@@ -1,5 +1,4 @@
-# 在推送到默认分支后，用 git-cliff 根据提交历史生成 CHANGELOG.md，只提交到 changelog 分支。
-# 该提交以当前 master 为父提交，树中只保留 CHANGELOG.md，从而与默认分支有共同祖先。
+# 在推送到默认分支后，用 git-cliff 根据提交历史重写根目录 CHANGELOG.md 并自动提交。
 # cliff.toml 模板为每条提交附加 author.timestamp（Asia/Shanghai，YYYY-MM-DD）。
 # 自动提交信息含 [skip ci]，避免与工作流形成循环触发。
 name: Changelog
@@ -49,15 +48,15 @@ jobs:
 
       - name: Commit changelog to isolated branch
         run: |
-          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           COMMIT_DATE=$(TZ=Asia/Shanghai date +%Y-%m-%d)
-          cp CHANGELOG.md /tmp/CHANGELOG.md
-          # 以当前 master 为父提交。孤立根提交与默认分支没有共同祖先，GitHub 文件页会报错。
-          git checkout -B changelog
-          git read-tree --empty
-          cp /tmp/CHANGELOG.md CHANGELOG.md
+          # 创建孤立分支（无历史）
+          git checkout --orphan changelog
+          # 重置暂存区，移除所有文件
+          git reset
+          # 只添加 CHANGELOG.md
           git add CHANGELOG.md
           git commit -m "chore(changelog): 同步 CHANGELOG ${COMMIT_DATE} [skip ci]"
+          # 强制推送
           git push origin changelog --force
