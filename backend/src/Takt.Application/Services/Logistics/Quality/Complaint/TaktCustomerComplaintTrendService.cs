@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Quality.Complaint
 // 文件名称：TaktCustomerComplaintTrendService.cs
 // 创建时间：2026-08-28
@@ -111,7 +111,7 @@ public class TaktCustomerComplaintTrendService : TaktServiceBase, ITaktCustomerC
             columnKeys,
             columnLabels,
             sheetName ?? "顾客投诉推移表",
-            fileName ?? "顾客投诉推移表.xlsx");
+            fileName ?? TaktNamingHelper.PlantPrefixedTrendExportBase(query.PlantCode, "顾客投诉推移"));
     }
 
     /// <summary>

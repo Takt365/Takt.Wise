@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/ec-kakunin -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：设变物料确认页面 -->
@@ -62,11 +62,11 @@
  */
 import { message } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n';
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width';
-import { getEcKakuninList, updateEcKakunin, exportEcKakuninData } from '@/api/logistics/manufacturing/engineering-change/ec-kakunin';
-import type { EcKakunin, EcKakuninUpdate } from '@/types/logistics/manufacturing/engineering-change/ec-kakunin';
-import { useEcDetailI18n } from '@/views/logistics/manufacturing/engineering-change/ec-gijutsu/composables/use-ec-detail-i18n';
-import KakuninForm from './components/kakunin-form.vue';
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth';
+import { getEcKakuninList, updateEcKakunin, exportEcKakuninData } from '@/api/logistics/manufacturing/engineering-change/ecKakunin.api';
+import type { EcKakunin, EcKakuninUpdate } from '@/types/logistics/manufacturing/engineering-change/ecKakunin.types';
+import { useEcDetailI18n } from '@/views/logistics/manufacturing/engineering-change/ec-gijutsu/composables/useEcDetailI18n';
+import KakuninForm from './components/KakuninForm.vue';
 
 const { t } = useI18n();
 const pi = useEcDetailI18n();

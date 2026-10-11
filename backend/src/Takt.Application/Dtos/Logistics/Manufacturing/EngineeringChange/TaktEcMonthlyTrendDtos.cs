@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcMonthlyTrendDtos.cs
 // 创建时间：2026-07-18
@@ -51,6 +51,10 @@ public class TaktEcMonthlyTrendQueryDto : TaktPagedQuery
     /// 实施范围（字典 logistics_manufacturing_ec_scope_category；可选，按主表过滤）
     /// </summary>
     public int? EcScope { get; set; }
+    /// <summary>
+    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int? EcDeptScope { get; set; }
 
     /// <summary>
     /// 变更状态（字典 logistics_manufacturing_ec_status；可选，按主表过滤）

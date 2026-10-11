@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Procurement
 // 文件名称：ITaktPurchasePriceTrendService.cs
 // 创建时间：2026-08-23
@@ -46,7 +46,7 @@ public interface ITaktPurchasePriceTrendService
     Task<List<TaktSelectOption>> GetPurchasePriceTrendSupplierOptionsAsync(string? plantCode = null, string? keyword = null, string? priceType = null);
 
     /// <summary>
-    /// 推移查询栏：按工厂+条件类型+供应商去重物料（级联第 4 级，查询时可空）
+    /// 推移查询栏：按工厂+条件类型去重物料（供应商可选，传入则再过滤）
     /// </summary>
     /// <param name="plantCode">工厂代码</param>
     /// <param name="priceType">条件类型</param>

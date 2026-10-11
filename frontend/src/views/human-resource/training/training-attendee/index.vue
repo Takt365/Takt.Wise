@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/human-resource/training/training-attendee -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：员工培训结果记录管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -410,18 +410,17 @@
  * 员工培训结果记录管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/human-resource/training/training-attendee
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import TrainingAttendeeForm from './components/attendee-form.vue'
-import { getTrainingAttendeeList, getTrainingAttendeeById, createTrainingAttendee, updateTrainingAttendee, deleteTrainingAttendeeById, deleteTrainingAttendeeBatch, getTrainingAttendeeTemplate, importTrainingAttendee, exportTrainingAttendee, updateTrainingAttendeeStatus } from '@/api/human-resource/training/attendee'
-import type { TrainingAttendee, TrainingAttendeeQuery } from '@/types/human-resource/training/attendee'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import TrainingAttendeeForm from './components/AttendeeForm.vue'
+import { getTrainingAttendeeList, getTrainingAttendeeById, createTrainingAttendee, updateTrainingAttendee, deleteTrainingAttendeeById, deleteTrainingAttendeeBatch, getTrainingAttendeeTemplate, importTrainingAttendee, exportTrainingAttendee, updateTrainingAttendeeStatus } from '@/api/human-resource/training/attendee.api'
+import type { TrainingAttendee, TrainingAttendeeQuery } from '@/types/human-resource/training/attendee.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 /** i18n 翻译函数 */

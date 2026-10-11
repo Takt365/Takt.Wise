@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Validators.Identity
 // 文件名称：TaktUserValidators.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：User 模块 FluentValidation 验证器（由 generate-validators-from-entity.cjs 根据 TaktUser 生成，请按需审阅）
 // 
@@ -22,7 +22,7 @@ namespace Takt.Application.Validators.Identity;
 /// <summary>
 /// 创建User DTO 验证器
 /// </summary>
-public class TaktUserCreateValidator : AbstractValidator<TaktCreateUserDto>
+public class TaktUserCreateValidator : AbstractValidator<TaktUserCreateDto>
 {
     /// <summary>
     /// 初始化 创建User 校验规则
@@ -40,7 +40,7 @@ public class TaktUserCreateValidator : AbstractValidator<TaktCreateUserDto>
             .MaximumLength(20).WithMessage("用户名长度不能超过20个字符");
         RuleFor(x => x.NickName)
             .NotEmpty().WithMessage("昵称不能为空")
-            .MaximumLength(40).WithMessage("昵称长度不能超过40个字符");
+            .MaximumLength(20).WithMessage("昵称长度不能超过20个字符");
         RuleFor(x => x.PasswordHash)
             .MaximumLength(255).WithMessage("密码哈希值长度不能超过255个字符");
         RuleFor(x => x.EmployeeId)
@@ -59,7 +59,7 @@ public class TaktUserCreateValidator : AbstractValidator<TaktCreateUserDto>
 /// <summary>
 /// 更新User DTO 验证器
 /// </summary>
-public class TaktUserUpdateValidator : AbstractValidator<TaktUpdateUserDto>
+public class TaktUserUpdateValidator : AbstractValidator<TaktUserUpdateDto>
 {
     /// <summary>
     /// 初始化 更新User 校验规则
@@ -79,7 +79,7 @@ public class TaktUserUpdateValidator : AbstractValidator<TaktUpdateUserDto>
             .MaximumLength(20).WithMessage("用户名长度不能超过20个字符");
         RuleFor(x => x.NickName)
             .NotEmpty().WithMessage("昵称不能为空")
-            .MaximumLength(40).WithMessage("昵称长度不能超过40个字符");
+            .MaximumLength(20).WithMessage("昵称长度不能超过20个字符");
         RuleFor(x => x.PasswordHash)
             .MaximumLength(255).WithMessage("密码哈希值长度不能超过255个字符");
         RuleFor(x => x.EmployeeId)
@@ -114,7 +114,7 @@ public class TaktUserImportValidator : AbstractValidator<TaktUserImportDto>
             .MaximumLength(20).WithMessage("用户名长度不能超过20个字符");
         RuleFor(x => x.NickName)
             .NotEmpty().WithMessage("昵称不能为空")
-            .MaximumLength(40).WithMessage("昵称长度不能超过40个字符");
+            .MaximumLength(20).WithMessage("昵称长度不能超过20个字符");
         RuleFor(x => x.PasswordHash)
             .MaximumLength(255).WithMessage("密码哈希值长度不能超过255个字符").When(x => !string.IsNullOrWhiteSpace(x.PasswordHash));
         RuleFor(x => x.EmployeeId)

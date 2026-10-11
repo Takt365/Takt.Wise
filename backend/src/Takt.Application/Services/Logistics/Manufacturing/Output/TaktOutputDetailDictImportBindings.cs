@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Output
 // 文件名称：TaktOutputDetailDictImportBindings.cs
 // 功能描述：产出日报明细 Excel 导入字典绑定（dict_type_code 与前端 dict-type 一致；仅导入旁路，UI 提交由前端转换）

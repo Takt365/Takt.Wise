@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TaktMiddlewareExtensions.cs" company="Takt.Plat">
-//   Copyright (c) Takt.Plat. All rights reserved.
+// <copyright file="TaktMiddlewareExtensions.cs" company="TaktWise">
+//   Copyright (c) TaktWise. All rights reserved.
 // </copyright>
 // <summary>
 //   中间件扩展方法

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：scripts/api-fragments
 // 文件名称：foundation-file-upload-api.cjs
 // 创建时间：2026-06-14
@@ -183,8 +183,8 @@ function mergeFoundationFileUploadApi(content) {
   let merged = content;
   if (!merged.includes('FileUploadPolicy')) {
     merged = merged.replace(
-      "} from '@/types/foundation/file';",
-      `,\n${UPLOAD_TYPE_NAMES}\n} from '@/types/foundation/file';`
+      "} from '@/types/foundation/file.types';",
+      `,\n${UPLOAD_TYPE_NAMES}\n} from '@/types/foundation/file.types';`
     );
   }
   const optionsMarker = '// ========================================\n// 选项';

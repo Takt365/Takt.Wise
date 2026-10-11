@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomMaterialCostAnalysisTrendService.cs
 // 创建时间：2026-08-28
@@ -161,6 +161,10 @@ public class TaktBomMaterialCostAnalysisTrendService : TaktServiceBase, ITaktBom
             columnKeys,
             columnLabels,
             sheetName ?? "BOM材料月度涨跌",
-            fileName ?? $"BOM材料月度涨跌_{result.ModelCode}.xlsx");
+            fileName ?? TaktNamingHelper.PlantPrefixedTrendExportBase(
+                result.PlantCode,
+                string.IsNullOrWhiteSpace(result.ModelCode)
+                    ? "BOM材料月度涨跌"
+                    : $"BOM材料月度涨跌_{result.ModelCode.Trim()}"));
     }
 }

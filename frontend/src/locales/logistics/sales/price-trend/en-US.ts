@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/sales/price-trend
 // 文件名称：en-US.ts
 // 创建时间：2026-07-18
@@ -20,9 +20,10 @@ export default {
     selectPeriodRequired: 'Please select a period range',
     selectPriceTypeRequired: 'Please select a condition type',
     selectCustomerRequired: 'Please select a customer',
-    summary: '{count} material×customer rows (gaps carry last valid price; hover * for price date)',
+    summary: '{count} material×customer rows (columns = ValidFrom; same-month records stay separate)',
     summaryModel: '{count} material×customer rows (model/product groups from BOM; gap fill same as left)',
     trendSummary: 'MoM {base} → {compare}: up {up} · down {down} · flat {flat}',
+    trendSummaryValidFrom: 'Each row compares its last two ValidFrom dates: up {up} · down {down} · flat {flat}',
     carriedFrom: 'Latest price date {period} (no valid price this month; carried forward)',
     export: 'Export list',
     exportSuccess: 'Export succeeded',

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Helpers
 // 文件名称：TaktPrimaryKeyInsertHelper.cs
 // 功能描述：实体插入主键策略（按 Id 字段类型 + PrimaryKeyType 配置：long 雪花 / int 自增 / Guid）

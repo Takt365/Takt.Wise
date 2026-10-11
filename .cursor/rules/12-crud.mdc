@@ -27,8 +27,8 @@ alwaysApply: true
 | 后端服务 | `TaktLoginLogService.cs`（标准 CRUD + 导入导出） |
 | 后端控制器 | `TaktLoginLogsController.cs`、`TaktUsersController.cs` |
 | 实体 | `TaktUser.cs` |
-| 前端 API | `api/identity/user.ts` |
-| 前端页面 | `views/identity/user/index.vue` + `components/user-form.vue` |
+| 前端 API | `api/identity/user.api.ts` |
+| 前端页面 | `views/identity/user/index.vue` + `components/UserForm.vue` |
 
 ---
 
@@ -100,7 +100,7 @@ Controller TaktXxxsController : TaktControllerBase；只注入 ITaktXxxService
 ```
 api/       getXxxList…；import request from '@/api/request'；路径复数 TaktXxxs
 types/     id 及 long 字段 string；TaktPagedQuery / TaktPagedResult
-views/     index.vue（8 行 HTML 头）+ components/xxx-form.vue
+views/     index.vue（8 行 HTML 头）+ components/XxxForm.vue
 页面分区   查询栏 → 工具栏 → 表格 → 分页 → 弹窗 → 高级查询/列设置
 组件       TaktQueryBar、TaktToolsBar、TaktSingleTable、TaktPagination、takt-modal
 表格       row-key string；:pagination="false" + 外置 TaktPagination；TaktSingleTable 默认 virtual
@@ -127,7 +127,7 @@ loading    列表/提交 async + loading 态
 | 导出 | 当前查询条件 → `exportXxxData` |
 | 状态开关 | 行内 switch → `updateXxxStatus`（若实体有状态字段） |
 
-表单组件 `defineExpose`：`validate`、`getValues`、`resetFields`（详见 `14-vue-form` §1.3；参照 `user-form.vue`）。
+表单组件 `defineExpose`：`validate`、`getValues`、`resetFields`（详见 `14-vue-form` §1.3；参照 `UserForm.vue`）。
 
 ---
 
@@ -139,7 +139,7 @@ loading    列表/提交 async + loading 态
 |------|------|
 | `generate-all.cjs` | 全栈流水线（以 `PIPELINE` 为准，10 步，见 `15-codegen` §一） |
 | `generate-from-backend.cjs` | 前端 `api/`、`types/` |
-| `generate-vue-all-from-api.cjs` | `index.vue` + `*-form.vue`（串联 CRUD / TREE / Master-Detail） |
+| `generate-vue-all-from-api.cjs` | `index.vue` + `*Form.vue`（串联 CRUD / TREE / Master-Detail） |
 | `generate-services-from-dtos.cjs` | 服务 |
 | `generate-controllers-from-services.cjs` | 控制器 |
 

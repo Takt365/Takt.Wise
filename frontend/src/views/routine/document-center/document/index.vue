@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/routine/document-center/document -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：文管中心主实体 支持制度、流程、模板等文档的分类、版本与权限控制管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -641,24 +641,23 @@
  * 文管中心主实体 支持制度、流程、模板等文档的分类、版本与权限控制管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/routine/document-center/document
  */
-import { ref, computed, onMounted, nextTick } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import DocumentForm from './components/document-form.vue'
-import DocumentVersionPanel from './components/document-version-panel.vue'
-import { provideDocumentMasterContext, type DocumentRowRecord } from './composables/use-document-master-context'
-import { getDocumentList, getDocumentById, createDocument, updateDocument, deleteDocumentById, deleteDocumentBatch, getDocumentTemplate, importDocument, exportDocument, updateDocumentStatus } from '@/api/routine/document-center/document'
-import type { Document, DocumentQuery } from '@/types/routine/document-center/document'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import DocumentForm from './components/DocumentForm.vue'
+import DocumentVersionPanel from './components/DocumentVersionPanel.vue'
+import { provideDocumentMasterContext, type DocumentRowRecord } from './composables/useDocumentMasterContext'
+import { getDocumentList, getDocumentById, createDocument, updateDocument, deleteDocumentById, deleteDocumentBatch, getDocumentTemplate, importDocument, exportDocument, updateDocumentStatus } from '@/api/routine/document-center/document.api'
+import type { Document, DocumentQuery } from '@/types/routine/document-center/document.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine, RiGitBranchLine } from '@remixicon/vue'
-import type { ToolBarAction } from '@/components/business/takt-tools-bar/index.vue'
+import type { ToolBarAction } from '@/components/business/TaktToolsBar/index.vue'
 
 import {
   useDocumentI18n,
@@ -666,7 +665,7 @@ import {
   DOCUMENT_QUERY_STRING_FIELDS,
   DOCUMENT_QUERY_FIELDS,
   DOCUMENT_SELF_I18N_KEY,
-} from './composables/use-document-i18n'
+} from './composables/useDocumentI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useDocumentI18n()
@@ -921,7 +920,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -1242,8 +1240,6 @@ const getDocumentDictValue = (
   if (typeof value === 'string' || typeof value === 'number') return value
   return String(value)
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

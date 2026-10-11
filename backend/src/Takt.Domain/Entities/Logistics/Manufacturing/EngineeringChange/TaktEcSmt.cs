@@ -1,10 +1,10 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcSmt.cs
 // 创建时间：2026-09-08
 // 创建人：Takt365(Cursor AI)
-// 功能描述：设变 SMT执行表（仅 F+C003；按设变明细ID+根物料编码+新物料编码+新品仓库唯一）
+// 功能描述：设变 SMT执行表（按实施范围去重；按成品含根物料+新物料且只为 C003，按机种/部管为新物料+根物料编码组）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -17,11 +17,11 @@ using Takt.Domain.Interfaces;
 namespace Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange;
 
 /// <summary>
-/// 设变 SMT（制造2课-物料 D0625 / F+C003）部门执行表（按设变明细 + 根物料编码 + 新物料编码 + 新品仓库唯一）
+/// 设变 SMT（制造2课-物料 D0625 / F+C003）部门执行表（去重键随实施范围变化；同键根物料写入编码组）
 /// </summary>
 [SugarTable("takt_logistics_manufacturing_ec_smt", "设变SMT执行表")]
 [SugarIndex("ix_ec_smt_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
-[SugarIndex("ix_takt_logistics_manufacturing_ec_smt_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcDetailId), OrderByType.Asc, nameof(EcRootMaterialCode), OrderByType.Asc, nameof(EcNewMaterialCode), OrderByType.Asc, nameof(EcNewWarehouse), OrderByType.Asc, true)]
+[SugarIndex("ix_takt_logistics_manufacturing_ec_smt_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcCode), OrderByType.Asc, nameof(EcModelCode), OrderByType.Asc, nameof(EcDetailId), OrderByType.Asc, nameof(EcNewMaterialCode), OrderByType.Asc, true)]
 [SugarIndex("ix_takt_logistics_manufacturing_ec_smt_plant_code", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(PlantCode), OrderByType.Asc, false)]
 public class TaktEcSmt : TaktCompanyEntityBase, ITaktEcDeptExecEntity
 {
@@ -50,10 +50,10 @@ public class TaktEcSmt : TaktCompanyEntityBase, ITaktEcDeptExecEntity
     public string EcModelCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）
+    /// 根物料编码组（同去重键下可见明细的根物料编码，分号分隔；ntext，同机种根物料可能很多）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_root_material_code", ColumnDescription = "根物料编码", Length = 20, ColumnDataType = "nvarchar", IsNullable = false)]
-    public string EcRootMaterialCode { get; set; } = string.Empty;
+    [SugarColumn(ColumnName = "ec_root_material_code_group", ColumnDescription = "根物料编码组", ColumnDataType = "ntext", IsNullable = false)]
+    public string EcRootMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
     /// 上阶物料编码（冗余：来自 TaktEcDetail.EcParentMaterialCode）
@@ -125,12 +125,6 @@ public class TaktEcSmt : TaktCompanyEntityBase, ITaktEcDeptExecEntity
     public DateTime? OutboundDate { get; set; }
 
     /// <summary>
-    /// 根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）
-    /// </summary>
-    [SugarColumn(ColumnName = "ec_root_material_description", ColumnDescription = "根物料描述", Length = 40, ColumnDataType = "nvarchar", IsNullable = false)]
-    public string EcRootMaterialDescription { get; set; } = string.Empty;
-
-    /// <summary>
     /// 部门编码（TaktDept.DeptCode；本表固定课别）
     /// </summary>
     [SugarColumn(ColumnName = "dept_code", ColumnDescription = "部门编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
@@ -146,6 +140,11 @@ public class TaktEcSmt : TaktCompanyEntityBase, ITaktEcDeptExecEntity
     /// </summary>
     [SugarColumn(ColumnName = "ec_scope", ColumnDescription = "实施范围", ColumnDataType = "int", IsNullable = false)]
     public int EcScope { get; set; }
+    /// <summary>
+    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    [SugarColumn(ColumnName = "ec_dept_scope", ColumnDescription = "部门实施范围", ColumnDataType = "int", IsNullable = false, DefaultValue = "2")]
+    public int EcDeptScope { get; set; } = 2;
 
     /// <summary>
     /// 设变明细 ID（TaktEcDetail 主键；去重组内代表/种子明细 Id；同组多明细按业务键 FanOut）

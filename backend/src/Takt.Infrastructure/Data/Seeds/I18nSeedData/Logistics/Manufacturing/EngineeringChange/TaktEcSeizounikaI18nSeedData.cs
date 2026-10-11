@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcSeizounikaI18nSeedData.cs
 // 创建时间：2026-08-26
@@ -125,6 +125,22 @@ public class TaktEcSeizounikaI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecseizounika.ecmodelcode", "zh-CN", "机种编码", "机种编码（冗余：来自 TaktEcDetail.EcModelCode）"),
             // entity.ecseizounika.ecmodelcode
             new TranslationSeedItem("entity.ecseizounika.ecmodelcode", "zh-HK", "機種編碼_hk", "机种编码（冗余：来自 TaktEcDetail.EcModelCode）"),
+            new TranslationSeedItem("entity.ecseizounika.ecmodelcodegroup", "en-US", "Model code group", "机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）"),
+            new TranslationSeedItem("entity.ecseizounika.ecmodelcodegroup", "ja-JP", "機種コード組", "机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）"),
+            new TranslationSeedItem("entity.ecseizounika.ecmodelcodegroup", "zh-CN", "机种编码组", "机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）"),
+            new TranslationSeedItem("entity.ecseizounika.ecmodelcodegroup", "zh-HK", "機種編碼組", "机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）"),
+            new TranslationSeedItem("entity.ecseizounika.ecnewmaterialcodegroup", "en-US", "New material code group", "新物料编码组（按设变时同设变单号下的新物料编码，分号分隔；ntext）"),
+            new TranslationSeedItem("entity.ecseizounika.ecnewmaterialcodegroup", "ja-JP", "新物料コード組", "新物料编码组（按设变时同设变单号下的新物料编码，分号分隔；ntext）"),
+            new TranslationSeedItem("entity.ecseizounika.ecnewmaterialcodegroup", "zh-CN", "新物料编码组", "新物料编码组（按设变时同设变单号下的新物料编码，分号分隔；ntext）"),
+            new TranslationSeedItem("entity.ecseizounika.ecnewmaterialcodegroup", "zh-HK", "新物料編碼組", "新物料编码组（按设变时同设变单号下的新物料编码，分号分隔；ntext）"),
+            new TranslationSeedItem("entity.ecseizounika.ecnewmaterialdescription", "en-US", "New material description", "新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）"),
+            new TranslationSeedItem("entity.ecseizounika.ecnewmaterialdescription", "ja-JP", "新物料記述", "新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）"),
+            new TranslationSeedItem("entity.ecseizounika.ecnewmaterialdescription", "zh-CN", "新物料描述", "新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）"),
+            new TranslationSeedItem("entity.ecseizounika.ecnewmaterialdescription", "zh-HK", "新物料描述", "新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）"),
+            new TranslationSeedItem("entity.ecseizounika.ecparentmaterialcodegroup", "en-US", "Parent material code group", "上阶物料编码组（按设变时同设变单号下的上阶物料编码，分号分隔；ntext）"),
+            new TranslationSeedItem("entity.ecseizounika.ecparentmaterialcodegroup", "ja-JP", "上階物料コード組", "上阶物料编码组（按设变时同设变单号下的上阶物料编码，分号分隔；ntext）"),
+            new TranslationSeedItem("entity.ecseizounika.ecparentmaterialcodegroup", "zh-CN", "上阶物料编码组", "上阶物料编码组（按设变时同设变单号下的上阶物料编码，分号分隔；ntext）"),
+            new TranslationSeedItem("entity.ecseizounika.ecparentmaterialcodegroup", "zh-HK", "上階物料編碼組", "上阶物料编码组（按设变时同设变单号下的上阶物料编码，分号分隔；ntext）"),
 
             // entity.ecseizounika.ecrootmaterialcode
             new TranslationSeedItem("entity.ecseizounika.ecrootmaterialcode", "en-US", "根物料编码_us", "根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode；与 EcDetailId 组成唯一键）"),

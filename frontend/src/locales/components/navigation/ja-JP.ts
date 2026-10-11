@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/components/navigation
 // 文件名称：ja-JP.ts
 // 创建时间：2026-06-16
@@ -37,7 +37,7 @@ export default {
       copyright: "著作権",
       defaultlanguage: "既定言語",
       demoswitch: "デモ",
-      demohint: "オンで参照専用：照会/エクスポート可、新規・更新・削除・取込は不可",
+      demohint: "Demo のON/OFFは透かしと同期；設定保存後に参照専用：照会/エクスポート可、新規・更新・削除・取込は不可",
       enablemultitab: "複数タブ",
       fixed: "固定",
       fixedheader: "ヘッダー固定",

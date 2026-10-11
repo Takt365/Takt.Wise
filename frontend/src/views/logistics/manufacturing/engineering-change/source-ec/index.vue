@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/source-ec -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：设变来源只读列表页，含查询、导出（无新增/编辑/删除/导入） -->
@@ -479,25 +479,24 @@
  * 设变来源只读列表页（查询/导出）
  * @module views/logistics/manufacturing/engineering-change/source-ec
  */
-import { ref, computed, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import SourceEcDetailPanel from './components/source-ec-detail-panel.vue'
-import { provideSourceEcMasterContext, type SourceEcRowRecord } from './composables/use-source-ec-master-context'
-import { getSourceEcList, exportSourceEc } from '@/api/logistics/manufacturing/engineering-change/source-ec'
-import type { SourceEc, SourceEcQuery } from '@/types/logistics/manufacturing/engineering-change/source-ec'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import SourceEcDetailPanel from './components/SourceEcDetailPanel.vue'
+import { provideSourceEcMasterContext, type SourceEcRowRecord } from './composables/useSourceEcMasterContext'
+import { getSourceEcList, exportSourceEc } from '@/api/logistics/manufacturing/engineering-change/sourceEc.api'
+import type { SourceEc, SourceEcQuery } from '@/types/logistics/manufacturing/engineering-change/sourceEc.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiQuestionLine } from '@remixicon/vue'
 
 import {
   useSourceEcI18n,
   SOURCEEC_QUERY_STRING_FIELDS,
   SOURCEEC_QUERY_FIELDS,
-} from './composables/use-source-ec-i18n'
+} from './composables/useSourceEcI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useSourceEcI18n()

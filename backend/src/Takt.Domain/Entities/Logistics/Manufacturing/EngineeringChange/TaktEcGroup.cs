@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcGroup.cs
 // 创建时间：2026-07-08
@@ -26,9 +26,9 @@ namespace Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange;
 public class TaktEcGroup : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 设变组编码（3）
+    /// 设变组编码（与员工编码同长 6，如 D10000）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_group_code", ColumnDescription = "设变组编码", ColumnDataType = "nvarchar", Length = 3, IsNullable = false)]
+    [SugarColumn(ColumnName = "ec_group_code", ColumnDescription = "设变组编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string EcGroupCode { get; set; } = string.Empty;
 
     /// <summary>
@@ -44,10 +44,10 @@ public class TaktEcGroup : TaktCompanyEntityBase
     public string? EcGroupDescription { get; set; }
 
     /// <summary>
-    /// 设变组类别（字典 logistics_manufacturing_ec_group_category；1=设变EC担当 2=SOP担当）
+    /// 设变组类别（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_group_category", ColumnDescription = "设变组类别", ColumnDataType = "int", IsNullable = false, DefaultValue = "1")]
-    public int EcGroupCategory { get; set; } = 1;
+    [SugarColumn(ColumnName = "ec_group_category", ColumnDescription = "设变组类别", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
+    public string EcGroupCategory { get; set; } = string.Empty;
 
     /// <summary>
     /// 联系电话

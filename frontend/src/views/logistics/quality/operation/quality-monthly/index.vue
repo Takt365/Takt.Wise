@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/quality/operation/quality-monthly -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：品质月报页面占位（菜单 logistics:quality:operation:monthly:list）；业务报表待接入 -->

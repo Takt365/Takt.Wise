@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/mrp/purchase-plan -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：Takt采购计划实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -269,23 +269,22 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('plannerEmployeeId')">
-      <a-form-item :label="pi.queryLabel('plannerEmployeeId')">
+      <div v-show="isFieldVisible('plannerGroupCode')">
+      <a-form-item :label="pi.queryLabel('plannerGroupCode')">
         <TaktSelect
-          v-model:value="advancedQueryForm.plannerEmployeeId"
-          api-url="TaktEmployees/options"
-          :placeholder="pi.queryPh('plannerEmployeeId', 'select')"
+          v-model:value="advancedQueryForm.plannerGroupCode"
+          api-url="TaktApsGroups/options"
+          :api-params="{ apsGroupCategory: 1 }"
+          :placeholder="pi.queryPh('plannerGroupCode', 'select')"
           allow-clear
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('plannerName')">
-      <a-form-item :label="pi.queryLabel('plannerName')">
+      <div v-show="isFieldVisible('plannerGroupName')">
+      <a-form-item :label="pi.queryLabel('plannerGroupName')">
         <a-input
-          v-model:value="advancedQueryForm.plannerName"
-          :placeholder="pi.queryPh('plannerName', 'required')"
-          show-count
-          :maxlength="80"
+          v-model:value="advancedQueryForm.plannerGroupName"
+          :placeholder="pi.queryPh('plannerGroupName', 'optional')"
           allow-clear
         />
       </a-form-item>
@@ -548,22 +547,21 @@
  * Takt采购计划实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/mrp/purchase-plan
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import PurchasePlanForm from './components/purchase-plan-form.vue'
-import PurchasePlanItemPanel from './components/purchase-plan-item-panel.vue'
-import { providePurchasePlanMasterContext, type PurchasePlanRowRecord } from './composables/use-purchase-plan-master-context'
-import { getPurchasePlanList, getPurchasePlanById, createPurchasePlan, updatePurchasePlan, deletePurchasePlanById, deletePurchasePlanBatch, getPurchasePlanTemplate, importPurchasePlan, exportPurchasePlan, updatePurchasePlanStatus } from '@/api/logistics/manufacturing/mrp/purchase-plan'
-import type { PurchasePlan, PurchasePlanQuery } from '@/types/logistics/manufacturing/mrp/purchase-plan'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import PurchasePlanForm from './components/PurchasePlanForm.vue'
+import PurchasePlanItemPanel from './components/PurchasePlanItemPanel.vue'
+import { providePurchasePlanMasterContext, type PurchasePlanRowRecord } from './composables/usePurchasePlanMasterContext'
+import { getPurchasePlanList, getPurchasePlanById, createPurchasePlan, updatePurchasePlan, deletePurchasePlanById, deletePurchasePlanBatch, getPurchasePlanTemplate, importPurchasePlan, exportPurchasePlan, updatePurchasePlanStatus } from '@/api/logistics/manufacturing/mrp/purchasePlan.api'
+import type { PurchasePlan, PurchasePlanQuery } from '@/types/logistics/manufacturing/mrp/purchasePlan.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -572,7 +570,7 @@ import {
   PURCHASEPLAN_QUERY_STRING_FIELDS,
   PURCHASEPLAN_QUERY_FIELDS,
   PURCHASEPLAN_SELF_I18N_KEY,
-} from './composables/use-purchase-plan-i18n'
+} from './composables/usePurchasePlanI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = usePurchasePlanI18n()
@@ -760,7 +758,6 @@ onMounted(async () => {
   loadData()
 })
 
-
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
 
@@ -905,31 +902,31 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getPurchasePlanField(record, 'purchaseGroupCode') ?? ''
   },
   {
-    title: pi.label('plannerEmployeeId'),
-    dataIndex: 'plannerEmployeeId',
-    key: 'plannerEmployeeId',
+    title: pi.label('plannerGroupCode'),
+    dataIndex: 'plannerGroupCode',
+    key: 'plannerGroupCode',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getPurchasePlanField(record, 'plannerEmployeeId') ?? ''
+    customRender: ({ record }: { record: any }) => getPurchasePlanField(record, 'plannerGroupCode') ?? ''
   },
   {
-    title: pi.label('plannerEmployeeName'),
-    dataIndex: 'plannerEmployeeName',
-    key: 'plannerEmployeeName',
+    title: pi.label('plannerGroupName'),
+    dataIndex: 'plannerGroupName',
+    key: 'plannerGroupName',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getPurchasePlanField(record, 'plannerEmployeeName') ?? ''
+    customRender: ({ record }: { record: any }) => getPurchasePlanField(record, 'plannerGroupName') ?? ''
   },
   {
-    title: pi.label('plannerName'),
-    dataIndex: 'plannerName',
-    key: 'plannerName',
+    title: pi.label('plannerGroupName'),
+    dataIndex: 'plannerGroupName',
+    key: 'plannerGroupName',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getPurchasePlanField(record, 'plannerName') ?? ''
+    customRender: ({ record }: { record: any }) => getPurchasePlanField(record, 'plannerGroupName') ?? ''
   },
   {
     title: pi.label('totalQuantity'),
@@ -1047,8 +1044,6 @@ const toPurchasePlanNumber = (value: string | number | undefined | null): number
   return Number.isFinite(num) ? num : 0
 }
 
-
-
 /** 行选择配置 */
 const rowSelection = computed(() => ({
   selectedRowKeys: selectedRowKeys.value,
@@ -1126,8 +1121,8 @@ function handleReset() {
   planPeriodEndStart: '',
   planPeriodEndEnd: '',
   purchaseGroupCode: '',
-  plannerEmployeeId: '',
-  plannerName: '',
+  plannerGroupCode: '',
+  plannerGroupName: '',
   totalQuantity: undefined as number | undefined,
   totalAmount: undefined as number | undefined,
   convertedQuantity: undefined as number | undefined,
@@ -1382,8 +1377,8 @@ function handleAdvancedQueryReset() {
   planPeriodEndStart: '',
   planPeriodEndEnd: '',
   purchaseGroupCode: '',
-  plannerEmployeeId: '',
-  plannerName: '',
+  plannerGroupCode: '',
+  plannerGroupName: '',
   totalQuantity: undefined as number | undefined,
   totalAmount: undefined as number | undefined,
   convertedQuantity: undefined as number | undefined,

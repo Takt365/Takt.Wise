@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomMaterialZeroPriceService.cs
 // 创建时间：2026-08-13
@@ -190,8 +190,19 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
     /// </summary>
     /// <param name="dto">工厂+核算月；组件可选；机种可选（仅批量发现组件时用）</param>
     /// <returns>回填统计</returns>
-    public async Task<TaktBomMaterialZeroPriceMovingBackfillResultDto> BackfillBomMaterialZeroPriceMovingAsync(
-        TaktBomMaterialZeroPriceMovingBackfillDto dto)
+    public Task<TaktBomMaterialZeroPriceMovingBackfillResultDto> BackfillBomMaterialZeroPriceMovingAsync(
+        TaktBomMaterialZeroPriceMovingBackfillDto dto) =>
+        BackfillBomMaterialZeroPriceMovingCoreAsync(dto, null);
+
+    /// <summary>
+    /// 批量/直接回填移动平均价
+    /// </summary>
+    /// <param name="dto">工厂+核算月；组件可选；机种可选（仅批量发现组件时用）</param>
+    /// <param name="preloadedHeaders">已从当前库查出的主表行；有值时不再按日期重查主表</param>
+    /// <returns>回填统计</returns>
+    private async Task<TaktBomMaterialZeroPriceMovingBackfillResultDto> BackfillBomMaterialZeroPriceMovingCoreAsync(
+        TaktBomMaterialZeroPriceMovingBackfillDto dto,
+        IReadOnlyList<TaktBomMaterialCost>? preloadedHeaders)
     {
         EnsureThreeLayerContext();
         ArgumentNullException.ThrowIfNull(dto);
@@ -223,7 +234,8 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
                 costingStart,
                 costingEnd,
                 costingPeriod,
-                includeDeleted: true);
+                includeDeleted: true,
+                preloadedHeaders: preloadedHeaders);
             componentTargets = mergedRows
                 .Where(r => !string.IsNullOrWhiteSpace(r.ComponentCode))
                 .Select(r => r.ComponentCode.Trim())
@@ -235,6 +247,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             return new TaktBomMaterialZeroPriceMovingBackfillResultDto
             {
                 ProcessedMonth = costingPeriod,
+                ItemPhysicalTable = await ResolveBomItemTableLabelAsync(costingStart),
             };
         }
 
@@ -259,6 +272,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             costingPeriod,
             componentSources);
         result.SkippedNoPriceCount = skippedNoPrice;
+        result.ItemPhysicalTable = await ResolveBomItemTableLabelAsync(costingStart);
         return result;
     }
 
@@ -328,9 +342,11 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             59,
             999);
         var periodKey = TaktBomMaterialCostItemLineCostHelper.ToPeriodKey(asOf);
+        var tenantCode = CurrentTenantCode;
+        var companyCode = CurrentCompanyCode;
         var periodHeaders = await _bomMaterialCostRepository.GetListAsync(
-            x => x.TenantCode == CurrentTenantCode
-                && x.CompanyCode == CurrentCompanyCode
+            x => x.TenantCode == tenantCode
+                && x.CompanyCode == companyCode
                 && x.CostingPeriod == periodKey,
             includeSoftDeleted: true);
         var plantCodes = periodHeaders
@@ -344,16 +360,27 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             return null;
         }
 
+        var monthEndExclusive = costingStart.AddMonths(1);
+        var fertType = TaktBomMaterialCostItemLineCostHelper.FertMaterialTypeCode;
         TaktBomMaterialZeroPriceMovingBackfillResultDto? aggregate = null;
         foreach (var code in plantCodes)
         {
-            var part = await BackfillBomMaterialZeroPriceMovingAsync(
+            // 主表行已从当前连接（选中库）取出，按工厂+FERT+核算月在内存筛选，避免再查时条件被丢掉
+            var plantHeaders = periodHeaders
+                .Where(h => string.Equals(h.PlantCode?.Trim(), code, StringComparison.OrdinalIgnoreCase)
+                    && string.Equals((h.MaterialType ?? string.Empty).Trim(), fertType, StringComparison.OrdinalIgnoreCase)
+                    && h.CostingDate >= costingStart
+                    && h.CostingDate < monthEndExclusive
+                    && !string.IsNullOrWhiteSpace(h.ProductCode))
+                .ToList();
+            var part = await BackfillBomMaterialZeroPriceMovingCoreAsync(
                 new TaktBomMaterialZeroPriceMovingBackfillDto
                 {
                     PlantCode = code,
                     CostingDateStart = costingStart,
                     CostingDateEnd = costingEnd,
-                });
+                },
+                plantHeaders);
             if (aggregate == null)
             {
                 aggregate = part;
@@ -370,6 +397,10 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             aggregate.ModelMonthlyAverageUpdatedCount =
                 checked(aggregate.ModelMonthlyAverageUpdatedCount + part.ModelMonthlyAverageUpdatedCount);
             aggregate.ProcessedMonth = part.ProcessedMonth;
+            if (string.IsNullOrWhiteSpace(aggregate.ItemPhysicalTable))
+            {
+                aggregate.ItemPhysicalTable = part.ItemPhysicalTable;
+            }
         }
         return aggregate;
     }
@@ -472,6 +503,27 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             SkippedOverflowCount = 0,
             ProcessedMonth = costingPeriod,
         };
+    }
+
+    /// <summary>
+    /// 去掉当前工厂纯数字编码的前导 0。成本汇总只改 ProductCode；明细年分表与基表改 ProductCode 与 ComponentCode。含非数字字符的编码不改。
+    /// </summary>
+    /// <param name="dto">工厂</param>
+    /// <returns>更新与冲突跳过行数</returns>
+    public async Task<TaktBomMaterialZeroPriceStripLeadingZeroResultDto> StripBomMaterialZeroPriceLeadingZerosAsync(
+        TaktBomMaterialZeroPriceStripLeadingZeroDto dto)
+    {
+        EnsureThreeLayerContext();
+        ArgumentNullException.ThrowIfNull(dto);
+        ArgumentException.ThrowIfNullOrWhiteSpace(dto.PlantCode);
+        var plantCode = dto.PlantCode.Trim();
+        var result = new TaktBomMaterialZeroPriceStripLeadingZeroResultDto();
+        await StripHeaderProductLeadingZerosAsync(plantCode, result);
+        foreach (var table in await ListBomItemPhysicalTablesAsync())
+        {
+            await StripItemCodeLeadingZerosAsync(plantCode, table, result);
+        }
+        return result;
     }
 
     /// <summary>
@@ -1046,11 +1098,14 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
         for (var i = 0; i < lookupCodes.Count; i += chunkSize)
         {
             var chunk = lookupCodes.Skip(i).Take(chunkSize).ToList();
+            var tenantCode = CurrentTenantCode;
+            var companyCode = CurrentCompanyCode;
+            var plant = plantCode.Trim();
             var exp = Expressionable.Create<TaktBomMaterialCostItem>();
             exp = exp.And(x =>
-                x.TenantCode == CurrentTenantCode
-                && x.CompanyCode == CurrentCompanyCode
-                && x.PlantCode == plantCode
+                x.TenantCode == tenantCode
+                && x.CompanyCode == companyCode
+                && x.PlantCode == plant
                 && chunk.Contains(x.ProductCode));
             if (costingMonthStart.HasValue)
             {
@@ -1203,6 +1258,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
     /// <param name="costingEnd">核算日止</param>
     /// <param name="costingPeriod">核算月 yyyy-MM</param>
     /// <param name="includeDeleted">true=含软删主表（回填）；false=列表仅未删主表；明细无软删</param>
+    /// <param name="preloadedHeaders">当前库已查出的主表；有值时不再按日期重查</param>
     /// <returns>产品码、产品→机种、合并行</returns>
     private async Task<(
         List<string> ProductCodes,
@@ -1213,23 +1269,41 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
         DateTime costingStart,
         DateTime costingEnd,
         string costingPeriod,
-        bool includeDeleted = false)
+        bool includeDeleted = false,
+        IReadOnlyList<TaktBomMaterialCost>? preloadedHeaders = null)
     {
         var fertType = TaktBomMaterialCostItemLineCostHelper.FertMaterialTypeCode;
+        var tenantCode = CurrentTenantCode;
+        var companyCode = CurrentCompanyCode;
+        var plant = plantCode.Trim();
+        var rangeStart = costingStart;
+        var rangeEnd = costingEnd;
         var exp = Expressionable.Create<TaktBomMaterialCost>();
         exp = exp.And(x =>
-            x.TenantCode == CurrentTenantCode
-            && x.CompanyCode == CurrentCompanyCode
-            && x.PlantCode == plantCode
+            x.TenantCode == tenantCode
+            && x.CompanyCode == companyCode
+            && x.PlantCode == plant
             && x.MaterialType == fertType
-            && x.CostingDate >= costingStart
-            && x.CostingDate <= costingEnd);
+            && x.CostingDate >= rangeStart
+            && x.CostingDate <= rangeEnd);
         if (!includeDeleted)
         {
             exp = exp.And(x => x.IsDeleted == 0);
         }
         List<TaktBomMaterialCost> headers;
-        if (modelFilters.Count > 0)
+        if (preloadedHeaders != null)
+        {
+            headers = preloadedHeaders.ToList();
+            if (modelFilters.Count > 0)
+            {
+                var modelSet = new HashSet<string>(modelFilters, StringComparer.OrdinalIgnoreCase);
+                headers = headers
+                    .Where(h => !string.IsNullOrWhiteSpace(h.ModelCode)
+                        && modelSet.Contains(h.ModelCode.Trim()))
+                    .ToList();
+            }
+        }
+        else if (modelFilters.Count > 0)
         {
             // 机种在内存 Trim 比对（单选/多选一致），避免库内尾随空格导致漏产品
             // includeDeleted 须传仓储 includeSoftDeleted（ApplyReadScope 默认过滤软删）
@@ -1523,14 +1597,17 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             .ExpandProductCodeLookupVariants(component)
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
+        var tenantCode = CurrentTenantCode;
+        var companyCode = CurrentCompanyCode;
+        var plant = plantCode.Trim();
         DateTime? costingExclusiveEnd = costingMonthEnd.HasValue
             ? costingMonthEnd.Value.AddMonths(1)
             : null;
         var exp = Expressionable.Create<TaktBomMaterialCostItem>();
         exp = exp.And(x =>
-            x.TenantCode == CurrentTenantCode
-            && x.CompanyCode == CurrentCompanyCode
-            && x.PlantCode == plantCode
+            x.TenantCode == tenantCode
+            && x.CompanyCode == companyCode
+            && x.PlantCode == plant
             && componentLookup.Contains(x.ComponentCode));
         if (costingMonthStart.HasValue)
         {
@@ -1654,12 +1731,264 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
     }
 
     /// <summary>
+    /// 成本汇总表：纯数字产品编码去前导 0
+    /// </summary>
+    /// <param name="plantCode">工厂</param>
+    /// <param name="result">累计结果</param>
+    private async Task StripHeaderProductLeadingZerosAsync(
+        string plantCode,
+        TaktBomMaterialZeroPriceStripLeadingZeroResultDto result)
+    {
+        long lastId = 0;
+        const int pageSize = 100;
+        for (var guard = 0; guard < 100000; guard++)
+        {
+            var (items, _) = await _bomMaterialCostRepository.GetPagedAsync(
+                x => x.PlantCode == plantCode && x.Id > lastId && x.ProductCode.StartsWith("0"),
+                1,
+                pageSize,
+                x => x.Id,
+                false);
+            if (items.Count == 0)
+            {
+                break;
+            }
+            lastId = items[^1].Id;
+            var planned = new List<(TaktBomMaterialCost Row, string NewCode)>();
+            foreach (var row in items)
+            {
+                var stripped = TryStripPureNumericLeadingZeros(row.ProductCode);
+                if (stripped == null)
+                {
+                    continue;
+                }
+                planned.Add((row, stripped));
+            }
+            if (planned.Count == 0)
+            {
+                continue;
+            }
+            var codes = planned.Select(x => x.NewCode).Distinct(StringComparer.Ordinal).ToList();
+            var existing = await _bomMaterialCostRepository.GetListAsync(
+                x => x.PlantCode == plantCode && codes.Contains(x.ProductCode),
+                includeSoftDeleted: true);
+            var occupied = existing
+                .Select(x => HeaderProductKey(x.PlantCode, x.ProductCode, x.CostingDate))
+                .ToHashSet(StringComparer.Ordinal);
+            var toSave = new List<TaktBomMaterialCost>();
+            foreach (var (row, newCode) in planned)
+            {
+                var key = HeaderProductKey(row.PlantCode, newCode, row.CostingDate);
+                if (!occupied.Add(key))
+                {
+                    result.SkippedConflictCount = checked(result.SkippedConflictCount + 1);
+                    continue;
+                }
+                row.ProductCode = newCode;
+                toSave.Add(row);
+            }
+            if (toSave.Count > 0)
+            {
+                await _bomMaterialCostRepository.UpdateRangeAsync(toSave);
+                result.HeaderProductUpdatedCount = checked(result.HeaderProductUpdatedCount + toSave.Count);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 明细物理表：纯数字产品编码、组件编码去前导 0
+    /// </summary>
+    /// <param name="plantCode">工厂</param>
+    /// <param name="table">物理表名</param>
+    /// <param name="result">累计结果</param>
+    private async Task StripItemCodeLeadingZerosAsync(
+        string plantCode,
+        string table,
+        TaktBomMaterialZeroPriceStripLeadingZeroResultDto result)
+    {
+        long lastId = 0;
+        const int pageSize = 100;
+        for (var guard = 0; guard < 100000; guard++)
+        {
+            var (items, _) = await _bomMaterialCostItemRepository.GetPagedAsync(
+                x => x.PlantCode == plantCode
+                    && x.Id > lastId
+                    && (x.ProductCode.StartsWith("0") || x.ComponentCode.StartsWith("0")),
+                1,
+                pageSize,
+                x => x.Id,
+                false,
+                table);
+            if (items.Count == 0)
+            {
+                break;
+            }
+            lastId = items[^1].Id;
+            var planned = new List<(TaktBomMaterialCostItem Row, string ProductCode, string ComponentCode, bool ProductChanged, bool ComponentChanged)>();
+            foreach (var row in items)
+            {
+                var product = TryStripPureNumericLeadingZeros(row.ProductCode);
+                var component = TryStripPureNumericLeadingZeros(row.ComponentCode);
+                if (product == null && component == null)
+                {
+                    continue;
+                }
+                planned.Add((
+                    row,
+                    product ?? row.ProductCode.Trim(),
+                    component ?? row.ComponentCode.Trim(),
+                    product != null,
+                    component != null));
+            }
+            if (planned.Count == 0)
+            {
+                continue;
+            }
+            var productCodes = planned.Select(x => x.ProductCode).Distinct(StringComparer.Ordinal).ToList();
+            var componentCodes = planned.Select(x => x.ComponentCode).Distinct(StringComparer.Ordinal).ToList();
+            var existing = await _bomMaterialCostItemRepository.GetListAsync(
+                x => x.PlantCode == plantCode
+                    && (productCodes.Contains(x.ProductCode) || componentCodes.Contains(x.ComponentCode)),
+                table,
+                includeSoftDeleted: true);
+            var occupied = existing
+                .Select(ItemLineKey)
+                .ToHashSet(StringComparer.Ordinal);
+            var toSave = new List<TaktBomMaterialCostItem>();
+            foreach (var plan in planned)
+            {
+                var key = ItemLineKey(plan.Row.PlantCode, plan.Row.BomLevel, plan.Row.BomItemCode, plan.ProductCode, plan.Row.LineNumber, plan.ComponentCode, plan.Row.CostingDate);
+                if (!occupied.Add(key))
+                {
+                    result.SkippedConflictCount = checked(result.SkippedConflictCount + 1);
+                    continue;
+                }
+                if (plan.ProductChanged)
+                {
+                    plan.Row.ProductCode = plan.ProductCode;
+                    result.ItemProductUpdatedCount = checked(result.ItemProductUpdatedCount + 1);
+                }
+                if (plan.ComponentChanged)
+                {
+                    plan.Row.ComponentCode = plan.ComponentCode;
+                    result.ItemComponentUpdatedCount = checked(result.ItemComponentUpdatedCount + 1);
+                }
+                toSave.Add(plan.Row);
+            }
+            if (toSave.Count > 0)
+            {
+                await _bomMaterialCostItemRepository.UpdateRangeAsync(toSave, table);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 明细基表与已存在的年分表
+    /// </summary>
+    /// <returns>物理表名</returns>
+    private async Task<List<string>> ListBomItemPhysicalTablesAsync()
+    {
+        var tables = new List<string>();
+        if (await _bomMaterialCostItemRepository.PhysicalTableExistsAsync(BomItemYearShardBaseTable))
+        {
+            tables.Add(BomItemYearShardBaseTable);
+        }
+        var year = DateTime.Now.Year;
+        for (var cursor = year - 15; cursor <= year + 1; cursor++)
+        {
+            var name = TaktYearShardTableHelper.BuildYearTableName(BomItemYearShardBaseTable, cursor);
+            if (await _bomMaterialCostItemRepository.PhysicalTableExistsAsync(name))
+            {
+                tables.Add(name);
+            }
+        }
+        return tables;
+    }
+
+    /// <summary>
+    /// 纯数字且有前导 0 时去掉前导 0；全 0 保留一个 0；含非数字则不改
+    /// </summary>
+    /// <param name="code">原编码</param>
+    /// <returns>新编码；无需修改时 null</returns>
+    private static string? TryStripPureNumericLeadingZeros(string? code)
+    {
+        var text = code?.Trim() ?? string.Empty;
+        if (text.Length < 2 || text[0] != '0')
+        {
+            return null;
+        }
+        foreach (var ch in text)
+        {
+            if (ch < '0' || ch > '9')
+            {
+                return null;
+            }
+        }
+        var stripped = text.TrimStart('0');
+        if (stripped.Length == 0)
+        {
+            stripped = "0";
+        }
+        return stripped == text ? null : stripped;
+    }
+
+    /// <summary>
+    /// 成本汇总唯一键
+    /// </summary>
+    private static string HeaderProductKey(string plantCode, string productCode, DateTime costingDate)
+    {
+        return string.Join('|', plantCode.Trim(), productCode.Trim(), costingDate.Ticks.ToString(System.Globalization.CultureInfo.InvariantCulture));
+    }
+
+    /// <summary>
+    /// 明细行唯一键
+    /// </summary>
+    private static string ItemLineKey(TaktBomMaterialCostItem row)
+    {
+        return ItemLineKey(row.PlantCode, row.BomLevel, row.BomItemCode, row.ProductCode, row.LineNumber, row.ComponentCode, row.CostingDate);
+    }
+
+    /// <summary>
+    /// 明细行唯一键
+    /// </summary>
+    private static string ItemLineKey(
+        string plantCode,
+        string bomLevel,
+        string bomItemCode,
+        string productCode,
+        int lineNumber,
+        string componentCode,
+        DateTime costingDate)
+    {
+        return string.Join(
+            '|',
+            plantCode.Trim(),
+            bomLevel.Trim(),
+            bomItemCode.Trim(),
+            productCode.Trim(),
+            lineNumber.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            componentCode.Trim(),
+            costingDate.Ticks.ToString(System.Globalization.CultureInfo.InvariantCulture));
+    }
+
+    /// <summary>
     /// 解析 BOM 成本明细物理表
     /// </summary>
     private async Task<string?> ResolveBomItemPhysicalTableAsync(int year)
     {
         var table = TaktYearShardTableHelper.BuildYearTableName(BomItemYearShardBaseTable, year);
         return await _bomMaterialCostItemRepository.PhysicalTableExistsAsync(table) ? table : null;
+    }
+
+    /// <summary>
+    /// 当前连接（选中库）上本次核算年对应的明细物理表；年分表不存在则用基表
+    /// </summary>
+    /// <param name="costingStart">核算月初</param>
+    /// <returns>物理表名</returns>
+    private async Task<string> ResolveBomItemTableLabelAsync(DateTime costingStart)
+    {
+        var yearTable = await ResolveBomItemPhysicalTableAsync(costingStart.Year);
+        return yearTable ?? BomItemYearShardBaseTable;
     }
 
     /// <summary>

@@ -1,10 +1,10 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcKoubai.cs
 // 创建时间：2026-06-29
 // 创建人：Takt365(Cursor AI)
-// 功能描述：设变采购课部门执行表（按设变明细ID+新物料编码+新采购类型唯一）
+// 功能描述：设变采购课部门执行表（任何范围按设变单号+新采购类型+新物料编码唯一；机种与根物料为编码组）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -17,11 +17,11 @@ using Takt.Domain.Interfaces;
 namespace Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange;
 
 /// <summary>
-/// 设变采购课（D0510）部门执行表（按设变明细 + 新物料编码 + 新采购类型唯一）
+/// 设变采购课（D0510）部门执行表（任何实施范围按设变单号 + 新采购类型 + 新物料编码唯一）
 /// </summary>
 [SugarTable("takt_logistics_manufacturing_ec_koubai", "设变采购执行表")]
 [SugarIndex("ix_ec_koubai_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
-[SugarIndex("ix_takt_logistics_manufacturing_ec_koubai_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcDetailId), OrderByType.Asc, nameof(EcNewMaterialCode), OrderByType.Asc, nameof(EcNewPurchaseType), OrderByType.Asc, true)]
+[SugarIndex("ix_takt_logistics_manufacturing_ec_koubai_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcCode), OrderByType.Asc, nameof(EcNewPurchaseType), OrderByType.Asc, nameof(EcNewMaterialCode), OrderByType.Asc, true)]
 [SugarIndex("ix_takt_logistics_manufacturing_ec_koubai_plant_code", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(PlantCode), OrderByType.Asc, false)]
 public class TaktEcKoubai : TaktCompanyEntityBase, ITaktEcDeptExecEntity
 {
@@ -44,10 +44,21 @@ public class TaktEcKoubai : TaktCompanyEntityBase, ITaktEcDeptExecEntity
     public string EcCode { get; set; } = string.Empty;
 
     /// <summary>
+    /// 机种编码组（同设变单号+新采购类型+新物料下的机种编码，分号分隔；ntext）
+    /// </summary>
+    [SugarColumn(ColumnName = "ec_model_code_group", ColumnDescription = "机种编码组", ColumnDataType = "ntext", IsNullable = false)]
+    public string EcModelCodeGroup { get; set; } = string.Empty;
+
+    /// <summary>
     /// 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
     /// </summary>
     [SugarColumn(ColumnName = "ec_new_material_code", ColumnDescription = "新物料编码", Length = 20, ColumnDataType = "nvarchar", IsNullable = false)]
     public string EcNewMaterialCode { get; set; } = string.Empty;
+    /// <summary>
+    /// 根物料编码组（同设变单号+新采购类型+新物料下的根物料编码，分号分隔；ntext）
+    /// </summary>
+    [SugarColumn(ColumnName = "ec_root_material_code_group", ColumnDescription = "根物料编码组", ColumnDataType = "ntext", IsNullable = false)]
+    public string EcRootMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
     /// 新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）
@@ -121,6 +132,11 @@ public class TaktEcKoubai : TaktCompanyEntityBase, ITaktEcDeptExecEntity
     /// </summary>
     [SugarColumn(ColumnName = "ec_scope", ColumnDescription = "实施范围", ColumnDataType = "int", IsNullable = false)]
     public int EcScope { get; set; }
+    /// <summary>
+    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    [SugarColumn(ColumnName = "ec_dept_scope", ColumnDescription = "部门实施范围", ColumnDataType = "int", IsNullable = false, DefaultValue = "2")]
+    public int EcDeptScope { get; set; } = 2;
 
     /// <summary>
     /// 设变明细 ID（TaktEcDetail 主键；去重组内代表/种子明细 Id；同组多明细按业务键 FanOut）

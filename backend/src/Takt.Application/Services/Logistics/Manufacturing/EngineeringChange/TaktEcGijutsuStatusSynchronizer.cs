@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcGijutsuStatusSynchronizer.cs
 // 创建时间：2026-08-26
@@ -24,6 +24,7 @@ public class TaktEcGijutsuStatusSynchronizer
     private readonly ITaktCompanyRepository<TaktEcGijutsu> _ecGijutsuRepository;
     private readonly ITaktCompanyRepository<TaktEcDetail> _ecDetailRepository;
     private readonly TaktEcExecDeptAccess _ecExecDeptAccess;
+    private readonly TaktEcHandoffMailService _handoffMailService;
 
     /// <summary>
     /// 构造函数
@@ -31,14 +32,17 @@ public class TaktEcGijutsuStatusSynchronizer
     /// <param name="ecGijutsuRepository">设变技术课主仓储</param>
     /// <param name="ecDetailRepository">设变明细仓储</param>
     /// <param name="ecExecDeptAccess">部门执行跨表访问</param>
+    /// <param name="handoffMailService">实施顺序邮件</param>
     public TaktEcGijutsuStatusSynchronizer(
         ITaktCompanyRepository<TaktEcGijutsu> ecGijutsuRepository,
         ITaktCompanyRepository<TaktEcDetail> ecDetailRepository,
-        TaktEcExecDeptAccess ecExecDeptAccess)
+        TaktEcExecDeptAccess ecExecDeptAccess,
+        TaktEcHandoffMailService handoffMailService)
     {
         _ecGijutsuRepository = ecGijutsuRepository;
         _ecDetailRepository = ecDetailRepository;
         _ecExecDeptAccess = ecExecDeptAccess;
+        _handoffMailService = handoffMailService;
     }
 
     /// <summary>
@@ -73,12 +77,12 @@ public class TaktEcGijutsuStatusSynchronizer
             x.EcCode == normalized && x.IsObsolete == 0);
         var execRows = await _ecExecDeptAccess.ListBaseByEcCodeAsync(normalized);
         var computed = ComputeEcStatus(details, execRows);
-        if (gijutsu.EcStatus == computed)
+        if (gijutsu.EcStatus != computed)
         {
-            return;
+            gijutsu.EcStatus = computed;
+            await _ecGijutsuRepository.UpdateAsync(gijutsu);
         }
-        gijutsu.EcStatus = computed;
-        await _ecGijutsuRepository.UpdateAsync(gijutsu);
+        await _handoffMailService.TryDispatchAsync(gijutsu, details, execRows);
     }
 
     /// <summary>

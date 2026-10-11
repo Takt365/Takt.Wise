@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/routine/meeting-center/meeting-notification
 // 文件名称：en-US.ts
 // 功能描述：Meeting notification public page copy; keys routine.meeting-center.meeting-notification.page.*

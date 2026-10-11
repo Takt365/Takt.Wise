@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds
 // 文件名称：TaktMenuLevel4SeedData.cs
 // 创建时间：2025-01-20
@@ -260,6 +260,26 @@ public class TaktMenuLevel4SeedData
             });
             insertCount += insertBOM15;
             updateCount += updateBOM15;
+
+            var (insertBOM16, updateBOM16) = await CreateOrUpdateMenuAsync(menuRepository, sqlSugarContext, tenantCode, "LOGISTICS_MANUFACTURING_BOM_GROUP", menu =>
+            {
+                menu.MenuName = "BOM组";
+                menu.MenuCode = "LOGISTICS_MANUFACTURING_BOM_GROUP";
+                menu.I18nKey = "menu.logistics.manufacturing.bom.group";
+                menu.Icon = "RiGroupLine";
+                menu.ParentId = manufacturingBomMenu.Id;
+                menu.MenuType = 1;
+                menu.Permission = "logistics:manufacturing:bom:group:list";
+                menu.RoutePath = "/logistics/manufacturing/bom/group";
+                menu.ComponentPath = "logistics/manufacturing/bom/group/index";
+                menu.SortOrder = 11;
+                menu.MenuStatus = 1;
+                menu.IsVisible = 1;
+                menu.IsCached = 0;
+                menu.IsExternal = 0;
+            });
+            insertCount += insertBOM16;
+            updateCount += updateBOM16;
         }
 
         // ========== MDS计划下的四级菜单 ==========
@@ -836,6 +856,26 @@ public class TaktMenuLevel4SeedData
             });
             insertCount += insertAPS6;
             updateCount += updateAPS6;
+
+            var (insertAPS7, updateAPS7) = await CreateOrUpdateMenuAsync(menuRepository, sqlSugarContext, tenantCode, "LOGISTICS_MANUFACTURING_APS_GROUP", menu =>
+            {
+                menu.MenuName = "APS组";
+                menu.MenuCode = "LOGISTICS_MANUFACTURING_APS_GROUP";
+                menu.I18nKey = "menu.logistics.manufacturing.aps.group";
+                menu.Icon = "RiGroupLine";
+                menu.ParentId = manufacturingApsMenu.Id;
+                menu.MenuType = 1;
+                menu.Permission = "logistics:manufacturing:aps:group:list";
+                menu.RoutePath = "/logistics/manufacturing/aps/group";
+                menu.ComponentPath = "logistics/manufacturing/aps/group/index";
+                menu.SortOrder = 7;
+                menu.MenuStatus = 1;
+                menu.IsVisible = 1;
+                menu.IsCached = 0;
+                menu.IsExternal = 0;
+            });
+            insertCount += insertAPS7;
+            updateCount += updateAPS7;
         }
 
         // ========== 设变下的四级菜单 ==========
@@ -1658,6 +1698,26 @@ public class TaktMenuLevel4SeedData
             });
             insertCount += insertSOP7;
             updateCount += updateSOP7;
+
+            var (insertSOP8, updateSOP8) = await CreateOrUpdateMenuAsync(menuRepository, sqlSugarContext, tenantCode, "LOGISTICS_MANUFACTURING_SOP_GROUP", menu =>
+            {
+                menu.MenuName = "SOP组";
+                menu.MenuCode = "LOGISTICS_MANUFACTURING_SOP_GROUP";
+                menu.I18nKey = "menu.logistics.manufacturing.sop.group";
+                menu.Icon = "RiGroupLine";
+                menu.ParentId = manufacturingSopMenu.Id;
+                menu.MenuType = 1;
+                menu.Permission = "logistics:manufacturing:sop:group:list";
+                menu.RoutePath = "/logistics/manufacturing/sop/group";
+                menu.ComponentPath = "logistics/manufacturing/sop/group/index";
+                menu.SortOrder = 9;
+                menu.MenuStatus = 1;
+                menu.IsVisible = 1;
+                menu.IsCached = 0;
+                menu.IsExternal = 0;
+            });
+            insertCount += insertSOP8;
+            updateCount += updateSOP8;
         }
 
         // ========== 品质成本下的四级菜单 ==========
@@ -1742,6 +1802,26 @@ public class TaktMenuLevel4SeedData
             });
             insertCount += insertQC4;
             updateCount += updateQC4;
+
+            var (insertQC5, updateQC5) = await CreateOrUpdateMenuAsync(menuRepository, sqlSugarContext, tenantCode, "LOGISTICS_QUALITY_COST_GROUP", menu =>
+            {
+                menu.MenuName = "成本组";
+                menu.MenuCode = "LOGISTICS_QUALITY_COST_GROUP";
+                menu.I18nKey = "menu.logistics.quality.cost.group";
+                menu.Icon = "RiGroupLine";
+                menu.ParentId = qualityCostMenu.Id;
+                menu.MenuType = 1;
+                menu.Permission = "logistics:quality:cost:group:list";
+                menu.RoutePath = "/logistics/quality/cost/group";
+                menu.ComponentPath = "logistics/quality/cost/group/index";
+                menu.SortOrder = 5;
+                menu.MenuStatus = 1;
+                menu.IsVisible = 1;
+                menu.IsCached = 0;
+                menu.IsExternal = 0;
+            });
+            insertCount += insertQC5;
+            updateCount += updateQC5;
         }
 
         // ========== 质量业务下的四级菜单 ==========
@@ -2050,6 +2130,26 @@ public class TaktMenuLevel4SeedData
             });
             insertCount += insertCP6;
             updateCount += updateCP6;
+
+            var (insertCP7, updateCP7) = await CreateOrUpdateMenuAsync(menuRepository, sqlSugarContext, tenantCode, "LOGISTICS_QUALITY_COMPLAINT_GROUP", menu =>
+            {
+                menu.MenuName = "客诉组";
+                menu.MenuCode = "LOGISTICS_QUALITY_COMPLAINT_GROUP";
+                menu.I18nKey = "menu.logistics.quality.complaint.group";
+                menu.Icon = "RiGroupLine";
+                menu.ParentId = qualityComplaintMenu.Id;
+                menu.MenuType = 1;
+                menu.Permission = "logistics:quality:complaint:group:list";
+                menu.RoutePath = "/logistics/quality/complaint/group";
+                menu.ComponentPath = "logistics/quality/complaint/group/index";
+                menu.SortOrder = 6;
+                menu.MenuStatus = 1;
+                menu.IsVisible = 1;
+                menu.IsCached = 0;
+                menu.IsExternal = 0;
+            });
+            insertCount += insertCP7;
+            updateCount += updateCP7;
         }
 
         return (insertCount, updateCount);

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Quality.Complaint
 // 文件名称：TaktCustomerComplaintHandlingService.cs
 // 创建时间：2026-06-23
@@ -343,8 +343,8 @@ public class TaktCustomerComplaintHandlingService : TaktServiceBase, ITaktCustom
                 || (x.CorrectiveAction != null && x.CorrectiveAction.Contains(keywords))
                 || (x.PreventiveAction != null && x.PreventiveAction.Contains(keywords))
                 || (x.ResponsibleDeptName != null && x.ResponsibleDeptName.Contains(keywords))
-                || (x.ResponsiblePersonName != null && x.ResponsiblePersonName.Contains(keywords))
-                || (x.HandlerName != null && x.HandlerName.Contains(keywords))
+                || (x.ResponsibleGroupName != null && x.ResponsibleGroupName.Contains(keywords))
+                || (x.HandlerGroupName != null && x.HandlerGroupName.Contains(keywords))
                 || SqlFunc.ToString(x.HandlingStatus).Contains(keywords)
                 || SqlFunc.ToString(x.HandlingCost).Contains(keywords)
                 || (x.CustomerFeedback != null && x.CustomerFeedback.Contains(keywords))
@@ -421,14 +421,14 @@ public class TaktCustomerComplaintHandlingService : TaktServiceBase, ITaktCustom
             exp = exp.And(x => x.ResponsibleDeptName != null && x.ResponsibleDeptName.Contains(queryDto.ResponsibleDeptName));
         }
 
-        if (!string.IsNullOrEmpty(queryDto?.ResponsiblePersonName))
+        if (!string.IsNullOrEmpty(queryDto?.ResponsibleGroupName))
         {
-            exp = exp.And(x => x.ResponsiblePersonName != null && x.ResponsiblePersonName.Contains(queryDto.ResponsiblePersonName));
+            exp = exp.And(x => x.ResponsibleGroupName != null && x.ResponsibleGroupName.Contains(queryDto.ResponsibleGroupName));
         }
 
-        if (!string.IsNullOrEmpty(queryDto?.HandlerName))
+        if (!string.IsNullOrEmpty(queryDto?.HandlerGroupName))
         {
-            exp = exp.And(x => x.HandlerName != null && x.HandlerName.Contains(queryDto.HandlerName));
+            exp = exp.And(x => x.HandlerGroupName != null && x.HandlerGroupName.Contains(queryDto.HandlerGroupName));
         }
 
         if (queryDto?.HandlingStatus.HasValue == true)

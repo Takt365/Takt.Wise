@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节节拍工厂·Takt Plat  -->
+<!-- 项目名称：节拍智控·TaktWise  -->
 <!-- 命名空间：@/views/routine/dict/type -->
 <!-- 文件名称：index.vue -->
 <!-- 创建时间：2025-01-20 -->
@@ -203,23 +203,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import type { FilterValue } from 'ant-design-vue/es/table/interface'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import DictTypeForm from './components/dict-type-form.vue'
-import DictDataWindow from './components/dict-data-window.vue'
-import * as dictTypeApi from '@/api/foundation/dict-type'
-import * as dictDataApi from '@/api/foundation/dict-data'
-import type { DictType, DictTypeQuery, DictTypeCreate, DictTypeUpdate } from '@/types/foundation/dict-type'
-import type { DictData } from '@/types/foundation/dict-data'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import DictTypeForm from './components/DictTypeForm.vue'
+import DictDataWindow from './components/DictDataWindow.vue'
+import * as dictTypeApi from '@/api/foundation/dictType.api'
+import * as dictDataApi from '@/api/foundation/dictData.api'
+import type { DictType, DictTypeQuery, DictTypeCreate, DictTypeUpdate } from '@/types/foundation/dictType.types'
+import type { DictData } from '@/types/foundation/dictData.types'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
-import { useUserStore } from '@/stores/identity/user'
-import { isLogoutInProgress } from '@/bootstrap/takt-logout-flow'
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize, ensureTaktPaginationConfigAsync } from '@/utils/takt-paged'
+import { useUserStore } from '@/stores/identity/useUserStore'
+import { isLogoutInProgress } from '@/bootstrap/taktLogoutFlow'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize, ensureTaktPaginationConfigAsync } from '@/utils/taktPaged'
 
 const { t } = useI18n()
 

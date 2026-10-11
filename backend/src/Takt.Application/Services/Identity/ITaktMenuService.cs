@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Identity
 // 文件名称：ITaktMenuService.cs
 // 创建时间：2026-06-09
@@ -52,6 +52,13 @@ public interface ITaktMenuService
     /// <param name="includeDisabled">是否包含禁用项</param>
     /// <returns>树形列表</returns>
     Task<List<TaktMenuTreeDto>> GetMenuTreeAsync(long parentId = 0, bool includeDisabled = false);
+
+    /// <summary>
+    /// 角色菜单分配：互斥懒加载树（一层）。未分配与已分配节点不重叠；父在对侧时子节点升为该侧根。
+    /// </summary>
+    /// <param name="queryDto">父级、侧别、已分配 Id 列表</param>
+    /// <returns>树形列表（一层）</returns>
+    Task<List<TaktMenuTreeDto>> GetMenuAssignTreeAsync(TaktMenuAssignTreeQueryDto queryDto);
 
     /// <summary>
     /// 创建菜单

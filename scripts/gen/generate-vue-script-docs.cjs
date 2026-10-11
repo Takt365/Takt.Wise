@@ -1,10 +1,10 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：scripts
 // 文件名称：generate-vue-script-docs.cjs
 // 创建时间：2026-06-08
 // 创建人：Takt365(Cursor AI)
-// 功能描述：Vue CRUD 生成脚本共享 JSDoc（index.vue / *-form.vue script setup 段）
+// 功能描述：Vue CRUD 生成脚本共享 JSDoc（index.vue / *Form.vue script setup 段）
 //
 // 版权信息：Copyright (c) 2025 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -212,7 +212,7 @@ ${updateDisabled}${deleteDisabled}`;
 }
 
 /**
- * *-form.vue script 段：表单状态与 props（完整 JSDoc）
+ * *Form.vue script 段：表单状态与 props（完整 JSDoc）
  * @param {object} options
  */
 function buildFormScriptStateBlock(options) {

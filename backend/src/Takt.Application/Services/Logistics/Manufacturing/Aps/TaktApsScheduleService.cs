@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Aps
 // 文件名称：TaktApsScheduleService.cs
 // 创建时间：2026-08-22
@@ -579,7 +579,7 @@ public class TaktApsScheduleService : TaktServiceBase, ITaktApsScheduleService
                 || (x.WorkshopName != null && x.WorkshopName.Contains(keywords))
                 || (x.ProductionLineCode != null && x.ProductionLineCode.Contains(keywords))
                 || (x.ProductionLineName != null && x.ProductionLineName.Contains(keywords))
-                || (x.PlannerName != null && x.PlannerName.Contains(keywords))
+                || (x.PlannerGroupName != null && x.PlannerGroupName.Contains(keywords))
                 || (x.PublishUserName != null && x.PublishUserName.Contains(keywords))
                 || (x.ScheduleDescription != null && x.ScheduleDescription.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
@@ -683,16 +683,16 @@ public class TaktApsScheduleService : TaktServiceBase, ITaktApsScheduleService
             exp = exp.And(x => x.ScheduleStatus == scheduleStatus);
         }
 
-        if (queryDto?.PlannerEmployeeId.HasValue == true)
+        if (!string.IsNullOrWhiteSpace(queryDto?.PlannerGroupCode))
         {
-            var plannerId = queryDto.PlannerEmployeeId.Value;
-            exp = exp.And(x => x.PlannerEmployeeId == plannerId);
+            var plannerGroupCode = queryDto.PlannerGroupCode;
+            exp = exp.And(x => x.PlannerGroupCode == plannerGroupCode);
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.PlannerName))
+        if (!string.IsNullOrWhiteSpace(queryDto?.PlannerGroupName))
         {
-            var plannerName = queryDto.PlannerName;
-            exp = exp.And(x => x.PlannerName != null && x.PlannerName.Contains(plannerName));
+            var plannerGroupName = queryDto.PlannerGroupName;
+            exp = exp.And(x => x.PlannerGroupName != null && x.PlannerGroupName.Contains(plannerGroupName));
         }
 
         if (queryDto?.PublishUserId.HasValue == true)
@@ -867,11 +867,11 @@ public class TaktApsScheduleService : TaktServiceBase, ITaktApsScheduleService
         {
             return true;
         }
-        if (queryDto.PlannerEmployeeId.HasValue)
+        if (!string.IsNullOrWhiteSpace(queryDto.PlannerGroupCode))
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.PlannerName))
+        if (!string.IsNullOrWhiteSpace(queryDto.PlannerGroupName))
         {
             return true;
         }

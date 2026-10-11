@@ -100,7 +100,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, markRaw, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import { RiAddLine, RiDeleteBinLine, RiSettings3Line } from '@remixicon/vue'
@@ -112,7 +111,7 @@ import ShortcutModule from './modules/ShortcutModule.vue'
 import TodoModule from './modules/TodoModule.vue'
 import NoticeModule from './modules/NoticeModule.vue'
 import CustomModule from './modules/CustomModule.vue'
-import type { WorkspaceModuleItem, WorkspaceModuleKey } from '@/types/dashboard/workspace'
+import type { WorkspaceModuleItem, WorkspaceModuleKey } from '@/types/dashboard/workspace.types'
 import {
   WORKSPACE_STORAGE_KEY,
   WORKSPACE_AVAILABLE_MODULES,

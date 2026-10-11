@@ -1,0 +1,32 @@
+/* ========================================
+ * 项目名称：节拍智控·TaktWise
+ * 命名空间：frontend/src/styles
+ * 文件名称：table-analysis-base.css
+ * 创建时间：2026-09-21
+ * 创建人：Takt365(Cursor AI)
+ * 功能描述：分析/推移表对齐兜底（表头居中；表体文本左、数值右）。权威对齐由 TaktSingleTable analysisTable 的 inline style 写入。
+ *
+ * 版权信息：Copyright (c) 2026 Takt  All rights reserved.
+ * 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
+ * ======================================== */
+
+.takt-analysis-table .ant-table-thead > tr > th,
+.takt-analysis-table .ant-table-thead .ant-table-cell {
+  text-align: center !important;
+}
+
+.takt-analysis-table .ant-table-tbody > tr > td:not(.ant-table-cell-fix-right):not(.ant-table-cell-fix-center),
+.takt-analysis-table .ant-table-tbody .ant-table-cell:not(.ant-table-cell-fix-right):not(.ant-table-cell-fix-center),
+.takt-analysis-table .ant-table-summary .ant-table-cell:not(.ant-table-cell-fix-right):not(.ant-table-cell-fix-center) {
+  text-align: left !important;
+}
+
+.takt-analysis-table .ant-table-tbody .ant-table-cell-fix-right,
+.takt-analysis-table .ant-table-summary .ant-table-cell-fix-right {
+  text-align: right !important;
+}
+
+.takt-analysis-table .ant-table-tbody .ant-table-cell-fix-center,
+.takt-analysis-table .ant-table-summary .ant-table-cell-fix-center {
+  text-align: center !important;
+}

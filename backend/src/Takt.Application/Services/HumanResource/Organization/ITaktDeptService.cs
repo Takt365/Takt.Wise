@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.HumanResource.Organization
 // 文件名称：ITaktDeptService.cs
 // 创建时间：2026-08-22
@@ -43,6 +43,14 @@ public interface ITaktDeptService
     /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
     /// <returns>树形选项（一层）</returns>
     Task<List<TaktTreeSelectOption>> GetDeptTreeOptionsAsync(long parentId = 0, string? plantCode = null, string? keyword = null);
+
+    /// <summary>
+    /// 获取部门选项（DictValue=DeptCode，DictLabel=DeptName1）
+    /// </summary>
+    /// <param name="plantCode">工厂代码（可选）</param>
+    /// <param name="keyword">搜索关键字（可选）</param>
+    /// <returns>下拉选项</returns>
+    Task<List<TaktSelectOption>> GetDeptOptionsAsync(string? plantCode = null, string? keyword = null);
 
     /// <summary>
     /// 获取部门 ISO 编码树形选项列表（懒加载：DictValue=IsoCode，用于编码规则等部门段选择）

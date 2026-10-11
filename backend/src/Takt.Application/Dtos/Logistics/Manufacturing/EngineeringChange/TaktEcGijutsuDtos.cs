@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcGijutsuDtos.cs
 // 创建时间：2026-08-22
@@ -67,7 +67,7 @@ public class TaktEcGijutsuDto : TaktCompanyDtoBase
     public string? PersistDeptExecSummary { get; set; }
 
     /// <summary>
-    /// 设变担当（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）
+    /// 设变担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
     public string EcLeader { get; set; } = string.Empty;
 
@@ -80,6 +80,11 @@ public class TaktEcGijutsuDto : TaktCompanyDtoBase
     /// 实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）
     /// </summary>
     public int EcScope { get; set; } = 0;
+
+    /// <summary>
+    /// 制二/制一/品管实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课
+    /// </summary>
+    public int EcDeptScope { get; set; } = 2;
 
     /// <summary>
     /// 录入日期
@@ -172,7 +177,7 @@ public class TaktEcGijutsuQueryDto : TaktPagedQuery
     public string? EcContent { get; set; } = string.Empty;
 
     /// <summary>
-    /// 设变担当（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）
+    /// 设变担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
     public string? EcLeader { get; set; } = string.Empty;
 
@@ -185,6 +190,11 @@ public class TaktEcGijutsuQueryDto : TaktPagedQuery
     /// 实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）
     /// </summary>
     public int? EcScope { get; set; }
+
+    /// <summary>
+    /// 制二/制一/品管实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课
+    /// </summary>
+    public int? EcDeptScope { get; set; }
 
     /// <summary>
     /// 录入日期（范围查询-开始）
@@ -280,9 +290,9 @@ public class TaktEcGijutsuCreateDto
     public string EcContent { get; set; } = string.Empty;
 
     /// <summary>
-    /// 设变担当（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）
+    /// 设变担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
-    [Required(ErrorMessage = "设变担当（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）不能为空")]
+    [Required(ErrorMessage = "设变担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）不能为空")]
     public string EcLeader { get; set; } = string.Empty;
 
     /// <summary>
@@ -291,9 +301,14 @@ public class TaktEcGijutsuCreateDto
     public decimal EcLossAmount { get; set; }
 
     /// <summary>
-    /// 实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）
+    /// 实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术；默认 1=全仕向）
     /// </summary>
-    public int EcScope { get; set; } = 0;
+    public int EcScope { get; set; } = 1;
+
+    /// <summary>
+    /// 制二/制一/品管实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课
+    /// </summary>
+    public int EcDeptScope { get; set; } = 2;
 
     /// <summary>
     /// 录入日期
@@ -461,7 +476,7 @@ public class TaktEcGijutsuTemplateDto
     public string? EcContent { get; set; } = string.Empty;
 
     /// <summary>
-    /// 设变担当（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）
+    /// 设变担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
     public string? EcLeader { get; set; } = string.Empty;
 
@@ -474,6 +489,11 @@ public class TaktEcGijutsuTemplateDto
     /// 实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）
     /// </summary>
     public int? EcScope { get; set; }
+
+    /// <summary>
+    /// 制二/制一/品管实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课
+    /// </summary>
+    public int? EcDeptScope { get; set; }
 
     /// <summary>
     /// 录入日期
@@ -563,7 +583,7 @@ public class TaktEcGijutsuImportDto
     public string? EcContent { get; set; } = string.Empty;
 
     /// <summary>
-    /// 设变担当（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）
+    /// 设变担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
     public string? EcLeader { get; set; } = string.Empty;
 
@@ -576,6 +596,11 @@ public class TaktEcGijutsuImportDto
     /// 实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）
     /// </summary>
     public int? EcScope { get; set; }
+
+    /// <summary>
+    /// 制二/制一/品管实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课
+    /// </summary>
+    public int? EcDeptScope { get; set; }
 
     /// <summary>
     /// 录入日期
@@ -671,7 +696,7 @@ public class TaktEcGijutsuExportDto
     public string EcContent { get; set; } = string.Empty;
 
     /// <summary>
-    /// 设变担当（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）
+    /// 设变担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
     public string EcLeader { get; set; } = string.Empty;
 
@@ -684,6 +709,11 @@ public class TaktEcGijutsuExportDto
     /// 实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）
     /// </summary>
     public int EcScope { get; set; } = 0;
+
+    /// <summary>
+    /// 制二/制一/品管实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课
+    /// </summary>
+    public int EcDeptScope { get; set; } = 2;
 
     /// <summary>
     /// 录入日期

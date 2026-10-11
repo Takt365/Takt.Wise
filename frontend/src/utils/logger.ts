@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/utils
 // 文件名称：logger.ts
 // 创建时间：2026-05-25
@@ -11,23 +11,23 @@
 // ========================================
 
 import type { App } from 'vue';
-import type { LogContext, Logger, LoggerConfig } from '@/types/logger';
+import type { LogContext, Logger, LoggerConfig } from '@/types/logger.types';
 import {
   LogLevel,
   buildLogEntry,
   parseLogLevelFromEnv,
   shouldLogLevel,
   writeLogEntryToConsole,
-} from '@/utils/log-formatter';
-import type { LogReporter } from '@/utils/log-reporter';
-import type { LogFileSink } from '@/utils/log-file-sink';
+} from '@/utils/logFormatter';
+import type { LogReporter } from '@/utils/logReporter';
+import type { LogFileSink } from '@/utils/logFileSink';
 import {
   createAppMeta,
   mergeRuntimeContext,
   parseEnvBoolean,
   readViteEnv,
   setRuntimeRouter,
-} from '@/utils/runtime-context';
+} from '@/utils/runtimeContext';
 import type { Router } from 'vue-router';
 
 /** 开发环境默认本地落盘 URL（与 log-file-sink 一致，避免静态 import 该模块） */
@@ -75,8 +75,8 @@ function ensureLoggerSinksAsync(): Promise<void> {
       loggerConfig = createDefaultLoggerConfig();
     }
     const [{ LogReporter }, { LogFileSink }] = await Promise.all([
-      import('@/utils/log-reporter'),
-      import('@/utils/log-file-sink'),
+      import('@/utils/logReporter'),
+      import('@/utils/logFileSink'),
     ]);
     if (!logReporter) {
       logReporter = new LogReporter(loggerConfig);
@@ -279,6 +279,6 @@ export function initLogger(app: App, override?: Partial<LoggerConfig>, router?: 
   return logger;
 }
 
-export { LogLevel } from '@/utils/log-formatter';
+export { LogLevel } from '@/utils/logFormatter';
 
 export default logger;

@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Validators.Logistics.Manufacturing.Aps
 // 文件名称：TaktApsScheduleValidators.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：ApsSchedule 模块 FluentValidation 验证器（由 generate-validators-from-entity.cjs 根据 TaktApsSchedule 生成，请按需审阅）
 // 
@@ -49,10 +49,8 @@ public class TaktApsScheduleCreateValidator : AbstractValidator<TaktApsScheduleC
         RuleFor(x => x.ScheduleName)
             .NotEmpty().WithMessage("排程名称不能为空")
             .MaximumLength(200).WithMessage("排程名称长度不能超过200个字符");
-        RuleFor(x => x.PlannerEmployeeId)
-            .GreaterThanOrEqualTo(0).WithMessage("计划员不能为负数");
         RuleFor(x => x.PublishUserId)
-            .GreaterThanOrEqualTo(0).WithMessage("发布人ID不能为负数");
+            .GreaterThanOrEqualTo(0).WithMessage("发布人不能为负数");
         RuleFor(x => x.ExtField)
             .MaximumLength(4000).WithMessage("扩展字段JSON长度不能超过4000个字符");
         RuleFor(x => x.Remark)
@@ -96,10 +94,8 @@ public class TaktApsScheduleUpdateValidator : AbstractValidator<TaktApsScheduleU
         RuleFor(x => x.ScheduleName)
             .NotEmpty().WithMessage("排程名称不能为空")
             .MaximumLength(200).WithMessage("排程名称长度不能超过200个字符");
-        RuleFor(x => x.PlannerEmployeeId)
-            .GreaterThanOrEqualTo(0).WithMessage("计划员不能为负数");
         RuleFor(x => x.PublishUserId)
-            .GreaterThanOrEqualTo(0).WithMessage("发布人ID不能为负数");
+            .GreaterThanOrEqualTo(0).WithMessage("发布人不能为负数");
         RuleFor(x => x.ExtField)
             .MaximumLength(4000).WithMessage("扩展字段JSON长度不能超过4000个字符");
         RuleFor(x => x.Remark)
@@ -137,10 +133,8 @@ public class TaktApsScheduleImportValidator : AbstractValidator<TaktApsScheduleI
         RuleFor(x => x.ScheduleName)
             .NotEmpty().WithMessage("排程名称不能为空")
             .MaximumLength(200).WithMessage("排程名称长度不能超过200个字符");
-        RuleFor(x => x.PlannerEmployeeId)
-            .GreaterThanOrEqualTo(0).WithMessage("计划员不能为负数");
         RuleFor(x => x.PublishUserId)
-            .GreaterThanOrEqualTo(0).WithMessage("发布人ID不能为负数");
+            .GreaterThanOrEqualTo(0).WithMessage("发布人不能为负数");
         RuleFor(x => x.ExtField)
             .MaximumLength(4000).WithMessage("扩展字段JSON长度不能超过4000个字符").When(x => !string.IsNullOrWhiteSpace(x.ExtField));
         RuleFor(x => x.Remark)

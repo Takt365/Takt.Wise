@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：scripts
 // 文件名称：generate-validators-from-entity.cjs
 // 创建时间：2026-05-23
@@ -285,7 +285,7 @@ function extractDtoPropertyNames(dtoContent, className) {
 }
 
 /**
- * 从 *Dtos.cs 解析 Create/Update/Import 类名（兼容 TaktXxxCreateDto 与 TaktCreateXxxDto）
+ * 从 *Dtos.cs 解析 Create/Update/Import 类名（仅 TaktXxxCreateDto / TaktCreateXxxDto 与 Update 对应体；禁止误匹配 TaktUpdateMyProfileResultDto 等）
  * @param {string} entityShort
  * @param {string|null} dtoContent
  */
@@ -299,22 +299,28 @@ function resolveDtoClassNames(entityShort, dtoContent) {
     return fallback;
   }
   const found = { create: null, update: null, import: null };
+  const aliasCreate = `TaktCreate${entityShort}Dto`;
+  const aliasUpdate = `TaktUpdate${entityShort}Dto`;
   const classRegex = /public\s+(?:partial\s+)?class\s+(\w+)\s*(?::|\{)/g;
   let match;
   while ((match = classRegex.exec(dtoContent)) !== null) {
     const className = match[1];
-    if (/^Takt\w+CreateDto$/.test(className) || /^TaktCreate\w+Dto$/.test(className)) {
+    if (className === fallback.create) {
       found.create = className;
-    } else if (/^Takt\w+UpdateDto$/.test(className) || /^TaktUpdate\w+Dto$/.test(className)) {
+    } else if (className === aliasCreate && !found.create) {
+      found.create = className;
+    } else if (className === fallback.update) {
       found.update = className;
-    } else if (/^Takt\w+ImportDto$/.test(className)) {
+    } else if (className === aliasUpdate && !found.update) {
+      found.update = className;
+    } else if (className === fallback.import) {
       found.import = className;
     }
   }
   return {
-    create: found.create,
-    update: found.update,
-    import: found.import,
+    create: found.create || fallback.create,
+    update: found.update || fallback.update,
+    import: found.import || fallback.import,
   };
 }
 
@@ -705,7 +711,7 @@ function buildFileHeader(entity, description) {
   const today = new Date().toISOString().split('T')[0];
   return [
     '// ========================================',
-    '// 项目名称：节拍工厂·Takt Plat',
+    '// 项目名称：节拍智控·TaktWise',
     `// 命名空间：${entity.validatorNamespace}`,
     `// 文件名称：Takt${entityShort}Validators.cs`,
     `// 创建时间：${today}`,

@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/bom/material-cost-analysis -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：BOM 成本分析：TaktBomMaterialCost 转置单表（机种/产品/品名/周期/涨跌/环比） -->
@@ -43,6 +43,7 @@
       class="min-h-0 min-w-0 flex-1 overflow-hidden"
     >
       <TaktSingleTable
+        analysis-table
         class="h-full min-h-0"
         entity-scope="company"
         table-mode="single"
@@ -121,7 +122,7 @@
 import { message } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import type { ToolBarAction } from '@/components/business/takt-tools-bar/index.vue'
+import type { ToolBarAction } from '@/components/business/TaktToolsBar/index.vue'
 import {
   RiArrowDownLine,
   RiArrowUpDownLine,
@@ -134,31 +135,35 @@ import {
 import {
   exportBomMaterialCostItemTransposed,
   getBomMaterialCostItemTransposedList,
-} from '@/api/logistics/manufacturing/bom/material-cost-analysis'
-import { getBomCostOptionPlantOptions } from '@/api/logistics/manufacturing/bom/cost-option'
-import type { BomMaterialCostItemTransposed } from '@/types/logistics/manufacturing/bom/material-cost-analysis'
+} from '@/api/logistics/manufacturing/bom/materialCostAnalysis.api'
+import { getBomCostOptionPlantOptions } from '@/api/logistics/manufacturing/bom/costOption.api'
+import type { BomMaterialCostItemTransposed } from '@/types/logistics/manufacturing/bom/materialCostAnalysis.types'
 import {
   ensureTaktPaginationConfigAsync,
   getTaktDefaultPageIndex,
   getTaktDefaultPageSize,
-} from '@/utils/takt-paged'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { TAKT_TABLE_SCROLL_Y_MIN } from '@/utils/table-scroll'
-import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/use-company-related-plant'
-import { useTenantStore } from '@/stores/identity/tenant'
-import { buildDefaultCostingPeriodRange } from '@/views/logistics/manufacturing/bom/material-cost/utils/bom-material-cost-period'
+} from '@/utils/taktPaged'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { TAKT_TABLE_SCROLL_Y_MIN } from '@/utils/tableScroll'
+import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/useCompanyRelatedPlant'
+import { useTenantStore } from '@/stores/identity/useTenantStore'
+import { buildDefaultCostingPeriodRange } from '@/views/logistics/manufacturing/bom/material-cost/utils/bomMaterialCostPeriod'
 import {
   buildBomExportBaseName,
   buildBomExportFileName,
-} from '@/views/logistics/manufacturing/bom/material-cost/utils/bom-export-file-name'
-import MaterialCostAnalysisQueryForm from './components/material-cost-item-analysis-query-form.vue'
+} from '@/views/logistics/manufacturing/bom/material-cost/utils/bomExportFileName'
+import MaterialCostAnalysisQueryForm from './components/MaterialCostItemAnalysisQueryForm.vue'
+import { useAnalysisPeriodRangeLimit } from '@/composables/useAnalysisPeriodRangeLimit'
 import {
   MATERIAL_COST_ANALYSIS_LOCALE_PREFIX,
   periodRangeToCostingDateQuery,
   useMaterialCostAnalysis,
-} from './composables/use-material-cost-item-analysis'
+} from './composables/useMaterialCostItemAnalysis'
 
 const { t } = useI18n()
+
+/** 期间最多 12 个月（查询前校验） */
+const { assertPeriodRangeOk } = useAnalysisPeriodRangeLimit()
 const localePrefix = MATERIAL_COST_ANALYSIS_LOCALE_PREFIX
 const { formatCost, formatPercent, trendLabel, trendClass, varianceClass } = useMaterialCostAnalysis()
 const tenantStore = useTenantStore()
@@ -429,6 +434,9 @@ function handleSearch() {
     message.warning(t(`${localePrefix}.selectPeriodRequired`))
     return
   }
+  if (!assertPeriodRangeOk(periodRange.value)) {
+    return
+  }
   pageIndex.value = getTaktDefaultPageIndex()
   void loadData()
 }
@@ -522,7 +530,8 @@ async function handleExport() {
   }
   exportLoading.value = true
   try {
-    const exportBase = buildBomExportBaseName('DTA BOM成本推移表', [
+    const sheetTitle = t(`${localePrefix}.title`)
+    const exportBase = buildBomExportBaseName(sheetTitle, [
       query.plantCode,
       query.modelCode,
       query.productCode])
@@ -532,8 +541,8 @@ async function handleExport() {
         pageIndex: 1,
         pageSize: 100000,
       },
-      'DTA BOM成本推移表',
-      buildBomExportFileName('DTA BOM成本推移表', [
+      sheetTitle,
+      buildBomExportFileName(sheetTitle, [
         query.plantCode,
         query.modelCode,
         query.productCode]),

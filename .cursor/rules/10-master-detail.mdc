@@ -1,6 +1,6 @@
 ---
 description: Takt 主子表（OneToMany）前后端规范；与 00-project、01-backend、02-frontend、06~08-overflow 一并生效
-globs: backend/**/*Item*.cs,backend/**/*Detail*.cs,backend/**/TaktDictType*.cs,backend/**/TaktDictData*.cs,frontend/src/components/business/takt-master-detail-table/**/*,frontend/src/views/**/*
+globs: backend/**/*Item*.cs,backend/**/*Detail*.cs,backend/**/TaktDictType*.cs,backend/**/TaktDictData*.cs,frontend/src/components/business/TaktMasterDetailTable*/**/*,frontend/src/views/**/*
 alwaysApply: true
 ---
 
@@ -102,7 +102,7 @@ alwaysApply: true
 
 ## 四、前端实现
 
-**标准参照**：`views/foundation/dict/index.vue`（展开行 + 独立子表 API）、`components/business/takt-master-detail-table`（主表 + 抽屉从表）
+**标准参照**：`views/foundation/dict/index.vue`（展开行 + 独立子表 API）、`components/business/TaktMasterDetailTableLr` / `TaktMasterDetailTableTb`（主表 + 抽屉从表）
 
 ### 4.1 组件选型
 

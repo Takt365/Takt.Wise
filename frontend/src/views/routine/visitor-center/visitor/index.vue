@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/routine/visitor-center/visitor -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：来访接待主实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -154,21 +154,20 @@
  * 来访接待主实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/routine/visitor-center/visitor
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import VisitorForm from './components/visitor-form.vue'
-import VisitorCompanionPanel from './components/visitor-companion-panel.vue'
-import { provideVisitorMasterContext, type VisitorRowRecord } from './composables/use-visitor-master-context'
-import { getVisitorList, getVisitorById, createVisitor, updateVisitor, deleteVisitorById, deleteVisitorBatch, getVisitorTemplate, importVisitor, exportVisitor } from '@/api/routine/visitor-center/visitor'
-import type { Visitor, VisitorQuery } from '@/types/routine/visitor-center/visitor'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import VisitorForm from './components/VisitorForm.vue'
+import VisitorCompanionPanel from './components/VisitorCompanionPanel.vue'
+import { provideVisitorMasterContext, type VisitorRowRecord } from './composables/useVisitorMasterContext'
+import { getVisitorList, getVisitorById, createVisitor, updateVisitor, deleteVisitorById, deleteVisitorBatch, getVisitorTemplate, importVisitor, exportVisitor } from '@/api/routine/visitor-center/visitor.api'
+import type { Visitor, VisitorQuery } from '@/types/routine/visitor-center/visitor.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
 
 import {
@@ -177,7 +176,7 @@ import {
   VISITOR_QUERY_STRING_FIELDS,
   VISITOR_QUERY_FIELDS,
   VISITOR_SELF_I18N_KEY,
-} from './composables/use-visitor-i18n'
+} from './composables/useVisitorI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useVisitorI18n()
@@ -315,7 +314,6 @@ onMounted(async () => {
   loadData()
 })
 
-
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
 
@@ -438,8 +436,6 @@ const getVisitorId = (record: VisitorRowRecord): string => {
  * @param field 字段名
  */
 const getVisitorField = (record: any, field: string): any => record?.[field]
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

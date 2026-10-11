@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcChangeFlowDtos.cs
 // 创建时间：2026-06-24
@@ -20,7 +20,7 @@ namespace Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange;
 public class TaktEcNotificationConfirmDto
 {
     /// <summary>
-    /// 投递记录 ID（与 notificationId+deptCode 二选一）
+    /// 投递记录 ID（与 notificationId+ecDeptGroupCode 二选一）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
     public long? DeliveryId { get; set; }
@@ -32,9 +32,9 @@ public class TaktEcNotificationConfirmDto
     public long? EcNotificationId { get; set; }
 
     /// <summary>
-    /// 部门编码
+    /// 设变部门编码（选项 TaktDepts/options；DictValue=DeptCode）
     /// </summary>
-    public string? DeptCode { get; set; }
+    public string? EcDeptGroupCode { get; set; }
 }
 
 /// <summary>

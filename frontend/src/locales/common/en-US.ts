@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/common
 // 文件名称：en-US.ts
 // 创建时间：2026-06-16
@@ -13,8 +13,8 @@
 export default {
   page: {
     app: {
-      title: "Takt Plat",
-      name: "Takt Plat",
+      title: "TaktWise",
+      name: "TaktWise",
       productcode: "TP-MES-PRO",
       slogan: "Takt-driven smart manufacturing",
       tagline: "Practical · Simple · Flexible",
@@ -135,6 +135,7 @@ export default {
       numberingRule: "Numbering rule",
       numberingCodePreview: "Auto-generated after selecting a rule",
       numberingRuleRequired: "Please select a numbering rule",
+      periodRangeMaxMonths: "The query period cannot exceed {max} months",
     },
   },
 };

@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Validators.Accounting.Financial
 // 文件名称：TaktExpenseValidators.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：Expense 模块 FluentValidation 验证器（由 generate-validators-from-entity.cjs 根据 TaktExpense 生成，请按需审阅）
 // 

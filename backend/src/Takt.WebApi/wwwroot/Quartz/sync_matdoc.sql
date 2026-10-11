@@ -37,9 +37,9 @@ DECLARE @ddl NVARCHAR(500);
 -- tenant/company/plant/culture 取自各源表本列；空值丢弃，不回退任务参数
 -- 主表唯一键：Tenant+Company+material_document_year+material_document_code
 -- 明细唯一键：material_document_id+line_number
--- 源明细 FK：先按 material_document_code 回填 material_document_id=主表雪花 id，再 SH.id=R.material_document_id 装入
--- #item 临时列 year：JOIN 源主表取得，不落库
--- 源侧同凭证码跨年重复时回填会歧义；当前源库同码无多年（已核对）
+-- 源明细不回写 material_document_id：回写源库失败会中断整批，目标子表 MERGE 不会执行
+-- 装入按凭证码关联源主表取年；#item 的 material_document_id 再对齐目标主表雪花 id
+-- 源侧同凭证码跨年时一行会挂到各年主表；当前源库同码无多年（已核对）
 -- posted_by：主表单据级；源明细无此列，装入恒为 NULL
 
 -- 目标库主表缺 posted_by 时补列（实体已有）
@@ -180,7 +180,8 @@ SELECT
   CAST(1 AS INT) AS [from_rn],
   @hdr_source AS [to_rn],
   @hdr_source AS [max_rn],
-  @hdr_source AS [batch_rows];
+  @hdr_source AS [batch_rows],
+  N'main' AS [scope];
 SET @progress_msg = CONCAT(
   N'QUARTZ_SYNC_PROGRESS|',
   N'load', N'|',
@@ -188,7 +189,7 @@ SET @progress_msg = CONCAT(
   CAST((@hdr_source) AS NVARCHAR(20)), N'|',
   CAST((@hdr_source) AS NVARCHAR(20)), N'|',
   CAST((@hdr_source) AS NVARCHAR(20)), N'|',
-  N'');
+  N'main');
 RAISERROR(@progress_msg, 10, 1) WITH NOWAIT;
 DECLARE @hdr_sap_keys INT = (
   SELECT COUNT(*) FROM (
@@ -285,7 +286,8 @@ INTO #hdr_delta (rn, oper_type, id, [material_document_year], [material_document
     @merge_from_rn AS [from_rn],
     CASE WHEN @merge_to_rn > @merge_max_rn THEN @merge_max_rn ELSE @merge_to_rn END AS [to_rn],
     @merge_max_rn AS [max_rn],
-    @dml_n AS [batch_rows];
+    @dml_n AS [batch_rows],
+    N'main' AS [scope];
   SET @progress_msg = CONCAT(
     N'QUARTZ_SYNC_PROGRESS|',
     N'merge', N'|',
@@ -293,7 +295,7 @@ INTO #hdr_delta (rn, oper_type, id, [material_document_year], [material_document
     CAST((CASE WHEN @merge_to_rn > @merge_max_rn THEN @merge_max_rn ELSE @merge_to_rn END) AS NVARCHAR(20)), N'|',
     CAST((@merge_max_rn) AS NVARCHAR(20)), N'|',
     CAST((@dml_n) AS NVARCHAR(20)), N'|',
-    N'');
+    N'main');
   RAISERROR(@progress_msg, 10, 1) WITH NOWAIT;
   SET @merge_from_rn = @merge_to_rn + 1;
 END
@@ -317,13 +319,17 @@ WHERE T.[is_deleted]=0
   AND NOT EXISTS (SELECT 1 FROM #hdr S WHERE S.[id]=T.[id]);
 DECLARE @hdr_delete INT = @@ROWCOUNT;
 
--- 源库回填：明细 material_document_id → 主表雪花 id（业务键 material_document_code）
-UPDATE I
-SET I.[material_document_id] = H.[id]
-FROM [{{SourceDatabase}}].[dbo].[takt_logistics_materials_material_document_item] AS I
-INNER JOIN [{{SourceDatabase}}].[dbo].[takt_logistics_materials_material_document] AS H
-  ON LTRIM(RTRIM(H.[material_document_code])) = LTRIM(RTRIM(I.[material_document_code]))
-WHERE I.[material_document_id] IS NULL OR I.[material_document_id] <> H.[id];
+-- 子表开始：不更新源库。按凭证码装入 #item，再把 material_document_id 对齐目标主表
+SELECT
+  N'QUARTZ_SYNC_PROGRESS' AS [summary_tag],
+  N'loadstart' AS [phase],
+  CAST(0 AS INT) AS [from_rn],
+  CAST(0 AS INT) AS [to_rn],
+  CAST(0 AS INT) AS [max_rn],
+  CAST(0 AS INT) AS [batch_rows],
+  N'detail' AS [scope];
+SET @progress_msg = N'QUARTZ_SYNC_PROGRESS|loadstart|0|0|0|0|detail';
+RAISERROR(@progress_msg, 10, 1) WITH NOWAIT;
 
 INSERT INTO #item
 SELECT S.rn, @base_id+1000000000+S.rn, 0,
@@ -458,7 +464,7 @@ FROM (
       ) AS dup_rn
     FROM [{{SourceDatabase}}].[dbo].[takt_logistics_materials_material_document_item] R
     INNER JOIN [{{SourceDatabase}}].[dbo].[takt_logistics_materials_material_document] SH
-      ON SH.[id] = R.[material_document_id]
+      ON LTRIM(RTRIM(SH.[material_document_code])) = LTRIM(RTRIM(R.[material_document_code]))
     WHERE LTRIM(RTRIM(ISNULL(SH.[material_document_year], N'')))<>N''
       AND LTRIM(RTRIM(ISNULL(R.[material_document_code], N'')))<>N''
       AND LTRIM(RTRIM(ISNULL(R.[plant_code], N'')))<>N''
@@ -485,7 +491,8 @@ SELECT
   CAST(1 AS INT) AS [from_rn],
   @item_source AS [to_rn],
   @item_source AS [max_rn],
-  @item_source AS [batch_rows];
+  @item_source AS [batch_rows],
+  N'detail' AS [scope];
 SET @progress_msg = CONCAT(
   N'QUARTZ_SYNC_PROGRESS|',
   N'load', N'|',
@@ -493,14 +500,14 @@ SET @progress_msg = CONCAT(
   CAST((@item_source) AS NVARCHAR(20)), N'|',
   CAST((@item_source) AS NVARCHAR(20)), N'|',
   CAST((@item_source) AS NVARCHAR(20)), N'|',
-  N'');
+  N'detail');
 RAISERROR(@progress_msg, 10, 1) WITH NOWAIT;
 DECLARE @item_sap_keys INT = (
   SELECT COUNT(*) FROM (
     SELECT LTRIM(RTRIM(SH.[material_document_year])) AS [material_document_year], LTRIM(RTRIM(R.[material_document_code])) AS [material_document_code], COALESCE(TRY_CAST(R.[line_number] AS INT),0) AS [line_number]
     FROM [{{SourceDatabase}}].[dbo].[takt_logistics_materials_material_document_item] R
     INNER JOIN [{{SourceDatabase}}].[dbo].[takt_logistics_materials_material_document] SH
-      ON SH.[id] = R.[material_document_id]
+      ON LTRIM(RTRIM(SH.[material_document_code])) = LTRIM(RTRIM(R.[material_document_code]))
     WHERE LTRIM(RTRIM(ISNULL(SH.[material_document_year], N'')))<>N''
       AND LTRIM(RTRIM(ISNULL(R.[material_document_code], N'')))<>N''
       AND LTRIM(RTRIM(ISNULL(R.[plant_code], N'')))<>N''
@@ -705,7 +712,8 @@ INTO #item_delta (rn, oper_type, id, [material_document_code], [line_number]);
     @merge_from_rn AS [from_rn],
     CASE WHEN @merge_to_rn > @merge_max_rn THEN @merge_max_rn ELSE @merge_to_rn END AS [to_rn],
     @merge_max_rn AS [max_rn],
-    @dml_n AS [batch_rows];
+    @dml_n AS [batch_rows],
+    N'detail' AS [scope];
   SET @progress_msg = CONCAT(
     N'QUARTZ_SYNC_PROGRESS|',
     N'merge', N'|',
@@ -713,7 +721,7 @@ INTO #item_delta (rn, oper_type, id, [material_document_code], [line_number]);
     CAST((CASE WHEN @merge_to_rn > @merge_max_rn THEN @merge_max_rn ELSE @merge_to_rn END) AS NVARCHAR(20)), N'|',
     CAST((@merge_max_rn) AS NVARCHAR(20)), N'|',
     CAST((@dml_n) AS NVARCHAR(20)), N'|',
-    N'');
+    N'detail');
   RAISERROR(@progress_msg, 10, 1) WITH NOWAIT;
   SET @merge_from_rn = @merge_to_rn + 1;
 END

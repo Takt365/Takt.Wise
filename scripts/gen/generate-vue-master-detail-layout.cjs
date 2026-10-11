@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：scripts
 // 文件名称：generate-vue-master-detail-layout.cjs
 // 功能描述：主子表 Vue 布局：列表 TaktMasterDetailTableLr + 弹窗上主下从 TaktEditableTable；查询栏关键字=栏宽−查询/重置（TaktQueryBar flex）
@@ -54,7 +54,9 @@ const {
   buildAdvancedQueryFactoryBlock,
   entityI18nHookName,
   entityI18nComposableFileName,
+  entityMasterContextComposableFileName,
   entityRowRecordTypeName,
+  toFrontendEntityFileCamel,
 } = require('./generate-vue-common.cjs');
 
 /**
@@ -180,7 +182,7 @@ function buildChildLineNumberScriptParts(child) {
   const idField = child.childIdField || `${camel}Id`;
   if (childFormFieldHasIsObsolete(child)) {
     return {
-      importLine: "import { resolveNextDetailLineNumber } from '@/utils/takt-sequence'",
+      importLine: "import { resolveNextDetailLineNumber } from '@/utils/taktSequence'",
       refLine: '',
       helperBlock: `/** 是否已持久化的子表行 */
 function isPersisted${pascal}Row(row: Record<string, unknown>): boolean {
@@ -209,7 +211,7 @@ function allocateNext${pascal}LineNumber(): number {
   }
   const maxRef = `max${pascal}LineNumber`;
   return {
-    importLine: "import { resolveMaxLineNumber, resolveNextDetailLineNumber } from '@/utils/takt-sequence'",
+    importLine: "import { resolveMaxLineNumber, resolveNextDetailLineNumber } from '@/utils/taktSequence'",
     refLine: `/** 后端已占用子表最大行号（与 max${pascal}LineNumber 对齐） */\nconst ${maxRef} = ref(0)`,
     helperBlock: `/** 是否已持久化的子表行 */
 function isPersisted${pascal}Row(row: Record<string, unknown>): boolean {
@@ -319,7 +321,7 @@ function buildEditableTableCellSlotMarkup(field, childCamel) {
 }
 
 /**
- * 生成 use-{entityKebab}-master-context.ts
+ * 生成 use{Entity}MasterContext.ts
  * @param {object} ctx
  * @returns {string}
  */
@@ -327,16 +329,17 @@ function generateMasterContextComposable(ctx) {
   const { entityPascal, entityKebab, viewEntityKebab, viewModulePath, comment, modulePath } = ctx;
   const entityCamel = pascalToCamel(entityPascal);
   const rowRecordType = entityRowRecordTypeName(entityPascal);
+  const masterContextFileName = entityMasterContextComposableFileName(entityPascal);
   return `// ========================================
-// 项目名称：节拍数字工厂 · Takt Plat (TDF)
+// 项目名称：节拍智控 · TaktWise (TDF)
 // 命名空间：@/views/${viewModulePath}/composables
-// 文件名称：use-${viewEntityKebab}-master-context.ts
+// 文件名称：${masterContextFileName}
 // 功能描述：${comment}主表选中行上下文（供右侧明细面板读取）
 // 版权信息：Copyright (c) 2025 Takt  All rights reserved.
 // ========================================
 
-import { inject, provide, type InjectionKey, type Ref, ref } from 'vue'
-import type { ${entityPascal} } from '@/types/${modulePath}/${entityKebab}'
+import type { InjectionKey, Ref } from 'vue'
+import type { ${entityPascal} } from '@/types/${modulePath}/${toFrontendEntityFileCamel(entityKebab)}.types'
 
 /** 表格行类型（与 index 列表行、TaktSingleTable slot record 一致） */
 export type ${rowRecordType} = ${entityPascal} | Record<string, unknown>
@@ -414,7 +417,7 @@ ${formTemplate.body}
   const scopeStoreImports = hasScopeContextFields ? scopeFragments.imports : '';
   const scopeStoreScript = hasScopeContextFields ? scopeFragments.script : '';
   const scopeContextWatch = hasScopeContextFields ? scopeFragments.watch : '';
-  const masterTypeImport = `import type { ${childPascal}Create } from '@/types/${modulePath}/${child.childKebab}'`;
+  const masterTypeImport = `import type { ${childPascal}Create } from '@/types/${modulePath}/${toFrontendEntityFileCamel(child.childKebab)}.types'`;
   const formScriptFragments = buildGeneratedFormVueScriptFragments({
     formFields,
     entityIdField: childIdField,
@@ -463,10 +466,8 @@ ${altFkPrefixBackfill}    const masterPlant = masterRow.plantCode ?? masterRow.P
   return payload`,
   )}`;
   const resetScopeDefaultsLine = buildFormResetScopeDefaultsBlock(childIdField, hasScopeContextFields);
+  // TaktSelect：unplugin-vue-components 自动注册，禁止手写 import（needsTaktSelect 仍用于 popupContainer）
   const needsTaktSelect = formFields.some((f) => f.htmlType === 'select' && f.dictType);
-  const taktSelectImport = needsTaktSelect
-    ? "import TaktSelect from '@/components/business/takt-select/index.vue'\n"
-    : '';
   const extFieldIconImport = buildExtFieldIconImportLine(formFields);
   let formScriptState = buildFormScriptStateBlock({
     formContentClassExpr,
@@ -498,10 +499,10 @@ ${altFkPrefixBackfill}    const masterPlant = masterRow.plantCode ?? masterRow.P
   );
   const activeTabReset = useFormTabs ? "  activeTab.value = 'tab-0'\n" : '';
   return `<!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/${viewModulePath}/components -->
-<!-- 文件名称：${viewChildKebab}-form.vue -->
-<!-- 功能描述：${comment}子表 ${child.childCamel} 独立 CRUD 弹窗表单；defineExpose validate/getValues/resetFields。由 ${generatorScript} 生成，风格与主表 *-form 一致 -->
+<!-- 文件名称：${child.childPascal}Form.vue -->
+<!-- 功能描述：${comment}子表 ${child.childCamel} 独立 CRUD 弹窗表单；defineExpose validate/getValues/resetFields。由 ${generatorScript} 生成，风格与主表 *Form 一致 -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
 <!-- ======================================== -->
 
@@ -528,7 +529,7 @@ import { useI18n } from 'vue-i18n'
 import type { Rule } from 'ant-design-vue/es/form'
 ${buildEntityI18nFormImportBlock(childPascal, viewChildKebab)}
 ${masterTypeImport}
-${taktSelectImport}${extFieldIconImport}${formScriptFragments.dictImportLine}${formScriptFragments.fileUploadImportLine}${formScriptFragments.numberingImportLine || ''}${scopeStoreImports}
+${extFieldIconImport}${formScriptFragments.dictImportLine}${formScriptFragments.fileUploadImportLine}${formScriptFragments.numberingImportLine || ''}${scopeStoreImports}
 ${formScriptState}
 ${formScriptFragments.defaultsBlock}
 ${formScriptFragments.normalizerBlock}
@@ -665,8 +666,8 @@ function buildChildPanelSummaryParts(child, childI18nPrefix, entityScope = 'comp
   filterTableColumnsByVisibleKeys,
   mergeDefaultColumns,
   normalizeUserTableColumns,
-} from '@/utils/table-columns'
-import { formatSummaryValue } from '@/components/business/takt-editable-table/editable-table-utils'`;
+} from '@/utils/tableColumns'
+import { formatSummaryValue } from '@/components/business/TaktEditableTable/editableTableUtils'`;
   const scriptBlock = `
 /** 与 TaktSingleTable 展示列对齐（用于汇总行单元格） */
 const resolvedSummaryColumns = computed(() => {
@@ -800,7 +801,15 @@ function generateChildDetailPanelVue(ctx, child) {
     childCaps.apiDelete,
     childCaps.apiDeleteBatch,
   ].filter(Boolean);
-  const apiImportBlock = [...new Set([...baseApiImports, ...importApiImports])].join(',\n  ');
+  const apiNames = [...new Set([...baseApiImports, ...importApiImports])];
+  if (apiNames.length === 0) {
+    console.warn(
+      `⚠️  子表 ${child.childPascal} 未解析到 API 导出（请确认 ${modulePath}/${toFrontendEntityFileCamel(child.childKebab)}.api.ts）`,
+    );
+  }
+  const apiImportStatement = apiNames.length
+    ? `import {\n  ${apiNames.join(',\n  ')},\n} from '@/api/${modulePath}/${toFrontendEntityFileCamel(child.childKebab)}.api'`
+    : '';
   const listQueryBlock = buildChildPanelListQueryBlock(
     child.childPascal,
     child.masterFkField,
@@ -892,9 +901,9 @@ ${queryFields.length ? `      @advanced-query="handleAdvancedQuery"
   const excelImportLine = (childCaps.hasImport || childCaps.hasExport)
     ? [
       "import { taktExcelEntityNames } from '@/utils/naming'",
-      ...(childCaps.hasExport ? ["import { resolveExportDownloadFileName } from '@/utils/export-download-name'"] : []),
+      ...(childCaps.hasExport ? ["import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'"] : []),
       ...(childCaps.hasImport && childCaps.hasGetTemplate
-        ? ["import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'"]
+        ? ["import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'"]
         : []),
     ].join('\n')
     : '';
@@ -939,9 +948,9 @@ function handleColumnSettingReset() {
   visibleColumnKeys.value = [...${childI18nPrefix}_DEFAULT_VISIBLE_COLUMN_KEYS]
 }`;
   return `<!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/${viewModulePath}/components -->
-<!-- 文件名称：${viewChildKebab}-panel.vue -->
+<!-- 文件名称：${child.childPascal}Panel.vue -->
 <!-- 功能描述：${comment}主表实体右侧明细 ${child.childCamel} 独立 CRUD（按主表选中 ${child.masterFkField} 分页） -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
 <!-- ======================================== -->
@@ -1046,20 +1055,17 @@ ${queryDrawerBlock}${importModalBlock}
  * ${comment}子表 ${child.childCamel} 右栏面板
  * @module views/${viewModulePath}/components
  */
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { measureMasterDetailLrTableScrollY } from '@/composables/use-takt-master-detail-lr-scroll-y'
-${TAKT_FORM_MODAL_WIDTH_IMPORT}import { TAKT_TABLE_SCROLL_Y_MIN } from '@/utils/table-scroll'
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-${excelImportLine ? `${excelImportLine}\n` : ''}${summaryParts.importLines ? `${summaryParts.importLines}\n` : ''}import { CreateActionColumn } from '@/components/business/takt-action-column/index'
-${remixIconImport}import ${child.childPascal}Form from './${viewChildKebab}-form.vue'
-import { use${entityPascal}MasterContext } from '../composables/use-${viewEntityKebab}-master-context'
-import {
-  ${apiImportBlock},
-} from '@/api/${modulePath}/${child.childKebab}'
-import type { ${child.childType}, ${child.childPascal}Query } from '@/types/${modulePath}/${child.childKebab}'
+import { measureMasterDetailLrTableScrollY } from '@/composables/useTaktMasterDetailLrScrollY'
+${TAKT_FORM_MODAL_WIDTH_IMPORT}import { TAKT_TABLE_SCROLL_Y_MIN } from '@/utils/tableScroll'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+${excelImportLine ? `${excelImportLine}\n` : ''}${summaryParts.importLines ? `${summaryParts.importLines}\n` : ''}import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
+${remixIconImport}import ${child.childPascal}Form from './${child.childPascal}Form.vue'
+import { use${entityPascal}MasterContext } from '../composables/${entityMasterContextComposableFileName(entityPascal).replace(/\.ts$/, '')}'
+${apiImportStatement}
+import type { ${child.childType}, ${child.childPascal}Query } from '@/types/${modulePath}/${toFrontendEntityFileCamel(child.childKebab)}.types'
 
 ${childEntityI18nImport}
 const { t } = useI18n()
@@ -1398,7 +1404,7 @@ function generateMasterDetailLrIndexScript(ctx) {
   const panelRefs = children.map((c) => `const ${c.childCamel}PanelRef = ref<InstanceType<typeof ${c.childPascal}Panel> | null>(null)`).join('\n');
   const panelImports = children.map((c) => {
     const viewChildKebab = c.viewChildKebab || c.childKebab;
-    return `import ${c.childPascal}Panel from './components/${viewChildKebab}-panel.vue'`;
+    return `import ${c.childPascal}Panel from './components/${c.childPascal}Panel.vue'`;
   }).join('\n');
   const reloadPanels = children.map((c) => `  ${c.childCamel}PanelRef.value?.reload?.()`).join('\n');
   const detailSlot = children.length === 1
@@ -1434,7 +1440,7 @@ async function load${entityPascal}Detail(record: ${rowRecordType}): Promise<${en
 }` : '';
   return {
     panelImports,
-    composableImport: `import { provide${entityPascal}MasterContext, type ${rowRecordType} } from './composables/use-${ctx.viewEntityKebab}-master-context'`,
+    composableImport: `import { provide${entityPascal}MasterContext, type ${rowRecordType} } from './composables/${entityMasterContextComposableFileName(ctx.entityPascal).replace(/\.ts$/, '')}'`,
     composableSetup: `/** 主表选中行上下文（右侧明细面板读取） */
 const { selectedMasterRow } = provide${entityPascal}MasterContext()`,
     panelRefs,
@@ -1548,7 +1554,7 @@ import {
   TAKT_TABLE_HEADER_FALLBACK_PX,
   TAKT_TABLE_SCROLL_Y_MIN,
   TAKT_TABLE_SUMMARY_ROW_HEIGHT_PX,
-} from '@/utils/table-scroll'
+} from '@/utils/tableScroll'
 
 /** 子表半区宿主（弹窗视口约 1/2） */
 const detailHostRef = ref<HTMLElement | null>(null)
@@ -1618,7 +1624,7 @@ onBeforeUnmount(() => {
 }
 
 /**
- * *-form.vue 上主下从（TaktEditableTable）片段
+ * *Form.vue 上主下从（TaktEditableTable）片段
  * @param {object} ctx
  * @returns {{ editableBlocks: string, script: string, tableRefs: string, validateLines: string, resetLines: string }}
  */
@@ -1753,7 +1759,7 @@ function getSelectPopupContainer(triggerNode?: HTMLElement): HTMLElement {
 }
 ` : '';
   const script = `
-import type { TaktEditableTableColumn } from '@/components/business/takt-editable-table/types'
+import type { TaktEditableTableColumn } from '@/components/business/TaktEditableTable/types'
 ${lineNumberImportLines ? `${lineNumberImportLines}\n` : ''}${childI18nImportLines}
 
 ${childI18nSetupLines}
@@ -1792,7 +1798,7 @@ function writeMasterDetailLayoutOutputs(bundle, ctx, options) {
   const viewDir = path.dirname(bundle.indexPath);
   const composableDir = path.join(viewDir, 'composables');
   const componentsDir = path.join(viewDir, 'components');
-  const composablePath = path.join(composableDir, `use-${ctx.viewEntityKebab}-master-context.ts`);
+  const composablePath = path.join(composableDir, entityMasterContextComposableFileName(ctx.entityPascal));
   const composableContent = generateMasterContextComposable(ctx);
   if (options.dryRun) {
     console.log(`🔍 [dry-run] 将生成: ${composablePath}`);
@@ -1802,8 +1808,8 @@ function writeMasterDetailLayoutOutputs(bundle, ctx, options) {
   }
   (ctx.fields.masterDetailChildren || []).forEach((child) => {
     const viewChildKebab = child.viewChildKebab || child.childKebab;
-    const panelPath = path.join(componentsDir, `${viewChildKebab}-panel.vue`);
-    const childFormPath = path.join(componentsDir, `${viewChildKebab}-form.vue`);
+    const panelPath = path.join(componentsDir, `${child.childPascal}Panel.vue`);
+    const childFormPath = path.join(componentsDir, `${child.childPascal}Form.vue`);
     const childI18nPath = path.join(composableDir, entityI18nComposableFileName(viewChildKebab));
     const childListCols = (child.listFields || []).filter((f) => f.name !== child.childIdField);
     const childI18nContent = buildEntityI18nComposableFile({

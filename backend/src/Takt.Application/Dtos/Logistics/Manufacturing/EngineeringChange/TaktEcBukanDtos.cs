@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcBukanDtos.cs
 // 创建时间：2026-09-02
@@ -63,6 +63,10 @@ public class TaktEcBukanDto : TaktCompanyDtoBase
     /// 实施范围（冗余：来自 TaktEcDetail.EcScope）
     /// </summary>
     public int EcScope { get; set; }
+    /// <summary>
+    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int EcDeptScope { get; set; } = 2;
 
     /// <summary>
     /// 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
@@ -130,15 +134,9 @@ public class TaktEcBukanDto : TaktCompanyDtoBase
     public string EcModelCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）
+    /// 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔；ntext）
     /// </summary>
-    public string? EcRootMaterialCode { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）
-    /// </summary>
-    public string? EcRootMaterialDescription { get; set; } = string.Empty;
-
+    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
@@ -146,7 +144,7 @@ public class TaktEcBukanDto : TaktCompanyDtoBase
     public int IsObsolete { get; set; } = 0;
 
     /// <summary>
-    /// 设变明细列表（视图主从：执行表为主；一对多；业务键 EcCode + EcModelCode + EcNewMaterialCode）
+    /// 设变明细列表（视图主从：执行表为主；一对多；业务键 EcCode + EcModelCode）
     /// </summary>
     public List<TaktEcDetailDto>? EcDetails { get; set; }
 
@@ -204,14 +202,9 @@ public class TaktEcBukanQueryDto : TaktPagedQuery
     public string? EcModelCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）
+    /// 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔；ntext）
     /// </summary>
-    public string? EcRootMaterialCode { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）
-    /// </summary>
-    public string? EcRootMaterialDescription { get; set; } = string.Empty;
+    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
     /// 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
@@ -353,6 +346,10 @@ public class TaktEcBukanCreateDto
     /// 实施范围（冗余：来自 TaktEcDetail.EcScope）
     /// </summary>
     public int EcScope { get; set; }
+    /// <summary>
+    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int EcDeptScope { get; set; } = 2;
 
     /// <summary>
     /// 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
@@ -422,15 +419,9 @@ public class TaktEcBukanCreateDto
     public string EcModelCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）
+    /// 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔；ntext）
     /// </summary>
-    public string? EcRootMaterialCode { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）
-    /// </summary>
-    public string? EcRootMaterialDescription { get; set; } = string.Empty;
-
+    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
@@ -495,6 +486,10 @@ public class TaktEcBukanStatusDto
     /// 实施范围（冗余：来自 TaktEcDetail.EcScope）
     /// </summary>
     public int EcScope { get; set; }
+    /// <summary>
+    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int EcDeptScope { get; set; } = 2;
 }
 
 // ========================================
@@ -523,6 +518,10 @@ public class TaktEcBukanDiscontinuedStatusDto
     /// 实施范围（冗余：来自 TaktEcDetail.EcScope）
     /// </summary>
     public int EcScope { get; set; }
+    /// <summary>
+    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int EcDeptScope { get; set; } = 2;
 }
 
 /// <summary>
@@ -595,14 +594,9 @@ public class TaktEcBukanTemplateDto
     public string? EcModelCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）
+    /// 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔；ntext）
     /// </summary>
-    public string? EcRootMaterialCode { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）
-    /// </summary>
-    public string? EcRootMaterialDescription { get; set; } = string.Empty;
+    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
     /// 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
@@ -723,14 +717,9 @@ public class TaktEcBukanImportDto
     public string? EcModelCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）
+    /// 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔；ntext）
     /// </summary>
-    public string? EcRootMaterialCode { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）
-    /// </summary>
-    public string? EcRootMaterialDescription { get; set; } = string.Empty;
+    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
     /// 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
@@ -858,6 +847,10 @@ public class TaktEcBukanExportDto
     /// 实施范围（冗余：来自 TaktEcDetail.EcScope）
     /// </summary>
     public int EcScope { get; set; }
+    /// <summary>
+    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int EcDeptScope { get; set; } = 2;
 
     /// <summary>
     /// 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
@@ -925,15 +918,9 @@ public class TaktEcBukanExportDto
     public string EcModelCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）
+    /// 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔；ntext）
     /// </summary>
-    public string? EcRootMaterialCode { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）
-    /// </summary>
-    public string? EcRootMaterialDescription { get; set; } = string.Empty;
-
+    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）

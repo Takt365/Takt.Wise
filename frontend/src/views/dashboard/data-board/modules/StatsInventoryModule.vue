@@ -1,6 +1,6 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
-<!-- 命名空间：frontend/src/views/dashboard/data-board/modules -->
+<!-- 项目名称：节拍智控·TaktWise -->
+<!-- 命名空间：frontend/src/views/dashboard/dataBoard.types/modules -->
 <!-- 文件名称：StatsInventoryModule.vue -->
 <!-- 功能描述：数据看板在库金额（前三月；卡面总金额，悬停 F/H/R 明细） -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
@@ -29,16 +29,15 @@
  * 在库金额：TaktMaterialMovingPrices/stock-stat
  * 卡面显示总金额；悬停明细 F/H/R（Z792→F、Z790→H、Z300→R）
  */
-import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import StatsMetricGrid from '../components/stats-metric-grid.vue'
-import { usePermissionStore } from '@/stores/identity/permission'
-import type { MaterialMovingPriceStat } from '@/types/logistics/materials/material-moving-price-stat'
-import { enrichDashboardMetricItems } from '../utils/stats-metric-dashboard'
+import StatsMetricGrid from '../components/StatsMetricGrid.vue'
+import { usePermissionStore } from '@/stores/identity/usePermissionStore'
+import type { MaterialMovingPriceStat } from '@/types/logistics/materials/materialMovingPriceStat.types'
+import { enrichDashboardMetricItems } from '../utils/statsMetricDashboard'
 import {
   formatDashboardAmountLabel,
   type DashboardAmountUnitKey,
-} from '../utils/format-dashboard-amount'
+} from '../utils/formatDashboardAmount'
 import {
   DASHBOARD_STATS_API,
   DASHBOARD_STATS_PERMISSION,
@@ -46,8 +45,8 @@ import {
   fetchDashboardGet,
   fetchDashboardMetricIfPermitted,
   scheduleDashboardLoad,
-} from '../utils/stats-query'
-import { getLastThreeCalendarMonthRanges } from '../utils/stats-dashboard-plant'
+} from '../utils/statsQuery'
+import { getLastThreeCalendarMonthRanges } from '../utils/statsDashboardPlant'
 
 /** 评估类别 → 卡面短码（Z792=F 成品，Z790=H 半成品，Z300=R 原材料） */
 const VALUATION_DISPLAY_CODES: ReadonlyArray<{ valuation: string; label: string }> = [

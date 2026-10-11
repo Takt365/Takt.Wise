@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.Mds
 // 文件名称：TaktSalesForecastDtos.cs
 // 创建时间：2026-08-28
@@ -96,20 +96,15 @@ public class TaktSalesForecastDto : TaktApprovalDtoBase
     public string? CustomerName1 { get; set; } = string.Empty;
 
     /// <summary>
-    /// 计划人（选项 TaktEmployees/options；DictValue=Id）
+    /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? PlannerEmployeeId { get; set; }
+    public string? PlannerGroupCode { get; set; }
+
 
     /// <summary>
-    /// 计划人（选项 TaktEmployees/options；DictValue=Id）
+    /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
     /// </summary>
-    public string? PlannerEmployeeName { get; set; }
-
-    /// <summary>
-    /// 计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）
-    /// </summary>
-    public string? PlannerName { get; set; } = string.Empty;
+    public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 计划总数量（基本单位数量；通常汇总版本 002）
@@ -255,15 +250,14 @@ public class TaktSalesForecastQueryDto : TaktPagedQuery
     public string? CustomerName1 { get; set; } = string.Empty;
 
     /// <summary>
-    /// 计划人（选项 TaktEmployees/options；DictValue=Id）
+    /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? PlannerEmployeeId { get; set; }
+    public string? PlannerGroupCode { get; set; }
 
     /// <summary>
-    /// 计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）
+    /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
     /// </summary>
-    public string? PlannerName { get; set; } = string.Empty;
+    public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 计划总数量（基本单位数量；通常汇总版本 002）
@@ -459,15 +453,14 @@ public class TaktSalesForecastCreateDto
     public string? CustomerName1 { get; set; } = string.Empty;
 
     /// <summary>
-    /// 计划人（选项 TaktEmployees/options；DictValue=Id）
+    /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? PlannerEmployeeId { get; set; }
+    public string? PlannerGroupCode { get; set; }
 
     /// <summary>
-    /// 计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）
+    /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
     /// </summary>
-    public string? PlannerName { get; set; } = string.Empty;
+    public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 计划总数量（基本单位数量；通常汇总版本 002）
@@ -660,15 +653,14 @@ public class TaktSalesForecastTemplateDto
     public string? CustomerName1 { get; set; } = string.Empty;
 
     /// <summary>
-    /// 计划人（选项 TaktEmployees/options；DictValue=Id）
+    /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? PlannerEmployeeId { get; set; }
+    public string? PlannerGroupCode { get; set; }
 
     /// <summary>
-    /// 计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）
+    /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
     /// </summary>
-    public string? PlannerName { get; set; } = string.Empty;
+    public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 计划总数量（基本单位数量；通常汇总版本 002）
@@ -808,15 +800,14 @@ public class TaktSalesForecastImportDto
     public string? CustomerName1 { get; set; } = string.Empty;
 
     /// <summary>
-    /// 计划人（选项 TaktEmployees/options；DictValue=Id）
+    /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? PlannerEmployeeId { get; set; }
+    public string? PlannerGroupCode { get; set; }
 
     /// <summary>
-    /// 计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）
+    /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
     /// </summary>
-    public string? PlannerName { get; set; } = string.Empty;
+    public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 计划总数量（基本单位数量；通常汇总版本 002）
@@ -962,15 +953,14 @@ public class TaktSalesForecastExportDto
     public string? CustomerName1 { get; set; } = string.Empty;
 
     /// <summary>
-    /// 计划人（选项 TaktEmployees/options；DictValue=Id）
+    /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? PlannerEmployeeId { get; set; }
+    public string? PlannerGroupCode { get; set; }
 
     /// <summary>
-    /// 计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）
+    /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
     /// </summary>
-    public string? PlannerName { get; set; } = string.Empty;
+    public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 计划总数量（基本单位数量；通常汇总版本 002）

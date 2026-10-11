@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Helpers
 // 文件名称：TaktDictStorageHelper.cs
 // 功能描述：字典落库规范化（显式 dict_type_code；UI 提交由前端 dict-type 转换，本类主要用于 Excel 导入等旁路）

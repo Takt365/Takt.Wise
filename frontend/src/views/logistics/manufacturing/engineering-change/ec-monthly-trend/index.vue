@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/ec-monthly-trend -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：月设变推移（工厂×设变号×部门×月份转置表） -->
@@ -9,7 +9,7 @@
 
 <template>
   <div class="flex h-full min-h-0 flex-col p-4">
-    <ec-monthly-trend-query-form
+    <EcMonthlyTrendQueryForm
       v-model:plant-code="plantCode"
       v-model:period-range="periodRange"
       v-model:ec-code="ecCode"
@@ -54,7 +54,7 @@
       @export="handleExport"
       @refresh="handleRefresh"
     />
-    <ec-monthly-trend-panel
+    <EcMonthlyTrendPanel
       ref="panelRef"
       v-model:loading="panelLoading"
       v-model:has-rows="hasRows"
@@ -78,20 +78,24 @@
  */
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import type { ToolBarAction } from '@/components/business/takt-tools-bar/index.vue'
+import type { ToolBarAction } from '@/components/business/TaktToolsBar/index.vue'
 import {
   RiArrowDownLine,
   RiArrowUpDownLine,
   RiArrowUpLine,
   RiListCheck,
 } from '@remixicon/vue'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { useTenantStore } from '@/stores/identity/tenant'
-import { buildDefaultCostingPeriodRange } from '@/views/logistics/manufacturing/bom/material-cost/utils/bom-material-cost-period'
-import EcMonthlyTrendQueryForm from './components/ec-monthly-trend-query-form.vue'
-import EcMonthlyTrendPanel from './components/ec-monthly-trend-panel.vue'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { useTenantStore } from '@/stores/identity/useTenantStore'
+import EcMonthlyTrendQueryForm from './components/EcMonthlyTrendQueryForm.vue'
+import EcMonthlyTrendPanel from './components/EcMonthlyTrendPanel.vue'
+import { useAnalysisPeriodRangeLimit } from '@/composables/useAnalysisPeriodRangeLimit'
+import { useAnalysisQueryDefaults } from '@/composables/useAnalysisQueryDefaults'
 
 const { t } = useI18n()
+
+/** 期间最多 12 个月（查询前校验） */
+const { assertPeriodRangeOk } = useAnalysisPeriodRangeLimit()
 /** 静态 locales 前缀 */
 const localePrefix = 'logistics.manufacturing.engineering-change.ec-monthly-trend.page'
 const tenantStore = useTenantStore()
@@ -102,6 +106,9 @@ const activeTab = ref<'issue' | 'implement'>('issue')
 const plantCode = ref<string | undefined>()
 /** 期间年月 */
 const periodRange = ref<[string, string] | null>(null)
+
+/** 默认工厂=公司 RelatedPlant；期间=前三月（对齐成本差异推移） */
+const { applyDefaultPeriodRange, applyDefaultPlantFromCompany, applyAnalysisQueryDefaults } = useAnalysisQueryDefaults(plantCode, periodRange)
 /** 设变单号 */
 const ecCode = ref<string | undefined>()
 /** 区分 */
@@ -167,6 +174,9 @@ function handleSearch() {
     message.warning(t(`${localePrefix}.selectPeriodRequired`))
     return
   }
+  if (!assertPeriodRangeOk(periodRange.value)) {
+    return
+  }
   void panelRef.value?.reload?.()
 }
 
@@ -183,14 +193,9 @@ function handleRefresh() {
   void panelRef.value?.reload?.()
 }
 
-/** 默认核算年月 */
-function applyDefaultPeriodRange() {
-  periodRange.value = buildDefaultCostingPeriodRange(3)
-}
 
 /** 清空工厂级联与结果 */
 function clearPlantCascade() {
-  plantCode.value = undefined
   deptCode.value = undefined
   ecCode.value = undefined
   hasRows.value = false
@@ -198,12 +203,12 @@ function clearPlantCascade() {
 }
 
 /** 重置 */
-function handleReset() {
+async function handleReset() {
   clearPlantCascade()
   ecScope.value = undefined
   changeStatus.value = undefined
   ecStatus.value = undefined
-  applyDefaultPeriodRange()
+  await applyAnalysisQueryDefaults()
   trendFilter.value = ''
 }
 
@@ -229,12 +234,13 @@ watch(
   () => tenantStore.companyCode,
   () => {
     clearPlantCascade()
+    void applyDefaultPlantFromCompany()
   },
 )
 
 onMounted(async () => {
   await ensureTaktPaginationConfigAsync()
-  applyDefaultPeriodRange()
+  await applyAnalysisQueryDefaults()
   void getTaktDefaultPageSize()
 })
 </script>

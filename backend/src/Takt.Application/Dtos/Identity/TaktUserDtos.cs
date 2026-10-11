@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Identity
 // 文件名称：TaktUserDtos.cs
 // 创建时间：2026-06-24
@@ -36,12 +36,12 @@ public class TaktUserDto : TaktTenantCultureDtoBase
     public long UserId { get; set; }
 
     /// <summary>
-    /// 用户名（唯一索引：租户内唯一，见 ix_user_name_unique；登录账号，最长 20 位）
+    /// 用户名（唯一索引：租户内唯一，见 ix_user_name_unique；登录账号，4–20 位）
     /// </summary>
     public string UserName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 昵称（显示名称，2–40 位）
+    /// 昵称（显示名称，2–20 位）
     /// </summary>
     public string NickName { get; set; } = string.Empty;
 
@@ -157,12 +157,12 @@ public class TaktUserQueryDto : TaktPagedQuery
     /// </summary>
     public string? TenantCode { get; set; } = string.Empty;
     /// <summary>
-    /// 用户名（唯一索引：租户内唯一，见 ix_user_name_unique；登录账号，最长 20 位）
+    /// 用户名（唯一索引：租户内唯一，见 ix_user_name_unique；登录账号，4–20 位）
     /// </summary>
     public string? UserName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 昵称（显示名称，2–40 位）
+    /// 昵称（显示名称，2–20 位）
     /// </summary>
     public string NickName { get; set; } = string.Empty;
 
@@ -278,13 +278,13 @@ public class TaktUserCreateDto
     /// </summary>
     public string TenantCode { get; set; } = string.Empty;
     /// <summary>
-    /// 用户名（唯一索引：租户内唯一，见 ix_user_name_unique；登录账号，最长 20 位）
+    /// 用户名（唯一索引：租户内唯一，见 ix_user_name_unique；登录账号，4–20 位）
     /// </summary>
-    [Required(ErrorMessage = "用户名（唯一索引：租户内唯一，见 ix_user_name_unique；登录账号，最长 20 位）不能为空")]
+    [Required(ErrorMessage = "用户名（唯一索引：租户内唯一，见 ix_user_name_unique；登录账号，4–20 位）不能为空")]
     public string UserName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 昵称（显示名称，2–40 位）
+    /// 昵称（显示名称，2–20 位）
     /// </summary>
     public string NickName { get; set; } = string.Empty;
 
@@ -410,12 +410,12 @@ public class TaktUserTemplateDto
     /// </summary>
     public string? TenantCode { get; set; } = string.Empty;
     /// <summary>
-    /// 用户名（唯一索引：租户内唯一，见 ix_user_name_unique；登录账号，最长 20 位）
+    /// 用户名（唯一索引：租户内唯一，见 ix_user_name_unique；登录账号，4–20 位）
     /// </summary>
     public string? UserName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 昵称（显示名称，2–40 位）
+    /// 昵称（显示名称，2–20 位）
     /// </summary>
     public string NickName { get; set; } = string.Empty;
 
@@ -492,12 +492,12 @@ public class TaktUserImportDto
     /// </summary>
     public string? TenantCode { get; set; } = string.Empty;
     /// <summary>
-    /// 用户名（唯一索引：租户内唯一，见 ix_user_name_unique；登录账号，最长 20 位）
+    /// 用户名（唯一索引：租户内唯一，见 ix_user_name_unique；登录账号，4–20 位）
     /// </summary>
     public string? UserName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 昵称（显示名称，2–40 位）
+    /// 昵称（显示名称，2–20 位）
     /// </summary>
     public string NickName { get; set; } = string.Empty;
 
@@ -596,12 +596,12 @@ public class TaktUserExportDto
     public long UserId { get; set; }
 
     /// <summary>
-    /// 用户名（唯一索引：租户内唯一，见 ix_user_name_unique；登录账号，最长 20 位）
+    /// 用户名（唯一索引：租户内唯一，见 ix_user_name_unique；登录账号，4–20 位）
     /// </summary>
     public string UserName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 昵称（显示名称，2–40 位）
+    /// 昵称（显示名称，2–20 位）
     /// </summary>
     public string NickName { get; set; } = string.Empty;
 
@@ -761,6 +761,65 @@ public class TaktChangePasswordDto
     /// </summary>
     [Required(ErrorMessage = "确认密码不能为空")]
     public string ConfirmPassword { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// 当前登录用户更新头像 DTO（写入关联员工 Avatar；空串表示清除）
+/// </summary>
+public class TaktUpdateMyAvatarDto
+{
+    /// <summary>
+    /// 头像访问 URL（空或空白表示清除；最长 500，与员工 Avatar 列一致）
+    /// </summary>
+    [MaxLength(500)]
+    public string? Avatar { get; set; }
+}
+
+/// <summary>
+/// 当前登录用户更新个人资料 DTO
+/// NickName → takt_identity_user；Mobile/Email → 当前会话公司下解析后的 takt_human_resource_personnel_employee（姓名/性别不可自助修改）
+/// </summary>
+public class TaktUpdateMyProfileDto
+{
+    /// <summary>
+    /// 昵称（落库 TaktUser.NickName；2–20 位）
+    /// </summary>
+    [Required(ErrorMessage = "昵称不能为空")]
+    [MaxLength(20)]
+    public string NickName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 手机号码（落库 TaktEmployee.Mobile；已绑定员工时必填）
+    /// </summary>
+    [MaxLength(11)]
+    public string? Mobile { get; set; }
+
+    /// <summary>
+    /// 电子邮箱（落库 TaktEmployee.Email；已绑定员工时必填）
+    /// </summary>
+    [MaxLength(100)]
+    public string? Email { get; set; }
+}
+
+/// <summary>
+/// 当前登录用户更新个人资料结果（便于前端同步 userInfo，无需整份 /me 重载）
+/// </summary>
+public class TaktUpdateMyProfileResultDto
+{
+    /// <summary>
+    /// 昵称（TaktUser）
+    /// </summary>
+    public string NickName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 手机号码（TaktEmployee）
+    /// </summary>
+    public string? Mobile { get; set; }
+
+    /// <summary>
+    /// 电子邮箱（TaktEmployee）
+    /// </summary>
+    public string? Email { get; set; }
 }
 
 /// <summary>

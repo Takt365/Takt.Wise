@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/human-resource/talent/talent-job-posting -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：职位发布管理页面，含查询、增删改，由 generate-vue-from-api 根据 types/api 自动生成 -->
@@ -245,10 +245,10 @@
       </a-form-item>
       </div>
       <div v-show="isFieldVisible('ExtField')">
-      <a-form-item :label="t('common.page.entity.ExtField')">
+      <a-form-item :label="t('common.page.entity.extfield')">
         <a-input
           v-model:value="advancedQueryForm.ExtField"
-          :placeholder="t('common.page.form.placeholder.required', { field: t('common.page.entity.ExtField') })"
+          :placeholder="t('common.page.form.placeholder.required', { field: t('common.page.entity.extfield') })"
           allow-clear
         />
       </a-form-item>
@@ -303,22 +303,21 @@
 </template>
 
 <script setup lang="ts">
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 /**
  * 职位发布管理页 · 由 generate-vue-from-api 根据 types/api 生成
  * @module views/human-resource/talent/talent-job-posting
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import TalentJobPostingForm from './components/talent-job-posting-form.vue'
-import { getTalentJobPostingList, getTalentJobPostingById, createTalentJobPosting, updateTalentJobPosting, deleteTalentJobPostingById, deleteTalentJobPostingBatch, getTalentJobPostingTemplate, importTalentJobPosting, exportTalentJobPosting } from '@/api/human-resource/talent/talent-job-posting'
-import type { TalentJobPosting, TalentJobPostingQuery, TalentJobPostingCreate, TalentJobPostingUpdate } from '@/types/human-resource/talent/talent-job-posting'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import TalentJobPostingForm from './components/TalentJobPostingForm.vue'
+import { getTalentJobPostingList, getTalentJobPostingById, createTalentJobPosting, updateTalentJobPosting, deleteTalentJobPostingById, deleteTalentJobPostingBatch, getTalentJobPostingTemplate, importTalentJobPosting, exportTalentJobPosting } from '@/api/human-resource/talent/talentJobPosting.api'
+import type { TalentJobPosting, TalentJobPostingQuery, TalentJobPostingCreate, TalentJobPostingUpdate } from '@/types/human-resource/talent/talentJobPosting.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
 
 const { t } = useI18n()
@@ -379,7 +378,7 @@ const queryFieldsMeta = computed(() => [
   { key: 'reason', label: t('entity.talentJobPosting.reason') },
   { key: 'createdAtStart', label: t('common.page.entity.createdatstart') },
   { key: 'createdAtEnd', label: t('common.page.entity.createdatend') },
-  { key: 'ExtField', label: t('common.page.entity.ExtField') },
+  { key: 'ExtField', label: t('common.page.entity.extfield') },
   { key: 'remark', label: t('common.page.entity.remark') }])
 const visibleQueryFieldKeys = ref<string[]>([])
 const columnSettingVisible = ref(false)

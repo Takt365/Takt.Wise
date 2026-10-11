@@ -8,16 +8,16 @@
 // biome-ignore lint: disable
 export {}
 declare global {
-  const BOM_MATERIAL_COST_ITEM_TABLE_NAME: typeof import('./composables/use-bom-material-cost-item-recalculate-signalr').BOM_MATERIAL_COST_ITEM_TABLE_NAME
-  const EC_GIJUTSU_TABLE_NAME: typeof import('./composables/use-ec-gijutsu-persist-signalr').EC_GIJUTSU_TABLE_NAME
-  const EC_NOTIFICATION_TABLE_NAME: typeof import('./composables/use-ec-change-signalr-refresh').EC_NOTIFICATION_TABLE_NAME
+  const BOM_MATERIAL_COST_ITEM_TABLE_NAME: typeof import('./composables/useBomMaterialCostItemRecalculateSignalr').BOM_MATERIAL_COST_ITEM_TABLE_NAME
+  const EC_GIJUTSU_TABLE_NAME: typeof import('./composables/useEcGijutsuPersistSignalr').EC_GIJUTSU_TABLE_NAME
+  const EC_NOTIFICATION_TABLE_NAME: typeof import('./composables/useEcChangeSignalrRefresh').EC_NOTIFICATION_TABLE_NAME
   const EffectScope: typeof import('vue').EffectScope
   const Modal: typeof import('ant-design-vue').Modal
-  const QUARTZ_TABLE_NAME: typeof import('./composables/use-quartz-signalr-refresh').QUARTZ_TABLE_NAME
-  const TAKT_CAPTCHA_BEHAVIOR_TRACK_HEIGHT: typeof import('./composables/use-takt-captcha-behavior').TAKT_CAPTCHA_BEHAVIOR_TRACK_HEIGHT
-  const TAKT_CAPTCHA_SLIDER_TRACK_HEIGHT: typeof import('./composables/use-takt-captcha-slider').TAKT_CAPTCHA_SLIDER_TRACK_HEIGHT
-  const TAKT_MASTER_DETAIL_LR_SCROLL_Y_KEY: typeof import('./composables/use-takt-master-detail-lr-scroll-y').TAKT_MASTER_DETAIL_LR_SCROLL_Y_KEY
-  const WORKFLOW_TABLE_NAMES: typeof import('./composables/use-workflow-signalr-refresh').WORKFLOW_TABLE_NAMES
+  const QUARTZ_TABLE_NAME: typeof import('./composables/useQuartzSignalrRefresh').QUARTZ_TABLE_NAME
+  const TAKT_CAPTCHA_BEHAVIOR_TRACK_HEIGHT: typeof import('./composables/useTaktCaptchaBehavior').TAKT_CAPTCHA_BEHAVIOR_TRACK_HEIGHT
+  const TAKT_CAPTCHA_SLIDER_TRACK_HEIGHT: typeof import('./composables/useTaktCaptchaSlider').TAKT_CAPTCHA_SLIDER_TRACK_HEIGHT
+  const TAKT_MASTER_DETAIL_LR_SCROLL_Y_KEY: typeof import('./composables/useTaktMasterDetailLrScrollY').TAKT_MASTER_DETAIL_LR_SCROLL_Y_KEY
+  const WORKFLOW_TABLE_NAMES: typeof import('./composables/useWorkflowSignalrRefresh').WORKFLOW_TABLE_NAMES
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
   const computed: typeof import('vue').computed
   const createApp: typeof import('vue').createApp
@@ -28,8 +28,8 @@ declare global {
   const defineComponent: typeof import('vue').defineComponent
   const defineStore: typeof import('pinia').defineStore
   const effectScope: typeof import('vue').effectScope
-  const formatBomMaterialCostItemRecalculateDuration: typeof import('./composables/use-bom-material-cost-item-recalculate-signalr').formatBomMaterialCostItemRecalculateDuration
-  const formatEcGijutsuPersistDuration: typeof import('./composables/use-ec-gijutsu-persist-signalr').formatEcGijutsuPersistDuration
+  const formatBomMaterialCostItemRecalculateDuration: typeof import('./composables/useBomMaterialCostItemRecalculateSignalr').formatBomMaterialCostItemRecalculateDuration
+  const formatEcGijutsuPersistDuration: typeof import('./composables/useEcGijutsuPersistSignalr').formatEcGijutsuPersistDuration
   const getActivePinia: typeof import('pinia').getActivePinia
   const getCurrentInstance: typeof import('vue').getCurrentInstance
   const getCurrentScope: typeof import('vue').getCurrentScope
@@ -41,17 +41,17 @@ declare global {
   const isReadonly: typeof import('vue').isReadonly
   const isRef: typeof import('vue').isRef
   const isShallow: typeof import('vue').isShallow
-  const isTaktCaptchaDisabledError: typeof import('./composables/use-takt-login-captcha').isTaktCaptchaDisabledError
+  const isTaktCaptchaDisabledError: typeof import('./composables/useTaktLoginCaptcha').isTaktCaptchaDisabledError
   const logger: typeof import('@/utils/logger').logger
   const mapActions: typeof import('pinia').mapActions
   const mapGetters: typeof import('pinia').mapGetters
-  const mapLazyTreeNodes: typeof import('./composables/use-lazy-tree').mapLazyTreeNodes
+  const mapLazyTreeNodes: typeof import('./composables/useLazyTree').mapLazyTreeNodes
   const mapState: typeof import('pinia').mapState
   const mapStores: typeof import('pinia').mapStores
   const mapWritableState: typeof import('pinia').mapWritableState
   const markRaw: typeof import('vue').markRaw
-  const measureMasterDetailLrTableScrollY: typeof import('./composables/use-takt-master-detail-lr-scroll-y').measureMasterDetailLrTableScrollY
-  const mergeLoadedChildren: typeof import('./composables/use-lazy-tree').mergeLoadedChildren
+  const measureMasterDetailLrTableScrollY: typeof import('./composables/useTaktMasterDetailLrScrollY').measureMasterDetailLrTableScrollY
+  const mergeLoadedChildren: typeof import('./composables/useLazyTree').mergeLoadedChildren
   const message: typeof import('ant-design-vue').message
   const nextTick: typeof import('vue').nextTick
   const notification: typeof import('ant-design-vue').notification
@@ -71,64 +71,65 @@ declare global {
   const onUnmounted: typeof import('vue').onUnmounted
   const onUpdated: typeof import('vue').onUpdated
   const onWatcherCleanup: typeof import('vue').onWatcherCleanup
-  const probeSessionCaptchaRequiredAsync: typeof import('./composables/use-takt-login-captcha').probeSessionCaptchaRequiredAsync
+  const probeSessionCaptchaRequiredAsync: typeof import('./composables/useTaktLoginCaptcha').probeSessionCaptchaRequiredAsync
   const provide: typeof import('vue').provide
-  const provideTaktMasterDetailLrScrollY: typeof import('./composables/use-takt-master-detail-lr-scroll-y').provideTaktMasterDetailLrScrollY
+  const provideTaktMasterDetailLrScrollY: typeof import('./composables/useTaktMasterDetailLrScrollY').provideTaktMasterDetailLrScrollY
   const reactive: typeof import('vue').reactive
   const readonly: typeof import('vue').readonly
   const ref: typeof import('vue').ref
   const resolveComponent: typeof import('vue').resolveComponent
-  const resolveCurrentCompanyRelatedPlantCode: typeof import('./composables/use-company-related-plant').resolveCurrentCompanyRelatedPlantCode
-  const resolveTableColumnResizeKey: typeof import('./composables/use-table-column-resize').resolveTableColumnResizeKey
+  const resolveCurrentCompanyRelatedPlantCode: typeof import('./composables/useCompanyRelatedPlant').resolveCurrentCompanyRelatedPlantCode
+  const resolveTableColumnResizeKey: typeof import('./composables/useTableColumnResize').resolveTableColumnResizeKey
   const setActivePinia: typeof import('pinia').setActivePinia
   const setMapStoreSuffix: typeof import('pinia').setMapStoreSuffix
   const shallowReactive: typeof import('vue').shallowReactive
   const shallowReadonly: typeof import('vue').shallowReadonly
   const shallowRef: typeof import('vue').shallowRef
   const storeToRefs: typeof import('pinia').storeToRefs
-  const taktIsLeafFlag: typeof import('./composables/use-lazy-tree').taktIsLeafFlag
+  const taktIsLeafFlag: typeof import('./composables/useLazyTree').taktIsLeafFlag
   const toRaw: typeof import('vue').toRaw
   const toRef: typeof import('vue').toRef
   const toRefs: typeof import('vue').toRefs
   const toValue: typeof import('vue').toValue
   const triggerRef: typeof import('vue').triggerRef
   const unref: typeof import('vue').unref
+  const useAnalysisPeriodRangeLimit: typeof import('./composables/useAnalysisPeriodRangeLimit').useAnalysisPeriodRangeLimit
+  const useAnalysisQueryDefaults: typeof import('./composables/useAnalysisQueryDefaults').useAnalysisQueryDefaults
   const useAttrs: typeof import('vue').useAttrs
-  const useBomMaterialCostItemRecalculateSignalR: typeof import('./composables/use-bom-material-cost-item-recalculate-signalr').useBomMaterialCostItemRecalculateSignalR
-  const useBusinessScopeRouteKey: typeof import('./composables/use-business-scope-route-key').useBusinessScopeRouteKey
-  const useCompanyRelatedPlant: typeof import('./composables/use-company-related-plant').useCompanyRelatedPlant
+  const useBomMaterialCostItemRecalculateSignalR: typeof import('./composables/useBomMaterialCostItemRecalculateSignalr').useBomMaterialCostItemRecalculateSignalR
+  const useBusinessScopeRouteKey: typeof import('./composables/useBusinessScopeRouteKey').useBusinessScopeRouteKey
+  const useCompanyRelatedPlant: typeof import('./composables/useCompanyRelatedPlant').useCompanyRelatedPlant
   const useCssModule: typeof import('vue').useCssModule
   const useCssVars: typeof import('vue').useCssVars
-  const useDatabaseInfoCatalog: typeof import('./composables/use-database-info-catalog').useDatabaseInfoCatalog
-  const useEcChangeSignalRRefresh: typeof import('./composables/use-ec-change-signalr-refresh').useEcChangeSignalRRefresh
-  const useEcExecSignalRGroup: typeof import('./composables/use-ec-dept-signalr-group').useEcExecSignalRGroup
-  const useEcGijutsuPersistSignalR: typeof import('./composables/use-ec-gijutsu-persist-signalr').useEcGijutsuPersistSignalR
-  const useEntityFieldI18n: typeof import('./composables/use-entity-field-i18n').useEntityFieldI18n
-  const useGsap: typeof import('./composables/use-gsap').useGsap
+  const useDatabaseInfoCatalog: typeof import('./composables/useDatabaseInfoCatalog').useDatabaseInfoCatalog
+  const useEcChangeSignalRRefresh: typeof import('./composables/useEcChangeSignalrRefresh').useEcChangeSignalRRefresh
+  const useEcExecSignalRGroup: typeof import('./composables/useEcDeptSignalrGroup').useEcExecSignalRGroup
+  const useEcGijutsuPersistSignalR: typeof import('./composables/useEcGijutsuPersistSignalr').useEcGijutsuPersistSignalR
+  const useEntityFieldI18n: typeof import('./composables/useEntityFieldI18n').useEntityFieldI18n
+  const useGsap: typeof import('./composables/useGsap').useGsap
   const useId: typeof import('vue').useId
   const useLink: typeof import('vue-router').useLink
-  const useLoginFieldSync: typeof import('./composables/use-login-field-sync').useLoginFieldSync
+  const useLoginFieldSync: typeof import('./composables/useLoginFieldSync').useLoginFieldSync
   const useModel: typeof import('vue').useModel
-  const useQuartzSignalRRefresh: typeof import('./composables/use-quartz-signalr-refresh').useQuartzSignalRRefresh
+  const useQuartzSignalRRefresh: typeof import('./composables/useQuartzSignalrRefresh').useQuartzSignalRRefresh
   const useRoute: typeof import('vue-router').useRoute
   const useRouter: typeof import('vue-router').useRouter
   const useSlots: typeof import('vue').useSlots
-  const useTableColumnResize: typeof import('./composables/use-table-column-resize').useTableColumnResize
-  const useTableRefresh: typeof import('./composables/use-table-refresh').useTableRefresh
-  const useTaktCaptchaBehavior: typeof import('./composables/use-takt-captcha-behavior').useTaktCaptchaBehavior
-  const useTaktCaptchaSlider: typeof import('./composables/use-takt-captcha-slider').useTaktCaptchaSlider
-  const useTaktComponentLocale: typeof import('./composables/use-takt-component-locale').useTaktComponentLocale
-  const useTaktContentModalWidth: typeof import('./composables/use-takt-content-modal-width').useTaktContentModalWidth
-  const useTaktFillHeightScrollY: typeof import('./composables/use-takt-fill-height-scroll-y').useTaktFillHeightScrollY
-  const useTaktFlowSubmit: typeof import('./composables/use-takt-flow-submit').useTaktFlowSubmit
-  const useTaktFormNumbering: typeof import('./composables/use-takt-form-numbering').useTaktFormNumbering
-  const useTaktLoginCaptcha: typeof import('./composables/use-takt-login-captcha').useTaktLoginCaptcha
-  const useTaktMasterDetailLrScrollY: typeof import('./composables/use-takt-master-detail-lr-scroll-y').useTaktMasterDetailLrScrollY
-  const useTaktTableBodyScrollY: typeof import('./composables/use-takt-table-body-scroll-y').useTaktTableBodyScrollY
-  const useTaktTableContainerScrollY: typeof import('./composables/use-takt-table-container-scroll-y').useTaktTableContainerScrollY
-  const useTaktTableViewportScrollY: typeof import('./composables/use-takt-table-viewport-scroll-y').useTaktTableViewportScrollY
+  const useTableColumnResize: typeof import('./composables/useTableColumnResize').useTableColumnResize
+  const useTableRefresh: typeof import('./composables/useTableRefresh').useTableRefresh
+  const useTaktCaptchaBehavior: typeof import('./composables/useTaktCaptchaBehavior').useTaktCaptchaBehavior
+  const useTaktCaptchaSlider: typeof import('./composables/useTaktCaptchaSlider').useTaktCaptchaSlider
+  const useTaktComponentLocale: typeof import('./composables/useTaktComponentLocale').useTaktComponentLocale
+  const useTaktContentModalWidth: typeof import('./composables/useTaktContentModalWidth').useTaktContentModalWidth
+  const useTaktFillHeightScrollY: typeof import('./composables/useTaktFillHeightScrollY').useTaktFillHeightScrollY
+  const useTaktFlowSubmit: typeof import('./composables/useTaktFlowSubmit').useTaktFlowSubmit
+  const useTaktFormNumbering: typeof import('./composables/useTaktFormNumbering').useTaktFormNumbering
+  const useTaktLoginCaptcha: typeof import('./composables/useTaktLoginCaptcha').useTaktLoginCaptcha
+  const useTaktMasterDetailLrScrollY: typeof import('./composables/useTaktMasterDetailLrScrollY').useTaktMasterDetailLrScrollY
+  const useTaktTableContainerScrollY: typeof import('./composables/useTaktTableContainerScrollY').useTaktTableContainerScrollY
+  const useTaktTableViewportScrollY: typeof import('./composables/useTaktTableViewportScrollY').useTaktTableViewportScrollY
   const useTemplateRef: typeof import('vue').useTemplateRef
-  const useWorkflowSignalRRefresh: typeof import('./composables/use-workflow-signalr-refresh').useWorkflowSignalRRefresh
+  const useWorkflowSignalRRefresh: typeof import('./composables/useWorkflowSignalrRefresh').useWorkflowSignalRRefresh
   const watch: typeof import('vue').watch
   const watchEffect: typeof import('vue').watchEffect
   const watchPostEffect: typeof import('vue').watchPostEffect
@@ -140,29 +141,29 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
-  export type { EntityFieldPlaceholderKind } from './composables/use-entity-field-i18n'
-  import('./composables/use-entity-field-i18n')
+  export type { EntityFieldPlaceholderKind } from './composables/useEntityFieldI18n'
+  import('./composables/useEntityFieldI18n')
   // @ts-ignore
-  export type { UseGsapOptions, UseGsapReturn } from './composables/use-gsap'
-  import('./composables/use-gsap')
+  export type { UseGsapOptions, UseGsapReturn } from './composables/useGsap'
+  import('./composables/useGsap')
   // @ts-ignore
-  export type { TaktLazyTreeNode, MapLazyTreeNodesOptions, MergeLazyTreeOptions } from './composables/use-lazy-tree'
-  import('./composables/use-lazy-tree')
+  export type { TaktLazyTreeNode, MapLazyTreeNodesOptions, MergeLazyTreeOptions } from './composables/useLazyTree'
+  import('./composables/useLazyTree')
   // @ts-ignore
-  export type { UseLoginFieldSyncOptions } from './composables/use-login-field-sync'
-  import('./composables/use-login-field-sync')
+  export type { UseLoginFieldSyncOptions } from './composables/useLoginFieldSync'
+  import('./composables/useLoginFieldSync')
   // @ts-ignore
-  export type { UseTaktFillHeightScrollYOptions } from './composables/use-takt-fill-height-scroll-y'
-  import('./composables/use-takt-fill-height-scroll-y')
+  export type { UseTaktFillHeightScrollYOptions } from './composables/useTaktFillHeightScrollY'
+  import('./composables/useTaktFillHeightScrollY')
   // @ts-ignore
-  export type { UseTaktFormNumberingOptions } from './composables/use-takt-form-numbering'
-  import('./composables/use-takt-form-numbering')
+  export type { UseTaktFormNumberingOptions } from './composables/useTaktFormNumbering'
+  import('./composables/useTaktFormNumbering')
   // @ts-ignore
-  export type { TaktCaptchaPanelExpose, UseTaktLoginCaptchaOptions } from './composables/use-takt-login-captcha'
-  import('./composables/use-takt-login-captcha')
+  export type { TaktCaptchaPanelExpose, UseTaktLoginCaptchaOptions } from './composables/useTaktLoginCaptcha'
+  import('./composables/useTaktLoginCaptcha')
   // @ts-ignore
-  export type { TaktMasterDetailLrScrollMeasureRefs, MeasureMasterDetailLrTableScrollYOptions } from './composables/use-takt-master-detail-lr-scroll-y'
-  import('./composables/use-takt-master-detail-lr-scroll-y')
+  export type { TaktMasterDetailLrScrollMeasureRefs, MeasureMasterDetailLrTableScrollYOptions } from './composables/useTaktMasterDetailLrScrollY'
+  import('./composables/useTaktMasterDetailLrScrollY')
 }
 
 // for vue template auto import
@@ -170,16 +171,16 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
-    readonly BOM_MATERIAL_COST_ITEM_TABLE_NAME: UnwrapRef<typeof import('./composables/use-bom-material-cost-item-recalculate-signalr')['BOM_MATERIAL_COST_ITEM_TABLE_NAME']>
-    readonly EC_GIJUTSU_TABLE_NAME: UnwrapRef<typeof import('./composables/use-ec-gijutsu-persist-signalr')['EC_GIJUTSU_TABLE_NAME']>
-    readonly EC_NOTIFICATION_TABLE_NAME: UnwrapRef<typeof import('./composables/use-ec-change-signalr-refresh')['EC_NOTIFICATION_TABLE_NAME']>
+    readonly BOM_MATERIAL_COST_ITEM_TABLE_NAME: UnwrapRef<typeof import('./composables/useBomMaterialCostItemRecalculateSignalr')['BOM_MATERIAL_COST_ITEM_TABLE_NAME']>
+    readonly EC_GIJUTSU_TABLE_NAME: UnwrapRef<typeof import('./composables/useEcGijutsuPersistSignalr')['EC_GIJUTSU_TABLE_NAME']>
+    readonly EC_NOTIFICATION_TABLE_NAME: UnwrapRef<typeof import('./composables/useEcChangeSignalrRefresh')['EC_NOTIFICATION_TABLE_NAME']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly Modal: UnwrapRef<typeof import('ant-design-vue')['Modal']>
-    readonly QUARTZ_TABLE_NAME: UnwrapRef<typeof import('./composables/use-quartz-signalr-refresh')['QUARTZ_TABLE_NAME']>
-    readonly TAKT_CAPTCHA_BEHAVIOR_TRACK_HEIGHT: UnwrapRef<typeof import('./composables/use-takt-captcha-behavior')['TAKT_CAPTCHA_BEHAVIOR_TRACK_HEIGHT']>
-    readonly TAKT_CAPTCHA_SLIDER_TRACK_HEIGHT: UnwrapRef<typeof import('./composables/use-takt-captcha-slider')['TAKT_CAPTCHA_SLIDER_TRACK_HEIGHT']>
-    readonly TAKT_MASTER_DETAIL_LR_SCROLL_Y_KEY: UnwrapRef<typeof import('./composables/use-takt-master-detail-lr-scroll-y')['TAKT_MASTER_DETAIL_LR_SCROLL_Y_KEY']>
-    readonly WORKFLOW_TABLE_NAMES: UnwrapRef<typeof import('./composables/use-workflow-signalr-refresh')['WORKFLOW_TABLE_NAMES']>
+    readonly QUARTZ_TABLE_NAME: UnwrapRef<typeof import('./composables/useQuartzSignalrRefresh')['QUARTZ_TABLE_NAME']>
+    readonly TAKT_CAPTCHA_BEHAVIOR_TRACK_HEIGHT: UnwrapRef<typeof import('./composables/useTaktCaptchaBehavior')['TAKT_CAPTCHA_BEHAVIOR_TRACK_HEIGHT']>
+    readonly TAKT_CAPTCHA_SLIDER_TRACK_HEIGHT: UnwrapRef<typeof import('./composables/useTaktCaptchaSlider')['TAKT_CAPTCHA_SLIDER_TRACK_HEIGHT']>
+    readonly TAKT_MASTER_DETAIL_LR_SCROLL_Y_KEY: UnwrapRef<typeof import('./composables/useTaktMasterDetailLrScrollY')['TAKT_MASTER_DETAIL_LR_SCROLL_Y_KEY']>
+    readonly WORKFLOW_TABLE_NAMES: UnwrapRef<typeof import('./composables/useWorkflowSignalrRefresh')['WORKFLOW_TABLE_NAMES']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
@@ -190,8 +191,8 @@ declare module 'vue' {
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
-    readonly formatBomMaterialCostItemRecalculateDuration: UnwrapRef<typeof import('./composables/use-bom-material-cost-item-recalculate-signalr')['formatBomMaterialCostItemRecalculateDuration']>
-    readonly formatEcGijutsuPersistDuration: UnwrapRef<typeof import('./composables/use-ec-gijutsu-persist-signalr')['formatEcGijutsuPersistDuration']>
+    readonly formatBomMaterialCostItemRecalculateDuration: UnwrapRef<typeof import('./composables/useBomMaterialCostItemRecalculateSignalr')['formatBomMaterialCostItemRecalculateDuration']>
+    readonly formatEcGijutsuPersistDuration: UnwrapRef<typeof import('./composables/useEcGijutsuPersistSignalr')['formatEcGijutsuPersistDuration']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
@@ -203,17 +204,17 @@ declare module 'vue' {
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
     readonly isShallow: UnwrapRef<typeof import('vue')['isShallow']>
-    readonly isTaktCaptchaDisabledError: UnwrapRef<typeof import('./composables/use-takt-login-captcha')['isTaktCaptchaDisabledError']>
+    readonly isTaktCaptchaDisabledError: UnwrapRef<typeof import('./composables/useTaktLoginCaptcha')['isTaktCaptchaDisabledError']>
     readonly logger: UnwrapRef<typeof import('@/utils/logger')['logger']>
     readonly mapActions: UnwrapRef<typeof import('pinia')['mapActions']>
     readonly mapGetters: UnwrapRef<typeof import('pinia')['mapGetters']>
-    readonly mapLazyTreeNodes: UnwrapRef<typeof import('./composables/use-lazy-tree')['mapLazyTreeNodes']>
+    readonly mapLazyTreeNodes: UnwrapRef<typeof import('./composables/useLazyTree')['mapLazyTreeNodes']>
     readonly mapState: UnwrapRef<typeof import('pinia')['mapState']>
     readonly mapStores: UnwrapRef<typeof import('pinia')['mapStores']>
     readonly mapWritableState: UnwrapRef<typeof import('pinia')['mapWritableState']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
-    readonly measureMasterDetailLrTableScrollY: UnwrapRef<typeof import('./composables/use-takt-master-detail-lr-scroll-y')['measureMasterDetailLrTableScrollY']>
-    readonly mergeLoadedChildren: UnwrapRef<typeof import('./composables/use-lazy-tree')['mergeLoadedChildren']>
+    readonly measureMasterDetailLrTableScrollY: UnwrapRef<typeof import('./composables/useTaktMasterDetailLrScrollY')['measureMasterDetailLrTableScrollY']>
+    readonly mergeLoadedChildren: UnwrapRef<typeof import('./composables/useLazyTree')['mergeLoadedChildren']>
     readonly message: UnwrapRef<typeof import('ant-design-vue')['message']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
     readonly notification: UnwrapRef<typeof import('ant-design-vue')['notification']>
@@ -233,63 +234,65 @@ declare module 'vue' {
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
     readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
-    readonly probeSessionCaptchaRequiredAsync: UnwrapRef<typeof import('./composables/use-takt-login-captcha')['probeSessionCaptchaRequiredAsync']>
+    readonly probeSessionCaptchaRequiredAsync: UnwrapRef<typeof import('./composables/useTaktLoginCaptcha')['probeSessionCaptchaRequiredAsync']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
-    readonly provideTaktMasterDetailLrScrollY: UnwrapRef<typeof import('./composables/use-takt-master-detail-lr-scroll-y')['provideTaktMasterDetailLrScrollY']>
+    readonly provideTaktMasterDetailLrScrollY: UnwrapRef<typeof import('./composables/useTaktMasterDetailLrScrollY')['provideTaktMasterDetailLrScrollY']>
     readonly reactive: UnwrapRef<typeof import('vue')['reactive']>
     readonly readonly: UnwrapRef<typeof import('vue')['readonly']>
     readonly ref: UnwrapRef<typeof import('vue')['ref']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
-    readonly resolveCurrentCompanyRelatedPlantCode: UnwrapRef<typeof import('./composables/use-company-related-plant')['resolveCurrentCompanyRelatedPlantCode']>
-    readonly resolveTableColumnResizeKey: UnwrapRef<typeof import('./composables/use-table-column-resize')['resolveTableColumnResizeKey']>
+    readonly resolveCurrentCompanyRelatedPlantCode: UnwrapRef<typeof import('./composables/useCompanyRelatedPlant')['resolveCurrentCompanyRelatedPlantCode']>
+    readonly resolveTableColumnResizeKey: UnwrapRef<typeof import('./composables/useTableColumnResize')['resolveTableColumnResizeKey']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
     readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
-    readonly taktIsLeafFlag: UnwrapRef<typeof import('./composables/use-lazy-tree')['taktIsLeafFlag']>
+    readonly taktIsLeafFlag: UnwrapRef<typeof import('./composables/useLazyTree')['taktIsLeafFlag']>
     readonly toRaw: UnwrapRef<typeof import('vue')['toRaw']>
     readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
     readonly toValue: UnwrapRef<typeof import('vue')['toValue']>
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
+    readonly useAnalysisPeriodRangeLimit: UnwrapRef<typeof import('./composables/useAnalysisPeriodRangeLimit')['useAnalysisPeriodRangeLimit']>
+    readonly useAnalysisQueryDefaults: UnwrapRef<typeof import('./composables/useAnalysisQueryDefaults')['useAnalysisQueryDefaults']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
-    readonly useBomMaterialCostItemRecalculateSignalR: UnwrapRef<typeof import('./composables/use-bom-material-cost-item-recalculate-signalr')['useBomMaterialCostItemRecalculateSignalR']>
-    readonly useBusinessScopeRouteKey: UnwrapRef<typeof import('./composables/use-business-scope-route-key')['useBusinessScopeRouteKey']>
-    readonly useCompanyRelatedPlant: UnwrapRef<typeof import('./composables/use-company-related-plant')['useCompanyRelatedPlant']>
+    readonly useBomMaterialCostItemRecalculateSignalR: UnwrapRef<typeof import('./composables/useBomMaterialCostItemRecalculateSignalr')['useBomMaterialCostItemRecalculateSignalR']>
+    readonly useBusinessScopeRouteKey: UnwrapRef<typeof import('./composables/useBusinessScopeRouteKey')['useBusinessScopeRouteKey']>
+    readonly useCompanyRelatedPlant: UnwrapRef<typeof import('./composables/useCompanyRelatedPlant')['useCompanyRelatedPlant']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
-    readonly useDatabaseInfoCatalog: UnwrapRef<typeof import('./composables/use-database-info-catalog')['useDatabaseInfoCatalog']>
-    readonly useEcChangeSignalRRefresh: UnwrapRef<typeof import('./composables/use-ec-change-signalr-refresh')['useEcChangeSignalRRefresh']>
-    readonly useEcExecSignalRGroup: UnwrapRef<typeof import('./composables/use-ec-dept-signalr-group')['useEcExecSignalRGroup']>
-    readonly useEcGijutsuPersistSignalR: UnwrapRef<typeof import('./composables/use-ec-gijutsu-persist-signalr')['useEcGijutsuPersistSignalR']>
-    readonly useEntityFieldI18n: UnwrapRef<typeof import('./composables/use-entity-field-i18n')['useEntityFieldI18n']>
-    readonly useGsap: UnwrapRef<typeof import('./composables/use-gsap')['useGsap']>
+    readonly useDatabaseInfoCatalog: UnwrapRef<typeof import('./composables/useDatabaseInfoCatalog')['useDatabaseInfoCatalog']>
+    readonly useEcChangeSignalRRefresh: UnwrapRef<typeof import('./composables/useEcChangeSignalrRefresh')['useEcChangeSignalRRefresh']>
+    readonly useEcExecSignalRGroup: UnwrapRef<typeof import('./composables/useEcDeptSignalrGroup')['useEcExecSignalRGroup']>
+    readonly useEcGijutsuPersistSignalR: UnwrapRef<typeof import('./composables/useEcGijutsuPersistSignalr')['useEcGijutsuPersistSignalR']>
+    readonly useEntityFieldI18n: UnwrapRef<typeof import('./composables/useEntityFieldI18n')['useEntityFieldI18n']>
+    readonly useGsap: UnwrapRef<typeof import('./composables/useGsap')['useGsap']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
-    readonly useLoginFieldSync: UnwrapRef<typeof import('./composables/use-login-field-sync')['useLoginFieldSync']>
+    readonly useLoginFieldSync: UnwrapRef<typeof import('./composables/useLoginFieldSync')['useLoginFieldSync']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
-    readonly useQuartzSignalRRefresh: UnwrapRef<typeof import('./composables/use-quartz-signalr-refresh')['useQuartzSignalRRefresh']>
+    readonly useQuartzSignalRRefresh: UnwrapRef<typeof import('./composables/useQuartzSignalrRefresh')['useQuartzSignalRRefresh']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
-    readonly useTableColumnResize: UnwrapRef<typeof import('./composables/use-table-column-resize')['useTableColumnResize']>
-    readonly useTableRefresh: UnwrapRef<typeof import('./composables/use-table-refresh')['useTableRefresh']>
-    readonly useTaktCaptchaBehavior: UnwrapRef<typeof import('./composables/use-takt-captcha-behavior')['useTaktCaptchaBehavior']>
-    readonly useTaktCaptchaSlider: UnwrapRef<typeof import('./composables/use-takt-captcha-slider')['useTaktCaptchaSlider']>
-    readonly useTaktComponentLocale: UnwrapRef<typeof import('./composables/use-takt-component-locale')['useTaktComponentLocale']>
-    readonly useTaktContentModalWidth: UnwrapRef<typeof import('./composables/use-takt-content-modal-width')['useTaktContentModalWidth']>
-    readonly useTaktFillHeightScrollY: UnwrapRef<typeof import('./composables/use-takt-fill-height-scroll-y')['useTaktFillHeightScrollY']>
-    readonly useTaktFlowSubmit: UnwrapRef<typeof import('./composables/use-takt-flow-submit')['useTaktFlowSubmit']>
-    readonly useTaktFormNumbering: UnwrapRef<typeof import('./composables/use-takt-form-numbering')['useTaktFormNumbering']>
-    readonly useTaktLoginCaptcha: UnwrapRef<typeof import('./composables/use-takt-login-captcha')['useTaktLoginCaptcha']>
-    readonly useTaktMasterDetailLrScrollY: UnwrapRef<typeof import('./composables/use-takt-master-detail-lr-scroll-y')['useTaktMasterDetailLrScrollY']>
-    readonly useTaktTableContainerScrollY: UnwrapRef<typeof import('./composables/use-takt-table-container-scroll-y')['useTaktTableContainerScrollY']>
-    readonly useTaktTableViewportScrollY: UnwrapRef<typeof import('./composables/use-takt-table-viewport-scroll-y')['useTaktTableViewportScrollY']>
+    readonly useTableColumnResize: UnwrapRef<typeof import('./composables/useTableColumnResize')['useTableColumnResize']>
+    readonly useTableRefresh: UnwrapRef<typeof import('./composables/useTableRefresh')['useTableRefresh']>
+    readonly useTaktCaptchaBehavior: UnwrapRef<typeof import('./composables/useTaktCaptchaBehavior')['useTaktCaptchaBehavior']>
+    readonly useTaktCaptchaSlider: UnwrapRef<typeof import('./composables/useTaktCaptchaSlider')['useTaktCaptchaSlider']>
+    readonly useTaktComponentLocale: UnwrapRef<typeof import('./composables/useTaktComponentLocale')['useTaktComponentLocale']>
+    readonly useTaktContentModalWidth: UnwrapRef<typeof import('./composables/useTaktContentModalWidth')['useTaktContentModalWidth']>
+    readonly useTaktFillHeightScrollY: UnwrapRef<typeof import('./composables/useTaktFillHeightScrollY')['useTaktFillHeightScrollY']>
+    readonly useTaktFlowSubmit: UnwrapRef<typeof import('./composables/useTaktFlowSubmit')['useTaktFlowSubmit']>
+    readonly useTaktFormNumbering: UnwrapRef<typeof import('./composables/useTaktFormNumbering')['useTaktFormNumbering']>
+    readonly useTaktLoginCaptcha: UnwrapRef<typeof import('./composables/useTaktLoginCaptcha')['useTaktLoginCaptcha']>
+    readonly useTaktMasterDetailLrScrollY: UnwrapRef<typeof import('./composables/useTaktMasterDetailLrScrollY')['useTaktMasterDetailLrScrollY']>
+    readonly useTaktTableContainerScrollY: UnwrapRef<typeof import('./composables/useTaktTableContainerScrollY')['useTaktTableContainerScrollY']>
+    readonly useTaktTableViewportScrollY: UnwrapRef<typeof import('./composables/useTaktTableViewportScrollY')['useTaktTableViewportScrollY']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
-    readonly useWorkflowSignalRRefresh: UnwrapRef<typeof import('./composables/use-workflow-signalr-refresh')['useWorkflowSignalRRefresh']>
+    readonly useWorkflowSignalRRefresh: UnwrapRef<typeof import('./composables/useWorkflowSignalrRefresh')['useWorkflowSignalRRefresh']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
     readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>

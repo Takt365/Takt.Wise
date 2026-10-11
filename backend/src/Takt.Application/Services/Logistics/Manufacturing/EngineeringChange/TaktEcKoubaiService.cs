@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcKoubaiService.cs
 // 创建时间：2026-07-09
@@ -130,12 +130,12 @@ public class TaktEcKoubaiService : TaktServiceBase, ITaktEcKoubaiService
         entity.IsObsolete = 0;
         var isUnique_ix_takt_logistics_manufacturing_ec_koubai_unique = await _uniqueValidator.IsUniqueAsync(
             _ecKoubaiRepository,
-            x => x.EcDetailId == entity.EcDetailId
-                && x.EcNewMaterialCode == entity.EcNewMaterialCode
-                && x.EcNewPurchaseType == entity.EcNewPurchaseType);
+            x => x.EcCode == entity.EcCode
+                && x.EcNewPurchaseType == entity.EcNewPurchaseType
+                && x.EcNewMaterialCode == entity.EcNewMaterialCode);
         if (!isUnique_ix_takt_logistics_manufacturing_ec_koubai_unique)
         {
-            throw new TaktBusinessException("设变采购执行的EcDetailId、EcNewMaterialCode、EcNewPurchaseType已存在");
+            throw new TaktBusinessException("设变采购执行的设变单号、新采购类型、新物料编码已存在");
         }
         if (entity.LineNumber <= 0)
         {
@@ -168,13 +168,13 @@ public class TaktEcKoubaiService : TaktServiceBase, ITaktEcKoubaiService
         entity.EcOldPartDisposition = keepOldPartDisposition;
         var isUnique_ix_takt_logistics_manufacturing_ec_koubai_unique = await _uniqueValidator.IsUniqueAsync(
             _ecKoubaiRepository,
-            x => x.EcDetailId == entity.EcDetailId
-                && x.EcNewMaterialCode == entity.EcNewMaterialCode
-                && x.EcNewPurchaseType == entity.EcNewPurchaseType,
+            x => x.EcCode == entity.EcCode
+                && x.EcNewPurchaseType == entity.EcNewPurchaseType
+                && x.EcNewMaterialCode == entity.EcNewMaterialCode,
             id);
         if (!isUnique_ix_takt_logistics_manufacturing_ec_koubai_unique)
         {
-            throw new TaktBusinessException("设变采购执行的EcDetailId、EcNewMaterialCode、EcNewPurchaseType已存在");
+            throw new TaktBusinessException("设变采购执行的设变单号、新采购类型、新物料编码已存在");
         }
         await _ecKoubaiRepository.UpdateAsync(entity);
         await _ecExecPersistence.FanOutKoubaiFillableByEcAndNewMaterialAsync(entity);
@@ -306,19 +306,19 @@ public class TaktEcKoubaiService : TaktServiceBase, ITaktEcKoubaiService
             try
             {
                 var entity = rows[i].Adapt<TaktEcKoubai>();
-                var importKey = $"{entity.EcDetailId}|{entity.EcNewMaterialCode}|{entity.EcNewPurchaseType}";
+                var importKey = $"{entity.EcCode}|{entity.EcNewPurchaseType}|{entity.EcNewMaterialCode}";
                 if (!importSeenKeys.Add(importKey))
                 {
-                    throw new TaktBusinessException("与Excel中其他行重复（EcDetailId、EcNewMaterialCode、EcNewPurchaseType）");
+                    throw new TaktBusinessException("与Excel中其他行重复（设变单号、新采购类型、新物料编码）");
                 }
                 var isUnique_ix_takt_logistics_manufacturing_ec_koubai_unique = await _uniqueValidator.IsUniqueAsync(
                     _ecKoubaiRepository,
-                    x => x.EcDetailId == entity.EcDetailId
-                        && x.EcNewMaterialCode == entity.EcNewMaterialCode
-                        && x.EcNewPurchaseType == entity.EcNewPurchaseType);
+                    x => x.EcCode == entity.EcCode
+                        && x.EcNewPurchaseType == entity.EcNewPurchaseType
+                        && x.EcNewMaterialCode == entity.EcNewMaterialCode);
                 if (!isUnique_ix_takt_logistics_manufacturing_ec_koubai_unique)
                 {
-                    throw new TaktBusinessException("设变采购执行的EcDetailId、EcNewMaterialCode、EcNewPurchaseType已存在");
+                    throw new TaktBusinessException("设变采购执行的设变单号、新采购类型、新物料编码已存在");
                 }
                 if (entity.LineNumber <= 0)
                 {

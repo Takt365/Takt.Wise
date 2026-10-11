@@ -1,8 +1,8 @@
-# Takt.Plat
+# TaktWise
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [繁體中文（香港）](README.zh-HK.md)
 
-節拍數字工廠 · 前後端分離企業平台（.NET 9 + Vue 3）。
+節拍智控 · 前後端分離企業平台（.NET 9 + Vue 3）。
 
 > ⚠️ **重要聲明**：本項目為 AI 智能生成（使用 Cursor AI 等 AI 輔助開發工具），代碼由 AI 自動生成並優化。
 >
@@ -51,7 +51,7 @@
 | 樣式 | Tailwind CSS 4.x |
 | 狀態 / 路由 / 請求 | Pinia、vue-router 5、Axios |
 | 國際化 | vue-i18n（靜態 `locales/**` + 後端動態種子） |
-| 工作流設計 | **主路徑** `takt-flow-antflow-designer`（AntFlow 風格樹）；LogicFlow 為實驗視圖 |
+| 工作流設計 | **主路徑** `takt-flow-ant-designer`（AntFlow 風格樹）；LogicFlow 為實驗視圖 |
 | 表單設計 | `@form-create/ant-design-vue` + antd-designer |
 | 富文本 | `@umoteam/editor` |
 | 圖表 | ECharts 6 |
@@ -124,7 +124,7 @@ Takt.Shared          → 分頁、異常、Options、工具類、枚舉/常量
 | **TaktConnectHub** | `/hubs/TaktConnectHub` | 連接/斷開、在線用戶、在線統計、強退 `ForceLogout` |
 | **TaktNotificationHub** | `/hubs/TaktNotificationHub` | 私信、公司內廣播、消息/在線統計推送 |
 
-推送按 **公司 + 用戶** 分組（`TaktSignalRGroupNames`）。調度入口：`ITaktSignalRDispatchService`。前端：`utils/takt-signalr.ts`、`stores/foundation/signalr.ts`。
+推送按 **公司 + 用戶** 分組（`TaktSignalRGroupNames`）。調度入口：`ITaktSignalRDispatchService`。前端：`utils/taktSignalr.ts`、`stores/foundation/signalr.ts`。
 
 ### 審批工作流
 
@@ -138,7 +138,7 @@ Takt.Shared          → 分頁、異常、Options、工具類、枚舉/常量
 |------|------|
 | 引擎 | `TaktFlowEngineService` / `TaktFlowEngineController`（運行時） |
 | 定義 CRUD | `TaktFlowScheme` / `TaktFlowForm` 等 |
-| 前端設計器 | `components/business/takt-flow-antflow-designer/` |
+| 前端設計器 | `components/business/TaktFlowAntDesigner/` |
 | 規範 | `.cursor/rules/09-workflow.mdc` |
 
 ### 其他能力
@@ -167,7 +167,7 @@ Takt.Shared          → 分頁、異常、Options、工具類、枚舉/常量
 | 領域 | 子模組 | 主要能力 |
 |------|--------|----------|
 | **Identity** | 用戶、角色、菜單、租戶、RBAC、認證 | 登錄鑑權、權限分配、多租戶/多公司授權 |
-| **Foundation** | 字典、翻譯、設置、編碼、消息、在線、文化、行政區劃、文件 | 平台基礎數據、站內消息、動態 i18n |
+| **Foundation** | 字典、翻譯、系統屬性、編碼、消息、在線、文化、行政區劃、文件 | 平台基礎數據、站內消息、動態 i18n |
 | **HumanResource** | Organization、Personnel、Attendance、Talent、Benefits、Compensation、Performance、Training | 組織、人事、考勤、薪酬福利、績效培訓 |
 | **Logistics · Materials** | 物料、供應商、廠商、工廠等 | 物料主數據 |
 | **Logistics · Procurement** | 請購 / 採購訂單 / 採購價格等 | 採購業務 |
@@ -188,9 +188,9 @@ Takt.Shared          → 分頁、異常、Options、工具類、枚舉/常量
 ## 項目結構
 
 ```
-Takt.Plat/
+TaktWise/
 ├── backend/
-│   ├── Takt.Plat.slnx
+│   ├── TaktWise.slnx
 │   └── src/
 │       ├── Takt.Shared/           # 公共類型、Options、異常、Enums/Constants
 │       ├── Takt.Domain/           # 實體、倉儲接口（~320）
@@ -231,8 +231,8 @@ Takt.Plat/
 ### 後端
 
 ```bash
-dotnet restore backend/Takt.Plat.slnx
-dotnet build backend/Takt.Plat.slnx -c Release
+dotnet restore backend/TaktWise.slnx
+dotnet build backend/TaktWise.slnx -c Release
 dotnet run --project backend/src/Takt.WebApi/Takt.WebApi.csproj
 ```
 
@@ -310,4 +310,4 @@ node scripts/gen/generate-vue-all-from-api.cjs --CostCenter
 
 [MIT License](LICENSE) · Copyright (c) 2026 Takt Technologies Co., Ltd.
 
-**維護者**：Takt.Plat（Cursor AI 等）
+**維護者**：TaktWise（Cursor AI 等）

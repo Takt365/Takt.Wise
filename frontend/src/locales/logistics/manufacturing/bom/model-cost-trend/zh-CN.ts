@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/manufacturing/bom/model-cost-trend
 // 文件名称：zh-CN.ts
 // 创建时间：2026-07-17
@@ -14,65 +14,25 @@ export default {
   page: {
     title: '机种成本推移',
     periodRange: '核算年月',
-    componentCodeOptional: '物料编码（可选，空=全部）',
-    componentCodesOptional: '物料编码（可多选，空=期间最后月全部）',
-    modelCodesOptional: '机种编码（可多选，空=期间最后月全部）',
-    componentAll: '全部物料',
+    modelOptional: '机种（可选，空=全部）',
     modelAll: '全部机种',
     selectPlantRequired: '请选择工厂代码',
     selectPeriodRequired: '请选择核算期间',
     selectMaterialTypeRequired: '请选择物料类型',
-    selectModelRequired: '请选择机种编码',
-    selectProductRequired: '请选择产品编码',
-    selectMasterFirst: '请先选择工厂并查询',
-    tabs: {
-      summary: '机种成本推移',
-      detail: '差异组件推移',
-    },
     summary:
-      '{plant} / 机种 {model} / 物料 {component} — 产品组 {productCount} 个，材料行 {componentCount} 条（范围=期间最后月机种与物料；明细仅期间内）',
-    summaryDetail:
-      '{plant} / 机种 {model} / 物料 {component} — 产品组 {productCount} 个，差异组件 {componentCount} 条（范围=期间最后月；按月对比有无）',
-    modelTrendSummary: '机种月材料成本 {base} → {compare}：{cost}（{trend}，差额 {variance}，{percent}）',
-    trendSummary: '分析行环比 {base} → {compare}：涨 {up} · 跌 {down} · 平 {flat}',
-    productCodes: '产品组',
-    modelGroup: '机种组',
-    productCount: '产品数',
+      '{plant} / {materialType} / {period} / 机种 {model} — 成品 {productCount} 个（组件差异取 {compare}）',
     export: '导出机种成本推移',
     exportSuccess: '机种成本推移导出成功',
     exportFailed: '机种成本推移导出失败',
     queryFailed: '机种成本推移查询失败',
-    filter: {
-      all: '全部',
-      changed: '仅变动',
-    },
-    sort: {
-      productCountDesc: '产品数降序（全表）',
-      productCountAsc: '产品数升序（全表）',
-      trend: '涨跌优先（全表）',
-      varianceDesc: '差额绝对值降序（全表）',
-    },
-    trend: {
-      none: '—',
-      up: '涨',
-      down: '跌',
-      flat: '平',
-      new: '新增',
-      removed: '剔除',
-    },
-    periodChange: {
-      present: '有',
-      absent: '无',
-      new: '新增',
-      removed: '剔除',
-      up: '涨',
-      down: '跌',
-      flat: '平',
-    },
     columns: {
-      trend: '涨跌',
-      varianceAmount: '环比差额',
-      variancePercent: '环比%',
+      model: '机种',
+      product: '产品',
+      productDescription: '产品描述',
+      variance: '差异',
+      commonPrice: '共通价格',
+      variancePrice: '差异价格',
+      componentVariance: '组件差异',
     },
   },
 };

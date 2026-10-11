@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Quality
 // 文件名称：TaktIpqcOrderItem.cs
 // 功能描述：IPQC制程检验单明细实体

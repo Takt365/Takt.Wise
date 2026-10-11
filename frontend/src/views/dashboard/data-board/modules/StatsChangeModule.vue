@@ -1,6 +1,6 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
-<!-- 命名空间：frontend/src/views/dashboard/data-board/modules -->
+<!-- 项目名称：节拍智控·TaktWise -->
+<!-- 命名空间：frontend/src/views/dashboard/dataBoard.types/modules -->
 <!-- 文件名称：StatsChangeModule.vue -->
 <!-- 功能描述：数据看板设变统计（设变摘要 + 未实施/实施中/已实施） -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
@@ -29,13 +29,12 @@
 /**
  * 设变统计：TaktEcGijutsus/stat 当月摘要；Kanban 实施中；部门行未实施/已实施
  */
-import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import StatsMetricGrid from '../components/stats-metric-grid.vue'
-import { usePermissionStore } from '@/stores/identity/permission'
-import { TaktEcImplementationStatus } from '@/constants/logistics/ec-implementation-status'
-import type { EcGijutsuStat } from '@/types/logistics/manufacturing/engineering-change/ec-gijutsu'
-import { enrichDashboardMetricItems } from '../utils/stats-metric-dashboard'
+import StatsMetricGrid from '../components/StatsMetricGrid.vue'
+import { usePermissionStore } from '@/stores/identity/usePermissionStore'
+import { TaktEcImplementationStatus } from '@/constants/logistics/ecImplementationStatus.constants'
+import type { EcGijutsuStat } from '@/types/logistics/manufacturing/engineering-change/ecGijutsu.types'
+import { enrichDashboardMetricItems } from '../utils/statsMetricDashboard'
 import {
   DASHBOARD_STATS_API,
   DASHBOARD_STATS_PERMISSION,
@@ -45,7 +44,7 @@ import {
   fetchDashboardPagedTotal,
   getCurrentMonthRange,
   scheduleDashboardLoad,
-} from '../utils/stats-query'
+} from '../utils/statsQuery'
 
 /** isImplemented：未实施 */
 const EC_DEPT_NOT_IMPLEMENTED = 0

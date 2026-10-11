@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomMaterialCostItemLineCostHelper.cs
 // 创建时间：2026-07-13
@@ -105,7 +105,7 @@ public static class TaktBomMaterialCostItemLineCostHelper
     /// <returns>Excel 用小数（如 -0.0034）；空则 null</returns>
     public static decimal? ToExcelPercent(decimal? percentPoints)
     {
-        if (!percentPoints.HasValue)
+        if (!percentPoints.HasValue || percentPoints.Value == 0m)
         {
             return null;
         }

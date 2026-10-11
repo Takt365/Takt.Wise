@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Sales
 // 文件名称：TaktSalesGroup.cs
 // 创建时间：2026-07-08
@@ -26,9 +26,9 @@ namespace Takt.Domain.Entities.Logistics.Sales;
 public class TaktSalesGroup : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 销售组编码（3）
+    /// 销售组编码（与员工编码同长 6）
     /// </summary>
-    [SugarColumn(ColumnName = "sales_group_code", ColumnDescription = "销售组编码", ColumnDataType = "nvarchar", Length = 3, IsNullable = false)]
+    [SugarColumn(ColumnName = "sales_group_code", ColumnDescription = "销售组编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string SalesGroupCode { get; set; } = string.Empty;
 
     /// <summary>

@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/quality/cost/assurance-outgoing -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：品质业务主表管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -162,11 +162,11 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('recorder')">
-      <a-form-item :label="t('entity.qualityassurance.recorder')">
+      <div v-show="isFieldVisible('recordGroupName')">
+      <a-form-item :label="t('entity.qualityassurance.recordgroupname')">
         <a-input
-          v-model:value="advancedQueryForm.recorder"
-          :placeholder="t('common.page.form.placeholder.required', { field: t('entity.qualityassurance.recorder') })"
+          v-model:value="advancedQueryForm.recordGroupName"
+          :placeholder="t('common.page.form.placeholder.required', { field: t('entity.qualityassurance.recordgroupname') })"
           show-count
           :maxlength="30"
           allow-clear
@@ -299,20 +299,19 @@
  * 品质业务主表管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/quality/cost/assurance-outgoing
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import QualityAssuranceForm from './components/assurance-form.vue'
-import QualityAssuranceOutgoingPanel from './components/assurance-outgoing-panel.vue'
-import { provideQualityAssuranceMasterContext } from './composables/use-assurance-master-context'
-import { getQualityAssuranceList, getQualityAssuranceById, createQualityAssurance, updateQualityAssurance, deleteQualityAssuranceById, deleteQualityAssuranceBatch, getQualityAssuranceTemplate, importQualityAssurance, exportQualityAssurance } from '@/api/logistics/quality/cost/assurance'
-import type { QualityAssurance, QualityAssuranceQuery } from '@/types/logistics/quality/cost/assurance'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import QualityAssuranceForm from './components/AssuranceForm.vue'
+import QualityAssuranceOutgoingPanel from './components/AssuranceOutgoingPanel.vue'
+import { provideQualityAssuranceMasterContext } from './composables/useAssuranceMasterContext'
+import { getQualityAssuranceList, getQualityAssuranceById, createQualityAssurance, updateQualityAssurance, deleteQualityAssuranceById, deleteQualityAssuranceBatch, getQualityAssuranceTemplate, importQualityAssurance, exportQualityAssurance } from '@/api/logistics/quality/cost/assurance.api'
+import type { QualityAssurance, QualityAssuranceQuery } from '@/types/logistics/quality/cost/assurance.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 /** i18n 翻译函数 */
@@ -365,7 +364,7 @@ const advancedQueryForm = ref({
   assuranceMonth: '',
   customerName: '',
   debitNoteCode: '',
-  recorder: '',
+  recordGroupName: '',
   totalQualityCost: undefined as number | undefined,
   currencyCode: '',
   createdAtStart: '',
@@ -380,7 +379,7 @@ const queryFieldsMeta = computed(() => [
   { key: 'assuranceMonth', label: t('entity.qualityassurance.assurancemonth') },
   { key: 'customerName', label: t('entity.qualityassurance.customername') },
   { key: 'debitNoteCode', label: t('entity.qualityassurance.debitnoteCode') },
-  { key: 'recorder', label: t('entity.qualityassurance.recorder') },
+  { key: 'recordGroupName', label: t('entity.qualityassurance.recordgroupname') },
   { key: 'totalQualityCost', label: t('entity.qualityassurance.totalqualitycost') },
   { key: 'currencyCode', label: t('entity.qualityassurance.currencyCode') },
   { key: 'createdAtStart', label: t('common.page.entity.createdatstart') },
@@ -433,7 +432,7 @@ function buildListQuery(overrides?: Partial<QualityAssuranceQuery>): QualityAssu
   assignTrimmed('assuranceMonth', form.assuranceMonth)
   assignTrimmed('customerName', form.customerName)
   assignTrimmed('debitNoteCode', form.debitNoteCode)
-  assignTrimmed('recorder', form.recorder)
+  assignTrimmed('recordGroupName', form.recordGroupName)
   if (form.totalQualityCost !== undefined && form.totalQualityCost !== null) {
     query.totalQualityCost = form.totalQualityCost
   }
@@ -558,13 +557,13 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getQualityAssuranceField(record, 'debitNoteCode') ?? ''
   },
   {
-    title: t('entity.qualityassurance.recorder'),
-    dataIndex: 'recorder',
-    key: 'recorder',
+    title: t('entity.qualityassurance.recordgroupname'),
+    dataIndex: 'recordGroupName',
+    key: 'recordGroupName',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getQualityAssuranceField(record, 'recorder') ?? ''
+    customRender: ({ record }: { record: any }) => getQualityAssuranceField(record, 'recordGroupName') ?? ''
   },
   {
     title: t('entity.qualityassurance.totalqualitycost'),
@@ -678,7 +677,7 @@ function handleReset() {
   assuranceMonth: '',
   customerName: '',
   debitNoteCode: '',
-  recorder: '',
+  recordGroupName: '',
   totalQualityCost: undefined as number | undefined,
   currencyCode: '',
   createdAtStart: '',
@@ -877,7 +876,7 @@ function handleAdvancedQueryReset() {
   assuranceMonth: '',
   customerName: '',
   debitNoteCode: '',
-  recorder: '',
+  recordGroupName: '',
   totalQualityCost: undefined as number | undefined,
   currencyCode: '',
   createdAtStart: '',

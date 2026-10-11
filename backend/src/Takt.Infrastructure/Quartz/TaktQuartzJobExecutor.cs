@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Quartz
 // 文件名称：TaktQuartzJobExecutor.cs
 // 创建时间：2026-06-11
@@ -20,6 +20,7 @@ using Takt.Domain.Entities.Foundation;
 using Takt.Domain.Entities.Statistics.Logging;
 using Takt.Domain.Interfaces;
 using Takt.Infrastructure.Data.Context;
+using Takt.Infrastructure.Extensions;
 using Takt.Infrastructure.Repositories;
 using Takt.Shared.Constants;
 using Takt.Shared.Enums;
@@ -111,6 +112,7 @@ public sealed class TaktQuartzJobExecutor
             task.TaskType,
             UserName,
             manualTrigger))
+        using (TaktSqlSugarAuditAop.BeginSuppressDiffLog())
         {
             var stopwatch = Stopwatch.StartNew();
             var executeTime = DateTime.Now;
@@ -238,8 +240,9 @@ public sealed class TaktQuartzJobExecutor
                 TaktQuartzSyncExecuteParamsHelper.ValidateDatabaseName(targetDatabase);
                 var (resolvedTenant, connectionString) = ResolveTenantConnectionByDatabaseName(targetDatabase);
                 targetDbScope = _sqlSugarContext.UseDatabaseConnection(resolvedTenant, connectionString);
+                var liveDatabase = _sqlSugarContext.Db.Ado.Connection?.Database ?? string.Empty;
                 TaktQuartzJobExecutionLogger.LogProgress(
-                    $"Assembly 已切换目标库：TargetDb={targetDatabase}，ConfigTenant={resolvedTenant}",
+                    $"Assembly 已切换目标库：TargetDb={targetDatabase}，LiveDb={liveDatabase}，ConfigTenant={resolvedTenant}",
                     task.Id);
             }
             var handler = _handlers.FirstOrDefault(x =>
@@ -343,10 +346,13 @@ public sealed class TaktQuartzJobExecutor
             TaktQuartzSyncExecuteParamsHelper.ValidateDatabaseName(targetDatabase);
         }
         var database = _configuration.RequireDatabase();
-        var plantCode = database.GetPlantCodeForCompanyCode(task.CompanyCode);
+        // 优先任务自身 PlantCode；空则按 Database:CompanyCodes↔PlantCodes 映射（与种子一致）
+        var plantCode = !string.IsNullOrWhiteSpace(task.PlantCode)
+            ? task.PlantCode.Trim()
+            : database.GetPlantCodeForCompanyCode(task.CompanyCode);
         var cultureCode = string.IsNullOrWhiteSpace(task.CultureCode)
             ? database.GetCultureCodeForCompanyCode(task.CompanyCode)
-            : task.CultureCode;
+            : task.CultureCode.Trim();
         var sql = await TaktQuartzSqlScriptHelper.ResolveExecutableSqlAsync(
             task.SqlScript,
             task.TenantCode,
@@ -559,7 +565,7 @@ public sealed class TaktQuartzJobExecutor
     /// <param name="context">Quartz 上下文</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>写入后的执行日志</returns>
-    private static async Task<TaktQuartzLog> PersistExecutionResultAsync(
+    private async Task<TaktQuartzLog> PersistExecutionResultAsync(
         TaktSeedContext seedContext,
         TaktQuartzTask task,
         DateTime executeTime,
@@ -582,6 +588,11 @@ public sealed class TaktQuartzJobExecutor
             executeStatus,
             executeIp,
             executeHost);
+        TaktCompanyScopeFillHelper.ApplyCompanyScopeFromConfiguration(
+            log,
+            log.TenantCode,
+            log.CompanyCode,
+            _configuration);
         log.Id = await TaktPrimaryKeyInsertHelper.InsertEntityReturnInt64Async(
             seedContext.Db,
             log,

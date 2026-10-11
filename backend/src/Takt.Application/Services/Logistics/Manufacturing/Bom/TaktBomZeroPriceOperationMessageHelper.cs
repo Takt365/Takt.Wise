@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomZeroPriceOperationMessageHelper.cs
 // 创建时间：2026-08-17
@@ -101,7 +101,7 @@ public static class TaktBomZeroPriceOperationMessageHelper
     /// </summary>
     /// <param name="result">结果</param>
     /// <returns>正文</returns>
-    public static string BuildPurchasePriceBackfillSuccess(TaktBomCalculatePurchasePriceBackfillResultDto result)
+    public static string BuildPurchaseInfoRecordBackfillSuccess(TaktBomCalculatePurchaseInfoRecordBackfillResultDto result)
     {
         ArgumentNullException.ThrowIfNull(result);
         return $"{result.ProcessedMonth} 回填采购价完成：扫描 {result.ScannedRowCount} 行，更新 {result.UpdatedRowCount}，无价格 {result.SkippedNoPriceCount}，未变化 {result.UnchangedRowCount}";

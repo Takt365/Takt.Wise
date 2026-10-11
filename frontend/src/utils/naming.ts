@@ -1,10 +1,10 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/utils
 // 文件名称：naming.ts
 // 创建时间：2026-05-22
 // 创建人：Takt365(Cursor AI)
-// 功能描述：与后端 TaktNamingHelper 对齐的 Excel 导入导出命名（sheet / fileName）、部门显示名 org.dept.* 键
+// 功能描述：与后端 TaktNamingHelper 对齐的 Excel 导入导出命名（sheet / fileName）、部门显示名 org.dept.* 键、推移导出 {工厂}_{报表名}
 //
 // 版权信息：Copyright (c) 2025 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -64,4 +64,41 @@ export function taktOrgDeptI18nKey(deptCode: string | null | undefined): string 
     throw new Error(`部门编码只能包含字母和数字：${deptCode}`);
   }
   return `org.dept.${code}`;
+}
+
+/**
+ * 与后端 TaktNamingHelper.PlantPrefixedTrendExportBase 一致：{工厂码}_{报表名}
+ * @param {string} plantCode 选中工厂码，如 C100
+ * @param {string} reportLabel 报表短名（已本地化），如 月销售推移 / Monthly Sales Trend
+ * @returns {string} 导出基名（不含扩展名与时间戳）
+ */
+export function taktPlantPrefixedTrendExportBase(plantCode: string, reportLabel: string): string {
+  const plant = (plantCode || '').trim();
+  let label = (reportLabel || '').trim();
+  if (!plant) {
+    throw new Error('plantCode 不能为空');
+  }
+  if (label.toLowerCase().endsWith('.xlsx')) {
+    label = label.slice(0, -5).trimEnd();
+  }
+  label = label.replace(/[/\\?%*:|"<>]/g, '_').replace(/\s+/g, ' ').trim();
+  if (!label) {
+    throw new Error('reportLabel 不能为空');
+  }
+  return `${plant}_${label}`;
+}
+
+/**
+ * 推移导出：本地化报表名 → sheetName + 工厂前缀 exportName / fallbackBase
+ * @param {string} plantCode 工厂码
+ * @param {string} reportTitle 本地化报表名（如 t('….page.title')）
+ * @returns {{ sheetName: string; exportName: string; fallbackBase: string }}
+ */
+export function taktTrendExportFileNames(
+  plantCode: string,
+  reportTitle: string,
+): { sheetName: string; exportName: string; fallbackBase: string } {
+  const sheetName = (reportTitle || '').trim().replace(/[/\\?%*:|"<>]/g, '_').replace(/\s+/g, ' ').trim();
+  const exportName = taktPlantPrefixedTrendExportBase(plantCode, sheetName);
+  return { sheetName, exportName, fallbackBase: exportName };
 }

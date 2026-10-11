@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Quality
 // 文件名称：TaktInspectionStandard.cs
 // 功能描述：检验标准实体，定义IQC/IPQC/FQC的检验项目和标准

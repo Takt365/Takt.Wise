@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Bom
 // 文件名称：TaktRoutingService.cs
 // 创建时间：2026-08-22
@@ -507,6 +507,8 @@ public class TaktRoutingService : TaktServiceBase, ITaktRoutingService
                 || (x.PlantCode != null && x.PlantCode.Contains(keywords))
                 || (x.WorkCenter != null && x.WorkCenter.Contains(keywords))
                 || (x.RoutingCode != null && x.RoutingCode.Contains(keywords))
+                || (x.RoutingGroupCode != null && x.RoutingGroupCode.Contains(keywords))
+                || (x.RoutingGroupName != null && x.RoutingGroupName.Contains(keywords))
                 || (x.RoutingName != null && x.RoutingName.Contains(keywords))
                 || (x.MaterialCode != null && x.MaterialCode.Contains(keywords))
                 || (x.Version != null && x.Version.Contains(keywords))
@@ -538,6 +540,18 @@ public class TaktRoutingService : TaktServiceBase, ITaktRoutingService
         {
             var routingCode = queryDto.RoutingCode;
             exp = exp.And(x => x.RoutingCode != null && x.RoutingCode.Contains(routingCode));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.RoutingGroupCode))
+        {
+            var routingGroupCode = queryDto.RoutingGroupCode;
+            exp = exp.And(x => x.RoutingGroupCode == routingGroupCode);
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.RoutingGroupName))
+        {
+            var routingGroupName = queryDto.RoutingGroupName;
+            exp = exp.And(x => x.RoutingGroupName != null && x.RoutingGroupName.Contains(routingGroupName));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.RoutingName))
@@ -655,6 +669,14 @@ public class TaktRoutingService : TaktServiceBase, ITaktRoutingService
             return true;
         }
         if (!string.IsNullOrWhiteSpace(queryDto.RoutingCode))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.RoutingGroupCode))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.RoutingGroupName))
         {
             return true;
         }

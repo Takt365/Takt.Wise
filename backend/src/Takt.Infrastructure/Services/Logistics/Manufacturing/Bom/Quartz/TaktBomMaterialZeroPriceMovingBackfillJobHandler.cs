@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Services.Logistics.Manufacturing.Bom.Quartz
 // 文件名称：TaktBomMaterialZeroPriceMovingBackfillJobHandler.cs
 // 创建时间：2026-08-19
@@ -61,8 +61,11 @@ public sealed class TaktBomMaterialZeroPriceMovingBackfillJobHandler : ITaktQuar
                 task.CompanyCode);
             return;
         }
+        var itemTable = string.IsNullOrWhiteSpace(result.ItemPhysicalTable)
+            ? string.Empty
+            : $"，明细表 {result.ItemPhysicalTable.Trim()}";
         context.ExecuteMessage =
-            $"零价格回填完成（月份 {result.ProcessedMonth}）：组件 {result.ComponentProcessedCount}，扫描 {result.ScannedRowCount}，更新 {result.UpdatedRowCount}，无建议价跳过 {result.SkippedNoPriceCount}，未变 {result.UnchangedRowCount}，产品月成本 {result.ProductMonthlyCostUpdatedCount}，机种月均 {result.ModelMonthlyAverageUpdatedCount}";
+            $"零价格回填完成（月份 {result.ProcessedMonth}）：组件 {result.ComponentProcessedCount}，扫描 {result.ScannedRowCount}，更新 {result.UpdatedRowCount}，无建议价跳过 {result.SkippedNoPriceCount}，未变 {result.UnchangedRowCount}，产品月成本 {result.ProductMonthlyCostUpdatedCount}，机种月均 {result.ModelMonthlyAverageUpdatedCount}{itemTable}";
         TaktLogger.Information(
             "[BomZeroPriceMpBk] Quartz 完成 Month={Month} Components={Components} Scanned={Scanned} Updated={Updated} SkippedNoPrice={Skipped} Unchanged={Unchanged} Pmc={Pmc} ModelAvg={ModelAvg} Tenant={Tenant} Company={Company}",
             result.ProcessedMonth,

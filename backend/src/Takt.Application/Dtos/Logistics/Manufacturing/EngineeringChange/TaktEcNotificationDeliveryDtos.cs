@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcNotificationDeliveryDtos.cs
 // 创建时间：2026-08-11
@@ -68,14 +68,14 @@ public class TaktEcNotificationDeliveryDto : TaktCompanyDtoBase
     public string EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 目标部门编码（TaktDept.DeptCode，如 D0710、D0810）
+    /// 设变部门编码（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）
     /// </summary>
-    public string DeptCode { get; set; } = string.Empty;
+    public string EcDeptGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 目标部门名称（冗余）
+    /// 设变部门名称（冗余：按 EcDeptGroupCode 取 TaktDept.DeptName1 联动）
     /// </summary>
-    public string? DeptName { get; set; } = string.Empty;
+    public string? EcDeptGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 优先级（1=普通，2=高，3=紧急）
@@ -93,15 +93,14 @@ public class TaktEcNotificationDeliveryDto : TaktCompanyDtoBase
     public DateTime? SentAt { get; set; }
 
     /// <summary>
-    /// 确认人用户 ID
+    /// 确认组编码（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ConfirmedByUserId { get; set; }
+    public string? ConfirmedByGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 确认人用户名
+    /// 确认组名称（冗余：按 ConfirmedByGroupCode 取 TaktEcGroups.EcGroupName 联动）
     /// </summary>
-    public string? ConfirmedByUserName { get; set; } = string.Empty;
+    public string? ConfirmedByGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 确认时间
@@ -163,14 +162,14 @@ public class TaktEcNotificationDeliveryQueryDto : TaktPagedQuery
     public string? EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 目标部门编码（TaktDept.DeptCode，如 D0710、D0810）
+    /// 设变部门编码（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）
     /// </summary>
-    public string? DeptCode { get; set; } = string.Empty;
+    public string? EcDeptGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 目标部门名称（冗余）
+    /// 设变部门名称（冗余：按 EcDeptGroupCode 取 TaktDept.DeptName1 联动）
     /// </summary>
-    public string? DeptName { get; set; } = string.Empty;
+    public string? EcDeptGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 优先级（1=普通，2=高，3=紧急）
@@ -193,15 +192,14 @@ public class TaktEcNotificationDeliveryQueryDto : TaktPagedQuery
     public DateTime? SentAtEnd { get; set; }
 
     /// <summary>
-    /// 确认人用户 ID
+    /// 确认组编码（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ConfirmedByUserId { get; set; }
+    public string? ConfirmedByGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 确认人用户名
+    /// 确认组名称（冗余：按 ConfirmedByGroupCode 取 TaktEcGroups.EcGroupName 联动）
     /// </summary>
-    public string? ConfirmedByUserName { get; set; } = string.Empty;
+    public string? ConfirmedByGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 确认时间（范围查询-开始）
@@ -288,15 +286,15 @@ public class TaktEcNotificationDeliveryCreateDto
     public string EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 目标部门编码（TaktDept.DeptCode，如 D0710、D0810）
+    /// 设变部门编码（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）
     /// </summary>
-    [Required(ErrorMessage = "目标部门编码（TaktDept.DeptCode，如 D0710、D0810）不能为空")]
-    public string DeptCode { get; set; } = string.Empty;
+    [Required(ErrorMessage = "设变部门编码（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）不能为空")]
+    public string EcDeptGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 目标部门名称（冗余）
+    /// 设变部门名称（冗余：按 EcDeptGroupCode 取 TaktDept.DeptName1 联动）
     /// </summary>
-    public string? DeptName { get; set; } = string.Empty;
+    public string? EcDeptGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 优先级（1=普通，2=高，3=紧急）
@@ -314,15 +312,14 @@ public class TaktEcNotificationDeliveryCreateDto
     public DateTime? SentAt { get; set; }
 
     /// <summary>
-    /// 确认人用户 ID
+    /// 确认组编码（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ConfirmedByUserId { get; set; }
+    public string? ConfirmedByGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 确认人用户名
+    /// 确认组名称（冗余：按 ConfirmedByGroupCode 取 TaktEcGroups.EcGroupName 联动）
     /// </summary>
-    public string? ConfirmedByUserName { get; set; } = string.Empty;
+    public string? ConfirmedByGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 确认时间
@@ -437,14 +434,14 @@ public class TaktEcNotificationDeliveryTemplateDto
     public string? EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 目标部门编码（TaktDept.DeptCode，如 D0710、D0810）
+    /// 设变部门编码（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）
     /// </summary>
-    public string? DeptCode { get; set; } = string.Empty;
+    public string? EcDeptGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 目标部门名称（冗余）
+    /// 设变部门名称（冗余：按 EcDeptGroupCode 取 TaktDept.DeptName1 联动）
     /// </summary>
-    public string? DeptName { get; set; } = string.Empty;
+    public string? EcDeptGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 优先级（1=普通，2=高，3=紧急）
@@ -462,15 +459,14 @@ public class TaktEcNotificationDeliveryTemplateDto
     public DateTime? SentAt { get; set; }
 
     /// <summary>
-    /// 确认人用户 ID
+    /// 确认组编码（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ConfirmedByUserId { get; set; }
+    public string? ConfirmedByGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 确认人用户名
+    /// 确认组名称（冗余：按 ConfirmedByGroupCode 取 TaktEcGroups.EcGroupName 联动）
     /// </summary>
-    public string? ConfirmedByUserName { get; set; } = string.Empty;
+    public string? ConfirmedByGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 确认时间
@@ -537,14 +533,14 @@ public class TaktEcNotificationDeliveryImportDto
     public string? EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 目标部门编码（TaktDept.DeptCode，如 D0710、D0810）
+    /// 设变部门编码（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）
     /// </summary>
-    public string? DeptCode { get; set; } = string.Empty;
+    public string? EcDeptGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 目标部门名称（冗余）
+    /// 设变部门名称（冗余：按 EcDeptGroupCode 取 TaktDept.DeptName1 联动）
     /// </summary>
-    public string? DeptName { get; set; } = string.Empty;
+    public string? EcDeptGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 优先级（1=普通，2=高，3=紧急）
@@ -562,15 +558,14 @@ public class TaktEcNotificationDeliveryImportDto
     public DateTime? SentAt { get; set; }
 
     /// <summary>
-    /// 确认人用户 ID
+    /// 确认组编码（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ConfirmedByUserId { get; set; }
+    public string? ConfirmedByGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 确认人用户名
+    /// 确认组名称（冗余：按 ConfirmedByGroupCode 取 TaktEcGroups.EcGroupName 联动）
     /// </summary>
-    public string? ConfirmedByUserName { get; set; } = string.Empty;
+    public string? ConfirmedByGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 确认时间
@@ -633,14 +628,14 @@ public class TaktEcNotificationDeliveryExportDto
     public string EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 目标部门编码（TaktDept.DeptCode，如 D0710、D0810）
+    /// 设变部门编码（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）
     /// </summary>
-    public string DeptCode { get; set; } = string.Empty;
+    public string EcDeptGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 目标部门名称（冗余）
+    /// 设变部门名称（冗余：按 EcDeptGroupCode 取 TaktDept.DeptName1 联动）
     /// </summary>
-    public string? DeptName { get; set; } = string.Empty;
+    public string? EcDeptGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 优先级（1=普通，2=高，3=紧急）
@@ -658,15 +653,14 @@ public class TaktEcNotificationDeliveryExportDto
     public DateTime? SentAt { get; set; }
 
     /// <summary>
-    /// 确认人用户 ID
+    /// 确认组编码（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ConfirmedByUserId { get; set; }
+    public string? ConfirmedByGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 确认人用户名
+    /// 确认组名称（冗余：按 ConfirmedByGroupCode 取 TaktEcGroups.EcGroupName 联动）
     /// </summary>
-    public string? ConfirmedByUserName { get; set; } = string.Empty;
+    public string? ConfirmedByGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 确认时间

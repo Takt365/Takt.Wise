@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Statistics.Logging
 // 文件名称：TaktOperLogService.cs
 // 创建时间：2026-06-12
@@ -74,6 +74,44 @@ public class TaktOperLogService : TaktServiceBase, ITaktOperLogService
             total,
             queryDto.PageIndex,
             queryDto.PageSize);
+    }
+
+    /// <summary>
+    /// 获取当前登录用户的操作日志列表（分页；强制精确匹配当前 UserName）
+    /// </summary>
+    /// <param name="queryDto">查询DTO（高级条件可用；UserName 由服务端清空后强制精确匹配当前用户）</param>
+    /// <returns>分页结果</returns>
+    public async Task<TaktPagedResult<TaktOperLogDto>> GetMyOperLogListAsync(TaktOperLogQueryDto queryDto)
+    {
+        var userName = CurrentUserName?.Trim();
+        if (string.IsNullOrEmpty(userName))
+        {
+            return TaktPagedResult<TaktOperLogDto>.Create(
+                new List<TaktOperLogDto>(),
+                0,
+                queryDto.PageIndex,
+                queryDto.PageSize);
+        }
+
+        // 禁止客户端通过高级查询 UserName 越权查看他人日志
+        queryDto.UserName = null;
+
+        var pageIndex = TaktPagedClamp.NormalizePageIndex(queryDto.PageIndex);
+        var pageSize = TaktPagedClamp.NormalizePageSize(queryDto.PageSize);
+        var basePredicate = QueryExpression(queryDto);
+        var userNameLower = userName.ToLowerInvariant();
+        var exp = Expressionable.Create<TaktOperLog>();
+        exp = exp.And(basePredicate);
+        exp = exp.And(x => x.UserName != null && x.UserName.ToLower() == userNameLower);
+        var predicate = exp.ToExpression();
+        var (data, total) = await _operLogRepository.GetPagedAsync(pageIndex, pageSize, predicate);
+        var dtos = data.Adapt<List<TaktOperLogDto>>();
+        foreach (var dto in dtos)
+        {
+            EnrichOperLogDto(dto);
+        }
+
+        return TaktPagedResult<TaktOperLogDto>.Create(dtos, total, pageIndex, pageSize);
     }
 
     /// <summary>
@@ -232,28 +270,32 @@ public class TaktOperLogService : TaktServiceBase, ITaktOperLogService
     {
         var exp = Expressionable.Create<TaktOperLog>();
 
-        if (!string.IsNullOrEmpty(queryDto?.KeyWords))
+        if (!string.IsNullOrWhiteSpace(queryDto?.KeyWords))
         {
-            var keywords = queryDto.KeyWords;
+            var keywords = queryDto.KeyWords!.Trim();
+            var keywordsLower = keywords.ToLower();
             exp = exp.And(x =>
-                (x.UserName != null && x.UserName.Contains(keywords))
+                (x.TenantCode != null && x.TenantCode.Contains(keywords))
+                || (x.PlantCode != null && x.PlantCode.ToLower().Contains(keywordsLower))
+                || (x.CompanyCode != null && x.CompanyCode.ToLower().Contains(keywordsLower))
+                || (x.CultureCode != null && x.CultureCode.Contains(keywords))
+                || (x.UserName != null && x.UserName.Contains(keywords))
                 || (x.OperModule != null && x.OperModule.Contains(keywords))
-                || x.OperType.Contains(keywords)
+                || (x.OperType != null && x.OperType.Contains(keywords))
                 || (x.OperMethod != null && x.OperMethod.Contains(keywords))
                 || (x.RequestMethod != null && x.RequestMethod.Contains(keywords))
                 || (x.OperUrl != null && x.OperUrl.Contains(keywords))
                 || (x.RequestParam != null && x.RequestParam.Contains(keywords))
                 || (x.JsonResult != null && x.JsonResult.Contains(keywords))
-                || SqlFunc.ToString(x.OperStatus).Contains(keywords)
                 || (x.ErrorMsg != null && x.ErrorMsg.Contains(keywords))
                 || (x.OperIp != null && x.OperIp.Contains(keywords))
                 || (x.OperLocation != null && x.OperLocation.Contains(keywords))
-                || SqlFunc.ToString(x.ElapsedTime).Contains(keywords)
-                || (x.CultureCode != null && x.CultureCode.Contains(keywords))
+                || (x.UserAgent != null && x.UserAgent.Contains(keywords))
+                || (x.Browser != null && x.Browser.Contains(keywords))
+                || (x.Os != null && x.Os.Contains(keywords))
+                || (x.DeviceType != null && x.DeviceType.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
-                || SqlFunc.ToString(x.OperTime).Contains(keywords)
-                || SqlFunc.ToString(x.CreatedAt).Contains(keywords)
             );
         }
 
@@ -318,6 +360,26 @@ public class TaktOperLogService : TaktServiceBase, ITaktOperLogService
             exp = exp.And(x => x.OperLocation != null && x.OperLocation.Contains(queryDto.OperLocation));
         }
 
+        if (!string.IsNullOrEmpty(queryDto?.UserAgent))
+        {
+            exp = exp.And(x => x.UserAgent != null && x.UserAgent.Contains(queryDto.UserAgent));
+        }
+
+        if (!string.IsNullOrEmpty(queryDto?.Browser))
+        {
+            exp = exp.And(x => x.Browser != null && x.Browser.Contains(queryDto.Browser));
+        }
+
+        if (!string.IsNullOrEmpty(queryDto?.Os))
+        {
+            exp = exp.And(x => x.Os != null && x.Os.Contains(queryDto.Os));
+        }
+
+        if (!string.IsNullOrEmpty(queryDto?.DeviceType))
+        {
+            exp = exp.And(x => x.DeviceType != null && x.DeviceType.Contains(queryDto.DeviceType));
+        }
+
         if (queryDto?.ElapsedTime.HasValue == true)
         {
             exp = exp.And(x => x.ElapsedTime == queryDto.ElapsedTime);
@@ -357,12 +419,14 @@ public class TaktOperLogService : TaktServiceBase, ITaktOperLogService
         {
             exp = exp.And(x => x.CreatedAt <= queryDto.CreatedAtEnd);
         }
+
         if (!string.IsNullOrWhiteSpace(queryDto?.PlantCode))
         {
-            var plantCode = queryDto.PlantCode;
-            exp = exp.And(x => x.PlantCode != null && x.PlantCode.Contains(plantCode));
+            var plantCode = queryDto.PlantCode.Trim();
+            exp = exp.And(x =>
+                x.PlantCode != null
+                && x.PlantCode.ToLower().Contains(plantCode.ToLower()));
         }
-
 
         return exp.ToExpression();
     }

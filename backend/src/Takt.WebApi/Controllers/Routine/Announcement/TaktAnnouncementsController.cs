@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi.Controllers.Routine.Announcement
 // 文件名称：TaktAnnouncementsController.cs
-// 创建时间：2026-08-24
+// 创建时间：2026-09-11
 // 创建人：Takt365(Cursor AI)
 // 功能描述：公告通知控制器
 // 
@@ -57,32 +57,12 @@ public class TaktAnnouncementsController : TaktControllerBase
     }
 
     /// <summary>
-    /// 获取公告通知件数统计（数据看板）
-    /// </summary>
-    /// <param name="queryDto">查询 DTO</param>
-    /// <returns>公告通知件数统计</returns>
-    [TaktPermission("routine:announcement:list", "公告通知件数统计")]
-    [HttpGet("announcement-stat")]
-    public async Task<IActionResult> GetAnnouncementStatAsync([FromQuery] TaktAnnouncementStatQueryDto queryDto)
-    {
-        try
-        {
-            var result = await _announcementService.GetAnnouncementStatAsync(queryDto);
-            return Success(result, "查询成功");
-        }
-        catch (Exception ex)
-        {
-            return HandleException(ex);
-        }
-    }
-
-    /// <summary>
     /// 根据ID获取公告通知
     /// </summary>
     /// <param name="id">公告通知ID</param>
     /// <returns>公告通知DTO</returns>
     [TaktPermission("routine:announcement:query", "公告通知详情")]
-    [HttpGet("{id}")]
+    [HttpGet("{id:long}")]
     public async Task<IActionResult> GetAnnouncementByIdAsync(long id)
     {
         try
@@ -103,6 +83,8 @@ public class TaktAnnouncementsController : TaktControllerBase
     /// <summary>
     /// 获取公告通知选项列表
     /// </summary>
+    /// <param name="plantCode">工厂代码（可选，用于按工厂过滤）</param>
+    /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
     /// <returns>下拉选项</returns>
     [TaktPermission("routine:announcement:query", "公告通知选项")]
     [HttpGet("options")]

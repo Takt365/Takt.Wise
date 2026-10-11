@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src
 // 文件名称：main.ts
 // 创建时间：2026-05-22
@@ -19,21 +19,21 @@ import '@umoteam/editor/style';
 import App from './App.vue';
 import router from './router';
 import i18n from './locales';
-import { initTaktGsap } from '@/bootstrap/takt-gsap';
-import { registerTaktEventHandlers } from '@/bootstrap/takt-event-handlers';
-import { initTaktIdleSession } from '@/bootstrap/takt-idle-session';
-import { initTaktTokenSession } from '@/bootstrap/takt-token-session';
-import { initTaktClientPerformanceMonitor } from '@/bootstrap/takt-client-performance-monitor';
-import { ensureTaktPaginationConfigAsync } from '@/config/takt-pagination';
+import { initTaktGsap } from '@/bootstrap/taktGsap';
+import { registerTaktEventHandlers } from '@/bootstrap/taktEventHandlers';
+import { initTaktIdleSession } from '@/bootstrap/taktIdleSession';
+import { initTaktTokenSession } from '@/bootstrap/taktTokenSession';
+import { initTaktClientPerformanceMonitor } from '@/bootstrap/taktClientPerformanceMonitor';
+import { ensureTaktPaginationConfigAsync } from '@/config/taktPagination';
 import { registerPermissionDirective } from '@/directives/permission';
-import { useLocaleStore } from '@/stores/foundation/locale';
-import { useSettingStore } from '@/stores/common/setting';
-import { useUserStore } from '@/stores/identity/user';
-import { useTenantStore } from '@/stores/identity/tenant';
-import { applySettings } from '@/utils/apply-settings';
-import { initEventBus } from '@/utils/event-bus';
+import { useLocaleStore } from '@/stores/foundation/useLocaleStore';
+import { useSettingStore } from '@/stores/common/useSettingStore';
+import { useUserStore } from '@/stores/identity/useUserStore';
+import { useTenantStore } from '@/stores/identity/useTenantStore';
+import { applySettings } from '@/utils/applySettings';
+import { initEventBus } from '@/utils/eventBus';
 import { initLogger } from '@/utils/logger';
-import { parseEnvBoolean, setRuntimeRouter } from '@/utils/runtime-context';
+import { parseEnvBoolean, setRuntimeRouter } from '@/utils/runtimeContext';
 import { initTaktThemeDom } from '@/utils/theme';
 import 'ant-design-vue/dist/reset.css';
 import 'flag-icons/css/flag-icons.min.css';

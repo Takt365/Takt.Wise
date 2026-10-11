@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
+<!-- 项目名称：节拍智控·TaktWise -->
 <!-- 命名空间：frontend/src -->
 <!-- 文件名称：App.vue -->
 <!-- 功能描述：根组件，包含路由视图和全局布局 -->
@@ -10,7 +10,7 @@
 <template>
   <a-config-provider :locale="locale" :theme="antdTheme">
     <a-app class="h-full">
-      <takt-theme-sync />
+      <TaktThemeSync />
       <router-view />
     </a-app>
   </a-config-provider>
@@ -23,10 +23,10 @@
  */
 import { theme as antdThemeApi } from 'ant-design-vue';
 import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context';
-import { useTaktComponentLocale } from '@/composables/use-takt-component-locale';
-import { useThemeStore } from '@/stores/common/theme';
-import { useThemeColorStore } from '@/stores/common/theme-color';
-import { useSettingStore } from '@/stores/common/setting';
+import { useTaktComponentLocale } from '@/composables/useTaktComponentLocale';
+import { useThemeStore } from '@/stores/common/useThemeStore';
+import { useThemeColorStore } from '@/stores/common/useThemeColorStore';
+import { useSettingStore } from '@/stores/common/useSettingStore';
 
 const { antDesignVueLocale } = useTaktComponentLocale();
 const themeStore = useThemeStore();

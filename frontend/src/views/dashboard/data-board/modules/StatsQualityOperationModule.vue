@@ -1,6 +1,6 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
-<!-- 命名空间：frontend/src/views/dashboard/data-board/modules -->
+<!-- 项目名称：节拍智控·TaktWise -->
+<!-- 命名空间：frontend/src/views/dashboard/dataBoard.types/modules -->
 <!-- 文件名称：StatsQualityOperationModule.vue -->
 <!-- 功能描述：数据看板质量检验统计（IQC/IPQC/FQC：批次数/抽样/合格/不合格/合格率/不良率） -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
@@ -35,12 +35,11 @@
 /**
  * 质量检验统计：IQC / IPQC / FQC 上月检验汇总表（行点击跳转各自明细清单）
  */
-import { ref, computed, onMounted } from 'vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { usePermissionStore } from '@/stores/identity/permission'
-import type { QualityInspectionStat } from '@/types/logistics/quality/operation/quality-inspection-stat'
+import { usePermissionStore } from '@/stores/identity/usePermissionStore'
+import type { QualityInspectionStat } from '@/types/logistics/quality/operation/qualityInspectionStat.types'
 import {
   DASHBOARD_STATS_API,
   DASHBOARD_STATS_PERMISSION,
@@ -48,8 +47,8 @@ import {
   fetchDashboardGet,
   fetchDashboardMetricIfPermitted,
   scheduleDashboardLoad,
-} from '../utils/stats-query'
-import { getDashboardInspectionMonthRange } from '../utils/stats-dashboard-plant'
+} from '../utils/statsQuery'
+import { getDashboardInspectionMonthRange } from '../utils/statsDashboardPlant'
 
 /** 空检验统计 */
 const EMPTY_INSPECTION_STAT: QualityInspectionStat = {

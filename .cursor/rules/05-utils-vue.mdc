@@ -24,8 +24,8 @@ alwaysApply: true
 - `@frontend/src/utils/naming.ts` — 纯函数、与后端 `TaktNamingHelper` 对齐
 - `@frontend/src/utils/mask.ts` — `XxxHelper` 静态类 + 具名函数 re-export
 - `@frontend/src/utils/regex.ts` — 编译期常量 `RegexPatterns` + `isValid*` 校验
-- `@frontend/src/utils/log-formatter.ts` — `sampleForLog` 与后端采样对齐
-- `@frontend/src/utils/export-download-name.ts` — 无副作用 I/O 解析
+- `@frontend/src/utils/logFormatter.ts` — `sampleForLog` 与后端采样对齐
+- `@frontend/src/utils/exportDownloadName.ts` — 无副作用 I/O 解析
 - `@frontend/src/utils/logger.ts` — **运行时网关**（模块级状态 + 文件头说明边界）
 
 ---
@@ -38,13 +38,13 @@ alwaysApply: true
 | ✅ | 模块内仅 `const` / `readonly` 不可变常量（如 `RegexPatterns`） |
 | ❌ | 纯工具模块内 `let` 缓存业务数据、上次结果、租户/用户上下文 |
 | ❌ | 在工具函数内读写 Pinia / `localStorage`（除非方法名与 JSDoc 明确为持久化网关） |
-| ⚠️ | **运行时网关**（`logger.ts`、`event-bus.ts`、`oauth.ts`、`runtime-context.ts`）允许模块级 `let`，须在**文件头功能描述**与模块顶注释标明「运行时网关 / 非纯工具」 |
+| ⚠️ | **运行时网关**（`logger.ts`、`eventBus.ts`、`oauth.ts`、`runtimeContext.ts`）允许模块级 `let`，须在**文件头功能描述**与模块顶注释标明「运行时网关 / 非纯工具」 |
 
 ```typescript
 // ❌ 纯工具中缓存（禁止）
 let _lastParsed: Record<string, string> = {}
 
-// ✅ 网关：logger.ts / event-bus.ts 模式，文件头说明边界
+// ✅ 网关：logger.ts / eventBus.ts 模式，文件头说明边界
 let loggerConfig: LoggerConfig | undefined
 ```
 
@@ -56,7 +56,7 @@ let loggerConfig: LoggerConfig | undefined
 
 | 目录 | 职责 | 示例 |
 |------|------|------|
-| `utils/` | 与 UI 无关的纯转换、校验、格式化、常量；可同步 | `mask.ts`、`regex.ts`、`naming.ts` |
+| `utils/` | 与 UI 无关的纯转换、校验、格式化、常量；可同步 | `mask.ts`、`regex.ts`、`naming.ts`、`eventBus.ts` |
 | `composables/` | 组合式 API、响应式状态、副作用编排 | `useUserForm` |
 | `api/` | HTTP 请求 | `getUserList` |
 | `stores/` | 全局可复用状态 | Pinia |
@@ -65,7 +65,7 @@ let loggerConfig: LoggerConfig | undefined
 |---------|---------|
 | 在 `utils/` 使用 `ref`/`reactive`/`onMounted` | composable 内调用 `utils/` 纯函数 |
 | 在 `utils/` 直接 `import request from '@/api/request'` 发业务 CRUD | 网关类 utils 经显式 init/configure 后再 I/O |
-| 把页面编排逻辑塞进 `common.ts` 大杂烩 | 按域拆分 `takt-*.ts`、`mask.ts` |
+| 把页面编排逻辑塞进 `common.ts` 大杂烩 | 按域拆分 `taktXxx.ts`、`mask.ts` |
 
 ---
 
@@ -74,9 +74,10 @@ let loggerConfig: LoggerConfig | undefined
 | 规则 | 说明 |
 |------|------|
 | ✅ | 一文件一技术/语义域（命名、正则、脱敏、日期、导出文件名等） |
-| ✅ | 文件名 **kebab-case**；领域工具优先 `takt-` 前缀（`takt-locale-merge.ts`） |
+| ✅ | **文件名 camelCase**；**类名 / 导出对象（`class`、常量对象）PascalCase**；领域工具优先 `takt` 前缀（`taktLocaleMerge.ts`、`MaskHelper`） |
 | ❌ | `common.ts` 持续堆叠无关函数（新能力应新建域文件） |
 | ❌ | 同一文件混合「格式化 + 权限 + 路由 + 上传」 |
+| ❌ | 通用类文件再用 kebab-case（`event-bus.ts`、`takt-locale-merge.ts`） |
 
 新增方法前：是否**仅**属于本文件职责域？是否与后端 `Takt.Shared/Helpers` 有对齐点（命名/正则/脱敏）？
 

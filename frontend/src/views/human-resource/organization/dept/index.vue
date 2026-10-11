@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/human-resource/organization/dept -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：部门实体 代表组织架构中的部门树表管理页（仅 tree API；右表选中后展示子孙），由 generate-vue-tree-from-api.cjs 自动生成 -->
@@ -492,12 +492,11 @@
  * 部门实体 代表组织架构中的部门树表管理页 · 左树选中后右表展示该节点+直接子级（更深展开懒加载）；默认右表为空
  * @module views/human-resource/organization/dept
  */
-import { ref, computed, watch, watchEffect, onMounted, nextTick } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
 import {
   filterTaktTreeTableNodes,
   collectTaktTreeTableExpandableKeys,
@@ -506,31 +505,31 @@ import {
   taktTreeExpandedKeysEqual,
   taktTreeTableNodeKey,
   type TaktTreeTableNode,
-} from '@/utils/takt-tree-table'
-import { useTableRefresh } from '@/composables/use-table-refresh'
+} from '@/utils/taktTreeTable'
+import { useTableRefresh } from '@/composables/useTableRefresh'
 import {
   mapLazyTreeNodes,
   mergeLoadedChildren,
   taktIsLeafFlag,
   type TaktLazyTreeNode,
-} from '@/composables/use-lazy-tree'
-import DeptForm from './components/dept-form.vue'
-import { getDeptTree, getDeptById, createDept, updateDept, deleteDeptById, deleteDeptBatch, getDeptTemplate, importDept, exportDept, updateDeptStatus, updateDeptSort } from '@/api/human-resource/organization/dept'
-import type { Dept, DeptTree, DeptUpdate } from '@/types/human-resource/organization/dept'
-import type { TreeDropPayload } from '@/components/business/takt-tree-left-table/index.vue'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+} from '@/composables/useLazyTree'
+import DeptForm from './components/DeptForm.vue'
+import { getDeptTree, getDeptById, createDept, updateDept, deleteDeptById, deleteDeptBatch, getDeptTemplate, importDept, exportDept, updateDeptStatus, updateDeptSort } from '@/api/human-resource/organization/dept.api'
+import type { Dept, DeptTree, DeptUpdate } from '@/types/human-resource/organization/dept.types'
+import type { TreeDropPayload } from '@/components/business/TaktTreeLeftTable/index.vue'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
-import { useUserStore } from '@/stores/identity/user'
+import { useUserStore } from '@/stores/identity/useUserStore'
 
 import {
   useDeptI18n,
   DEPT_QUERY_STRING_FIELDS,
   DEPT_QUERY_FIELDS,
   DEPT_SELF_I18N_KEY,
-} from './composables/use-dept-i18n'
+} from './composables/useDeptI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useDeptI18n()
@@ -1177,8 +1176,6 @@ const toDeptNumber = (value: string | number | undefined | null): number => {
   return Number.isFinite(num) ? num : 0
 }
 
-
-
 /** 从异常对象提取用户可见消息 */
 const getErrorMessage = (error: unknown, fallback: string): string => {
   if (typeof error === 'object' && error !== null && 'message' in error) {
@@ -1454,7 +1451,6 @@ const handleReset = () => {
   advancedQueryForm.value = createEmptyAdvancedQueryForm()
 }
 
-
 /**
  * 行内状态切换
  * @param record 当前行
@@ -1570,7 +1566,6 @@ async function handleDelete() {
     }
   })
 }
-
 
 /** 打开导入对话框 */
 function handleImport() {

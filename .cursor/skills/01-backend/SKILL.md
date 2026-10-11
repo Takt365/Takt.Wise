@@ -26,7 +26,7 @@ description: >-
 **前置（强制）**：先完成 [12-crud](../12-crud/SKILL.md) 基线清单（11 项能力、路由、权限）。
 
 ```
-- [ ] 1. Domain：实体继承 Tenant/Company/Approval 基类；表名 takt_{模块}_{实体}；**属性一律 int/int?，禁止 enum**（00-project §1.8.1）
+- [ ] 1. Domain：实体继承 Tenant/Company/Approval 基类；表名 takt_{模块}_{实体}；**属性一律 int/int?，禁止 enum**（00-project §1.8.1）；**ColumnDescription 仅短标题**，长说明在 XML summary（01-backend §六，全字段通用）
 - [ ] 2. DTO：TaktXxxDto / QueryDto(继承 TaktPagedQuery) / Create / Update / Import / Export
 - [ ] 3. 服务：ITaktXxxService + TaktXxxService（单数），继承 TaktServiceBase
 - [ ] 4. 控制器：TaktXxxsController（复数），只注入 ITaktXxxService；❌ 控制器内 SqlSugar
@@ -34,7 +34,7 @@ description: >-
 - [ ] 6. 列表/详情/导入导出：实现要点见 01-backend §五；路由/权限见 12-crud §三
 - [ ] 7. i18n 种子 + 菜单 Permission（00-project §1.6 / §1.7）
 - [ ] 8. 分页：QueryExpression + GetPagedAsync；pageSize clamp（06-overflow-csharp）
-- [ ] 9. XML 注释：类、公开方法、QueryExpression/FillXxxDto
+- [ ] 9. XML 注释：类、公开方法、QueryExpression/FillXxxDto；实体字段 summary 含字典/冗余等，ColumnDescription 保持短标题
 - [ ] 10. 空行：03-format-blank-lines
 ```
 
@@ -49,6 +49,15 @@ Domain → Shared
 ❌ 控制器内 SqlSugar 查询  
 ❌ 控制器注入仓储  
 ✅ 异常 try/catch + HandleException；业务错误 ThrowBusinessExceptionLocalized
+
+## ColumnDescription vs XML（全实体通用）
+
+| 落点 | 写什么 |
+|------|--------|
+| `ColumnDescription` | 仅短标题（如 `客户名称`、`物料编码`） |
+| `/// <summary>` | 字典、选项、冗余联动、业务说明 |
+
+❌ 禁止在 `ColumnDescription` 写「冗余：…」「字典 xxx；0=…」等长文。
 
 ## 种子（§全新写法）
 

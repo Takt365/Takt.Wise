@@ -44,6 +44,7 @@ alwaysApply: true
 | 部门简称 / ISO 编码 | `dept_short_name` / `iso_code`（二者一致） | **6** / **6** |
 | 部门名称1 / 部门名称2 | `dept_name1` / `dept_name2` | **40** / **70** |
 | 成本中心编码 | `cost_center_code`、费用单 `cost_center`（与部门编码同长） | **6** |
+| **员工姓名** | `employee_name`；冗余列（`*employee_name`、与 `TaktEmployee.EmployeeName` 联动的责任人/验收人等） | **80**（校验 **2–80**） |
 
 属性名：单表结算/报告币种一律 **`CurrencyCode`**；多角色保留前缀且以 **`CurrencyCode` 结尾**（如 `ScaleCurrencyCode`）。❌ 禁止 `Currency`、`CostCurrency`、`ConditionCurrency` 等无 `Code` 后缀。
 
@@ -108,7 +109,7 @@ alwaysApply: true
 | 采购订单 / 请购（采购申请）编码 | `purchase_order_code`、`purchase_request_code`、`request_code`（请购） | **20** |
 | 采购预测编码 | `purchase_forecast_code` | **20** |
 | 销售报价 / 采购询价编码 | `sales_quotation_code`、`purchase_inquiry_code` | **20** |
-| 销售价格 / 采购价格编码（定价记录号） | `sales_price_code`、`purchase_price_code` | **20** |
+| 销售价格 / 采购价格编码（定价记录号） | `sales_condition_record_code`、`purchase_info_record_code` | **20** |
 | 客户编码 | `customer_code` | **10** |
 | 供应商编码 | `supplier_code` | **10** |
 
@@ -156,6 +157,7 @@ alwaysApply: true
 - **国际化键** `i18n_key`：**140**（TaktDictData / TaktTranslation / TaktMenu 同长）
 - **字典项标签/值** `dict_label` / `dict_value`：**40**；**扩展标签/值** `ext_label` / `ext_value`：**140**
 - **本地化名称** `native_name`：**40**
+- **员工姓名** `employee_name`（及同义冗余）：**80**（校验 2–80）
 - **物料编码特例**：`manufacturer_material_code` / `seller_material_code` = **40**；本厂 `material_code` / `internal_material_code` = **20**——禁止混用
 - 改某一语义长度：必须全库同义列一并改齐（含冗余码、来源码）
 - 生成脚本产出 Length 与本章冲突时，**以本章为准**手工或脚本修正

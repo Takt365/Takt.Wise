@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Operation
 // 文件名称：TaktIpqcDefectHandlingI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktIpqcDefectHandling 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -198,41 +198,41 @@ public class TaktIpqcDefectHandlingI18nSeedData : ITaktSeedDataCoordinator
             // entity.ipqcdefecthandling.responsibledeptname
             new TranslationSeedItem("entity.ipqcdefecthandling.responsibledeptname", "zh-HK", "责任部门名称_hk", "责任部门名称（冗余：按 ResponsibleDeptId 取 TaktDept.DeptName1 联动）"),
 
-            // entity.ipqcdefecthandling.responsiblepersonid
-            new TranslationSeedItem("entity.ipqcdefecthandling.responsiblepersonid", "en-US", "责任人ID_us", "责任人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.ipqcdefecthandling.responsiblepersonid
-            new TranslationSeedItem("entity.ipqcdefecthandling.responsiblepersonid", "ja-JP", "责任人ID_jp", "责任人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.ipqcdefecthandling.responsiblepersonid
-            new TranslationSeedItem("entity.ipqcdefecthandling.responsiblepersonid", "zh-CN", "责任人ID", "责任人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.ipqcdefecthandling.responsiblepersonid
-            new TranslationSeedItem("entity.ipqcdefecthandling.responsiblepersonid", "zh-HK", "责任人ID_hk", "责任人（选项 TaktEmployees/options；DictValue=Id）"),
+            // entity.ipqcdefecthandling.responsiblegroupcode
+            new TranslationSeedItem("entity.ipqcdefecthandling.responsiblegroupcode", "en-US", "责任组编码_us", "责任组编码（选项 TaktQualityGroups/options?qualityGroupCategory=3；DictValue=QualityGroupCode）"),
+            // entity.ipqcdefecthandling.responsiblegroupcode
+            new TranslationSeedItem("entity.ipqcdefecthandling.responsiblegroupcode", "ja-JP", "责任组编码_jp", "责任组编码（选项 TaktQualityGroups/options?qualityGroupCategory=3；DictValue=QualityGroupCode）"),
+            // entity.ipqcdefecthandling.responsiblegroupcode
+            new TranslationSeedItem("entity.ipqcdefecthandling.responsiblegroupcode", "zh-CN", "责任组编码", "责任组编码（选项 TaktQualityGroups/options?qualityGroupCategory=3；DictValue=QualityGroupCode）"),
+            // entity.ipqcdefecthandling.responsiblegroupcode
+            new TranslationSeedItem("entity.ipqcdefecthandling.responsiblegroupcode", "zh-HK", "责任组编码_hk", "责任组编码（选项 TaktQualityGroups/options?qualityGroupCategory=3；DictValue=QualityGroupCode）"),
 
-            // entity.ipqcdefecthandling.responsiblepersonname
-            new TranslationSeedItem("entity.ipqcdefecthandling.responsiblepersonname", "en-US", "责任人名称_us", "责任人名称（冗余：按 ResponsiblePersonId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.ipqcdefecthandling.responsiblepersonname
-            new TranslationSeedItem("entity.ipqcdefecthandling.responsiblepersonname", "ja-JP", "责任人名称_jp", "责任人名称（冗余：按 ResponsiblePersonId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.ipqcdefecthandling.responsiblepersonname
-            new TranslationSeedItem("entity.ipqcdefecthandling.responsiblepersonname", "zh-CN", "责任人名称", "责任人名称（冗余：按 ResponsiblePersonId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.ipqcdefecthandling.responsiblepersonname
-            new TranslationSeedItem("entity.ipqcdefecthandling.responsiblepersonname", "zh-HK", "责任人名称_hk", "责任人名称（冗余：按 ResponsiblePersonId 取 TaktEmployee.EmployeeName 联动）"),
+            // entity.ipqcdefecthandling.responsiblegroupname
+            new TranslationSeedItem("entity.ipqcdefecthandling.responsiblegroupname", "en-US", "责任组名称_us", "责任组名称（冗余：按 ResponsibleGroupCode 取 TaktQualityGroups.QualityGroupName 联动）"),
+            // entity.ipqcdefecthandling.responsiblegroupname
+            new TranslationSeedItem("entity.ipqcdefecthandling.responsiblegroupname", "ja-JP", "责任组名称_jp", "责任组名称（冗余：按 ResponsibleGroupCode 取 TaktQualityGroups.QualityGroupName 联动）"),
+            // entity.ipqcdefecthandling.responsiblegroupname
+            new TranslationSeedItem("entity.ipqcdefecthandling.responsiblegroupname", "zh-CN", "责任组名称", "责任组名称（冗余：按 ResponsibleGroupCode 取 TaktQualityGroups.QualityGroupName 联动）"),
+            // entity.ipqcdefecthandling.responsiblegroupname
+            new TranslationSeedItem("entity.ipqcdefecthandling.responsiblegroupname", "zh-HK", "责任组名称_hk", "责任组名称（冗余：按 ResponsibleGroupCode 取 TaktQualityGroups.QualityGroupName 联动）"),
 
-            // entity.ipqcdefecthandling.handlerid
-            new TranslationSeedItem("entity.ipqcdefecthandling.handlerid", "en-US", "处理人ID_us", "处理人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.ipqcdefecthandling.handlerid
-            new TranslationSeedItem("entity.ipqcdefecthandling.handlerid", "ja-JP", "处理人ID_jp", "处理人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.ipqcdefecthandling.handlerid
-            new TranslationSeedItem("entity.ipqcdefecthandling.handlerid", "zh-CN", "处理人ID", "处理人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.ipqcdefecthandling.handlerid
-            new TranslationSeedItem("entity.ipqcdefecthandling.handlerid", "zh-HK", "处理人ID_hk", "处理人（选项 TaktEmployees/options；DictValue=Id）"),
+            // entity.ipqcdefecthandling.handlergroupcode
+            new TranslationSeedItem("entity.ipqcdefecthandling.handlergroupcode", "en-US", "处理组编码_us", "处理组编码（选项 TaktQualityGroups/options?qualityGroupCategory=4；DictValue=QualityGroupCode）"),
+            // entity.ipqcdefecthandling.handlergroupcode
+            new TranslationSeedItem("entity.ipqcdefecthandling.handlergroupcode", "ja-JP", "处理组编码_jp", "处理组编码（选项 TaktQualityGroups/options?qualityGroupCategory=4；DictValue=QualityGroupCode）"),
+            // entity.ipqcdefecthandling.handlergroupcode
+            new TranslationSeedItem("entity.ipqcdefecthandling.handlergroupcode", "zh-CN", "处理组编码", "处理组编码（选项 TaktQualityGroups/options?qualityGroupCategory=4；DictValue=QualityGroupCode）"),
+            // entity.ipqcdefecthandling.handlergroupcode
+            new TranslationSeedItem("entity.ipqcdefecthandling.handlergroupcode", "zh-HK", "处理组编码_hk", "处理组编码（选项 TaktQualityGroups/options?qualityGroupCategory=4；DictValue=QualityGroupCode）"),
 
-            // entity.ipqcdefecthandling.handlername
-            new TranslationSeedItem("entity.ipqcdefecthandling.handlername", "en-US", "处理人名称_us", "处理人名称（冗余：按 HandlerId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.ipqcdefecthandling.handlername
-            new TranslationSeedItem("entity.ipqcdefecthandling.handlername", "ja-JP", "处理人名称_jp", "处理人名称（冗余：按 HandlerId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.ipqcdefecthandling.handlername
-            new TranslationSeedItem("entity.ipqcdefecthandling.handlername", "zh-CN", "处理人名称", "处理人名称（冗余：按 HandlerId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.ipqcdefecthandling.handlername
-            new TranslationSeedItem("entity.ipqcdefecthandling.handlername", "zh-HK", "处理人名称_hk", "处理人名称（冗余：按 HandlerId 取 TaktEmployee.EmployeeName 联动）"),
+            // entity.ipqcdefecthandling.handlergroupname
+            new TranslationSeedItem("entity.ipqcdefecthandling.handlergroupname", "en-US", "处理组名称_us", "处理组名称（冗余：按 HandlerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）"),
+            // entity.ipqcdefecthandling.handlergroupname
+            new TranslationSeedItem("entity.ipqcdefecthandling.handlergroupname", "ja-JP", "处理组名称_jp", "处理组名称（冗余：按 HandlerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）"),
+            // entity.ipqcdefecthandling.handlergroupname
+            new TranslationSeedItem("entity.ipqcdefecthandling.handlergroupname", "zh-CN", "处理组名称", "处理组名称（冗余：按 HandlerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）"),
+            // entity.ipqcdefecthandling.handlergroupname
+            new TranslationSeedItem("entity.ipqcdefecthandling.handlergroupname", "zh-HK", "处理组名称_hk", "处理组名称（冗余：按 HandlerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）"),
 
             // entity.ipqcdefecthandling.handlingat
             new TranslationSeedItem("entity.ipqcdefecthandling.handlingat", "en-US", "处理时间_us", "处理时间"),
@@ -242,6 +242,60 @@ public class TaktIpqcDefectHandlingI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ipqcdefecthandling.handlingat", "zh-CN", "处理时间", "处理时间"),
             // entity.ipqcdefecthandling.handlingat
             new TranslationSeedItem("entity.ipqcdefecthandling.handlingat", "zh-HK", "处理时间_hk", "处理时间"),
+
+            // entity.ipqcdefecthandling.verifydeptid
+            new TranslationSeedItem("entity.ipqcdefecthandling.verifydeptid", "en-US", "验证部门ID_us", "验证部门（选项 TaktDepts/tree-options；DictValue=Id）"),
+            // entity.ipqcdefecthandling.verifydeptid
+            new TranslationSeedItem("entity.ipqcdefecthandling.verifydeptid", "ja-JP", "验证部门ID_jp", "验证部门（选项 TaktDepts/tree-options；DictValue=Id）"),
+            // entity.ipqcdefecthandling.verifydeptid
+            new TranslationSeedItem("entity.ipqcdefecthandling.verifydeptid", "zh-CN", "验证部门ID", "验证部门（选项 TaktDepts/tree-options；DictValue=Id）"),
+            // entity.ipqcdefecthandling.verifydeptid
+            new TranslationSeedItem("entity.ipqcdefecthandling.verifydeptid", "zh-HK", "验证部门ID_hk", "验证部门（选项 TaktDepts/tree-options；DictValue=Id）"),
+
+            // entity.ipqcdefecthandling.verifydeptname
+            new TranslationSeedItem("entity.ipqcdefecthandling.verifydeptname", "en-US", "验证部门名称_us", "验证部门名称（冗余：按 VerifyDeptId 取 TaktDept.DeptName1 联动）"),
+            // entity.ipqcdefecthandling.verifydeptname
+            new TranslationSeedItem("entity.ipqcdefecthandling.verifydeptname", "ja-JP", "验证部门名称_jp", "验证部门名称（冗余：按 VerifyDeptId 取 TaktDept.DeptName1 联动）"),
+            // entity.ipqcdefecthandling.verifydeptname
+            new TranslationSeedItem("entity.ipqcdefecthandling.verifydeptname", "zh-CN", "验证部门名称", "验证部门名称（冗余：按 VerifyDeptId 取 TaktDept.DeptName1 联动）"),
+            // entity.ipqcdefecthandling.verifydeptname
+            new TranslationSeedItem("entity.ipqcdefecthandling.verifydeptname", "zh-HK", "验证部门名称_hk", "验证部门名称（冗余：按 VerifyDeptId 取 TaktDept.DeptName1 联动）"),
+
+            // entity.ipqcdefecthandling.qualityownergroupcode
+            new TranslationSeedItem("entity.ipqcdefecthandling.qualityownergroupcode", "en-US", "质量负责人组编码_us", "质量负责人组编码（选项 TaktQualityGroups/options?qualityGroupCategory=5；DictValue=QualityGroupCode）"),
+            // entity.ipqcdefecthandling.qualityownergroupcode
+            new TranslationSeedItem("entity.ipqcdefecthandling.qualityownergroupcode", "ja-JP", "质量负责人组编码_jp", "质量负责人组编码（选项 TaktQualityGroups/options?qualityGroupCategory=5；DictValue=QualityGroupCode）"),
+            // entity.ipqcdefecthandling.qualityownergroupcode
+            new TranslationSeedItem("entity.ipqcdefecthandling.qualityownergroupcode", "zh-CN", "质量负责人组编码", "质量负责人组编码（选项 TaktQualityGroups/options?qualityGroupCategory=5；DictValue=QualityGroupCode）"),
+            // entity.ipqcdefecthandling.qualityownergroupcode
+            new TranslationSeedItem("entity.ipqcdefecthandling.qualityownergroupcode", "zh-HK", "质量负责人组编码_hk", "质量负责人组编码（选项 TaktQualityGroups/options?qualityGroupCategory=5；DictValue=QualityGroupCode）"),
+
+            // entity.ipqcdefecthandling.qualityownergroupname
+            new TranslationSeedItem("entity.ipqcdefecthandling.qualityownergroupname", "en-US", "质量负责人组名称_us", "质量负责人组名称（冗余：按 QualityOwnerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）"),
+            // entity.ipqcdefecthandling.qualityownergroupname
+            new TranslationSeedItem("entity.ipqcdefecthandling.qualityownergroupname", "ja-JP", "质量负责人组名称_jp", "质量负责人组名称（冗余：按 QualityOwnerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）"),
+            // entity.ipqcdefecthandling.qualityownergroupname
+            new TranslationSeedItem("entity.ipqcdefecthandling.qualityownergroupname", "zh-CN", "质量负责人组名称", "质量负责人组名称（冗余：按 QualityOwnerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）"),
+            // entity.ipqcdefecthandling.qualityownergroupname
+            new TranslationSeedItem("entity.ipqcdefecthandling.qualityownergroupname", "zh-HK", "质量负责人组名称_hk", "质量负责人组名称（冗余：按 QualityOwnerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）"),
+
+            // entity.ipqcdefecthandling.verifyat
+            new TranslationSeedItem("entity.ipqcdefecthandling.verifyat", "en-US", "验证时间_us", "验证时间"),
+            // entity.ipqcdefecthandling.verifyat
+            new TranslationSeedItem("entity.ipqcdefecthandling.verifyat", "ja-JP", "验证时间_jp", "验证时间"),
+            // entity.ipqcdefecthandling.verifyat
+            new TranslationSeedItem("entity.ipqcdefecthandling.verifyat", "zh-CN", "验证时间", "验证时间"),
+            // entity.ipqcdefecthandling.verifyat
+            new TranslationSeedItem("entity.ipqcdefecthandling.verifyat", "zh-HK", "验证时间_hk", "验证时间"),
+
+            // entity.ipqcdefecthandling.verifystatus
+            new TranslationSeedItem("entity.ipqcdefecthandling.verifystatus", "en-US", "验证结果_us", "验证结果（字典 logistics_quality_defect_verify_status；0=待验证 1=合格 2=不合格）"),
+            // entity.ipqcdefecthandling.verifystatus
+            new TranslationSeedItem("entity.ipqcdefecthandling.verifystatus", "ja-JP", "验证结果_jp", "验证结果（字典 logistics_quality_defect_verify_status；0=待验证 1=合格 2=不合格）"),
+            // entity.ipqcdefecthandling.verifystatus
+            new TranslationSeedItem("entity.ipqcdefecthandling.verifystatus", "zh-CN", "验证结果", "验证结果（字典 logistics_quality_defect_verify_status；0=待验证 1=合格 2=不合格）"),
+            // entity.ipqcdefecthandling.verifystatus
+            new TranslationSeedItem("entity.ipqcdefecthandling.verifystatus", "zh-HK", "验证结果_hk", "验证结果（字典 logistics_quality_defect_verify_status；0=待验证 1=合格 2=不合格）"),
 
             // entity.ipqcdefecthandling.correctiveaction
             new TranslationSeedItem("entity.ipqcdefecthandling.correctiveaction", "en-US", "纠正措施_us", "预防措施/纠正措施"),

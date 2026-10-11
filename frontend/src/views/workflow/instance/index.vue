@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节节拍工厂·Takt Plat  -->
+<!-- 项目名称：节拍智控·TaktWise  -->
 <!-- 命名空间：@/views/workflow/instance -->
 <!-- 文件名称：index.vue -->
 <!-- 创建时间：2025-01-20 -->
@@ -191,31 +191,30 @@
 /**
  * 流程实例列表页：全部实例查询、分页、详情、更新、撤回、挂起、恢复、终止、删除、导出。
  */
-import { ref, onMounted, computed } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import {
   getFlowEngineDetailById,
   withdrawFlowEngineInstance,
   suspendFlowEngineInstance,
   resumeFlowEngineInstance,
   terminateFlowEngineInstance
-} from '@/api/workflow/flow-engine'
+} from '@/api/workflow/flowEngine.api'
 import {
   getFlowInstanceList,
   updateFlowInstance,
   deleteFlowInstanceById,
   deleteFlowInstanceBatch,
   exportFlowInstance
-} from '@/api/workflow/flow-instance'
-import { useUserStore } from '@/stores/identity/user'
-import InstanceForm from './components/instance-form.vue'
-import type { FlowInstance, FlowInstanceQuery, FlowInstanceEditPayload } from '@/types/workflow/flow-instance'
-import type { FlowInstanceDetail } from '@/types/workflow/flow-engine'
-import { useWorkflowSignalRRefresh, WORKFLOW_TABLE_NAMES } from '@/composables/use-workflow-signalr-refresh'
+} from '@/api/workflow/flowInstance.api'
+import { useUserStore } from '@/stores/identity/useUserStore'
+import InstanceForm from './components/InstanceForm.vue'
+import type { FlowInstance, FlowInstanceQuery, FlowInstanceEditPayload } from '@/types/workflow/flowInstance.types'
+import type { FlowInstanceDetail } from '@/types/workflow/flowEngine.types'
+import { useWorkflowSignalRRefresh, WORKFLOW_TABLE_NAMES } from '@/composables/useWorkflowSignalrRefresh'
 
 type FlowInstanceTableRow = FlowInstance & { instanceId: string; currentNodeName?: string }
 import { RiEyeLine, RiArrowGoBackLine, RiEditLine, RiDeleteBinLine, RiPauseLine, RiPlayLine, RiStopLine } from '@remixicon/vue'

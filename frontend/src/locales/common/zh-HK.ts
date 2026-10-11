@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/common
 // 文件名称：zh-HK.ts
 // 创建时间：2026-06-16
@@ -13,8 +13,8 @@
 export default {
   page: {
     app: {
-      title: "節拍工廠",
-      name: "節拍工廠·Takt Plat",
+      title: "節拍智控",
+      name: "節拍智控·TaktWise",
       productcode: "TP-MES-PRO",
       slogan: "節拍驅動智造",
       tagline: "實用 · 簡潔 · 靈活",
@@ -135,6 +135,7 @@ export default {
       numberingRule: "編碼規則",
       numberingCodePreview: "選擇編碼規則後自動生成",
       numberingRuleRequired: "請選擇編碼規則",
+      periodRangeMaxMonths: "查詢期間不能超過 {max} 個月",
     },
   },
 };

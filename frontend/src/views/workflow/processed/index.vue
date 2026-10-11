@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节节拍工厂·Takt Plat  -->
+<!-- 项目名称：节拍智控·TaktWise  -->
 <!-- 命名空间：@/views/workflow/processed -->
 <!-- 文件名称：index.vue -->
 <!-- 创建时间：2025-01-20 -->
@@ -128,20 +128,19 @@
 /**
  * 已办列表页：我已处理的流程实例列表、分页、详情、导出。
  */
-import { ref, onMounted, computed } from 'vue'
 import { message } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { RiEyeLine } from '@remixicon/vue'
 import {
   getFlowEngineProcessedList,
   getFlowEngineProcessedById
-} from '@/api/workflow/flow-engine'
-import FlowInstanceDetailForm from '@/views/workflow/processed/components/flow-instance-detail-form.vue'
-import type { FlowInstanceListItem, FlowInstanceDetail, FlowTodoQuery } from '@/types/workflow/flow-engine'
-import { useWorkflowSignalRRefresh, WORKFLOW_TABLE_NAMES } from '@/composables/use-workflow-signalr-refresh'
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
+} from '@/api/workflow/flowEngine.api'
+import FlowInstanceDetailForm from '@/views/workflow/processed/components/FlowInstanceDetailForm.vue'
+import type { FlowInstanceListItem, FlowInstanceDetail, FlowTodoQuery } from '@/types/workflow/flowEngine.types'
+import { useWorkflowSignalRRefresh, WORKFLOW_TABLE_NAMES } from '@/composables/useWorkflowSignalrRefresh'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 
 const { t } = useI18n()
 /** 列表快捷查询占位文案 */

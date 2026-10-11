@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcSeizouikka.cs
 // 创建时间：2026-06-29
@@ -21,7 +21,7 @@ namespace Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange;
 /// </summary>
 [SugarTable("takt_logistics_manufacturing_ec_seizouikka", "设变制一执行表")]
 [SugarIndex("ix_ec_seizouikka_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
-[SugarIndex("ix_takt_logistics_manufacturing_ec_seizouikka_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcDetailId), OrderByType.Asc, nameof(EcRootMaterialCode), OrderByType.Asc, true)]
+[SugarIndex("ix_takt_logistics_manufacturing_ec_seizouikka_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcDetailId), OrderByType.Asc, true)]
 [SugarIndex("ix_takt_logistics_manufacturing_ec_seizouikka_plant_code", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(PlantCode), OrderByType.Asc, false)]
 public class TaktEcSeizouikka : TaktCompanyEntityBase, ITaktEcDeptExecEntity, ITaktEcExecModelRootMaterialRow
 {
@@ -46,10 +46,15 @@ public class TaktEcSeizouikka : TaktCompanyEntityBase, ITaktEcDeptExecEntity, IT
     [SugarColumn(ColumnName = "ec_model_code", ColumnDescription = "机种编码", Length = 40, ColumnDataType = "nvarchar", IsNullable = false)]
     public string EcModelCode { get; set; } = string.Empty;
     /// <summary>
-    /// 根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）
+    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_root_material_code", ColumnDescription = "根物料编码", Length = 20, ColumnDataType = "nvarchar", IsNullable = false)]
-    public string EcRootMaterialCode { get; set; } = string.Empty;
+    [SugarColumn(ColumnName = "ec_model_code_group", ColumnDescription = "机种编码组", ColumnDataType = "ntext", IsNullable = false)]
+    public string EcModelCodeGroup { get; set; } = string.Empty;
+    /// <summary>
+    /// 根物料编码组（同去重键下的根物料编码，分号分隔；ntext，按机种时同机种根物料可能很多）
+    /// </summary>
+    [SugarColumn(ColumnName = "ec_root_material_code_group", ColumnDescription = "根物料编码组", ColumnDataType = "ntext", IsNullable = false)]
+    public string EcRootMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
     /// 是否实施（0=否 1=是，字典 sys_yes_no）
@@ -108,6 +113,11 @@ public class TaktEcSeizouikka : TaktCompanyEntityBase, ITaktEcDeptExecEntity, IT
     /// </summary>
     [SugarColumn(ColumnName = "ec_scope", ColumnDescription = "实施范围", ColumnDataType = "int", IsNullable = false)]
     public int EcScope { get; set; }
+    /// <summary>
+    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    [SugarColumn(ColumnName = "ec_dept_scope", ColumnDescription = "部门实施范围", ColumnDataType = "int", IsNullable = false, DefaultValue = "2")]
+    public int EcDeptScope { get; set; } = 2;
 
     /// <summary>
     /// 设变明细 ID（TaktEcDetail 主键；去重组内代表/种子明细 Id；同组多明细按业务键 FanOut）

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Quality.Operation
 // 文件名称：TaktFqcOrderTrendService.cs
 // 创建时间：2026-07-23
@@ -128,7 +128,7 @@ public class TaktFqcOrderTrendService : TaktServiceBase, ITaktFqcOrderTrendServi
             columnKeys,
             columnLabels,
             sheetName ?? "成品检验推移",
-            fileName ?? "成品检验推移表.xlsx");
+            fileName ?? TaktNamingHelper.PlantPrefixedTrendExportBase(query.PlantCode, "成品检验推移"));
     }
 
     /// <summary>

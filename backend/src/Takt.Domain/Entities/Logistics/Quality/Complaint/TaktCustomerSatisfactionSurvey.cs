@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Quality.Complaint
 // 文件名称：TaktCustomerSatisfactionSurvey.cs
 // 创建时间：2026-05-11
@@ -70,16 +70,15 @@ public class TaktCustomerSatisfactionSurvey : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "survey_period", ColumnDescription = "调查周期", ColumnDataType = "int", IsNullable = false, DefaultValue = "1")]
     public int SurveyPeriod { get; set; } = 1;
     /// <summary>
-    /// 调查人（选项 TaktEmployees/options；DictValue=Id）
+    /// 调查组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=5；DictValue=ComplaintGroupCode）
     /// </summary>
-    [SugarColumn(ColumnName = "surveyor_by_employee_id", ColumnDescription = "调查人ID", ColumnDataType = "bigint", IsNullable = true)]
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? SurveyorByEmployeeId { get; set; }
+    [SugarColumn(ColumnName = "surveyor_by_group_code", ColumnDescription = "调查组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? SurveyorByGroupCode { get; set; }
     /// <summary>
-    /// 调查人名称（冗余：按 SurveyorByEmployeeId 取 TaktEmployee.EmployeeName 联动）
+    /// 调查组名称（冗余：按 SurveyorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    [SugarColumn(ColumnName = "surveyor_by_employee_name", ColumnDescription = "调查人名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
-    public string? SurveyorByEmployeeName { get; set; }
+    [SugarColumn(ColumnName = "surveyor_by_group_name", ColumnDescription = "调查组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? SurveyorByGroupName { get; set; }
     /// <summary>
     /// 客户联系人
     /// </summary>

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Manufacturing.Aps
 // 文件名称：TaktApsSchedule.cs
 // 功能描述：APS排程主表，基于 MRP 计划订单做周/日/班次、设备级排程
@@ -130,16 +130,16 @@ public class TaktApsSchedule : TaktCompanyEntityBase
     public int ScheduleStatus { get; set; } = 0;
 
     /// <summary>
-    /// 计划员（选项 TaktEmployees/options；DictValue=Id）
+    /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    [SugarColumn(ColumnName = "planner_employee_id", ColumnDescription = "计划员员工ID", ColumnDataType = "bigint", IsNullable = true)]
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? PlannerEmployeeId { get; set; }
+    [SugarColumn(ColumnName = "planner_group_code", ColumnDescription = "计划组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? PlannerGroupCode { get; set; }
+
     /// <summary>
-    /// 计划员名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）
+    /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
     /// </summary>
-    [SugarColumn(ColumnName = "planner_name", ColumnDescription = "计划员名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
-    public string? PlannerName { get; set; }
+    [SugarColumn(ColumnName = "planner_group_name", ColumnDescription = "计划组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? PlannerGroupName { get; set; }
 
     /// <summary>
     /// 发布时间
@@ -148,16 +148,16 @@ public class TaktApsSchedule : TaktCompanyEntityBase
     public DateTime? PublishTime { get; set; }
 
     /// <summary>
-    /// 发布人ID（选项 TaktEmployees/options；DictValue=Id）
+    /// 发布人（选项 TaktApsGroups/options?apsGroupCategory=2；DictValue=Id）
     /// </summary>
     [SugarColumn(ColumnName = "publish_user_id", ColumnDescription = "发布人ID", ColumnDataType = "bigint", IsNullable = true)]
     [JsonConverter(typeof(ValueToStringConverter))]
     public long? PublishUserId { get; set; }
 
     /// <summary>
-    /// 发布人姓名
+    /// 发布人姓名（冗余字段,便于查询）
     /// </summary>
-    [SugarColumn(ColumnName = "publish_user_name", ColumnDescription = "发布人姓名", ColumnDataType = "varchar", Length = 20, IsNullable = true)]
+    [SugarColumn(ColumnName = "publish_user_name", ColumnDescription = "发布人姓名", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
     public string? PublishUserName { get; set; }
 
     /// <summary>

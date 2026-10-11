@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/quality/cost/assurance -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：品质业务主表管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -154,21 +154,20 @@
  * 品质业务主表管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/quality/cost/assurance
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import QualityAssuranceForm from './components/assurance-form.vue'
-import QualityAssuranceIncomingPanel from './components/assurance-incoming-panel.vue'
-import { provideQualityAssuranceMasterContext, type QualityAssuranceRowRecord } from './composables/use-assurance-master-context'
-import { getQualityAssuranceList, getQualityAssuranceById, createQualityAssurance, updateQualityAssurance, deleteQualityAssuranceById, deleteQualityAssuranceBatch, getQualityAssuranceTemplate, importQualityAssurance, exportQualityAssurance } from '@/api/logistics/quality/cost/assurance'
-import type { QualityAssurance, QualityAssuranceQuery } from '@/types/logistics/quality/cost/assurance'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import QualityAssuranceForm from './components/AssuranceForm.vue'
+import QualityAssuranceIncomingPanel from './components/AssuranceIncomingPanel.vue'
+import { provideQualityAssuranceMasterContext, type QualityAssuranceRowRecord } from './composables/useAssuranceMasterContext'
+import { getQualityAssuranceList, getQualityAssuranceById, createQualityAssurance, updateQualityAssurance, deleteQualityAssuranceById, deleteQualityAssuranceBatch, getQualityAssuranceTemplate, importQualityAssurance, exportQualityAssurance } from '@/api/logistics/quality/cost/assurance.api'
+import type { QualityAssurance, QualityAssuranceQuery } from '@/types/logistics/quality/cost/assurance.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
 
 import {
@@ -177,7 +176,7 @@ import {
   QUALITYASSURANCE_QUERY_STRING_FIELDS,
   QUALITYASSURANCE_QUERY_FIELDS,
   QUALITYASSURANCE_SELF_I18N_KEY,
-} from './composables/use-assurance-i18n'
+} from './composables/useAssuranceI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useQualityAssuranceI18n()
@@ -315,7 +314,6 @@ onMounted(async () => {
   loadData()
 })
 
-
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
 
@@ -415,13 +413,13 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getQualityAssuranceField(record, 'debitNoteCode') ?? ''
   },
   {
-    title: pi.label('recorder'),
-    dataIndex: 'recorder',
-    key: 'recorder',
+    title: pi.label('recordGroupName'),
+    dataIndex: 'recordGroupName',
+    key: 'recordGroupName',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getQualityAssuranceField(record, 'recorder') ?? ''
+    customRender: ({ record }: { record: any }) => getQualityAssuranceField(record, 'recordGroupName') ?? ''
   },
   {
     title: pi.label('totalQualityCost'),
@@ -483,8 +481,6 @@ const getQualityAssuranceId = (record: QualityAssuranceRowRecord): string => {
  * @param field 字段名
  */
 const getQualityAssuranceField = (record: any, field: string): any => record?.[field]
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

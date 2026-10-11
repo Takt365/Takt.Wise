@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/materials/material-plant -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：Takt工厂物料实体管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -642,20 +642,19 @@
  * Takt工厂物料实体管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/logistics/materials/material-plant
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import MaterialPlantForm from './components/material-plant-form.vue'
-import { getMaterialPlantList, getMaterialPlantById, createMaterialPlant, updateMaterialPlant, deleteMaterialPlantById, deleteMaterialPlantBatch, getMaterialPlantTemplate, importMaterialPlant, exportMaterialPlant, updateMaterialPlantStatus } from '@/api/logistics/materials/material-plant'
-import type { MaterialPlant, MaterialPlantQuery } from '@/types/logistics/materials/material-plant'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import MaterialPlantForm from './components/MaterialPlantForm.vue'
+import { getMaterialPlantList, getMaterialPlantById, createMaterialPlant, updateMaterialPlant, deleteMaterialPlantById, deleteMaterialPlantBatch, getMaterialPlantTemplate, importMaterialPlant, exportMaterialPlant, updateMaterialPlantStatus } from '@/api/logistics/materials/materialPlant.api'
+import type { MaterialPlant, MaterialPlantQuery } from '@/types/logistics/materials/materialPlant.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -664,7 +663,7 @@ import {
   MATERIALPLANT_QUERY_STRING_FIELDS,
   MATERIALPLANT_QUERY_FIELDS,
   MATERIALPLANT_SELF_I18N_KEY,
-} from './composables/use-material-plant-i18n'
+} from './composables/useMaterialPlantI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useMaterialPlantI18n()

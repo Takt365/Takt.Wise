@@ -14,10 +14,10 @@
 
 ## 前端
 
-- `frontend/src/components/business/takt-flow-antflow-designer/`
-- `frontend/src/components/business/takt-flow-antflow-designer/config/takt-flow-tree.ts`
-- `frontend/src/components/business/takt-flow-antflow-designer/config/takt-flow-design-validate.ts`
-- `frontend/src/views/workflow/scheme/components/scheme-form.vue`
+- `frontend/src/components/business/TaktFlowAntDesigner/`
+- `frontend/src/components/business/TaktFlowAntDesigner/config/taktFlowTree.ts`
+- `frontend/src/components/business/TaktFlowAntDesigner/config/taktFlowDesignValidate.ts`
+- `frontend/src/views/workflow/scheme/components/SchemeForm.vue`
 - `frontend/src/views/workflow/todo/index.vue`
 - `frontend/src/api/workflow/instance.ts`
 - `frontend/src/types/workflow/`

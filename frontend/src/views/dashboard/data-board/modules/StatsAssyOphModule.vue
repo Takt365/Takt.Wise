@@ -1,6 +1,6 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
-<!-- 命名空间：frontend/src/views/dashboard/data-board/modules -->
+<!-- 项目名称：节拍智控·TaktWise -->
+<!-- 命名空间：frontend/src/views/dashboard/dataBoard.types/modules -->
 <!-- 文件名称：StatsAssyOphModule.vue -->
 <!-- 功能描述：数据看板组立 OPH（按生产班组：班别/计划数/生产数/达成率） -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
@@ -35,12 +35,11 @@
 /**
  * 组立 OPH：上月按生产班组（TeamCode）汇总计划数/生产数/达成率
  */
-import { ref, computed, onMounted } from 'vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { usePermissionStore } from '@/stores/identity/permission'
-import type { OutputProductionStat } from '@/types/logistics/manufacturing/output/output-stat'
+import { usePermissionStore } from '@/stores/identity/usePermissionStore'
+import type { OutputProductionStat } from '@/types/logistics/manufacturing/output/outputStat.types'
 import {
   DASHBOARD_STATS_API,
   DASHBOARD_STATS_PERMISSION,
@@ -49,7 +48,7 @@ import {
   fetchDashboardMetricIfPermitted,
   getLastMonthRange,
   scheduleDashboardLoad,
-} from '../utils/stats-query'
+} from '../utils/statsQuery'
 
 /** 空生产统计 */
 const EMPTY_STAT: OutputProductionStat = {

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Extensions
 // 文件名称：TaktCompanyScopeFillHelper.cs
 // 创建时间：2026-08-11
@@ -10,6 +10,7 @@
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
 // ========================================
 
+using Microsoft.Extensions.Configuration;
 using SqlSugar;
 using Takt.Domain.Entities;
 using Takt.Shared.Options;
@@ -49,6 +50,33 @@ public static class TaktCompanyScopeFillHelper
             database.GetCultureCodeForCompanyCode(companyCode),
             database.GetPlantCodeForCompanyCode(companyCode));
         return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// 从 IConfiguration 的 Database 节解析公司↔工厂↔文化映射后写入实体（旁路仓储的日志写入路径使用）。
+    /// </summary>
+    /// <param name="entity">公司级或审批级实体</param>
+    /// <param name="tenantCode">租户编码</param>
+    /// <param name="companyCode">公司编码</param>
+    /// <param name="configuration">应用配置</param>
+    public static void ApplyCompanyScopeFromConfiguration(
+        object entity,
+        string tenantCode,
+        string companyCode,
+        IConfiguration configuration)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+        ArgumentNullException.ThrowIfNull(configuration);
+        if (string.IsNullOrWhiteSpace(tenantCode) || string.IsNullOrWhiteSpace(companyCode))
+        {
+            return;
+        }
+
+        var database = configuration.RequireDatabase();
+        ApplyCompanyScope(
+            entity,
+            database.GetCultureCodeForCompanyCode(companyCode),
+            database.GetPlantCodeForCompanyCode(companyCode));
     }
 
     /// <summary>

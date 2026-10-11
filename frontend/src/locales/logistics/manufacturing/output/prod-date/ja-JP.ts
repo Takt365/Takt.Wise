@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/manufacturing/output/prod-date
 // 文件名称：ja-JP.ts
 // 功能描述：製造产出 生産日ルール文案；引用键 logistics.manufacturing.output.prod-date.page.*

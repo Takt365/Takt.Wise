@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Identity
 // 文件名称：TaktUserService.cs
 // 创建时间：2025-01-20
@@ -37,6 +37,7 @@ public class TaktUserService : TaktServiceBase, ITaktUserService
 {
     private readonly ITaktTenantRepository<TaktUser> _userRepository;
     private readonly ITaktCompanyRepository<TaktEmployee> _employeeRepository;
+    private readonly ITaktEmployeeProfileResolver _employeeProfileResolver;
     private readonly ITaktRbacService _rbacService;
     private readonly ITaktPermissionService _permissionService;
     private readonly ITaktDictDataService _dictDataService;
@@ -47,6 +48,7 @@ public class TaktUserService : TaktServiceBase, ITaktUserService
     /// </summary>
     /// <param name="userRepository">用户仓储</param>
     /// <param name="employeeRepository">员工仓储</param>
+    /// <param name="employeeProfileResolver">员工档案跨公司解析</param>
     /// <param name="rbacService">RBAC 关联分配服务</param>
     /// <param name="permissionService">权限服务</param>
     /// <param name="dictDataService">字典数据服务</param>
@@ -56,6 +58,7 @@ public class TaktUserService : TaktServiceBase, ITaktUserService
     public TaktUserService(
         ITaktTenantRepository<TaktUser> userRepository,
         ITaktCompanyRepository<TaktEmployee> employeeRepository,
+        ITaktEmployeeProfileResolver employeeProfileResolver,
         ITaktRbacService rbacService,
         ITaktPermissionService permissionService,
         ITaktDictDataService dictDataService,
@@ -66,6 +69,7 @@ public class TaktUserService : TaktServiceBase, ITaktUserService
     {
         _userRepository = userRepository;
         _employeeRepository = employeeRepository;
+        _employeeProfileResolver = employeeProfileResolver;
         _rbacService = rbacService;
         _permissionService = permissionService;
         _dictDataService = dictDataService;
@@ -133,28 +137,43 @@ public class TaktUserService : TaktServiceBase, ITaktUserService
     }
 
     /// <summary>
-    /// 获取用户选项列表（用于下拉框等）
+    /// 获取用户选项列表（用于下拉/分配；DB 分页上限 200；keyword 模糊用户名/昵称）
     /// </summary>
     /// <param name="plantCode">工厂代码（可选，用于按工厂过滤）</param>
-    /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
+    /// <param name="keyword">搜索关键字（可选，模糊匹配用户名/昵称）</param>
     /// <returns>用户选项列表</returns>
     public async Task<List<TaktSelectOption>> GetUserOptionsAsync(string? plantCode = null, string? keyword = null)
     {
         EnsureThreeLayerContext();
-        var users = await _userRepository.GetListAsync(u => u.TenantCode == CurrentTenantCode);
+        const int maxOptions = 200;
+        const int fetchSize = 500;
+        var kw = keyword?.Trim();
+        Expression<Func<TaktUser, bool>> predicate = string.IsNullOrEmpty(kw)
+            ? (u => u.TenantCode == CurrentTenantCode)
+            : (u => u.TenantCode == CurrentTenantCode
+                && ((u.UserName != null && u.UserName.Contains(kw))
+                    || (u.NickName != null && u.NickName.Contains(kw))));
+        var (users, _) = await _userRepository.GetPagedAsync(
+            predicate,
+            1,
+            fetchSize,
+            u => u.UserName ?? string.Empty,
+            false);
         var options = new List<TaktSelectOption>();
         foreach (var user in users)
         {
+            if (options.Count >= maxOptions)
+            {
+                break;
+            }
             if (user.Id <= 0)
             {
                 continue;
             }
-
             if (!await _permissionService.HasCompanyAccessAsync(user.Id, CurrentTenantCode, CurrentCompanyCode))
             {
                 continue;
             }
-
             options.Add(new TaktSelectOption
             {
                 DictValue = user.Id.ToString(),
@@ -162,7 +181,6 @@ public class TaktUserService : TaktServiceBase, ITaktUserService
                 ExtValue = user.UserName,
             });
         }
-
         return options;
     }
 
@@ -504,6 +522,166 @@ public class TaktUserService : TaktServiceBase, ITaktUserService
         await _userRepository.UpdateAsync(entity);
 
         LogInformation("用户密码修改成功: UserId={UserId}", CurrentUserId.Value);
+    }
+
+    /// <summary>
+    /// 更新当前登录用户头像（关联员工 Avatar）
+    /// </summary>
+    /// <param name="dto">头像 DTO</param>
+    /// <returns>更新后的头像 URL（清除时为 null）</returns>
+    public async Task<string?> UpdateMyAvatarAsync(TaktUpdateMyAvatarDto dto)
+    {
+        if (!IsAuthenticated || !CurrentUserId.HasValue)
+        {
+            ThrowBusinessException("用户未登录，无法更新头像");
+        }
+
+        var user = await _userRepository.GetByIdAsync(CurrentUserId.Value);
+        EnsureExists(user, "用户不存在");
+
+        if (user!.TenantCode != CurrentTenantCode)
+        {
+            ThrowBusinessException("无权限更新头像");
+        }
+
+        if (user.EmployeeId <= 0)
+        {
+            ThrowBusinessException("当前账号未绑定员工档案，无法更新头像");
+        }
+
+        var companyCode = (CurrentCompanyCode ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(companyCode))
+        {
+            ThrowBusinessException("当前会话公司无效，无法更新头像");
+        }
+
+        var employee = await _employeeProfileResolver.ResolveForCompanyAsync(
+            user.EmployeeId,
+            CurrentTenantCode!,
+            companyCode);
+        EnsureExists(employee, "员工档案不存在");
+
+        if (employee!.TenantCode != CurrentTenantCode)
+        {
+            ThrowBusinessException("无权限更新头像");
+        }
+
+        var avatar = string.IsNullOrWhiteSpace(dto.Avatar) ? null : dto.Avatar.Trim();
+        if (avatar != null && avatar.Length > 500)
+        {
+            ThrowBusinessException("头像地址过长");
+        }
+
+        employee.Avatar = avatar;
+        employee.UpdatedBy = CurrentUserId;
+        employee.UpdatedAt = DateTime.Now;
+        await _employeeRepository.UpdateAsync(employee);
+
+        LogInformation("用户头像更新成功: UserId={UserId}, EmployeeId={EmployeeId}", CurrentUserId.Value, employee.Id);
+        return avatar;
+    }
+
+    /// <summary>
+    /// 更新当前登录用户个人资料
+    /// NickName → takt_identity_user；Mobile/Email → 当前会话公司员工行（姓名/性别不可自助改）
+    /// </summary>
+    /// <param name="dto">个人资料 DTO</param>
+    /// <returns>更新后的可展示字段</returns>
+    public async Task<TaktUpdateMyProfileResultDto> UpdateMyProfileAsync(TaktUpdateMyProfileDto dto)
+    {
+        if (!IsAuthenticated || !CurrentUserId.HasValue)
+        {
+            ThrowBusinessException("用户未登录，无法更新资料");
+        }
+
+        var user = await _userRepository.GetByIdAsync(CurrentUserId.Value);
+        EnsureExists(user, "用户不存在");
+
+        if (user!.TenantCode != CurrentTenantCode)
+        {
+            ThrowBusinessException("无权限更新资料");
+        }
+
+        var nickName = (dto.NickName ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(nickName))
+        {
+            ThrowBusinessException("昵称不能为空");
+        }
+
+        if (nickName.Length < TaktRegexHelper.NickNameMinLength || nickName.Length > TaktRegexHelper.NickNameMaxLength)
+        {
+            ThrowBusinessException($"昵称长度须为{TaktRegexHelper.NickNameMinLength}–{TaktRegexHelper.NickNameMaxLength}个字符");
+        }
+
+        user.NickName = nickName;
+        user.UpdatedBy = CurrentUserId;
+        user.UpdatedAt = DateTime.Now;
+        await _userRepository.UpdateAsync(user);
+
+        var result = new TaktUpdateMyProfileResultDto
+        {
+            NickName = user.NickName,
+        };
+
+        if (user.EmployeeId <= 0)
+        {
+            LogInformation("用户资料更新成功（仅账号昵称）: UserId={UserId}", CurrentUserId.Value);
+            return result;
+        }
+
+        var companyCode = (CurrentCompanyCode ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(companyCode))
+        {
+            ThrowBusinessException("当前会话公司无效，无法更新员工档案");
+        }
+
+        var employee = await _employeeProfileResolver.ResolveForCompanyAsync(
+            user.EmployeeId,
+            CurrentTenantCode!,
+            companyCode);
+        EnsureExists(employee, "员工档案不存在");
+
+        if (employee!.TenantCode != CurrentTenantCode)
+        {
+            ThrowBusinessException("无权限更新员工档案");
+        }
+
+        var mobile = (dto.Mobile ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(mobile))
+        {
+            ThrowBusinessException("手机号码不能为空");
+        }
+
+        if (mobile.Length > 11)
+        {
+            ThrowBusinessException("手机号码长度不能超过11个字符");
+        }
+
+        var email = (dto.Email ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            ThrowBusinessException("电子邮箱不能为空");
+        }
+
+        if (email.Length > 100)
+        {
+            ThrowBusinessException("电子邮箱长度不能超过100个字符");
+        }
+
+        employee.Mobile = mobile;
+        employee.Email = email;
+        employee.UpdatedBy = CurrentUserId;
+        employee.UpdatedAt = DateTime.Now;
+        await _employeeRepository.UpdateAsync(employee);
+
+        result.Mobile = employee.Mobile;
+        result.Email = employee.Email;
+
+        LogInformation(
+            "用户资料更新成功: UserId={UserId}, EmployeeId={EmployeeId}",
+            CurrentUserId.Value,
+            employee.Id);
+        return result;
     }
 
     /// <summary>

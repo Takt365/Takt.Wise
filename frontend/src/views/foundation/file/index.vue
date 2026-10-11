@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/foundation/file -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：文件实体管理页面，含查询、上传、删除、导出与只读详情，不支持导入与编辑 -->
@@ -101,7 +101,7 @@
           />
         </template>
         <template v-else-if="column.key === 'fileTags'">
-          <takt-tag-color :value="getFileField(record, 'fileTags')" />
+          <TaktTagColor :value="getFileField(record, 'fileTags')" />
         </template>
       </template>
 
@@ -412,26 +412,25 @@
 </template>
 
 <script setup lang="ts">
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize, ensureTaktPaginationConfigAsync } from '@/utils/takt-paged'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize, ensureTaktPaginationConfigAsync } from '@/utils/taktPaged'
 /**
  * 文件实体 公司级实体：文件元数据按租户+公司隔离管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/foundation/file
  */
-import { ref, computed, onMounted, nextTick } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import FileFormUpload from './components/file-form-upload.vue'
-import FileDetail from './components/file-detail.vue'
-import { getFileList, getFileById, deleteFileById, deleteFileBatch, exportFile, downloadFileById, updateFileStatus, updateFilePublic } from '@/api/foundation/file'
-import type { File, FileQuery } from '@/types/foundation/file'
-import { isFileStatusEnabled, TAKT_FILE_STATUS_LOCKED } from '@/utils/takt-file-status'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import FileFormUpload from './components/FileFormUpload.vue'
+import FileDetail from './components/FileDetail.vue'
+import { getFileList, getFileById, deleteFileById, deleteFileBatch, exportFile, downloadFileById, updateFileStatus, updateFilePublic } from '@/api/foundation/file.api'
+import type { File, FileQuery } from '@/types/foundation/file.types'
+import { isFileStatusEnabled, TAKT_FILE_STATUS_LOCKED } from '@/utils/taktFileStatus'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEyeLine, RiDeleteBinLine } from '@remixicon/vue'
-import { usePermissionStore } from '@/stores/identity/permission'
+import { usePermissionStore } from '@/stores/identity/usePermissionStore'
 
 /** i18n 翻译函数 */
 const { t } = useI18n()

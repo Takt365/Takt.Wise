@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/defect/assy-order-defect -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：组立工单不良统计实体管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -398,20 +398,19 @@
  * 组立工单不良统计实体管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/defect/assy-order-defect
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import AssyOrderDefectForm from './components/assy-order-defect-form.vue'
-import { getAssyOrderDefectList, getAssyOrderDefectById, createAssyOrderDefect, updateAssyOrderDefect, deleteAssyOrderDefectById, deleteAssyOrderDefectBatch, getAssyOrderDefectTemplate, importAssyOrderDefect, exportAssyOrderDefect, updateAssyOrderDefectStatus } from '@/api/logistics/manufacturing/defect/assy-order-defect'
-import type { AssyOrderDefect, AssyOrderDefectQuery } from '@/types/logistics/manufacturing/defect/assy-order-defect'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import AssyOrderDefectForm from './components/AssyOrderDefectForm.vue'
+import { getAssyOrderDefectList, getAssyOrderDefectById, createAssyOrderDefect, updateAssyOrderDefect, deleteAssyOrderDefectById, deleteAssyOrderDefectBatch, getAssyOrderDefectTemplate, importAssyOrderDefect, exportAssyOrderDefect, updateAssyOrderDefectStatus } from '@/api/logistics/manufacturing/defect/assyOrderDefect.api'
+import type { AssyOrderDefect, AssyOrderDefectQuery } from '@/types/logistics/manufacturing/defect/assyOrderDefect.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -420,7 +419,7 @@ import {
   ASSYORDERDEFECT_QUERY_STRING_FIELDS,
   ASSYORDERDEFECT_QUERY_FIELDS,
   ASSYORDERDEFECT_SELF_I18N_KEY,
-} from './composables/use-assy-order-defect-i18n'
+} from './composables/useAssyOrderDefectI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useAssyOrderDefectI18n()

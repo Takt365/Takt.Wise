@@ -78,7 +78,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, markRaw, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { message } from 'ant-design-vue'
 import { RiAddLine, RiDeleteBinLine } from '@remixicon/vue'
@@ -105,7 +104,7 @@ import StatsPurchaseOrderModule from './modules/StatsPurchaseOrderModule.vue'
 import StatsPurchaseRequestModule from './modules/StatsPurchaseRequestModule.vue'
 import StatsInventoryModule from './modules/StatsInventoryModule.vue'
 import StatsCustomModule from './modules/StatsCustomModule.vue'
-import type { DataBoardModuleItem, DataBoardModuleKey } from '@/types/dashboard/data-board'
+import type { DataBoardModuleItem, DataBoardModuleKey } from '@/types/dashboard/dataBoard.types'
 import {
   DATA_BOARD_STORAGE_KEY,
   DATA_BOARD_AVAILABLE_MODULES,

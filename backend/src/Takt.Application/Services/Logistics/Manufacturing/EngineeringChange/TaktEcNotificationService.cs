@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcNotificationService.cs
 // 创建时间：2026-08-22
@@ -17,6 +17,7 @@ using Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange;
 using Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange;
 using Takt.Domain.Interfaces;
 using Takt.Domain.Repositories;
+using Takt.Shared.Constants;
 using Takt.Shared.Exceptions;
 using Takt.Shared.Helpers;
 using Takt.Shared.Models;
@@ -32,6 +33,7 @@ public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationSer
     private readonly ITaktApprovalRepository<TaktEcNotification> _ecNotificationRepository;
     private readonly ITaktCompanyRepository<TaktEcGijutsu> _ecGijutsuRepository;
     private readonly ITaktUniqueValidator _uniqueValidator;
+    private readonly ITaktNumberingGenerator _numberingGenerator;
 
     /// <summary>
     /// 构造函数
@@ -39,12 +41,14 @@ public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationSer
     /// <param name="ecNotificationRepository">工程变更通知单仓储</param>
     /// <param name="ecGijutsuRepository">设变技术课主仓储</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
+    /// <param name="numberingGenerator">业务编码生成器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktEcNotificationService(
         ITaktApprovalRepository<TaktEcNotification> ecNotificationRepository,
         ITaktCompanyRepository<TaktEcGijutsu> ecGijutsuRepository,
         ITaktUniqueValidator uniqueValidator,
+        ITaktNumberingGenerator numberingGenerator,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
@@ -52,6 +56,7 @@ public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationSer
         _ecNotificationRepository = ecNotificationRepository;
         _ecGijutsuRepository = ecGijutsuRepository;
         _uniqueValidator = uniqueValidator;
+        _numberingGenerator = numberingGenerator;
     }
 
     /// <summary>
@@ -107,12 +112,12 @@ public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationSer
         EnsureThreeLayerContext();
         var list = await _ecNotificationRepository.GetListAsync(
             x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.EcNotificationStatus == 1,
-            x => x.EcNotificationNotifierName ?? string.Empty,
+            x => x.EcNotificationNotifierGroupName ?? string.Empty,
             false);
         return list.Select(e => new TaktSelectOption
         {
             DictValue = e.EcNotificationCode,
-            DictLabel = e.EcNotificationNotifierName ?? e.EcNotificationCode,
+            DictLabel = e.EcNotificationNotifierGroupName ?? e.EcNotificationCode,
         }).ToList();
     }
 
@@ -125,6 +130,13 @@ public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationSer
     {
         var entity = dto.Adapt<TaktEcNotification>();
         await StampEcNotificationEcGijutsuAsync(entity, dto);
+        var ruleCode = TaktEcFlowConstants.ResolveNotificationRuleCode(entity.EcNotificationMethod);
+        var generated = await _numberingGenerator.GenerateNextAsync(ruleCode);
+        if (string.IsNullOrWhiteSpace(generated.BusinessCode))
+        {
+            throw new TaktBusinessException("工程变更通知单号生成失败");
+        }
+        entity.EcNotificationCode = generated.BusinessCode.Trim();
         var isUnique_ix_takt_logistics_manufacturing_ec_notification_code_unique = await _uniqueValidator.IsUniqueAsync(
             _ecNotificationRepository,
             x => x.EcNotificationCode == entity.EcNotificationCode);
@@ -378,7 +390,7 @@ public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationSer
                 || (x.EcTitle != null && x.EcTitle.Contains(keywords))
                 || (x.EcNotificationDeptCodes != null && x.EcNotificationDeptCodes.Contains(keywords))
                 || (x.EcNotificationDeptNames != null && x.EcNotificationDeptNames.Contains(keywords))
-                || (x.EcNotificationNotifierName != null && x.EcNotificationNotifierName.Contains(keywords))
+                || (x.EcNotificationNotifierGroupName != null && x.EcNotificationNotifierGroupName.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
             );
@@ -432,16 +444,16 @@ public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationSer
             exp = exp.And(x => x.EcNotificationDeptNames != null && x.EcNotificationDeptNames.Contains(ecNotificationDeptNames));
         }
 
-        if (queryDto?.EcNotificationNotifierId.HasValue == true)
+        if (!string.IsNullOrWhiteSpace(queryDto?.EcNotificationNotifierGroupCode))
         {
-            var ecNotificationNotifierId = queryDto.EcNotificationNotifierId.Value;
-            exp = exp.And(x => x.EcNotificationNotifierId == ecNotificationNotifierId);
+            var ecNotificationNotifierGroupCode = queryDto.EcNotificationNotifierGroupCode;
+            exp = exp.And(x => x.EcNotificationNotifierGroupCode == ecNotificationNotifierGroupCode);
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.EcNotificationNotifierName))
+        if (!string.IsNullOrWhiteSpace(queryDto?.EcNotificationNotifierGroupName))
         {
-            var ecNotificationNotifierName = queryDto.EcNotificationNotifierName;
-            exp = exp.And(x => x.EcNotificationNotifierName != null && x.EcNotificationNotifierName.Contains(ecNotificationNotifierName));
+            var ecNotificationNotifierGroupName = queryDto.EcNotificationNotifierGroupName;
+            exp = exp.And(x => x.EcNotificationNotifierGroupName != null && x.EcNotificationNotifierGroupName.Contains(ecNotificationNotifierGroupName));
         }
 
         if (queryDto?.EcNotificationMethod.HasValue == true)
@@ -542,11 +554,11 @@ public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationSer
         {
             return true;
         }
-        if (queryDto.EcNotificationNotifierId.HasValue)
+        if (!string.IsNullOrWhiteSpace(queryDto.EcNotificationNotifierGroupCode))
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.EcNotificationNotifierName))
+        if (!string.IsNullOrWhiteSpace(queryDto.EcNotificationNotifierGroupName))
         {
             return true;
         }

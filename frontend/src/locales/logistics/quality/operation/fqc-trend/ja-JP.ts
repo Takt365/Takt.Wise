@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/quality/operation/fqc-trend
 // 文件名称：ja-JP.ts
 // 功能描述：完成品検査推移ページ；参照キー logistics.quality.operation.fqc-trend.page.*

@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/serial/summary -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：序列号汇总管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -420,20 +420,19 @@
  * 序列号汇总管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/logistics/serial/summary
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import SerialSummaryForm from './components/summary-form.vue'
-import { getSerialSummaryList, getSerialSummaryById, createSerialSummary, updateSerialSummary, deleteSerialSummaryById, deleteSerialSummaryBatch, getSerialSummaryTemplate, importSerialSummary, exportSerialSummary } from '@/api/logistics/serial/summary'
-import type { SerialSummary, SerialSummaryQuery } from '@/types/logistics/serial/summary'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import SerialSummaryForm from './components/SummaryForm.vue'
+import { getSerialSummaryList, getSerialSummaryById, createSerialSummary, updateSerialSummary, deleteSerialSummaryById, deleteSerialSummaryBatch, getSerialSummaryTemplate, importSerialSummary, exportSerialSummary } from '@/api/logistics/serial/summary.api'
+import type { SerialSummary, SerialSummaryQuery } from '@/types/logistics/serial/summary.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -442,7 +441,7 @@ import {
   SERIALSUMMARY_QUERY_STRING_FIELDS,
   SERIALSUMMARY_QUERY_FIELDS,
   SERIALSUMMARY_SELF_I18N_KEY,
-} from './composables/use-summary-i18n'
+} from './composables/useSummaryI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useSerialSummaryI18n()

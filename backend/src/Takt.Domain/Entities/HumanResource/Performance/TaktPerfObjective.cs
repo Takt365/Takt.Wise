@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.HumanResource.Performance
 // 文件名称：TaktPerfObjective.cs
 // 创建时间：2026-06-06
@@ -32,7 +32,7 @@ public class TaktPerfObjective : TaktApprovalEntityBase
     /// <summary>
     /// 员工姓名
     /// </summary>
-    [SugarColumn(ColumnName = "employee_name", ColumnDescription = "员工姓名", ColumnDataType = "nvarchar", Length = 50, IsNullable = false)]
+    [SugarColumn(ColumnName = "employee_name", ColumnDescription = "员工姓名", ColumnDataType = "nvarchar", Length = 80, IsNullable = false)]
     public string EmployeeName { get; set; } = string.Empty;
     /// <summary>
     /// 方案指标（选项 TaktPerfSchemes/options；DictValue=Id）

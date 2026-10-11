@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomCostOptionDtos.cs
 // 创建时间：2026-08-21
@@ -57,7 +57,7 @@ public class TaktBomCostOptionDto
     public string? ProductCode { get; set; }
 
     /// <summary>
-    /// 远程搜索关键字（物料选项：组件编码/描述；可空=全量去重）
+    /// 远程搜索关键字（机种：编码/名称；物料：组件编码/描述；可空=全量去重）
     /// </summary>
     public string? Keyword { get; set; }
 }

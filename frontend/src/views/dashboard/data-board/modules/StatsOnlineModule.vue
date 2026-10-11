@@ -1,6 +1,6 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
-<!-- 命名空间：frontend/src/views/dashboard/data-board/modules -->
+<!-- 项目名称：节拍智控·TaktWise -->
+<!-- 命名空间：frontend/src/views/dashboard/dataBoard.types/modules -->
 <!-- 文件名称：StatsOnlineModule.vue -->
 <!-- 功能描述：数据看板在线统计（在线用户 / 今日访问） -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
@@ -28,19 +28,18 @@
 /**
  * 在线统计：公司维度看板（在线人数、当日访问）
  */
-import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import StatsMetricGrid from '../components/stats-metric-grid.vue'
-import { usePermissionStore } from '@/stores/identity/permission'
-import type { OnlineDashboardStatistics } from '@/types/foundation/online'
-import { enrichDashboardMetricItems } from '../utils/stats-metric-dashboard'
+import StatsMetricGrid from '../components/StatsMetricGrid.vue'
+import { usePermissionStore } from '@/stores/identity/usePermissionStore'
+import type { OnlineDashboardStatistics } from '@/types/foundation/online.types'
+import { enrichDashboardMetricItems } from '../utils/statsMetricDashboard'
 import {
   DASHBOARD_STATS_API,
   DASHBOARD_STATS_PERMISSION,
   fetchDashboardGet,
   fetchDashboardMetricIfPermitted,
   scheduleDashboardLoad,
-} from '../utils/stats-query'
+} from '../utils/statsQuery'
 
 const { t } = useI18n()
 const permissionStore = usePermissionStore()

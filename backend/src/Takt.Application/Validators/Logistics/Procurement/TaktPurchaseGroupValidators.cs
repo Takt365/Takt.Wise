@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Validators.Logistics.Procurement
 // 文件名称：TaktPurchaseGroupValidators.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：PurchaseGroup 模块 FluentValidation 验证器（由 generate-validators-from-entity.cjs 根据 TaktPurchaseGroup 生成，请按需审阅）
 // 
@@ -43,7 +43,7 @@ public class TaktPurchaseGroupCreateValidator : AbstractValidator<TaktPurchaseGr
             .MaximumLength(4).WithMessage("工厂代码长度不能超过4个字符");
         RuleFor(x => x.PurchaseGroupCode)
             .NotEmpty().WithMessage("采购组编码不能为空")
-            .MaximumLength(3).WithMessage("采购组编码长度不能超过3个字符");
+            .MaximumLength(6).WithMessage("采购组编码长度不能超过6个字符");
         RuleFor(x => x.PurchaseGroupName)
             .NotEmpty().WithMessage("采购组名称不能为空")
             .MaximumLength(80).WithMessage("采购组名称长度不能超过80个字符");
@@ -84,7 +84,7 @@ public class TaktPurchaseGroupUpdateValidator : AbstractValidator<TaktPurchaseGr
             .MaximumLength(4).WithMessage("工厂代码长度不能超过4个字符");
         RuleFor(x => x.PurchaseGroupCode)
             .NotEmpty().WithMessage("采购组编码不能为空")
-            .MaximumLength(3).WithMessage("采购组编码长度不能超过3个字符");
+            .MaximumLength(6).WithMessage("采购组编码长度不能超过6个字符");
         RuleFor(x => x.PurchaseGroupName)
             .NotEmpty().WithMessage("采购组名称不能为空")
             .MaximumLength(80).WithMessage("采购组名称长度不能超过80个字符");
@@ -119,7 +119,7 @@ public class TaktPurchaseGroupImportValidator : AbstractValidator<TaktPurchaseGr
             .MaximumLength(4).WithMessage("工厂代码长度不能超过4个字符").When(x => !string.IsNullOrWhiteSpace(x.PlantCode));
         RuleFor(x => x.PurchaseGroupCode)
             .NotEmpty().WithMessage("采购组编码不能为空")
-            .MaximumLength(3).WithMessage("采购组编码长度不能超过3个字符");
+            .MaximumLength(6).WithMessage("采购组编码长度不能超过6个字符");
         RuleFor(x => x.PurchaseGroupName)
             .NotEmpty().WithMessage("采购组名称不能为空")
             .MaximumLength(80).WithMessage("采购组名称长度不能超过80个字符");

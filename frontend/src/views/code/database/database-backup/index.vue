@@ -1,6 +1,6 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
-<!-- 命名空间：@/views/code/database/database-backup -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
+<!-- 命名空间：@/views/code/database/databaseBackup.types -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：标准 CRUD 列表；工具栏与操作列均含更新/删除；操作列另含立即/后台执行 -->
 <!-- 版权信息：Copyright (c) 2026 Takt  All rights reserved. -->
@@ -270,14 +270,13 @@
 <script setup lang="ts">
 /**
  * 数据库备份标准 CRUD 列表页
- * @module views/code/database/database-backup
+ * @module views/code/database/databaseBackup.types
  */
-import { computed, onMounted, ref } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
 import { RiEditLine, RiDeleteBinLine, RiPlayLine, RiTimerLine } from '@remixicon/vue'
 import {
   createDatabaseBackup,
@@ -289,18 +288,18 @@ import {
   runDatabaseBackupById,
   scheduleDatabaseBackupById,
   updateDatabaseBackup,
-} from '@/api/code/database/database-backup'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
+} from '@/api/code/database/databaseBackup.api'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import type { DatabaseBackup, DatabaseBackupQuery } from '@/types/code/database/backup'
-import BackupForm from './components/backup-form.vue'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import type { DatabaseBackup, DatabaseBackupQuery } from '@/types/code/database/backup.types'
+import BackupForm from './components/BackupForm.vue'
 import {
   useDatabaseBackupI18n,
   DATABASEBACKUP_LIST_FIELDS,
   DATABASEBACKUP_QUERY_FIELDS,
   DATABASEBACKUP_QUERY_STRING_FIELDS,
-} from './composables/use-backup-i18n'
+} from './composables/useBackupI18n'
 
 /** 实体字段 i18n */
 const pi = useDatabaseBackupI18n()

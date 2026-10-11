@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/quality/cost/incident -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：品质事故主表管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -154,21 +154,20 @@
  * 品质事故主表管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/quality/cost/incident
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import QualityIncidentForm from './components/incident-form.vue'
-import QualityIncidentItemPanel from './components/incident-item-panel.vue'
-import { provideQualityIncidentMasterContext, type QualityIncidentRowRecord } from './composables/use-incident-master-context'
-import { getQualityIncidentList, getQualityIncidentById, createQualityIncident, updateQualityIncident, deleteQualityIncidentById, deleteQualityIncidentBatch, getQualityIncidentTemplate, importQualityIncident, exportQualityIncident } from '@/api/logistics/quality/cost/incident'
-import type { QualityIncident, QualityIncidentQuery } from '@/types/logistics/quality/cost/incident'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import QualityIncidentForm from './components/IncidentForm.vue'
+import QualityIncidentItemPanel from './components/IncidentItemPanel.vue'
+import { provideQualityIncidentMasterContext, type QualityIncidentRowRecord } from './composables/useIncidentMasterContext'
+import { getQualityIncidentList, getQualityIncidentById, createQualityIncident, updateQualityIncident, deleteQualityIncidentById, deleteQualityIncidentBatch, getQualityIncidentTemplate, importQualityIncident, exportQualityIncident } from '@/api/logistics/quality/cost/incident.api'
+import type { QualityIncident, QualityIncidentQuery } from '@/types/logistics/quality/cost/incident.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
 
 import {
@@ -177,7 +176,7 @@ import {
   QUALITYINCIDENT_QUERY_STRING_FIELDS,
   QUALITYINCIDENT_QUERY_FIELDS,
   QUALITYINCIDENT_SELF_I18N_KEY,
-} from './composables/use-incident-i18n'
+} from './composables/useIncidentI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useQualityIncidentI18n()
@@ -314,7 +313,6 @@ onMounted(async () => {
   await ensureTaktPaginationConfigAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -492,8 +490,6 @@ const getQualityIncidentId = (record: QualityIncidentRowRecord): string => {
  * @param field 字段名
  */
 const getQualityIncidentField = (record: any, field: string): any => record?.[field]
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

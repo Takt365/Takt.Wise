@@ -1,5 +1,5 @@
 ﻿// ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.HumanResource.Personnel
 // 文件名称：TaktEmployee.cs
 // 创建时间：2025-01-20
@@ -36,7 +36,7 @@ public class TaktEmployee : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "employee_code", ColumnDescription = "员工编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string EmployeeCode { get; set; } = string.Empty;
     /// <summary>
-    /// 姓名
+    /// 姓名（2–80 位）
     /// </summary>
     [SugarColumn(ColumnName = "employee_name", ColumnDescription = "姓名", ColumnDataType = "nvarchar", Length = 80, IsNullable = false)]
     public string EmployeeName { get; set; } = string.Empty;

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/manufacturing/bom/price-delta-trend
 // 文件名称：ja-JP.ts
 // 创建时间：2026-08-13
@@ -12,6 +12,7 @@
 
 export default {
   page: {
+    title: 'コスト差異推移',
     selectPlantRequired: '工場を選択してください',
     selectPeriodRequired: '原価期間を選択してください',
     selectMaterialTypeRequired: '物料タイプを選択してください',

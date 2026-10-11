@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/bom/price-delta-trend -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：成本差异推移独立页（月成本 + 0价格组 + 价格差异组） -->
@@ -9,7 +9,7 @@
 
 <template>
   <div class="flex h-full min-h-0 min-w-0 w-full flex-col overflow-hidden p-4">
-    <price-delta-trend-query-form
+    <PriceDeltaTrendQueryForm
       v-model:plant-code="plantCode"
       v-model:material-type="materialType"
       v-model:model-code="modelCode"
@@ -51,6 +51,7 @@
       class="min-h-0 min-w-0 flex-1 overflow-hidden"
     >
       <TaktSingleTable
+        analysis-table
         class="h-full min-h-0"
         entity-scope="company"
         table-mode="single"
@@ -122,32 +123,33 @@
 import { message } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { getBomCostOptionPlantOptions } from '@/api/logistics/manufacturing/bom/cost-option'
+import { getBomCostOptionPlantOptions } from '@/api/logistics/manufacturing/bom/costOption.api'
 import {
   exportBomPriceDeltaTrendData,
   getBomPriceDeltaTrendList,
-} from '@/api/logistics/manufacturing/bom/price-delta-trend'
-import type { BomPriceDeltaTrend } from '@/types/logistics/manufacturing/bom/price-delta-trend'
+} from '@/api/logistics/manufacturing/bom/priceDeltaTrend.api'
+import type { BomPriceDeltaTrend } from '@/types/logistics/manufacturing/bom/priceDeltaTrend.types'
 import {
   ensureTaktPaginationConfigAsync,
   getTaktDefaultPageIndex,
   getTaktDefaultPageSize,
-} from '@/utils/takt-paged'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { measureFillHeightScrollYPx, TAKT_TABLE_SCROLL_Y_MIN } from '@/utils/table-scroll'
-import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/use-company-related-plant'
-import { useTableRefresh } from '@/composables/use-table-refresh'
+} from '@/utils/taktPaged'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { measureFillHeightScrollYPx, TAKT_TABLE_SCROLL_Y_MIN } from '@/utils/tableScroll'
+import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/useCompanyRelatedPlant'
+import { useTableRefresh } from '@/composables/useTableRefresh'
 import {
   buildDefaultCostingPeriodRange,
   buildDefaultPriceDeltaMonths,
   isCostingMonthInRange,
   periodRangeToCostingDateQuery,
-} from '@/views/logistics/manufacturing/bom/material-cost/utils/bom-material-cost-period'
+} from '@/views/logistics/manufacturing/bom/material-cost/utils/bomMaterialCostPeriod'
 import {
   buildBomExportBaseName,
   buildBomExportFileName,
-} from '@/views/logistics/manufacturing/bom/material-cost/utils/bom-export-file-name'
-import PriceDeltaTrendQueryForm from '@/views/logistics/manufacturing/bom/price-delta-trend/components/price-delta-trend-query-form.vue'
+} from '@/views/logistics/manufacturing/bom/material-cost/utils/bomExportFileName'
+import PriceDeltaTrendQueryForm from '@/views/logistics/manufacturing/bom/price-delta-trend/components/PriceDeltaTrendQueryForm.vue'
+import { useAnalysisPeriodRangeLimit } from '@/composables/useAnalysisPeriodRangeLimit'
 
 /** 长文本 Tooltip 样式（限制悬停层尺寸，避免整页撑爆） */
 const longTextTooltipStyle = {
@@ -156,6 +158,9 @@ const longTextTooltipStyle = {
 
 const localePrefix = 'logistics.manufacturing.bom.price-delta-trend.page'
 const { t } = useI18n()
+
+/** 期间最多 12 个月（查询前校验） */
+const { assertPeriodRangeOk } = useAnalysisPeriodRangeLimit()
 
 /** 工厂 */
 const plantCode = ref<string | undefined>()
@@ -450,6 +455,9 @@ async function handleSearch() {
     message.warning(t(`${localePrefix}.selectPeriodRequired`))
     return
   }
+  if (!assertPeriodRangeOk(periodRange.value)) {
+    return
+  }
   if (!materialType.value?.trim()) {
     message.warning(t(`${localePrefix}.selectMaterialTypeRequired`))
     return
@@ -539,7 +547,7 @@ async function handleExport() {
   try {
     const query = buildQuery()
     const plant = plantCode.value?.trim() ?? ''
-    const sheetTitle = 'DTA BOM成本差异推移'
+    const sheetTitle = t(`${localePrefix}.title`)
     const exportBase = buildBomExportBaseName(sheetTitle, [plant])
     const exportMeta = await exportBomPriceDeltaTrendData(
       query,

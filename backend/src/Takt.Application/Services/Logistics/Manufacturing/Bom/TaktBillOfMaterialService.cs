@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Bom
 // 文件名称：TaktBillOfMaterialService.cs
 // 创建时间：2026-08-22
@@ -552,6 +552,8 @@ public class TaktBillOfMaterialService : TaktServiceBase, ITaktBillOfMaterialSer
                 || (x.BomVersion != null && x.BomVersion.Contains(keywords))
                 || (x.AlternativeBomNumber != null && x.AlternativeBomNumber.Contains(keywords))
                 || (x.ParentMaterialUnit != null && x.ParentMaterialUnit.Contains(keywords))
+                || (x.BomGroupCode != null && x.BomGroupCode.Contains(keywords))
+                || (x.BomGroupName != null && x.BomGroupName.Contains(keywords))
                 || (x.BomDescription != null && x.BomDescription.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
@@ -622,6 +624,18 @@ public class TaktBillOfMaterialService : TaktServiceBase, ITaktBillOfMaterialSer
         {
             var parentMaterialQuantity = queryDto.ParentMaterialQuantity.Value;
             exp = exp.And(x => x.ParentMaterialQuantity == parentMaterialQuantity);
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.BomGroupCode))
+        {
+            var bomGroupCode = queryDto.BomGroupCode;
+            exp = exp.And(x => x.BomGroupCode == bomGroupCode);
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.BomGroupName))
+        {
+            var bomGroupName = queryDto.BomGroupName;
+            exp = exp.And(x => x.BomGroupName != null && x.BomGroupName.Contains(bomGroupName));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.BomDescription))
@@ -749,6 +763,14 @@ public class TaktBillOfMaterialService : TaktServiceBase, ITaktBillOfMaterialSer
             return true;
         }
         if (queryDto.ParentMaterialQuantity.HasValue)
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.BomGroupCode))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.BomGroupName))
         {
             return true;
         }

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi.Controllers.Logistics.Sales
 // 文件名称：TaktSalesPriceTrendsController.cs
 // 创建时间：2026-07-23
@@ -20,7 +20,7 @@ using Takt.Shared.Options;
 namespace Takt.WebApi.Controllers.Logistics.Sales;
 
 /// <summary>
-/// 销售价格月推移转置分析控制器（与 TaktSalesPrices CRUD 分离）
+/// 销售价格月推移转置分析控制器（与 TaktSalesConditionRecords CRUD 分离）
 /// </summary>
 [ApiModule(4, "后勤管理")]
 [Route("api/[controller]", Name = "销售价格推移")]
@@ -106,11 +106,11 @@ public class TaktSalesPriceTrendsController : TaktControllerBase
     }
 
     /// <summary>
-    /// 推移查询栏：按工厂+条件类型+客户去重物料
+    /// 推移查询栏：按工厂+条件类型去重物料（客户可选）
     /// </summary>
     /// <param name="plantCode">工厂代码</param>
     /// <param name="priceType">条件类型</param>
-    /// <param name="customerCode">客户编码</param>
+    /// <param name="customerCode">客户编码（可选）</param>
     /// <returns>下拉选项</returns>
     [TaktPermission("logistics:sales:price:trend:list", "销售价格推移物料选项")]
     [HttpGet("material-options")]
@@ -118,9 +118,7 @@ public class TaktSalesPriceTrendsController : TaktControllerBase
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(plantCode)
-                || string.IsNullOrWhiteSpace(priceType)
-                || string.IsNullOrWhiteSpace(customerCode))
+            if (string.IsNullOrWhiteSpace(plantCode) || string.IsNullOrWhiteSpace(priceType))
             {
                 return Success(new List<TaktSelectOption>(), "查询成功");
             }
@@ -134,7 +132,7 @@ public class TaktSalesPriceTrendsController : TaktControllerBase
     }
 
     /// <summary>
-    /// 销售价格月推移转置分析（工厂×物料×客户×月份）
+    /// 销售价格推移转置分析（工厂×物料×客户×ValidFrom）
     /// </summary>
     /// <param name="queryDto">查询 DTO</param>
     /// <returns>转置分析结果</returns>
@@ -155,7 +153,7 @@ public class TaktSalesPriceTrendsController : TaktControllerBase
     }
 
     /// <summary>
-    /// 清单导出：销售价格月推移
+    /// 清单导出：销售价格推移
     /// </summary>
     /// <param name="query">查询条件</param>
     /// <param name="sheetName">工作表名称</param>

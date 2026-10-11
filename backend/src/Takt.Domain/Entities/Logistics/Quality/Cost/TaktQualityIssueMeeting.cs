@@ -1,5 +1,5 @@
 ﻿// ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Quality.Cost
 // 文件名称：TaktQualityIssueMeeting.cs
 // 创建时间：2026-05-07
@@ -118,10 +118,16 @@ public class TaktQualityIssueMeeting : TaktCompanyEntityBase
     public decimal OtherApparatusCost { get; set; } = 0;
 
     /// <summary>
-    /// 品质问题対応记录者（会议调查试验记录者）
+    /// 对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）
     /// </summary>
-    [SugarColumn(ColumnName = "meeting_recorder", ColumnDescription = "品质问题对应记录者", Length = 30, ColumnDataType = "nvarchar", IsNullable = true)]
-    public string? MeetingRecorder { get; set; }
+    [SugarColumn(ColumnName = "response_group_code", ColumnDescription = "对应组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? ResponseGroupCode { get; set; }
+
+    /// <summary>
+    /// 对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    [SugarColumn(ColumnName = "response_group_name", ColumnDescription = "对应组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? ResponseGroupName { get; set; }
 
 
     /// <summary>

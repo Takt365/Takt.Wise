@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Quality.Operation
 // 文件名称：TaktQualityGroupDtos.cs
 // 创建时间：2026-08-11
@@ -51,7 +51,7 @@ public class TaktQualityGroupDto : TaktCompanyDtoBase
     public string? QualityGroupDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 质量组类别（字典 logistics_quality_group_category；0=IQC，1=QA，2=IPQC）
+    /// 质量组类别（字典 logistics_quality_group_category；0=IQC组 1=QA组 2=IPQC组 3=责任组 4=处理组 5=质量负责人组）
     /// </summary>
     public int QualityGroupCategory { get; set; } = 0;
 
@@ -128,7 +128,7 @@ public class TaktQualityGroupQueryDto : TaktPagedQuery
     public string? QualityGroupDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 质量组类别（字典 logistics_quality_group_category；0=IQC，1=QA，2=IPQC）
+    /// 质量组类别（字典 logistics_quality_group_category；0=IQC组 1=QA组 2=IPQC组 3=责任组 4=处理组 5=质量负责人组）
     /// </summary>
     public int? QualityGroupCategory { get; set; }
 
@@ -226,7 +226,7 @@ public class TaktQualityGroupCreateDto
     public string? QualityGroupDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 质量组类别（字典 logistics_quality_group_category；0=IQC，1=QA，2=IPQC）
+    /// 质量组类别（字典 logistics_quality_group_category；0=IQC组 1=QA组 2=IPQC组 3=责任组 4=处理组 5=质量负责人组）
     /// </summary>
     public int QualityGroupCategory { get; set; } = 0;
 
@@ -375,7 +375,7 @@ public class TaktQualityGroupTemplateDto
     public string? QualityGroupDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 质量组类别（字典 logistics_quality_group_category；0=IQC，1=QA，2=IPQC）
+    /// 质量组类别（字典 logistics_quality_group_category；0=IQC组 1=QA组 2=IPQC组 3=责任组 4=处理组 5=质量负责人组）
     /// </summary>
     public int? QualityGroupCategory { get; set; }
 
@@ -452,7 +452,7 @@ public class TaktQualityGroupImportDto
     public string? QualityGroupDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 质量组类别（字典 logistics_quality_group_category；0=IQC，1=QA，2=IPQC）
+    /// 质量组类别（字典 logistics_quality_group_category；0=IQC组 1=QA组 2=IPQC组 3=责任组 4=处理组 5=质量负责人组）
     /// </summary>
     public int? QualityGroupCategory { get; set; }
 
@@ -530,7 +530,7 @@ public class TaktQualityGroupExportDto
     public string? QualityGroupDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 质量组类别（字典 logistics_quality_group_category；0=IQC，1=QA，2=IPQC）
+    /// 质量组类别（字典 logistics_quality_group_category；0=IQC组 1=QA组 2=IPQC组 3=责任组 4=处理组 5=质量负责人组）
     /// </summary>
     public int QualityGroupCategory { get; set; } = 0;
 

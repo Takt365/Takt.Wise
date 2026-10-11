@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Interfaces
 // 文件名称：ITaktPermissionService.cs
 // 创建时间：2025-01-20
@@ -52,6 +52,7 @@ public interface ITaktPermissionService
     /// </summary>
     /// <param name="userId">用户ID</param>
     /// <param name="tenantCode">租户编码</param>
+    /// <param name="companyCode">公司编码</param>
     /// <returns>数据权限范围</returns>
-    Task<int> GetDataScopeAsync(long userId, string tenantCode);
+    Task<int> GetDataScopeAsync(long userId, string tenantCode, string companyCode);
 }

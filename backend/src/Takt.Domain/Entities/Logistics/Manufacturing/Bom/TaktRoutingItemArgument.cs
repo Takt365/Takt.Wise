@@ -1,6 +1,6 @@
 #nullable enable
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Manufacturing.Bom
 // 文件名称：TaktRoutingItemArgument.cs
 // 创建时间：2026-06-15

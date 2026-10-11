@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Models.Foundation
 // 文件名称：TaktDictStorageContext.cs
 // 功能描述：字典落库上下文：双向快照 + 多选排序映射（由 ITaktDictDataService 预加载）

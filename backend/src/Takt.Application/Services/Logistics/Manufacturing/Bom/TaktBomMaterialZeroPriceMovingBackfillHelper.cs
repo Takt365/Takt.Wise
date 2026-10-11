@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomMaterialZeroPriceMovingBackfillHelper.cs
 // 创建时间：2026-08-17
@@ -22,7 +22,7 @@ namespace Takt.Application.Services.Logistics.Manufacturing.Bom;
 public static class TaktBomMaterialZeroPriceMovingBackfillHelper
 {
     /// <summary>
-    /// ExtField 回填根键（与 TaktBomCalculatePurchasePriceHelper 一致）
+    /// ExtField 回填根键（与 TaktBomCalculatePurchaseInfoRecordHelper 一致）
     /// </summary>
     public const string ExtFieldBackfillRootKey = "_bk";
 

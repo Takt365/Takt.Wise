@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
+<!-- 项目名称：节拍智控·TaktWise -->
 <!-- 命名空间：@/views/code/generator -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：代码生成表配置 CRUD 页：分页列表、表单弹窗(gen-form)、从库导入(import-table)、代码预览(code-preview)、生成/同步/克隆/初始化。 -->
@@ -193,7 +193,7 @@
 </template>
 
 <script setup lang="ts">
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 /**
  * 代码生成表配置列表页：TaktGenTables CRUD + TaktGenEngines（导入/生成/预览/初始化）。
  * 子组件：gen-form（表+列配置）、import-table（从库导入）、code-preview（生成预览）。
@@ -202,37 +202,37 @@ import { useI18n } from 'vue-i18n'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { RiEditLine, RiDeleteBinLine, RiEyeLine, RiCodeSSlashLine, RiRefreshLine, RiFileCopyLine, RiRestartLine } from '@remixicon/vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
-import TaktColumnDrawer from '@/components/business/takt-column-drawer/index.vue'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
+import TaktColumnDrawer from '@/components/business/TaktColumnDrawer/index.vue'
 import {
   getGenTableList,
   getGenTableById,
   createGenTable,
   updateGenTable,
   deleteGenTableById,
-} from '@/api/code/generator/gen-table'
+} from '@/api/code/generator/genTable.api'
 import type {
   GenTable,
   GenTableQuery,
   GenTableCreate,
   GenTableUpdate,
-} from '@/types/code/generator/gen-table'
+} from '@/types/code/generator/genTable.types'
 import {
   importTableFromDatabase,
   initializeTableFromEntity,
   generateCode,
   previewCode,
   syncTableColumnsFromDatabase,
-} from '@/api/code/generator/gen-engine'
-import type { CodeGenGenerateResult, CodeGenPreviewFile, CodeGenPreviewResult, CodeGenPreviewValidationIssue } from '@/types/code/generator/gen-engine'
-import type { TaktBinaryDownload } from '@/types/common'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { getDatabaseInfoList, getDatabaseTableInfoList } from '@/api/code/database/database-info'
-import type { DatabaseInfo, DatabaseTableInfo } from '@/types/code/database/database-info'
-import GenForm from './components/gen-form.vue'
-import ImportTable from './components/import-table.vue'
-import CodePreview from './components/code-preview.vue'
-import type { PreviewFile, PreviewValidationIssue } from './components/code-preview.vue'
+} from '@/api/code/generator/genEngine.api'
+import type { CodeGenGenerateResult, CodeGenPreviewFile, CodeGenPreviewResult, CodeGenPreviewValidationIssue } from '@/types/code/generator/genEngine.types'
+import type { TaktBinaryDownload } from '@/types/common.types'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { getDatabaseInfoList, getDatabaseTableInfoList } from '@/api/code/database/databaseInfo.api'
+import type { DatabaseInfo, DatabaseTableInfo } from '@/types/code/database/databaseInfo.types'
+import GenForm from './components/GenForm.vue'
+import ImportTable from './components/ImportTable.vue'
+import CodePreview from './components/CodePreview.vue'
+import type { PreviewFile, PreviewValidationIssue } from './components/CodePreview.vue'
 
 /** i18n 翻译函数 */
 const { t } = useI18n()

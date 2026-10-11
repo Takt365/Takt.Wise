@@ -11,12 +11,12 @@
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <FileVersion>0.1.0.0</FileVersion>
     <!-- 公司信息 -->
-    <Company Condition=" '$(Language)' == 'zh-CN' ">节拍技术有限公司</Company>
+    <Company Condition=" '$(Language)' == 'zh-CN' ">节拍科技有限公司</Company>
     <Company Condition=" '$(Language)' != 'zh-CN' ">Takt Technologies Co., Ltd.</Company>
     <Authors>Takt365</Authors>
-    <Copyright Condition=" '$(Language)' == 'zh-CN' ">Copyright (c) 2025-$([System.DateTime]::Now.ToString("yyyy")) 节拍技术有限公司。保留所有权利。</Copyright>
+    <Copyright Condition=" '$(Language)' == 'zh-CN' ">Copyright (c) 2025-$([System.DateTime]::Now.ToString("yyyy")) 节拍科技有限公司。保留所有权利。</Copyright>
     <Copyright Condition=" '$(Language)' != 'zh-CN' ">Copyright (c) 2025-$([System.DateTime]::Now.ToString("yyyy")) Takt Technologies Co., Ltd. All rights reserved.</Copyright>
-    <Product>Takt.Plat</Product>
+    <Product>TaktWise</Product>
     <!-- 算术溢出：项目级 checked 语义（强烈推荐，与 00-project §五 对齐） -->
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>

@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/mrp/production-plan -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：Takt生产计划实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -170,22 +170,21 @@
  * Takt生产计划实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/mrp/production-plan
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import ProductionPlanForm from './components/production-plan-form.vue'
-import ProductionPlanItemPanel from './components/production-plan-item-panel.vue'
-import { provideProductionPlanMasterContext, type ProductionPlanRowRecord } from './composables/use-production-plan-master-context'
-import { getProductionPlanList, getProductionPlanById, createProductionPlan, updateProductionPlan, deleteProductionPlanById, deleteProductionPlanBatch, getProductionPlanTemplate, importProductionPlan, exportProductionPlan, updateProductionPlanStatus } from '@/api/logistics/manufacturing/mrp/production-plan'
-import type { ProductionPlan, ProductionPlanQuery } from '@/types/logistics/manufacturing/mrp/production-plan'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import ProductionPlanForm from './components/ProductionPlanForm.vue'
+import ProductionPlanItemPanel from './components/ProductionPlanItemPanel.vue'
+import { provideProductionPlanMasterContext, type ProductionPlanRowRecord } from './composables/useProductionPlanMasterContext'
+import { getProductionPlanList, getProductionPlanById, createProductionPlan, updateProductionPlan, deleteProductionPlanById, deleteProductionPlanBatch, getProductionPlanTemplate, importProductionPlan, exportProductionPlan, updateProductionPlanStatus } from '@/api/logistics/manufacturing/mrp/productionPlan.api'
+import type { ProductionPlan, ProductionPlanQuery } from '@/types/logistics/manufacturing/mrp/productionPlan.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
 
 import {
@@ -194,7 +193,7 @@ import {
   PRODUCTIONPLAN_QUERY_STRING_FIELDS,
   PRODUCTIONPLAN_QUERY_FIELDS,
   PRODUCTIONPLAN_SELF_I18N_KEY,
-} from './composables/use-production-plan-i18n'
+} from './composables/useProductionPlanI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useProductionPlanI18n()
@@ -335,7 +334,6 @@ onMounted(async () => {
   loadData()
 })
 
-
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
 
@@ -471,13 +469,13 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getProductionPlanField(record, 'planPeriodEnd') ?? ''
   },
   {
-    title: pi.label('plannerId'),
-    dataIndex: 'plannerId',
-    key: 'plannerId',
+    title: pi.label('plannerGroupCode'),
+    dataIndex: 'plannerGroupCode',
+    key: 'plannerGroupCode',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getProductionPlanField(record, 'plannerId') ?? ''
+    customRender: ({ record }: { record: any }) => getProductionPlanField(record, 'plannerGroupCode') ?? ''
   },
   {
     title: pi.label('planBy'),
@@ -612,8 +610,6 @@ const toProductionPlanNumber = (value: string | number | undefined | null): numb
   const num = Number(value ?? 0)
   return Number.isFinite(num) ? num : 0
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

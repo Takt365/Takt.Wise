@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Materials
 // 文件名称：TaktMaterialGroup.cs
 // 创建时间：2026-06-15
@@ -26,9 +26,9 @@ namespace Takt.Domain.Entities.Logistics.Materials;
 public class TaktMaterialGroup : TaktTenantCoreEntityBase
 {
     /// <summary>
-    /// 物料组编码（group_code；租户内唯一；与物料 material_group 对齐）
+    /// 物料组编码（与员工编码同长 6；租户内唯一）
     /// </summary>
-    [SugarColumn(ColumnName = "material_group_code", ColumnDescription = "物料组编码", ColumnDataType = "varchar", Length = 20, IsNullable = false)]
+    [SugarColumn(ColumnName = "material_group_code", ColumnDescription = "物料组编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string MaterialGroupCode { get; set; } = string.Empty;
 
     /// <summary>

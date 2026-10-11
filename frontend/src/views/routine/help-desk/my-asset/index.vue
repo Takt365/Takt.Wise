@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/routine/help-desk/my-asset -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：服务台「我的资产」页；按当前用户工单的 AssetCode 聚合，关联 TaktAsset -->
@@ -41,13 +41,12 @@
  * 服务台我的资产页（当前用户工单 AssetCode 聚合）
  * @module views/routine/help-desk/my-asset
  */
-import { ref, computed, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { getMyTicketAssetList } from '@/api/routine/help-desk/ticket'
-import type { TicketMyAsset } from '@/types/routine/help-desk/ticket'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { getMyTicketAssetList } from '@/api/routine/help-desk/ticket.api'
+import type { TicketMyAsset } from '@/types/routine/help-desk/ticket.types'
 
 /** i18n 翻译函数 */
 const { t } = useI18n()

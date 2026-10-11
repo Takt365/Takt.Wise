@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Cost
 // 文件名称：TaktQualityIncidentI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktQualityIncident 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -134,6 +134,24 @@ public class TaktQualityIncidentI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.qualityincident.incidentreason", "zh-CN", "事故内容", "事故内容(废弃原因)"),
             // entity.qualityincident.incidentreason
             new TranslationSeedItem("entity.qualityincident.incidentreason", "zh-HK", "事故内容_hk", "事故内容(废弃原因)"),
+
+            // entity.qualityincident.scrapgroupcode
+            new TranslationSeedItem("entity.qualityincident.scrapgroupcode", "en-US", "废弃组编码_us", "废弃组编码（选项 TaktCostGroups/options?costGroupCategory=2；DictValue=CostGroupCode）"),
+            // entity.qualityincident.scrapgroupcode
+            new TranslationSeedItem("entity.qualityincident.scrapgroupcode", "ja-JP", "废弃组编码_jp", "废弃组编码（选项 TaktCostGroups/options?costGroupCategory=2；DictValue=CostGroupCode）"),
+            // entity.qualityincident.scrapgroupcode
+            new TranslationSeedItem("entity.qualityincident.scrapgroupcode", "zh-CN", "废弃组编码", "废弃组编码（选项 TaktCostGroups/options?costGroupCategory=2；DictValue=CostGroupCode）"),
+            // entity.qualityincident.scrapgroupcode
+            new TranslationSeedItem("entity.qualityincident.scrapgroupcode", "zh-HK", "废弃组编码_hk", "废弃组编码（选项 TaktCostGroups/options?costGroupCategory=2；DictValue=CostGroupCode）"),
+
+            // entity.qualityincident.scrapgroupname
+            new TranslationSeedItem("entity.qualityincident.scrapgroupname", "en-US", "废弃组名称_us", "废弃组名称（冗余：按 ScrapGroupCode 取 TaktCostGroups.CostGroupName 联动）"),
+            // entity.qualityincident.scrapgroupname
+            new TranslationSeedItem("entity.qualityincident.scrapgroupname", "ja-JP", "废弃组名称_jp", "废弃组名称（冗余：按 ScrapGroupCode 取 TaktCostGroups.CostGroupName 联动）"),
+            // entity.qualityincident.scrapgroupname
+            new TranslationSeedItem("entity.qualityincident.scrapgroupname", "zh-CN", "废弃组名称", "废弃组名称（冗余：按 ScrapGroupCode 取 TaktCostGroups.CostGroupName 联动）"),
+            // entity.qualityincident.scrapgroupname
+            new TranslationSeedItem("entity.qualityincident.scrapgroupname", "zh-HK", "废弃组名称_hk", "废弃组名称（冗余：按 ScrapGroupCode 取 TaktCostGroups.CostGroupName 联动）"),
 
             // entity.qualityincident.totalscrapquantity
             new TranslationSeedItem("entity.qualityincident.totalscrapquantity", "en-US", "废弃总数_us", "废弃总数(自动计算 = 各子表废弃数量合计)"),

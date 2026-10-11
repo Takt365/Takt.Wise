@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.HumanResource.Personnel
 // 文件名称：TaktEmployeeI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEmployee 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -100,13 +100,13 @@ public class TaktEmployeeI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.employee.code", "zh-HK", "员工编码_hk", "员工编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 员工编码规则生成并展示，非手输；单据类型菜单：员工档案）"),
 
             // entity.employee.name
-            new TranslationSeedItem("entity.employee.name", "en-US", "姓名_us", "姓名"),
+            new TranslationSeedItem("entity.employee.name", "en-US", "姓名_us", "姓名（2–80 位）"),
             // entity.employee.name
-            new TranslationSeedItem("entity.employee.name", "ja-JP", "姓名_jp", "姓名"),
+            new TranslationSeedItem("entity.employee.name", "ja-JP", "姓名_jp", "姓名（2–80 位）"),
             // entity.employee.name
-            new TranslationSeedItem("entity.employee.name", "zh-CN", "姓名", "姓名"),
+            new TranslationSeedItem("entity.employee.name", "zh-CN", "姓名", "姓名（2–80 位）"),
             // entity.employee.name
-            new TranslationSeedItem("entity.employee.name", "zh-HK", "姓名_hk", "姓名"),
+            new TranslationSeedItem("entity.employee.name", "zh-HK", "姓名_hk", "姓名（2–80 位）"),
 
             // entity.employee.gender
             new TranslationSeedItem("entity.employee.gender", "en-US", "性别_us", "性别（字典 sys_user_gender；0=未知 1=男 2=女）"),

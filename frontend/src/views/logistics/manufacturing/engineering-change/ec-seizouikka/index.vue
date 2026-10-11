@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/ec-seizouikka -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：设变制一部门：左栏执行主表，右栏设变明细 -->
@@ -28,10 +28,10 @@
 /**
  * 设变制一部门列表页（左右主子表：主=执行，从=明细）
  */
-import { getEcSeizouikkaList, getEcSeizouikkaById, updateEcSeizouikka, exportEcSeizouikka, updateEcSeizouikkaDiscontinuedStatus } from '@/api/logistics/manufacturing/engineering-change/ec-seizouikka'
-import { TaktEcExecCodes } from '@/constants/logistics/ec-exec-codes'
-import EcDeptExecLrPage from '../components/ec-dept-exec-lr-page.vue'
-import EcDeptViewForm from './components/ec-dept-view-form.vue'
+import { getEcSeizouikkaList, getEcSeizouikkaById, updateEcSeizouikka, exportEcSeizouikka, updateEcSeizouikkaDiscontinuedStatus } from '@/api/logistics/manufacturing/engineering-change/ecSeizouikka.api'
+import { TaktEcExecCodes } from '@/constants/logistics/ecExecCodes.constants'
+import EcDeptExecLrPage from '../components/EcDeptExecLrPage.vue'
+import EcDeptViewForm from './components/EcDeptViewForm.vue'
 
 /**
  * 更新停产状态

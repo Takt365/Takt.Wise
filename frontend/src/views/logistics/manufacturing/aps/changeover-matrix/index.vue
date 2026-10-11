@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/aps/changeover-matrix -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：换型矩阵管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -285,20 +285,19 @@
  * 换型矩阵管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/aps/changeover-matrix
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import ChangeoverMatrixForm from './components/changeover-matrix-form.vue'
-import { getChangeoverMatrixList, getChangeoverMatrixById, createChangeoverMatrix, updateChangeoverMatrix, deleteChangeoverMatrixById, deleteChangeoverMatrixBatch, getChangeoverMatrixTemplate, importChangeoverMatrix, exportChangeoverMatrix, updateChangeoverMatrixStatus } from '@/api/logistics/manufacturing/aps/changeover-matrix'
-import type { ChangeoverMatrix, ChangeoverMatrixQuery } from '@/types/logistics/manufacturing/aps/changeover-matrix'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import ChangeoverMatrixForm from './components/ChangeoverMatrixForm.vue'
+import { getChangeoverMatrixList, getChangeoverMatrixById, createChangeoverMatrix, updateChangeoverMatrix, deleteChangeoverMatrixById, deleteChangeoverMatrixBatch, getChangeoverMatrixTemplate, importChangeoverMatrix, exportChangeoverMatrix, updateChangeoverMatrixStatus } from '@/api/logistics/manufacturing/aps/changeoverMatrix.api'
+import type { ChangeoverMatrix, ChangeoverMatrixQuery } from '@/types/logistics/manufacturing/aps/changeoverMatrix.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -307,7 +306,7 @@ import {
   CHANGEOVERMATRIX_QUERY_STRING_FIELDS,
   CHANGEOVERMATRIX_QUERY_FIELDS,
   CHANGEOVERMATRIX_SELF_I18N_KEY,
-} from './composables/use-changeover-matrix-i18n'
+} from './composables/useChangeoverMatrixI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useChangeoverMatrixI18n()

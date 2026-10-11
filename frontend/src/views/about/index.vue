@@ -1,5 +1,5 @@
 ﻿<!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
+<!-- 项目名称：节拍智控·TaktWise -->
 <!-- 命名空间：@/views/about -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：关于页面，系统信息与依赖列表（表头分组） -->
@@ -61,7 +61,6 @@
 
 <script setup lang="ts">
 import type { TableColumnsType } from 'ant-design-vue'
-import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RiFileTextLine, RiCopyrightLine, RiShieldLine, RiFileList3Line } from '@remixicon/vue'
 import { appInfo } from '@/utils/appMeta'

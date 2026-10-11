@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomMaterialCostTrendService.cs
 // 创建时间：2026-08-01
@@ -196,7 +196,7 @@ public class TaktBomMaterialCostTrendService : TaktServiceBase, ITaktBomMaterial
             columnKeys,
             columnLabels,
             sheetName ?? "DTA 产品成本推移表",
-            fileName ?? "DTA 产品成本推移表.xlsx");
+            fileName ?? TaktNamingHelper.PlantPrefixedTrendExportBase(query.PlantCode, "DTA 产品成本推移表"));
     }
 
     /// <summary>

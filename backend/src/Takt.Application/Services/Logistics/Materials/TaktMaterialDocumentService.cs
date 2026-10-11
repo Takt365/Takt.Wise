@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Materials
 // 文件名称：TaktMaterialDocumentService.cs
-// 创建时间：2026-08-22
+// 创建时间：2026-09-20
 // 创建人：Takt365(Cursor AI)
 // 功能描述：物料凭证应用服务实现
 // 
@@ -14,7 +14,6 @@ using System.Linq.Expressions;
 using Mapster;
 using SqlSugar;
 using Takt.Application.Dtos.Logistics.Materials;
-using Takt.Application.Services.Foundation;
 using Takt.Domain.Entities.Logistics.Materials;
 using Takt.Domain.Interfaces;
 using Takt.Domain.Repositories;
@@ -34,7 +33,6 @@ public class TaktMaterialDocumentService : TaktServiceBase, ITaktMaterialDocumen
     private readonly ITaktCompanyRepository<TaktMaterialDocumentItem> _materialDocumentItemRepository;
     private readonly ITaktLineNumberGenerator _lineNumberGenerator;
     private readonly ITaktUniqueValidator _uniqueValidator;
-    private readonly ITaktCurrentEmployeeCodeService _currentEmployeeCodeService;
 
     /// <summary>
     /// 构造函数
@@ -43,7 +41,6 @@ public class TaktMaterialDocumentService : TaktServiceBase, ITaktMaterialDocumen
     /// <param name="materialDocumentItemRepository">MaterialDocumentItem仓储</param>
     /// <param name="lineNumberGenerator">明细行号生成器</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
-    /// <param name="currentEmployeeCodeService">当前登录用户员工编码解析</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktMaterialDocumentService(
@@ -51,7 +48,6 @@ public class TaktMaterialDocumentService : TaktServiceBase, ITaktMaterialDocumen
         ITaktCompanyRepository<TaktMaterialDocumentItem> materialDocumentItemRepository,
         ITaktLineNumberGenerator lineNumberGenerator,
         ITaktUniqueValidator uniqueValidator,
-        ITaktCurrentEmployeeCodeService currentEmployeeCodeService,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
@@ -60,7 +56,6 @@ public class TaktMaterialDocumentService : TaktServiceBase, ITaktMaterialDocumen
         _materialDocumentItemRepository = materialDocumentItemRepository;
         _lineNumberGenerator = lineNumberGenerator;
         _uniqueValidator = uniqueValidator;
-        _currentEmployeeCodeService = currentEmployeeCodeService;
     }
 
     /// <summary>
@@ -134,7 +129,6 @@ public class TaktMaterialDocumentService : TaktServiceBase, ITaktMaterialDocumen
     public async Task<TaktMaterialDocumentDto> CreateMaterialDocumentAsync(TaktMaterialDocumentCreateDto dto)
     {
         var entity = dto.Adapt<TaktMaterialDocument>();
-        entity.PostedBy = await _currentEmployeeCodeService.GetCurrentEmployeeCodeAsync();
         var isUnique_ix_takt_logistics_materials_material_document_doc_unique = await _uniqueValidator.IsUniqueAsync(
             _materialDocumentRepository,
             x => x.MaterialDocumentYear == entity.MaterialDocumentYear
@@ -162,7 +156,6 @@ public class TaktMaterialDocumentService : TaktServiceBase, ITaktMaterialDocumen
             throw new TaktBusinessException("物料凭证不存在");
         }
         dto.Adapt(entity);
-        entity.PostedBy = await _currentEmployeeCodeService.GetCurrentEmployeeCodeAsync();
         var isUnique_ix_takt_logistics_materials_material_document_doc_unique = await _uniqueValidator.IsUniqueAsync(
             _materialDocumentRepository,
             x => x.MaterialDocumentYear == entity.MaterialDocumentYear
@@ -251,7 +244,6 @@ public class TaktMaterialDocumentService : TaktServiceBase, ITaktMaterialDocumen
             try
             {
                 var entity = rows[i].Adapt<TaktMaterialDocument>();
-                entity.PostedBy = await _currentEmployeeCodeService.GetCurrentEmployeeCodeAsync();
                 var importKey = $"{entity.MaterialDocumentYear}|{entity.MaterialDocumentCode}";
                 if (!importSeenKeys.Add(importKey))
                 {
@@ -398,7 +390,7 @@ public class TaktMaterialDocumentService : TaktServiceBase, ITaktMaterialDocumen
                 childDto.CultureCode = entity.CultureCode;
                 childDto.PlantCode = entity.PlantCode;
                 childDto.MaterialDocumentCode = entity.MaterialDocumentCode;
-                childDto.PostedBy = entity.PostedBy;
+                childDto.PostedBy = entity.PostedBy ?? string.Empty;
                 var lineKey = $"{entity.CompanyCode}|{entity.Id}|{childDto.LineNumber}";
                 if (!seenLineKeys.Add(lineKey))
                 {

@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Materials
 // 文件名称：TaktMaterialDocumentItemI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktMaterialDocumentItem 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -235,13 +235,13 @@ public class TaktMaterialDocumentItemI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.materialdocumentitem.customercode", "zh-HK", "客户_hk", "客户（选项 TaktCustomers/options；DictValue=CustomerCode）"),
 
             // entity.materialdocumentitem.debitcreditindicator
-            new TranslationSeedItem("entity.materialdocumentitem.debitcreditindicator", "en-US", "借/贷标识_us", "借/贷标识"),
+            new TranslationSeedItem("entity.materialdocumentitem.debitcreditindicator", "en-US", "借/贷标识_us", "借/贷标识（S=借方入库/增加，H=贷方冲销退货/减少；入库实绩统计按此加减，不以移动类型取反）"),
             // entity.materialdocumentitem.debitcreditindicator
-            new TranslationSeedItem("entity.materialdocumentitem.debitcreditindicator", "ja-JP", "借/贷标识_jp", "借/贷标识"),
+            new TranslationSeedItem("entity.materialdocumentitem.debitcreditindicator", "ja-JP", "借/贷标识_jp", "借/贷标识（S=借方入库/增加，H=贷方冲销退货/减少；入库实绩统计按此加减，不以移动类型取反）"),
             // entity.materialdocumentitem.debitcreditindicator
-            new TranslationSeedItem("entity.materialdocumentitem.debitcreditindicator", "zh-CN", "借/贷标识", "借/贷标识"),
+            new TranslationSeedItem("entity.materialdocumentitem.debitcreditindicator", "zh-CN", "借/贷标识", "借/贷标识（S=借方入库/增加，H=贷方冲销退货/减少；入库实绩统计按此加减，不以移动类型取反）"),
             // entity.materialdocumentitem.debitcreditindicator
-            new TranslationSeedItem("entity.materialdocumentitem.debitcreditindicator", "zh-HK", "借/贷标识_hk", "借/贷标识"),
+            new TranslationSeedItem("entity.materialdocumentitem.debitcreditindicator", "zh-HK", "借/贷标识_hk", "借/贷标识（S=借方入库/增加，H=贷方冲销退货/减少；入库实绩统计按此加减，不以移动类型取反）"),
 
             // entity.materialdocumentitem.currencycode
             new TranslationSeedItem("entity.materialdocumentitem.currencycode", "en-US", "货币_us", "货币（字典 accounting_financial_currency_code）"),

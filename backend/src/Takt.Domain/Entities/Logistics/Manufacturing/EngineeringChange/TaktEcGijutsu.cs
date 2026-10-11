@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Manufacturing.Ecn
 // 文件名称：TaktEcGijutsu.cs
 // 创建时间：2025-02-02
@@ -61,7 +61,7 @@ public class TaktEcGijutsu : TaktCompanyEntityBase
     public string EcContent { get; set; } = string.Empty;
 
     /// <summary>
-    /// 设变担当（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）
+    /// 设变担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
     [SugarColumn(ColumnName = "ec_leader", ColumnDescription = "设变担当", Length = 80, ColumnDataType = "nvarchar", IsNullable = false)]
     public string EcLeader { get; set; } = string.Empty;
@@ -75,13 +75,19 @@ public class TaktEcGijutsu : TaktCompanyEntityBase
     /// <summary>
     /// 实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_scope", ColumnDescription = "实施范围", ColumnDataType = "int", IsNullable = false, DefaultValue = "4")]
-    public int EcScope { get; set; } = 4;
+    [SugarColumn(ColumnName = "ec_scope", ColumnDescription = "实施范围", ColumnDataType = "int", IsNullable = false, DefaultValue = "1")]
+    public int EcScope { get; set; } = 1;
 
-  /// <summary>
-  /// 录入日期
-  /// </summary>
-  [SugarColumn(ColumnName = "ec_entry_date", ColumnDescription = "录入日期", ColumnDataType = "date", IsNullable = false)]
+    /// <summary>
+    /// 制二/制一/品管实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种
+    /// </summary>
+    [SugarColumn(ColumnName = "ec_dept_scope", ColumnDescription = "部门范围", ColumnDataType = "int", IsNullable = false, DefaultValue = "2")]
+    public int EcDeptScope { get; set; } = 2;
+
+    /// <summary>
+    /// 录入日期
+    /// </summary>
+    [SugarColumn(ColumnName = "ec_entry_date", ColumnDescription = "录入日期", ColumnDataType = "date", IsNullable = false)]
     public DateTime EcEntryDate { get; set; }
 
     /// <summary>

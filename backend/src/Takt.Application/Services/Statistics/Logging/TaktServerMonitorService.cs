@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Statistics.Logging
 // 文件名称：TaktServerMonitorService.cs
 // 创建时间：2026-05-06
@@ -63,7 +63,7 @@ public class TaktServerMonitorService : TaktServiceBase, ITaktServerMonitorServi
         var startTime = process.StartTime;
         var dto = new TaktAppStatusDto
         {
-            ApplicationName = loggingOptions?.AppName ?? "Takt Plat",
+            ApplicationName = loggingOptions?.AppName ?? "TaktWise",
             ApplicationVersion = loggingOptions?.AppVersion
                 ?? Assembly.GetEntryAssembly()?.GetName().Version?.ToString()
                 ?? "1.0.0.0",

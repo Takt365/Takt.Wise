@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/sop/sop-step-check-item -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：SOP 工步实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -284,21 +284,20 @@
  * SOP 工步实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/sop/sop-step-check-item
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import SopStepForm from './components/step-form.vue'
-import SopStepCheckItemPanel from './components/sop-step-check-item-panel.vue'
-import { provideSopStepMasterContext } from './composables/use-step-master-context'
-import { getSopStepList, getSopStepById, createSopStep, updateSopStep, deleteSopStepById, deleteSopStepBatch, getSopStepTemplate, importSopStep, exportSopStep } from '@/api/logistics/manufacturing/sop/step'
-import type { SopStep, SopStepQuery } from '@/types/logistics/manufacturing/sop/step'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import SopStepForm from './components/StepForm.vue'
+import SopStepCheckItemPanel from './components/SopStepCheckItemPanel.vue'
+import { provideSopStepMasterContext } from './composables/useStepMasterContext'
+import { getSopStepList, getSopStepById, createSopStep, updateSopStep, deleteSopStepById, deleteSopStepBatch, getSopStepTemplate, importSopStep, exportSopStep } from '@/api/logistics/manufacturing/sop/step.api'
+import type { SopStep, SopStepQuery } from '@/types/logistics/manufacturing/sop/step.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 /** i18n 翻译函数 */

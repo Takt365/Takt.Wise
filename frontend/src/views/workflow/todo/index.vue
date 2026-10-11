@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节节拍工厂·Takt Plat  -->
+<!-- 项目名称：节拍智控·TaktWise  -->
 <!-- 命名空间：@/views/workflow/todo -->
 <!-- 文件名称：index.vue -->
 <!-- 创建时间：2025-01-20 -->
@@ -69,7 +69,7 @@
             {{ t('workflow.instance.page.task.form.content') }}
           </div>
           <TaskFormContent :detail="taskDetail" />
-          <takt-flow-pending-add-approvers-panel
+          <TaktFlowPendingAddApproversPanel
             :detail="taskDetail"
             :allow-reduce="!!taskDetail?.canVerify"
             @refresh="reloadTaskDetailInModal"
@@ -117,7 +117,7 @@
             {{ t('workflow.instance.page.task.form.content') }}
           </div>
           <TaskFormContent :detail="taskDetail" />
-          <takt-flow-pending-add-approvers-panel
+          <TaktFlowPendingAddApproversPanel
             :detail="taskDetail"
             :allow-reduce="!!taskDetail?.canVerify"
             @refresh="reloadTaskDetailInModal"
@@ -151,7 +151,7 @@
             {{ t('workflow.instance.page.task.form.content') }}
           </div>
           <TaskFormContent :detail="taskDetail" />
-          <takt-flow-pending-add-approvers-panel
+          <TaktFlowPendingAddApproversPanel
             :detail="taskDetail"
             :allow-reduce="!!taskDetail?.canVerify"
             @refresh="reloadTaskDetailInModal"
@@ -222,28 +222,27 @@
 /**
  * 待办列表页：拉取待办、分页、办结（通过/驳回）、转办、加签；弹窗内展示任务内容与审批/转办/加签表单。
  */
-import { ref, reactive, computed, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import {
   RiCheckboxCircleLine,
   RiCloseCircleLine,
   RiUserShared2Line,
   RiUserAddLine
 } from '@remixicon/vue'
-import { getFlowEngineTodoList, getFlowEngineTodoById, completeFlowEngineTask, transferFlowEngineTask, addFlowEngineApprovers } from '@/api/workflow/flow-engine'
-import { getUserOptions } from '@/api/identity/user'
-import ApproveForm from './components/flow-approve-form.vue'
-import TransferForm from './components/flow-transfer-form.vue'
-import AddSignForm from './components/flow-add-sign-form.vue'
-import TaskFormContent from './components/flow-task-form-content.vue'
-import type { FlowTodoItem, FlowInstanceDetail, FlowAddApproverItem, FlowTodoQuery } from '@/types/workflow/flow-engine'
-import type { TaktSelectOption } from '@/types/common'
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { useWorkflowSignalRRefresh, WORKFLOW_TABLE_NAMES } from '@/composables/use-workflow-signalr-refresh'
-import { useWorkflowTodoCountStore } from '@/stores/workflow/todo-count'
+import { getFlowEngineTodoList, getFlowEngineTodoById, completeFlowEngineTask, transferFlowEngineTask, addFlowEngineApprovers } from '@/api/workflow/flowEngine.api'
+import { getUserOptions } from '@/api/identity/user.api'
+import ApproveForm from './components/FlowApproveForm.vue'
+import TransferForm from './components/FlowTransferForm.vue'
+import AddSignForm from './components/FlowAddSignForm.vue'
+import TaskFormContent from './components/FlowTaskFormContent.vue'
+import type { FlowTodoItem, FlowInstanceDetail, FlowAddApproverItem, FlowTodoQuery } from '@/types/workflow/flowEngine.types'
+import type { TaktSelectOption } from '@/types/common.types'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { useWorkflowSignalRRefresh, WORKFLOW_TABLE_NAMES } from '@/composables/useWorkflowSignalrRefresh'
+import { useWorkflowTodoCountStore } from '@/stores/workflow/useTodoCountStore'
 const toErrorMessage = (error: unknown): string => (error instanceof Error ? error.message : String(error))
 
 const { t } = useI18n()

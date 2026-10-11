@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds
 // 文件名称：TaktDictDataSeedData.cs
 // 创建时间：2025-01-20
@@ -153,6 +153,14 @@ public class TaktDictDataSeedData : ITaktSeedDataCoordinator
             TaktLogger.Information(
                 "sys_publish_scope 非标准项已软删除 {Count} 条（仅保留 0|1|2，不含指定角色）",
                 softDeletedPublishScopes);
+        }
+
+        var softDeletedEcScopes = await SoftDeleteObsoleteEcScopeCategoriesAsync(seedContext, tenantCode);
+        if (softDeletedEcScopes > 0)
+        {
+            TaktLogger.Information(
+                "logistics_manufacturing_ec_scope_category 非标准项已软删除 {Count} 条（仅保留 1=全仕向 2=部管 3=内部 4=技术）",
+                softDeletedEcScopes);
         }
 
         TaktLogger.Information("字典数据种子数据初始化完成: 插入 {InsertCount} 条，更新 {UpdateCount} 条", insertCount, updateCount);
@@ -1718,7 +1726,7 @@ public class TaktDictDataSeedData : ITaktSeedDataCoordinator
             ("logistics_sales_pricing_procedure","标准","ZVAA97","dict.logistics.sales.pricing.procedure.zvaa97",11,11,0,"销售定价过程.ZVAA97",11,"mul","A","V"),
             ("logistics_sales_pricing_procedure","标准 - 总额 (旧)","ZVAA98","dict.logistics.sales.pricing.procedure.zvaa98",12,12,0,"销售定价过程.ZVAA98",12,"mul","A","V"),
             ("logistics_sales_pricing_procedure","标准","ZVAA99","dict.logistics.sales.pricing.procedure.zvaa99",13,13,1,"销售定价过程.ZVAA99",13,"mul","A","V"),
-            ("logistics_procurement_pricing_procedure","采购价格","ZRM001","dict.logistics.procurement.pricing.procedure.zrm001",1,1,1,"采购定价过程.ZRM001",1,"mul","A","M"),
+            ("logistics_procurement_pricing_procedure","采购信息记录","ZRM001","dict.logistics.procurement.pricing.procedure.zrm001",1,1,1,"采购定价过程.ZRM001",1,"mul","A","M"),
             ("logistics_procurement_pricing_procedure","库存凭证","ZRM002","dict.logistics.procurement.pricing.procedure.zrm002",2,2,0,"采购定价过程.ZRM002",2,"mul","A","M"),
             ("logistics_procurement_pricing_procedure","采购单据(大)","RM0000","dict.logistics.procurement.pricing.procedure.rm0000",3,3,0,"采购定价过程.RM0000",3,"mul","A","M"),
             ("logistics_procurement_pricing_procedure","条件补充抬头","RM0001","dict.logistics.procurement.pricing.procedure.rm0001",4,4,0,"采购定价过程.RM0001",4,"mul","A","M"),
@@ -1875,15 +1883,25 @@ public class TaktDictDataSeedData : ITaktSeedDataCoordinator
             ("logistics_manufacturing_ec_attachment_type","外部联络","EL","dict.logistics.manufacturing.ec.attachment.type.el",4,4,0,"设变附件文件类别.外部联络",4,"mul","",""),
             ("logistics_manufacturing_ec_attachment_type","TCJ","TCJ","dict.logistics.manufacturing.ec.attachment.type.tcj",5,5,0,"设变附件文件类别.TCJ",5,"mul","",""),
             ("logistics_manufacturing_ec_attachment_type","设变","EC","dict.logistics.manufacturing.ec.attachment.type.ec",6,6,0,"设变附件文件类别.设变文件",6,"mul","",""),
-            ("logistics_manufacturing_ec_scope_category","实施范围-全仕向","1","dict.logistics.manufacturing.ec.scope.category.1",1,1,0,"设变实施范围.全仕向",1,"mul","",""),
-            ("logistics_manufacturing_ec_scope_category","实施范围-部管","2","dict.logistics.manufacturing.ec.scope.category.2",2,2,0,"设变实施范围.部管",2,"mul","",""),
-            ("logistics_manufacturing_ec_scope_category","实施范围-内部","3","dict.logistics.manufacturing.ec.scope.category.3",3,3,0,"设变实施范围.内部",3,"mul","",""),
-            ("logistics_manufacturing_ec_scope_category","实施范围-技术","4","dict.logistics.manufacturing.ec.scope.category.4",4,4,0,"设变实施范围.技术",4,"mul","",""),
+            ("logistics_manufacturing_ec_scope_category","全仕向","1","dict.logistics.manufacturing.ec.scope.category.1",1,1,0,"设变实施范围.全仕向",1,"mul","",""),
+            ("logistics_manufacturing_ec_scope_category","部管","2","dict.logistics.manufacturing.ec.scope.category.2",2,2,0,"设变实施范围.部管",2,"mul","",""),
+            ("logistics_manufacturing_ec_scope_category","内部","3","dict.logistics.manufacturing.ec.scope.category.3",3,3,0,"设变实施范围.内部",3,"mul","",""),
+            ("logistics_manufacturing_ec_scope_category","技术","4","dict.logistics.manufacturing.ec.scope.category.4",4,4,0,"设变实施范围.技术",4,"mul","",""),
+            ("logistics_manufacturing_ec_dept_scope_category","按成品","1","dict.logistics.manufacturing.ec.dept.scope.category.1",1,1,0,"设变部门实施范围.按成品",1,"mul","",""),
+            ("logistics_manufacturing_ec_dept_scope_category","按机种","2","dict.logistics.manufacturing.ec.dept.scope.category.2",2,2,0,"设变部门实施范围.按机种",2,"mul","",""),
+            ("logistics_manufacturing_ec_dept_scope_category","按设变","3","dict.logistics.manufacturing.ec.dept.scope.category.3",3,3,0,"设变部门实施范围.按设变",3,"mul","",""),
             ("logistics_manufacturing_ec_gijutsu_status","发行","1","dict.logistics.manufacturing.ec.gijutsu.status.1",1,1,1,"设变技术课状态.发行",1,"mul","",""),
             ("logistics_manufacturing_ec_gijutsu_status","执行中","2","dict.logistics.manufacturing.ec.gijutsu.status.2",2,2,0,"设变技术课状态.执行中",2,"mul","",""),
             ("logistics_manufacturing_ec_gijutsu_status","完成","3","dict.logistics.manufacturing.ec.gijutsu.status.3",3,3,0,"设变技术课状态.完成",3,"mul","",""),
-            ("logistics_manufacturing_ec_group_category","设变EC担当","1","dict.logistics.manufacturing.ec.group.category.1",1,1,1,"设变组类别.设变EC担当",1,"mul","",""),
-            ("logistics_manufacturing_ec_group_category","SOP担当","2","dict.logistics.manufacturing.ec.group.category.2",2,2,0,"设变组类别.SOP担当",2,"mul","",""),
+            ("logistics_manufacturing_ec_group_category","SOP制技担当","2","dict.logistics.manufacturing.ec.group.category.2",2,2,1,"设变组类别.SOP制技担当",2,"mul","",""),
+            ("logistics_manufacturing_ec_group_category","EC生管担当","3","dict.logistics.manufacturing.ec.group.category.3",3,3,0,"设变组类别.EC生管担当",3,"mul","",""),
+            ("logistics_manufacturing_ec_group_category","EC采购担当","4","dict.logistics.manufacturing.ec.group.category.4",4,4,0,"设变组类别.EC采购担当",4,"mul","",""),
+            ("logistics_manufacturing_ec_group_category","EC部管担当","5","dict.logistics.manufacturing.ec.group.category.5",5,5,0,"设变组类别.EC部管担当",5,"mul","",""),
+            ("logistics_manufacturing_ec_group_category","EC受检担当","6","dict.logistics.manufacturing.ec.group.category.6",6,6,0,"设变组类别.EC受检担当",6,"mul","",""),
+            ("logistics_manufacturing_ec_group_category","EC SMT担当","7","dict.logistics.manufacturing.ec.group.category.7",7,7,0,"设变组类别.EC SMT担当",7,"mul","",""),
+            ("logistics_manufacturing_ec_group_category","EC制二担当","8","dict.logistics.manufacturing.ec.group.category.8",8,8,0,"设变组类别.EC制二担当",8,"mul","",""),
+            ("logistics_manufacturing_ec_group_category","EC制一担当","9","dict.logistics.manufacturing.ec.group.category.9",9,9,0,"设变组类别.EC制一担当",9,"mul","",""),
+            ("logistics_manufacturing_ec_group_category","EC品管担当","10","dict.logistics.manufacturing.ec.group.category.10",10,10,0,"设变组类别.EC品管担当",10,"mul","",""),
             ("logistics_manufacturing_ec_in_stock_status","在库","1","dict.logistics.manufacturing.ec.in.stock.status.1",1,1,0,"设变在库状态.在库",1,"mul","",""),
             ("logistics_manufacturing_ec_in_stock_status","不在库","2","dict.logistics.manufacturing.ec.in.stock.status.2",2,2,0,"设变在库状态.不在库",2,"mul","",""),
             ("logistics_manufacturing_ec_in_stock_status","待确认","3","dict.logistics.manufacturing.ec.in.stock.status.3",3,3,0,"设变在库状态.待确认",3,"mul","",""),
@@ -2145,6 +2163,16 @@ public class TaktDictDataSeedData : ITaktSeedDataCoordinator
             ("logistics_procurement_manufacturer_type","合同制造商(CM)","2","dict.logistics.procurement.manufacturer.type.2",3,3,0,"制造商类型.CM",3,"mul","",""),
             ("logistics_procurement_manufacturer_type","品牌制造商","3","dict.logistics.procurement.manufacturer.type.3",4,4,0,"制造商类型.品牌制造商",4,"mul","",""),
             ("logistics_procurement_manufacturer_type","其他","4","dict.logistics.procurement.manufacturer.type.4",5,5,0,"制造商类型.其他",5,"mul","",""),
+            ("logistics_maintenance_group_category","设备","1","dict.logistics.maintenance.group.category.1",1,1,1,"设备维护组类别.设备",1,"mul","",""),
+            ("logistics_maintenance_group_category","维护","2","dict.logistics.maintenance.group.category.2",2,2,0,"设备维护组类别.维护",2,"mul","",""),
+            ("logistics_customer_service_group_category","服务","1","dict.logistics.customer.service.group.category.1",1,1,1,"客户服务组类别.服务",1,"mul","",""),
+            ("logistics_customer_service_group_category","工单","2","dict.logistics.customer.service.group.category.2",2,2,0,"客户服务组类别.工单",2,"mul","",""),
+            ("logistics_manufacturing_aps_group_category","计划员","1","dict.logistics.manufacturing.aps.group.category.1",1,1,1,"APS组类别.计划员",1,"mul","",""),
+            ("logistics_manufacturing_aps_group_category","发布员","2","dict.logistics.manufacturing.aps.group.category.2",2,2,0,"APS组类别.发布员",2,"mul","",""),
+            ("logistics_manufacturing_aps_group_category","设备操作员","3","dict.logistics.manufacturing.aps.group.category.3",3,3,0,"APS组类别.设备操作员",3,"mul","",""),
+            ("logistics_manufacturing_aps_group_category","设备维护员","4","dict.logistics.manufacturing.aps.group.category.4",4,4,0,"APS组类别.设备维护员",4,"mul","",""),
+            ("logistics_manufacturing_bom_group_category","BOM","1","dict.logistics.manufacturing.bom.group.category.1",1,1,1,"BOM组类别.BOM",1,"mul","",""),
+            ("logistics_manufacturing_bom_group_category","工艺","2","dict.logistics.manufacturing.bom.group.category.2",2,2,0,"BOM组类别.工艺",2,"mul","",""),
             ("logistics_manufacturing_defect_group_category","ASSY","0","dict.logistics.manufacturing.defect.group.category.0",1,1,1,"不良组类别.Assy",1,"mul","",""),
             ("logistics_manufacturing_defect_group_category","INSPECTION","1","dict.logistics.manufacturing.defect.group.category.1",2,2,0,"不良组类别.Inspection",2,"mul","",""),
             ("logistics_manufacturing_defect_group_category","REPAIR","2","dict.logistics.manufacturing.defect.group.category.2",3,3,0,"不良组类别.Repair",3,"mul","",""),
@@ -2723,7 +2751,7 @@ public class TaktDictDataSeedData : ITaktSeedDataCoordinator
             ("logistics_materials_price_unit_param","10","10","dict.logistics.materials.price.unit.param.10",2,2,0,"价格单位.10",2,"mul","",""),
             ("logistics_materials_price_unit_param","100","100","dict.logistics.materials.price.unit.param.100",3,3,0,"价格单位.100",3,"mul","",""),
             ("logistics_materials_price_unit_param","1000","1000","dict.logistics.materials.price.unit.param.1000",4,4,1,"价格单位.1000",4,"mul","",""),
-            ("logistics_procurement_pricing_date_control","采购订单日期","1","dict.logistics.procurement.pricing.date.control.1",1,1,1,"定价日期控制.采购订单日期",1,"mul","",""),
+            ("logistics_procurement_pricing_date_control","订单日期","1","dict.logistics.procurement.pricing.date.control.1",1,1,1,"定价日期控制.订单日期",1,"mul","",""),
             ("logistics_procurement_pricing_date_control","交货日期","2","dict.logistics.procurement.pricing.date.control.2",2,2,0,"定价日期控制.交货日期",2,"mul","",""),
             ("logistics_procurement_pricing_date_control","当前日期","3","dict.logistics.procurement.pricing.date.control.3",3,3,0,"定价日期控制.当前日期",3,"mul","",""),
             ("logistics_procurement_pricing_date_control","手动","4","dict.logistics.procurement.pricing.date.control.4",4,4,0,"定价日期控制.手动",4,"mul","",""),
@@ -2842,6 +2870,9 @@ public class TaktDictDataSeedData : ITaktSeedDataCoordinator
             ("logistics_quality_defect_type","一般","1","dict.logistics.quality.defect.type.1",2,2,0,"检验不良类型.一般",2,"mul","",""),
             ("logistics_quality_defect_type","严重","2","dict.logistics.quality.defect.type.2",3,3,0,"检验不良类型.严重",3,"mul","",""),
             ("logistics_quality_defect_type","致命","3","dict.logistics.quality.defect.type.3",4,4,0,"检验不良类型.致命",4,"mul","",""),
+            ("logistics_quality_defect_verify_status","待验证","0","dict.logistics.quality.defect.verify.status.0",1,1,1,"检验不良验证结果.待验证",1,"mul","",""),
+            ("logistics_quality_defect_verify_status","合格","1","dict.logistics.quality.defect.verify.status.1",2,2,0,"检验不良验证结果.合格",2,"mul","",""),
+            ("logistics_quality_defect_verify_status","不合格","2","dict.logistics.quality.defect.verify.status.2",3,3,0,"检验不良验证结果.不合格",3,"mul","",""),
             ("logistics_quality_evaluation_category","质量管理","0","dict.logistics.quality.evaluation.category.0",1,1,1,"供应商评价类别.质量管理",1,"mul","",""),
             ("logistics_quality_evaluation_category","交付能力","1","dict.logistics.quality.evaluation.category.1",2,2,0,"供应商评价类别.交付能力",2,"mul","",""),
             ("logistics_quality_evaluation_category","价格水平","2","dict.logistics.quality.evaluation.category.2",3,3,0,"供应商评价类别.价格水平",3,"mul","",""),
@@ -2862,9 +2893,28 @@ public class TaktDictDataSeedData : ITaktSeedDataCoordinator
             ("logistics_quality_follow_up_status","待跟进","1","dict.logistics.quality.follow.up.status.1",2,2,0,"跟进状态.待跟进",2,"mul","",""),
             ("logistics_quality_follow_up_status","跟进中","2","dict.logistics.quality.follow.up.status.2",3,3,0,"跟进状态.跟进中",3,"mul","",""),
             ("logistics_quality_follow_up_status","已完成","3","dict.logistics.quality.follow.up.status.3",4,4,0,"跟进状态.已完成",4,"mul","",""),
-            ("logistics_quality_group_category","IQC","0","dict.logistics.quality.group.category.0",1,1,1,"质量组类别.IQC",1,"mul","",""),
-            ("logistics_quality_group_category","QA","1","dict.logistics.quality.group.category.1",2,2,0,"质量组类别.QA",2,"mul","",""),
-            ("logistics_quality_group_category","IPQC","2","dict.logistics.quality.group.category.2",3,3,0,"质量组类别.IPQC",3,"mul","",""),
+            ("logistics_quality_complaint_group_category","责任组","1","dict.logistics.quality.complaint.group.category.1",1,1,1,"客诉组类别.责任组",1,"mul","",""),
+            ("logistics_quality_complaint_group_category","处理组","2","dict.logistics.quality.complaint.group.category.2",2,2,0,"客诉组类别.处理组",2,"mul","",""),
+            ("logistics_quality_complaint_group_category","改善组","3","dict.logistics.quality.complaint.group.category.3",3,3,0,"客诉组类别.改善组",3,"mul","",""),
+            ("logistics_quality_complaint_group_category","评价组","4","dict.logistics.quality.complaint.group.category.4",4,4,0,"客诉组类别.评价组",4,"mul","",""),
+            ("logistics_quality_complaint_group_category","调查组","5","dict.logistics.quality.complaint.group.category.5",5,5,0,"客诉组类别.调查组",5,"mul","",""),
+            ("logistics_quality_cost_group_category","记录组","1","dict.logistics.quality.cost.group.category.1",1,1,1,"成本组类别.记录组",1,"mul","",""),
+            ("logistics_quality_cost_group_category","废弃组","2","dict.logistics.quality.cost.group.category.2",2,2,0,"成本组类别.废弃组",2,"mul","",""),
+            ("logistics_quality_cost_group_category","对应组","3","dict.logistics.quality.cost.group.category.3",3,3,0,"成本组类别.对应组",3,"mul","",""),
+            ("logistics_manufacturing_sop_group_category","工位","1","dict.logistics.manufacturing.sop.group.category.1",1,1,1,"SOP组类别.工位",1,"mul","",""),
+            ("logistics_manufacturing_sop_group_category","文档","2","dict.logistics.manufacturing.sop.group.category.2",2,2,0,"SOP组类别.文档",2,"mul","",""),
+            ("logistics_manufacturing_sop_group_category","版本","3","dict.logistics.manufacturing.sop.group.category.3",3,3,0,"SOP组类别.版本",3,"mul","",""),
+            ("logistics_manufacturing_sop_group_category","确认","4","dict.logistics.manufacturing.sop.group.category.4",4,4,0,"SOP组类别.确认",4,"mul","",""),
+            ("logistics_manufacturing_sop_group_category","执行","5","dict.logistics.manufacturing.sop.group.category.5",5,5,0,"SOP组类别.执行",5,"mul","",""),
+            ("logistics_manufacturing_sop_group_category","扫码","6","dict.logistics.manufacturing.sop.group.category.6",6,6,0,"SOP组类别.扫码",6,"mul","",""),
+            ("logistics_manufacturing_sop_group_category","ESD","7","dict.logistics.manufacturing.sop.group.category.7",7,7,0,"SOP组类别.ESD",7,"mul","",""),
+            ("logistics_manufacturing_sop_group_category","安灯","8","dict.logistics.manufacturing.sop.group.category.8",8,8,0,"SOP组类别.安灯",8,"mul","",""),
+            ("logistics_quality_group_category","IQC组","0","dict.logistics.quality.group.category.0",1,1,1,"质量组类别.IQC组",1,"mul","",""),
+            ("logistics_quality_group_category","QA组","1","dict.logistics.quality.group.category.1",2,2,0,"质量组类别.QA组",2,"mul","",""),
+            ("logistics_quality_group_category","IPQC组","2","dict.logistics.quality.group.category.2",3,3,0,"质量组类别.IPQC组",3,"mul","",""),
+            ("logistics_quality_group_category","责任组","3","dict.logistics.quality.group.category.3",4,4,0,"质量组类别.责任组",4,"mul","",""),
+            ("logistics_quality_group_category","处理组","4","dict.logistics.quality.group.category.4",5,5,0,"质量组类别.处理组",5,"mul","",""),
+            ("logistics_quality_group_category","质量负责人组","5","dict.logistics.quality.group.category.5",6,6,0,"质量组类别.质量负责人组",6,"mul","",""),
             ("logistics_quality_improvement_status","待改善","0","dict.logistics.quality.improvement.status.0",1,1,1,"客诉改善状态.待改善",1,"mul","",""),
             ("logistics_quality_improvement_status","改善中","1","dict.logistics.quality.improvement.status.1",2,2,0,"客诉改善状态.改善中",2,"mul","",""),
             ("logistics_quality_improvement_status","已完成","2","dict.logistics.quality.improvement.status.2",3,3,0,"客诉改善状态.已完成",3,"mul","",""),
@@ -3536,6 +3586,33 @@ public class TaktDictDataSeedData : ITaktSeedDataCoordinator
             .Where(d =>
                 d.TenantCode == tenantCode &&
                 d.DictTypeCode == "sys_publish_scope" &&
+                d.IsDeleted == 0 &&
+                !supported.Contains(d.DictValue))
+            .ExecuteCommandAsync();
+    }
+
+    /// <summary>
+    /// 软删除设变实施范围中已不在字典定义内的项（仅保留 1=全仕向 2=部管 3=内部 4=技术；按成品/按机种属于部门实施范围）
+    /// </summary>
+    /// <param name="seedContext">种子上下文</param>
+    /// <param name="tenantCode">租户编码</param>
+    /// <returns>软删除条数</returns>
+    private static async Task<int> SoftDeleteObsoleteEcScopeCategoriesAsync(
+        TaktSeedContext seedContext,
+        string tenantCode)
+    {
+        var now = DateTime.Now;
+        string[] supported = ["1", "2", "3", "4"];
+        return await seedContext.Db.Updateable<TaktDictData>()
+            .SetColumns(d => new TaktDictData
+            {
+                IsDeleted = 1,
+                UpdatedAt = now,
+                DeletedAt = now,
+            })
+            .Where(d =>
+                d.TenantCode == tenantCode &&
+                d.DictTypeCode == "logistics_manufacturing_ec_scope_category" &&
                 d.IsDeleted == 0 &&
                 !supported.Contains(d.DictValue))
             .ExecuteCommandAsync();

@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Routine.Announcement
 // 文件名称：ITaktAnnouncementService.cs
-// 创建时间：2026-08-24
+// 创建时间：2026-09-11
 // 创建人：Takt365(Cursor AI)
 // 功能描述：公告通知应用服务接口
 // 
@@ -104,10 +104,4 @@ public interface ITaktAnnouncementService
     /// <returns>Excel 文件</returns>
     Task<(string fileName, byte[] fileContent)> ExportAnnouncementAsync(TaktAnnouncementQueryDto? query = null, string? sheetName = null, string? fileName = null);
 
-    /// <summary>
-    /// 获取公告通知件数统计（数据看板；按 PublishTime）
-    /// </summary>
-    /// <param name="queryDto">查询 DTO</param>
-    /// <returns>公告通知件数统计</returns>
-    Task<TaktAnnouncementStatDto> GetAnnouncementStatAsync(TaktAnnouncementStatQueryDto queryDto);
 }

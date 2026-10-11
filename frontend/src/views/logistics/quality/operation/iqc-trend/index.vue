@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/quality/operation/iqc-trend -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：进货检验推移（工厂×供应商×月份不良率转置表） -->
@@ -9,7 +9,7 @@
 
 <template>
   <div class="flex h-full min-h-0 flex-col p-4">
-    <iqc-trend-query-form
+    <IqcTrendQueryForm
       v-model:plant-code="plantCode"
       v-model:period-range="periodRange"
       v-model:supplier-code="supplierCode"
@@ -36,7 +36,7 @@
       @export="handleExport"
       @refresh="handleRefresh"
     />
-    <iqc-trend-panel
+    <IqcTrendPanel
       ref="panelRef"
       v-model:loading="panelLoading"
       v-model:has-rows="hasRows"
@@ -55,21 +55,25 @@
  */
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import type { ToolBarAction } from '@/components/business/takt-tools-bar/index.vue'
+import type { ToolBarAction } from '@/components/business/TaktToolsBar/index.vue'
 import {
   RiArrowDownLine,
   RiArrowUpDownLine,
   RiArrowUpLine,
   RiListCheck,
 } from '@remixicon/vue'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/use-company-related-plant'
-import { useTenantStore } from '@/stores/identity/tenant'
-import { buildDefaultCostingPeriodRange } from '@/views/logistics/manufacturing/bom/material-cost/utils/bom-material-cost-period'
-import IqcTrendQueryForm from './components/iqc-trend-query-form.vue'
-import IqcTrendPanel from './components/iqc-trend-panel.vue'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/useCompanyRelatedPlant'
+import { useTenantStore } from '@/stores/identity/useTenantStore'
+import { buildDefaultCostingPeriodRange } from '@/views/logistics/manufacturing/bom/material-cost/utils/bomMaterialCostPeriod'
+import IqcTrendQueryForm from './components/IqcTrendQueryForm.vue'
+import IqcTrendPanel from './components/IqcTrendPanel.vue'
+import { useAnalysisPeriodRangeLimit } from '@/composables/useAnalysisPeriodRangeLimit'
 
 const { t } = useI18n()
+
+/** 期间最多 12 个月（查询前校验） */
+const { assertPeriodRangeOk } = useAnalysisPeriodRangeLimit()
 const localePrefix = 'logistics.quality.operation.iqc-trend.page'
 const tenantStore = useTenantStore()
 
@@ -132,6 +136,9 @@ function handleSearch() {
   }
   if (!periodRange.value?.[0]) {
     message.warning(t(`${localePrefix}.selectPeriodRequired`))
+    return
+  }
+  if (!assertPeriodRangeOk(periodRange.value)) {
     return
   }
   void panelRef.value?.reload?.()

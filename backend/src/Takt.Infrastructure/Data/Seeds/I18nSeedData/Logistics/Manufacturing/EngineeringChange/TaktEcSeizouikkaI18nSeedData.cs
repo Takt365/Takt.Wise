@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcSeizouikkaI18nSeedData.cs
 // 创建时间：2026-08-26
@@ -125,6 +125,10 @@ public class TaktEcSeizouikkaI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecseizouikka.ecmodelcode", "zh-CN", "机种编码", "机种编码（冗余：来自 TaktEcDetail.EcModelCode）"),
             // entity.ecseizouikka.ecmodelcode
             new TranslationSeedItem("entity.ecseizouikka.ecmodelcode", "zh-HK", "機種編碼_hk", "机种编码（冗余：来自 TaktEcDetail.EcModelCode）"),
+            new TranslationSeedItem("entity.ecseizouikka.ecmodelcodegroup", "en-US", "Model code group", "机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）"),
+            new TranslationSeedItem("entity.ecseizouikka.ecmodelcodegroup", "ja-JP", "機種コード組", "机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）"),
+            new TranslationSeedItem("entity.ecseizouikka.ecmodelcodegroup", "zh-CN", "机种编码组", "机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）"),
+            new TranslationSeedItem("entity.ecseizouikka.ecmodelcodegroup", "zh-HK", "機種編碼組", "机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）"),
 
             // entity.ecseizouikka.ecrootmaterialcode
             new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialcode", "en-US", "根物料编码_us", "根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）"),

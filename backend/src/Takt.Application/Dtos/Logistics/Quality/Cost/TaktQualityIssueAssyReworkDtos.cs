@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Quality.Cost
 // 文件名称：TaktQualityIssueAssyReworkDtos.cs
 // 创建时间：2026-08-22
@@ -122,9 +122,14 @@ public class TaktQualityIssueAssyReworkDto : TaktCompanyDtoBase
     public string? AssyNote { get; set; } = string.Empty;
 
     /// <summary>
-    /// 组装不良改修应对记录者
+    /// 对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）
     /// </summary>
-    public string? AssyRecorder { get; set; } = string.Empty;
+    public string? ResponseGroupCode { get; set; }
+
+    /// <summary>
+    /// 对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ResponseGroupName { get; set; }
 
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
@@ -251,9 +256,14 @@ public class TaktQualityIssueAssyReworkQueryDto : TaktPagedQuery
     public string? AssyNote { get; set; } = string.Empty;
 
     /// <summary>
-    /// 组装不良改修应对记录者
+    /// 对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）
     /// </summary>
-    public string? AssyRecorder { get; set; } = string.Empty;
+    public string? ResponseGroupCode { get; set; }
+
+    /// <summary>
+    /// 对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ResponseGroupName { get; set; }
 
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
@@ -392,9 +402,14 @@ public class TaktQualityIssueAssyReworkCreateDto
     public string? AssyNote { get; set; } = string.Empty;
 
     /// <summary>
-    /// 组装不良改修应对记录者
+    /// 对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）
     /// </summary>
-    public string? AssyRecorder { get; set; } = string.Empty;
+    public string? ResponseGroupCode { get; set; }
+
+    /// <summary>
+    /// 对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ResponseGroupName { get; set; }
 
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
@@ -567,9 +582,14 @@ public class TaktQualityIssueAssyReworkTemplateDto
     public string? AssyNote { get; set; } = string.Empty;
 
     /// <summary>
-    /// 组装不良改修应对记录者
+    /// 对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）
     /// </summary>
-    public string? AssyRecorder { get; set; } = string.Empty;
+    public string? ResponseGroupCode { get; set; }
+
+    /// <summary>
+    /// 对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ResponseGroupName { get; set; }
 
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
@@ -695,9 +715,14 @@ public class TaktQualityIssueAssyReworkImportDto
     public string? AssyNote { get; set; } = string.Empty;
 
     /// <summary>
-    /// 组装不良改修应对记录者
+    /// 对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）
     /// </summary>
-    public string? AssyRecorder { get; set; } = string.Empty;
+    public string? ResponseGroupCode { get; set; }
+
+    /// <summary>
+    /// 对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ResponseGroupName { get; set; }
 
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
@@ -829,9 +854,14 @@ public class TaktQualityIssueAssyReworkExportDto
     public string? AssyNote { get; set; } = string.Empty;
 
     /// <summary>
-    /// 组装不良改修应对记录者
+    /// 对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）
     /// </summary>
-    public string? AssyRecorder { get; set; } = string.Empty;
+    public string? ResponseGroupCode { get; set; }
+
+    /// <summary>
+    /// 对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ResponseGroupName { get; set; }
 
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）

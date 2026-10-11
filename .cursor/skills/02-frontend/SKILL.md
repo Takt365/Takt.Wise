@@ -48,17 +48,17 @@ Vue 3 `<script setup>` + TS | Ant Design Vue 4 `a-*` | Tailwind 4 | Pinia | vue-
 
 | 场景 | 参照 |
 |------|------|
-| 单表 CRUD | `views/identity/user/index.vue`、`api/identity/user.ts`、`components/user-form.vue` |
-| 登录/验证码 | `views/login/index.vue`、`takt-captcha-*` |
-| 紧凑弹窗 | `components/business/takt-modal` |
-| 表格组件 | `takt-single-table` |
+| 单表 CRUD | `views/identity/user/index.vue`、`api/identity/user.api.ts`、`components/UserForm.vue` |
+| 登录/验证码 | `views/login/index.vue`、`TaktCaptcha*` |
+| 紧凑弹窗 | `components/business/TaktModal` |
+| 表格组件 | `TaktSingleTable` |
 | 全局样式 | `styles/global.css` |
 | **全栈 CRUD 映射** | [12-crud](../12-crud/SKILL.md) |
 
 ## auto-import 注意
 
 - 勿重复 import：`vue`、`pinia`、`ref`、`computed`（已 auto-import）
-- 勿重复 import 已注册组件（`<takt-modal />`）
+- 勿重复 import 已注册组件（`<TaktModal />`）
 - **仍须**显式：vue-i18n、message、api、types、composables
 
 ## API 与后端对齐

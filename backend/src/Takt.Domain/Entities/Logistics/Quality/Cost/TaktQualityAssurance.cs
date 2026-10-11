@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称:节拍数字工厂 ·Takt Plat (TDF)
+// 项目名称:节拍智控 ·TaktWise (TDF)
 // 命名空间:Takt.Domain.Entities.Logistics.Quality.Cost
 // 文件名称:TaktQualityAssurance.cs
 // 创建时间:2026-05-07
@@ -54,10 +54,16 @@ public class TaktQualityAssurance : TaktCompanyEntityBase
     public string? DebitNoteCode { get; set; }
 
     /// <summary>
-    /// 记录者
+    /// 记录组编码（选项 TaktCostGroups/options?costGroupCategory=1；DictValue=CostGroupCode）
     /// </summary>
-    [SugarColumn(ColumnName = "recorder", ColumnDescription = "记录者", Length = 30, ColumnDataType = "nvarchar", IsNullable = true)]
-    public string? Recorder { get; set; }
+    [SugarColumn(ColumnName = "record_group_code", ColumnDescription = "记录组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? RecordGroupCode { get; set; }
+
+    /// <summary>
+    /// 记录组名称（冗余：按 RecordGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    [SugarColumn(ColumnName = "record_group_name", ColumnDescription = "记录组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? RecordGroupName { get; set; }
 
     // ==================== 汇总信息 ====================
 

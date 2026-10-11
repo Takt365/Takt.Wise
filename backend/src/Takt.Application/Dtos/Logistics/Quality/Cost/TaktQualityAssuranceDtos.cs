@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Quality.Cost
 // 文件名称：TaktQualityAssuranceDtos.cs
 // 创建时间：2026-08-22
@@ -56,9 +56,14 @@ public class TaktQualityAssuranceDto : TaktCompanyDtoBase
     public string? DebitNoteCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 记录者
+    /// 记录组编码（选项 TaktCostGroups/options?costGroupCategory=1；DictValue=CostGroupCode）
     /// </summary>
-    public string? Recorder { get; set; } = string.Empty;
+    public string? RecordGroupCode { get; set; }
+
+    /// <summary>
+    /// 记录组名称（冗余：按 RecordGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? RecordGroupName { get; set; }
 
     /// <summary>
     /// 质量总成本(元,自动计算 = 各子表费用合计)
@@ -165,9 +170,14 @@ public class TaktQualityAssuranceQueryDto : TaktPagedQuery
     public string? DebitNoteCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 记录者
+    /// 记录组编码（选项 TaktCostGroups/options?costGroupCategory=1；DictValue=CostGroupCode）
     /// </summary>
-    public string? Recorder { get; set; } = string.Empty;
+    public string? RecordGroupCode { get; set; }
+
+    /// <summary>
+    /// 记录组名称（冗余：按 RecordGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? RecordGroupName { get; set; }
 
     /// <summary>
     /// 质量总成本(元,自动计算 = 各子表费用合计)
@@ -252,9 +262,14 @@ public class TaktQualityAssuranceCreateDto
     public string? DebitNoteCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 记录者
+    /// 记录组编码（选项 TaktCostGroups/options?costGroupCategory=1；DictValue=CostGroupCode）
     /// </summary>
-    public string? Recorder { get; set; } = string.Empty;
+    public string? RecordGroupCode { get; set; }
+
+    /// <summary>
+    /// 记录组名称（冗余：按 RecordGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? RecordGroupName { get; set; }
 
     /// <summary>
     /// 质量总成本(元,自动计算 = 各子表费用合计)
@@ -419,9 +434,14 @@ public class TaktQualityAssuranceTemplateDto
     public string? DebitNoteCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 记录者
+    /// 记录组编码（选项 TaktCostGroups/options?costGroupCategory=1；DictValue=CostGroupCode）
     /// </summary>
-    public string? Recorder { get; set; } = string.Empty;
+    public string? RecordGroupCode { get; set; }
+
+    /// <summary>
+    /// 记录组名称（冗余：按 RecordGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? RecordGroupName { get; set; }
 
     /// <summary>
     /// 质量总成本(元,自动计算 = 各子表费用合计)
@@ -526,9 +546,14 @@ public class TaktQualityAssuranceImportDto
     public string? DebitNoteCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 记录者
+    /// 记录组编码（选项 TaktCostGroups/options?costGroupCategory=1；DictValue=CostGroupCode）
     /// </summary>
-    public string? Recorder { get; set; } = string.Empty;
+    public string? RecordGroupCode { get; set; }
+
+    /// <summary>
+    /// 记录组名称（冗余：按 RecordGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? RecordGroupName { get; set; }
 
     /// <summary>
     /// 质量总成本(元,自动计算 = 各子表费用合计)
@@ -639,9 +664,14 @@ public class TaktQualityAssuranceExportDto
     public string? DebitNoteCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 记录者
+    /// 记录组编码（选项 TaktCostGroups/options?costGroupCategory=1；DictValue=CostGroupCode）
     /// </summary>
-    public string? Recorder { get; set; } = string.Empty;
+    public string? RecordGroupCode { get; set; }
+
+    /// <summary>
+    /// 记录组名称（冗余：按 RecordGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? RecordGroupName { get; set; }
 
     /// <summary>
     /// 质量总成本(元,自动计算 = 各子表费用合计)

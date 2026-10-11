@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/foundation/online -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：在线用户管理页面（查询、删除、导出、强退；会话由 SignalR 自动注册） -->
@@ -216,7 +216,7 @@
     />
 
     <!-- 强退弹窗 -->
-    <takt-modal
+    <TaktModal
       v-model:open="kickVisible"
       :title="kickModalTitle"
       :confirm-loading="kickLoading"
@@ -225,13 +225,13 @@
       @ok="handleKickSubmit"
       @cancel="handleKickCancel"
     >
-      <online-kick-form
+      <OnlineKickForm
         ref="kickFormRef"
         :form-data="kickTarget"
         :default-kick-mode="kickDefaultMode"
         :loading="kickLoading"
       />
-    </takt-modal>
+    </TaktModal>
   </div>
 </template>
 
@@ -240,20 +240,19 @@
  * 在线用户实体管理页
  * @module views/foundation/online
  */
-import { ref, computed, onMounted, nextTick } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize, ensureTaktPaginationConfigAsync } from '@/utils/takt-paged'
-import { getOnlineList, deleteOnlineById, deleteOnlineBatch, exportOnline, forceKickOnlineById } from '@/api/foundation/online'
-import type { Online, OnlineQuery } from '@/types/foundation/online'
-import OnlineKickForm from './components/online-kick-form.vue'
-import type { OnlineKickMode } from './components/online-kick-form.vue'
-import { useUserStore } from '@/stores/identity/user'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize, ensureTaktPaginationConfigAsync } from '@/utils/taktPaged'
+import { getOnlineList, deleteOnlineById, deleteOnlineBatch, exportOnline, forceKickOnlineById } from '@/api/foundation/online.api'
+import type { Online, OnlineQuery } from '@/types/foundation/online.types'
+import OnlineKickForm from './components/OnlineKickForm.vue'
+import type { OnlineKickMode } from './components/OnlineKickForm.vue'
+import { useUserStore } from '@/stores/identity/useUserStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { TaktOnlineStatus } from '@/utils/foundation-enums'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { TaktOnlineStatus } from '@/utils/foundationEnums'
 import { RiDeleteBinLine, RiLogoutBoxRLine, RiTimerLine } from '@remixicon/vue'
 
 /** i18n 翻译函数 */

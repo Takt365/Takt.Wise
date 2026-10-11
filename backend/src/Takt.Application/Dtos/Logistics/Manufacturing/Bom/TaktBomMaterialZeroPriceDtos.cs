@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomMaterialZeroPriceDtos.cs
 // 创建时间：2026-08-13
@@ -287,6 +287,11 @@ public class TaktBomMaterialZeroPriceMovingBackfillResultDto
     /// 核算月 yyyy-MM
     /// </summary>
     public string ProcessedMonth { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 本次读写的明细物理表（选中库中的年分表，不存在则基表）
+    /// </summary>
+    public string ItemPhysicalTable { get; set; } = string.Empty;
 }
 
 /// <summary>
@@ -355,4 +360,41 @@ public class TaktBomMaterialZeroPricePcbSectMarkResultDto
     /// 核算月 yyyy-MM
     /// </summary>
     public string ProcessedMonth { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// 去掉纯数字编码前导 0（当前工厂；成本汇总产品编码，明细产品编码与组件编码）
+/// </summary>
+public class TaktBomMaterialZeroPriceStripLeadingZeroDto
+{
+    /// <summary>
+    /// 工厂代码（必填）
+    /// </summary>
+    public string PlantCode { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// 去前导 0 结果
+/// </summary>
+public class TaktBomMaterialZeroPriceStripLeadingZeroResultDto
+{
+    /// <summary>
+    /// 成本汇总表产品编码更新行数
+    /// </summary>
+    public int HeaderProductUpdatedCount { get; set; }
+
+    /// <summary>
+    /// 明细表产品编码更新行数
+    /// </summary>
+    public int ItemProductUpdatedCount { get; set; }
+
+    /// <summary>
+    /// 明细表组件编码更新行数
+    /// </summary>
+    public int ItemComponentUpdatedCount { get; set; }
+
+    /// <summary>
+    /// 去掉前导 0 后与已有唯一键冲突而跳过的行数
+    /// </summary>
+    public int SkippedConflictCount { get; set; }
 }

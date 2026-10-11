@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/human-resource/benefits/emp-benefit-plan -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：员工福利方案管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -338,20 +338,19 @@
  * 员工福利方案管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/human-resource/benefits/emp-benefit-plan
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import EmpBenefitPlanForm from './components/emp-benefit-plan-form.vue'
-import { getEmpBenefitPlanList, getEmpBenefitPlanById, createEmpBenefitPlan, updateEmpBenefitPlan, deleteEmpBenefitPlanById, deleteEmpBenefitPlanBatch, getEmpBenefitPlanTemplate, importEmpBenefitPlan, exportEmpBenefitPlan, updateEmpBenefitPlanStatus } from '@/api/human-resource/benefits/emp-benefit-plan'
-import type { EmpBenefitPlan, EmpBenefitPlanQuery } from '@/types/human-resource/benefits/emp-benefit-plan'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import EmpBenefitPlanForm from './components/EmpBenefitPlanForm.vue'
+import { getEmpBenefitPlanList, getEmpBenefitPlanById, createEmpBenefitPlan, updateEmpBenefitPlan, deleteEmpBenefitPlanById, deleteEmpBenefitPlanBatch, getEmpBenefitPlanTemplate, importEmpBenefitPlan, exportEmpBenefitPlan, updateEmpBenefitPlanStatus } from '@/api/human-resource/benefits/empBenefitPlan.api'
+import type { EmpBenefitPlan, EmpBenefitPlanQuery } from '@/types/human-resource/benefits/empBenefitPlan.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -360,7 +359,7 @@ import {
   EMPBENEFITPLAN_QUERY_STRING_FIELDS,
   EMPBENEFITPLAN_QUERY_FIELDS,
   EMPBENEFITPLAN_SELF_I18N_KEY,
-} from './composables/use-emp-benefit-plan-i18n'
+} from './composables/useEmpBenefitPlanI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useEmpBenefitPlanI18n()
@@ -467,7 +466,6 @@ const deleteDisabled = computed(() => selectedRows.value.length === 0)
 /** Pinia：字典缓存（列表/查询 dict-type 渲染前预热） */
 const dictDataStore = useDictDataStore()
 
-
 /**
  * 构建列表/导出查询参数（空字符串与未填数值/日期不下发，避免后端 DateTime? 模型绑定 400；无参不补默认）
  * @param overrides 覆盖分页或导出上限等字段
@@ -504,7 +502,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /**
  * 构建列表标准文本列
@@ -573,8 +570,6 @@ const getEmpBenefitPlanDictValue = (
   if (typeof value === 'string' || typeof value === 'number') return value
   return String(value)
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

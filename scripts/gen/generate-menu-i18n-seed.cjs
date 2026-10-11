@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 脚本名称：generate-menu-i18n-seed.cjs
 // 功能描述：从 TaktMenuLevel1~4SeedData.cs 全量生成 TaktMenuI18nSeedData.cs（menu.* 翻译键）
 // TranslationText：MenuName + 语言后缀（en-US/_us、ja-JP/_jp、zh-CN 无后缀、zh-HK/_hk）
@@ -121,7 +121,7 @@ const menuResourceType = TRANSLATION_RESOURCE_TYPE_FRONTEND;
 const lines = [];
 
 lines.push('// ========================================');
-lines.push('// 项目名称：节拍工厂·Takt Plat');
+lines.push('// 项目名称：节拍智控·TaktWise');
 lines.push('// 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData');
 lines.push('// 文件名称：TaktMenuI18nSeedData.cs');
 lines.push(`// 创建时间：${today}`);

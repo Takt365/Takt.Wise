@@ -1,15 +1,15 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/materials/material-moving-trend -->
 <!-- 文件名称：index.vue -->
-<!-- 功能描述：物料月移动价格推移（物料×月份转置；机种推移见 material-model-trend） -->
+<!-- 功能描述：物料月移动价格推移（物料×月份转置） -->
 <!-- 版权信息：Copyright (c) 2026 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->
 
 <template>
   <div class="flex h-full min-h-0 flex-col p-4">
-    <material-moving-trend-query-form
+    <MaterialMovingTrendQueryForm
       v-model:plant-code="plantCode"
       v-model:period-range="periodRange"
       v-model:valuation="valuation"
@@ -38,7 +38,7 @@
       @export="handleExport"
       @refresh="handleRefresh"
     />
-    <material-moving-trend-panel
+    <MaterialMovingTrendPanel
       ref="panelRef"
       v-model:loading="panelLoading"
       v-model:has-rows="hasRows"
@@ -58,24 +58,28 @@
  */
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import type { ToolBarAction } from '@/components/business/takt-tools-bar/index.vue'
+import type { ToolBarAction } from '@/components/business/TaktToolsBar/index.vue'
 import {
   RiArrowDownLine,
   RiArrowUpDownLine,
   RiArrowUpLine,
   RiListCheck,
 } from '@remixicon/vue'
-import { getMaterialMovingTrendPlantOptions } from '@/api/logistics/materials/material-moving-trend'
-import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/use-company-related-plant'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { useTenantStore } from '@/stores/identity/tenant'
-import { buildDefaultCostingPeriodRange } from '@/views/logistics/manufacturing/bom/material-cost/utils/bom-material-cost-period'
-import MaterialMovingTrendPanel from './components/material-moving-trend-panel.vue'
-import MaterialMovingTrendQueryForm from './components/material-moving-trend-query-form.vue'
+import { getMaterialMovingTrendPlantOptions } from '@/api/logistics/materials/materialMovingTrend.api'
+import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/useCompanyRelatedPlant'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { useTenantStore } from '@/stores/identity/useTenantStore'
+import { buildDefaultCostingPeriodRange } from '@/views/logistics/manufacturing/bom/material-cost/utils/bomMaterialCostPeriod'
+import MaterialMovingTrendPanel from './components/MaterialMovingTrendPanel.vue'
+import MaterialMovingTrendQueryForm from './components/MaterialMovingTrendQueryForm.vue'
+import { useAnalysisPeriodRangeLimit } from '@/composables/useAnalysisPeriodRangeLimit'
 
 /** 静态 locales 前缀 */
 const localePrefix = 'logistics.materials.material-moving-trend.page'
 const { t } = useI18n()
+
+/** 期间最多 12 个月（查询前校验） */
+const { assertPeriodRangeOk } = useAnalysisPeriodRangeLimit()
 const tenantStore = useTenantStore()
 
 /** 工厂 */
@@ -141,6 +145,9 @@ function handleSearch() {
   }
   if (!periodRange.value?.[0]) {
     message.warning(t(`${localePrefix}.selectPeriodRequired`))
+    return
+  }
+  if (!assertPeriodRangeOk(periodRange.value)) {
     return
   }
   void panelRef.value?.reload?.()

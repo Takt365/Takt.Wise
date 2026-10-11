@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/directives
 // 文件名称：permission.ts
 // 创建时间：2026-05-23
@@ -12,8 +12,8 @@
 
 import type { App, Directive, DirectiveBinding } from 'vue';
 import { watch, type WatchStopHandle } from 'vue';
-import { usePermissionStore } from '@/stores/identity/permission';
-import type { TaktPermissionBindingValue } from '@/types/common';
+import { usePermissionStore } from '@/stores/identity/usePermissionStore';
+import type { TaktPermissionBindingValue } from '@/types/common.types';
 import { hasAnyPermission } from '@/utils/permission';
 
 /** 指令卸载时停止 store 监听的扩展属性 */

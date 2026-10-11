@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/sop/sop-exec -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：SOP 工位执行追溯实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -483,25 +483,24 @@
  * SOP 工位执行追溯实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/sop/sop-exec
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import SopExecForm from './components/sop-exec-form.vue'
-import { getSopExecList, getSopExecById, createSopExec, updateSopExec, deleteSopExecById, deleteSopExecBatch, getSopExecTemplate, importSopExec, exportSopExec, updateSopExecStatus } from '@/api/logistics/manufacturing/sop/sop-exec'
-import * as sopExecStepApi from '@/api/logistics/manufacturing/sop/sop-exec-step'
-import * as sopExecScanApi from '@/api/logistics/manufacturing/sop/sop-exec-scan'
-import * as sopArgumentApi from '@/api/logistics/manufacturing/sop/sop-argument'
-import type { SopExecStep, SopExecStepQuery } from '@/types/logistics/manufacturing/sop/sop-exec-step'
-import type { SopExecScan, SopExecScanQuery } from '@/types/logistics/manufacturing/sop/sop-exec-scan'
-import type { SopArgument, SopArgumentQuery } from '@/types/logistics/manufacturing/sop/sop-argument'
-import type { SopExec, SopExecQuery, SopExecCreate, SopExecUpdate } from '@/types/logistics/manufacturing/sop/sop-exec'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import SopExecForm from './components/SopExecForm.vue'
+import { getSopExecList, getSopExecById, createSopExec, updateSopExec, deleteSopExecById, deleteSopExecBatch, getSopExecTemplate, importSopExec, exportSopExec, updateSopExecStatus } from '@/api/logistics/manufacturing/sop/sopExec.api'
+import * as sopExecStepApi from '@/api/logistics/manufacturing/sop/sopExecStep.api'
+import * as sopExecScanApi from '@/api/logistics/manufacturing/sop/sopExecScan.api'
+import * as sopArgumentApi from '@/api/logistics/manufacturing/sop/sopArgument.api'
+import type { SopExecStep, SopExecStepQuery } from '@/types/logistics/manufacturing/sop/sopExecStep.types'
+import type { SopExecScan, SopExecScanQuery } from '@/types/logistics/manufacturing/sop/sopExecScan.types'
+import type { SopArgument, SopArgumentQuery } from '@/types/logistics/manufacturing/sop/sopArgument.types'
+import type { SopExec, SopExecQuery, SopExecCreate, SopExecUpdate } from '@/types/logistics/manufacturing/sop/sopExec.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 /** i18n 翻译函数 */

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Quality.Operation
 // 文件名称：TaktFqcDefectHandlingDtos.cs
 // 创建时间：2026-08-22
@@ -97,19 +97,60 @@ public class TaktFqcDefectHandlingDto : TaktCompanyDtoBase
     public string? ResponsibleDeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 责任组编码（选项 TaktQualityGroups/options?qualityGroupCategory=3；DictValue=QualityGroupCode）
     /// </summary>
-    public string? ResponsiblePersonName { get; set; } = string.Empty;
+    public string? ResponsibleGroupCode { get; set; }
 
     /// <summary>
-    /// 处理人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 责任组名称（冗余：按 ResponsibleGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
     /// </summary>
-    public string? HandlerName { get; set; } = string.Empty;
+    public string? ResponsibleGroupName { get; set; }
+
+    /// <summary>
+    /// 处理组编码（选项 TaktQualityGroups/options?qualityGroupCategory=4；DictValue=QualityGroupCode）
+    /// </summary>
+    public string? HandlerGroupCode { get; set; }
+
+    /// <summary>
+    /// 处理组名称（冗余：按 HandlerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
+    /// </summary>
+    public string? HandlerGroupName { get; set; }
 
     /// <summary>
     /// 处理时间
     /// </summary>
     public DateTime? HandlingAt { get; set; }
+
+    /// <summary>
+    /// 验证部门（选项 TaktDepts/tree-options；DictValue=Id）
+    /// </summary>
+    [JsonConverter(typeof(ValueToStringConverter))]
+    public long? VerifyDeptId { get; set; }
+
+    /// <summary>
+    /// 验证部门名称（冗余：按 VerifyDeptId 取 TaktDept.DeptName1 联动）
+    /// </summary>
+    public string? VerifyDeptName { get; set; }
+
+    /// <summary>
+    /// 质量负责人组编码（选项 TaktQualityGroups/options?qualityGroupCategory=5；DictValue=QualityGroupCode）
+    /// </summary>
+    public string? QualityOwnerGroupCode { get; set; }
+
+    /// <summary>
+    /// 质量负责人组名称（冗余：按 QualityOwnerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
+    /// </summary>
+    public string? QualityOwnerGroupName { get; set; }
+
+    /// <summary>
+    /// 验证时间
+    /// </summary>
+    public DateTime? VerifyAt { get; set; }
+
+    /// <summary>
+    /// 验证结果（字典 logistics_quality_defect_verify_status；0=待验证 1=合格 2=不合格）
+    /// </summary>
+    public int VerifyStatus { get; set; } = 0;
 
     /// <summary>
     /// 预防措施/纠正措施
@@ -231,14 +272,24 @@ public class TaktFqcDefectHandlingQueryDto : TaktPagedQuery
     public string? ResponsibleDeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 责任组编码（选项 TaktQualityGroups/options?qualityGroupCategory=3；DictValue=QualityGroupCode）
     /// </summary>
-    public string? ResponsiblePersonName { get; set; } = string.Empty;
+    public string? ResponsibleGroupCode { get; set; }
 
     /// <summary>
-    /// 处理人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 责任组名称（冗余：按 ResponsibleGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
     /// </summary>
-    public string? HandlerName { get; set; } = string.Empty;
+    public string? ResponsibleGroupName { get; set; }
+
+    /// <summary>
+    /// 处理组编码（选项 TaktQualityGroups/options?qualityGroupCategory=4；DictValue=QualityGroupCode）
+    /// </summary>
+    public string? HandlerGroupCode { get; set; }
+
+    /// <summary>
+    /// 处理组名称（冗余：按 HandlerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
+    /// </summary>
+    public string? HandlerGroupName { get; set; }
 
     /// <summary>
     /// 处理时间（范围查询-开始）
@@ -249,6 +300,42 @@ public class TaktFqcDefectHandlingQueryDto : TaktPagedQuery
     /// 处理时间（范围查询-结束）
     /// </summary>
     public DateTime? HandlingAtEnd { get; set; }
+
+    /// <summary>
+    /// 验证部门（选项 TaktDepts/tree-options；DictValue=Id）
+    /// </summary>
+    [JsonConverter(typeof(ValueToStringConverter))]
+    public long? VerifyDeptId { get; set; }
+
+    /// <summary>
+    /// 验证部门名称（冗余：按 VerifyDeptId 取 TaktDept.DeptName1 联动）
+    /// </summary>
+    public string? VerifyDeptName { get; set; }
+
+    /// <summary>
+    /// 质量负责人组编码（选项 TaktQualityGroups/options?qualityGroupCategory=5；DictValue=QualityGroupCode）
+    /// </summary>
+    public string? QualityOwnerGroupCode { get; set; }
+
+    /// <summary>
+    /// 质量负责人组名称（冗余：按 QualityOwnerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
+    /// </summary>
+    public string? QualityOwnerGroupName { get; set; }
+
+    /// <summary>
+    /// 验证时间（范围查询-开始）
+    /// </summary>
+    public DateTime? VerifyAtStart { get; set; }
+
+    /// <summary>
+    /// 验证时间（范围查询-结束）
+    /// </summary>
+    public DateTime? VerifyAtEnd { get; set; }
+
+    /// <summary>
+    /// 验证结果（字典 logistics_quality_defect_verify_status；0=待验证 1=合格 2=不合格）
+    /// </summary>
+    public int? VerifyStatus { get; set; }
 
     /// <summary>
     /// 预防措施/纠正措施
@@ -386,19 +473,60 @@ public class TaktFqcDefectHandlingCreateDto
     public string? ResponsibleDeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 责任组编码（选项 TaktQualityGroups/options?qualityGroupCategory=3；DictValue=QualityGroupCode）
     /// </summary>
-    public string? ResponsiblePersonName { get; set; } = string.Empty;
+    public string? ResponsibleGroupCode { get; set; }
 
     /// <summary>
-    /// 处理人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 责任组名称（冗余：按 ResponsibleGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
     /// </summary>
-    public string? HandlerName { get; set; } = string.Empty;
+    public string? ResponsibleGroupName { get; set; }
+
+    /// <summary>
+    /// 处理组编码（选项 TaktQualityGroups/options?qualityGroupCategory=4；DictValue=QualityGroupCode）
+    /// </summary>
+    public string? HandlerGroupCode { get; set; }
+
+    /// <summary>
+    /// 处理组名称（冗余：按 HandlerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
+    /// </summary>
+    public string? HandlerGroupName { get; set; }
 
     /// <summary>
     /// 处理时间
     /// </summary>
     public DateTime? HandlingAt { get; set; }
+
+    /// <summary>
+    /// 验证部门（选项 TaktDepts/tree-options；DictValue=Id）
+    /// </summary>
+    [JsonConverter(typeof(ValueToStringConverter))]
+    public long? VerifyDeptId { get; set; }
+
+    /// <summary>
+    /// 验证部门名称（冗余：按 VerifyDeptId 取 TaktDept.DeptName1 联动）
+    /// </summary>
+    public string? VerifyDeptName { get; set; }
+
+    /// <summary>
+    /// 质量负责人组编码（选项 TaktQualityGroups/options?qualityGroupCategory=5；DictValue=QualityGroupCode）
+    /// </summary>
+    public string? QualityOwnerGroupCode { get; set; }
+
+    /// <summary>
+    /// 质量负责人组名称（冗余：按 QualityOwnerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
+    /// </summary>
+    public string? QualityOwnerGroupName { get; set; }
+
+    /// <summary>
+    /// 验证时间
+    /// </summary>
+    public DateTime? VerifyAt { get; set; }
+
+    /// <summary>
+    /// 验证结果（字典 logistics_quality_defect_verify_status；0=待验证 1=合格 2=不合格）
+    /// </summary>
+    public int VerifyStatus { get; set; } = 0;
 
     /// <summary>
     /// 预防措施/纠正措施
@@ -590,19 +718,60 @@ public class TaktFqcDefectHandlingTemplateDto
     public string? ResponsibleDeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 责任组编码（选项 TaktQualityGroups/options?qualityGroupCategory=3；DictValue=QualityGroupCode）
     /// </summary>
-    public string? ResponsiblePersonName { get; set; } = string.Empty;
+    public string? ResponsibleGroupCode { get; set; }
 
     /// <summary>
-    /// 处理人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 责任组名称（冗余：按 ResponsibleGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
     /// </summary>
-    public string? HandlerName { get; set; } = string.Empty;
+    public string? ResponsibleGroupName { get; set; }
+
+    /// <summary>
+    /// 处理组编码（选项 TaktQualityGroups/options?qualityGroupCategory=4；DictValue=QualityGroupCode）
+    /// </summary>
+    public string? HandlerGroupCode { get; set; }
+
+    /// <summary>
+    /// 处理组名称（冗余：按 HandlerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
+    /// </summary>
+    public string? HandlerGroupName { get; set; }
 
     /// <summary>
     /// 处理时间
     /// </summary>
     public DateTime? HandlingAt { get; set; }
+
+    /// <summary>
+    /// 验证部门（选项 TaktDepts/tree-options；DictValue=Id）
+    /// </summary>
+    [JsonConverter(typeof(ValueToStringConverter))]
+    public long? VerifyDeptId { get; set; }
+
+    /// <summary>
+    /// 验证部门名称（冗余：按 VerifyDeptId 取 TaktDept.DeptName1 联动）
+    /// </summary>
+    public string? VerifyDeptName { get; set; }
+
+    /// <summary>
+    /// 质量负责人组编码（选项 TaktQualityGroups/options?qualityGroupCategory=5；DictValue=QualityGroupCode）
+    /// </summary>
+    public string? QualityOwnerGroupCode { get; set; }
+
+    /// <summary>
+    /// 质量负责人组名称（冗余：按 QualityOwnerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
+    /// </summary>
+    public string? QualityOwnerGroupName { get; set; }
+
+    /// <summary>
+    /// 验证时间
+    /// </summary>
+    public DateTime? VerifyAt { get; set; }
+
+    /// <summary>
+    /// 验证结果（字典 logistics_quality_defect_verify_status；0=待验证 1=合格 2=不合格）
+    /// </summary>
+    public int VerifyStatus { get; set; } = 0;
 
     /// <summary>
     /// 预防措施/纠正措施
@@ -723,19 +892,60 @@ public class TaktFqcDefectHandlingImportDto
     public string? ResponsibleDeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 责任组编码（选项 TaktQualityGroups/options?qualityGroupCategory=3；DictValue=QualityGroupCode）
     /// </summary>
-    public string? ResponsiblePersonName { get; set; } = string.Empty;
+    public string? ResponsibleGroupCode { get; set; }
 
     /// <summary>
-    /// 处理人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 责任组名称（冗余：按 ResponsibleGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
     /// </summary>
-    public string? HandlerName { get; set; } = string.Empty;
+    public string? ResponsibleGroupName { get; set; }
+
+    /// <summary>
+    /// 处理组编码（选项 TaktQualityGroups/options?qualityGroupCategory=4；DictValue=QualityGroupCode）
+    /// </summary>
+    public string? HandlerGroupCode { get; set; }
+
+    /// <summary>
+    /// 处理组名称（冗余：按 HandlerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
+    /// </summary>
+    public string? HandlerGroupName { get; set; }
 
     /// <summary>
     /// 处理时间
     /// </summary>
     public DateTime? HandlingAt { get; set; }
+
+    /// <summary>
+    /// 验证部门（选项 TaktDepts/tree-options；DictValue=Id）
+    /// </summary>
+    [JsonConverter(typeof(ValueToStringConverter))]
+    public long? VerifyDeptId { get; set; }
+
+    /// <summary>
+    /// 验证部门名称（冗余：按 VerifyDeptId 取 TaktDept.DeptName1 联动）
+    /// </summary>
+    public string? VerifyDeptName { get; set; }
+
+    /// <summary>
+    /// 质量负责人组编码（选项 TaktQualityGroups/options?qualityGroupCategory=5；DictValue=QualityGroupCode）
+    /// </summary>
+    public string? QualityOwnerGroupCode { get; set; }
+
+    /// <summary>
+    /// 质量负责人组名称（冗余：按 QualityOwnerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
+    /// </summary>
+    public string? QualityOwnerGroupName { get; set; }
+
+    /// <summary>
+    /// 验证时间
+    /// </summary>
+    public DateTime? VerifyAt { get; set; }
+
+    /// <summary>
+    /// 验证结果（字典 logistics_quality_defect_verify_status；0=待验证 1=合格 2=不合格）
+    /// </summary>
+    public int VerifyStatus { get; set; } = 0;
 
     /// <summary>
     /// 预防措施/纠正措施
@@ -862,19 +1072,60 @@ public class TaktFqcDefectHandlingExportDto
     public string? ResponsibleDeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 责任组编码（选项 TaktQualityGroups/options?qualityGroupCategory=3；DictValue=QualityGroupCode）
     /// </summary>
-    public string? ResponsiblePersonName { get; set; } = string.Empty;
+    public string? ResponsibleGroupCode { get; set; }
 
     /// <summary>
-    /// 处理人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 责任组名称（冗余：按 ResponsibleGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
     /// </summary>
-    public string? HandlerName { get; set; } = string.Empty;
+    public string? ResponsibleGroupName { get; set; }
+
+    /// <summary>
+    /// 处理组编码（选项 TaktQualityGroups/options?qualityGroupCategory=4；DictValue=QualityGroupCode）
+    /// </summary>
+    public string? HandlerGroupCode { get; set; }
+
+    /// <summary>
+    /// 处理组名称（冗余：按 HandlerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
+    /// </summary>
+    public string? HandlerGroupName { get; set; }
 
     /// <summary>
     /// 处理时间
     /// </summary>
     public DateTime? HandlingAt { get; set; }
+
+    /// <summary>
+    /// 验证部门（选项 TaktDepts/tree-options；DictValue=Id）
+    /// </summary>
+    [JsonConverter(typeof(ValueToStringConverter))]
+    public long? VerifyDeptId { get; set; }
+
+    /// <summary>
+    /// 验证部门名称（冗余：按 VerifyDeptId 取 TaktDept.DeptName1 联动）
+    /// </summary>
+    public string? VerifyDeptName { get; set; }
+
+    /// <summary>
+    /// 质量负责人组编码（选项 TaktQualityGroups/options?qualityGroupCategory=5；DictValue=QualityGroupCode）
+    /// </summary>
+    public string? QualityOwnerGroupCode { get; set; }
+
+    /// <summary>
+    /// 质量负责人组名称（冗余：按 QualityOwnerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
+    /// </summary>
+    public string? QualityOwnerGroupName { get; set; }
+
+    /// <summary>
+    /// 验证时间
+    /// </summary>
+    public DateTime? VerifyAt { get; set; }
+
+    /// <summary>
+    /// 验证结果（字典 logistics_quality_defect_verify_status；0=待验证 1=合格 2=不合格）
+    /// </summary>
+    public int VerifyStatus { get; set; } = 0;
 
     /// <summary>
     /// 预防措施/纠正措施

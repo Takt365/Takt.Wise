@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节节拍工厂·Takt Plat  -->
+<!-- 项目名称：节拍智控·TaktWise  -->
 <!-- 命名空间：@/views/workflow/form -->
 <!-- 文件名称：index.vue -->
 <!-- 创建时间：2025-01-20 -->
@@ -180,14 +180,13 @@
 /**
  * 流程表单列表页：查询、分页、新增、编辑、删除；弹窗内使用 FormForm 编辑表单与 formConfig。
  */
-import { ref, reactive, onMounted, computed } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
-import TaktQueryBar from '@/components/business/takt-query-bar/index.vue'
-import FormForm from './components/form-form.vue'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
+import TaktQueryBar from '@/components/business/TaktQueryBar/index.vue'
+import FormForm from './components/FormForm.vue'
 import {
   getFlowFormList,
   getFlowFormById,
@@ -199,17 +198,17 @@ import {
   getFlowFormTemplate,
   importFlowForm,
   exportFlowForm
-} from '@/api/workflow/flow-form'
+} from '@/api/workflow/flowForm.api'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import type {
   FlowForm,
   FlowFormQuery,
   FlowFormCreate,
   FlowFormUpdate
-} from '@/types/workflow/flow-form'
-import { useTenantStore } from '@/stores/identity/tenant'
-import { useUserStore } from '@/stores/identity/user'
+} from '@/types/workflow/flowForm.types'
+import { useTenantStore } from '@/stores/identity/useTenantStore'
+import { useUserStore } from '@/stores/identity/useUserStore'
 import { RiEditLine, RiDeleteBinLine, RiBrushLine, RiPlayLine, RiStopLine } from '@remixicon/vue'
 
 const { t } = useI18n()

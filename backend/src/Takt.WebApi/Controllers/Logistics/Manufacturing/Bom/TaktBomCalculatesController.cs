@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi.Controllers.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomCalculatesController.cs
 // 创建时间：2026-08-14
@@ -165,15 +165,15 @@ public class TaktBomCalculatesController : TaktControllerBase
     /// <returns>回填统计</returns>
     [TaktPermission("logistics:manufacturing:bom:material:zeroprice:update", "回填BOM采购价格")]
     [HttpPut("purchase-price")]
-    public async Task<IActionResult> BackfillBomCalculatePurchasePriceAsync(
+    public async Task<IActionResult> BackfillBomCalculatePurchaseInfoRecordAsync(
         [FromBody] TaktBomCalculateQueryDto queryDto)
     {
         try
         {
-            var result = await _bomCalculateService.BackfillBomCalculatePurchasePriceAsync(queryDto);
+            var result = await _bomCalculateService.BackfillBomCalculatePurchaseInfoRecordAsync(queryDto);
             await TaktBomZeroPriceOperationMessageHelper.TryNotifyAsync(
                 _messageService,
-                TaktBomZeroPriceOperationMessageHelper.BuildPurchasePriceBackfillSuccess(result));
+                TaktBomZeroPriceOperationMessageHelper.BuildPurchaseInfoRecordBackfillSuccess(result));
             return Success(result, "回填采购价格完成");
         }
         catch (Exception ex)

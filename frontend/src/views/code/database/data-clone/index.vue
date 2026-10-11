@@ -1,5 +1,5 @@
 ﻿<!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/code/database/data-clone -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：公司级数据克隆页（一次一公司一表；备份窗口确认后执行） -->
@@ -190,7 +190,7 @@
       </a-descriptions>
     </a-card>
 
-    <takt-modal
+    <TaktModal
       v-model:open="backupModalVisible"
       :title="t('code.database.data-clone.page.backupmodaltitle')"
       :use-viewport-size="false"
@@ -236,7 +236,7 @@
           </a-button>
         </div>
       </template>
-    </takt-modal>
+    </TaktModal>
   </div>
 </template>
 
@@ -245,12 +245,11 @@
  * 公司级数据克隆页：配置源/目标公司与表 → 备份窗口预览 → 确认后执行
  * @module views/code/database/data-clone
  */
-import { computed, onMounted, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { cloneData, getDataClonePreview } from '@/api/code/database/data-clone'
-import { useDatabaseInfoCatalog } from '@/composables/use-database-info-catalog'
-import type { DataClonePreview, DataCloneRequest, DataCloneResult } from '@/types/code/database/data-clone'
+import { cloneData, getDataClonePreview } from '@/api/code/database/dataClone.api'
+import { useDatabaseInfoCatalog } from '@/composables/useDatabaseInfoCatalog'
+import type { DataClonePreview, DataCloneRequest, DataCloneResult } from '@/types/code/database/dataClone.types'
 
 /** 备份预览文案键前缀 */
 const DATA_PREVIEW_KEY = 'code.database.data-clone.page.preview'

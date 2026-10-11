@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Identity
 // 文件名称：TaktRbacService.cs
 // 创建时间：2026-05-27
@@ -32,12 +32,12 @@ namespace Takt.Application.Services.Identity;
 public class TaktRbacService : TaktServiceBase, ITaktRbacService
 {
     private readonly ITaktTenantRepository<TaktUser> _userRepository;
-    private readonly ITaktTenantRepository<TaktUserRole> _userRoleRepository;
+    private readonly ITaktCompanyRepository<TaktUserRole> _userRoleRepository;
     private readonly ITaktTenantRepository<TaktRole> _roleRepository;
-    private readonly ITaktTenantRepository<TaktUserTenant> _userTenantRepository;
+    private readonly ITaktCompanyRepository<TaktUserTenant> _userTenantRepository;
     private readonly ITaktCompanyRepository<TaktUserCompany> _userCompanyRepository;
     private readonly ITaktTenantRepository<TaktCompany> _companyCatalogRepository;
-    private readonly ITaktTenantRepository<TaktRoleMenu> _roleMenuRepository;
+    private readonly ITaktCompanyRepository<TaktRoleMenu> _roleMenuRepository;
     private readonly ITaktCompanyRepository<TaktRoleCompany> _roleCompanyRepository;
     private readonly ITaktCompanyRepository<TaktRoleDept> _roleDeptRepository;
     private readonly ITaktTenantRepository<TaktMenu> _menuRepository;
@@ -71,12 +71,12 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
     /// <param name="localizationService">本地化服务</param>
     public TaktRbacService(
         ITaktTenantRepository<TaktUser> userRepository,
-        ITaktTenantRepository<TaktUserRole> userRoleRepository,
+        ITaktCompanyRepository<TaktUserRole> userRoleRepository,
         ITaktTenantRepository<TaktRole> roleRepository,
-        ITaktTenantRepository<TaktUserTenant> userTenantRepository,
+        ITaktCompanyRepository<TaktUserTenant> userTenantRepository,
         ITaktCompanyRepository<TaktUserCompany> userCompanyRepository,
         ITaktTenantRepository<TaktCompany> companyCatalogRepository,
-        ITaktTenantRepository<TaktRoleMenu> roleMenuRepository,
+        ITaktCompanyRepository<TaktRoleMenu> roleMenuRepository,
         ITaktCompanyRepository<TaktRoleCompany> roleCompanyRepository,
         ITaktCompanyRepository<TaktRoleDept> roleDeptRepository,
         ITaktTenantRepository<TaktMenu> menuRepository,
@@ -120,8 +120,11 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
         // 【校验】用户存在且属于当前租户
         var user = await EnsureUserAccessibleAsync(userId);
 
-        // 【查询】用户-角色关联表
-        var list = await _userRoleRepository.GetListAsync(x => x.UserId == userId);
+        // 【查询】用户-角色关联表（当前公司）
+        var list = await _userRoleRepository.GetListAsync(x =>
+            x.UserId == userId
+            && x.TenantCode == CurrentTenantCode
+            && x.CompanyCode == CurrentCompanyCode);
         var dtos = list.Adapt<List<TaktUserRoleDto>>();
 
         if (dtos.Count == 0)
@@ -158,7 +161,10 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
         {
             return new Dictionary<long, string>();
         }
-        var userRoles = await _userRoleRepository.GetListAsync(x => idList.Contains(x.UserId));
+        var userRoles = await _userRoleRepository.GetListAsync(x =>
+            idList.Contains(x.UserId)
+            && x.TenantCode == CurrentTenantCode
+            && x.CompanyCode == CurrentCompanyCode);
         if (userRoles.Count == 0)
         {
             return new Dictionary<long, string>();
@@ -199,17 +205,21 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
             }
         }
 
-        // 【新增】构建待插入的关联实体（实际写入在 ReplaceTenantAssociationsAsync 内完成）
+        // 【新增】构建待插入的关联实体（实际写入在 ReplaceCompanyAssociationsAsync 内完成）
         var entities = roleIdList.Select(roleId => new TaktUserRole
         {
             UserId = userId,
             RoleId = roleId,
+            TenantCode = CurrentTenantCode,
+            CompanyCode = CurrentCompanyCode,
         }).ToList();
 
         // 【分配】查询 → 删除 → 新增
-        await ReplaceTenantAssociationsAsync(
+        await ReplaceCompanyAssociationsAsync(
             _userRoleRepository,
-            x => x.UserId == userId,
+            x => x.UserId == userId
+                && x.TenantCode == CurrentTenantCode
+                && x.CompanyCode == CurrentCompanyCode,
             entities,
             $"用户角色 UserId={userId}");
         return true;
@@ -229,9 +239,9 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
         // 【校验】用户存在且属于当前租户
         var user = await EnsureUserAccessibleAsync(userId);
 
-        // 【查询】用户-租户关联表（默认租户优先排序）
+        // 【查询】用户-租户关联表（当前公司隔离；默认租户优先排序）
         var list = await _userTenantRepository.GetListAsync(
-            x => x.UserId == userId,
+            x => x.UserId == userId && x.CompanyCode == CurrentCompanyCode,
             x => x.IsDefault,
             true);
 
@@ -296,15 +306,16 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
         {
             UserId = userId,
             TenantCode = code,
+            CompanyCode = CurrentCompanyCode,
             IsDefault = string.Equals(code, defaultTenantCode, StringComparison.OrdinalIgnoreCase)
                 ? 1
                 : 0,
         }).ToList();
 
         // 【分配】查询 → 删除 → 新增
-        await ReplaceTenantAssociationsAsync(
+        await ReplaceCompanyAssociationsAsync(
             _userTenantRepository,
-            x => x.UserId == userId,
+            x => x.UserId == userId && x.CompanyCode == CurrentCompanyCode,
             entities,
             $"用户租户 UserId={userId}");
         return true;
@@ -319,7 +330,8 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
     {
         await EnsureTenantCodeAccessibleAsync(tenantCode);
         var code = tenantCode.Trim();
-        var list = await _userTenantRepository.GetListAsync(x => x.TenantCode == code);
+        var list = await _userTenantRepository.GetListAsync(x =>
+            x.TenantCode == code && x.CompanyCode == CurrentCompanyCode);
         var dtos = list.Adapt<List<TaktUserTenantDto>>();
         if (dtos.Count == 0)
         {
@@ -361,11 +373,12 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
         {
             UserId = userId,
             TenantCode = code,
+            CompanyCode = CurrentCompanyCode,
             IsDefault = 0,
         }).ToList();
-        await ReplaceTenantAssociationsAsync(
+        await ReplaceCompanyAssociationsAsync(
             _userTenantRepository,
-            x => x.TenantCode == code,
+            x => x.TenantCode == code && x.CompanyCode == CurrentCompanyCode,
             entities,
             $"租户用户 TenantCode={code}");
         return true;
@@ -422,7 +435,7 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
     #region 角色菜单权限（TaktRoleMenu）
 
     /// <summary>
-    /// 【查询】获取角色菜单关联列表（仅未软删除记录）
+    /// 【查询】获取角色菜单关联列表（填充 MenuName / ParentId / MenuType / MenuPath / SortOrder）
     /// </summary>
     /// <param name="roleId">角色ID</param>
     /// <returns>角色-菜单关联 DTO 列表</returns>
@@ -431,8 +444,11 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
         // 【校验】角色存在且属于当前租户
         var role = await EnsureRoleAccessibleAsync(roleId);
 
-        // 【查询】角色-菜单关联表
-        var list = await _roleMenuRepository.GetListAsync(x => x.RoleId == roleId);
+        // 【查询】角色-菜单关联表（当前公司）
+        var list = await _roleMenuRepository.GetListAsync(x =>
+            x.RoleId == roleId
+            && x.TenantCode == CurrentTenantCode
+            && x.CompanyCode == CurrentCompanyCode);
         var dtos = list.Adapt<List<TaktRoleMenuDto>>();
 
         if (dtos.Count == 0)
@@ -440,10 +456,27 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
             return dtos;
         }
 
-        // 【查询】菜单主数据，填充 MenuName
+        // 【查询】菜单主数据，填充 MenuName / ParentId / MenuType / MenuPath / SortOrder（分批，避免超大 IN）
         var menuIds = dtos.Select(d => d.MenuId).Distinct().ToList();
-        var menus = await _menuRepository.GetListAsync(m => menuIds.Contains(m.Id));
-        var menuNameMap = menus.ToDictionary(m => m.Id, m => m.MenuName);
+        var menuNameMap = new Dictionary<long, string?>();
+        var menuParentMap = new Dictionary<long, long>();
+        var menuTypeMap = new Dictionary<long, int>();
+        var menuPathMap = new Dictionary<long, string?>();
+        var menuSortMap = new Dictionary<long, int>();
+        const int batchSize = 500;
+        for (var i = 0; i < menuIds.Count; i = checked(i + batchSize))
+        {
+            var batch = menuIds.Skip(i).Take(batchSize).ToList();
+            var menus = await _menuRepository.GetListAsync(m => batch.Contains(m.Id));
+            foreach (var m in menus)
+            {
+                menuNameMap[m.Id] = m.MenuName;
+                menuParentMap[m.Id] = m.ParentId;
+                menuTypeMap[m.Id] = m.MenuType;
+                menuPathMap[m.Id] = m.MenuPath;
+                menuSortMap[m.Id] = m.SortOrder;
+            }
+        }
 
         foreach (var dto in dtos)
         {
@@ -451,6 +484,22 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
             if (menuNameMap.TryGetValue(dto.MenuId, out var menuName))
             {
                 dto.MenuName = menuName;
+            }
+            if (menuParentMap.TryGetValue(dto.MenuId, out var parentId))
+            {
+                dto.ParentId = parentId;
+            }
+            if (menuTypeMap.TryGetValue(dto.MenuId, out var menuType))
+            {
+                dto.MenuType = menuType;
+            }
+            if (menuPathMap.TryGetValue(dto.MenuId, out var menuPath))
+            {
+                dto.MenuPath = menuPath;
+            }
+            if (menuSortMap.TryGetValue(dto.MenuId, out var sortOrder))
+            {
+                dto.SortOrder = sortOrder;
             }
         }
 
@@ -499,12 +548,16 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
         {
             RoleId = roleId,
             MenuId = menuId,
+            TenantCode = CurrentTenantCode,
+            CompanyCode = CurrentCompanyCode,
         }).ToList();
 
         // 【分配】查询 → 删除 → 新增
-        await ReplaceTenantAssociationsAsync(
+        await ReplaceCompanyAssociationsAsync(
             _roleMenuRepository,
-            x => x.RoleId == roleId,
+            x => x.RoleId == roleId
+                && x.TenantCode == CurrentTenantCode
+                && x.CompanyCode == CurrentCompanyCode,
             entities,
             $"角色菜单 RoleId={roleId}");
         return true;
@@ -518,7 +571,10 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
     public async Task<List<TaktRoleMenuDto>> GetMenuRoleIdsAsync(long menuId)
     {
         var menu = await EnsureMenuAccessibleAsync(menuId);
-        var list = await _roleMenuRepository.GetListAsync(x => x.MenuId == menuId);
+        var list = await _roleMenuRepository.GetListAsync(x =>
+            x.MenuId == menuId
+            && x.TenantCode == CurrentTenantCode
+            && x.CompanyCode == CurrentCompanyCode);
         var dtos = list.Adapt<List<TaktRoleMenuDto>>();
         if (dtos.Count == 0)
         {
@@ -560,10 +616,14 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
         {
             RoleId = roleId,
             MenuId = menuId,
+            TenantCode = CurrentTenantCode,
+            CompanyCode = CurrentCompanyCode,
         }).ToList();
-        await ReplaceTenantAssociationsAsync(
+        await ReplaceCompanyAssociationsAsync(
             _roleMenuRepository,
-            x => x.MenuId == menuId,
+            x => x.MenuId == menuId
+                && x.TenantCode == CurrentTenantCode
+                && x.CompanyCode == CurrentCompanyCode,
             entities,
             $"菜单角色 MenuId={menuId}");
         return true;
@@ -993,22 +1053,22 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
     #region 私有辅助方法
 
     /// <summary>
-    /// 【分配】全量覆盖租户级关联（物理删除旧行再插入，避免软删行仍占用 ix_*_unique）
+    /// 【分配】全量覆盖公司级关联（物理删除旧行再插入，避免软删行仍占用 ix_*_unique）
     /// </summary>
-    /// <typeparam name="TEntity">租户级关联实体</typeparam>
+    /// <typeparam name="TEntity">公司级关联实体</typeparam>
     /// <param name="repository">关联仓储</param>
-    /// <param name="scopePredicate">作用域条件（如 UserId、RoleId）</param>
+    /// <param name="scopePredicate">作用域条件（如 UserId、RoleId、EmployeeId；须含 CompanyCode 当仓储关闭会话公司过滤）</param>
     /// <param name="newEntities">【新增】待插入的关联实体列表</param>
     /// <param name="logContext">日志上下文</param>
     /// <returns>异步任务</returns>
-    private async Task ReplaceTenantAssociationsAsync<TEntity>(
-        ITaktTenantRepository<TEntity> repository,
+    private async Task ReplaceCompanyAssociationsAsync<TEntity>(
+        ITaktCompanyRepository<TEntity> repository,
         Expression<Func<TEntity, bool>> scopePredicate,
         List<TEntity> newEntities,
         string logContext)
-        where TEntity : TaktTenantCoreEntityBase, new()
+        where TEntity : TaktCompanyEntityBase, new()
     {
-        // 关联表含唯一索引（Tenant+外键组合）；软删后再插会撞唯一约束，故物理删除作用域内全部行（含已软删）
+        // 关联表含唯一索引（Tenant+Company+外键）；软删后再插会撞唯一约束，故物理删除作用域内全部行（含已软删）
         var deleted = await repository.DeletePhysicallyAsync(scopePredicate);
         LogInformation("【删除】已物理删除旧关联 {Count} 条: {LogContext}", deleted, logContext);
 
@@ -1020,93 +1080,6 @@ public class TaktRbacService : TaktServiceBase, ITaktRbacService
 
         await repository.CreateRangeAsync(newEntities);
         LogInformation("【新增】关联 {Count} 条: {LogContext}", newEntities.Count, logContext);
-    }
-
-    /// <summary>
-    /// 【分配】全量覆盖公司级关联（统一三步：【查询】→【删除】→【新增】）
-    /// </summary>
-    /// <typeparam name="TEntity">公司级关联实体</typeparam>
-    /// <param name="repository">关联仓储</param>
-    /// <param name="scopePredicate">作用域条件（如 UserId、RoleId、EmployeeId）</param>
-    /// <param name="newEntities">【新增】待插入的关联实体列表</param>
-    /// <param name="logContext">日志上下文</param>
-    /// <returns>异步任务</returns>
-    private async Task ReplaceCompanyAssociationsAsync<TEntity>(
-        ITaktCompanyRepository<TEntity> repository,
-        Expression<Func<TEntity, bool>> scopePredicate,
-        List<TEntity> newEntities,
-        string logContext)
-        where TEntity : TaktCompanyEntityBase, new()
-    {
-        // 【查询】按作用域获取当前未删除的旧关联
-        var existing = await repository.GetListAsync(scopePredicate);
-
-        // 【删除】对查询到的旧关联逐条软删除（IsDeleted=1）
-        await SoftDeleteCompanyAssociationRowsAsync(repository, existing, logContext);
-
-        if (newEntities.Count == 0)
-        {
-            LogInformation("【分配】完成，无【新增】数据: {LogContext}", logContext);
-            return;
-        }
-
-        // 【新增】批量插入新关联
-        await repository.CreateRangeAsync(newEntities);
-        LogInformation("【新增】关联 {Count} 条: {LogContext}", newEntities.Count, logContext);
-    }
-
-    /// <summary>
-    /// 【删除】软删除租户级关联行（仓储 DeleteAsync 设置 IsDeleted、UpdatedAt、DeletedBy）
-    /// </summary>
-    /// <typeparam name="TEntity">租户级关联实体</typeparam>
-    /// <param name="repository">关联仓储</param>
-    /// <param name="existing">【查询】得到的旧关联列表</param>
-    /// <param name="logContext">日志上下文</param>
-    /// <returns>异步任务</returns>
-    private async Task SoftDeleteTenantAssociationRowsAsync<TEntity>(
-        ITaktTenantRepository<TEntity> repository,
-        List<TEntity> existing,
-        string logContext)
-        where TEntity : TaktTenantCoreEntityBase, new()
-    {
-        if (existing.Count == 0)
-        {
-            return;
-        }
-
-        foreach (var row in existing)
-        {
-            await repository.DeleteAsync(row.Id);
-        }
-
-        LogInformation("【删除】已软删除旧关联 {Count} 条: {LogContext}", existing.Count, logContext);
-    }
-
-    /// <summary>
-    /// 【删除】软删除公司级关联行（仓储 DeleteAsync 设置 IsDeleted、UpdatedAt、DeletedBy）
-    /// </summary>
-    /// <typeparam name="TEntity">公司级关联实体</typeparam>
-    /// <param name="repository">关联仓储</param>
-    /// <param name="existing">【查询】得到的旧关联列表</param>
-    /// <param name="logContext">日志上下文</param>
-    /// <returns>异步任务</returns>
-    private async Task SoftDeleteCompanyAssociationRowsAsync<TEntity>(
-        ITaktCompanyRepository<TEntity> repository,
-        List<TEntity> existing,
-        string logContext)
-        where TEntity : TaktCompanyEntityBase, new()
-    {
-        if (existing.Count == 0)
-        {
-            return;
-        }
-
-        foreach (var row in existing)
-        {
-            await repository.DeleteAsync(row.Id);
-        }
-
-        LogInformation("【删除】已软删除旧关联 {Count} 条: {LogContext}", existing.Count, logContext);
     }
 
     /// <summary>

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.Bom
 // 文件名称：TaktRoutingDtos.cs
 // 创建时间：2026-08-22
@@ -49,6 +49,16 @@ public class TaktRoutingDto : TaktApprovalDtoBase
     /// 工艺路线名称
     /// </summary>
     public string RoutingName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 工艺路线组编码（选项 TaktBomGroups/options?bomGroupCategory=2；DictValue=BomGroupCode）
+    /// </summary>
+    public string? RoutingGroupCode { get; set; }
+
+    /// <summary>
+    /// 工艺路线组名称（冗余：按 RoutingGroupCode 取 TaktBomGroups.BomGroupName 联动）
+    /// </summary>
+    public string? RoutingGroupName { get; set; }
 
     /// <summary>
     /// 用途（字典 logistics_manufacturing_routing_purpose：1=生产，2=工程/设计，3=万能，4=工厂维护）
@@ -137,6 +147,16 @@ public class TaktRoutingQueryDto : TaktPagedQuery
     /// 工艺路线名称
     /// </summary>
     public string? RoutingName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 工艺路线组编码（选项 TaktBomGroups/options?bomGroupCategory=2；DictValue=BomGroupCode）
+    /// </summary>
+    public string? RoutingGroupCode { get; set; }
+
+    /// <summary>
+    /// 工艺路线组名称（冗余：按 RoutingGroupCode 取 TaktBomGroups.BomGroupName 联动）
+    /// </summary>
+    public string? RoutingGroupName { get; set; }
 
     /// <summary>
     /// 用途（字典 logistics_manufacturing_routing_purpose：1=生产，2=工程/设计，3=万能，4=工厂维护）
@@ -295,6 +315,16 @@ public class TaktRoutingCreateDto
     public string RoutingName { get; set; } = string.Empty;
 
     /// <summary>
+    /// 工艺路线组编码（选项 TaktBomGroups/options?bomGroupCategory=2；DictValue=BomGroupCode）
+    /// </summary>
+    public string? RoutingGroupCode { get; set; }
+
+    /// <summary>
+    /// 工艺路线组名称（冗余：按 RoutingGroupCode 取 TaktBomGroups.BomGroupName 联动）
+    /// </summary>
+    public string? RoutingGroupName { get; set; }
+
+    /// <summary>
     /// 用途（字典 logistics_manufacturing_routing_purpose：1=生产，2=工程/设计，3=万能，4=工厂维护）
     /// </summary>
     public int Purpose { get; set; } = 0;
@@ -442,6 +472,16 @@ public class TaktRoutingTemplateDto
     public string? RoutingName { get; set; } = string.Empty;
 
     /// <summary>
+    /// 工艺路线组编码（选项 TaktBomGroups/options?bomGroupCategory=2；DictValue=BomGroupCode）
+    /// </summary>
+    public string? RoutingGroupCode { get; set; }
+
+    /// <summary>
+    /// 工艺路线组名称（冗余：按 RoutingGroupCode 取 TaktBomGroups.BomGroupName 联动）
+    /// </summary>
+    public string? RoutingGroupName { get; set; }
+
+    /// <summary>
     /// 用途（字典 logistics_manufacturing_routing_purpose：1=生产，2=工程/设计，3=万能，4=工厂维护）
     /// </summary>
     public int? Purpose { get; set; }
@@ -532,6 +572,16 @@ public class TaktRoutingImportDto
     /// 工艺路线名称
     /// </summary>
     public string? RoutingName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 工艺路线组编码（选项 TaktBomGroups/options?bomGroupCategory=2；DictValue=BomGroupCode）
+    /// </summary>
+    public string? RoutingGroupCode { get; set; }
+
+    /// <summary>
+    /// 工艺路线组名称（冗余：按 RoutingGroupCode 取 TaktBomGroups.BomGroupName 联动）
+    /// </summary>
+    public string? RoutingGroupName { get; set; }
 
     /// <summary>
     /// 用途（字典 logistics_manufacturing_routing_purpose：1=生产，2=工程/设计，3=万能，4=工厂维护）
@@ -630,6 +680,16 @@ public class TaktRoutingExportDto
     /// 工艺路线名称
     /// </summary>
     public string RoutingName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 工艺路线组编码（选项 TaktBomGroups/options?bomGroupCategory=2；DictValue=BomGroupCode）
+    /// </summary>
+    public string? RoutingGroupCode { get; set; }
+
+    /// <summary>
+    /// 工艺路线组名称（冗余：按 RoutingGroupCode 取 TaktBomGroups.BomGroupName 联动）
+    /// </summary>
+    public string? RoutingGroupName { get; set; }
 
     /// <summary>
     /// 用途（字典 logistics_manufacturing_routing_purpose：1=生产，2=工程/设计，3=万能，4=工厂维护）

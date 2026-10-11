@@ -1,6 +1,6 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
-<!-- 命名空间：frontend/src/views/dashboard/data-board/modules -->
+<!-- 项目名称：节拍智控·TaktWise -->
+<!-- 命名空间：frontend/src/views/dashboard/dataBoard.types/modules -->
 <!-- 文件名称：StatsCustomerServiceModule.vue -->
 <!-- 功能描述：数据看板客户服务统计（请求/订单/工单/合同本月数量） -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
@@ -29,17 +29,16 @@
 /**
  * 客户服务统计：request/order/ticket/contract *-stat
  */
-import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import StatsMetricGrid from '../components/stats-metric-grid.vue'
-import { usePermissionStore } from '@/stores/identity/permission'
+import StatsMetricGrid from '../components/StatsMetricGrid.vue'
+import { usePermissionStore } from '@/stores/identity/usePermissionStore'
 import type {
   ServiceContractStat,
   ServiceOrderStat,
   ServiceRequestStat,
   ServiceTicketStat,
-} from '@/types/logistics/customer-service/stat'
-import { enrichDashboardMetricItems } from '../utils/stats-metric-dashboard'
+} from '@/types/logistics/customer-service/stat.types'
+import { enrichDashboardMetricItems } from '../utils/statsMetricDashboard'
 import {
   DASHBOARD_STATS_API,
   DASHBOARD_STATS_PERMISSION,
@@ -48,7 +47,7 @@ import {
   fetchDashboardMetricIfPermitted,
   getLastMonthRange,
   scheduleDashboardLoad,
-} from '../utils/stats-query'
+} from '../utils/statsQuery'
 
 /** 空请求统计 */
 const EMPTY_REQUEST_STAT: ServiceRequestStat = { statMonth: '', monthRequestCount: 0 }

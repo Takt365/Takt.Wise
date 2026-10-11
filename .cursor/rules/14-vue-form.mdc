@@ -1,10 +1,10 @@
 ---
-description: Takt 表单组件 xxx-form.vue 规范（单表/主子表/树表）；由 index.vue 弹窗引用；叠加 12-crud
-globs: frontend/src/views/**/components/*-form.vue
+description: Takt 表单组件 *Form.vue 规范（单表/主子表/树表）；由 index.vue 弹窗引用；叠加 12-crud
+globs: frontend/src/views/**/components/*Form.vue
 alwaysApply: true
 ---
 
-# Vue 表单组件（*-form.vue）
+# Vue 表单组件（*Form.vue）
 
 通用 UI/i18n 见 `@.cursor/rules/02-frontend.mdc`；列表页壳见 `13-vue-view`；DTO 对齐见 `12-crud`。
 
@@ -12,9 +12,9 @@ alwaysApply: true
 
 | 表形态 | 表单特征 | 参照 |
 |--------|----------|------|
-| **单表** | 单 `a-form` 或 `a-tabs` 分业务段 | `user-form.vue` |
-| **主子表** | Tab 主表 + Tab/表格内嵌子表行 | `dict-type-form.vue` |
-| **树表** | `TaktTreeSelect` 选 `parentId` | `dept-form.vue` |
+| **单表** | 单 `a-form` 或 `a-tabs` 分业务段 | `UserForm.vue` |
+| **主子表** | Tab 主表 + Tab/表格内嵌子表行 | `DictTypeForm.vue` |
+| **树表** | `TaktTreeSelect` 选 `parentId` | `DeptForm.vue` |
 
 ---
 
@@ -22,9 +22,9 @@ alwaysApply: true
 
 ### 1.1 文件
 
-- 路径：`views/{模块}/components/{entity}-form.vue`
+- 路径：`views/{模块}/components/{EntityPascal}Form.vue`
 - 顶部 **8 行 HTML 注释**（功能描述含 `defineExpose` 清单）
-- 文件名 **kebab-case**；模板标签 `<user-form />`
+- 文件名 **PascalCase**（`UserForm.vue`）；模板标签 `<UserForm />`
 
 ### 1.2 Props
 
@@ -49,7 +49,7 @@ loading?: boolean
 | `resetFields` | 清空/恢复初始态 |
 | `setServerValidationErrors` | （可选）FluentValidation 字段错误回填 |
 
-参照 `user-form.vue`、`dept-form.vue`。
+参照 `UserForm.vue`、`DeptForm.vue`。
 
 ### 1.4 表单 UI
 
@@ -60,17 +60,17 @@ loading?: boolean
 - 字典：`TaktSelect` + `api-url` 或 `dict-type`（与后端 `DictTypeCode` 一致）
 - **「xxx内容」正文**：`takt-rich-editor`（字段名 `content` / `XxxContent`，或 XML 摘要标题以「内容」结尾；备注 `remark` 仍用 `a-textarea`）
 - **文件名称 + 访问地址**：同表同时有 `fileName` 与 `accessUrl` 时用 `takt-upload-file`（上传后回填 `fileName`，禁止手输）；**排除** Foundation `TaktFile` 自身。查询抽屉仍用普通输入；子表行内单元格仍用输入框
-- **TaktNumbering 自动编码（表单）**：实体字段 XML 描述含「自动通过 TaktNumbering」且**不含** MIME → 新增态 **编码规则下拉**（`TaktSelect` + `TaktNumberings/options`，`:api-params="{ documentType: '<菜单 MenuName>' }"` 仅显示该单据类型规则，字段 `numberingRuleCode`）+ **业务编码只读预览**（`previewNumberingNext` / `useTaktFormNumbering`）；编辑态规则隐藏、编码 `disabled`。`DocumentType` 存 **MenuName**（非 Id）。文案：`common.page.form.numberingRule` / `numberingCodePreview` / `numberingRuleRequired`。参照 `announcement-form.vue` / `employee-form.vue`。❌ 禁止按类型/性别猜规则码；❌ 禁止手输业务编码；❌ 禁止无 `documentType` 过滤拉全量规则
+- **TaktNumbering 自动编码（表单）**：实体字段 XML 描述含「自动通过 TaktNumbering」且**不含** MIME → 新增态 **编码规则下拉**（`TaktSelect` + `TaktNumberings/options`，`:api-params="{ documentType: '<菜单 MenuName>' }"` 仅显示该单据类型规则，字段 `numberingRuleCode`）+ **业务编码只读预览**（`previewNumberingNext` / `useTaktFormNumbering`）；编辑态规则隐藏、编码 `disabled`。`DocumentType` 存 **MenuName**（非 Id）。文案：`common.page.form.numberingRule` / `numberingCodePreview` / `numberingRuleRequired`。参照 `AnnouncementForm.vue` / `EmployeeForm.vue`。❌ 禁止按类型/性别猜规则码；❌ 禁止手输业务编码；❌ 禁止无 `documentType` 过滤拉全量规则
 - **TaktNumbering 自动编码（上传引擎）**：字段描述含「自动通过 TaktNumbering」且含 MIME → **不走表单选规则**；由 `TaktFileUploadEngine` 按 MIME→`FD-F*` 调 `ITaktNumberingGenerator`
 - 长表单：`a-tabs` 分 Tab；Tab 文案用 `{路径}.page.tabs.*` 静态 locales
 
-❌ 在 form 内再包 `TaktModal`；❌ 硬编码中文；❌ 表单控件 `size="small"`（须 Ant Design 默认 `middle`）；❌ 隔离/只读字段用 HTML `readonly`（须 `disabled`，参照 `user-form.vue`）；❌ 大块 scoped 布局 CSS（Tailwind / 极简 `:deep` 例外见 `02-frontend` §1.2）
+❌ 在 form 内再包 `TaktModal`；❌ 硬编码中文；❌ 表单控件 `size="small"`（须 Ant Design 默认 `middle`）；❌ 隔离/只读字段用 HTML `readonly`（须 `disabled`，参照 `UserForm.vue`）；❌ 大块 scoped 布局 CSS（Tailwind / 极简 `:deep` 例外见 `02-frontend` §1.2）
 
 ---
 
 ## 二、单表表单
 
-**参照**：`views/identity/user/components/user-form.vue`
+**参照**：`views/identity/user/components/UserForm.vue`
 
 ### 2.1 结构
 
@@ -95,7 +95,7 @@ a-form（或 a-form 外包 a-tabs）
 
 ## 三、主子表表单
 
-**参照**：`views/foundation/dict/components/dict-type-form.vue`
+**参照**：`views/foundation/dict/components/DictTypeForm.vue`
 
 ### 3.1 结构
 
@@ -110,7 +110,7 @@ a-tabs
 - 内存数组：`dictDataList` / `items`；与 `TaktXxxCreateDto.items` 对齐
 - 临时行 `row-key`：`client-${uuid}`；已持久化用实体 Id **string**
 - 行内增删改：工具栏「添加行」+ 行内 `a-input` / 操作列删除
-- 复杂子表：拆 `xxx-item-form.vue` 或独立 `DictDataWindow`（见 `13-vue-view` §3.1）
+- 复杂子表：拆 `XxxItemForm.vue` 或独立 `DictDataWindow`（见 `13-vue-view` §3.1）
 
 ### 3.3 validate / getValues
 
@@ -127,7 +127,7 @@ await mainFormRef.value?.validate()
 
 ## 四、树表表单
 
-**参照**：`views/human-resource/organization/dept/components/dept-form.vue`
+**参照**：`views/human-resource/organization/dept/components/DeptForm.vue`
 
 ### 4.1 必备字段
 
@@ -136,7 +136,7 @@ await mainFormRef.value?.validate()
 | `parentId` | `TaktTreeSelect`，`api-url="/api/TaktXxxs/tree-options"` |
 | 业务编码 | 新增可编辑；编辑 `:disabled="!!formData?.xxxId"` |
 
-❌ **`sortOrder` 不入维护表单**：由后端 `ITaktSortOrderGenerator` 在 Create/Import（值 ≤0）自动回填；树拖拽改序走 `UpdateXxxSort` / 拖拽 API，不在 `*-form.vue` 展示。
+❌ **`sortOrder` 不入维护表单**：由后端 `ITaktSortOrderGenerator` 在 Create/Import（值 ≤0）自动回填；树拖拽改序走 `UpdateXxxSort` / 拖拽 API，不在 `*Form.vue` 展示。
 
 ### 4.2 父级默认值
 
@@ -189,7 +189,7 @@ async function handleFormSubmit() {
 
 ## 七、代码生成（generate-vue-*-from-api.cjs）
 
-详见 `15-codegen` §3.6。与 `index.vue` 同步生成 `components/{entity}-form.vue`（有 Create/Update API 时）。
+详见 `15-codegen` §3.6。与 `index.vue` 同步生成 `components/{EntityPascal}Form.vue`（有 Create/Update API 时）。
 
 | 形态 | 脚本产出 |
 |------|----------|
@@ -197,7 +197,7 @@ async function handleFormSubmit() {
 | **主子表** | 主表 Tab + 子表 Tab（`a-table` 行内编辑、`handleAdd/Remove*Row`） |
 | **树表** | **不生成**；手工 `TaktTreeSelect` + `parentId`（§四） |
 
-`defineExpose` 脚本已含 `validate` / `getValues` / `resetFields`；复杂页（如 `user-form`）在排除列表内须手工维护。
+`defineExpose` 脚本已含 `validate` / `getValues` / `resetFields`；复杂页（如 `UserForm`）在排除列表内须手工维护。
 
 ---
 

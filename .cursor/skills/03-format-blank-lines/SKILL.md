@@ -41,7 +41,7 @@ description: >-
 | 语言 | 参照 |
 |------|------|
 | C# | `TaktUser.cs`、`TaktCultureSeedData.cs` |
-| TS | `api/identity/user.ts` |
+| TS | `api/identity/user.api.ts` |
 | Vue | 同目录已有 CRUD 页 |
 
 ## 修复流程

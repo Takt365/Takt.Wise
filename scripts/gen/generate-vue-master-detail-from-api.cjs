@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：scripts
 // 文件名称：generate-vue-master-detail-from-api.cjs
 // 创建时间：2026-06-08
@@ -71,6 +71,7 @@ const {
   hasScopeContextFormFields,
   resolveScopeFormFieldPresence,
   buildScopeContextFormScriptFragments,
+  toFrontendEntityFileCamel,
 } = require('./generate-vue-common.cjs');
 const {
   generateMasterDetailLrIndexScript,
@@ -109,7 +110,7 @@ function buildViewBundle(baseBundle, viewModulePath, fields) {
       fields,
     },
     indexPath: path.join(viewDir, 'index.vue'),
-    formPath: path.join(viewDir, 'components', `${masterFormKebab}-form.vue`),
+    formPath: path.join(viewDir, 'components', `${baseBundle.fullCtx.entityPascal}Form.vue`),
     i18nComposablePath,
   };
 }
@@ -386,7 +387,7 @@ function generateMasterDetailIndexVue(ctx) {
     ? buildImportModalVueBlock(entityPascal)
     : '';
   const formImports = (caps.hasCreate || caps.hasUpdate)
-    ? `import ${entityPascal}Form from './components/${viewEntityKebab}-form.vue'\n`
+    ? `import ${entityPascal}Form from './components/${entityPascal}Form.vue'\n`
     : '';
   const iconImports = buildRemixIconImportLine({
     includeActionIcons: caps.hasUpdate || caps.hasDelete,
@@ -396,7 +397,7 @@ function generateMasterDetailIndexVue(ctx) {
     ? "import { taktExcelEntityNames } from '@/utils/naming'\n"
     : '';
   const exportImport = caps.hasExport
-    ? "import { resolveExportDownloadFileName } from '@/utils/export-download-name'\n"
+    ? "import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'\n"
     : '';
   const importResultImport = (caps.hasImport && caps.hasGetTemplate)
     ? buildVueImportResultUtilImportLine()
@@ -579,7 +580,7 @@ ${mdParts.deleteClearSelection}
     ? buildServerPagedListQueryBlock(entityPascal, fields.queryFields)
     : '';
   return `<!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/${viewModulePath} -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：${comment}管理页面，含查询、增删改，由 ${generatorScript} 根据 types/api 自动生成 -->
@@ -687,16 +688,15 @@ ${importBlock}
  * ${comment}管理页 · 由 ${generatorScript} 根据 types/api 生成
  * @module views/${viewModulePath}
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 ${(caps.hasCreate || caps.hasUpdate) ? TAKT_FORM_MODAL_WIDTH_IMPORT : ''}${formImports}${mdParts.panelImports}
 ${mdParts.composableImport}
-import { ${importApiNames.join(', ')} } from '@/api/${modulePath}/${entityKebab}'
-import type { ${typeImports.join(', ')} } from '@/types/${modulePath}/${entityKebab}'
+import { ${importApiNames.join(', ')} } from '@/api/${modulePath}/${toFrontendEntityFileCamel(entityKebab)}.api'
+import type { ${typeImports.join(', ')} } from '@/types/${modulePath}/${toFrontendEntityFileCamel(entityKebab)}.types'
 ${indexDictImport}${excelImport}${exportImport}${importResultImport}${iconImports}
 ${entityI18nIndexImport}
 ${singleStateBlock}
@@ -846,7 +846,7 @@ function handleResizeColumn() {}
 const EMPTY_MD_FORM_PARTS = { editableBlocks: '', script: '', tableRefs: '', validateLines: '', resetLines: '', needsTaktSelect: false };
 
 /**
- * 生成 *-form.vue（单表 CRUD 或主子表，由 assemblyOptions 区分）
+ * 生成 *Form.vue（单表 CRUD 或主子表，由 assemblyOptions 区分）
  * @param {object} ctx
  * @param {{ mdFormParts?: object, hasMasterDetail?: boolean, generatorScript?: string }} [assemblyOptions]
  */
@@ -886,10 +886,6 @@ ${mdFormParts.editableBlocks}
     </div>`
     : `${mainFormBody}
 ${mdFormParts.editableBlocks}`;
-  const needsTaktSelect = formFields.some((f) => f.htmlType === 'select' && f.dictType)
-    || formFields.some((f) => f.htmlType === 'apiSelect' && f.apiUrl)
-    || formFields.some((f) => f.htmlType === 'numberingRule')
-    || mdFormParts.needsTaktSelect;
   const hasScopeContextFields = hasScopeContextFormFields(formFields, masterDetailChildren)
     || hasMasterDetailChildren;
   const scopePresence = resolveScopeFormFieldPresence(formFields, masterDetailChildren);
@@ -910,9 +906,7 @@ ${mdFormParts.editableBlocks}`;
     ? masterDetailChildren.map((c) => `  child${c.childPascal}Rows.value = []`).join('\n')
     : '';
   const resetEditableTables = mdFormParts.resetLines || '';
-  const taktSelectImport = needsTaktSelect
-    ? "import TaktSelect from '@/components/business/takt-select/index.vue'\n"
-    : '';
+  // TaktSelect 等业务 SFC：unplugin-vue-components 自动注册，禁止手写 import
   const extFieldIconImport = buildExtFieldIconImportLine(formFields);
   const formScriptFragments = buildGeneratedFormVueScriptFragments({
     formFields,
@@ -940,19 +934,8 @@ ${mdFormParts.editableBlocks}`;
   const halfPaneStyleBlock = hasMasterDetailChildren
     ? buildMasterDetailFormHalfPaneStyleBlock(viewEntityKebab)
     : buildFormTabsScopedStyleBlock(useFormTabs);
-  const vueImportNormalized = (() => {
-    if (!hasMasterDetailChildren) {
-      return formScriptFragments.vueImportLine;
-    }
-    const names = new Set(
-      (formScriptFragments.vueImportLine.match(/\{([^}]+)\}/)?.[1] || '')
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean),
-    );
-    ['onMounted', 'onBeforeUnmount', 'nextTick'].forEach((n) => names.add(n));
-    return `import { ${[...names].join(', ')} } from 'vue'`;
-  })();
+  // vue API 由 auto-import 注入；禁止再拼 import { … } from 'vue'
+  const vueImportNormalized = '';
   const activeTabReset = useFormTabs ? "  activeTab.value = 'tab-0'\n" : '';
   const halfPaneFormDataWatchHook = hasMasterDetailChildren
     ? `
@@ -968,9 +951,9 @@ watch(
 `
     : '';
   return `<!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/${viewModulePath}/components -->
-<!-- 文件名称：${viewEntityKebab}-form.vue -->
+<!-- 文件名称：${entityPascal}Form.vue -->
 <!-- 功能描述：${comment}维护弹窗内嵌表单（上主下从各占约 1/2 级联保存）。由 ${generatorScript} 根据 types/api 自动生成；defineExpose 提供 validate、getValues、resetFields -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
@@ -999,7 +982,7 @@ import { useI18n } from 'vue-i18n'
 import type { Rule } from 'ant-design-vue/es/form'
 ${buildEntityI18nFormImportBlock(entityPascal, viewEntityKebab)}
 ${masterTypeImport}
-${taktSelectImport}${extFieldIconImport}${formScriptFragments.dictImportLine}${formScriptFragments.fileUploadImportLine}${formScriptFragments.numberingImportLine || ''}${scopeStoreImports}
+${extFieldIconImport}${formScriptFragments.dictImportLine}${formScriptFragments.fileUploadImportLine}${formScriptFragments.numberingImportLine || ''}${scopeStoreImports}
 ${formScriptState}
 ${halfPaneScrollScript}
 ${formScriptFragments.defaultsBlock}

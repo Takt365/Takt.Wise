@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.Aps
 // 文件名称：TaktApsScheduleDtos.cs
 // 创建时间：2026-08-22
@@ -127,15 +127,14 @@ public class TaktApsScheduleDto : TaktCompanyDtoBase
     public int ScheduleStatus { get; set; } = 0;
 
     /// <summary>
-    /// 计划员ID（选项 TaktEmployees/options；DictValue=Id）
+    /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? PlannerEmployeeId { get; set; }
+    public string? PlannerGroupCode { get; set; }
 
     /// <summary>
-    /// 计划员姓名
+    /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
     /// </summary>
-    public string? PlannerName { get; set; } = string.Empty;
+    public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 发布时间
@@ -143,13 +142,13 @@ public class TaktApsScheduleDto : TaktCompanyDtoBase
     public DateTime? PublishTime { get; set; }
 
     /// <summary>
-    /// 发布人ID（选项 TaktEmployees/options；DictValue=Id）
+    /// 发布人（选项 TaktApsGroups/options?apsGroupCategory=2；DictValue=Id）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
     public long? PublishUserId { get; set; }
 
     /// <summary>
-    /// 发布人姓名
+    /// 发布人姓名（冗余字段,便于查询）
     /// </summary>
     public string? PublishUserName { get; set; } = string.Empty;
 
@@ -304,15 +303,14 @@ public class TaktApsScheduleQueryDto : TaktPagedQuery
     public int? ScheduleStatus { get; set; }
 
     /// <summary>
-    /// 计划员ID（选项 TaktEmployees/options；DictValue=Id）
+    /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? PlannerEmployeeId { get; set; }
+    public string? PlannerGroupCode { get; set; }
 
     /// <summary>
-    /// 计划员姓名
+    /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
     /// </summary>
-    public string? PlannerName { get; set; } = string.Empty;
+    public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 发布时间（范围查询-开始）
@@ -325,13 +323,13 @@ public class TaktApsScheduleQueryDto : TaktPagedQuery
     public DateTime? PublishTimeEnd { get; set; }
 
     /// <summary>
-    /// 发布人ID（选项 TaktEmployees/options；DictValue=Id）
+    /// 发布人（选项 TaktApsGroups/options?apsGroupCategory=2；DictValue=Id）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
     public long? PublishUserId { get; set; }
 
     /// <summary>
-    /// 发布人姓名
+    /// 发布人姓名（冗余字段,便于查询）
     /// </summary>
     public string? PublishUserName { get; set; } = string.Empty;
 
@@ -479,15 +477,14 @@ public class TaktApsScheduleCreateDto
     public int ScheduleStatus { get; set; } = 0;
 
     /// <summary>
-    /// 计划员ID（选项 TaktEmployees/options；DictValue=Id）
+    /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? PlannerEmployeeId { get; set; }
+    public string? PlannerGroupCode { get; set; }
 
     /// <summary>
-    /// 计划员姓名
+    /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
     /// </summary>
-    public string? PlannerName { get; set; } = string.Empty;
+    public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 发布时间
@@ -495,13 +492,13 @@ public class TaktApsScheduleCreateDto
     public DateTime? PublishTime { get; set; }
 
     /// <summary>
-    /// 发布人ID（选项 TaktEmployees/options；DictValue=Id）
+    /// 发布人（选项 TaktApsGroups/options?apsGroupCategory=2；DictValue=Id）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
     public long? PublishUserId { get; set; }
 
     /// <summary>
-    /// 发布人姓名
+    /// 发布人姓名（冗余字段,便于查询）
     /// </summary>
     public string? PublishUserName { get; set; } = string.Empty;
 
@@ -702,15 +699,14 @@ public class TaktApsScheduleTemplateDto
     public int? ScheduleStatus { get; set; }
 
     /// <summary>
-    /// 计划员ID（选项 TaktEmployees/options；DictValue=Id）
+    /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? PlannerEmployeeId { get; set; }
+    public string? PlannerGroupCode { get; set; }
 
     /// <summary>
-    /// 计划员姓名
+    /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
     /// </summary>
-    public string? PlannerName { get; set; } = string.Empty;
+    public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 发布时间
@@ -718,13 +714,13 @@ public class TaktApsScheduleTemplateDto
     public DateTime? PublishTime { get; set; }
 
     /// <summary>
-    /// 发布人ID（选项 TaktEmployees/options；DictValue=Id）
+    /// 发布人（选项 TaktApsGroups/options?apsGroupCategory=2；DictValue=Id）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
     public long? PublishUserId { get; set; }
 
     /// <summary>
-    /// 发布人姓名
+    /// 发布人姓名（冗余字段,便于查询）
     /// </summary>
     public string? PublishUserName { get; set; } = string.Empty;
 
@@ -867,15 +863,14 @@ public class TaktApsScheduleImportDto
     public int? ScheduleStatus { get; set; }
 
     /// <summary>
-    /// 计划员ID（选项 TaktEmployees/options；DictValue=Id）
+    /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? PlannerEmployeeId { get; set; }
+    public string? PlannerGroupCode { get; set; }
 
     /// <summary>
-    /// 计划员姓名
+    /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
     /// </summary>
-    public string? PlannerName { get; set; } = string.Empty;
+    public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 发布时间
@@ -883,13 +878,13 @@ public class TaktApsScheduleImportDto
     public DateTime? PublishTime { get; set; }
 
     /// <summary>
-    /// 发布人ID（选项 TaktEmployees/options；DictValue=Id）
+    /// 发布人（选项 TaktApsGroups/options?apsGroupCategory=2；DictValue=Id）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
     public long? PublishUserId { get; set; }
 
     /// <summary>
-    /// 发布人姓名
+    /// 发布人姓名（冗余字段,便于查询）
     /// </summary>
     public string? PublishUserName { get; set; } = string.Empty;
 
@@ -1038,15 +1033,14 @@ public class TaktApsScheduleExportDto
     public int ScheduleStatus { get; set; } = 0;
 
     /// <summary>
-    /// 计划员ID（选项 TaktEmployees/options；DictValue=Id）
+    /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? PlannerEmployeeId { get; set; }
+    public string? PlannerGroupCode { get; set; }
 
     /// <summary>
-    /// 计划员姓名
+    /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
     /// </summary>
-    public string? PlannerName { get; set; } = string.Empty;
+    public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 发布时间
@@ -1054,13 +1048,13 @@ public class TaktApsScheduleExportDto
     public DateTime? PublishTime { get; set; }
 
     /// <summary>
-    /// 发布人ID（选项 TaktEmployees/options；DictValue=Id）
+    /// 发布人（选项 TaktApsGroups/options?apsGroupCategory=2；DictValue=Id）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
     public long? PublishUserId { get; set; }
 
     /// <summary>
-    /// 发布人姓名
+    /// 发布人姓名（冗余字段,便于查询）
     /// </summary>
     public string? PublishUserName { get; set; } = string.Empty;
 

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.CustomerService
 // 文件名称：TaktCustomerServiceRequest.cs
 // 创建时间：2026-06-06
@@ -148,7 +148,7 @@ public class TaktCustomerServiceRequest : TaktCompanyEntityBase
     /// <summary>
     /// 受理人姓名
     /// </summary>
-    [SugarColumn(ColumnName = "assigned_employee_name", ColumnDescription = "受理人姓名", ColumnDataType = "nvarchar", Length = 50, IsNullable = true)]
+    [SugarColumn(ColumnName = "assigned_employee_name", ColumnDescription = "受理人姓名", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
     public string? AssignedEmployeeName { get; set; }
 
     /// <summary>

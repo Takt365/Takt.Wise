@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/quality/operation/ipqc-trend
 // 文件名称：zh-HK.ts
 // 功能描述：過程質量推移頁；引用鍵 logistics.quality.operation.ipqc-trend.page.*

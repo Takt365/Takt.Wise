@@ -115,6 +115,8 @@
     "toValue": true,
     "triggerRef": true,
     "unref": true,
+    "useAnalysisPeriodRangeLimit": true,
+    "useAnalysisQueryDefaults": true,
     "useAttrs": true,
     "useBomMaterialCostItemRecalculateSignalR": true,
     "useBusinessScopeRouteKey": true,

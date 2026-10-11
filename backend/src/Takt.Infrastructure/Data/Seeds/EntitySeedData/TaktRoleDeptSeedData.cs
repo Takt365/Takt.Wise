@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds
 // 文件名称：TaktRoleDeptSeedData.cs
 // 创建时间：2025-01-20
@@ -84,7 +84,7 @@ public class TaktRoleDeptSeedData : ITaktSeedDataCoordinator
     }
 
     /// <summary>
-    /// 角色-部门关联模板（按公司独立组织根；DTA 另挂制造2课给普通员工）
+    /// 角色-部门关联模板（DTA 2300：各部门管理员挂对应部门；其它公司仅超管挂组织根）
     /// </summary>
     /// <param name="companyCode">公司代码</param>
     /// <returns>角色编码与部门编码对</returns>
@@ -98,9 +98,13 @@ public class TaktRoleDeptSeedData : ITaktSeedDataCoordinator
             _ => companyCode,
         };
         yield return ("ROLE_SUPER_ADMIN", rootDeptCode);
-        yield return ("ROLE_DEPT_ADMIN", rootDeptCode);
+        yield return ("ROLE_DEMO", rootDeptCode);
         if (companyCode == "2300")
         {
+            foreach (var d in TaktRoleSeedData.DeptAdminRoles)
+            {
+                yield return (d.RoleCode, d.DeptCode);
+            }
             yield return ("ROLE_EMPLOYEE", "D0620");
         }
     }

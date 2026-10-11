@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Quality.Complaint
 // 文件名称：TaktCustomerComplaint.cs
 // 创建时间：2026-05-11
@@ -77,19 +77,18 @@ public class TaktCustomerComplaint : TaktCompanyEntityBase
     /// <summary>
     /// 责任部门名称（冗余：按 ResponsibleDeptId 取 TaktDept.DeptName1 联动）
     /// </summary>
-    [SugarColumn(ColumnName = "responsible_dept_name", ColumnDescription = "责任部门名称（冗余：按 ResponsibleDeptId 取 TaktDept.DeptName1 联动）", ColumnDataType = "nvarchar", Length = 100, IsNullable = true)]
+    [SugarColumn(ColumnName = "responsible_dept_name", ColumnDescription = "责任部门名称", ColumnDataType = "nvarchar", Length = 100, IsNullable = true)]
     public string? ResponsibleDeptName { get; set; }
     /// <summary>
-    /// 责任人 ID（选项 TaktEmployees/options；DictValue=Id）
+    /// 责任组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=1；DictValue=ComplaintGroupCode）
     /// </summary>
-    [SugarColumn(ColumnName = "responsible_person_id", ColumnDescription = "责任人ID", ColumnDataType = "bigint", IsNullable = true)]
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ResponsiblePersonId { get; set; }
+    [SugarColumn(ColumnName = "responsible_group_code", ColumnDescription = "责任组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? ResponsibleGroupCode { get; set; }
     /// <summary>
-    /// 责任人名称（冗余：按 ResponsiblePersonId 取 TaktEmployee.EmployeeName 联动）
+    /// 责任组名称（冗余：按 ResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    [SugarColumn(ColumnName = "responsible_person_name", ColumnDescription = "责任人名称（冗余：按 ResponsiblePersonId 取 TaktEmployee.EmployeeName 联动）", ColumnDataType = "nvarchar", Length = 50, IsNullable = true)]
-    public string? ResponsiblePersonName { get; set; }
+    [SugarColumn(ColumnName = "responsible_group_name", ColumnDescription = "责任组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? ResponsibleGroupName { get; set; }
     /// <summary>
     /// 要求回复日期
     /// </summary>

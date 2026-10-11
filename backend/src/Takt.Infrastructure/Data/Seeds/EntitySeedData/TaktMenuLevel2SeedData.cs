@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds
 // 文件名称：TaktMenuLevel2SeedData.cs
 // 创建时间：2025-01-20
@@ -1072,17 +1072,17 @@ public class TaktMenuLevel2SeedData
             insertCount += insertFoundation7;
             updateCount += updateFoundation7;
 
-            var (insertFoundation8, updateFoundation8) = await CreateOrUpdateMenuAsync(menuRepository, sqlSugarContext, tenantCode, "FOUNDATION_SETTING", menu =>
+            var (insertFoundation8, updateFoundation8) = await CreateOrUpdateMenuAsync(menuRepository, sqlSugarContext, tenantCode, "FOUNDATION_SYSTEM_PROPERTY", menu =>
             {
-                menu.MenuName = "系统设置";
-                menu.MenuCode = "FOUNDATION_SETTING";
-                menu.I18nKey = "menu.foundation.setting";
+                menu.MenuName = "系统属性";
+                menu.MenuCode = "FOUNDATION_SYSTEM_PROPERTY";
+                menu.I18nKey = "menu.foundation.system.property";
                 menu.Icon = "RiSettingsLine";
                 menu.ParentId = foundationMenu.Id;
                 menu.MenuType = 1;
-                menu.Permission = "foundation:setting:list";
-                menu.RoutePath = "/foundation/setting";
-                menu.ComponentPath = "foundation/setting/index";
+                menu.Permission = "foundation:system:property:list";
+                menu.RoutePath = "/foundation/system-property";
+                menu.ComponentPath = "foundation/system-property/index";
                 menu.SortOrder = 8;
                 menu.MenuStatus = 1;
                 menu.IsVisible = 1;

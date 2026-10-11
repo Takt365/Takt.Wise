@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/components/navigation
 // 文件名称：zh-HK.ts
 // 创建时间：2026-06-16
@@ -40,7 +40,7 @@ export default {
       copyright: "版權信息",
       defaultlanguage: "默認語言",
       demoswitch: "Demo開關",
-      demohint: "開啓後全站只讀：可查詢/導出，禁止新增、修改、刪除、導入等寫操作",
+      demohint: "開啓/關閉 Demo 時同步開關水印；配置保存後全站只讀：可查詢/導出，禁止新增、修改、刪除、導入等寫操作",
       enablemultitab: "啓用多標籤頁",
       fixed: "固定",
       fixedheader: "固定頭部",

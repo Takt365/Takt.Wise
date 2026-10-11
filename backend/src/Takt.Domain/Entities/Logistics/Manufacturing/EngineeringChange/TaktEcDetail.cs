@@ -1,5 +1,5 @@
 ﻿// ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcDetail.cs
 // 创建时间：2025-02-02
@@ -210,6 +210,11 @@ public class TaktEcDetail : TaktCompanyEntityBase
     /// </summary>
     [SugarColumn(ColumnName = "ec_scope", ColumnDescription = "实施范围", ColumnDataType = "int", IsNullable = false)]
     public int EcScope { get; set; }
+    /// <summary>
+    /// 制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课的选择，执行行再按部门固定规则解析
+    /// </summary>
+    [SugarColumn(ColumnName = "ec_dept_scope", ColumnDescription = "部门范围", ColumnDataType = "int", IsNullable = false, DefaultValue = "2")]
+    public int EcDeptScope { get; set; } = 2;
 
     /// <summary>
     /// 技术课主表 ID（TaktEcGijutsu 主键；序列化为 string 避免 Javascript 精度问题）

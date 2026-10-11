@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcHinkanDtos.cs
 // 创建时间：2026-08-26
@@ -65,6 +65,10 @@ public class TaktEcHinkanDto : TaktCompanyDtoBase
     /// 实施范围（冗余：来自 TaktEcDetail.EcScope）
     /// </summary>
     public int EcScope { get; set; }
+    /// <summary>
+    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int EcDeptScope { get; set; } = 2;
 
     /// <summary>
     /// 部门编码（TaktDept.DeptCode，5 位，如 D0820）
@@ -121,9 +125,13 @@ public class TaktEcHinkanDto : TaktCompanyDtoBase
     /// </summary>
     public string EcModelCode { get; set; } = string.Empty;
     /// <summary>
-    /// 根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）
+    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
     /// </summary>
-    public string? EcRootMaterialCode { get; set; } = string.Empty;
+    public string EcModelCodeGroup { get; set; } = string.Empty;
+    /// <summary>
+    /// 根物料编码组（同去重键下的根物料编码，分号分隔；ntext）
+    /// </summary>
+    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
     /// <summary>
     /// 根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）
     /// </summary>
@@ -195,6 +203,10 @@ public class TaktEcHinkanQueryDto : TaktPagedQuery
     /// 实施范围（冗余：来自 TaktEcDetail.EcScope）
     /// </summary>
     public int? EcScope { get; set; }
+    /// <summary>
+    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int? EcDeptScope { get; set; }
 
     /// <summary>
     /// 部门编码（TaktDept.DeptCode，5 位，如 D0820）
@@ -246,9 +258,13 @@ public class TaktEcHinkanQueryDto : TaktPagedQuery
     /// </summary>
     public string? EcModelCode { get; set; } = string.Empty;
     /// <summary>
-    /// 根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）
+    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
     /// </summary>
-    public string? EcRootMaterialCode { get; set; } = string.Empty;
+    public string? EcModelCodeGroup { get; set; } = string.Empty;
+    /// <summary>
+    /// 根物料编码组（同去重键下的根物料编码，分号分隔；ntext）
+    /// </summary>
+    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
     /// <summary>
     /// 根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）
     /// </summary>
@@ -334,6 +350,10 @@ public class TaktEcHinkanCreateDto
     /// 实施范围（冗余：来自 TaktEcDetail.EcScope）
     /// </summary>
     public int EcScope { get; set; }
+    /// <summary>
+    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int EcDeptScope { get; set; } = 2;
 
     /// <summary>
     /// 部门编码（TaktDept.DeptCode，5 位，如 D0820）
@@ -392,9 +412,13 @@ public class TaktEcHinkanCreateDto
     [Required(ErrorMessage = "机种（冗余：来自 TaktEcDetail.EcModelCode）不能为空")]
     public string EcModelCode { get; set; } = string.Empty;
     /// <summary>
-    /// 根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）
+    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
     /// </summary>
-    public string? EcRootMaterialCode { get; set; } = string.Empty;
+    public string EcModelCodeGroup { get; set; } = string.Empty;
+    /// <summary>
+    /// 根物料编码组（同去重键下的根物料编码，分号分隔；ntext）
+    /// </summary>
+    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
     /// <summary>
     /// 根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）
     /// </summary>
@@ -462,6 +486,10 @@ public class TaktEcHinkanDiscontinuedStatusDto
     /// 实施范围（冗余：来自 TaktEcDetail.EcScope）
     /// </summary>
     public int EcScope { get; set; }
+    /// <summary>
+    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int EcDeptScope { get; set; } = 2;
 }
 
 /// <summary>
@@ -537,6 +565,10 @@ public class TaktEcHinkanTemplateDto
     /// 实施范围（冗余：来自 TaktEcDetail.EcScope）
     /// </summary>
     public int? EcScope { get; set; }
+    /// <summary>
+    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int? EcDeptScope { get; set; }
 
     /// <summary>
     /// 部门编码（TaktDept.DeptCode，5 位，如 D0820）
@@ -583,9 +615,13 @@ public class TaktEcHinkanTemplateDto
     /// </summary>
     public string? EcModelCode { get; set; } = string.Empty;
     /// <summary>
-    /// 根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）
+    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
     /// </summary>
-    public string? EcRootMaterialCode { get; set; } = string.Empty;
+    public string? EcModelCodeGroup { get; set; } = string.Empty;
+    /// <summary>
+    /// 根物料编码组（同去重键下的根物料编码，分号分隔；ntext）
+    /// </summary>
+    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
     /// <summary>
     /// 根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）
     /// </summary>
@@ -657,6 +693,10 @@ public class TaktEcHinkanImportDto
     /// 实施范围（冗余：来自 TaktEcDetail.EcScope）
     /// </summary>
     public int? EcScope { get; set; }
+    /// <summary>
+    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int? EcDeptScope { get; set; }
 
     /// <summary>
     /// 部门编码（TaktDept.DeptCode，5 位，如 D0820）
@@ -703,9 +743,13 @@ public class TaktEcHinkanImportDto
     /// </summary>
     public string? EcModelCode { get; set; } = string.Empty;
     /// <summary>
-    /// 根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）
+    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
     /// </summary>
-    public string? EcRootMaterialCode { get; set; } = string.Empty;
+    public string? EcModelCodeGroup { get; set; } = string.Empty;
+    /// <summary>
+    /// 根物料编码组（同去重键下的根物料编码，分号分隔；ntext）
+    /// </summary>
+    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
     /// <summary>
     /// 根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）
     /// </summary>
@@ -783,6 +827,10 @@ public class TaktEcHinkanExportDto
     /// 实施范围（冗余：来自 TaktEcDetail.EcScope）
     /// </summary>
     public int EcScope { get; set; }
+    /// <summary>
+    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int EcDeptScope { get; set; } = 2;
 
     /// <summary>
     /// 部门编码（TaktDept.DeptCode，5 位，如 D0820）
@@ -839,9 +887,13 @@ public class TaktEcHinkanExportDto
     /// </summary>
     public string EcModelCode { get; set; } = string.Empty;
     /// <summary>
-    /// 根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）
+    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
     /// </summary>
-    public string? EcRootMaterialCode { get; set; } = string.Empty;
+    public string EcModelCodeGroup { get; set; } = string.Empty;
+    /// <summary>
+    /// 根物料编码组（同去重键下的根物料编码，分号分隔；ntext）
+    /// </summary>
+    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
     /// <summary>
     /// 根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）
     /// </summary>

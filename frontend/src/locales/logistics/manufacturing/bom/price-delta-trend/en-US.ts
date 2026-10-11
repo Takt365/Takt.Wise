@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/manufacturing/bom/price-delta-trend
 // 文件名称：en-US.ts
 // 创建时间：2026-08-13
@@ -12,6 +12,7 @@
 
 export default {
   page: {
+    title: 'Cost Delta Trend',
     selectPlantRequired: 'Please select a plant',
     selectPeriodRequired: 'Please select a costing period',
     selectMaterialTypeRequired: 'Please select a material type',

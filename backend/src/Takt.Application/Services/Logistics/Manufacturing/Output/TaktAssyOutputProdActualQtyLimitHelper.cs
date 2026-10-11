@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Output
 // 文件名称：TaktAssyOutputProdActualQtyLimitHelper.cs
 // 功能描述：组立日报明细生产实际累计不得超过工单数量（跨生产日期、同工单号汇总）

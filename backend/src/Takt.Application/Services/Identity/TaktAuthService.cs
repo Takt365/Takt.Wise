@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Identity
 // 文件名称：TaktAuthService.cs
 // 创建时间：2026-05-23
@@ -16,6 +16,8 @@ using Microsoft.Extensions.Options;
 using Takt.Application.Dtos.Identity;
 using Takt.Application.Services;
 using Takt.Domain.Entities.Accounting.Financial;
+using Takt.Domain.Entities.Foundation;
+using Takt.Domain.Entities.HumanResource.Organization;
 using Takt.Domain.Entities.HumanResource.Personnel;
 using Takt.Domain.Entities.Identity;
 using Takt.Domain.Interfaces;
@@ -37,13 +39,17 @@ public class TaktAuthService : TaktServiceBase, ITaktAuthService
     private const int AuthLogSampleSize = 40;
 
     private readonly ITaktTenantRepository<TaktUser> _userRepository;
-    private readonly ITaktCompanyRepository<TaktEmployee> _employeeRepository;
+    private readonly ITaktEmployeeProfileResolver _employeeProfileResolver;
     private readonly ITaktTenantRepository<TaktCompany> _companyRepository;
+    private readonly ITaktTenantRepository<TaktTenant> _tenantRepository;
+    private readonly ITaktTenantRepository<TaktCulture> _cultureRepository;
     private readonly ITaktCompanyRepository<TaktUserCompany> _userCompanyRepository;
+    private readonly ITaktCompanyRepository<TaktEmployeeDept> _employeeDeptRepository;
+    private readonly ITaktCompanyRepository<TaktDept> _deptRepository;
     private readonly ITaktPermissionService _permissionService;
-    private readonly ITaktTenantRepository<TaktUserRole> _userRoleRepository;
+    private readonly ITaktCompanyRepository<TaktUserRole> _userRoleRepository;
     private readonly ITaktTenantRepository<TaktRole> _roleRepository;
-    private readonly ITaktTenantRepository<TaktRoleMenu> _roleMenuRepository;
+    private readonly ITaktCompanyRepository<TaktRoleMenu> _roleMenuRepository;
     private readonly ITaktTenantRepository<TaktMenu> _menuRepository;
     private readonly ITaktCacheService _cacheService;
     private readonly ITaktLoginSessionService _loginSessionService;
@@ -54,9 +60,13 @@ public class TaktAuthService : TaktServiceBase, ITaktAuthService
     /// 构造函数
     /// </summary>
     /// <param name="userRepository">用户仓储</param>
-    /// <param name="employeeRepository">员工仓储</param>
+    /// <param name="employeeProfileResolver">员工档案跨公司解析</param>
     /// <param name="companyRepository">公司仓储</param>
+    /// <param name="tenantRepository">租户仓储</param>
+    /// <param name="cultureRepository">区域文化仓储</param>
     /// <param name="userCompanyRepository">用户公司关联仓储</param>
+    /// <param name="employeeDeptRepository">员工部门关联仓储</param>
+    /// <param name="deptRepository">部门仓储</param>
     /// <param name="userRoleRepository">用户角色关联仓储</param>
     /// <param name="roleRepository">角色仓储</param>
     /// <param name="roleMenuRepository">角色菜单关联仓储</param>
@@ -70,12 +80,16 @@ public class TaktAuthService : TaktServiceBase, ITaktAuthService
     /// <param name="localizationService">本地化服务</param>
     public TaktAuthService(
         ITaktTenantRepository<TaktUser> userRepository,
-        ITaktCompanyRepository<TaktEmployee> employeeRepository,
+        ITaktEmployeeProfileResolver employeeProfileResolver,
         ITaktTenantRepository<TaktCompany> companyRepository,
+        ITaktTenantRepository<TaktTenant> tenantRepository,
+        ITaktTenantRepository<TaktCulture> cultureRepository,
         ITaktCompanyRepository<TaktUserCompany> userCompanyRepository,
-        ITaktTenantRepository<TaktUserRole> userRoleRepository,
+        ITaktCompanyRepository<TaktEmployeeDept> employeeDeptRepository,
+        ITaktCompanyRepository<TaktDept> deptRepository,
+        ITaktCompanyRepository<TaktUserRole> userRoleRepository,
         ITaktTenantRepository<TaktRole> roleRepository,
-        ITaktTenantRepository<TaktRoleMenu> roleMenuRepository,
+        ITaktCompanyRepository<TaktRoleMenu> roleMenuRepository,
         ITaktTenantRepository<TaktMenu> menuRepository,
         ITaktPermissionService permissionService,
         ITaktCacheService cacheService,
@@ -87,9 +101,13 @@ public class TaktAuthService : TaktServiceBase, ITaktAuthService
         : base(userContext, localizationService)
     {
         _userRepository = userRepository;
-        _employeeRepository = employeeRepository;
+        _employeeProfileResolver = employeeProfileResolver;
         _companyRepository = companyRepository;
+        _tenantRepository = tenantRepository;
+        _cultureRepository = cultureRepository;
         _userCompanyRepository = userCompanyRepository;
+        _employeeDeptRepository = employeeDeptRepository;
+        _deptRepository = deptRepository;
         _userRoleRepository = userRoleRepository;
         _roleRepository = roleRepository;
         _roleMenuRepository = roleMenuRepository;
@@ -716,20 +734,22 @@ public class TaktAuthService : TaktServiceBase, ITaktAuthService
     /// 若仅分配了页面菜单（MenuType=1）而未勾选其子按钮（MenuType=2），
     /// 仍自动并入该页面下启用按钮的 Permission（如 foundation:message:list → unread/query/read），
     /// 避免顶栏未读/统计等接口因缺按钮 RoleMenu 而 403。
+    /// 若 RoleMenu 已显式挂了按钮（如 ROLE_DEMO 仅挂 :query），则不再扩权其它按钮。
     /// </remarks>
     /// <param name="userId">用户 ID</param>
     /// <param name="tenantCode">租户编码</param>
     /// <returns>权限码列表</returns>
     public async Task<List<string>> GetUserPermissionCodesAsync(long userId, string tenantCode)
     {
-        var cacheKey = $"takt:perm-codes:{tenantCode}:{userId}";
+        var companyCode = await ResolveCurrentActiveCompanyCodeAsync(userId, tenantCode);
+        var cacheKey = $"takt:perm-codes:{tenantCode}:{companyCode}:{userId}";
         var expiration = TimeSpan.FromMinutes(_cacheOptions.DefaultExpirationMinutes);
 
         return await _cacheService.GetOrCreateAsync(
             cacheKey,
             async () =>
             {
-                var accessibleMenus = await GetAccessibleMenusAsync(userId, tenantCode);
+                var accessibleMenus = await GetAccessibleMenusAsync(userId, tenantCode, companyCode);
                 var codes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 foreach (var menu in accessibleMenus)
                 {
@@ -739,12 +759,13 @@ public class TaktAuthService : TaktServiceBase, ITaktAuthService
                     }
                 }
 
-                // 页面菜单已授权时，并入其子按钮权限码（RoleMenu 常只勾页面、未勾按钮）
+                // 仅「只勾了页面、未勾任何按钮」时并入子按钮；已显式挂按钮的角色（如 ROLE_DEMO）不扩权
+                var hasExplicitButtons = accessibleMenus.Any(m => m.MenuType == 2);
                 var accessiblePageIds = accessibleMenus
                     .Where(m => m.MenuType == 1)
                     .Select(m => m.Id)
                     .ToHashSet();
-                if (accessiblePageIds.Count > 0)
+                if (!hasExplicitButtons && accessiblePageIds.Count > 0)
                 {
                     var buttonMenus = await _menuRepository.GetListAsync(m =>
                         m.TenantCode == tenantCode
@@ -773,7 +794,8 @@ public class TaktAuthService : TaktServiceBase, ITaktAuthService
     /// <returns>角色编码列表</returns>
     public async Task<List<string>> GetUserRoleCodesAsync(long userId, string tenantCode)
     {
-        var roles = await GetEnabledRolesAsync(userId, tenantCode);
+        var companyCode = await ResolveCurrentActiveCompanyCodeAsync(userId, tenantCode);
+        var roles = await GetEnabledRolesAsync(userId, tenantCode, companyCode);
         return roles.Select(r => r.RoleCode).Distinct().ToList();
     }
 
@@ -826,10 +848,22 @@ public class TaktAuthService : TaktServiceBase, ITaktAuthService
             });
 
         var permissionsStopwatch = Stopwatch.StartNew();
-        // 拉资料时强制刷新权限缓存，避免旧缓存与 RoleMenu 不一致导致顶栏 statistics 403
-        await _cacheService.RemoveAsync($"takt:perm-codes:{tenantCode}:{userId}");
+        await _cacheService.RemoveAsync($"takt:perm-codes:{tenantCode}:{companyCode}:{userId}");
         var permissions = await GetUserPermissionCodesAsync(userId, tenantCode);
-        var roles = await GetUserRoleCodesAsync(userId, tenantCode);
+        var enabledRoles = await GetEnabledRolesAsync(userId, tenantCode, companyCode);
+        var distinctRoles = enabledRoles
+            .GroupBy(r => r.RoleCode, StringComparer.OrdinalIgnoreCase)
+            .Select(g => g.First())
+            .Where(r => !string.IsNullOrWhiteSpace(r.RoleCode))
+            .ToList();
+        var roles = distinctRoles.Select(r => r.RoleCode).ToList();
+        var roleNames = distinctRoles
+            .Select(r =>
+            {
+                var name = (r.RoleName ?? string.Empty).Trim();
+                return string.IsNullOrWhiteSpace(name) ? r.RoleCode : name;
+            })
+            .ToList();
         var (permissionSample, permissionTotal) = TaktLogFormatter.SampleForLog(permissions, AuthLogSampleSize);
         var (roleSample, roleTotal) = TaktLogFormatter.SampleForLog(roles, AuthLogSampleSize);
         WriteAuthFlowLog(
@@ -850,7 +884,7 @@ public class TaktAuthService : TaktServiceBase, ITaktAuthService
             });
 
         var menusStopwatch = Stopwatch.StartNew();
-        var menus = await GetUserMenuTreeAsync(userId, tenantCode);
+        var menus = await GetUserMenuTreeAsync(userId, tenantCode, companyCode);
         var menuNodeCount = CountMenuTreeNodes(menus);
         var (menuCodeSample, menuCodeTotal) = CollectMenuCodesForLog(menus);
         var (menuPathSample, menuPathTotal) = CollectRoutablePathsForLog(menus);
@@ -913,30 +947,95 @@ public class TaktAuthService : TaktServiceBase, ITaktAuthService
         string? employeeMobile = null;
         string? employeeEmail = null;
         string? avatar = null;
-        if (user.EmployeeId > 0)
+        var profileEmployeeId = user.EmployeeId;
+        TaktEmployee? sessionEmployee = null;
+        if (user.EmployeeId > 0 && !string.IsNullOrWhiteSpace(companyCode))
         {
-            var employee = await _employeeRepository.GetByIdAsync(user.EmployeeId);
-            if (employee != null && employee.TenantCode == tenantCode)
+            sessionEmployee = await _employeeProfileResolver.ResolveForCompanyAsync(
+                user.EmployeeId,
+                tenantCode,
+                companyCode);
+            if (sessionEmployee != null)
             {
-                employeeName = employee.EmployeeName;
-                employeeGender = employee.Gender;
-                employeeMobile = employee.Mobile;
-                employeeEmail = employee.Email;
-                avatar = employee.Avatar;
+                profileEmployeeId = sessionEmployee.Id;
+                employeeName = sessionEmployee.EmployeeName;
+                employeeGender = sessionEmployee.Gender;
+                employeeMobile = sessionEmployee.Mobile;
+                employeeEmail = sessionEmployee.Email;
+                avatar = sessionEmployee.Avatar;
             }
         }
 
         var companyDefaultCulture = string.Empty;
         var relatedPlant = string.Empty;
+        string? companyName = null;
+        string? deptName = null;
+        var deptCodes = new List<string>();
         if (!string.IsNullOrWhiteSpace(companyCode))
         {
             var activeCompany = await _companyRepository.FirstAsync(c =>
                 c.TenantCode == tenantCode && c.CompanyCode == companyCode);
             companyDefaultCulture = (activeCompany?.CultureCode ?? string.Empty).Trim();
             relatedPlant = (activeCompany?.RelatedPlant ?? string.Empty).Trim();
+            if (activeCompany != null)
+            {
+                companyName = !string.IsNullOrWhiteSpace(activeCompany.CompanyShortName)
+                    ? activeCompany.CompanyShortName.Trim()
+                    : activeCompany.CompanyName1.Trim();
+            }
+
+            // 当前会话公司下的员工部门（TaktEmployeeDept → TaktDept；EmployeeId 用解析后的本司行）
+            if (sessionEmployee != null && sessionEmployee.Id > 0)
+            {
+                var employeeDepts = await _employeeDeptRepository.GetListAsync(x =>
+                    x.EmployeeId == sessionEmployee.Id && x.CompanyCode == companyCode);
+                var deptIds = employeeDepts
+                    .Select(x => x.DeptId)
+                    .Where(id => id > 0)
+                    .Distinct()
+                    .ToList();
+                if (deptIds.Count > 0)
+                {
+                    var depts = await _deptRepository.GetListAsync(x =>
+                        deptIds.Contains(x.Id) && x.CompanyCode == companyCode);
+                    var ordered = depts
+                        .OrderBy(d => d.SortOrder)
+                        .ThenBy(d => d.DeptCode)
+                        .ToList();
+                    deptCodes = ordered
+                        .Select(d => d.DeptCode.Trim())
+                        .Where(c => !string.IsNullOrWhiteSpace(c))
+                        .ToList();
+                    var deptLabels = ordered
+                        .Select(d =>
+                            !string.IsNullOrWhiteSpace(d.DeptShortName)
+                                ? d.DeptShortName.Trim()
+                                : d.DeptName1.Trim())
+                        .Where(n => !string.IsNullOrWhiteSpace(n))
+                        .ToList();
+                    if (deptLabels.Count > 0)
+                    {
+                        deptName = string.Join("、", deptLabels);
+                    }
+                }
+            }
         }
 
         var userCulture = (user.CultureCode ?? string.Empty).Trim();
+        string? cultureName = null;
+        if (!string.IsNullOrWhiteSpace(userCulture))
+        {
+            var culture = await _cultureRepository.FirstAsync(c =>
+                c.TenantCode == tenantCode && c.CultureCode == userCulture);
+            cultureName = culture?.NativeName?.Trim();
+        }
+
+        string? tenantName = null;
+        var tenant = await _tenantRepository.FirstAsync(t => t.TenantCode == tenantCode);
+        if (tenant != null && !string.IsNullOrWhiteSpace(tenant.TenantName))
+        {
+            tenantName = tenant.TenantName.Trim();
+        }
 
         return new TaktUserInfoResponseDto
         {
@@ -944,19 +1043,25 @@ public class TaktAuthService : TaktServiceBase, ITaktAuthService
             UserName = user.UserName,
             NickName = user.NickName,
             UserType = user.UserType,
-            EmployeeId = user.EmployeeId,
+            EmployeeId = profileEmployeeId,
             EmployeeName = employeeName,
             Gender = employeeGender,
             Mobile = employeeMobile,
             Email = employeeEmail,
             Avatar = avatar,
             TenantCode = user.TenantCode,
+            TenantName = tenantName,
             CompanyCode = companyCode,
             RelatedPlant = relatedPlant,
             DefaultCulture = userCulture,
+            CultureName = cultureName,
             CompanyDefaultCulture = companyDefaultCulture,
-            UserStatus = (int)user.UserStatus,
+            CompanyName = companyName,
+            DeptName = deptName,
+            DeptCodes = deptCodes,
+            UserStatus = user.UserStatus,
             Roles = roles,
+            RoleNames = roleNames,
             Permissions = permissions,
             AccessibleCompanies = accessibleCompanies,
             LastLoginAt = user.LastLoginAt,
@@ -1044,7 +1149,8 @@ public class TaktAuthService : TaktServiceBase, ITaktAuthService
     /// <returns>路由路径列表</returns>
     public async Task<List<string>> GetUserRoutePathsAsync(long userId, string tenantCode)
     {
-        var menus = await GetAccessibleMenusAsync(userId, tenantCode);
+        var companyCode = await ResolveCurrentActiveCompanyCodeAsync(userId, tenantCode);
+        var menus = await GetAccessibleMenusAsync(userId, tenantCode, companyCode);
         return menus
             .Where(m => m.MenuType == (int)1 && !string.IsNullOrWhiteSpace(m.RoutePath))
             .Select(m => NormalizeRoutePath(m.RoutePath))
@@ -1064,15 +1170,18 @@ public class TaktAuthService : TaktServiceBase, ITaktAuthService
     }
 
     /// <summary>
-    /// 获取用户在指定租户下已启用的角色列表
+    /// 获取用户在指定租户、公司下已启用的角色列表
     /// </summary>
     /// <param name="userId">用户 ID</param>
     /// <param name="tenantCode">租户编码</param>
+    /// <param name="companyCode">公司编码</param>
     /// <returns>已启用角色列表</returns>
-    private async Task<List<TaktRole>> GetEnabledRolesAsync(long userId, string tenantCode)
+    private async Task<List<TaktRole>> GetEnabledRolesAsync(long userId, string tenantCode, string companyCode)
     {
         var userRoles = await _userRoleRepository.GetListAsync(ur =>
-            ur.UserId == userId && ur.TenantCode == tenantCode);
+            ur.UserId == userId
+            && ur.TenantCode == tenantCode
+            && ur.CompanyCode == companyCode);
         if (userRoles.Count == 0)
         {
             return new List<TaktRole>();
@@ -1091,13 +1200,14 @@ public class TaktAuthService : TaktServiceBase, ITaktAuthService
     /// </summary>
     /// <param name="userId">用户 ID</param>
     /// <param name="tenantCode">租户编码</param>
+    /// <param name="companyCode">公司编码</param>
     /// <returns>可访问菜单列表</returns>
-    private async Task<List<TaktMenu>> GetAccessibleMenusAsync(long userId, string tenantCode)
+    private async Task<List<TaktMenu>> GetAccessibleMenusAsync(long userId, string tenantCode, string companyCode)
     {
         var allMenus = await _menuRepository.GetListAsync(m =>
             m.TenantCode == tenantCode && m.MenuStatus == 1);
 
-        var roles = await GetEnabledRolesAsync(userId, tenantCode);
+        var roles = await GetEnabledRolesAsync(userId, tenantCode, companyCode);
         if (roles.Count == 0)
         {
             return new List<TaktMenu>();
@@ -1105,7 +1215,9 @@ public class TaktAuthService : TaktServiceBase, ITaktAuthService
 
         var roleIds = roles.Select(r => r.Id).ToList();
         var roleMenus = await _roleMenuRepository.GetListAsync(rm =>
-            rm.TenantCode == tenantCode && roleIds.Contains(rm.RoleId));
+            rm.TenantCode == tenantCode
+            && rm.CompanyCode == companyCode
+            && roleIds.Contains(rm.RoleId));
         var menuIds = roleMenus.Select(rm => rm.MenuId).Distinct().ToHashSet();
         return allMenus.Where(m => menuIds.Contains(m.Id)).ToList();
     }
@@ -1115,10 +1227,11 @@ public class TaktAuthService : TaktServiceBase, ITaktAuthService
     /// </summary>
     /// <param name="userId">用户 ID</param>
     /// <param name="tenantCode">租户编码</param>
+    /// <param name="companyCode">公司编码</param>
     /// <returns>菜单树 DTO 列表</returns>
-    private async Task<List<TaktMenuTreeDto>> GetUserMenuTreeAsync(long userId, string tenantCode)
+    private async Task<List<TaktMenuTreeDto>> GetUserMenuTreeAsync(long userId, string tenantCode, string companyCode)
     {
-        var menus = await GetAccessibleMenusAsync(userId, tenantCode);
+        var menus = await GetAccessibleMenusAsync(userId, tenantCode, companyCode);
         // 与 TaktMenuType 及种子数据一致：0=目录、1=页面菜单、2=按钮（按钮不参与侧栏树）
         var treeSource = menus.Where(m => m.MenuType != (int)2).ToList();
         return BuildMenuTree(treeSource, 0);

@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/labor-hour/assy-labor-hour -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：组立工数统计实体管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -319,20 +319,19 @@
  * 组立工数统计实体管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/labor-hour/assy-labor-hour
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import AssyLaborHourForm from './components/assy-labor-hour-form.vue'
-import { getAssyLaborHourList, getAssyLaborHourById, createAssyLaborHour, updateAssyLaborHour, deleteAssyLaborHourById, deleteAssyLaborHourBatch, getAssyLaborHourTemplate, importAssyLaborHour, exportAssyLaborHour } from '@/api/logistics/manufacturing/labor-hour/assy-labor-hour'
-import type { AssyLaborHour, AssyLaborHourQuery } from '@/types/logistics/manufacturing/labor-hour/assy-labor-hour'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import AssyLaborHourForm from './components/AssyLaborHourForm.vue'
+import { getAssyLaborHourList, getAssyLaborHourById, createAssyLaborHour, updateAssyLaborHour, deleteAssyLaborHourById, deleteAssyLaborHourBatch, getAssyLaborHourTemplate, importAssyLaborHour, exportAssyLaborHour } from '@/api/logistics/manufacturing/labor-hour/assyLaborHour.api'
+import type { AssyLaborHour, AssyLaborHourQuery } from '@/types/logistics/manufacturing/labor-hour/assyLaborHour.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -341,7 +340,7 @@ import {
   ASSYLABORHOUR_QUERY_STRING_FIELDS,
   ASSYLABORHOUR_QUERY_FIELDS,
   ASSYLABORHOUR_SELF_I18N_KEY,
-} from './composables/use-assy-labor-hour-i18n'
+} from './composables/useAssyLaborHourI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useAssyLaborHourI18n()

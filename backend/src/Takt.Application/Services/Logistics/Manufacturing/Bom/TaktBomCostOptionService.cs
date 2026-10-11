@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomCostOptionService.cs
 // 创建时间：2026-08-21
@@ -128,8 +128,28 @@ public class TaktBomCostOptionService : TaktServiceBase, ITaktBomCostOptionServi
     public async Task<List<TaktSelectOption>> GetBomCostOptionModelOptionsAsync(string? plantCode = null, string? keyword = null, TaktBomCostOptionDto? queryDto = null)
     {
         ArgumentNullException.ThrowIfNull(queryDto);
-        var headers = await LoadHeaderOptionsAsync(queryDto, requireModelCode: true, requireProductCode: false);
+        var kw = keyword?.Trim();
+        if (string.IsNullOrEmpty(kw))
+        {
+            kw = queryDto.Keyword?.Trim();
+        }
         var modelNameLookup = await BuildModelNameLookupAsync();
+        IReadOnlyList<string>? nameCodes = null;
+        if (!string.IsNullOrEmpty(kw))
+        {
+            nameCodes = modelNameLookup
+                .Where(kv =>
+                    kv.Key.Contains(kw, StringComparison.OrdinalIgnoreCase)
+                    || kv.Value.Contains(kw, StringComparison.OrdinalIgnoreCase))
+                .Select(kv => kv.Key)
+                .ToList();
+        }
+        var headers = await LoadHeaderOptionsAsync(
+            queryDto,
+            requireModelCode: true,
+            requireProductCode: false,
+            modelKeyword: kw,
+            modelCodesMatchingName: nameCodes);
         return headers
             .GroupBy(e => e.ModelCode!.Trim(), StringComparer.OrdinalIgnoreCase)
             .OrderBy(g => g.Key, StringComparer.Ordinal)
@@ -249,11 +269,15 @@ public class TaktBomCostOptionService : TaktServiceBase, ITaktBomCostOptionServi
     /// <param name="queryDto">选项查询</param>
     /// <param name="requireModelCode">是否要求 ModelCode 非空</param>
     /// <param name="requireProductCode">是否要求 ProductCode 非空</param>
+    /// <param name="modelKeyword">机种远程搜索；空则不按关键字收窄</param>
+    /// <param name="modelCodesMatchingName">名称命中的机种编码（与关键字 OR）</param>
     /// <returns>未删除头表行</returns>
     private async Task<List<TaktBomMaterialCost>> LoadHeaderOptionsAsync(
         TaktBomCostOptionDto queryDto,
         bool requireModelCode,
-        bool requireProductCode)
+        bool requireProductCode,
+        string? modelKeyword = null,
+        IReadOnlyList<string>? modelCodesMatchingName = null)
     {
         ArgumentNullException.ThrowIfNull(queryDto);
         EnsureThreeLayerContext();
@@ -296,6 +320,21 @@ public class TaktBomCostOptionService : TaktServiceBase, ITaktBomCostOptionServi
         else if (models.Count > 1)
         {
             exp = exp.And(x => models.Contains(x.ModelCode));
+        }
+        var kw = modelKeyword?.Trim();
+        if (!string.IsNullOrEmpty(kw))
+        {
+            var nameCodes = modelCodesMatchingName?.ToList() ?? new List<string>();
+            if (nameCodes.Count == 0)
+            {
+                exp = exp.And(x => x.ModelCode != null && x.ModelCode.Contains(kw));
+            }
+            else
+            {
+                exp = exp.And(x =>
+                    x.ModelCode != null
+                    && (x.ModelCode.Contains(kw) || nameCodes.Contains(x.ModelCode)));
+            }
         }
         return await _bomMaterialCostRepository.GetListAsync(exp.ToExpression());
     }

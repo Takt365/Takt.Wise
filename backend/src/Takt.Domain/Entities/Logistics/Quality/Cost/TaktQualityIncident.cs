@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称:节拍数字工厂 ·Takt Plat (TDF)
+// 项目名称:节拍智控 ·TaktWise (TDF)
 // 命名空间:Takt.Domain.Entities.Logistics.Quality.Cost
 // 文件名称:TaktQualityIncident.cs
 // 创建时间:2026-05-07
@@ -58,6 +58,18 @@ public class TaktQualityIncident : TaktCompanyEntityBase
     /// </summary>
     [SugarColumn(ColumnName = "incident_reason", ColumnDescription = "事故内容", ColumnDataType = "ntext", IsNullable = true)]
     public string? IncidentReason { get; set; }
+
+    /// <summary>
+    /// 废弃组编码（选项 TaktCostGroups/options?costGroupCategory=2；DictValue=CostGroupCode）
+    /// </summary>
+    [SugarColumn(ColumnName = "scrap_group_code", ColumnDescription = "废弃组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? ScrapGroupCode { get; set; }
+
+    /// <summary>
+    /// 废弃组名称（冗余：按 ScrapGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    [SugarColumn(ColumnName = "scrap_group_name", ColumnDescription = "废弃组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? ScrapGroupName { get; set; }
 
     // ==================== 汇总信息 ====================
 

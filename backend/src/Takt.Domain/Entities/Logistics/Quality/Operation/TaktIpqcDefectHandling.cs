@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Quality
 // 文件名称：TaktIpqcDefectHandling.cs
 // 功能描述：IPQC制程检验不良处理记录实体
@@ -85,32 +85,61 @@ public class TaktIpqcDefectHandling : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "responsible_dept_name", ColumnDescription = "责任部门名称", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
     public string? ResponsibleDeptName { get; set; }
     /// <summary>
-    /// 责任人（选项 TaktEmployees/options；DictValue=Id）
+    /// 责任组编码（选项 TaktQualityGroups/options?qualityGroupCategory=3；DictValue=QualityGroupCode）
     /// </summary>
-    [SugarColumn(ColumnName = "responsible_person_id", ColumnDescription = "责任人ID", ColumnDataType = "bigint", IsNullable = true)]
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ResponsiblePersonId { get; set; }
+    [SugarColumn(ColumnName = "responsible_group_code", ColumnDescription = "责任组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? ResponsibleGroupCode { get; set; }
     /// <summary>
-    /// 责任人名称（冗余：按 ResponsiblePersonId 取 TaktEmployee.EmployeeName 联动）
+    /// 责任组名称（冗余：按 ResponsibleGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
     /// </summary>
-    [SugarColumn(ColumnName = "responsible_person_name", ColumnDescription = "责任人名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
-    public string? ResponsiblePersonName { get; set; }
+    [SugarColumn(ColumnName = "responsible_group_name", ColumnDescription = "责任组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? ResponsibleGroupName { get; set; }
     /// <summary>
-    /// 处理人（选项 TaktEmployees/options；DictValue=Id）
+    /// 处理组编码（选项 TaktQualityGroups/options?qualityGroupCategory=4；DictValue=QualityGroupCode）
     /// </summary>
-    [SugarColumn(ColumnName = "handler_id", ColumnDescription = "处理人ID", ColumnDataType = "bigint", IsNullable = true)]
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? HandlerId { get; set; }
+    [SugarColumn(ColumnName = "handler_group_code", ColumnDescription = "处理组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? HandlerGroupCode { get; set; }
     /// <summary>
-    /// 处理人名称（冗余：按 HandlerId 取 TaktEmployee.EmployeeName 联动）
+    /// 处理组名称（冗余：按 HandlerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
     /// </summary>
-    [SugarColumn(ColumnName = "handler_name", ColumnDescription = "处理人名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
-    public string? HandlerName { get; set; }
+    [SugarColumn(ColumnName = "handler_group_name", ColumnDescription = "处理组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? HandlerGroupName { get; set; }
     /// <summary>
     /// 处理时间
     /// </summary>
     [SugarColumn(ColumnName = "handling_at", ColumnDescription = "处理时间", ColumnDataType = "datetime", IsNullable = true)]
     public DateTime? HandlingAt { get; set; }
+    /// <summary>
+    /// 验证部门（选项 TaktDepts/tree-options；DictValue=Id）
+    /// </summary>
+    [SugarColumn(ColumnName = "verify_dept_id", ColumnDescription = "验证部门ID", ColumnDataType = "bigint", IsNullable = true)]
+    [JsonConverter(typeof(ValueToStringConverter))]
+    public long? VerifyDeptId { get; set; }
+    /// <summary>
+    /// 验证部门名称（冗余：按 VerifyDeptId 取 TaktDept.DeptName1 联动）
+    /// </summary>
+    [SugarColumn(ColumnName = "verify_dept_name", ColumnDescription = "验证部门名称", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? VerifyDeptName { get; set; }
+    /// <summary>
+    /// 质量负责人组编码（选项 TaktQualityGroups/options?qualityGroupCategory=5；DictValue=QualityGroupCode）
+    /// </summary>
+    [SugarColumn(ColumnName = "quality_owner_group_code", ColumnDescription = "质量负责人组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? QualityOwnerGroupCode { get; set; }
+    /// <summary>
+    /// 质量负责人组名称（冗余：按 QualityOwnerGroupCode 取 TaktQualityGroups.QualityGroupName 联动）
+    /// </summary>
+    [SugarColumn(ColumnName = "quality_owner_group_name", ColumnDescription = "质量负责人组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? QualityOwnerGroupName { get; set; }
+    /// <summary>
+    /// 验证时间
+    /// </summary>
+    [SugarColumn(ColumnName = "verify_at", ColumnDescription = "验证时间", ColumnDataType = "datetime", IsNullable = true)]
+    public DateTime? VerifyAt { get; set; }
+    /// <summary>
+    /// 验证结果（字典 logistics_quality_defect_verify_status；0=待验证 1=合格 2=不合格）
+    /// </summary>
+    [SugarColumn(ColumnName = "verify_status", ColumnDescription = "验证结果", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
+    public int VerifyStatus { get; set; } = 0;
     /// <summary>
     /// 预防措施/纠正措施
     /// </summary>

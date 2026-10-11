@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds
 // 文件名称：TaktEmployeeSeedData.cs
 // 创建时间：2025-01-20
@@ -28,6 +28,11 @@ namespace Takt.Infrastructure.Data.Seeds.EntitySeedData;
 /// </summary>
 public class TaktEmployeeSeedData : ITaktSeedDataCoordinator
 {
+    /// <summary>
+    /// 管理员种子头像（员工编码 900001 / 用户 admin）；其余用户无固定图，前端用用户名首字母
+    /// </summary>
+    public const string AdminAvatarPath = "assets/images/avatar/takt_admin.gif";
+
     /// <summary>
     /// 执行顺序（在公司之后，用户之前）
     /// </summary>
@@ -131,10 +136,17 @@ public class TaktEmployeeSeedData : ITaktSeedDataCoordinator
             _ => "110101199003031258"
         };
         employee.Mobile = $"1380013800{sequence}";
+        employee.Email = sequence == 0
+            ? "admin@takt.local"
+            : $"employee{sequence:D3}@takt.local";
         employee.NativePlace = "110000";
         employee.Ethnicity = 1;
         employee.PoliticalAffiliation = 0;
         employee.MaritalStatus = 0;
+        // 仅管理员固定头像；其余清空（空串确保 Updateable 写库，纠正曾写入的默认 png）
+        employee.Avatar = string.Equals(employee.EmployeeCode, "900001", StringComparison.Ordinal)
+            ? AdminAvatarPath
+            : string.Empty;
     }
 
     /// <summary>

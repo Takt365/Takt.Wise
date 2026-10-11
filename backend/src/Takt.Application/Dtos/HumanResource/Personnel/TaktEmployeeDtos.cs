@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.HumanResource.Personnel
 // 文件名称：TaktEmployeeDtos.cs
 // 创建时间：2026-08-22
@@ -42,7 +42,7 @@ public class TaktEmployeeDto : TaktCompanyDtoBase
     public string EmployeeCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 姓名
+    /// 姓名（2–80 位）
     /// </summary>
     public string EmployeeName { get; set; } = string.Empty;
 
@@ -228,7 +228,7 @@ public class TaktEmployeeQueryDto : TaktPagedQuery
     public string? EmployeeCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 姓名
+    /// 姓名（2–80 位）
     /// </summary>
     public string? EmployeeName { get; set; } = string.Empty;
 
@@ -359,7 +359,7 @@ public class TaktEmployeeCreateDto
     public string? NumberingRuleCode { get; set; }
 
     /// <summary>
-    /// 姓名
+    /// 姓名（2–80 位）
     /// </summary>
     [Required(ErrorMessage = "姓名不能为空")]
     public string EmployeeName { get; set; } = string.Empty;
@@ -648,7 +648,7 @@ public class TaktEmployeeTemplateDto
     public string? EmployeeCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 姓名
+    /// 姓名（2–80 位）
     /// </summary>
     public string? EmployeeName { get; set; } = string.Empty;
 
@@ -825,7 +825,7 @@ public class TaktEmployeeImportDto
     public string? EmployeeCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 姓名
+    /// 姓名（2–80 位）
     /// </summary>
     public string? EmployeeName { get; set; } = string.Empty;
 
@@ -1008,7 +1008,7 @@ public class TaktEmployeeExportDto
     public string EmployeeCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 姓名
+    /// 姓名（2–80 位）
     /// </summary>
     public string EmployeeName { get; set; } = string.Empty;
 

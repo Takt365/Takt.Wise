@@ -36,8 +36,9 @@ DECLARE @ddl NVARCHAR(500);
 -- {{SourceDatabase}}.dbo.takt_logistics_sales_invoice[_item] → 当前租户库同名表
 -- 主表唯一键：Tenant+Company+billing_document_code
 -- 明细唯一键：sales_invoice_id+line_number
--- 源明细 FK：先按 billing_document_code 回填 sales_invoice_id=主表雪花 id，再 SH.id=R.sales_invoice_id 装入
--- tenant/company/plant/culture 取自各源表本列；空值丢弃，不回退任务参数
+-- 源明细 FK：先按 billing_document_code 回填 sales_invoice_id，再 SH.id=R.sales_invoice_id 装入
+-- tenant/company/plant/culture：优先源表本列；为空时回退任务参数 {{TenantCode}}/{{CompanyCode}}/{{PlantCode}}/{{CultureCode}}
+-- （SAP 暂存常见主表隔离列空、明细有值，不回退会导致主表装入 0、明细 keys 巨大）
 
 IF COL_LENGTH(N'dbo.takt_logistics_sales_invoice', N'posted_by') IS NULL
   ALTER TABLE [dbo].[takt_logistics_sales_invoice] ADD [posted_by] NVARCHAR(6) NULL;
@@ -243,10 +244,10 @@ FROM (
   FROM (
     SELECT
       ISNULL(NULLIF(LEFT(LTRIM(RTRIM(R.[billing_document_code])), 10), N''), N'') AS [billing_document_code],
-      LEFT(LTRIM(RTRIM(ISNULL(R.[plant_code], N''))), 4) AS [plant_code],
-      LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3) AS [tenant_code],
-      LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4) AS [company_code],
-      LTRIM(RTRIM(ISNULL(R.[culture_code], N''))) AS [culture_code],
+      COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[plant_code], N''))), 4), N''), @plant_code) AS [plant_code],
+      COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3), N''), @tenant_code) AS [tenant_code],
+      COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4), N''), @company_code) AS [company_code],
+      COALESCE(NULLIF(LTRIM(RTRIM(ISNULL(R.[culture_code], N''))), N''), @culture_code) AS [culture_code],
       NULLIF(LEFT(LTRIM(RTRIM(R.[billing_type])), 4), N'') AS [billing_type],
       NULLIF(LEFT(LTRIM(RTRIM(R.[billing_category])), 1), N'') AS [billing_category],
       NULLIF(LEFT(LTRIM(RTRIM(R.[document_category])), 1), N'') AS [document_category],
@@ -294,15 +295,18 @@ FROM (
       TRY_CAST(R.[deleted_by] AS BIGINT) AS [deleted_by],
       R.[deleted_at] AS [deleted_at],
       CASE WHEN ISNULL(R.[is_deleted], 0) = 0 THEN 0 ELSE 1 END AS [is_deleted],
-            ROW_NUMBER() OVER (
-        PARTITION BY LTRIM(RTRIM(R.[billing_document_code]))
-        ORDER BY LTRIM(RTRIM(R.[billing_document_code]))
+      ROW_NUMBER() OVER (
+        PARTITION BY
+          COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3), N''), @tenant_code),
+          COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4), N''), @company_code),
+          LTRIM(RTRIM(R.[billing_document_code]))
+        ORDER BY R.[id]
       ) AS dup_rn
     FROM [{{SourceDatabase}}].[dbo].[takt_logistics_sales_invoice] R
     WHERE LTRIM(RTRIM(ISNULL(R.[billing_document_code], N''))) <> N''
-      AND LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))) <> N''
-      AND LTRIM(RTRIM(ISNULL(R.[company_code], N''))) <> N''
-      AND LTRIM(RTRIM(ISNULL(R.[culture_code], N''))) <> N''
+      AND COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3), N''), @tenant_code) <> N''
+      AND COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4), N''), @company_code) <> N''
+      AND COALESCE(NULLIF(LTRIM(RTRIM(ISNULL(R.[culture_code], N''))), N''), @culture_code) <> N''
   ) N
   WHERE N.dup_rn = 1
 ) S
@@ -328,10 +332,19 @@ RAISERROR(@progress_msg, 10, 1) WITH NOWAIT;
 DECLARE @hdr_sap_keys INT = (
   SELECT COUNT(*)
   FROM (
-    SELECT LTRIM(RTRIM(R.[billing_document_code])) AS [billing_document_code]
+    SELECT
+      COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3), N''), @tenant_code) AS [tenant_code],
+      COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4), N''), @company_code) AS [company_code],
+      LTRIM(RTRIM(R.[billing_document_code])) AS [billing_document_code]
     FROM [{{SourceDatabase}}].[dbo].[takt_logistics_sales_invoice] R
     WHERE LTRIM(RTRIM(ISNULL(R.[billing_document_code], N''))) <> N''
-    GROUP BY LTRIM(RTRIM(R.[billing_document_code]))
+      AND COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3), N''), @tenant_code) <> N''
+      AND COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4), N''), @company_code) <> N''
+      AND COALESCE(NULLIF(LTRIM(RTRIM(ISNULL(R.[culture_code], N''))), N''), @culture_code) <> N''
+    GROUP BY
+      COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3), N''), @tenant_code),
+      COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4), N''), @company_code),
+      LTRIM(RTRIM(R.[billing_document_code]))
   ) K
 );
 IF @hdr_source <> @hdr_sap_keys
@@ -590,12 +603,18 @@ FROM (
     ROW_NUMBER() OVER (ORDER BY N.[billing_document_code], N.[line_number]) AS rn
   FROM (
     SELECT
-      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(R.[billing_document_code])), 10), N''), N'') AS [billing_document_code],
+      -- 与 #hdr 对齐：单据码/租户/公司取自源主表 SH（空则任务参数）；勿优先明细行隔离列，否则 JOIN #hdr 失败
+      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(SH.[billing_document_code])), 10), N''),
+        ISNULL(NULLIF(LEFT(LTRIM(RTRIM(R.[billing_document_code])), 10), N''), N'')) AS [billing_document_code],
       COALESCE(TRY_CAST(R.[line_number] AS INT), 0) AS [line_number],
-      LEFT(LTRIM(RTRIM(ISNULL(R.[plant_code], N''))), 4) AS [plant_code],
-      LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3) AS [tenant_code],
-      LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4) AS [company_code],
-      LTRIM(RTRIM(ISNULL(R.[culture_code], N''))) AS [culture_code],
+      COALESCE(
+        NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[plant_code], N''))), 4), N''),
+        NULLIF(LEFT(LTRIM(RTRIM(ISNULL(SH.[plant_code], N''))), 4), N''),
+        @plant_code
+      ) AS [plant_code],
+      COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(SH.[tenant_code], N''))), 3), N''), @tenant_code) AS [tenant_code],
+      COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(SH.[company_code], N''))), 4), N''), @company_code) AS [company_code],
+      COALESCE(NULLIF(LTRIM(RTRIM(ISNULL(SH.[culture_code], N''))), N''), @culture_code) AS [culture_code],
       ROUND(TRY_CAST(R.[billing_quantity] AS DECIMAL(18,3)), 3) AS [billing_quantity],
       NULLIF(LEFT(LTRIM(RTRIM(R.[sales_unit])), 3), N'') AS [sales_unit],
       NULLIF(LEFT(LTRIM(RTRIM(R.[base_unit])), 3), N'') AS [base_unit],
@@ -668,17 +687,24 @@ FROM (
       TRY_CAST(R.[deleted_by] AS BIGINT) AS [deleted_by],
       R.[deleted_at] AS [deleted_at],
       CASE WHEN ISNULL(R.[is_deleted], 0) = 0 THEN 0 ELSE 1 END AS [is_deleted],
-            ROW_NUMBER() OVER (
+      ROW_NUMBER() OVER (
         PARTITION BY
-          LTRIM(RTRIM(R.[billing_document_code])),
+          COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(SH.[tenant_code], N''))), 3), N''), @tenant_code),
+          COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(SH.[company_code], N''))), 4), N''), @company_code),
+          ISNULL(NULLIF(LEFT(LTRIM(RTRIM(SH.[billing_document_code])), 10), N''),
+            ISNULL(NULLIF(LEFT(LTRIM(RTRIM(R.[billing_document_code])), 10), N''), N'')),
           COALESCE(TRY_CAST(R.[line_number] AS INT), 0)
-        ORDER BY COALESCE(TRY_CAST(R.[line_number] AS INT), 0)
+        ORDER BY R.[id]
       ) AS dup_rn
     FROM [{{SourceDatabase}}].[dbo].[takt_logistics_sales_invoice_item] R
     INNER JOIN [{{SourceDatabase}}].[dbo].[takt_logistics_sales_invoice] SH
       ON SH.[id] = R.[sales_invoice_id]
-    WHERE LTRIM(RTRIM(ISNULL(R.[billing_document_code], N''))) <> N''
-      AND COALESCE(TRY_CAST(R.[line_number] AS INT), 0) > 0
+    WHERE COALESCE(TRY_CAST(R.[line_number] AS INT), 0) > 0
+      AND ISNULL(NULLIF(LEFT(LTRIM(RTRIM(SH.[billing_document_code])), 10), N''),
+            NULLIF(LEFT(LTRIM(RTRIM(R.[billing_document_code])), 10), N'')) IS NOT NULL
+      AND COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(SH.[tenant_code], N''))), 3), N''), @tenant_code) <> N''
+      AND COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(SH.[company_code], N''))), 4), N''), @company_code) <> N''
+      AND COALESCE(NULLIF(LTRIM(RTRIM(ISNULL(SH.[culture_code], N''))), N''), @culture_code) <> N''
   ) N
   WHERE N.dup_rn = 1
 ) S
@@ -719,15 +745,25 @@ DECLARE @item_sap_keys INT = (
   SELECT COUNT(*)
   FROM (
     SELECT
-      LTRIM(RTRIM(R.[billing_document_code])) AS [billing_document_code],
+      COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(SH.[tenant_code], N''))), 3), N''), @tenant_code) AS [tenant_code],
+      COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(SH.[company_code], N''))), 4), N''), @company_code) AS [company_code],
+      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(SH.[billing_document_code])), 10), N''),
+        ISNULL(NULLIF(LEFT(LTRIM(RTRIM(R.[billing_document_code])), 10), N''), N'')) AS [billing_document_code],
       COALESCE(TRY_CAST(R.[line_number] AS INT), 0) AS [line_number]
     FROM [{{SourceDatabase}}].[dbo].[takt_logistics_sales_invoice_item] R
     INNER JOIN [{{SourceDatabase}}].[dbo].[takt_logistics_sales_invoice] SH
       ON SH.[id] = R.[sales_invoice_id]
-    WHERE LTRIM(RTRIM(ISNULL(R.[billing_document_code], N''))) <> N''
-      AND COALESCE(TRY_CAST(R.[line_number] AS INT), 0) > 0
+    WHERE COALESCE(TRY_CAST(R.[line_number] AS INT), 0) > 0
+      AND ISNULL(NULLIF(LEFT(LTRIM(RTRIM(SH.[billing_document_code])), 10), N''),
+            NULLIF(LEFT(LTRIM(RTRIM(R.[billing_document_code])), 10), N'')) IS NOT NULL
+      AND COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(SH.[tenant_code], N''))), 3), N''), @tenant_code) <> N''
+      AND COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(SH.[company_code], N''))), 4), N''), @company_code) <> N''
+      AND COALESCE(NULLIF(LTRIM(RTRIM(ISNULL(SH.[culture_code], N''))), N''), @culture_code) <> N''
     GROUP BY
-      LTRIM(RTRIM(R.[billing_document_code])),
+      COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(SH.[tenant_code], N''))), 3), N''), @tenant_code),
+      COALESCE(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(SH.[company_code], N''))), 4), N''), @company_code),
+      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(SH.[billing_document_code])), 10), N''),
+        ISNULL(NULLIF(LEFT(LTRIM(RTRIM(R.[billing_document_code])), 10), N''), N'')),
       COALESCE(TRY_CAST(R.[line_number] AS INT), 0)
   ) K
 );

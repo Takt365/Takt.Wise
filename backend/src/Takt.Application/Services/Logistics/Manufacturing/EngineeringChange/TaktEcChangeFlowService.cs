@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcChangeFlowService.cs
 // 创建时间：2026-06-24
@@ -125,8 +125,6 @@ public class TaktEcChangeFlowService : TaktServiceBase, ITaktEcChangeFlowService
         }
         delivery.DeliveryStatus = TaktEcFlowConstants.DeliveryStatusConfirmed;
         delivery.ConfirmedAt = DateTime.Now;
-        delivery.ConfirmedByUserId = CurrentUserId;
-        delivery.ConfirmedByUserName = CurrentUserName;
         await _deliveryRepository.UpdateAsync(delivery);
         var notification = await LoadNotificationAsync(delivery.EcNotificationId);
         await NotifyInitiatorDeliveryConfirmedAsync(notification, delivery);
@@ -136,12 +134,12 @@ public class TaktEcChangeFlowService : TaktServiceBase, ITaktEcChangeFlowService
         {
             notification.EcNotificationStatus = 2;
             await _ecNotificationRepository.UpdateAsync(notification);
-            await CreateExecutionTasksAsync(notification, delivery.DeptCode);
+            await CreateExecutionTasksAsync(notification, delivery.EcDeptGroupCode);
             await TryCloseEcChangeAsync(notification.Id);
         }
         else
         {
-            await CreateExecutionTasksAsync(notification, delivery.DeptCode);
+            await CreateExecutionTasksAsync(notification, delivery.EcDeptGroupCode);
         }
     }
 
@@ -308,7 +306,7 @@ public class TaktEcChangeFlowService : TaktServiceBase, ITaktEcChangeFlowService
     {
         var existing = await _deliveryRepository.FirstAsync(x =>
             x.EcNotificationId == notification.Id
-            && x.DeptCode == deptCode
+            && x.EcDeptGroupCode == deptCode
             && x.IsDeleted == 0);
         if (existing != null)
         {
@@ -320,8 +318,8 @@ public class TaktEcChangeFlowService : TaktServiceBase, ITaktEcChangeFlowService
             EcNotificationCode = notification.EcNotificationCode,
             EcGijutsuId = notification.EcGijutsuId,
             EcCode = notification.EcCode,
-            DeptCode = deptCode,
-            DeptName = deptName,
+            EcDeptGroupCode = deptCode,
+            EcDeptGroupName = deptName,
             Priority = priority,
             DeliveryStatus = TaktEcFlowConstants.DeliveryStatusPending
         };
@@ -344,13 +342,13 @@ public class TaktEcChangeFlowService : TaktServiceBase, ITaktEcChangeFlowService
             }
             return byId;
         }
-        if (!dto.EcNotificationId.HasValue || string.IsNullOrWhiteSpace(dto.DeptCode))
+        if (!dto.EcNotificationId.HasValue || string.IsNullOrWhiteSpace(dto.EcDeptGroupCode))
         {
-            throw new TaktBusinessException("请提供 deliveryId 或 ecNotificationId+deptCode");
+            throw new TaktBusinessException("请提供 deliveryId 或 ecNotificationId+ecDeptGroupCode");
         }
         var delivery = await _deliveryRepository.FirstAsync(x =>
             x.EcNotificationId == dto.EcNotificationId.Value
-            && x.DeptCode == dto.DeptCode.Trim()
+            && x.EcDeptGroupCode == dto.EcDeptGroupCode.Trim()
             && x.IsDeleted == 0);
         if (delivery == null)
         {
@@ -378,8 +376,8 @@ public class TaktEcChangeFlowService : TaktServiceBase, ITaktEcChangeFlowService
             {
                 EcNotificationId = notification.Id.ToString(),
                 EcCode = notification.EcCode,
-                DeptCode = delivery.DeptCode,
-                ConfirmedByUserName = delivery.ConfirmedByUserName,
+                EcDeptGroupCode = delivery.EcDeptGroupCode,
+                ConfirmedByGroupName = delivery.ConfirmedByGroupName,
                 ConfirmedAt = delivery.ConfirmedAt
             });
     }
@@ -470,10 +468,6 @@ public class TaktEcChangeFlowService : TaktServiceBase, ITaktEcChangeFlowService
         if (userId is null or <= 0)
         {
             userId = notification.CreatedBy;
-        }
-        if (notification.EcNotificationNotifierId.HasValue && notification.EcNotificationNotifierId.Value > 0)
-        {
-            userId = notification.EcNotificationNotifierId;
         }
         if (!userId.HasValue || userId.Value <= 0)
         {

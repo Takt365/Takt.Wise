@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/statistics/logging/backup-log -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：备份日志只读审计页，含查询、详情、删除、导出（无新增/编辑），对齐 delta-log -->
@@ -347,18 +347,17 @@
  * 备份日志管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/statistics/logging/backup-log
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import BackupLogDetail from './components/backup-log-detail.vue'
-import { getBackupLogList, getBackupLogById, deleteBackupLogById, deleteBackupLogBatch, exportBackupLog } from '@/api/statistics/logging/backup-log'
-import type { BackupLog, BackupLogQuery } from '@/types/statistics/logging/backup-log'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import BackupLogDetail from './components/BackupLogDetail.vue'
+import { getBackupLogList, getBackupLogById, deleteBackupLogById, deleteBackupLogBatch, exportBackupLog } from '@/api/statistics/logging/backupLog.api'
+import type { BackupLog, BackupLogQuery } from '@/types/statistics/logging/backupLog.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEyeLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -367,7 +366,7 @@ import {
   BACKUPLOG_QUERY_STRING_FIELDS,
   BACKUPLOG_QUERY_FIELDS,
   BACKUPLOG_SELF_I18N_KEY,
-} from './composables/use-backup-log-i18n'
+} from './composables/useBackupLogI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useBackupLogI18n()

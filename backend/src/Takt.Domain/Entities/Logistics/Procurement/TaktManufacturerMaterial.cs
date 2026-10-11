@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Procurement
 // 文件名称：TaktManufacturerMaterial.cs
 // 创建时间：2026-05-13
@@ -8,7 +8,7 @@
 //
 // 业务语义说明：
 // 记录制造商物料编码与本厂物料的对应关系，不涉及商务价格；
-// 价格和交易信息应在 TaktPurchasePrice/TaktPurchasePriceItem 中管理
+// 价格和交易信息应在 TaktPurchaseInfoRecord/TaktPurchaseInfoRecordItem 中管理
 //
 // 版权信息：Copyright (c) 2025 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。

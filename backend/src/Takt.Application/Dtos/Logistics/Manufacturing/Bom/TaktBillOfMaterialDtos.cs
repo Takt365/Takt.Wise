@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.Bom
 // 文件名称：TaktBillOfMaterialDtos.cs
 // 创建时间：2026-08-28
@@ -89,6 +89,16 @@ public class TaktBillOfMaterialDto : TaktCompanyDtoBase
     /// 基本数量（BOM基数，对应）
     /// </summary>
     public decimal ParentMaterialQuantity { get; set; }
+
+    /// <summary>
+    /// BOM组编码（选项 TaktBomGroups/options?bomGroupCategory=1；DictValue=BomGroupCode）
+    /// </summary>
+    public string? BomGroupCode { get; set; }
+
+    /// <summary>
+    /// BOM组名称（冗余：按 BomGroupCode 取 TaktBomGroups.BomGroupName 联动）
+    /// </summary>
+    public string? BomGroupName { get; set; }
 
     /// <summary>
     /// BOM描述
@@ -207,6 +217,16 @@ public class TaktBillOfMaterialQueryDto : TaktPagedQuery
     /// 基本数量（BOM基数，对应）
     /// </summary>
     public decimal? ParentMaterialQuantity { get; set; }
+
+    /// <summary>
+    /// BOM组编码（选项 TaktBomGroups/options?bomGroupCategory=1；DictValue=BomGroupCode）
+    /// </summary>
+    public string? BomGroupCode { get; set; }
+
+    /// <summary>
+    /// BOM组名称（冗余：按 BomGroupCode 取 TaktBomGroups.BomGroupName 联动）
+    /// </summary>
+    public string? BomGroupName { get; set; }
 
     /// <summary>
     /// BOM描述
@@ -333,6 +353,16 @@ public class TaktBillOfMaterialCreateDto
     /// 基本数量（BOM基数，对应）
     /// </summary>
     public decimal ParentMaterialQuantity { get; set; }
+
+    /// <summary>
+    /// BOM组编码（选项 TaktBomGroups/options?bomGroupCategory=1；DictValue=BomGroupCode）
+    /// </summary>
+    public string? BomGroupCode { get; set; }
+
+    /// <summary>
+    /// BOM组名称（冗余：按 BomGroupCode 取 TaktBomGroups.BomGroupName 联动）
+    /// </summary>
+    public string? BomGroupName { get; set; }
 
     /// <summary>
     /// BOM描述
@@ -519,6 +549,16 @@ public class TaktBillOfMaterialTemplateDto
     public decimal? ParentMaterialQuantity { get; set; }
 
     /// <summary>
+    /// BOM组编码（选项 TaktBomGroups/options?bomGroupCategory=1；DictValue=BomGroupCode）
+    /// </summary>
+    public string? BomGroupCode { get; set; }
+
+    /// <summary>
+    /// BOM组名称（冗余：按 BomGroupCode 取 TaktBomGroups.BomGroupName 联动）
+    /// </summary>
+    public string? BomGroupName { get; set; }
+
+    /// <summary>
     /// BOM描述
     /// </summary>
     public string? BomDescription { get; set; } = string.Empty;
@@ -624,6 +664,16 @@ public class TaktBillOfMaterialImportDto
     /// 基本数量（BOM基数，对应）
     /// </summary>
     public decimal? ParentMaterialQuantity { get; set; }
+
+    /// <summary>
+    /// BOM组编码（选项 TaktBomGroups/options?bomGroupCategory=1；DictValue=BomGroupCode）
+    /// </summary>
+    public string? BomGroupCode { get; set; }
+
+    /// <summary>
+    /// BOM组名称（冗余：按 BomGroupCode 取 TaktBomGroups.BomGroupName 联动）
+    /// </summary>
+    public string? BomGroupName { get; set; }
 
     /// <summary>
     /// BOM描述
@@ -737,6 +787,16 @@ public class TaktBillOfMaterialExportDto
     /// 基本数量（BOM基数，对应）
     /// </summary>
     public decimal ParentMaterialQuantity { get; set; }
+
+    /// <summary>
+    /// BOM组编码（选项 TaktBomGroups/options?bomGroupCategory=1；DictValue=BomGroupCode）
+    /// </summary>
+    public string? BomGroupCode { get; set; }
+
+    /// <summary>
+    /// BOM组名称（冗余：按 BomGroupCode 取 TaktBomGroups.BomGroupName 联动）
+    /// </summary>
+    public string? BomGroupName { get; set; }
 
     /// <summary>
     /// BOM描述

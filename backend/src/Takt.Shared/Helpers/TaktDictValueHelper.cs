@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Helpers
 // 文件名称：TaktDictValueHelper.cs
 // 功能描述：单选字典 DictValue↔DictLabel 转换与落库规范化（数值 DictValue 存 DictLabel；与前端 takt-dict-convert.ts、TaktDictMultiValueHelper 对齐）

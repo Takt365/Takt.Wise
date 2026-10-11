@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Context
 // 文件名称：TaktSqlSugarContext.cs
 // 创建时间：2025-01-20
@@ -13,10 +13,13 @@
 // Takt 内部引用 - ORM 框架
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using SqlSugar;
 using Takt.Domain.Entities;
 using Takt.Domain.Entities.Statistics.Logging;
+using Takt.Infrastructure.Extensions;
 using Takt.Infrastructure.Services;
 using Takt.Shared.Constants;
 using Takt.Shared.Enums;
@@ -128,7 +131,7 @@ public class TaktSqlSugarContext : IDisposable
         // SqlSugar 内置雪花ID：当实体主键为 long 类型时，插入时自动生成
         // 无需手动配置，SqlSugar 会自动处理
 
-        TaktSqlSugarAuditAop.ConfigureClient(_db, _httpContextAccessor);
+        TaktSqlSugarAuditAop.ConfigureClient(_db, _httpContextAccessor, _configuration);
 
         // 开启日志（开发环境）
 #if DEBUG
@@ -154,11 +157,13 @@ public class TaktSqlSugarContext : IDisposable
         {
             throw new InvalidOperationException("已存在未结束的临时数据库连接切换");
         }
+        // 独立 ConfigId：选中库的连接不能复用请求租户客户端的静态连接，否则查询仍落在原库
         var next = TaktSqlSugarConnectionHelper.CreateClient(
             _sugarDbType,
             configTenantCode.Trim(),
-            connectionString);
-        TaktSqlSugarAuditAop.ConfigureClient(next, _httpContextAccessor);
+            connectionString,
+            configId: "quartz_" + configTenantCode.Trim());
+        TaktSqlSugarAuditAop.ConfigureClient(next, _httpContextAccessor, _configuration);
         _temporaryClient = next;
         _db = next;
         return new TemporaryDatabaseConnectionScope(this);
@@ -586,6 +591,52 @@ internal static class TaktSqlSugarAuditAop
     private static readonly AsyncLocal<bool> SuppressAuditWrite = new();
 
     /// <summary>
+    /// 抑制差异日志 AOP（Quartz 批量同步等：脚本已写摘要，勿再为 Message 等实体写逐行差异）
+    /// </summary>
+    private static readonly AsyncLocal<bool> SuppressDiffLog = new();
+
+    /// <summary>
+    /// 进入差异日志 AOP 抑制作用域（Dispose 后恢复）
+    /// </summary>
+    /// <returns>作用域</returns>
+    public static IDisposable BeginSuppressDiffLog()
+    {
+        var previous = SuppressDiffLog.Value;
+        SuppressDiffLog.Value = true;
+        return new SuppressDiffLogScope(previous);
+    }
+
+    /// <summary>
+    /// 差异日志抑制作用域
+    /// </summary>
+    private sealed class SuppressDiffLogScope : IDisposable
+    {
+        private readonly bool _previous;
+        private bool _disposed;
+
+        /// <summary>
+        /// 构造
+        /// </summary>
+        /// <param name="previous">进入前标志</param>
+        public SuppressDiffLogScope(bool previous)
+        {
+            _previous = previous;
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            SuppressDiffLog.Value = _previous;
+            _disposed = true;
+        }
+    }
+
+    /// <summary>
     /// 程序启动时注册 Insertable/Updateable/Deleteable 自动启用差异日志（SqlSugar 官方 StaticConfig 批量配置）
     /// </summary>
     public static void RegisterGlobalDiffLogSwitch()
@@ -607,9 +658,13 @@ internal static class TaktSqlSugarAuditAop
     /// </summary>
     /// <param name="db">SqlSugar 客户端</param>
     /// <param name="httpContextAccessor">HTTP 上下文访问器</param>
-    public static void ConfigureClient(ISqlSugarClient db, IHttpContextAccessor? httpContextAccessor)
+    /// <param name="configuration">应用配置（Quartz/后台无 RequestServices 时回退解析 Company↔Plant）</param>
+    public static void ConfigureClient(
+        ISqlSugarClient db,
+        IHttpContextAccessor? httpContextAccessor,
+        IConfiguration? configuration = null)
     {
-        db.Aop.OnDiffLogEvent = diff => PersistDiffLog(db, diff, httpContextAccessor);
+        db.Aop.OnDiffLogEvent = diff => PersistDiffLog(db, diff, httpContextAccessor, configuration);
     }
 
     /// <summary>
@@ -665,6 +720,13 @@ internal static class TaktSqlSugarAuditAop
                 return;
             }
 
+            TryApplyCompanyScope(
+                httpContext,
+                operLog,
+                operLog.TenantCode,
+                operLog.CompanyCode,
+                fallbackConfiguration: null);
+
             SuppressAuditWrite.Value = true;
             TaktPrimaryKeyInsertHelper.InsertEntitySync(db, operLog, TaktPrimaryKeyInsertHelper.RuntimeOptions);
         }
@@ -684,12 +746,14 @@ internal static class TaktSqlSugarAuditAop
     /// <param name="db">SqlSugar 客户端</param>
     /// <param name="diff">差异日志模型</param>
     /// <param name="httpContextAccessor">HTTP 上下文访问器</param>
+    /// <param name="fallbackConfiguration">无 RequestServices 时用于 Company↔Plant 映射的配置</param>
     private static void PersistDiffLog(
         ISqlSugarClient db,
         DiffLogModel diff,
-        IHttpContextAccessor? httpContextAccessor)
+        IHttpContextAccessor? httpContextAccessor,
+        IConfiguration? fallbackConfiguration)
     {
-        if (SuppressAuditWrite.Value)
+        if (SuppressAuditWrite.Value || SuppressDiffLog.Value)
         {
             return;
         }
@@ -746,6 +810,13 @@ internal static class TaktSqlSugarAuditAop
                 return;
             }
 
+            TryApplyCompanyScope(
+                httpContext,
+                deltaLog,
+                deltaLog.TenantCode,
+                deltaLog.CompanyCode,
+                fallbackConfiguration);
+
             SuppressAuditWrite.Value = true;
             TaktPrimaryKeyInsertHelper.InsertEntitySync(db, deltaLog, TaktPrimaryKeyInsertHelper.RuntimeOptions);
         }
@@ -757,6 +828,42 @@ internal static class TaktSqlSugarAuditAop
         {
             SuppressAuditWrite.Value = false;
         }
+    }
+
+    /// <summary>
+    /// 按 Database:CompanyCodes↔PlantCodes↔CultureCodes 写入公司级日志实体的 CultureCode / PlantCode。
+    /// 优先 HttpContext.RequestServices；Quartz/后台 RequestServices 已释放时回退 fallbackConfiguration。
+    /// </summary>
+    /// <param name="httpContext">HTTP 上下文（可为已结束请求）</param>
+    /// <param name="entity">公司级实体（操作日志 / 差异日志）</param>
+    /// <param name="tenantCode">租户编码</param>
+    /// <param name="companyCode">公司编码</param>
+    /// <param name="fallbackConfiguration">无 RequestServices 时的配置回退</param>
+    private static void TryApplyCompanyScope(
+        HttpContext? httpContext,
+        object entity,
+        string tenantCode,
+        string companyCode,
+        IConfiguration? fallbackConfiguration)
+    {
+        IConfiguration? configuration = null;
+        var services = httpContext?.RequestServices;
+        if (services != null)
+        {
+            configuration = services.GetService<IConfiguration>();
+        }
+
+        configuration ??= fallbackConfiguration;
+        if (configuration == null)
+        {
+            return;
+        }
+
+        TaktCompanyScopeFillHelper.ApplyCompanyScopeFromConfiguration(
+            entity,
+            tenantCode,
+            companyCode,
+            configuration);
     }
 
     /// <summary>

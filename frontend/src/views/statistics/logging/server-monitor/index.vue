@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/statistics/logging/server-monitor -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：服务监控页面，展示应用状态与硬件信息；权限 statistics:logging:server:monitor:list -->
@@ -366,13 +366,13 @@ import { GaugeChart } from 'echarts/charts'
 import { TooltipComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import type { ECharts } from 'echarts/core'
-import { useTaktComponentLocale } from '@/composables/use-takt-component-locale'
-import { usePermissionStore } from '@/stores/identity/permission'
+import { useTaktComponentLocale } from '@/composables/useTaktComponentLocale'
+import { usePermissionStore } from '@/stores/identity/usePermissionStore'
 import {
   getAppStatus,
   getServerHardware,
-} from '@/api/statistics/logging/server-monitor'
-import type { AppStatus, CpuCoreInfo, CpuInfo, GpuInfo, MemoryModule, ServerHardware } from '@/types/statistics/logging/server-monitor'
+} from '@/api/statistics/logging/serverMonitor.api'
+import type { AppStatus, CpuCoreInfo, CpuInfo, GpuInfo, MemoryModule, ServerHardware } from '@/types/statistics/logging/serverMonitor.types'
 
 dayjs.extend(duration)
 

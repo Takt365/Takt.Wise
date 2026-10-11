@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/procurement/purchase-price-trend
 // 文件名称：zh-CN.ts
 // 创建时间：2026-07-18
@@ -21,9 +21,12 @@ export default {
     selectPeriodRequired: '请选择期间年月',
     selectPriceTypeRequired: '请选择条件类型',
     selectSupplierRequired: '请选择供应商',
-    summary: '物料×供应商行 {count} 条（缺月回填最近有效价；* 悬停可查看最近价格日期）',
-    summaryModel: '物料×供应商行 {count} 条（机种/产品组来自 BOM；缺月回填同左）',
-    trendSummary: '环比 {base} → {compare}：涨 {up} · 跌 {down} · 平 {flat}',
+    summary: '物料×供应商行 {count} 条（每笔有效起始日一行；相邻比较，右侧为首笔对末笔）',
+    summaryModel: '物料×供应商行 {count} 条（机种/产品组来自 BOM；列与涨跌规则同左）',
+    trendSummary: '{base} → {compare}：涨 {up} · 跌 {down} · 平 {flat}',
+    trendSummaryValidFrom: '各行第 1 笔对末笔：涨 {up} · 跌 {down} · 平 {flat}',
+    adjacentVs: '相对 {period}',
+    pointColumn: '第{n}笔',
     carriedFrom: '最近价格日期 {period}（该月无有效价，沿用回填）',
     export: '清单导出',
     exportSuccess: '清单导出成功',
@@ -45,9 +48,12 @@ export default {
       flat: '平',
     },
     columns: {
-      trend: '涨跌',
-      varianceAmount: '环比差额',
-      variancePercent: '环比%',
+      unitPrice: '单价',
+      validFrom: '有效起始日',
+      adjacent: '涨跌',
+      trend: '期间涨跌',
+      varianceAmount: '期间差额',
+      variancePercent: '期间%',
       modelGroup: '机种组',
       productGroup: '产品组',
       materialText: '物料描述',

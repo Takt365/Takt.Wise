@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Identity
 // 文件名称：TaktUser.cs
 // 创建时间：2025-01-20
@@ -27,14 +27,14 @@ namespace Takt.Domain.Entities.Identity;
 public class TaktUser : TaktTenantCultureEntityBase
 {
     /// <summary>
-    /// 用户名（唯一索引：租户内唯一，见 ix_user_name_unique；登录账号，最长 20 位）
+    /// 用户名（唯一索引：租户内唯一，见 ix_user_name_unique；登录账号，4–20 位）
     /// </summary>
     [SugarColumn(ColumnName = "user_name", ColumnDescription = "用户名", ColumnDataType = "varchar", Length = 20, IsNullable = false)]
     public string UserName { get; set; } = string.Empty;
     /// <summary>
-    /// 昵称（显示名称，2–40 位）
+    /// 昵称（显示名称，2–20 位）
     /// </summary>
-    [SugarColumn(ColumnName = "nick_name", ColumnDescription = "昵称", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
+    [SugarColumn(ColumnName = "nick_name", ColumnDescription = "昵称", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string NickName { get; set; } = string.Empty;
     /// <summary>
     /// 用户类型（字典 sys_user_type）

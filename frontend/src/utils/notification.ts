@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/utils
 // 文件名称：notification.ts
 // 创建时间：2026-05-26
@@ -13,14 +13,14 @@
 import { notification } from 'ant-design-vue';
 import type { NotificationPlacement } from 'ant-design-vue';
 import type { VNode } from 'vue';
-import { translateLocaleMessage as translate } from '@/utils/takt-i18n-message';
-import { formatPrivateMessageNotificationContent } from '@/utils/takt-message-display';
-import type { NotificationType } from '@/types/event';
+import { translateLocaleMessage as translate } from '@/utils/taktI18nMessage';
+import { formatPrivateMessageNotificationContent } from '@/utils/taktMessageDisplay';
+import type { NotificationType } from '@/types/event.types';
 import {
   HEADER_ONLINE_AUTO_READ_MS,
   useHeaderNotificationStore,
   type TaktHeaderNotificationKind,
-} from '@/stores/navigation/header-notification';
+} from '@/stores/navigation/useHeaderNotificationStore';
 
 /** 与 EventBus / 通知中心一致的类型 */
 export type NotifyType = NotificationType;

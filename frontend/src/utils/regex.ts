@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节节拍工厂·Takt Plat 
+// 项目名称：节拍智控·TaktWise 
 // 命名空间：@/utils/regex
 // 文件名称：regex.ts
 // 创建时间：2025-01-21
@@ -72,8 +72,8 @@ export const RegexPatterns = {
   /** 用户名（小写字母开头，允许小写字母和数字，不允许特殊符号，4-20位） */
   userName: /^[a-z][a-z0-9]{3,19}$/,
 
-  /** 登录账号（小写字母开头，字母与数字，5-20 位，与登录/注册页 maxlength 一致） */
-  LOGIN_USER_NAME: /^[a-z][a-z0-9]{4,19}$/,
+  /** 登录账号（小写字母开头，字母与数字，4-20 位，与 UserName / 种子用户 demo 一致） */
+  LOGIN_USER_NAME: /^[a-z][a-z0-9]{3,19}$/,
 
   /** 租户编码（3 位数字，与 Database:TenantCodes 一致） */
   TENANT_CODE: /^\d{3}$/,
@@ -84,8 +84,11 @@ export const RegexPatterns = {
   /** 全名（中文、英文、数字、空格、点、横线，2-100位） */
   FULL_NAME: /^[\u4e00-\u9fa5a-zA-Z0-9\s.-]{2,100}$/,
   
-  /** 昵称（中文、英文、数字、下划线、横线、点，2-40 位） */
-  NICK_NAME: /^[\u4e00-\u9fa5a-zA-Z0-9_.-]{2,40}$/,
+  /** 昵称（中文、英文、数字、下划线、横线、点，2-20 位） */
+  NICK_NAME: /^[\u4e00-\u9fa5a-zA-Z0-9_.-]{2,20}$/,
+
+  /** 员工姓名（中文、英文、数字、空格、点、横线，2-80 位；与 TaktEmployee.EmployeeName 对齐） */
+  EMPLOYEE_NAME: /^[\u4e00-\u9fa5a-zA-Z0-9\s.-]{2,80}$/,
   
   /** 英文名（英文字母、数字、空格、横线、点、单引号，2-100位，必须以字母开头和结尾） */
   ENGLISH_NAME: /^[a-zA-Z]([a-zA-Z0-9\s.\-']{0,98}[a-zA-Z])?$/,
@@ -262,8 +265,8 @@ export const RegexPatterns = {
   NON_WHITESPACE: /\S/,
 } as const
 
-/** 登录页用户名最小长度 */
-export const LOGIN_USER_NAME_MIN_LENGTH = 5;
+/** 登录页用户名最小长度（与种子用户 demo 及 UserName 规则 4-20 一致） */
+export const LOGIN_USER_NAME_MIN_LENGTH = 4;
 
 /** 登录页用户名最大长度（与 TaktUser.UserName varchar(20) 一致） */
 export const LOGIN_USER_NAME_MAX_LENGTH = 20;
@@ -283,8 +286,14 @@ export const EMAIL_MAX_LENGTH = 100;
 /** 用户昵称最小长度 */
 export const USER_NICK_NAME_MIN_LENGTH = 2;
 
-/** 用户昵称最大长度（与 TaktUser.NickName nvarchar(40) 一致） */
-export const USER_NICK_NAME_MAX_LENGTH = 40;
+/** 用户昵称最大长度（与 TaktUser.NickName nvarchar(20) 一致） */
+export const USER_NICK_NAME_MAX_LENGTH = 20;
+
+/** 员工姓名最小长度 */
+export const EMPLOYEE_NAME_MIN_LENGTH = 2;
+
+/** 员工姓名最大长度（与 TaktEmployee.EmployeeName nvarchar(80) 一致） */
+export const EMPLOYEE_NAME_MAX_LENGTH = 80;
 
 /** 中国大陆手机号位数 */
 export const PHONE_CN_LENGTH = 11;
@@ -673,7 +682,7 @@ export class RegexHelper {
   }
 
   /**
-   * 验证登录账号（5-20 位小写字母开头）
+   * 验证登录账号（4-20 位小写字母开头）
    * @param userName 登录账号
    * @returns 是否有效
    */
@@ -814,6 +823,15 @@ export class RegexHelper {
     const v = (nickName ?? '').trim()
     if (!v) return true
     return this.test('NICK_NAME', v)
+  }
+
+  /**
+   * 员工姓名（与后端 `TaktRegexHelper.EmployeeName` 一致）：2–80 位。
+   * @param employeeName 员工姓名
+   * @returns 是否有效
+   */
+  static isValidEmployeeName(employeeName: string): boolean {
+    return this.test('EMPLOYEE_NAME', (employeeName ?? '').trim())
   }
 
   /**
@@ -1284,6 +1302,7 @@ export const isValidRealName = RegexHelper.isValidRealName.bind(RegexHelper)
 export const isValidFullName = RegexHelper.isValidFullName.bind(RegexHelper)
 export const isValidNickName = RegexHelper.isValidNickName.bind(RegexHelper)
 export const isValidUserNickName = RegexHelper.isValidUserNickName.bind(RegexHelper)
+export const isValidEmployeeName = RegexHelper.isValidEmployeeName.bind(RegexHelper)
 export const isValidFirstOrLastName = RegexHelper.isValidFirstOrLastName.bind(RegexHelper)
 export const isValidEnglishName = RegexHelper.isValidEnglishName.bind(RegexHelper)
 export const isValidPassword = RegexHelper.isValidPassword.bind(RegexHelper)

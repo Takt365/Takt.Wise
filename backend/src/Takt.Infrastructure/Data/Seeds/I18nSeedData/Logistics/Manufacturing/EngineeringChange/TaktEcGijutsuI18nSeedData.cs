@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcGijutsuI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEcGijutsu 实体字段国际化种子（已对齐前端 locales：src/locales/logistics/manufacturing/engineering-change/ec-gijutsu）
 // 
@@ -136,13 +136,13 @@ public class TaktEcGijutsuI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecgijutsu.eccontent", "zh-HK", "设变内容_hk", "设变内容（富文本 HTML）"),
 
             // entity.ecgijutsu.ecleader
-            new TranslationSeedItem("entity.ecgijutsu.ecleader", "en-US", "设变担当_us", "设变担当（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
+            new TranslationSeedItem("entity.ecgijutsu.ecleader", "en-US", "设变担当_us", "设变担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
             // entity.ecgijutsu.ecleader
-            new TranslationSeedItem("entity.ecgijutsu.ecleader", "ja-JP", "设变担当_jp", "设变担当（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
+            new TranslationSeedItem("entity.ecgijutsu.ecleader", "ja-JP", "设变担当_jp", "设变担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
             // entity.ecgijutsu.ecleader
-            new TranslationSeedItem("entity.ecgijutsu.ecleader", "zh-CN", "设变担当", "设变担当（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
+            new TranslationSeedItem("entity.ecgijutsu.ecleader", "zh-CN", "设变担当", "设变担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
             // entity.ecgijutsu.ecleader
-            new TranslationSeedItem("entity.ecgijutsu.ecleader", "zh-HK", "设变担当_hk", "设变担当（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
+            new TranslationSeedItem("entity.ecgijutsu.ecleader", "zh-HK", "设变担当_hk", "设变担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
 
             // entity.ecgijutsu.eclossamount
             new TranslationSeedItem("entity.ecgijutsu.eclossamount", "en-US", "损失金额_us", "损失金额"),
@@ -161,6 +161,15 @@ public class TaktEcGijutsuI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecgijutsu.ecscope", "zh-CN", "实施范围", "实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）"),
             // entity.ecgijutsu.ecscope
             new TranslationSeedItem("entity.ecgijutsu.ecscope", "zh-HK", "实施范围_hk", "实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）"),
+
+            // entity.ecgijutsu.ecdeptscope
+            new TranslationSeedItem("entity.ecgijutsu.ecdeptscope", "en-US", "部门范围_us", "制二/制一/品管实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种"),
+            // entity.ecgijutsu.ecdeptscope
+            new TranslationSeedItem("entity.ecgijutsu.ecdeptscope", "ja-JP", "部门范围_jp", "制二/制一/品管实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种"),
+            // entity.ecgijutsu.ecdeptscope
+            new TranslationSeedItem("entity.ecgijutsu.ecdeptscope", "zh-CN", "部门范围", "制二/制一/品管实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种"),
+            // entity.ecgijutsu.ecdeptscope
+            new TranslationSeedItem("entity.ecgijutsu.ecdeptscope", "zh-HK", "部门范围_hk", "制二/制一/品管实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种"),
 
             // entity.ecgijutsu.ecentrydate
             new TranslationSeedItem("entity.ecgijutsu.ecentrydate", "en-US", "录入日期_us", "录入日期"),

@@ -35,7 +35,7 @@ description: >-
 | 6 | `i18n` | `generate-entity-i18n-seed.cjs` | ✅ | `TaktXxxI18nSeedData.cs` |
 | 7 | `dict-i18n` | `generate-dict-i18n-seed.cjs` | ✅ | `TaktDictI18nSeedData.cs` |
 | 8 | `menu-i18n` | `generate-menu-i18n-seed.cjs` | ✅ | 菜单 `menu.*` |
-| 9 | `vue` | `generate-vue-all-from-api.cjs` | — | `index.vue` + `*-form.vue` |
+| 9 | `vue` | `generate-vue-all-from-api.cjs` | — | `index.vue` + `*Form.vue` |
 
 **文档与代码不一致时以 `PIPELINE` 为准并回写本文。** `validate-*` 一次性校验脚本**不属于**流水线，完成后删除。详见规则 §四。
 

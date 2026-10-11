@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi.Controllers.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomCostOptionsController.cs
 // 创建时间：2026-08-21
@@ -69,9 +69,9 @@ public class TaktBomCostOptionsController : TaktControllerBase
     }
 
     /// <summary>
-    /// 机种去重（头表；须工厂+期间；仅未删除）
+    /// 机种去重（头表；须工厂+期间；仅未删除；Keyword 按编码/名称远程搜索）
     /// </summary>
-    /// <param name="queryDto">工厂 + 期间；MaterialType 可选</param>
+    /// <param name="queryDto">工厂 + 期间；MaterialType、Keyword 可选</param>
     /// <returns>机种选项</returns>
     [HttpGet("model-options")]
     public async Task<IActionResult> GetBomCostOptionModelOptionsAsync(
@@ -79,7 +79,7 @@ public class TaktBomCostOptionsController : TaktControllerBase
     {
         return await QueryBomCostOptionAsync(
             queryDto,
-            dto => _bomCostOptionService.GetBomCostOptionModelOptionsAsync(dto?.PlantCode, null, dto));
+            dto => _bomCostOptionService.GetBomCostOptionModelOptionsAsync(dto?.PlantCode, dto?.Keyword, dto));
     }
 
     /// <summary>

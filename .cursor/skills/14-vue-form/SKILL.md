@@ -1,12 +1,12 @@
 ---
 name: 14-vue-form
 description: >-
-  新建或审查 Takt 表单组件 *-form.vue（单表/主子表/树表）。
-  用于 views/**/components/*-form.vue、defineExpose、TaktTreeSelect 父级、
+  新建或审查 Takt 表单组件 *Form.vue（单表/主子表/树表）。
+  用于 views/**/components/*Form.vue、defineExpose、TaktTreeSelect 父级、
   或用户提到 14-vue-form、弹窗表单、级联 items 时。
 ---
 
-# Vue 表单组件（*-form.vue）
+# Vue 表单组件（*Form.vue）
 
 完整规范：`.cursor/rules/14-vue-form.mdc`
 
@@ -14,9 +14,9 @@ description: >-
 
 | 形态 | 参照 form.vue |
 |------|---------------|
-| 单表 | `views/identity/user/components/user-form.vue` |
-| 主子表 | `views/foundation/dict/components/dict-type-form.vue` |
-| 树表 | `views/human-resource/organization/dept/components/dept-form.vue` |
+| 单表 | `views/identity/user/components/UserForm.vue` |
+| 主子表 | `views/foundation/dict/components/DictTypeForm.vue` |
+| 树表 | `views/human-resource/organization/dept/components/DeptForm.vue` |
 
 列表页集成 → [13-vue-view](../13-vue-view/SKILL.md)
 

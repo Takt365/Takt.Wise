@@ -1,10 +1,10 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcKoubaiQueryHelper.cs
 // 创建时间：2026-08-27
 // 创建人：Takt365(Cursor AI)
-// 功能描述：采购课主表/子表可见明细：新采购类型 F，设变单号+新物料去重（保留最大 Id）
+// 功能描述：采购课主表/子表可见明细：任何范围按设变单号+新采购类型+新物料去重（保留最大 Id）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -47,13 +47,14 @@ internal static class TaktEcKoubaiQueryHelper
     }
 
     /// <summary>
-    /// 采购执行列表可见：本表自去重（同设变+新物料+采购类型 F，保留最大 EcDetailId）
+    /// 采购执行列表可见：任何范围按设变单号+新采购类型+新物料去重，保留最大 EcDetailId
     /// </summary>
     /// <returns>执行表过滤表达式</returns>
     internal static Expression<Func<TaktEcKoubai, bool>> VisibleExecExpression()
     {
         var purchaseTypeF = TaktEcScopeConstants.PurchaseTypeExternal;
-        return x => x.EcNewPurchaseType == purchaseTypeF
+        return x =>
+            x.EcNewPurchaseType == purchaseTypeF
             && !SqlFunc.Subqueryable<TaktEcKoubai>()
                 .Where(s =>
                     s.TenantCode == x.TenantCode
@@ -61,8 +62,8 @@ internal static class TaktEcKoubaiQueryHelper
                     && s.IsDeleted == 0
                     && s.IsObsolete == 0
                     && s.EcCode == x.EcCode
+                    && s.EcNewPurchaseType == x.EcNewPurchaseType
                     && s.EcNewMaterialCode == x.EcNewMaterialCode
-                    && s.EcNewPurchaseType == purchaseTypeF
                     && s.EcDetailId > x.EcDetailId)
                 .Any();
     }

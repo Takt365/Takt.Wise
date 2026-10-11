@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/vite.config
 // 文件名称：vite.config.ts
 // 创建时间：2026-05-22
@@ -11,7 +11,7 @@
 // ========================================
 //
 // 环境变量来源：frontend/.env、.env.development、.env.production
-// 客户端运行时读取：src/config/vite-env.ts（requireViteEnv，缺失即抛错）
+// 客户端运行时读取：src/config/viteEnv.ts（requireViteEnv，缺失即抛错）
 //
 // 开发代理约定（VITE_API_BASE_URL 为相对路径时，如 /api）：
 //   浏览器 → 同源 dev 服务器（VITE_APP_ORIGIN，如 https://localhost:60081）
@@ -45,7 +45,7 @@ import Components from 'unplugin-vue-components/vite';
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
 import mkcert from 'vite-plugin-mkcert';
 import { VitePWA } from 'vite-plugin-pwa';
-import { vitePluginLogger } from './src/config/vite-dev-plugin.ts';
+import { vitePluginLogger } from './src/config/viteDevPlugin.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

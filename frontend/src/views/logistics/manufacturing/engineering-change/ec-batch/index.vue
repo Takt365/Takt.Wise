@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/ec-batch -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：设变投入批次转置列表（行=设变明细，列=各阶段日期+批次） -->
@@ -91,21 +91,21 @@
 import { RiEyeLine } from '@remixicon/vue';
 import type { TableColumnsType } from 'ant-design-vue';
 import { useI18n } from 'vue-i18n';
-import { useEntityFieldI18n } from '@/composables/use-entity-field-i18n';
-import { getEcBatchTransposedList } from '@/api/logistics/manufacturing/engineering-change/ec-batch';
-import { getEcDetailById } from '@/api/logistics/manufacturing/engineering-change/ec-detail';
-import { exportEcBatchData } from '@/api/logistics/manufacturing/engineering-change/ec-batch';
-import { CreateActionColumn } from '@/components/business/takt-action-column/index';
-import { TaktEcBatchStageCodes } from '@/constants/logistics/ec-batch-stage-codes';
-import { TaktEcDeptCodes } from '@/constants/logistics/ec-dept-codes';
-import type { EcDetail } from '@/types/logistics/manufacturing/engineering-change/ec-detail';
+import { useEntityFieldI18n } from '@/composables/useEntityFieldI18n';
+import { getEcBatchTransposedList } from '@/api/logistics/manufacturing/engineering-change/ecBatch.api';
+import { getEcDetailById } from '@/api/logistics/manufacturing/engineering-change/ecDetail.api';
+import { exportEcBatchData } from '@/api/logistics/manufacturing/engineering-change/ecBatch.api';
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index';
+import { TaktEcBatchStageCodes } from '@/constants/logistics/ecBatchStageCodes.constants';
+import { TaktEcDeptCodes } from '@/constants/logistics/ecDeptCodes.constants';
+import type { EcDetail } from '@/types/logistics/manufacturing/engineering-change/ecDetail.types';
 import type {
   EcExecBatchTransposed,
   EcExecBatchTransposedResult,
-} from '@/types/logistics/manufacturing/engineering-change/ec-exec-transposed';
+} from '@/types/logistics/manufacturing/engineering-change/ecExecTransposed.types';
 import { taktOrgDeptI18nKey } from '@/utils/naming';
-import { useEcDetailI18n } from '@/views/logistics/manufacturing/engineering-change/ec-gijutsu/composables/use-ec-detail-i18n';
-import { useEcGijutsuI18n } from '@/views/logistics/manufacturing/engineering-change/ec-gijutsu/composables/use-ec-gijutsu-i18n';
+import { useEcDetailI18n } from '@/views/logistics/manufacturing/engineering-change/ec-gijutsu/composables/useEcDetailI18n';
+import { useEcGijutsuI18n } from '@/views/logistics/manufacturing/engineering-change/ec-gijutsu/composables/useEcGijutsuI18n';
 
 const { t } = useI18n();
 const pi = useEcDetailI18n();

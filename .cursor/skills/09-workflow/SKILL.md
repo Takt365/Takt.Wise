@@ -27,10 +27,10 @@ description: >-
 ## 新建业务流程（检查清单）
 
 ```
-- [ ] 1. 读参照：TaktLeaveWorkflowSeedData、TaktFlowEngineService、takt-flow-tree.ts
+- [ ] 1. 读参照：TaktLeaveWorkflowSeedData、TaktFlowEngineService、taktFlowTree.ts
 - [ ] 2. 方案：TaktFlowScheme（ProcessKey、ProcessContent 树）
 - [ ] 3. 表单：TaktFlowForm（FormContent）
-- [ ] 4. 设计器：takt-flow-antflow-designer 编辑 → takt-flow-design-validate.ts 通过
+- [ ] 4. 设计器：TaktFlowAntDesigner 编辑 → taktFlowDesignValidate.ts 通过
 - [ ] 5. 发布：SchemeStatus=Published；启动用 ProcessContentSnapshot
 - [ ] 6. 菜单/权限：workflow:{page}:{action}，与 TaktFlowEngineController 一致
 - [ ] 7. i18n：entity.flow*、menu.workflow.*、locales/workflow/*.page.*
@@ -71,7 +71,7 @@ description: >-
 | 1 | 或签 |
 | 2 | 会签 |
 
-枚举源：`TaktFlowEnums.cs` ↔ `takt-flow-tree.ts`。
+枚举源：`TaktFlowEnums.cs` ↔ `taktFlowTree.ts`。
 
 ## 异常动作映射
 

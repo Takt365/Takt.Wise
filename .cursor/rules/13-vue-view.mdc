@@ -44,7 +44,7 @@ alwaysApply: true
   → TaktToolsBar（*-permission 与菜单一致）
   → TaktSingleTable（:pagination="false"）
   → TaktPagination（外置）
-  → TaktModal（`:width="formModalWidthPx"` = `useTaktContentModalWidth`）+ <xxx-form ref="formRef" />
+  → TaktModal（`:width="formModalWidthPx"` = `useTaktContentModalWidth`）+ <XxxForm ref="formRef" />
   → TaktQueryDrawer（高级查询）
   → TaktColumnDrawer（列设置）
   → （可选）TaktImportFile 独立 Modal
@@ -161,7 +161,7 @@ TaktQueryDrawer / TaktColumnDrawer / TaktImportFile（同单表）
 | 工具栏 | `TaktToolsBar` | 同左 | 左/右双工具栏 |
 | 主列表 | `TaktSingleTable` | + 展开/窗口 | `TaktTreeLeft/RightTable` |
 | 分页 | 服务端 | 主表服务端；子表独立 list | 右侧客户端 slice |
-| 弹窗表单 | `xxx-form` | 主表 form（可含子表 Tab） | `xxx-form` + `TaktTreeSelect` 父级 |
+| 弹窗表单 | `XxxForm` | 主表 form（可含子表 Tab） | `XxxForm` + `TaktTreeSelect` 父级 |
 
 ---
 
@@ -188,5 +188,5 @@ TaktQueryDrawer / TaktColumnDrawer / TaktImportFile（同单表）
 - 单表：**禁止**省略 QueryBar/ToolsBar/Pagination/Modal 标准分区
 - 主子表：**禁止**主表 list 绑定全量子表；展开/窗口须 lazy + loading
 - 树表：**禁止**整树未拍平绑右表；须 `flatten` + 分页/virtual
-- 表单细节：**不**在 index 内堆字段 → 抽 `components/*-form.vue`（`14-vue-form`）
+- 表单细节：**不**在 index 内堆字段 → 抽 `components/*Form.vue`（`14-vue-form`）
 - 实现清单：`.cursor/skills/13-vue-view/SKILL.md`

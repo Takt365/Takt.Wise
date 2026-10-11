@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Statistics.Logging
 // 文件名称：TaktLoginLogService.cs
 // 创建时间：2026-06-12
@@ -74,6 +74,44 @@ public class TaktLoginLogService : TaktServiceBase, ITaktLoginLogService
             total,
             queryDto.PageIndex,
             queryDto.PageSize);
+    }
+
+    /// <summary>
+    /// 获取当前登录用户的登录日志列表（分页；强制精确匹配当前 UserName）
+    /// </summary>
+    /// <param name="queryDto">查询DTO（高级条件可用；UserName 由服务端清空后强制精确匹配当前用户）</param>
+    /// <returns>分页结果</returns>
+    public async Task<TaktPagedResult<TaktLoginLogDto>> GetMyLoginLogListAsync(TaktLoginLogQueryDto queryDto)
+    {
+        var userName = CurrentUserName?.Trim();
+        if (string.IsNullOrEmpty(userName))
+        {
+            return TaktPagedResult<TaktLoginLogDto>.Create(
+                new List<TaktLoginLogDto>(),
+                0,
+                queryDto.PageIndex,
+                queryDto.PageSize);
+        }
+
+        // 禁止客户端通过高级查询 UserName 越权查看他人日志
+        queryDto.UserName = null;
+
+        var pageIndex = TaktPagedClamp.NormalizePageIndex(queryDto.PageIndex);
+        var pageSize = TaktPagedClamp.NormalizePageSize(queryDto.PageSize);
+        var basePredicate = QueryExpression(queryDto);
+        var userNameLower = userName.ToLowerInvariant();
+        var exp = Expressionable.Create<TaktLoginLog>();
+        exp = exp.And(basePredicate);
+        exp = exp.And(x => x.UserName != null && x.UserName.ToLower() == userNameLower);
+        var predicate = exp.ToExpression();
+        var (data, total) = await _loginLogRepository.GetPagedAsync(pageIndex, pageSize, predicate);
+        var dtos = data.Adapt<List<TaktLoginLogDto>>();
+        foreach (var dto in dtos)
+        {
+            EnrichLoginLogDto(dto);
+        }
+
+        return TaktPagedResult<TaktLoginLogDto>.Create(dtos, total, pageIndex, pageSize);
     }
 
     /// <summary>
@@ -215,24 +253,26 @@ public class TaktLoginLogService : TaktServiceBase, ITaktLoginLogService
     {
         var exp = Expressionable.Create<TaktLoginLog>();
 
-        if (!string.IsNullOrEmpty(queryDto?.KeyWords))
+        if (!string.IsNullOrWhiteSpace(queryDto?.KeyWords))
         {
-            var keywords = queryDto.KeyWords;
+            var keywords = queryDto.KeyWords!.Trim();
+            var keywordsLower = keywords.ToLower();
             exp = exp.And(x =>
-                (x.UserName != null && x.UserName.Contains(keywords))
-                || SqlFunc.ToString(x.LoginType).Contains(keywords)
+                (x.TenantCode != null && x.TenantCode.Contains(keywords))
+                || (x.PlantCode != null && x.PlantCode.ToLower().Contains(keywordsLower))
+                || (x.CompanyCode != null && x.CompanyCode.ToLower().Contains(keywordsLower))
+                || (x.CultureCode != null && x.CultureCode.Contains(keywords))
+                || (x.UserName != null && x.UserName.Contains(keywords))
+                || (x.LoginType != null && x.LoginType.Contains(keywords))
                 || (x.Browser != null && x.Browser.Contains(keywords))
                 || (x.Os != null && x.Os.Contains(keywords))
                 || (x.UserAgent != null && x.UserAgent.Contains(keywords))
-                || SqlFunc.ToString(x.LoginResult).Contains(keywords)
+                || (x.LoginResult != null && x.LoginResult.Contains(keywords))
                 || (x.LoginMessage != null && x.LoginMessage.Contains(keywords))
                 || (x.LoginIp != null && x.LoginIp.Contains(keywords))
                 || (x.LoginLocation != null && x.LoginLocation.Contains(keywords))
-                || (x.CultureCode != null && x.CultureCode.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
-                || SqlFunc.ToString(x.LogoutAt).Contains(keywords)
-                || SqlFunc.ToString(x.CreatedAt).Contains(keywords)
             );
         }
 
@@ -319,12 +359,14 @@ public class TaktLoginLogService : TaktServiceBase, ITaktLoginLogService
         {
             exp = exp.And(x => x.CreatedAt <= queryDto.CreatedAtEnd);
         }
+
         if (!string.IsNullOrWhiteSpace(queryDto?.PlantCode))
         {
-            var plantCode = queryDto.PlantCode;
-            exp = exp.And(x => x.PlantCode != null && x.PlantCode.Contains(plantCode));
+            var plantCode = queryDto.PlantCode.Trim();
+            exp = exp.And(x =>
+                x.PlantCode != null
+                && x.PlantCode.ToLower().Contains(plantCode.ToLower()));
         }
-
 
         return exp.ToExpression();
     }

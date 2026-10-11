@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/config
 // 文件名称：oauth.ts
 // 创建时间：2026-05-23
@@ -10,8 +10,8 @@
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
 // ========================================
 
-import { getAppOrigin, joinOriginPath, requireViteEnv } from '@/config/vite-env';
-import type { TaktOAuthConfig } from '@/types/common';
+import { getAppOrigin, joinOriginPath, requireViteEnv } from '@/config/viteEnv';
+import type { TaktOAuthConfig } from '@/types/common.types';
 
 export type { TaktOAuthConfig };
 

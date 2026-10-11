@@ -1,6 +1,6 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
-<!-- 命名空间：frontend/src/views/dashboard/data-board/modules -->
+<!-- 项目名称：节拍智控·TaktWise -->
+<!-- 命名空间：frontend/src/views/dashboard/dataBoard.types/modules -->
 <!-- 文件名称：StatsQualityComplaintModule.vue -->
 <!-- 功能描述：数据看板客诉统计（上月：件数/未处理/处理中/处理完成） -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
@@ -29,12 +29,11 @@
 /**
  * 客诉统计：上月客诉件数 / 未处理 / 处理中 / 处理完成
  */
-import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import StatsMetricGrid from '../components/stats-metric-grid.vue'
-import { enrichDashboardMetricItems } from '../utils/stats-metric-dashboard'
-import { usePermissionStore } from '@/stores/identity/permission'
-import type { CustomerComplaintStat } from '@/types/logistics/quality/complaint/customer-complaint-stat'
+import StatsMetricGrid from '../components/StatsMetricGrid.vue'
+import { enrichDashboardMetricItems } from '../utils/statsMetricDashboard'
+import { usePermissionStore } from '@/stores/identity/usePermissionStore'
+import type { CustomerComplaintStat } from '@/types/logistics/quality/complaint/customerComplaintStat.types'
 import {
   DASHBOARD_STATS_API,
   DASHBOARD_STATS_PERMISSION,
@@ -42,8 +41,8 @@ import {
   fetchDashboardGet,
   fetchDashboardMetricIfPermitted,
   scheduleDashboardLoad,
-} from '../utils/stats-query'
-import { getDashboardInspectionMonthRange } from '../utils/stats-dashboard-plant'
+} from '../utils/statsQuery'
+import { getDashboardInspectionMonthRange } from '../utils/statsDashboardPlant'
 
 /** 空统计 */
 const EMPTY_STAT: CustomerComplaintStat = {

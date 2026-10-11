@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍数字工厂 ·Takt Plat (TDF) 
+// 项目名称：节拍智控 ·TaktWise (TDF) 
 // 命名空间：Takt.Domain.Entities.Code.Generator
 // 文件名称：TaktGenTable.cs
 // 创建时间：2025-01-20

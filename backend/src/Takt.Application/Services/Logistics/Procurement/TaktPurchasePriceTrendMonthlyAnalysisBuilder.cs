@@ -1,10 +1,10 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Procurement
 // 文件名称：TaktPurchasePriceTrendMonthlyAnalysisBuilder.cs
 // 创建时间：2026-08-23
 // 创建人：Takt365(Cursor AI)
-// 功能描述：采购价格月推移转置分析构建器（主表/明细筛选、期间列、涨跌环比）
+// 功能描述：采购价格推移转置分析构建器（列=各行第 n 笔 ValidFrom；相邻逐比；期间涨跌=首笔对末笔）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -23,7 +23,7 @@ using Takt.Shared.Models;
 namespace Takt.Application.Services.Logistics.Procurement;
 
 /// <summary>
-/// 采购价格月推移转置分析构建器
+/// 采购价格推移转置分析构建器（列=各行第 n 笔 ValidFrom，不对齐全表日期；相邻逐比；期间涨跌=首笔对末笔）
 /// </summary>
 public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITaktPurchasePriceTrendMonthlyAnalysisBuilder
 {
@@ -32,28 +32,28 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
     /// </summary>
     private const int MaterialNameLookupBatchSize = 500;
 
-    private readonly ITaktCompanyRepository<TaktPurchasePrice> _purchasePriceRepository;
-    private readonly ITaktCompanyRepository<TaktPurchasePriceItem> _purchasePriceItemRepository;
+    private readonly ITaktCompanyRepository<TaktPurchaseInfoRecord> _purchaseInfoRecordRepository;
+    private readonly ITaktCompanyRepository<TaktPurchaseInfoRecordItem> _purchaseInfoRecordItemRepository;
     private readonly ITaktCompanyRepository<TaktMaterialPlant> _materialPlantRepository;
     private readonly ITaktCompanyRepository<TaktSupplier> _supplierRepository;
 
     public TaktPurchasePriceTrendMonthlyAnalysisBuilder(
-        ITaktCompanyRepository<TaktPurchasePrice> purchasePriceRepository,
-        ITaktCompanyRepository<TaktPurchasePriceItem> purchasePriceItemRepository,
+        ITaktCompanyRepository<TaktPurchaseInfoRecord> purchaseInfoRecordRepository,
+        ITaktCompanyRepository<TaktPurchaseInfoRecordItem> purchaseInfoRecordItemRepository,
         ITaktCompanyRepository<TaktMaterialPlant> materialPlantRepository,
         ITaktCompanyRepository<TaktSupplier> supplierRepository,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
     {
-        _purchasePriceRepository = purchasePriceRepository;
-        _purchasePriceItemRepository = purchasePriceItemRepository;
+        _purchaseInfoRecordRepository = purchaseInfoRecordRepository;
+        _purchaseInfoRecordItemRepository = purchaseInfoRecordItemRepository;
         _materialPlantRepository = materialPlantRepository;
         _supplierRepository = supplierRepository;
     }
 
     /// <summary>
-    /// 构建采购价格月推移转置分析全量结果
+    /// 构建采购价格推移转置分析全量结果（列=第 n 笔）
     /// </summary>
     /// <param name="queryDto">查询条件</param>
     /// <returns>内存构建结果</returns>
@@ -67,12 +67,15 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
         var supplierFilter = string.IsNullOrWhiteSpace(queryDto.SupplierCode) ? null : queryDto.SupplierCode.Trim();
         var materialFilter = string.IsNullOrWhiteSpace(queryDto.MaterialCode) ? null : queryDto.MaterialCode.Trim();
         var priceTypeFilter = string.IsNullOrWhiteSpace(queryDto.PriceType) ? null : queryDto.PriceType.Trim();
+        var (rangeStart, rangeEndExclusive) = ResolvePurchasePriceTrendDateBounds(queryDto);
         var masterExp = BuildPurchasePriceTrendMasterExpression(
             plantCode,
             supplierFilter,
             materialFilter,
-            priceTypeFilter);
-        var masters = await _purchasePriceRepository.GetListAsync(masterExp);
+            priceTypeFilter,
+            rangeStart,
+            rangeEndExclusive);
+        var masters = await _purchaseInfoRecordRepository.GetListAsync(masterExp);
         if (masters.Count == 0)
         {
             return TaktPurchasePriceTrendAnalysisBuilt.Empty();
@@ -80,21 +83,19 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
         var masterById = masters.ToDictionary(m => m.Id);
         var masterIds = masters.Select(m => m.Id).ToList();
         var itemExp = BuildPurchasePriceTrendItemExpression(masterIds);
-        var items = await _purchasePriceItemRepository.GetListAsync(itemExp);
+        var items = await _purchaseInfoRecordItemRepository.GetListAsync(itemExp);
         if (items.Count == 0)
         {
             return TaktPurchasePriceTrendAnalysisBuilt.Empty();
         }
         var sourceRows = items
-            .Where(i => masterById.ContainsKey(i.PurchasePriceId))
+            .Where(i => masterById.ContainsKey(i.PurchaseInfoRecordId))
             .Select(i => new PurchasePriceTrendSourceRow
             {
-                Master = masterById[i.PurchasePriceId],
+                Master = masterById[i.PurchaseInfoRecordId],
                 Item = i,
             })
             .ToList();
-        var (rangeStart, rangeEnd, periodOrder) = ResolvePurchasePriceTrendRange(queryDto);
-        var focusPeriod = ResolvePurchasePriceFocusPeriod(queryDto.FocusPeriod, periodOrder);
         var allRows = sourceRows
             .GroupBy(
                 r => new PurchasePriceTrendRowKey(
@@ -102,23 +103,23 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
                     r.Master.MaterialCode.Trim(),
                     r.Master.SupplierCode.Trim()),
                 PurchasePriceTrendRowKeyComparer.Instance)
-            .Select(g => BuildPurchasePriceTrendRow(
-                g.Key,
-                g.ToList(),
-                periodOrder,
-                focusPeriod,
-                rangeStart,
-                rangeEnd))
+            .Select(g => BuildPurchasePriceTrendRow(g.Key, g.ToList()))
             .ToList();
         await FillPurchasePriceTrendDisplayNamesAsync(plantCode, allRows);
+        var maxPoints = allRows.Count == 0 ? 0 : allRows.Max(r => r.PeriodPoints.Count);
+        if (maxPoints > TaktPriceTrendAnalysisHelper.MaxTrendMonths)
+        {
+            throw new ArgumentException($"单行有效起始日不得超过 {TaktPriceTrendAnalysisHelper.MaxTrendMonths} 笔");
+        }
+        var periodOrder = Enumerable.Range(1, maxPoints).Select(i => i.ToString()).ToList();
         var filtered = FilterPurchasePriceTrendRows(allRows, queryDto.TrendFilter);
         var ordered = OrderPurchasePriceTrendRows(filtered);
         return new TaktPurchasePriceTrendAnalysisBuilt
         {
             OrderedRows = ordered,
             PeriodOrder = periodOrder,
-            BasePeriod = allRows.FirstOrDefault()?.BasePeriod,
-            ComparePeriod = focusPeriod,
+            BasePeriod = periodOrder.FirstOrDefault(),
+            ComparePeriod = periodOrder.LastOrDefault(),
             UpCount = allRows.Count(r => r.Trend == "up"),
             DownCount = allRows.Count(r => r.Trend == "down"),
             FlatCount = allRows.Count(r => r.Trend == "flat"),
@@ -133,18 +134,24 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
     /// <param name="supplierFilter">供应商编码包含</param>
     /// <param name="materialFilter">物料编码包含</param>
     /// <param name="priceType">价格类型（如 PB00）</param>
+    /// <param name="validFromStart">有效起始日区间起（含）</param>
+    /// <param name="validFromEndExclusive">有效起始日区间止（不含）</param>
     /// <returns>表达式</returns>
-    private Expression<Func<TaktPurchasePrice, bool>> BuildPurchasePriceTrendMasterExpression(
+    private Expression<Func<TaktPurchaseInfoRecord, bool>> BuildPurchasePriceTrendMasterExpression(
         string plantCode,
         string? supplierFilter,
         string? materialFilter,
-        string? priceType)
+        string? priceType,
+        DateTime validFromStart,
+        DateTime validFromEndExclusive)
     {
-        var exp = Expressionable.Create<TaktPurchasePrice>();
+        var exp = Expressionable.Create<TaktPurchaseInfoRecord>();
         exp = exp.And(x =>
             x.TenantCode == CurrentTenantCode
             && x.CompanyCode == CurrentCompanyCode
-            && x.PlantCode == plantCode);
+            && x.PlantCode == plantCode
+            && x.ValidFrom >= validFromStart
+            && x.ValidFrom < validFromEndExclusive);
         if (!string.IsNullOrWhiteSpace(supplierFilter))
         {
             var supplier = supplierFilter.Trim();
@@ -167,27 +174,27 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
     /// </summary>
     /// <param name="masterIds">主表 ID 列表</param>
     /// <returns>表达式</returns>
-    private Expression<Func<TaktPurchasePriceItem, bool>> BuildPurchasePriceTrendItemExpression(
+    private Expression<Func<TaktPurchaseInfoRecordItem, bool>> BuildPurchasePriceTrendItemExpression(
         IReadOnlyList<long> masterIds)
     {
-        var exp = Expressionable.Create<TaktPurchasePriceItem>();
+        var exp = Expressionable.Create<TaktPurchaseInfoRecordItem>();
         exp = exp.And(x =>
             x.TenantCode == CurrentTenantCode
             && x.CompanyCode == CurrentCompanyCode
-            && masterIds.Contains(x.PurchasePriceId)
+            && masterIds.Contains(x.PurchaseInfoRecordId)
             && x.IsObsolete == 0);
         return exp.ToExpression();
     }
 
     /// <summary>
-    /// 解析采购价格推移分析日期区间与期间列
+    /// 解析采购价格推移查询的有效起始日闭开区间（查询栏年月 → ValidFrom）
     /// </summary>
     /// <param name="queryDto">查询 DTO</param>
-    /// <returns>区间起止与期间列顺序</returns>
-    private static (DateTime RangeStart, DateTime RangeEnd, List<string> PeriodOrder) ResolvePurchasePriceTrendRange(
+    /// <returns>区间起（含）与止（不含）</returns>
+    private static (DateTime RangeStart, DateTime RangeEndExclusive) ResolvePurchasePriceTrendDateBounds(
         TaktPurchasePriceTrendQueryDto queryDto)
     {
-        var (periodStart, periodEnd) = NormalizePurchasePricePeriodBounds(
+        var (periodStart, periodEnd) = NormalizePurchaseInfoRecordPeriodBounds(
             queryDto.PeriodDateStart,
             queryDto.PeriodDateEnd);
         if (periodStart.HasValue || periodEnd.HasValue)
@@ -203,15 +210,10 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
             {
                 throw new ArgumentException($"分析区间不得超过 {TaktPriceTrendAnalysisHelper.MaxTrendMonths} 个月");
             }
-            var rangeStart = startMonth;
-            var rangeEnd = endMonth.AddMonths(1).AddDays(-1);
-            var periodOrder = BuildConsecutivePeriodOrder(startMonth, endMonth);
-            return (rangeStart, rangeEnd, periodOrder);
+            return (startMonth, endMonth.AddMonths(1));
         }
         var (resolvedStart, resolvedEnd) = TaktPriceTrendAnalysisHelper.ResolveTrendDateRange(null, null);
-        var start = new DateTime(resolvedStart.Year, resolvedStart.Month, 1);
-        var endMonthFirst = new DateTime(resolvedEnd.Year, resolvedEnd.Month, 1);
-        return (resolvedStart, resolvedEnd, BuildConsecutivePeriodOrder(start, endMonthFirst));
+        return (resolvedStart, resolvedEnd.Date.AddDays(1));
     }
 
     /// <summary>
@@ -220,7 +222,7 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
     /// <param name="periodDateStart">期间起</param>
     /// <param name="periodDateEnd">期间止</param>
     /// <returns>月初起止</returns>
-    private static (DateTime? Start, DateTime? End) NormalizePurchasePricePeriodBounds(
+    private static (DateTime? Start, DateTime? End) NormalizePurchaseInfoRecordPeriodBounds(
         DateTime? periodDateStart,
         DateTime? periodDateEnd)
     {
@@ -238,101 +240,69 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
     }
 
     /// <summary>
-    /// 构建连续 yyyy-MM 期间列
-    /// </summary>
-    /// <param name="periodStart">期间起（月初）</param>
-    /// <param name="periodEnd">期间止（月初）</param>
-    /// <returns>期间列顺序</returns>
-    private static List<string> BuildConsecutivePeriodOrder(DateTime periodStart, DateTime periodEnd)
-    {
-        var order = new List<string>();
-        for (var cursor = periodStart; cursor <= periodEnd; cursor = cursor.AddMonths(1))
-        {
-            order.Add(cursor.ToString("yyyy-MM"));
-        }
-        return order;
-    }
-
-    /// <summary>
-    /// 解析关注期间
-    /// </summary>
-    /// <param name="focusPeriod">关注期间</param>
-    /// <param name="periodOrder">期间列</param>
-    /// <returns>关注期间 yyyy-MM</returns>
-    private static string? ResolvePurchasePriceFocusPeriod(string? focusPeriod, IReadOnlyList<string> periodOrder)
-    {
-        if (!string.IsNullOrWhiteSpace(focusPeriod))
-        {
-            return focusPeriod.Trim();
-        }
-        return periodOrder.Count > 0 ? periodOrder[^1] : null;
-    }
-
-    /// <summary>
-    /// 构建单行采购价格月推移
+    /// 构建单行采购价格推移（该行 ValidFrom 自早到晚成第 n 笔；同日多条取均价；相邻逐比）
     /// </summary>
     /// <param name="key">行键</param>
     /// <param name="groupRows">同键明细</param>
-    /// <param name="periodOrder">期间列</param>
-    /// <param name="focusPeriod">关注期间</param>
-    /// <param name="rangeStart">分析区间起</param>
-    /// <param name="rangeEnd">分析区间止</param>
     /// <returns>转置行</returns>
     private static TaktPurchasePriceTrendDto BuildPurchasePriceTrendRow(
         PurchasePriceTrendRowKey key,
-        IReadOnlyList<PurchasePriceTrendSourceRow> groupRows,
-        IReadOnlyList<string> periodOrder,
-        string? focusPeriod,
-        DateTime rangeStart,
-        DateTime rangeEnd)
+        IReadOnlyList<PurchasePriceTrendSourceRow> groupRows)
     {
-        var entries = groupRows.Select(r => new TaktPriceTrendEntry
-        {
-            EffectiveStartDate = r.Master.ValidFrom,
-            EffectiveEndDate = r.Master.ValidTo,
-            RawPrice = r.Item.Price,
-            PerUnit = r.Item.PriceUnit,
-            Unit = r.Item.UnitOfMeasure ?? string.Empty,
-            ReferenceCode = r.Master.SupplierCode,
-        }).ToList();
-        // 缺月回填最近有效价（与物料移动价格推移一致；回填写入最近价格日期供前端 * 悬停）
-        var points = TaktPriceTrendAnalysisHelper.BuildMonthlyTrendPoints(
-            entries,
-            rangeStart,
-            rangeEnd,
-            carryForwardMissingMonths: true);
-        var pointByMonth = points.ToDictionary(p => p.YearMonth, StringComparer.Ordinal);
-        // 无自定义比较器，避免 JSON 序列化后前端读不到来源日期（* 标记）
-        var periodUnitPrices = new Dictionary<string, decimal>();
-        var periodPriceSourcePeriods = new Dictionary<string, string>();
+        var priceByDate = groupRows
+            .GroupBy(r => r.Master.ValidFrom.Date)
+            .ToDictionary(
+                g => g.Key.ToString("yyyy-MM-dd"),
+                g =>
+                {
+                    var avgRaw = g.Average(x => x.Item.Price);
+                    var perUnit = g.Select(x => x.Item.PriceUnit).FirstOrDefault();
+                    var unit = g.Select(x => x.Item.UnitOfMeasure)
+                        .FirstOrDefault(u => !string.IsNullOrWhiteSpace(u)) ?? string.Empty;
+                    var currency = g.Select(x => x.Item.ConditionCurrencyCode?.Trim())
+                        .FirstOrDefault(c => !string.IsNullOrWhiteSpace(c)) ?? string.Empty;
+                    return (
+                        UnitPrice: RoundPurchasePriceUnitPrice(
+                            TaktPriceTrendAnalysisHelper.NormalizeUnitPrice(avgRaw, perUnit)),
+                        Unit: unit,
+                        Currency: currency);
+                },
+                StringComparer.Ordinal);
+        var periodUnitPrices = new Dictionary<string, decimal>(StringComparer.Ordinal);
+        var periodPriceSourcePeriods = new Dictionary<string, string>(StringComparer.Ordinal);
+        var periodPoints = new List<TaktPurchasePriceTrendPointDto>();
         var row = new TaktPurchasePriceTrendDto
         {
             PlantCode = key.PlantCode,
             MaterialCode = key.MaterialCode,
             SupplierCode = key.SupplierCode,
-            CurrencyCode = groupRows
-                .Select(r => r.Item.ConditionCurrencyCode?.Trim())
+            CurrencyCode = priceByDate.Values
+                .Select(v => v.Currency)
                 .FirstOrDefault(c => !string.IsNullOrWhiteSpace(c)) ?? string.Empty,
-            Unit = entries.FirstOrDefault(e => !string.IsNullOrWhiteSpace(e.Unit))?.Unit ?? string.Empty,
+            Unit = priceByDate.Values
+                .Select(v => v.Unit)
+                .FirstOrDefault(u => !string.IsNullOrWhiteSpace(u)) ?? string.Empty,
             Trend = "none",
             PeriodUnitPrices = periodUnitPrices,
             PeriodPriceSourcePeriods = periodPriceSourcePeriods,
+            PeriodPoints = periodPoints,
+            PeriodAdjacents = new Dictionary<string, TaktPurchasePriceTrendAdjacentDto>(StringComparer.Ordinal),
         };
-        foreach (var period in periodOrder)
+        foreach (var pair in priceByDate.OrderBy(kv => kv.Key, StringComparer.Ordinal))
         {
-            if (!pointByMonth.TryGetValue(period, out var point) || !point.HasPrice)
+            periodUnitPrices[pair.Key] = pair.Value.UnitPrice;
+            periodPriceSourcePeriods[pair.Key] = pair.Key;
+            periodPoints.Add(new TaktPurchasePriceTrendPointDto
             {
-                continue;
-            }
-            periodUnitPrices[period] = RoundPurchasePriceUnitPrice(point.UnitPrice);
-            // 当月有价=yyyy-MM；缺月回填=最近价格日期 yyyy-MM-dd（与移动价 * 说明一致）
-            periodPriceSourcePeriods[period] = TaktPriceTrendAnalysisHelper.ResolvePeriodPriceSourceLabel(point);
-            if (!string.IsNullOrWhiteSpace(point.Unit))
+                ValidFrom = pair.Key,
+                UnitPrice = pair.Value.UnitPrice,
+            });
+            if (!string.IsNullOrWhiteSpace(pair.Value.Unit))
             {
-                row.Unit = point.Unit;
+                row.Unit = pair.Value.Unit;
             }
         }
-        ApplyPurchasePriceFocusTrend(row, focusPeriod);
+        ApplyPurchaseInfoRecordValidFromTrend(row);
         return row;
     }
 
@@ -502,55 +472,69 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
     }
 
     /// <summary>
-    /// 按关注月计算环比涨跌
+    /// 按该行第 n 笔有效起始日自早到晚：相邻逐比；期间涨跌=第 1 笔对末笔
     /// </summary>
     /// <param name="row">转置行</param>
-    /// <param name="focusPeriod">关注期间 yyyy-MM</param>
-    private static void ApplyPurchasePriceFocusTrend(TaktPurchasePriceTrendDto row, string? focusPeriod)
+    private static void ApplyPurchaseInfoRecordValidFromTrend(TaktPurchasePriceTrendDto row)
     {
-        if (string.IsNullOrWhiteSpace(focusPeriod))
-        {
-            return;
-        }
-        var comparePeriod = focusPeriod.Trim();
-        if (!DateTime.TryParseExact(
-                comparePeriod + "-01",
-                "yyyy-MM-dd",
-                System.Globalization.CultureInfo.InvariantCulture,
-                System.Globalization.DateTimeStyles.None,
-                out var compareMonth))
-        {
-            return;
-        }
-        var basePeriod = compareMonth.AddMonths(-1).ToString("yyyy-MM");
-        row.BasePeriod = basePeriod;
-        row.ComparePeriod = comparePeriod;
-        if (!row.PeriodUnitPrices.TryGetValue(basePeriod, out var basePrice)
-            || !row.PeriodUnitPrices.TryGetValue(comparePeriod, out var comparePrice))
+        var points = row.PeriodPoints ?? new List<TaktPurchasePriceTrendPointDto>();
+        row.PeriodPoints = points;
+        row.PeriodAdjacents ??= new Dictionary<string, TaktPurchasePriceTrendAdjacentDto>(StringComparer.Ordinal);
+        if (points.Count < 2)
         {
             row.Trend = "none";
             return;
         }
-        row.VarianceAmount = RoundPurchasePriceUnitPrice(comparePrice - basePrice);
+        for (var i = 1; i < points.Count; i++)
+        {
+            var previous = points[i - 1];
+            var current = points[i];
+            var adjacent = ComputePurchaseInfoRecordVariance(previous.UnitPrice, current.UnitPrice);
+            current.AdjacentTrend = adjacent.Trend;
+            current.AdjacentVarianceAmount = adjacent.Amount;
+            current.AdjacentVariancePercent = adjacent.Percent;
+            current.AdjacentBasePeriod = previous.ValidFrom;
+            row.PeriodAdjacents[current.ValidFrom] = new TaktPurchasePriceTrendAdjacentDto
+            {
+                BasePeriod = previous.ValidFrom,
+                ComparePeriod = current.ValidFrom,
+                Trend = adjacent.Trend,
+                VarianceAmount = adjacent.Amount,
+                VariancePercent = adjacent.Percent,
+            };
+        }
+        var first = points[0];
+        var last = points[^1];
+        var overall = ComputePurchaseInfoRecordVariance(first.UnitPrice, last.UnitPrice);
+        row.BasePeriod = first.ValidFrom;
+        row.ComparePeriod = last.ValidFrom;
+        row.VarianceAmount = overall.Amount;
+        row.VariancePercent = overall.Percent;
+        row.Trend = overall.Trend;
+    }
+
+    /// <summary>
+    /// 计算对比单价相对基准单价的差额、变动率与涨跌
+    /// </summary>
+    /// <param name="basePrice">基准单价</param>
+    /// <param name="comparePrice">对比单价</param>
+    /// <returns>差额、变动率、涨跌码</returns>
+    private static (decimal Amount, decimal? Percent, string Trend) ComputePurchaseInfoRecordVariance(
+        decimal basePrice,
+        decimal comparePrice)
+    {
+        var amount = RoundPurchasePriceUnitPrice(comparePrice - basePrice);
+        decimal? percent = null;
         if (basePrice != 0m)
         {
-            row.VariancePercent = Math.Round(
-                row.VarianceAmount.Value / basePrice,
-                4,
-                MidpointRounding.AwayFromZero);
+            percent = Math.Round(amount / basePrice, 4, MidpointRounding.AwayFromZero);
         }
-        if (comparePrice > basePrice)
-        {
-            row.Trend = "up";
-        }
-        else if (comparePrice < basePrice)
-        {
-            row.Trend = "down";
-        }
-        else
-        {
-            row.Trend = "flat";
-        }
+        var trend = comparePrice > basePrice
+            ? "up"
+            : comparePrice < basePrice
+                ? "down"
+                : "flat";
+        return (amount, percent, trend);
     }
 
     /// <summary>
@@ -609,6 +593,7 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
     /// <returns>四舍五入后单价</returns>
     private static decimal RoundPurchasePriceUnitPrice(decimal value) =>
         Math.Round(value, 5, MidpointRounding.AwayFromZero);
+
     /// <summary>
     /// 采购价格推移行键
     /// </summary>
@@ -664,11 +649,11 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
         /// <summary>
         /// 采购价格主表
         /// </summary>
-        public TaktPurchasePrice Master { get; init; } = null!;
+        public TaktPurchaseInfoRecord Master { get; init; } = null!;
 
         /// <summary>
-        /// 采购价格明细
+        /// 采购信息记录行
         /// </summary>
-        public TaktPurchasePriceItem Item { get; init; } = null!;
+        public TaktPurchaseInfoRecordItem Item { get; init; } = null!;
     }
 }

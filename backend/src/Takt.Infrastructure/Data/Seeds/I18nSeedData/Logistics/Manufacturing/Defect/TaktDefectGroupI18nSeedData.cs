@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Defect
 // 文件名称：TaktDefectGroupI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktDefectGroup 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktDefectGroupI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.defectgroup._self", "zh-HK", "不良组主数据信息_hk", "实体名称"),
 
             // entity.defectgroup.code
-            new TranslationSeedItem("entity.defectgroup.code", "en-US", "不良组编码_us", "不良组编码（3）"),
+            new TranslationSeedItem("entity.defectgroup.code", "en-US", "不良组编码_us", "不良组编码（与员工编码同长 6）"),
             // entity.defectgroup.code
-            new TranslationSeedItem("entity.defectgroup.code", "ja-JP", "不良组编码_jp", "不良组编码（3）"),
+            new TranslationSeedItem("entity.defectgroup.code", "ja-JP", "不良组编码_jp", "不良组编码（与员工编码同长 6）"),
             // entity.defectgroup.code
-            new TranslationSeedItem("entity.defectgroup.code", "zh-CN", "不良组编码", "不良组编码（3）"),
+            new TranslationSeedItem("entity.defectgroup.code", "zh-CN", "不良组编码", "不良组编码（与员工编码同长 6）"),
             // entity.defectgroup.code
-            new TranslationSeedItem("entity.defectgroup.code", "zh-HK", "不良组编码_hk", "不良组编码（3）"),
+            new TranslationSeedItem("entity.defectgroup.code", "zh-HK", "不良组编码_hk", "不良组编码（与员工编码同长 6）"),
 
             // entity.defectgroup.name
             new TranslationSeedItem("entity.defectgroup.name", "en-US", "不良组名称_us", "不良组名称"),

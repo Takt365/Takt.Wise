@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/human-resource/compensation/salary-formula -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：薪资计算公式管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -389,19 +389,18 @@
  * 薪资计算公式管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/human-resource/compensation/salary-formula
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import SalaryFormulaForm from './components/salary-formula-form.vue'
-import { getSalaryFormulaList, getSalaryFormulaById, createSalaryFormula, updateSalaryFormula, deleteSalaryFormulaById, deleteSalaryFormulaBatch, getSalaryFormulaTemplate, importSalaryFormula, exportSalaryFormula, updateSalaryFormulaStatus } from '@/api/human-resource/compensation/salary-formula'
-import type { SalaryFormula, SalaryFormulaQuery } from '@/types/human-resource/compensation/salary-formula'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import SalaryFormulaForm from './components/SalaryFormulaForm.vue'
+import { getSalaryFormulaList, getSalaryFormulaById, createSalaryFormula, updateSalaryFormula, deleteSalaryFormulaById, deleteSalaryFormulaBatch, getSalaryFormulaTemplate, importSalaryFormula, exportSalaryFormula, updateSalaryFormulaStatus } from '@/api/human-resource/compensation/salaryFormula.api'
+import type { SalaryFormula, SalaryFormulaQuery } from '@/types/human-resource/compensation/salaryFormula.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 /** i18n 翻译函数 */

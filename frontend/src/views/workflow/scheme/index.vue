@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节节拍工厂·Takt Plat  -->
+<!-- 项目名称：节拍智控·TaktWise  -->
 <!-- 命名空间：@/views/workflow/scheme -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：流程方案管理页面，包含列表、查询、导出、新增、编辑、删除及 ProcessContent 设计 -->
@@ -157,19 +157,18 @@
 </template>
 
 <script setup lang="ts">
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 /**
  * 流程方案列表页：查询、分页、导出、新增、编辑、删除；弹窗内使用 SchemeForm 编辑方案与 ProcessContent。
  */
-import { ref, reactive, onMounted, computed } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
-import { validateProcessContentForSave } from '@/utils/workflow/validate-process-content'
-import { DEFAULT_PROCESS_CONTENT } from '@/utils/workflow/default-process-content'
-import SchemeForm from './components/scheme-form.vue'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
+import { validateProcessContentForSave } from '@/utils/workflow/validateProcessContent'
+import { DEFAULT_PROCESS_CONTENT } from '@/utils/workflow/defaultProcessContent'
+import SchemeForm from './components/SchemeForm.vue'
 import {
   getFlowSchemeList,
   getFlowSchemeById,
@@ -180,13 +179,13 @@ import {
   exportFlowScheme,
   getFlowSchemeTemplate,
   importFlowScheme
-} from '@/api/workflow/flow-scheme'
-import type { FlowScheme, FlowSchemeCreate, FlowSchemeUpdate, FlowSchemeFormModel } from '@/types/workflow/flow-scheme'
-import { useTenantStore } from '@/stores/identity/tenant'
-import { useUserStore } from '@/stores/identity/user'
+} from '@/api/workflow/flowScheme.api'
+import type { FlowScheme, FlowSchemeCreate, FlowSchemeUpdate, FlowSchemeFormModel } from '@/types/workflow/flowScheme.types'
+import { useTenantStore } from '@/stores/identity/useTenantStore'
+import { useUserStore } from '@/stores/identity/useUserStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { useWorkflowSignalRRefresh, WORKFLOW_TABLE_NAMES } from '@/composables/use-workflow-signalr-refresh'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { useWorkflowSignalRRefresh, WORKFLOW_TABLE_NAMES } from '@/composables/useWorkflowSignalrRefresh'
 import { RiEditLine, RiDeleteBinLine, RiPlayLine, RiStopLine } from '@remixicon/vue'
 
 const { t } = useI18n()
@@ -265,7 +264,7 @@ const getSchemeId = (record: unknown): string => {
   return flowSchemeId != null ? String(flowSchemeId) : ''
 }
 
-/** 表格列：与 @/types/workflow/flow-scheme FlowScheme 字段一致（列表展示用，不含 processContent 大字段） */
+/** 表格列：与 @/types/workflow/flowScheme.types FlowScheme 字段一致（列表展示用，不含 processContent 大字段） */
 const columns = computed<TableColumnsType>(() => [
   {
     title: 'ID',

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Procurement
 // 文件名称：TaktPurchasePriceTrendDtos.cs
 // 创建时间：2026-07-01
@@ -33,7 +33,7 @@ public class TaktPurchasePriceTrendQueryDto : TaktPagedQuery
     public DateTime? PeriodDateEnd { get; set; }
 
     /// <summary>
-    /// 关注期间 yyyy-MM（可选）；缺省取期间末月，相对上月算环比
+    /// 关注期间（可选；采购价格推移按各行最早对最晚 ValidFrom 计期间涨跌，相邻有效起始日另计，忽略本字段）
     /// </summary>
     public string? FocusPeriod { get; set; }
 
@@ -61,10 +61,15 @@ public class TaktPurchasePriceTrendQueryDto : TaktPagedQuery
     /// 涨跌筛选：空=全部；up/down/flat/none；changed=仅涨或跌
     /// </summary>
     public string? TrendFilter { get; set; }
+
+    /// <summary>
+    /// 明细导出/列表可见列键（逗号分隔；空=导出全部明细列）
+    /// </summary>
+    public string? DetailColumnKeys { get; set; }
 }
 
 /// <summary>
-/// 采购价格推移转置行（行=工厂+物料+供应商，列=各月折算单价）
+/// 采购价格推移转置行（行=工厂+物料+供应商；列=该行自己的第 n 笔 ValidFrom，不对齐全表日期）
 /// </summary>
 public class TaktPurchasePriceTrendDto
 {
@@ -104,37 +109,47 @@ public class TaktPurchasePriceTrendDto
     public string Unit { get; set; } = string.Empty;
 
     /// <summary>
-    /// 各期间折算单价（键 yyyy-MM；仅含当月有效价月份）
+    /// 各有效起始日折算单价（键 yyyy-MM-dd；供导出/兼容）
     /// </summary>
     public Dictionary<string, decimal> PeriodUnitPrices { get; set; } = new(StringComparer.Ordinal);
 
     /// <summary>
-    /// 各期间单价来源月（有效期填充场景可留空）
+    /// 各列单价来源（与日期键相同；无缺月回填）
     /// </summary>
     public Dictionary<string, string> PeriodPriceSourcePeriods { get; set; } = new(StringComparer.Ordinal);
 
     /// <summary>
-    /// 环比涨跌：none / up / down / flat
+    /// 该行有效起始日序列（自早到晚；表格第 n 笔对应本列表第 n 项）
+    /// </summary>
+    public List<TaktPurchasePriceTrendPointDto> PeriodPoints { get; set; } = new();
+
+    /// <summary>
+    /// 相邻有效起始日比较（键=后一次 yyyy-MM-dd）
+    /// </summary>
+    public Dictionary<string, TaktPurchasePriceTrendAdjacentDto> PeriodAdjacents { get; set; } = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// 期间涨跌（该行最早有效起始日 vs 最晚有效起始日）：none / up / down / flat
     /// </summary>
     public string Trend { get; set; } = "none";
 
     /// <summary>
-    /// 环比基准期间
+    /// 期间基准有效起始日（该行最早）
     /// </summary>
     public string? BasePeriod { get; set; }
 
     /// <summary>
-    /// 环比对比期间
+    /// 期间对比有效起始日（该行最晚）
     /// </summary>
     public string? ComparePeriod { get; set; }
 
     /// <summary>
-    /// 环比差额（对比单价 - 基准单价）
+    /// 期间差额（采购价格推移=末笔单价-首笔单价；采购订单价格历史推移=各月「单价差×当月数量」合计，即因单价造成的采购金额浮动）
     /// </summary>
     public decimal? VarianceAmount { get; set; }
 
     /// <summary>
-    /// 环比变动率（小数比率，保留 4 位；如 0.2978 表示 29.78%）
+    /// 期间变动率（小数比率，保留 4 位；如 0.2978 表示 29.78%）
     /// </summary>
     public decimal? VariancePercent { get; set; }
 
@@ -160,7 +175,7 @@ public class TaktPurchasePriceTrendResultDto
     public TaktPagedResult<TaktPurchasePriceTrendDto> Paged { get; set; } = null!;
 
     /// <summary>
-    /// 期间列顺序 yyyy-MM
+    /// 第 n 笔序号（1 起；各行按自己的 ValidFrom 取第 n 笔，不对齐全表日期）
     /// </summary>
     public List<string> PeriodOrder { get; set; } = new();
 
@@ -170,12 +185,12 @@ public class TaktPurchasePriceTrendResultDto
     public int MaterialCount { get; set; }
 
     /// <summary>
-    /// 环比基准期间
+    /// 期间基准笔序号（第 1 笔）
     /// </summary>
     public string? BasePeriod { get; set; }
 
     /// <summary>
-    /// 环比对比期间（关注月）
+    /// 期间对比笔序号（末笔）
     /// </summary>
     public string? ComparePeriod { get; set; }
 
@@ -198,4 +213,132 @@ public class TaktPurchasePriceTrendResultDto
     /// 无法比较行数（筛选前全量统计）
     /// </summary>
     public int NoneCount { get; set; }
+
+    /// <summary>
+    /// 各月采购金额 / 涨价合计 / 跌价合计（采购订单价格历史推移用）
+    /// </summary>
+    public List<TaktPurchasePriceTrendMonthSummaryDto> MonthSummaries { get; set; } = new();
+
+    /// <summary>
+    /// 期间采购金额合计（采购订单价格历史推移用）
+    /// </summary>
+    public decimal TotalAmount { get; set; }
+
+    /// <summary>
+    /// 期间涨价合计（各物料因单价上涨造成的采购金额之和）
+    /// </summary>
+    public decimal TotalUpAmount { get; set; }
+
+    /// <summary>
+    /// 期间跌价合计（各物料因单价下跌造成的采购金额之和）
+    /// </summary>
+    public decimal TotalDownAmount { get; set; }
+}
+
+/// <summary>
+/// 价格推移单月汇总（金额 + 因单价涨/跌拆开的影响金额）
+/// </summary>
+public class TaktPurchasePriceTrendMonthSummaryDto
+{
+    /// <summary>
+    /// 年月 yyyy-MM
+    /// </summary>
+    public string Period { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 当月采购金额合计
+    /// </summary>
+    public decimal Amount { get; set; }
+
+    /// <summary>
+    /// 当月涨价合计（单价上涨物料的「单价差×当月数量」之和）
+    /// </summary>
+    public decimal UpAmount { get; set; }
+
+    /// <summary>
+    /// 当月跌价合计（单价下跌物料的「单价差×当月数量」绝对值之和）
+    /// </summary>
+    public decimal DownAmount { get; set; }
+}
+
+/// <summary>
+/// 采购价格推移单笔（该行自己的一次 ValidFrom）
+/// </summary>
+public class TaktPurchasePriceTrendPointDto
+{
+    /// <summary>
+    /// 有效起始日 yyyy-MM-dd
+    /// </summary>
+    public string ValidFrom { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 折算单价
+    /// </summary>
+    public decimal UnitPrice { get; set; }
+
+    /// <summary>
+    /// 当月采购数量（采购订单价格历史推移用；采购价格推移忽略）
+    /// </summary>
+    public decimal Quantity { get; set; }
+
+    /// <summary>
+    /// 当月采购金额（采购订单价格历史推移用；采购价格推移忽略）
+    /// </summary>
+    public decimal Amount { get; set; }
+
+    /// <summary>
+    /// 当月是否有采购（采购订单价格历史推移用）
+    /// </summary>
+    public bool HasPurchase { get; set; }
+
+    /// <summary>
+    /// 相对前一笔的涨跌：none / up / down / flat（第 1 笔为 none）
+    /// </summary>
+    public string AdjacentTrend { get; set; } = "none";
+
+    /// <summary>
+    /// 相对前一笔差额（采购价格推移=单价差额；采购订单价格历史推移=单价差额×当月数量，即因单价造成的采购金额变动）
+    /// </summary>
+    public decimal? AdjacentVarianceAmount { get; set; }
+
+    /// <summary>
+    /// 相对前一笔变动率（小数比率）
+    /// </summary>
+    public decimal? AdjacentVariancePercent { get; set; }
+
+    /// <summary>
+    /// 前一笔有效起始日 yyyy-MM-dd
+    /// </summary>
+    public string? AdjacentBasePeriod { get; set; }
+}
+
+/// <summary>
+/// 相邻两次有效起始日比较（相对前一次）
+/// </summary>
+public class TaktPurchasePriceTrendAdjacentDto
+{
+    /// <summary>
+    /// 前一次有效起始日 yyyy-MM-dd
+    /// </summary>
+    public string BasePeriod { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 本次有效起始日 yyyy-MM-dd
+    /// </summary>
+    public string ComparePeriod { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 相邻涨跌：up / down / flat
+    /// </summary>
+    public string Trend { get; set; } = "none";
+
+    /// <summary>
+    /// 相邻差额（本次单价 - 前一次单价）
+    /// </summary>
+    public decimal VarianceAmount { get; set; }
+
+    /// <summary>
+    /// 相邻变动率（小数比率，保留 4 位）
+    /// </summary>
+    public decimal? VariancePercent { get; set; }
 }

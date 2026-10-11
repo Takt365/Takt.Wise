@@ -1,5 +1,5 @@
 ﻿// ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Helpers
 // 文件名称：TaktEmailTemplateHelper.cs
 // 功能描述：邮件模板加载与占位符替换，供发送邮件时套用。优先从标准位置 wwwroot/Email/Templates 加载。

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.EntitySeedData
 // 文件名称：TaktNumberingSeedData.cs
 // 创建时间：2026-06-14
@@ -17,6 +17,7 @@ using Takt.Domain.Entities.Foundation;
 using Takt.Domain.Entities.Identity;
 using Takt.Domain.Interfaces;
 using Takt.Domain.Repositories;
+using Takt.Shared.Constants;
 using Takt.Shared.Helpers;
 using Takt.Shared.Options;
 
@@ -58,15 +59,16 @@ public class TaktNumberingSeedData : ITaktSeedDataCoordinator
     private const string MenuEquipment = "LOGISTICS_MAINTENANCE_EQUIPMENT";
     private const string MenuSalesInvoice = "LOGISTICS_SALES_INVOICE";
     private const string MenuSalesOrder = "LOGISTICS_SALES_ORDER";
-    private const string MenuSalesPrice = "LOGISTICS_SALES_PRICE";
+    private const string MenuSalesConditionRecord = "LOGISTICS_SALES_CONDITION_RECORD";
     private const string MenuSalesQuotation = "LOGISTICS_SALES_QUOTATION";
     private const string MenuPurchaseOrder = "LOGISTICS_PROCUREMENT_PURCHASE_ORDER";
-    private const string MenuPurchasePrice = "LOGISTICS_PROCUREMENT_PURCHASE_PRICE";
+    private const string MenuPurchaseInfoRecord = "LOGISTICS_PROCUREMENT_PURCHASE_INFO_RECORD";
     private const string MenuPurchaseRequest = "LOGISTICS_PROCUREMENT_PURCHASE_REQUEST";
     private const string MenuSupplier = "LOGISTICS_PROCUREMENT_SUPPLIER";
     private const string MenuVendor = "LOGISTICS_PROCUREMENT_VENDOR";
     private const string MenuClient = "LOGISTICS_SALES_CLIENT";
     private const string MenuCustomer = "LOGISTICS_SALES_CUSTOMER";
+    private const string MenuEcNotification = "LOGISTICS_MANUFACTURING_ENGINEERING_CHANGE_NOTIFICATION";
 
     // 与字典 sys_numbering_dept_code 的 DictValue 一致
     private const string IsoR = "R"; // 总务部 D0100
@@ -637,13 +639,13 @@ public class TaktNumberingSeedData : ITaktSeedDataCoordinator
             new NumberingSeedTemplate(
                 "LG-SLS-PRC",
                 "销售价格编码",
-                MenuSalesPrice,
+                MenuSalesConditionRecord,
                 IsoS,
                 "SPRC",
                 "yyyy",
                 "Annually",
                 SegmentsCompanyLevel,
-                "内置：TaktSalesPrice.SalesPriceCode"),
+                "内置：TaktSalesConditionRecord.SalesConditionRecordCode"),
             new NumberingSeedTemplate(
                 "LG-SLS-QUO",
                 "销售报价编码",
@@ -667,13 +669,13 @@ public class TaktNumberingSeedData : ITaktSeedDataCoordinator
             new NumberingSeedTemplate(
                 "LG-PUR-PRC",
                 "采购价格编码",
-                MenuPurchasePrice,
+                MenuPurchaseInfoRecord,
                 IsoC,
                 "PRC",
                 "yyyy",
                 "Annually",
                 SegmentsCompanyLevel,
-                "内置：TaktPurchasePrice.PurchasePriceCode"),
+                "内置：TaktPurchaseInfoRecord.PurchaseInfoRecordCode"),
             new NumberingSeedTemplate(
                 "LG-PUR-REQ",
                 "采购申请编码",
@@ -724,6 +726,46 @@ public class TaktNumberingSeedData : ITaktSeedDataCoordinator
                 "None",
                 SegmentsCompanyNoDate,
                 "内置：TaktCustomer.CustomerCode"),
+            new NumberingSeedTemplate(
+                TaktEcFlowConstants.NotificationRuleSystem,
+                "设变系统通知编码",
+                MenuEcNotification,
+                IsoZ,
+                "SYS",
+                "yyyy",
+                "Annually",
+                SegmentsCompanyLevel,
+                "内置：TaktEcNotification.EcNotificationCode；EcNotificationMethod=1系统通知"),
+            new NumberingSeedTemplate(
+                TaktEcFlowConstants.NotificationRuleEmail,
+                "设变邮件通知编码",
+                MenuEcNotification,
+                IsoZ,
+                "MAIL",
+                "yyyy",
+                "Annually",
+                SegmentsCompanyLevel,
+                "内置：TaktEcNotification.EcNotificationCode；EcNotificationMethod=2邮件"),
+            new NumberingSeedTemplate(
+                TaktEcFlowConstants.NotificationRulePaper,
+                "设变纸质通知编码",
+                MenuEcNotification,
+                IsoZ,
+                "PAPR",
+                "yyyy",
+                "Annually",
+                SegmentsCompanyLevel,
+                "内置：TaktEcNotification.EcNotificationCode；EcNotificationMethod=3纸质"),
+            new NumberingSeedTemplate(
+                TaktEcFlowConstants.NotificationRuleMeeting,
+                "设变会议通知编码",
+                MenuEcNotification,
+                IsoZ,
+                "MEET",
+                "yyyy",
+                "Annually",
+                SegmentsCompanyLevel,
+                "内置：TaktEcNotification.EcNotificationCode；EcNotificationMethod=4会议"),
         ];
     }
 

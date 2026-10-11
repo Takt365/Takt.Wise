@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Interfaces
 // 文件名称：ITaktEcExecModelRootMaterialRow.cs
 // 创建时间：2026-09-09
@@ -38,7 +38,7 @@ public interface ITaktEcExecModelRootMaterialRow : ITaktEcDeptExecEntity
     string EcModelCode { get; set; }
 
     /// <summary>
-    /// 根物料编码
+    /// 根物料编码组（同去重键下的根物料编码，分号分隔）
     /// </summary>
-    string EcRootMaterialCode { get; set; }
+    string EcRootMaterialCodeGroup { get; set; }
 }

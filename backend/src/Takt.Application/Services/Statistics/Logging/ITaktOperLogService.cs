@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Statistics.Logging
 // 文件名称：ITaktOperLogService.cs
 // 创建时间：2026-06-12
@@ -27,6 +27,13 @@ public interface ITaktOperLogService
     /// <param name="queryDto">查询DTO</param>
     /// <returns>分页结果</returns>
     Task<TaktPagedResult<TaktOperLogDto>> GetOperLogListAsync(TaktOperLogQueryDto queryDto);
+
+    /// <summary>
+    /// 获取当前登录用户的操作日志列表（分页；强制 UserName=当前用户，供个人中心）
+    /// </summary>
+    /// <param name="queryDto">查询DTO（高级条件可用；UserName 由服务端强制为当前用户）</param>
+    /// <returns>分页结果</returns>
+    Task<TaktPagedResult<TaktOperLogDto>> GetMyOperLogListAsync(TaktOperLogQueryDto queryDto);
 
     /// <summary>
     /// 根据ID获取操作日志

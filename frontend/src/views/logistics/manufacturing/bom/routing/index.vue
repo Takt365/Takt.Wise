@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/bom/routing -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：工艺路线主表实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -458,22 +458,21 @@
  * 工艺路线主表实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/bom/routing
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import RoutingForm from './components/routing-form.vue'
-import RoutingItemPanel from './components/routing-item-panel.vue'
-import { provideRoutingMasterContext, type RoutingRowRecord } from './composables/use-routing-master-context'
-import { getRoutingList, getRoutingById, createRouting, updateRouting, deleteRoutingById, deleteRoutingBatch, getRoutingTemplate, importRouting, exportRouting, updateRoutingStatus } from '@/api/logistics/manufacturing/bom/routing'
-import type { Routing, RoutingQuery } from '@/types/logistics/manufacturing/bom/routing'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import RoutingForm from './components/RoutingForm.vue'
+import RoutingItemPanel from './components/RoutingItemPanel.vue'
+import { provideRoutingMasterContext, type RoutingRowRecord } from './composables/useRoutingMasterContext'
+import { getRoutingList, getRoutingById, createRouting, updateRouting, deleteRoutingById, deleteRoutingBatch, getRoutingTemplate, importRouting, exportRouting, updateRoutingStatus } from '@/api/logistics/manufacturing/bom/routing.api'
+import type { Routing, RoutingQuery } from '@/types/logistics/manufacturing/bom/routing.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -482,7 +481,7 @@ import {
   ROUTING_QUERY_STRING_FIELDS,
   ROUTING_QUERY_FIELDS,
   ROUTING_SELF_I18N_KEY,
-} from './composables/use-routing-i18n'
+} from './composables/useRoutingI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useRoutingI18n()
@@ -641,7 +640,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -840,8 +838,6 @@ const getRoutingDictValue = (
   if (typeof value === 'string' || typeof value === 'number') return value
   return String(value)
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

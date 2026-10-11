@@ -1,6 +1,6 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
-<!-- 命名空间：frontend/src/views/dashboard/data-board/modules -->
+<!-- 项目名称：节拍智控·TaktWise -->
+<!-- 命名空间：frontend/src/views/dashboard/dataBoard.types/modules -->
 <!-- 文件名称：StatsSalesInvoiceModule.vue -->
 <!-- 功能描述：数据看板销售发票金额（近三月） -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
@@ -28,12 +28,11 @@
 /**
  * 销售发票金额：近三个自然月（TaktSalesInvoices/invoice-stat）
  */
-import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import StatsMetricGrid from '../components/stats-metric-grid.vue'
-import { usePermissionStore } from '@/stores/identity/permission'
-import type { SalesInvoiceStat } from '@/types/logistics/sales/sales-stat'
-import { enrichDashboardMetricItems } from '../utils/stats-metric-dashboard'
+import StatsMetricGrid from '../components/StatsMetricGrid.vue'
+import { usePermissionStore } from '@/stores/identity/usePermissionStore'
+import type { SalesInvoiceStat } from '@/types/logistics/sales/salesStat.types'
+import { enrichDashboardMetricItems } from '../utils/statsMetricDashboard'
 import {
   DASHBOARD_STATS_API,
   DASHBOARD_STATS_PERMISSION,
@@ -41,8 +40,8 @@ import {
   fetchDashboardGet,
   fetchDashboardMetricIfPermitted,
   scheduleDashboardLoad,
-} from '../utils/stats-query'
-import { getLastThreeCalendarMonthRanges } from '../utils/stats-dashboard-plant'
+} from '../utils/statsQuery'
+import { getLastThreeCalendarMonthRanges } from '../utils/statsDashboardPlant'
 
 /** 空销售发票统计 */
 const EMPTY_STAT: SalesInvoiceStat = {

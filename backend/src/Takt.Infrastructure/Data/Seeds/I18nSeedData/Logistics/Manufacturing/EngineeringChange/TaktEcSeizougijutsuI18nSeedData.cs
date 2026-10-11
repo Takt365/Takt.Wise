@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcSeizougijutsuI18nSeedData.cs
 // 创建时间：2026-08-26
@@ -126,14 +126,14 @@ public class TaktEcSeizougijutsuI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecseizougijutsu.ecmodelcode
             new TranslationSeedItem("entity.ecseizougijutsu.ecmodelcode", "zh-HK", "機種編碼_hk", "机种编码（冗余：来自 TaktEcDetail.EcModelCode）"),
 
-            // entity.ecseizougijutsu.ecrootmaterialcode
-            new TranslationSeedItem("entity.ecseizougijutsu.ecrootmaterialcode", "en-US", "根物料编码_us", "根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）"),
-            // entity.ecseizougijutsu.ecrootmaterialcode
-            new TranslationSeedItem("entity.ecseizougijutsu.ecrootmaterialcode", "ja-JP", "根物料编码_jp", "根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）"),
-            // entity.ecseizougijutsu.ecrootmaterialcode
-            new TranslationSeedItem("entity.ecseizougijutsu.ecrootmaterialcode", "zh-CN", "根物料编码", "根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）"),
-            // entity.ecseizougijutsu.ecrootmaterialcode
-            new TranslationSeedItem("entity.ecseizougijutsu.ecrootmaterialcode", "zh-HK", "根物料编码_hk", "根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）"),
+            // entity.ecseizougijutsu.ecrootmaterialcodegroup
+            new TranslationSeedItem("entity.ecseizougijutsu.ecrootmaterialcodegroup", "en-US", "根物料编码组_us", "根物料编码组（同去重键下的根物料编码，分号分隔；ntext）"),
+            // entity.ecseizougijutsu.ecrootmaterialcodegroup
+            new TranslationSeedItem("entity.ecseizougijutsu.ecrootmaterialcodegroup", "ja-JP", "根物料编码组_jp", "根物料编码组（同去重键下的根物料编码，分号分隔；ntext）"),
+            // entity.ecseizougijutsu.ecrootmaterialcodegroup
+            new TranslationSeedItem("entity.ecseizougijutsu.ecrootmaterialcodegroup", "zh-CN", "根物料编码组", "根物料编码组（同去重键下的根物料编码，分号分隔；ntext）"),
+            // entity.ecseizougijutsu.ecrootmaterialcodegroup
+            new TranslationSeedItem("entity.ecseizougijutsu.ecrootmaterialcodegroup", "zh-HK", "根物料编码组_hk", "根物料编码组（同去重键下的根物料编码，分号分隔；ntext）"),
 
             // entity.ecseizougijutsu.ecrootmaterialdescription
             new TranslationSeedItem("entity.ecseizougijutsu.ecrootmaterialdescription", "en-US", "根物料描述_us", "根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）"),

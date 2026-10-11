@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Quality.Complaint
 // 文件名称：TaktCustomerComplaintService.cs
 // 创建时间：2026-09-04
@@ -599,7 +599,7 @@ public class TaktCustomerComplaintService : TaktServiceBase, ITaktCustomerCompla
                 || (x.CustomerName1 != null && x.CustomerName1.Contains(keywords))
                 || (x.CustomerCode != null && x.CustomerCode.Contains(keywords))
                 || (x.ResponsibleDeptName != null && x.ResponsibleDeptName.Contains(keywords))
-                || (x.ResponsiblePersonName != null && x.ResponsiblePersonName.Contains(keywords))
+                || (x.ResponsibleGroupName != null && x.ResponsibleGroupName.Contains(keywords))
                 || (x.ComplaintDescription != null && x.ComplaintDescription.Contains(keywords))
                 || (x.HandlingResult != null && x.HandlingResult.Contains(keywords))
                 || (x.Attachments != null && x.Attachments.Contains(keywords))
@@ -674,16 +674,16 @@ public class TaktCustomerComplaintService : TaktServiceBase, ITaktCustomerCompla
             exp = exp.And(x => x.ResponsibleDeptName != null && x.ResponsibleDeptName.Contains(responsibleDeptName));
         }
 
-        if (queryDto?.ResponsiblePersonId.HasValue == true)
+        if (!string.IsNullOrWhiteSpace(queryDto?.ResponsibleGroupCode))
         {
-            var responsiblePersonId = queryDto.ResponsiblePersonId.Value;
-            exp = exp.And(x => x.ResponsiblePersonId == responsiblePersonId);
+            var responsibleGroupCode = queryDto.ResponsibleGroupCode;
+            exp = exp.And(x => x.ResponsibleGroupCode == responsibleGroupCode);
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.ResponsiblePersonName))
+        if (!string.IsNullOrWhiteSpace(queryDto?.ResponsibleGroupName))
         {
-            var responsiblePersonName = queryDto.ResponsiblePersonName;
-            exp = exp.And(x => x.ResponsiblePersonName != null && x.ResponsiblePersonName.Contains(responsiblePersonName));
+            var responsibleGroupName = queryDto.ResponsibleGroupName;
+            exp = exp.And(x => x.ResponsibleGroupName != null && x.ResponsibleGroupName.Contains(responsibleGroupName));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.ComplaintDescription))
@@ -844,11 +844,11 @@ public class TaktCustomerComplaintService : TaktServiceBase, ITaktCustomerCompla
         {
             return true;
         }
-        if (queryDto.ResponsiblePersonId.HasValue)
+        if (!string.IsNullOrWhiteSpace(queryDto.ResponsibleGroupCode))
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.ResponsiblePersonName))
+        if (!string.IsNullOrWhiteSpace(queryDto.ResponsibleGroupName))
         {
             return true;
         }

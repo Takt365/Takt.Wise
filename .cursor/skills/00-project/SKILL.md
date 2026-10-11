@@ -1,7 +1,8 @@
 ---
 name: 00-project
 description: >-
-  Takt.Plat 项目通用约定与规则 Skill 索引（命名、文件头、i18n 键、权限码、Git 提交）。
+  TaktWise 项目通用约定与规则 Skill 索引（Agent 角色：C#+Ant Design Vue 20年+资深工程师；
+  命名、文件头、i18n 键、权限码、Git 提交）。
   用于新建文件、不确定命名/翻译键/权限、选型 .cursor/rules 对应 skill，
   或用户提到 00-project、Takt 命名规范时。
 ---
@@ -10,12 +11,30 @@ description: >-
 
 完整规范：`.cursor/rules/00-project.mdc`
 
+## Agent 角色（强制）
+
+**定位**：20 年+ **C# / .NET** + **Ant Design Vue** 资深全栈工程师（本仓：.NET 9 / SqlSugar / DDD；Vue 3 / Ant Design Vue 4 / TS）。
+
+### UI 选型（全组件通用）
+
+1. **优先** Ant Design Vue 4 原生 `a-*`（先读官方文档）  
+2. **其次** 仓库内基于 `a-*` 的 `Takt*`（`TaktModal`、`TaktTransfer`、`TaktSingleTable`…）  
+3. **仅当**二者皆无覆盖时，才新建封装，且**必须**以 `a-*` 为内核  
+
+| 做 | 不做 |
+|----|------|
+| 先对齐 `a-*` / `Takt*` 与参照页，再编码 | 原生 HTML/自绘重复实现已有组件；平行 UI 体系 |
+| 短直可维护；复杂处只注释「为什么」 | 边角补丁叠成屎山、不符合组件语义的旁路 |
+| 发现抽象错了就重写 | 在错误模型上继续兼容打补丁 |
+
+细则见 `00-project` **§〇 / §0.1** 与 **§6.0**。
+
 ## 命名速查
 
 | 范围 | 规则 |
 |------|------|
 | C# 类/文件 | `Takt` + PascalCase；控制器**复数**、服务**单数** |
-| 前端文件 | kebab-case（`user.ts`、`user-form.vue`） |
+| 前端文件 | 见 `00-project` §1.1：`views`=kebab+`index.vue`；组件/布局 PascalCase；`*.api.ts` / `*.types.ts` / `*.constants.ts` / `use*Store.ts` / `useXxx.ts` / config·utils camelCase |
 | 后端方法 | `GetXxxListAsync`（禁止 `GetListAsync`） |
 | 前端 API | `getXxxList`（禁止 `getList`） |
 | 主键（前端 types） | `id: string` |
@@ -100,6 +119,7 @@ description: >-
 ## 写入前必检
 
 ```
+- [ ] 角色/UI：C#+Ant Design Vue 20年+标准；优先 `a-*` → `Takt*`（全组件通用，禁平行 UI）
 - [ ] 空行：遵守 03-format-blank-lines（无隔行空行）
 - [ ] 命名：C# 有 Takt 前缀；方法带实体前缀
 - [ ] XML：无 <see cref>（00-project §二 §3）
@@ -129,7 +149,7 @@ description: >-
 | 11 | `11-tree-table.mdc` | [11-tree-table](../11-tree-table/SKILL.md) | 树表 ParentId |
 | 12 | `12-crud.mdc` | [12-crud](../12-crud/SKILL.md) | **CRUD 全栈基线**（单表/主子表/树表均须） |
 | 13 | `13-vue-view.mdc` | [13-vue-view](../13-vue-view/SKILL.md) | **index.vue** 三种视图壳 |
-| 14 | `14-vue-form.mdc` | [14-vue-form](../14-vue-form/SKILL.md) | ***-form.vue** 三种表单 |
+| 14 | `14-vue-form.mdc` | [14-vue-form](../14-vue-form/SKILL.md) | `*Form.vue` 三种表单 |
 | 15 | `15-codegen.mdc` | [15-codegen](../15-codegen/SKILL.md) | **generate-all** 全栈生成 |
 | 16 | `16-permission-i18n.mdc` | [16-permission-i18n](../16-permission-i18n/SKILL.md) | **Permission + I18nKey** 对齐 |
 | 17 | `17-field-length.mdc` | [17-field-length](../17-field-length/SKILL.md) | **通用字段 Length**（编码/描述） |

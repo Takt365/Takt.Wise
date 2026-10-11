@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Quartz
 // 文件名称：TaktQuartzSqlResultReader.cs
 // 创建时间：2026-07-15
@@ -501,12 +501,9 @@ public static class TaktQuartzSqlResultReader
         {
             return null;
         }
-        // 确保 RAISERROR / PRINT 走 InfoMessage（否则 WITH NOWAIT 也可能被吞掉）
-        var fireProp = connection.GetType().GetProperty("FireInfoMessageEventOnUserErrors");
-        if (fireProp != null && fireProp.CanWrite && fireProp.PropertyType == typeof(bool))
-        {
-            fireProp.SetValue(connection, true);
-        }
+        // 仅订阅 InfoMessage：RAISERROR severity=10（进度）本就会走 InfoMessage。
+        // ❌ 禁止 FireInfoMessageEventOnUserErrors=true —— 会把 THROW/severity≤16 改成 InfoMessage，
+        //    导致脚本中途失败仍被当成「执行成功、无 SUMMARY」。
         eventInfo.AddEventHandler(connection, handler);
         return new SqlInfoMessageSubscription(connection, eventInfo, handler);
     }

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Defect
 // 文件名称：TaktDefectMonthlyTrendService.cs
 // 创建时间：2026-07-18
@@ -262,7 +262,7 @@ public class TaktDefectMonthlyTrendService : TaktServiceBase, ITaktDefectMonthly
         columnKeys,
         columnLabels,
         sheetName ?? "月生产不良推移表",
-        fileName ?? "月生产不良推移表.xlsx");
+        fileName ?? TaktNamingHelper.PlantPrefixedTrendExportBase(query.PlantCode, "月生产不良推移"));
   }
 
   /// <summary>

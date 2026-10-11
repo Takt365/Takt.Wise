@@ -1,5 +1,5 @@
 {
-  "name": "takt-plat-frontend",
+  "name": "takt-wise-frontend",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -11,6 +11,7 @@
     "build:vite": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --fix",
+    "audit:naming": "node ../scripts/audit-frontend-naming.cjs",
     "generate": "node ../scripts/generate-from-backend.cjs",
     "generate:vue": "node ../scripts/generate-vue-crud-from-api.cjs"
   },

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Quality.Complaint
 // 文件名称：TaktCustomerComplaintItemDtos.cs
 // 创建时间：2026-09-04
@@ -107,15 +107,14 @@ public class TaktCustomerComplaintItemDto : TaktCompanyDtoBase
     public string? ImprovementAction { get; set; } = string.Empty;
 
     /// <summary>
-    /// 改善责任人（选项 TaktEmployees/options；DictValue=Id）
+    /// 改善组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=3；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ImprovementResponsibleId { get; set; }
+    public string? ImprovementResponsibleGroupCode { get; set; }
 
     /// <summary>
-    /// 改善责任人名称（冗余：按 ImprovementResponsibleId 取 TaktEmployee.EmployeeName 联动）
+    /// 改善组名称（冗余：按 ImprovementResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? ImprovementResponsibleName { get; set; } = string.Empty;
+    public string? ImprovementResponsibleGroupName { get; set; }
 
     /// <summary>
     /// 计划完成日期
@@ -252,15 +251,14 @@ public class TaktCustomerComplaintItemQueryDto : TaktPagedQuery
     public string? ImprovementAction { get; set; } = string.Empty;
 
     /// <summary>
-    /// 改善责任人（选项 TaktEmployees/options；DictValue=Id）
+    /// 改善组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=3；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ImprovementResponsibleId { get; set; }
+    public string? ImprovementResponsibleGroupCode { get; set; }
 
     /// <summary>
-    /// 改善责任人名称（冗余：按 ImprovementResponsibleId 取 TaktEmployee.EmployeeName 联动）
+    /// 改善组名称（冗余：按 ImprovementResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? ImprovementResponsibleName { get; set; } = string.Empty;
+    public string? ImprovementResponsibleGroupName { get; set; }
 
     /// <summary>
     /// 计划完成日期（范围查询-开始）
@@ -422,15 +420,14 @@ public class TaktCustomerComplaintItemCreateDto
     public string? ImprovementAction { get; set; } = string.Empty;
 
     /// <summary>
-    /// 改善责任人（选项 TaktEmployees/options；DictValue=Id）
+    /// 改善组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=3；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ImprovementResponsibleId { get; set; }
+    public string? ImprovementResponsibleGroupCode { get; set; }
 
     /// <summary>
-    /// 改善责任人名称（冗余：按 ImprovementResponsibleId 取 TaktEmployee.EmployeeName 联动）
+    /// 改善组名称（冗余：按 ImprovementResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? ImprovementResponsibleName { get; set; } = string.Empty;
+    public string? ImprovementResponsibleGroupName { get; set; }
 
     /// <summary>
     /// 计划完成日期
@@ -637,15 +634,14 @@ public class TaktCustomerComplaintItemTemplateDto
     public string? ImprovementAction { get; set; } = string.Empty;
 
     /// <summary>
-    /// 改善责任人（选项 TaktEmployees/options；DictValue=Id）
+    /// 改善组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=3；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ImprovementResponsibleId { get; set; }
+    public string? ImprovementResponsibleGroupCode { get; set; }
 
     /// <summary>
-    /// 改善责任人名称（冗余：按 ImprovementResponsibleId 取 TaktEmployee.EmployeeName 联动）
+    /// 改善组名称（冗余：按 ImprovementResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? ImprovementResponsibleName { get; set; } = string.Empty;
+    public string? ImprovementResponsibleGroupName { get; set; }
 
     /// <summary>
     /// 计划完成日期
@@ -781,15 +777,14 @@ public class TaktCustomerComplaintItemImportDto
     public string? ImprovementAction { get; set; } = string.Empty;
 
     /// <summary>
-    /// 改善责任人（选项 TaktEmployees/options；DictValue=Id）
+    /// 改善组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=3；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ImprovementResponsibleId { get; set; }
+    public string? ImprovementResponsibleGroupCode { get; set; }
 
     /// <summary>
-    /// 改善责任人名称（冗余：按 ImprovementResponsibleId 取 TaktEmployee.EmployeeName 联动）
+    /// 改善组名称（冗余：按 ImprovementResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? ImprovementResponsibleName { get; set; } = string.Empty;
+    public string? ImprovementResponsibleGroupName { get; set; }
 
     /// <summary>
     /// 计划完成日期
@@ -931,15 +926,14 @@ public class TaktCustomerComplaintItemExportDto
     public string? ImprovementAction { get; set; } = string.Empty;
 
     /// <summary>
-    /// 改善责任人（选项 TaktEmployees/options；DictValue=Id）
+    /// 改善组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=3；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ImprovementResponsibleId { get; set; }
+    public string? ImprovementResponsibleGroupCode { get; set; }
 
     /// <summary>
-    /// 改善责任人名称（冗余：按 ImprovementResponsibleId 取 TaktEmployee.EmployeeName 联动）
+    /// 改善组名称（冗余：按 ImprovementResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? ImprovementResponsibleName { get; set; } = string.Empty;
+    public string? ImprovementResponsibleGroupName { get; set; }
 
     /// <summary>
     /// 计划完成日期

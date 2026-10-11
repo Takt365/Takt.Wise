@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Bom
 // 文件名称：TaktBillOfMaterialI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktBillOfMaterial 实体字段国际化种子（已对齐前端 locales：src/locales/logistics/manufacturing/bom/bill-of-material）
 // 
@@ -197,6 +197,24 @@ public class TaktBillOfMaterialI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.billofmaterial.bomdescription", "zh-CN", "BOM描述", "BOM描述"),
             // entity.billofmaterial.bomdescription
             new TranslationSeedItem("entity.billofmaterial.bomdescription", "zh-HK", "BOM描述_hk", "BOM描述"),
+
+            // entity.billofmaterial.bomgroupcode
+            new TranslationSeedItem("entity.billofmaterial.bomgroupcode", "en-US", "BOM组编码_us", "BOM组编码（选项 TaktBomGroups/options?bomGroupCategory=1；DictValue=BomGroupCode）"),
+            // entity.billofmaterial.bomgroupcode
+            new TranslationSeedItem("entity.billofmaterial.bomgroupcode", "ja-JP", "BOM组编码_jp", "BOM组编码（选项 TaktBomGroups/options?bomGroupCategory=1；DictValue=BomGroupCode）"),
+            // entity.billofmaterial.bomgroupcode
+            new TranslationSeedItem("entity.billofmaterial.bomgroupcode", "zh-CN", "BOM组编码", "BOM组编码（选项 TaktBomGroups/options?bomGroupCategory=1；DictValue=BomGroupCode）"),
+            // entity.billofmaterial.bomgroupcode
+            new TranslationSeedItem("entity.billofmaterial.bomgroupcode", "zh-HK", "BOM组编码_hk", "BOM组编码（选项 TaktBomGroups/options?bomGroupCategory=1；DictValue=BomGroupCode）"),
+
+            // entity.billofmaterial.bomgroupname
+            new TranslationSeedItem("entity.billofmaterial.bomgroupname", "en-US", "BOM组名称_us", "BOM组名称（冗余：按 BomGroupCode 取 TaktBomGroups.BomGroupName 联动）"),
+            // entity.billofmaterial.bomgroupname
+            new TranslationSeedItem("entity.billofmaterial.bomgroupname", "ja-JP", "BOM组名称_jp", "BOM组名称（冗余：按 BomGroupCode 取 TaktBomGroups.BomGroupName 联动）"),
+            // entity.billofmaterial.bomgroupname
+            new TranslationSeedItem("entity.billofmaterial.bomgroupname", "zh-CN", "BOM组名称", "BOM组名称（冗余：按 BomGroupCode 取 TaktBomGroups.BomGroupName 联动）"),
+            // entity.billofmaterial.bomgroupname
+            new TranslationSeedItem("entity.billofmaterial.bomgroupname", "zh-HK", "BOM组名称_hk", "BOM组名称（冗余：按 BomGroupCode 取 TaktBomGroups.BomGroupName 联动）"),
 
             // entity.billofmaterial.sortorder
             new TranslationSeedItem("entity.billofmaterial.sortorder", "en-US", "排序号_us", "排序号（回填）（越小越靠前）"),

@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/defect/pcba-inspection -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：PCBA检查日报实体 不良率管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -163,22 +163,21 @@
  * PCBA检查日报实体 不良率管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/defect/pcba-inspection
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import PcbaInspectionForm from './components/pcba-inspection-form.vue'
-import PcbaInspectionDetailPanel from './components/pcba-inspection-detail-panel.vue'
-import { providePcbaInspectionMasterContext, type PcbaInspectionRowRecord } from './composables/use-pcba-inspection-master-context'
-import { getPcbaInspectionList, getPcbaInspectionById, createPcbaInspection, updatePcbaInspection, deletePcbaInspectionById, deletePcbaInspectionBatch, getPcbaInspectionTemplate, importPcbaInspection, exportPcbaInspection } from '@/api/logistics/manufacturing/defect/pcba-inspection'
-import type { PcbaInspection, PcbaInspectionQuery } from '@/types/logistics/manufacturing/defect/pcba-inspection'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import PcbaInspectionForm from './components/PcbaInspectionForm.vue'
+import PcbaInspectionDetailPanel from './components/PcbaInspectionDetailPanel.vue'
+import { providePcbaInspectionMasterContext, type PcbaInspectionRowRecord } from './composables/usePcbaInspectionMasterContext'
+import { getPcbaInspectionList, getPcbaInspectionById, createPcbaInspection, updatePcbaInspection, deletePcbaInspectionById, deletePcbaInspectionBatch, getPcbaInspectionTemplate, importPcbaInspection, exportPcbaInspection } from '@/api/logistics/manufacturing/defect/pcbaInspection.api'
+import type { PcbaInspection, PcbaInspectionQuery } from '@/types/logistics/manufacturing/defect/pcbaInspection.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
 
 import {
@@ -187,7 +186,7 @@ import {
   PCBAINSPECTION_QUERY_STRING_FIELDS,
   PCBAINSPECTION_QUERY_FIELDS,
   PCBAINSPECTION_SELF_I18N_KEY,
-} from './composables/use-pcba-inspection-i18n'
+} from './composables/usePcbaInspectionI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = usePcbaInspectionI18n()
@@ -327,7 +326,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -509,8 +507,6 @@ const getPcbaInspectionDictValue = (
   if (typeof value === 'string' || typeof value === 'number') return value
   return String(value)
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

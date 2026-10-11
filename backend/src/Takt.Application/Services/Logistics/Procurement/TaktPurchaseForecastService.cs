@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Procurement
 // 文件名称：TaktPurchaseForecastService.cs
 // 创建时间：2026-08-22
@@ -496,7 +496,7 @@ public class TaktPurchaseForecastService : TaktServiceBase, ITaktPurchaseForecas
                 || (x.MaterialDescription != null && x.MaterialDescription.Contains(keywords))
                 || (x.SupplierCode != null && x.SupplierCode.Contains(keywords))
                 || (x.SupplierName1 != null && x.SupplierName1.Contains(keywords))
-                || (x.PlannerName != null && x.PlannerName.Contains(keywords))
+                || (x.PlannerGroupName != null && x.PlannerGroupName.Contains(keywords))
                 || (x.PlanDescription != null && x.PlanDescription.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
@@ -575,16 +575,16 @@ public class TaktPurchaseForecastService : TaktServiceBase, ITaktPurchaseForecas
             exp = exp.And(x => x.SupplierName1 != null && x.SupplierName1.Contains(supplierName1));
         }
 
-        if (queryDto?.PlannerEmployeeId.HasValue == true)
+        if (!string.IsNullOrWhiteSpace(queryDto?.PlannerGroupCode))
         {
-            var plannerId = queryDto.PlannerEmployeeId.Value;
-            exp = exp.And(x => x.PlannerEmployeeId == plannerId);
+            var plannerGroupCode = queryDto.PlannerGroupCode;
+            exp = exp.And(x => x.PlannerGroupCode == plannerGroupCode);
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.PlannerName))
+        if (!string.IsNullOrWhiteSpace(queryDto?.PlannerGroupName))
         {
-            var planBy = queryDto.PlannerName;
-            exp = exp.And(x => x.PlannerName != null && x.PlannerName.Contains(planBy));
+            var planBy = queryDto.PlannerGroupName;
+            exp = exp.And(x => x.PlannerGroupName != null && x.PlannerGroupName.Contains(planBy));
         }
 
         if (queryDto?.TotalQuantity.HasValue == true)
@@ -743,11 +743,11 @@ public class TaktPurchaseForecastService : TaktServiceBase, ITaktPurchaseForecas
         {
             return true;
         }
-        if (queryDto.PlannerEmployeeId.HasValue)
+        if (!string.IsNullOrWhiteSpace(queryDto.PlannerGroupCode))
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.PlannerName))
+        if (!string.IsNullOrWhiteSpace(queryDto.PlannerGroupName))
         {
             return true;
         }

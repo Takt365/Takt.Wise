@@ -221,6 +221,25 @@ HTTP 路由、权限末段与前端 API 完整映射见 `@.cursor/rules/12-crud.
 ❌ 装运条件（字典 logistics_sales_shipping_conditions；DictValue=Z1～Z3；外系统字段码）
 ```
 
+**`ColumnDescription` 与 XML summary 分工（强制，全实体通用，非个别字段特例）**：
+
+适用于 `Takt.Domain/Entities/**` 下**每一个**带 `[SugarColumn]` 的字符串/业务列，不限于冗余名、责任人、字典字段。
+
+| 落点 | 内容 | 要求 |
+|------|------|------|
+| **`ColumnDescription`** | **仅短标题**（库列备注、生成 i18n 标签） | 名词短语即可；❌ 括号内长说明、❌ 「冗余/联动/字典/选项」散文 |
+| **`/// <summary>`** | 完整语义 | 字典码、选项 API、冗余来源、联动、业务约束等**一律写这里** |
+
+```text
+✅ ColumnDescription = "客户名称" / "物料编码" / "责任人名称" / "调休对应"
+✅ /// <summary>责任人名称（冗余：按 ResponsiblePersonId 取 TaktEmployee.EmployeeName 联动）</summary>
+✅ /// <summary>调休对应（多对；上班日=>所补放假日，分号分隔；Length=200）</summary>
+❌ ColumnDescription = "责任人名称（冗余：按 ResponsiblePersonId 取 TaktEmployee.EmployeeName 联动）"
+❌ ColumnDescription = "客户等级（字典 xxx；0=普通 1=VIP）"  ← 字典细节只写 summary
+❌ ColumnDescription = "调休对应（上班日=>放假日）"  ← 映射说明只写 summary
+```
+
+生成脚本 / 手写实体审阅时：**先**保证 `ColumnDescription` 短标题，**再**把长说明迁入 XML。
 **新增实体检查清单**：
 1. 选定上表基类之一（定义见 `@backend/src/Takt.Domain/Entities/TaktEntityBase.cs`）
 2. 多库按 `TenantCode` 映射：`ConnectionStrings:Tenant_{tenantCode}`；启动初始化见 `Program.cs` → `TaktSeedDataCoordinator.InitializeAllAsync`
@@ -269,7 +288,7 @@ HTTP 路由、权限末段与前端 API 完整映射见 `@.cursor/rules/12-crud.
 | `generate-controllers-from-services.cjs` | `Takt{复数}Controller`（路由 `api/Takt{复数}`） |
 | `generate-from-backend.cjs` | 前端 `types/`、`api/`（API_BASE **复数**） |
 | `generate-entity-i18n-seed.cjs` | `TaktXxxI18nSeedData.cs` |
-| `generate-vue-all-from-api.cjs` | `views/index.vue` + `components/*-form.vue`（**单表/主子表/树表** 三模板串联；排除实体见 `generate-entity-exclusions.cjs`） |
+| `generate-vue-all-from-api.cjs` | `views/index.vue` + `components/*Form.vue`（**单表/主子表/树表** 三模板串联；排除实体见 `generate-entity-exclusions.cjs`） |
 
 复数规则见 `generate-script-common.cjs`。生成后须编译并人工审阅 QueryExpression、权限码（`15-codegen` §五）。
 
@@ -292,3 +311,4 @@ HTTP 路由、权限末段与前端 API 完整映射见 `@.cursor/rules/12-crud.
 - 全栈代码生成：见 `@.cursor/rules/15-codegen.mdc`；删改 `scripts/` 须先读 `PIPELINE`（§四）
 - 新建/审查实体：**禁止**实体属性使用 enum；一律 `int`/`int?`（`00-project` §1.8.1）；**字段 Length 对照 `17-field-length`**（无专项默认 40），禁止无说明使用 50/100
 - **实体属性通用/特有前缀**：见 §六「实体属性命名」；❌ 禁止同实体混用 `Title` 与 `XxxType`
+- **`ColumnDescription`（全实体通用）**：仅短标题；冗余/联动/字典/选项/映射细节**只**写 XML `<summary>`（§六）；❌ 禁止把长说明写进 `ColumnDescription`

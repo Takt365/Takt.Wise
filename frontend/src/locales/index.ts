@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat (TDF)
+// 项目名称：节拍智控·TaktWise (TDF)
 // 命名空间：frontend/src/locales
 // 文件名称：index.ts
 // 创建时间：2026-05-22
@@ -19,14 +19,14 @@ import {
   buildNestedLocaleMessages,
   registerTaktI18n,
   resolveLocaleMessageFromTree,
-} from '@/utils/takt-i18n-message';
+} from '@/utils/taktI18nMessage';
 import { TAKT_DEFAULT_LOCALE, TAKT_LOCALE_STORAGE_KEY } from '@/utils/common';
 import {
   deepMergeLocaleMessages,
   nestLocalePayloadUnderNamespace,
   resolveLocaleNamespaceSegments,
   type TaktLocaleMessageTree,
-} from '@/utils/takt-locale-merge';
+} from '@/utils/taktLocaleMerge';
 
 /** 单语言包消息结构 */
 type TaktLocaleMessages = TaktLocaleMessageTree;

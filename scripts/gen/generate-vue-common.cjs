@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：scripts
 // 文件名称：generate-vue-common.cjs
 // 创建时间：2026-06-08
@@ -29,6 +29,15 @@ const {
   resolveFrontendOutputRelPath,
   isModuleLeafSameAsEntityKebab,
   isTaktNumberingAutoFormFieldSummary,
+  toFrontendApiFileName,
+  toFrontendTypesFileName,
+  toFrontendApiImportPath,
+  toFrontendTypesImportPath,
+  toFrontendEntityFileCamel,
+  parseFrontendTypesFileCamel,
+  parseFrontendApiFileCamel,
+  camelToKebab,
+  kebabToCamel,
 } = require('./generate-script-common.cjs');
 const {
   shouldExcludeDtoSourceBase,
@@ -93,7 +102,9 @@ function pascalToKebab(str) {
 }
 
 /**
- * 统一模块路径（小写、正斜杠）
+ * 统一模块目录路径（正斜杠 + 小写）
+ * 仅用于目录段（如 foundation、routine/announcement）；❌ 禁止传入含实体文件主名的路径，
+ * 否则 systemProperty 会被压成 systemproperty，Vue import 对不上 systemProperty.types.ts
  * @param {string} modulePath
  * @returns {string}
  */
@@ -124,19 +135,21 @@ function collectApiFiles(entityPrefix) {
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) {
         scan(full);
-      } else if (entry.name.endsWith('.ts')) {
+      } else if (entry.name.endsWith('.api.ts')) {
         const relFromApi = path.relative(root, full).replace(/\\/g, '/');
         if (entityPrefix) {
           const modulePath = path.dirname(relFromApi);
           const rawKebab = pascalToKebab(entityPrefix);
           const shortKebab = resolveFrontendModuleFileName(rawKebab, modulePath);
           const baseName = entry.name;
+          const wantRaw = toFrontendApiFileName(rawKebab);
+          const wantShort = toFrontendApiFileName(shortKebab);
           const dir = path.dirname(full);
-          const canonicalPath = path.join(dir, `${rawKebab}.ts`);
-          if (shortKebab !== rawKebab && baseName === `${shortKebab}.ts` && fs.existsSync(canonicalPath)) {
+          const canonicalPath = path.join(dir, wantRaw);
+          if (shortKebab !== rawKebab && baseName === wantShort && fs.existsSync(canonicalPath)) {
             continue;
           }
-          if (baseName !== `${rawKebab}.ts` && baseName !== `${shortKebab}.ts`) {
+          if (baseName !== wantRaw && baseName !== wantShort) {
             continue;
           }
         }
@@ -735,7 +748,7 @@ function buildFormTabLabelAttr(tabIndex, tabCount) {
 
 /**
  * 表单内容区高度 class（超过单 Tab 标准容量时用 10 行布局）
- * @returns {string} 生成到 *-form.vue 的 computed 表达式
+ * @returns {string} 生成到 *Form.vue 的 computed 表达式
  */
 function buildFormContentClassComputedExpr() {
   return `computed(() => (formFields.length > ${FORM_TAB_FIELDS_PER_TAB} ? 'takt-form-content-rows-10' : 'takt-form-content-rows-5'))`;
@@ -780,7 +793,7 @@ function resolveScopeFormFieldPresence(formFields, masterDetailChildren = []) {
 }
 
 /**
- * *-form.vue：租户/公司隔离 Pinia 与 applyScopeDefaults（按字段存在性 + entityScope 生成）
+ * *Form.vue：租户/公司隔离 Pinia 与 applyScopeDefaults（按字段存在性 + entityScope 生成）
  * tenant-core：仅 tenantCode；tenant-culture：tenantCode + cultureCode 默认 mul（不回填公司语言）；
  * tenant：cultureCode 取公司主档语言；tenant-plant：tenantCode + relatedPlant。
  * @param {{ hasTenant: boolean, hasCompany: boolean, hasCultureCode: boolean, hasPlantCode: boolean, hasRelatedPlant: boolean }} presence
@@ -805,9 +818,9 @@ function buildScopeContextFormScriptFragments(presence, entityIdField, entityPas
   if (!hasTenant && !hasCompany && !injectCompanyCulture && !injectMulCulture && !hasPlantCode && !hasRelatedPlant) {
     return { imports: '', script: '', watch: '' };
   }
-  const imports = ["import { useTenantStore } from '@/stores/identity/tenant'"];
+  const imports = ["import { useTenantStore } from '@/stores/identity/useTenantStore'"];
   if (injectCompanyCulture) {
-    imports.push("import { useUserStore } from '@/stores/identity/user'");
+    imports.push("import { useUserStore } from '@/stores/identity/useUserStore'");
   }
   const storeLines = [];
   storeLines.push('/** Pinia：租户上下文 */');
@@ -925,12 +938,21 @@ function entityI18nHookName(entityPascal) {
 }
 
 /**
- * composable 文件名（plant → use-plant-i18n.ts）
+ * composable 文件名（plant → usePlantI18n.ts）
  * @param {string} viewEntityKebab
  * @returns {string}
  */
 function entityI18nComposableFileName(viewEntityKebab) {
-  return `use-${viewEntityKebab}-i18n.ts`;
+  return `use${kebabToPascal(viewEntityKebab)}I18n.ts`;
+}
+
+/**
+ * 主子表上下文 composable 文件名（Plant → usePlantMasterContext.ts）
+ * @param {string} entityPascal
+ * @returns {string}
+ */
+function entityMasterContextComposableFileName(entityPascal) {
+  return `use${entityPascal}MasterContext.ts`;
 }
 
 /**
@@ -964,7 +986,7 @@ function resolveFormPlaceholderKind(field) {
 }
 
 /**
- * 生成 views/.../composables/use-{entity}-i18n.ts（字段名清单 + useXxxI18n，文案由 takt-entity-i18n 推导）
+ * 生成 views/.../composables/use{Entity}I18n.ts（字段名清单 + useXxxI18n，文案由 takt-entity-i18n 推导）
  * @param {object} options
  * @returns {string}
  */
@@ -1035,7 +1057,7 @@ export const ${prefix}_SUMMARY_SUM_FIELDS = [] as const
     })()
     : '';
   return `// ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：@/views/${viewModulePath}/composables
 // 文件名称：${entityI18nComposableFileName(viewEntityKebab)}
 // 功能描述：${comment}字段清单 + ${hookName}（字段名映射一次，文案由 entity.${entityI18nSlug}.* 种子动态解析）
@@ -1044,9 +1066,9 @@ export const ${prefix}_SUMMARY_SUM_FIELDS = [] as const
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
 // ========================================
 
-import type { ${queryTypeName} } from '@/types/${options.modulePath}/${options.entityKebab}'
-import { buildEntitySelfI18nKey } from '@/utils/takt-entity-i18n'
-import { useEntityFieldI18n, type EntityFieldPlaceholderKind } from '@/composables/use-entity-field-i18n'
+import type { ${queryTypeName} } from '@/types/${options.modulePath}/${toFrontendEntityFileCamel(options.entityKebab)}.types'
+import { buildEntitySelfI18nKey } from '@/utils/taktEntityI18n'
+import { useEntityFieldI18n, type EntityFieldPlaceholderKind } from '@/composables/useEntityFieldI18n'
 
 /** 与 Takt${entityPascal}I18nSeedData 一致的实体 slug */
 export const ${prefix}_ENTITY_SLUG = '${entityI18nSlug}'
@@ -1078,7 +1100,7 @@ ${queryFieldTypeBlock}
 ${queryFieldsSpread}
 
 /**
- * ${comment}字段 i18n：index / ${viewEntityKebab}-form 统一入口
+ * ${comment}字段 i18n：index / ${entityPascal}Form 统一入口
  */
 export function ${hookName}() {
   const ef = useEntityFieldI18n(${prefix}_ENTITY_SLUG)
@@ -1128,7 +1150,7 @@ const pi = ${hookName}()
 }
 
 /**
- * *-form.vue：composable 导入与 pi 实例
+ * *Form.vue：composable 导入与 pi 实例
  * @param {string} entityPascal
  * @param {string} viewEntityKebab
  * @returns {string}
@@ -1327,7 +1349,7 @@ ${extraBefore}${rowBlock}
 }
 
 /**
- * 生成 *-form.vue 主表区模板（单 Tab 无主子表时扁平 a-row，与手工 CRUD 表单对齐）
+ * 生成 *Form.vue 主表区模板（单 Tab 无主子表时扁平 a-row，与手工 CRUD 表单对齐）
  * @param {object} options
  * @returns {{ useFormTabs: boolean, body: string }}
  */
@@ -1554,6 +1576,42 @@ function resolveApiSelectParamsObjectLiteral(field) {
     const levelMatch = doc.match(/Level\s*=\s*(\d)/i);
     if (levelMatch) {
       parts.push(`level: ${levelMatch[1]}`);
+    }
+  }
+  if (apiUrl.includes('TaktApsGroups/options')) {
+    const categoryMatch = doc.match(/apsGroupCategory\s*=\s*(\d+)/i);
+    if (categoryMatch) {
+      parts.push(`apsGroupCategory: ${categoryMatch[1]}`);
+    }
+  }
+  if (apiUrl.includes('TaktEcGroups/options')) {
+    const categoryMatch = doc.match(/ecGroupCategory\s*=\s*(\d+)/i);
+    if (categoryMatch) {
+      parts.push(`ecGroupCategory: ${categoryMatch[1]}`);
+    }
+  }
+  if (apiUrl.includes('TaktComplaintGroups/options')) {
+    const categoryMatch = doc.match(/complaintGroupCategory\s*=\s*(\d+)/i);
+    if (categoryMatch) {
+      parts.push(`complaintGroupCategory: ${categoryMatch[1]}`);
+    }
+  }
+  if (apiUrl.includes('TaktCostGroups/options')) {
+    const categoryMatch = doc.match(/costGroupCategory\s*=\s*(\d+)/i);
+    if (categoryMatch) {
+      parts.push(`costGroupCategory: ${categoryMatch[1]}`);
+    }
+  }
+  if (apiUrl.includes('TaktQualityGroups/options')) {
+    const categoryMatch = doc.match(/qualityGroupCategory\s*=\s*(\d+)/i);
+    if (categoryMatch) {
+      parts.push(`qualityGroupCategory: ${categoryMatch[1]}`);
+    }
+  }
+  if (apiUrl.includes('TaktBomGroups/options')) {
+    const categoryMatch = doc.match(/bomGroupCategory\s*=\s*(\d+)/i);
+    if (categoryMatch) {
+      parts.push(`bomGroupCategory: ${categoryMatch[1]}`);
     }
   }
   if (apiUrl.includes('TaktAccountTitles/options')) {
@@ -2312,7 +2370,7 @@ function parseOneToManyNavigations(entityFile) {
  */
 function resolveChildTypesFilePath(modulePath, childPascal) {
   const childKebab = resolveFrontendModuleFileName(pascalToKebab(childPascal), modulePath);
-  return path.join(CONFIG.frontendRoot, CONFIG.typesDir, modulePath, `${childKebab}.d.ts`);
+  return path.join(CONFIG.frontendRoot, CONFIG.typesDir, modulePath, toFrontendTypesFileName(childKebab));
 }
 
 /**
@@ -2691,14 +2749,37 @@ function resolveChildMasterFkField(interfaces, childPascal, masterCamel, foreign
 }
 
 /**
+ * 解析前端 API 文件绝对路径（优先 camelCase.api.ts，兼容历史 *.ts）
+ * @param {string} modulePath 相对 src/api 的目录
+ * @param {string} fileKebabOrCamel 实体文件主名
+ * @returns {string|null}
+ */
+function resolveFrontendApiAbsolutePath(modulePath, fileKebabOrCamel) {
+  const apiRoot = path.join(CONFIG.frontendRoot, CONFIG.apiDir, modulePath || '');
+  const preferred = path.join(apiRoot, toFrontendApiFileName(fileKebabOrCamel));
+  if (fs.existsSync(preferred)) {
+    return preferred;
+  }
+  const camelLegacy = path.join(apiRoot, `${toFrontendEntityFileCamel(fileKebabOrCamel)}.ts`);
+  if (fs.existsSync(camelLegacy)) {
+    return camelLegacy;
+  }
+  const rawLegacy = path.join(apiRoot, `${fileKebabOrCamel}.ts`);
+  if (fs.existsSync(rawLegacy) && rawLegacy !== camelLegacy) {
+    return rawLegacy;
+  }
+  return null;
+}
+
+/**
  * 解析子表 list API 方法名
  * @param {string} modulePath
  * @param {string} childKebab
  * @param {string} childPascal
  */
 function resolveChildListApiMethod(modulePath, childKebab, childPascal) {
-  const apiPath = path.join(CONFIG.frontendRoot, CONFIG.apiDir, modulePath, `${childKebab}.ts`);
-  if (!fs.existsSync(apiPath)) {
+  const apiPath = resolveFrontendApiAbsolutePath(modulePath, childKebab);
+  if (!apiPath) {
     return '';
   }
   const { methods } = parseApiFile(fs.readFileSync(apiPath, 'utf-8'));
@@ -2707,7 +2788,7 @@ function resolveChildListApiMethod(modulePath, childKebab, childPascal) {
 }
 
 /**
- * 递归收集 types 目录下全部实体 .d.ts
+ * 递归收集 types 目录下全部业务实体 .types.ts（不含 common / shim .d.ts）
  * @param {string} [rootDir]
  */
 function collectAllTypesFiles(rootDir = path.join(CONFIG.frontendRoot, CONFIG.typesDir)) {
@@ -2719,7 +2800,7 @@ function collectAllTypesFiles(rootDir = path.join(CONFIG.frontendRoot, CONFIG.ty
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) {
         scan(full);
-      } else if (entry.name.endsWith('.d.ts') && entry.name !== 'common.d.ts') {
+      } else if (entry.name.endsWith('.types.ts') && entry.name !== 'common.types.ts') {
         files.push(full);
       }
     }
@@ -2797,7 +2878,8 @@ function buildMasterDetailChildRegistry() {
   for (const typesFile of collectAllTypesFiles()) {
     const relTypes = path.relative(path.join(CONFIG.frontendRoot, CONFIG.typesDir), typesFile).replace(/\\/g, '/');
     const modulePath = path.dirname(relTypes);
-    const entityKebab = path.basename(typesFile, '.d.ts');
+    const entityCamel = parseFrontendTypesFileCamel(typesFile);
+    const entityKebab = camelToKebab(entityCamel);
     const content = fs.readFileSync(typesFile, 'utf-8');
     const ifaceMap = parseTypeInterfaces(content);
     const entityPascal = resolveMainEntityPascalFromTypes(ifaceMap) || kebabToPascal(entityKebab);
@@ -2982,7 +3064,7 @@ function buildFieldMeta(ifaceMap, entityPascal, typesFileContent = '', modulePat
   const enrichedChildren = masterDetailChildren.map((child) => {
     const { resolveChildEntityFrontendKebab } = require('./generate-master-detail-associations.cjs');
     const childFileKebab = resolveChildEntityFrontendKebab(child.childPascal, normalizedModulePath);
-    const childDtsFile = path.join(CONFIG.frontendRoot, CONFIG.typesDir, normalizedModulePath, `${childFileKebab}.d.ts`);
+    const childDtsFile = path.join(CONFIG.frontendRoot, CONFIG.typesDir, normalizedModulePath, toFrontendTypesFileName(childFileKebab));
     const childDtsText = fs.existsSync(childDtsFile) ? fs.readFileSync(childDtsFile, 'utf-8') : '';
     const childIfaceMap = childDtsText ? parseTypeInterfaces(childDtsText) : ifaceMap;
     const childFormRaw = buildChildFormFieldProps(
@@ -3028,8 +3110,8 @@ function buildFieldMeta(ifaceMap, entityPascal, typesFileContent = '', modulePat
       }
       return true;
     });
-    const childApiPath = path.join(CONFIG.frontendRoot, CONFIG.apiDir, normalizedModulePath, `${childFileKebab}.ts`);
-    const childCaps = fs.existsSync(childApiPath)
+    const childApiPath = resolveFrontendApiAbsolutePath(normalizedModulePath, childFileKebab);
+    const childCaps = childApiPath
       ? detectApiCapabilities(child.childPascal, parseApiFile(fs.readFileSync(childApiPath, 'utf-8')).methods)
       : detectApiCapabilities(child.childPascal, {});
     return {
@@ -3063,36 +3145,44 @@ function buildFieldMeta(ifaceMap, entityPascal, typesFileContent = '', modulePat
  */
 function resolveModuleContext(apiFilePath, entityShort, overrides) {
   const relApi = path.relative(path.join(CONFIG.frontendRoot, CONFIG.apiDir), apiFilePath).replace(/\\/g, '/');
-  const relNoExt = normalizeModulePath(relApi.replace(/\.ts$/, ''));
-  const entityKebab = path.basename(relNoExt);
-  const parentModulePath = normalizeModulePath(path.dirname(relNoExt) === '.' ? '' : path.dirname(relNoExt));
+  // 先剥扩展名；文件主名必须保留 camelCase（勿对含文件名的路径调用 normalizeModulePath）
+  const relStripped = relApi
+    .replace(/\.api\.ts$/i, '')
+    .replace(/\.types\.ts$/i, '')
+    .replace(/\.ts$/i, '');
+  const fileStem = path.basename(relStripped);
+  const parentModulePath = normalizeModulePath(
+    path.dirname(relStripped) === '.' ? '' : path.dirname(relStripped),
+  );
   const entityPascal = entityShort;
+  const entityCamel = pascalToCamel(entityPascal);
+  // 与 generate-from-backend 一致：api/types 文件主名用实体 camel（systemProperty），不用 i18n slug
+  const apiFileCamel = entityCamel || toFrontendEntityFileCamel(fileStem);
   const canonicalKebab = pascalToKebab(entityPascal);
-  const viewEntityKebab = stripModulePrefixFromEntityKebab(canonicalKebab, relNoExt);
+  const viewEntityKebab = stripModulePrefixFromEntityKebab(canonicalKebab, parentModulePath);
   const moduleViewPathKey = resolveViewModulePath(parentModulePath, viewEntityKebab);
   const menu = MENU_INDEX.get(moduleViewPathKey)
-    || MENU_INDEX.get(relNoExt)
+    || MENU_INDEX.get(normalizeModulePath(relStripped))
     || MENU_INDEX.get(viewEntityKebab)
     || MENU_INDEX.get(canonicalKebab)
-    || MENU_INDEX.get(entityKebab);
+    || MENU_INDEX.get(camelToKebab(apiFileCamel));
   const viewModulePath = overrides.viewPath
     || (menu?.componentPath ? menu.componentPath.replace(/\/index$/, '') : '')
     || moduleViewPathKey;
-  const outputRel = resolveFrontendOutputRelPath(parentModulePath, entityKebab);
+  const outputRel = resolveFrontendOutputRelPath(parentModulePath, canonicalKebab);
   const modulePath = outputRel.importPath.includes('/')
     ? outputRel.importPath.split('/').slice(0, -1).join('/')
     : '';
-  const apiEntityKebab = outputRel.file;
+  const resolvedFileCamel = toFrontendEntityFileCamel(outputRel.file) || apiFileCamel;
   let permissionPrefix = resolvePermissionPrefixFromController(entityShort) || menu?.permissionPrefix;
   if (!permissionPrefix) {
-    permissionPrefix = `${modulePath.replace(/\//g, ':')}:${apiEntityKebab}`;
+    permissionPrefix = `${modulePath.replace(/\//g, ':')}:${resolvedFileCamel}`;
   }
-  const entityCamel = pascalToCamel(entityPascal);
   const entityI18nSlug = entityClassToSlug(`Takt${entityPascal}`);
   return {
     modulePath,
     viewModulePath,
-    entityKebab: apiEntityKebab,
+    entityKebab: resolvedFileCamel,
     viewEntityKebab,
     entityPascal,
     entityCamel,
@@ -3100,7 +3190,9 @@ function resolveModuleContext(apiFilePath, entityShort, overrides) {
     entitySlug: entityCamel,
     permissionPrefix,
     cssRootClass: viewModulePath.replace(/\//g, '-'),
-    apiImportRel: outputRel.importPath,
+    apiImportRel: toFrontendApiImportPath(
+      modulePath ? `${modulePath}/${resolvedFileCamel}` : resolvedFileCamel,
+    ),
   };
 }
 
@@ -3314,9 +3406,12 @@ ${indent}  disabled
 ${indent}/>`;
   }
   if (field.htmlType === 'apiSelect' && field.apiUrl) {
+    const nameValueAttr = /DictValue\s*=\s*(ApsGroupName|ComplaintGroupName|CostGroupName)/i.test(field.doc || '')
+      ? `\n${indent}  :field-names="{ label: 'dictLabel', value: 'extLabel' }"`
+      : '';
     return `${indent}<TaktSelect
 ${indent}  v-model:value="${modelPrefix}${field.name}"
-${indent}  api-url="${field.apiUrl}"${renderApiSelectParamsAttr(field, indent)}
+${indent}  api-url="${field.apiUrl}"${renderApiSelectParamsAttr(field, indent)}${nameValueAttr}
 ${indent}  :placeholder="${fieldPlaceholderTExpr(field, 'common.page.form.placeholder.select')}"${editLockAttrs}
 ${indent}/>`;
   }
@@ -3345,7 +3440,7 @@ ${indent}  :rows="2"${editLockAttrs}
 ${indent}/>`;
   }
   if (field.htmlType === 'richEditor') {
-    return `${indent}<takt-rich-editor
+    return `${indent}<TaktRichEditor
 ${indent}  v-model:value="${modelPrefix}${field.name}"
 ${indent}  :placeholder="${fieldPlaceholderTExpr(field, 'common.page.form.placeholder.optional')}"${editLockAttrs}
 ${indent}/>`;
@@ -3358,7 +3453,7 @@ ${indent}  disabled
 ${indent}/>`;
   }
   if (field.htmlType === 'fileUpload') {
-    return `${indent}<takt-upload-file
+    return `${indent}<TaktUploadFile
 ${indent}  tabs-type="files"
 ${indent}  :files-auto-upload="true"
 ${indent}  :files-multiple="false"
@@ -3433,10 +3528,13 @@ function renderQueryFormItemBody(field) {
       </a-form-item>`;
   }
   if (field.htmlType === 'apiSelect' && field.apiUrl) {
+    const nameValueAttr = /DictValue\s*=\s*(ApsGroupName|ComplaintGroupName|CostGroupName)/i.test(field.doc || '')
+      ? `\n          :field-names="{ label: 'dictLabel', value: 'extLabel' }"`
+      : '';
     return `      <a-form-item :label="${fieldLabelTExpr(field, 'query')}">
         <TaktSelect
           v-model:value="advancedQueryForm.${field.name}"
-          api-url="${field.apiUrl}"${renderApiSelectParamsAttr(field, '        ')}
+          api-url="${field.apiUrl}"${renderApiSelectParamsAttr(field, '        ')}${nameValueAttr}
           :placeholder="${fieldPlaceholderTExpr(field, 'common.page.form.placeholder.select', 'query')}"
           allow-clear
         />
@@ -3580,18 +3678,19 @@ function assertGeneratedFormNoSmallSize(formContent, formPath) {
   }
   if (/(^|\n)\s*readonly\s*(\n|$)/.test(formContent)) {
     throw new Error(
-      `[generate-vue] 表单禁止 HTML readonly（隔离/只读字段须用 disabled，参照 user-form.vue）: ${formPath}`,
+      `[generate-vue] 表单禁止 HTML readonly（隔离/只读字段须用 disabled，参照 UserForm.vue）: ${formPath}`,
     );
   }
 }
 
 /**
  * 由 API 相对路径加载 types 与 interfaces
- * @param {string} rel 相对 frontend/src/api 的路径（如 logistics/serial/inbound.ts）
+ * @param {string} rel 相对 frontend/src/api 的路径（如 logistics/serial/inbound.api.ts）
  * @returns {{ content: string, ifaceMap: ReturnType<typeof parseTypeInterfaces> } | null}
  */
 function loadTypesInterfacesForApiRel(rel) {
-  const dtsFilePath = path.join(CONFIG.frontendRoot, CONFIG.typesDir, `${rel.replace(/\.ts$/, '.d.ts')}`);
+  const typesRel = toFrontendTypesImportPath(rel.replace(/\.api\.ts$/i, '').replace(/\.ts$/i, ''));
+  const dtsFilePath = path.join(CONFIG.frontendRoot, CONFIG.typesDir, `${typesRel}.ts`);
   if (!fs.existsSync(dtsFilePath)) {
     console.warn(`⚠️  缺少类型文件，跳过: ${dtsFilePath}`);
     return null;
@@ -3605,7 +3704,8 @@ function loadTypesInterfacesForApiRel(rel) {
  */
 function loadVueModuleContext(apiFilePath, options, masterDetailChildRegistry) {
   const rel = path.relative(path.join(CONFIG.frontendRoot, CONFIG.apiDir), apiFilePath).replace(/\\/g, '/');
-  const entityKebab = path.basename(rel, '.ts');
+  const entityCamel = parseFrontendApiFileCamel(rel);
+  const entityKebab = camelToKebab(entityCamel);
   const typesBundle = loadTypesInterfacesForApiRel(rel);
   if (!typesBundle) {
     return { skipped: true };
@@ -3695,7 +3795,7 @@ function loadVueModuleContext(apiFilePath, options, masterDetailChildRegistry) {
   };
   const viewDir = path.join(CONFIG.frontendRoot, CONFIG.viewsDir, ctx.viewModulePath);
   const indexPath = path.join(viewDir, 'index.vue');
-  const formPath = path.join(viewDir, 'components', `${ctx.viewEntityKebab}-form.vue`);
+  const formPath = path.join(viewDir, 'components', `${ctx.entityPascal}Form.vue`);
   const i18nComposablePath = path.join(viewDir, 'composables', entityI18nComposableFileName(ctx.viewEntityKebab));
   const needsForm = capsMerged.hasCreate || capsMerged.hasUpdate;
   return {
@@ -3719,7 +3819,7 @@ function loadVueModuleContext(apiFilePath, options, masterDetailChildRegistry) {
 }
 
 /**
- * 主表 *-form.vue types 导入（仅主表 Create；子表类型由 *-item-form.vue 独立导入）
+ * 主表 *Form.vue types 导入（仅主表 Create；子表类型由 *ItemForm.vue 独立导入）
  * @param {object} options
  * @param {string} options.entityPascal
  * @param {string} options.entityKebab API/types 文件名（kebab）
@@ -3728,7 +3828,7 @@ function loadVueModuleContext(apiFilePath, options, masterDetailChildRegistry) {
  */
 function buildMasterDetailFormTypeImportLines(options) {
   const { entityPascal, entityKebab, modulePath } = options;
-  const masterTypeImport = `import type { ${entityPascal}Create } from '@/types/${modulePath}/${entityKebab}'`;
+  const masterTypeImport = `import type { ${entityPascal}Create } from '@/types/${modulePath}/${toFrontendEntityFileCamel(entityKebab)}.types'`;
   return { masterTypeImport };
 }
 
@@ -3824,7 +3924,7 @@ function resolveFormFieldDefaultValue(field, dictDefaults) {
 }
 
 /**
- * 生成 *-form.vue：FORM_FIELD_DEFAULTS + applyFormDefaults
+ * 生成 *Form.vue：FORM_FIELD_DEFAULTS + applyFormDefaults
  * @param {Array<{ name: string, type?: string, doc?: string, dictType?: string, readOnly?: boolean }>} formFields
  * @returns {string}
  */
@@ -3892,7 +3992,7 @@ function normalizeResetPeriodForSubmit(value: unknown): string {
 }
 
 /**
- * 生成 *-form.vue：提交前字段归一化（resetPeriod、number 字典项）
+ * 生成 *Form.vue：提交前字段归一化（resetPeriod、number 字典项）
  * @param {Array<{ name: string, type?: string, readOnly?: boolean }>} formFields
  * @param {{ useBuildSubmitPayload?: boolean }} [options]
  * @returns {{ script: string, editNormalizeLines: string[], getValuesBody: string }}
@@ -4452,7 +4552,7 @@ function buildFormRequiredRuleLines(formFields) {
 
 /** @returns {string} useDictDataStore 导入行 */
 function buildDictDataStoreImportLine() {
-  return "import { useDictDataStore } from '@/stores/foundation/dict-data'\n";
+  return "import { useDictDataStore } from '@/stores/foundation/useDictDataStore'\n";
 }
 
 /**
@@ -4481,7 +4581,7 @@ const dictDataStore = useDictDataStore()
 }
 
 /**
- * 生成 *-form.vue 的 formData watch（仅含主键时灌编辑态）
+ * 生成 *Form.vue 的 formData watch（仅含主键时灌编辑态）
  * @param {object} options
  * @returns {string}
  */
@@ -4534,13 +4634,13 @@ ${scopeOnCreate}      formRef.value?.clearValidate()
 function buildBusinessFileUploadFormImportBlock() {
   return `import { message } from 'ant-design-vue'
 import type { UploadFile, UploadProps } from 'ant-design-vue'
-import { getFileById } from '@/api/foundation/file'
-import { uploadTaktFileSmart } from '@/utils/takt-file-chunk-upload'
+import { getFileById } from '@/api/foundation/file.api'
+import { uploadTaktFileSmart } from '@/utils/taktFileChunkUpload'
 import {
   buildTaktFileAcceptAttribute,
   loadTaktFileUploadBasePolicy,
   resolveTaktFileMaxSizeMb,
-} from '@/utils/takt-file-upload-policy'
+} from '@/utils/taktFileUploadPolicy'
 `;
 }
 
@@ -4650,7 +4750,7 @@ onMounted(() => {
 }
 
 /**
- * 生成 *-form.vue script 段公共片段（三模板共用）
+ * 生成 *Form.vue script 段公共片段（三模板共用）
  * @param {object} options
  * @returns {{ vueImportLine: string, dictImportLine: string, dictBootstrap: string, fileUploadImportLine: string, fileUploadBootstrap: string, requiredRules: string, watchBlock: string }}
  */
@@ -4662,7 +4762,7 @@ function buildGeneratedFormVueScriptFragments(options) {
   const fileUploadImportLine = needsFileUpload ? buildBusinessFileUploadFormImportBlock() : '';
   const fileUploadBootstrap = needsFileUpload ? buildBusinessFileUploadFormScriptBlock() : '';
   const numberingImportLine = needsNumbering
-    ? "import { useTaktFormNumbering } from '@/composables/use-takt-form-numbering'\n"
+    ? "import { useTaktFormNumbering } from '@/composables/useTaktFormNumbering'\n"
     : '';
   const numberingBootstrap = needsNumbering
     ? buildTaktNumberingFormScriptBlock(options.formFields, options.entityIdField || 'id')
@@ -4672,7 +4772,8 @@ function buildGeneratedFormVueScriptFragments(options) {
     entityIdField: options.entityIdField || '',
   });
   return {
-    vueImportLine: `import { reactive, watch, computed, ref${needsOnMounted ? ', onMounted' : ''} } from 'vue'`,
+    // vue / pinia 等由 unplugin-auto-import 注入（auto-imports.d.ts）；.vue 禁止再写 import { ref, … } from 'vue'
+    vueImportLine: '',
     dictImportLine: needsDictSelect ? buildDictDataStoreImportLine() : '',
     dictBootstrap: needsDictSelect ? buildDictDataStoreFormBootstrap() : '',
     fileUploadImportLine,
@@ -4830,12 +4931,12 @@ function buildServerPagedIndexStyleBlock() {
  * @returns {string}
  */
 function buildVueImportResultUtilImportLine() {
-  return "import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'\n";
+  return "import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'\n";
 }
 
 /** 表单弹窗宽度 import（与 ec-gijutsu 来源导入/主表/附件弹窗一致） */
 const TAKT_FORM_MODAL_WIDTH_IMPORT =
-  "import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'\n";
+  "import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'\n";
 
 /** TaktModal 表单弹窗 width 绑定 */
 const TAKT_FORM_MODAL_WIDTH_ATTR = ':width="formModalWidthPx"';
@@ -4945,6 +5046,13 @@ module.exports = {
   collectApiFiles,
   kebabToPascal,
   pascalToKebab,
+  toFrontendEntityFileCamel,
+  toFrontendApiFileName,
+  toFrontendTypesFileName,
+  parseFrontendApiFileCamel,
+  parseFrontendTypesFileCamel,
+  camelToKebab,
+  kebabToCamel,
   parseVueCliArgs,
   runVueGeneratorCli,
   SKIP_LIST_FIELDS,
@@ -4962,6 +5070,7 @@ module.exports = {
   entityI18nConstPrefix,
   entityI18nHookName,
   entityI18nComposableFileName,
+  entityMasterContextComposableFileName,
   resolveFormPlaceholderKind,
   buildEntityI18nComposableFile,
   buildEntityI18nIndexImportBlock,

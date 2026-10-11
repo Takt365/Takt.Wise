@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcUkekenService.cs
 // 创建时间：2026-07-09
@@ -130,12 +130,12 @@ public class TaktEcUkekenService : TaktServiceBase, ITaktEcUkekenService
         entity.IsObsolete = 0;
         var isUnique_ix_takt_logistics_manufacturing_ec_ukeken_unique = await _uniqueValidator.IsUniqueAsync(
             _ecUkekenRepository,
-            x => x.EcDetailId == entity.EcDetailId
-                && x.EcNewMaterialCode == entity.EcNewMaterialCode
-                && x.EcNewRequiresInspection == entity.EcNewRequiresInspection);
+            x => x.EcCode == entity.EcCode
+                && x.EcNewRequiresInspection == entity.EcNewRequiresInspection
+                && x.EcNewMaterialCode == entity.EcNewMaterialCode);
         if (!isUnique_ix_takt_logistics_manufacturing_ec_ukeken_unique)
         {
-            throw new TaktBusinessException("设变受检执行的EcDetailId、EcNewMaterialCode、EcNewRequiresInspection已存在");
+            throw new TaktBusinessException("设变受检执行的设变单号、新品检验、新物料编码已存在");
         }
         if (entity.LineNumber <= 0)
         {
@@ -166,13 +166,13 @@ public class TaktEcUkekenService : TaktServiceBase, ITaktEcUkekenService
         dto.Adapt(entity);
         var isUnique_ix_takt_logistics_manufacturing_ec_ukeken_unique = await _uniqueValidator.IsUniqueAsync(
             _ecUkekenRepository,
-            x => x.EcDetailId == entity.EcDetailId
-                && x.EcNewMaterialCode == entity.EcNewMaterialCode
-                && x.EcNewRequiresInspection == entity.EcNewRequiresInspection,
+            x => x.EcCode == entity.EcCode
+                && x.EcNewRequiresInspection == entity.EcNewRequiresInspection
+                && x.EcNewMaterialCode == entity.EcNewMaterialCode,
             id);
         if (!isUnique_ix_takt_logistics_manufacturing_ec_ukeken_unique)
         {
-            throw new TaktBusinessException("设变受检执行的EcDetailId、EcNewMaterialCode、EcNewRequiresInspection已存在");
+            throw new TaktBusinessException("设变受检执行的设变单号、新品检验、新物料编码已存在");
         }
         await _ecUkekenRepository.UpdateAsync(entity);
         await _ecExecPersistence.FanOutUkekenFillableByEcAndNewMaterialAsync(entity);
@@ -304,19 +304,19 @@ public class TaktEcUkekenService : TaktServiceBase, ITaktEcUkekenService
             try
             {
                 var entity = rows[i].Adapt<TaktEcUkeken>();
-                var importKey = $"{entity.EcDetailId}|{entity.EcNewMaterialCode}|{entity.EcNewRequiresInspection}";
+                var importKey = $"{entity.EcCode}|{entity.EcNewRequiresInspection}|{entity.EcNewMaterialCode}";
                 if (!importSeenKeys.Add(importKey))
                 {
-                    throw new TaktBusinessException("与Excel中其他行重复（EcDetailId、EcNewMaterialCode、EcNewRequiresInspection）");
+                    throw new TaktBusinessException("与Excel中其他行重复（设变单号、新品检验、新物料编码）");
                 }
                 var isUnique_ix_takt_logistics_manufacturing_ec_ukeken_unique = await _uniqueValidator.IsUniqueAsync(
                     _ecUkekenRepository,
-                    x => x.EcDetailId == entity.EcDetailId
-                        && x.EcNewMaterialCode == entity.EcNewMaterialCode
-                        && x.EcNewRequiresInspection == entity.EcNewRequiresInspection);
+                    x => x.EcCode == entity.EcCode
+                        && x.EcNewRequiresInspection == entity.EcNewRequiresInspection
+                        && x.EcNewMaterialCode == entity.EcNewMaterialCode);
                 if (!isUnique_ix_takt_logistics_manufacturing_ec_ukeken_unique)
                 {
-                    throw new TaktBusinessException("设变受检执行的EcDetailId、EcNewMaterialCode、EcNewRequiresInspection已存在");
+                    throw new TaktBusinessException("设变受检执行的设变单号、新品检验、新物料编码已存在");
                 }
                 if (entity.LineNumber <= 0)
                 {

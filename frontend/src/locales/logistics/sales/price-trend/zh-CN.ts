@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/sales/price-trend
 // 文件名称：zh-CN.ts
 // 创建时间：2026-07-18
@@ -20,9 +20,10 @@ export default {
     selectPeriodRequired: '请选择期间年月',
     selectPriceTypeRequired: '请选择条件类型',
     selectCustomerRequired: '请选择客户',
-    summary: '物料×客户行 {count} 条（缺月回填最近有效价；* 悬停可查看最近价格日期）',
+    summary: '物料×客户行 {count} 条（列=有效起始日；同月多笔不合并）',
     summaryModel: '物料×客户行 {count} 条（机种/产品组来自 BOM；缺月回填同左）',
     trendSummary: '环比 {base} → {compare}：涨 {up} · 跌 {down} · 平 {flat}',
+    trendSummaryValidFrom: '各行按最近两次有效起始日比较：涨 {up} · 跌 {down} · 平 {flat}',
     carriedFrom: '最近价格日期 {period}（该月无有效价，沿用回填）',
     export: '清单导出',
     exportSuccess: '清单导出成功',

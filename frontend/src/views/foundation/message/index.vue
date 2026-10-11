@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/foundation/message -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：在线消息实体管理页面，含查询、增删改、导出 -->
@@ -318,30 +318,29 @@
  * 在线消息实体管理页
  * @module views/foundation/message
  */
-import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize, ensureTaktPaginationConfigAsync } from '@/utils/takt-paged'
-import MessageForm from './components/message-form.vue'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize, ensureTaktPaginationConfigAsync } from '@/utils/taktPaged'
+import MessageForm from './components/MessageForm.vue'
 import {
   getMessageList,
   deleteMessageById,
   deleteMessageBatch,
   exportMessage,
-} from '@/api/foundation/message'
+} from '@/api/foundation/message.api'
 import type {
   Message,
   MessageQuery,
-} from '@/types/foundation/message'
+} from '@/types/foundation/message.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { useUserStore } from '@/stores/identity/user'
-import { isLogoutInProgress } from '@/bootstrap/takt-logout-flow'
-import { useEventBus } from '@/utils/event-bus'
-import type { SignalRMessage } from '@/types/foundation/signal-r'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { useUserStore } from '@/stores/identity/useUserStore'
+import { isLogoutInProgress } from '@/bootstrap/taktLogoutFlow'
+import { useEventBus } from '@/utils/eventBus'
+import type { SignalRMessage } from '@/types/foundation/signalR.types'
 import { RiDeleteBinLine } from '@remixicon/vue'
 
 /** i18n 翻译函数 */

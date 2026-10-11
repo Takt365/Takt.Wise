@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Identity
 // 文件名称：TaktLoginDtos.cs
 // 创建时间：2025-01-20
@@ -331,6 +331,11 @@ public class TaktUserInfoResponseDto
     public string TenantCode { get; set; } = string.Empty;
 
     /// <summary>
+    /// 租户名称（TaktTenant.TenantName）
+    /// </summary>
+    public string? TenantName { get; set; }
+
+    /// <summary>
     /// 公司编码
     /// </summary>
     public string CompanyCode { get; set; } = string.Empty;
@@ -346,6 +351,11 @@ public class TaktUserInfoResponseDto
     public string DefaultCulture { get; set; } = string.Empty;
 
     /// <summary>
+    /// 用户区域文化本地化名称（TaktCulture.NativeName，与 DefaultCulture 对应）
+    /// </summary>
+    public string? CultureName { get; set; }
+
+    /// <summary>
     /// 当前公司区域文化 BCP47（takt_company.culture_code，业务行戳记与界面语言）
     /// </summary>
     public string CompanyDefaultCulture { get; set; } = string.Empty;
@@ -354,6 +364,16 @@ public class TaktUserInfoResponseDto
     /// 公司名称（从公司表关联）
     /// </summary>
     public string? CompanyName { get; set; }
+
+    /// <summary>
+    /// 当前公司下所属部门显示名（TaktEmployeeDept → TaktDept；多部门顿号拼接）
+    /// </summary>
+    public string? DeptName { get; set; }
+
+    /// <summary>
+    /// 当前公司下所属部门编码列表（供前端 org.dept.* 翻译；与 DeptName 同序）
+    /// </summary>
+    public List<string> DeptCodes { get; set; } = new();
 
     /// <summary>
     /// 状态（1=启用，0=禁用）
@@ -366,9 +386,14 @@ public class TaktUserInfoResponseDto
     public string StatusName => UserStatus == 1 ? "启用" : "禁用";
 
     /// <summary>
-    /// 角色列表
+    /// 角色编码列表（鉴权 / 前端权限；与 RoleNames 同序）
     /// </summary>
     public List<string> Roles { get; set; } = new();
+
+    /// <summary>
+    /// 角色显示名列表（TaktRole.RoleName；与 Roles 同序，个人中心展示）
+    /// </summary>
+    public List<string> RoleNames { get; set; } = new();
 
     /// <summary>
     /// 权限列表

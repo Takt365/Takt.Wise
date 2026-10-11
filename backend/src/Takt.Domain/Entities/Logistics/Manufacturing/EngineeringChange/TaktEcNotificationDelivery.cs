@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcNotificationDelivery.cs
 // 创建时间：2026-06-24
@@ -20,7 +20,7 @@ namespace Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange;
 /// </summary>
 [SugarTable("takt_logistics_manufacturing_ec_notification_delivery", "工程变更通知投递表")]
 [SugarIndex("ix_ec_notification_delivery_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
-[SugarIndex("ix_ec_notification_delivery_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcNotificationId), OrderByType.Asc, nameof(DeptCode), OrderByType.Asc, true)]
+[SugarIndex("ix_ec_notification_delivery_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcNotificationId), OrderByType.Asc, nameof(EcDeptGroupCode), OrderByType.Asc, true)]
 [SugarIndex("ix_ec_notification_delivery_plant_code", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(PlantCode), OrderByType.Asc, false)]
 [SugarIndex("ix_ec_notification_delivery_status", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(DeliveryStatus), OrderByType.Asc, false)]
 public class TaktEcNotificationDelivery : TaktCompanyEntityBase
@@ -49,15 +49,15 @@ public class TaktEcNotificationDelivery : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "ec_code", ColumnDescription = "设变单号", ColumnDataType = "varchar", Length = 40, IsNullable = false)]
     public string EcCode { get; set; } = string.Empty;
     /// <summary>
-    /// 目标部门编码（TaktDept.DeptCode，如 D0710、D0810）
+    /// 设变部门编码（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）
     /// </summary>
-    [SugarColumn(ColumnName = "dept_code", ColumnDescription = "目标部门编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
-    public string DeptCode { get; set; } = string.Empty;
+    [SugarColumn(ColumnName = "ec_dept_group_code", ColumnDescription = "设变部门编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
+    public string EcDeptGroupCode { get; set; } = string.Empty;
     /// <summary>
-    /// 目标部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）
+    /// 设变部门名称（冗余：按 EcDeptGroupCode 取 TaktDept.DeptName1 联动）
     /// </summary>
-    [SugarColumn(ColumnName = "dept_name", ColumnDescription = "目标部门名称", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
-    public string? DeptName { get; set; }
+    [SugarColumn(ColumnName = "ec_dept_group_name", ColumnDescription = "设变部门名称", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? EcDeptGroupName { get; set; }
     /// <summary>
     /// 优先级（1=普通，2=高，3=紧急）
     /// </summary>
@@ -74,16 +74,15 @@ public class TaktEcNotificationDelivery : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "sent_at", ColumnDescription = "发送时间", ColumnDataType = "datetime", IsNullable = true)]
     public DateTime? SentAt { get; set; }
     /// <summary>
-    /// 确认人用户 ID
+    /// 确认组编码（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
-    [SugarColumn(ColumnName = "confirmed_by_user_id", ColumnDescription = "确认人用户ID", ColumnDataType = "bigint", IsNullable = true)]
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ConfirmedByUserId { get; set; }
+    [SugarColumn(ColumnName = "confirmed_by_group_code", ColumnDescription = "确认组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? ConfirmedByGroupCode { get; set; }
     /// <summary>
-    /// 确认人用户名
+    /// 确认组名称（冗余：按 ConfirmedByGroupCode 取 TaktEcGroups.EcGroupName 联动）
     /// </summary>
-    [SugarColumn(ColumnName = "confirmed_by_user_name", ColumnDescription = "确认人用户名", ColumnDataType = "varchar", Length = 40, IsNullable = true)]
-    public string? ConfirmedByUserName { get; set; }
+    [SugarColumn(ColumnName = "confirmed_by_group_name", ColumnDescription = "确认组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? ConfirmedByGroupName { get; set; }
     /// <summary>
     /// 确认时间
     /// </summary>

@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/ec-kanban -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：设变实施跟踪看板：执行路径、当前卡点部门、实施状态筛选 -->
@@ -86,14 +86,14 @@
  * 设变实施跟踪看板：按 8 张部门执行表汇总路径，品管课完成即正式完成
  */
 import { useI18n } from 'vue-i18n';
-import { useEntityFieldI18n } from '@/composables/use-entity-field-i18n';
+import { useEntityFieldI18n } from '@/composables/useEntityFieldI18n';
 import { taktOrgDeptI18nKey } from '@/utils/naming';
-import { getEcKanbanList, exportEcKanbanData } from '@/api/logistics/manufacturing/engineering-change/ec-kanban';
-import { TaktEcKanbanOrder } from '@/constants/logistics/ec-exec-codes';
-import { TaktEcImplementationStatus } from '@/constants/logistics/ec-implementation-status';
-import type { EcKanban } from '@/types/logistics/manufacturing/engineering-change/ec-kanban';
-import { useEcGijutsuI18n } from '@/views/logistics/manufacturing/engineering-change/ec-gijutsu/composables/use-ec-gijutsu-i18n';
-import EcKanbanStageStrip from './components/ec-kanban-stage-strip.vue';
+import { getEcKanbanList, exportEcKanbanData } from '@/api/logistics/manufacturing/engineering-change/ecKanban.api';
+import { TaktEcKanbanOrder } from '@/constants/logistics/ecExecCodes.constants';
+import { TaktEcImplementationStatus } from '@/constants/logistics/ecImplementationStatus.constants';
+import type { EcKanban } from '@/types/logistics/manufacturing/engineering-change/ecKanban.types';
+import { useEcGijutsuI18n } from '@/views/logistics/manufacturing/engineering-change/ec-gijutsu/composables/useEcGijutsuI18n';
+import EcKanbanStageStrip from './components/EcKanbanStageStrip.vue';
 
 const { t } = useI18n();
 const gi = useEcGijutsuI18n();

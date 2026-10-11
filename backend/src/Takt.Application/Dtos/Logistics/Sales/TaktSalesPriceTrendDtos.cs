@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Sales
 // 文件名称：TaktSalesPriceTrendDtos.cs
 // 创建时间：2026-07-01
@@ -33,7 +33,7 @@ public class TaktSalesPriceTrendQueryDto : TaktPagedQuery
     public DateTime? PeriodDateEnd { get; set; }
 
     /// <summary>
-    /// 关注期间 yyyy-MM（可选）；缺省取期间末月，相对上月算环比
+    /// 关注期间（可选；销售价格推移按各行最近两次 ValidFrom 比较，忽略本字段）
     /// </summary>
     public string? FocusPeriod { get; set; }
 
@@ -64,7 +64,7 @@ public class TaktSalesPriceTrendQueryDto : TaktPagedQuery
 }
 
 /// <summary>
-/// 销售价格推移转置行（行=工厂+物料+客户，列=各月折算单价）
+/// 销售价格推移转置行（行=工厂+物料+客户，列=各 ValidFrom 折算单价）
 /// </summary>
 public class TaktSalesPriceTrendDto
 {
@@ -104,12 +104,12 @@ public class TaktSalesPriceTrendDto
     public string Unit { get; set; } = string.Empty;
 
     /// <summary>
-    /// 各期间折算单价（键 yyyy-MM；仅含当月有效价月份）
+    /// 各有效起始日折算单价（键 yyyy-MM-dd，对应主表 ValidFrom）
     /// </summary>
     public Dictionary<string, decimal> PeriodUnitPrices { get; set; } = new(StringComparer.Ordinal);
 
     /// <summary>
-    /// 各期间单价来源月（有效期填充场景可留空）
+    /// 各列单价来源（与列键相同的 yyyy-MM-dd；无缺月回填）
     /// </summary>
     public Dictionary<string, string> PeriodPriceSourcePeriods { get; set; } = new(StringComparer.Ordinal);
 
@@ -160,7 +160,7 @@ public class TaktSalesPriceTrendResultDto
     public TaktPagedResult<TaktSalesPriceTrendDto> Paged { get; set; } = null!;
 
     /// <summary>
-    /// 期间列顺序 yyyy-MM
+    /// 有效起始日列顺序 yyyy-MM-dd
     /// </summary>
     public List<string> PeriodOrder { get; set; } = new();
 
@@ -175,7 +175,7 @@ public class TaktSalesPriceTrendResultDto
     public string? BasePeriod { get; set; }
 
     /// <summary>
-    /// 环比对比期间（关注月）
+    /// 环比对比期间（最近有效起始日）
     /// </summary>
     public string? ComparePeriod { get; set; }
 

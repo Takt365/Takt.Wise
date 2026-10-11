@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/components/common
 // 文件名称：zh-CN.ts
 // 创建时间：2026-06-16
@@ -71,6 +71,8 @@ export default {
       images: "图片上传",
       imageonly: "只能上传图片文件",
       imagesizeexceed: "图片大小不能超过 {max}MB",
+      imagepixelmin: "图片像素不能小于 {min}×{min}",
+      imagepixelmax: "头像输出像素不能超过 {max}×{max}",
       imagereadfail: "读取图片失败",
       ok: "确定",
       operationfail: "操作失败",

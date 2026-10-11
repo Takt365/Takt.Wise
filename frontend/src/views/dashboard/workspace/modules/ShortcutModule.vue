@@ -55,11 +55,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { useMenuStore } from '@/stores/identity/menu'
-import { useWorkspaceShortcutStore } from '@/stores/dashboard/workspace-shortcut'
+import { useMenuStore } from '@/stores/identity/useMenuStore'
+import { useWorkspaceShortcutStore } from '@/stores/dashboard/useWorkspaceShortcutStore'
 import { TAKT_REMIX_ICON_CLASS } from '@/utils/common'
 import { resolveThemeColorCssVar } from '@/utils/theme'
 

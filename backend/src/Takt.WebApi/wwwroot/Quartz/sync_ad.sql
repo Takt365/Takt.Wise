@@ -508,51 +508,9 @@ BEGIN
   THROW 50002, @count_msg, 1;
 END;
 
-INSERT INTO [takt_statistics_logging_delta_log] (
-  [id],[oper_type],[table_name],[primary_key_id],
-  [before_data],[after_data],[diff_data],[sql_statement],
-  [oper_ip],[oper_location],[user_agent],[browser],[os],[device_type],
-  [oper_time],[elapsed_time],[tenant_code],[company_code],[plant_code],[culture_code],
-  [ext_field],[remark],[created_by],[created_at]
-)
-SELECT
-  @base_id + d.rn,
-  d.oper_type,
-  N'takt_foundation_admin_division',
-  d.id,
-  ISNULL((
-    SELECT
-      d.country_code_old AS [country_code],
-      d.division_name_old AS [division_name],
-      d.parent_id_old AS [parent_id],
-      d.level_old AS [level],
-      d.division_status_old AS [division_status]
-    WHERE d.oper_type = 'UPDATE'
-    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-  ), '{}'),
-  (
-    SELECT
-      d.country_code_new AS [country_code],
-      d.division_name_new AS [division_name],
-      d.parent_id_new AS [parent_id],
-      d.level_new AS [level],
-      d.division_status_new AS [division_status]
-    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-  ),
-  ISNULL((
-    SELECT
-      CASE WHEN d.oper_type = 'UPDATE' THEN ISNULL(d.division_name_old, 'null') END AS [division_name.old],
-      CASE WHEN d.oper_type = 'UPDATE' THEN ISNULL(d.division_name_new, 'null') END AS [division_name.new],
-      CASE WHEN d.oper_type = 'UPDATE' THEN ISNULL(CAST(d.parent_id_old AS NVARCHAR), 'null') END AS [parent_id.old],
-      CASE WHEN d.oper_type = 'UPDATE' THEN ISNULL(CAST(d.parent_id_new AS NVARCHAR), 'null') END AS [parent_id.new]
-    WHERE d.oper_type = 'UPDATE'
-    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-  ), '{}'),
-  N'MERGE AdminDivision Sync',
-  '127.0.0.1','Server','SQLCMD','Server','Windows','Server',
-  @now,0,
-  d.tenant_code,@company_code,@plant_code,@culture_code,'{}',N'SYNC',COALESCE(d.change_by,@sync_user_id),@now
-FROM #delta d;
+
+/* per-row delta_log removed */
+
 
 DECLARE @insert_count INT = (SELECT COUNT(*) FROM #delta WHERE oper_type = 'INSERT');
 DECLARE @update_count INT = (SELECT COUNT(*) FROM #delta WHERE oper_type = 'UPDATE');
@@ -569,6 +527,31 @@ DECLARE @json_result NVARCHAR(MAX) =
   + N',"unchanged":' + CAST(@unchanged_count AS NVARCHAR)
   + N',"soft_delete_this_run":' + CAST(@delete_count AS NVARCHAR)
   + N',"soft_delete_keys":"' + REPLACE(@soft_deleted_keys, N'"', N'''') + N'"}';
+
+-- 批量同步：每次执行仅写 1 条摘要差异日志（非逐行）；明细变更见业务操作差异日志
+INSERT INTO [takt_statistics_logging_delta_log] (
+  [id],[oper_type],[table_name],[primary_key_id],
+  [before_data],[after_data],[diff_data],[sql_statement],
+  [oper_ip],[oper_location],[user_agent],[browser],[os],[device_type],
+  [oper_time],[elapsed_time],[tenant_code],[company_code],[plant_code],[culture_code],
+  [ext_field],[remark],[created_by],[created_at]
+)
+VALUES (
+  @base_id,
+  N'SYNC',
+  N'takt_foundation_admin_division',
+  NULL,
+  N'{}',
+  ISNULL(@json_result, N'{}'),
+  N'{}',
+  N'MERGE AdminDivision Sync (summary)',
+  N'127.0.0.1',N'Server',N'SQLCMD',N'Server',N'Windows',N'Server',
+  @now,0,
+  @tenant_code,@company_code,@plant_code,@culture_code,
+  N'{}',N'SYNC batch summary',@sync_user_id,@now
+);
+
+
 
 INSERT INTO [takt_statistics_logging_oper_log] (
   [id],[user_name],[oper_type],[oper_module],[oper_method],

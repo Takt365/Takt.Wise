@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/code/database/database-info -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：当前登录租户业务库物理表浏览（不可切换租户，服务端分页） -->
@@ -67,17 +67,16 @@
 </template>
 
 <script setup lang="ts">
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 /**
  * 数据库表信息浏览页：仅当前登录租户业务库物理表（租户隔离，服务端分页）
  * @module views/code/database/database-info
  */
-import { ref, computed, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { getDatabaseTableInfoPageList } from '@/api/code/database/database-info'
-import type { DatabaseTableInfo, DatabaseTableInfoQuery } from '@/types/code/database/database-info'
+import { getDatabaseTableInfoPageList } from '@/api/code/database/databaseInfo.api'
+import type { DatabaseTableInfo, DatabaseTableInfoQuery } from '@/types/code/database/databaseInfo.types'
 
 /** i18n 翻译函数 */
 const { t } = useI18n()

@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/quality/complaint/customer-complaint -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：客诉主表实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -274,23 +274,24 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('responsiblePersonId')">
-      <a-form-item :label="pi.queryLabel('responsiblePersonId')">
+      <div v-show="isFieldVisible('responsibleGroupCode')">
+      <a-form-item :label="pi.queryLabel('responsibleGroupCode')">
         <TaktSelect
-          v-model:value="advancedQueryForm.responsiblePersonId"
-          api-url="TaktEmployees/options"
-          :placeholder="pi.queryPh('responsiblePersonId', 'select')"
+          v-model:value="advancedQueryForm.responsibleGroupCode"
+          api-url="TaktComplaintGroups/options"
+          :api-params="{ complaintGroupCategory: 1 }"
+          :placeholder="pi.queryPh('responsibleGroupCode', 'select')"
           allow-clear
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('responsiblePersonName')">
-      <a-form-item :label="pi.queryLabel('responsiblePersonName')">
+      <div v-show="isFieldVisible('responsibleGroupName')">
+      <a-form-item :label="pi.queryLabel('responsibleGroupName')">
         <a-input
-          v-model:value="advancedQueryForm.responsiblePersonName"
-          :placeholder="pi.queryPh('responsiblePersonName', 'required')"
+          v-model:value="advancedQueryForm.responsibleGroupName"
+          :placeholder="pi.queryPh('responsibleGroupName', 'required')"
           show-count
-          :maxlength="50"
+          :maxlength="80"
           allow-clear
         />
       </a-form-item>
@@ -493,22 +494,21 @@
  * 客诉主表实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/quality/complaint/customer-complaint
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import CustomerComplaintForm from './components/customer-complaint-form.vue'
-import CustomerComplaintItemPanel from './components/customer-complaint-item-panel.vue'
-import { provideCustomerComplaintMasterContext, type CustomerComplaintRowRecord } from './composables/use-customer-complaint-master-context'
-import { getCustomerComplaintList, getCustomerComplaintById, createCustomerComplaint, updateCustomerComplaint, deleteCustomerComplaintById, deleteCustomerComplaintBatch, getCustomerComplaintTemplate, importCustomerComplaint, exportCustomerComplaint, updateCustomerComplaintStatus } from '@/api/logistics/quality/complaint/customer-complaint'
-import type { CustomerComplaint, CustomerComplaintQuery } from '@/types/logistics/quality/complaint/customer-complaint'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import CustomerComplaintForm from './components/CustomerComplaintForm.vue'
+import CustomerComplaintItemPanel from './components/CustomerComplaintItemPanel.vue'
+import { provideCustomerComplaintMasterContext, type CustomerComplaintRowRecord } from './composables/useCustomerComplaintMasterContext'
+import { getCustomerComplaintList, getCustomerComplaintById, createCustomerComplaint, updateCustomerComplaint, deleteCustomerComplaintById, deleteCustomerComplaintBatch, getCustomerComplaintTemplate, importCustomerComplaint, exportCustomerComplaint, updateCustomerComplaintStatus } from '@/api/logistics/quality/complaint/customerComplaint.api'
+import type { CustomerComplaint, CustomerComplaintQuery } from '@/types/logistics/quality/complaint/customerComplaint.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -517,7 +517,7 @@ import {
   CUSTOMERCOMPLAINT_QUERY_STRING_FIELDS,
   CUSTOMERCOMPLAINT_QUERY_FIELDS,
   CUSTOMERCOMPLAINT_SELF_I18N_KEY,
-} from './composables/use-customer-complaint-i18n'
+} from './composables/useCustomerComplaintI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useCustomerComplaintI18n()
@@ -691,7 +691,6 @@ onMounted(async () => {
   loadData()
 })
 
-
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
 
@@ -842,22 +841,22 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getCustomerComplaintField(record, 'responsibleDeptName') ?? ''
   },
   {
-    title: pi.label('responsiblePersonId'),
-    dataIndex: 'responsiblePersonId',
-    key: 'responsiblePersonId',
+    title: pi.label('responsibleGroupCode'),
+    dataIndex: 'responsibleGroupCode',
+    key: 'responsibleGroupCode',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getCustomerComplaintField(record, 'responsiblePersonId') ?? ''
+    customRender: ({ record }: { record: any }) => getCustomerComplaintField(record, 'responsibleGroupCode') ?? ''
   },
   {
-    title: pi.label('responsiblePersonName'),
-    dataIndex: 'responsiblePersonName',
-    key: 'responsiblePersonName',
+    title: pi.label('responsibleGroupName'),
+    dataIndex: 'responsibleGroupName',
+    key: 'responsibleGroupName',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getCustomerComplaintField(record, 'responsiblePersonName') ?? ''
+    customRender: ({ record }: { record: any }) => getCustomerComplaintField(record, 'responsibleGroupName') ?? ''
   },
   {
     title: pi.label('requiredReplyDate'),
@@ -968,8 +967,6 @@ const getCustomerComplaintDictValue = (
   return String(value)
 }
 
-
-
 /** 行选择配置 */
 const rowSelection = computed(() => ({
   selectedRowKeys: selectedRowKeys.value,
@@ -1046,8 +1043,8 @@ function handleReset() {
   complaintLevel: undefined as number | undefined,
   responsibleDeptId: '',
   responsibleDeptName: '',
-  responsiblePersonId: '',
-  responsiblePersonName: '',
+  responsibleGroupCode: '',
+  responsibleGroupName: '',
   requiredReplyDateStart: '',
   requiredReplyDateEnd: '',
   actualReplyDateStart: '',
@@ -1271,8 +1268,8 @@ function handleAdvancedQueryReset() {
   complaintLevel: undefined as number | undefined,
   responsibleDeptId: '',
   responsibleDeptName: '',
-  responsiblePersonId: '',
-  responsiblePersonName: '',
+  responsibleGroupCode: '',
+  responsibleGroupName: '',
   requiredReplyDateStart: '',
   requiredReplyDateEnd: '',
   actualReplyDateStart: '',

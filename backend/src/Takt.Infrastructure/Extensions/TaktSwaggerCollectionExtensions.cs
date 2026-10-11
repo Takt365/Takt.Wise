@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Extensions
 // 文件名称：TaktSwaggerCollectionExtensions.cs
 // 创建时间：2025-01-20
@@ -90,7 +90,7 @@ public static class TaktSwaggerCollectionExtensions
 
         app.MapScalarApiReference(ScalarEndpointPrefix, options =>
         {
-            options.WithTitle("Takt Plat API");
+            options.WithTitle("TaktWise API");
             options.WithFavicon("/logo/takt.svg");
             options.WithOpenApiRoutePattern(OpenApiRoutePattern);
             options.AddDocuments(scalarDocuments);
@@ -152,7 +152,7 @@ public static class TaktSwaggerCollectionExtensions
         {
             document.Info = new OpenApiInfo
             {
-                Title = $"Takt Plat - {group.DisplayName}",
+                Title = $"TaktWise - {group.DisplayName}",
                 Version = group.DocumentName,
                 Description = $"业务模块：{group.DisplayName}（{group.DocumentName}）",
             };

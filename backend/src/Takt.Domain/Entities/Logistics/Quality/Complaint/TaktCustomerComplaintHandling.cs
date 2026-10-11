@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Quality.Complaint
 // 文件名称：TaktCustomerComplaintHandling.cs
 // 创建时间：2026-05-11
@@ -24,7 +24,7 @@ namespace Takt.Domain.Entities.Logistics.Quality.Complaint;
 [SugarIndex("ix_takt_logistics_quality_customer_complaint_handling_code_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(PlantCode), OrderByType.Asc, nameof(ComplaintHandlingCode), OrderByType.Asc, true)]
 [SugarIndex("ix_takt_logistics_quality_customer_complaint_handling_plant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(PlantCode), OrderByType.Asc, false)]
 [SugarIndex("ix_takt_logistics_quality_customer_complaint_handling_complaint_id", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(ComplaintId), OrderByType.Asc, false)]
-[SugarIndex("ix_takt_logistics_quality_customer_complaint_handling_handler_id", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(HandlerId), OrderByType.Asc, false)]
+[SugarIndex("ix_takt_logistics_quality_customer_complaint_handling_handler_group_code", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(HandlerGroupCode), OrderByType.Asc, false)]
 public class TaktCustomerComplaintHandling : TaktCompanyEntityBase
 {
 
@@ -92,27 +92,25 @@ public class TaktCustomerComplaintHandling : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "responsible_dept_name", ColumnDescription = "责任部门名称", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
     public string? ResponsibleDeptName { get; set; }
     /// <summary>
-    /// 责任人（选项 TaktEmployees/options；DictValue=Id）
+    /// 责任组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=1；DictValue=ComplaintGroupCode）
     /// </summary>
-    [SugarColumn(ColumnName = "responsible_person_id", ColumnDescription = "责任人ID", ColumnDataType = "bigint", IsNullable = true)]
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ResponsiblePersonId { get; set; }
+    [SugarColumn(ColumnName = "responsible_group_code", ColumnDescription = "责任组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? ResponsibleGroupCode { get; set; }
     /// <summary>
-    /// 责任人名称（冗余：按 ResponsiblePersonId 取 TaktEmployee.EmployeeName 联动）
+    /// 责任组名称（冗余：按 ResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    [SugarColumn(ColumnName = "responsible_person_name", ColumnDescription = "责任人名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
-    public string? ResponsiblePersonName { get; set; }
+    [SugarColumn(ColumnName = "responsible_group_name", ColumnDescription = "责任组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? ResponsibleGroupName { get; set; }
     /// <summary>
-    /// 处理人（选项 TaktEmployees/options；DictValue=Id）
+    /// 处理组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=2；DictValue=ComplaintGroupCode）
     /// </summary>
-    [SugarColumn(ColumnName = "handler_id", ColumnDescription = "处理人ID", ColumnDataType = "bigint", IsNullable = true)]
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? HandlerId { get; set; }
+    [SugarColumn(ColumnName = "handler_group_code", ColumnDescription = "处理组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? HandlerGroupCode { get; set; }
     /// <summary>
-    /// 处理人名称（冗余：按 HandlerId 取 TaktEmployee.EmployeeName 联动）
+    /// 处理组名称（冗余：按 HandlerGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    [SugarColumn(ColumnName = "handler_name", ColumnDescription = "处理人名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
-    public string? HandlerName { get; set; }
+    [SugarColumn(ColumnName = "handler_group_name", ColumnDescription = "处理组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? HandlerGroupName { get; set; }
     /// <summary>
     /// 处理时间
     /// </summary>

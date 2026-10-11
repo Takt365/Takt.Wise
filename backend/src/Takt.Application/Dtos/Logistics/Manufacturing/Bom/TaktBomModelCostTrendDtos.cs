@@ -1,22 +1,21 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomModelCostTrendDtos.cs
 // 创建时间：2026-08-01
 // 创建人：Takt365(Cursor AI)
-// 功能描述：BOM 机种成本推移 DTO（与产品推移 / 成本分析分离）
+// 功能描述：BOM 机种成本推移 DTO（一行一个成品：各月成本、相邻月差额、组件差异）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
 // ========================================
 
-using System.ComponentModel.DataAnnotations;
 using Takt.Shared.Models;
 
 namespace Takt.Application.Dtos.Logistics.Manufacturing.Bom;
 
 /// <summary>
-/// 机种成本推移查询
+/// 机种成本推移查询（工厂 + 期间 + 物料类型；机种可空=全部机种）
 /// </summary>
 public class TaktBomModelCostTrendQueryDto : TaktPagedQuery
 {
@@ -26,68 +25,28 @@ public class TaktBomModelCostTrendQueryDto : TaktPagedQuery
     public string PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种编码（兼容单值；与 ModelCodes 合并；空=全部机种）
+    /// 机种编码（可选；空=范围内全部机种，各机种单独对比其成品）
     /// </summary>
     public string? ModelCode { get; set; }
 
     /// <summary>
-    /// 机种编码多选（逗号分隔；空=期间最后月全部机种）
-    /// </summary>
-    public string? ModelCodes { get; set; }
-
-    /// <summary>
-    /// 产品编码（可选；有值时仅汇总该产品下明细）
-    /// </summary>
-    public string? ProductCode { get; set; }
-
-    /// <summary>
-    /// 组件/物料编码（兼容单值；与 ComponentCodes 合并；空=期间最后月全部物料）
-    /// </summary>
-    public string? ComponentCode { get; set; }
-
-    /// <summary>
-    /// 组件/物料编码多选（逗号分隔；空=期间最后月全部 X+F 物料）
-    /// </summary>
-    public string? ComponentCodes { get; set; }
-
-    /// <summary>
-    /// 物料类型（本表 MaterialType；空=不过滤）
+    /// 物料类型（本表 MaterialType；必填）
     /// </summary>
     public string? MaterialType { get; set; }
 
     /// <summary>
-    /// 核算期间起（CostingDate 月初语义）
+    /// 核算期间起（月初）
     /// </summary>
     public DateTime? PeriodDateStart { get; set; }
 
     /// <summary>
-    /// 核算期间止（CostingDate 月初语义）
+    /// 核算期间止（月初；组件差异取该月）
     /// </summary>
     public DateTime? PeriodDateEnd { get; set; }
-
-    /// <summary>
-    /// 关注期间 yyyy-MM（可选）；环比对比月
-    /// </summary>
-    public string? FocusPeriod { get; set; }
-
-    /// <summary>
-    /// 涨跌筛选：空=全部；up/down/flat/none；changed=仅涨或跌
-    /// </summary>
-    public string? TrendFilter { get; set; }
-
-    /// <summary>
-    /// 全量列表排序（分页前）：productCountDesc（默认）/ productCountAsc / trend
-    /// </summary>
-    public string? SortBy { get; set; }
-
-    /// <summary>
-    /// 合并模式：summary=材料成本推移；detail=差异组件推移
-    /// </summary>
-    public string? MergeMode { get; set; }
 }
 
 /// <summary>
-/// 机种成本推移分析行（summary/detail 合并键跨产品组合并；列为核算月组件单价）
+/// 机种成本推移行（一个成品）
 /// </summary>
 public class TaktBomModelCostTrendDto
 {
@@ -107,54 +66,14 @@ public class TaktBomModelCostTrendDto
     public string ModelName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 组件编码
+    /// 产品编码
     /// </summary>
-    public string ComponentCode { get; set; } = string.Empty;
+    public string ProductCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 组件描述
+    /// 产品描述
     /// </summary>
-    public string ComponentDescription { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 组件数量（detail 模式展示；summary 可为空）
-    /// </summary>
-    public decimal? ComponentQuantity { get; set; }
-
-    /// <summary>
-    /// 批量标识（detail 模式）
-    /// </summary>
-    public string? BatchIndicator { get; set; }
-
-    /// <summary>
-    /// 生产相关
-    /// </summary>
-    public string? ProductionRelated { get; set; }
-
-    /// <summary>
-    /// 采购类型
-    /// </summary>
-    public string PurchaseType { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 特殊采购类（detail 模式）
-    /// </summary>
-    public string? SpecialProcurementType { get; set; }
-
-    /// <summary>
-    /// 利润中心（detail 模式）
-    /// </summary>
-    public string? ProfitCenterCode { get; set; }
-
-    /// <summary>
-    /// 产品组（最后月命中产品及该组件用量；格式「产品编码:数量」英文逗号分隔，如 8Y00000154:1,09VRS7TS04:1）
-    /// </summary>
-    public string ProductCodes { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 产品组内产品数
-    /// </summary>
-    public int ProductCount { get; set; }
+    public string ProductDescription { get; set; } = string.Empty;
 
     /// <summary>
     /// 币种
@@ -162,48 +81,29 @@ public class TaktBomModelCostTrendDto
     public string CurrencyCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 各核算月组件单价（键 yyyy-MM；MovingAveragePrice÷MovingPriceUnit，不乘组件数量、不按产品数加总；缺月无键）
+    /// 各月成品成本（键 yyyy-MM；ProductMonthlyCalculation；缺月无键）
     /// </summary>
-    public Dictionary<string, decimal> PeriodMaterialCosts { get; set; } = new(StringComparer.Ordinal);
+    public Dictionary<string, decimal> PeriodCosts { get; set; } = new(StringComparer.Ordinal);
 
     /// <summary>
-    /// 各月存在/变动码（detail）：present / absent / new / removed / up / down / flat
-    /// </summary>
-    public Dictionary<string, string> PeriodChangeTypes { get; set; } = new(StringComparer.Ordinal);
-
-    /// <summary>
-    /// 兼容旧字段：同 PeriodMaterialCosts
-    /// </summary>
-    public Dictionary<string, decimal> PeriodUnitPrices
-    {
-        get => PeriodMaterialCosts;
-        set => PeriodMaterialCosts = value ?? new Dictionary<string, decimal>(StringComparer.Ordinal);
-    }
-
-    /// <summary>
-    /// 环比涨跌：none / up / down / flat
-    /// </summary>
-    public string Trend { get; set; } = "none";
-
-    /// <summary>
-    /// 环比基准期间
-    /// </summary>
-    public string? BasePeriod { get; set; }
-
-    /// <summary>
-    /// 环比对比期间
-    /// </summary>
-    public string? ComparePeriod { get; set; }
-
-    /// <summary>
-    /// 环比差额
+    /// 相邻月差额（期间最后月 − 前一月；缺月则为空）
     /// </summary>
     public decimal? VarianceAmount { get; set; }
 
     /// <summary>
-    /// 环比变动率（百分点，如 -0.34 表示 -0.34%；导出 Excel 时 ÷100）
+    /// 共通价格（期间止月、同机种各成品用量与单价都相同的组件行成本合计；5 位小数；无止月成本则为空）
     /// </summary>
-    public decimal? VariancePercent { get; set; }
+    public decimal? CommonPrice { get; set; }
+
+    /// <summary>
+    /// 差异价格（期间止月、同机种各成品间用量或单价不一致的组件行成本合计；5 位小数；无止月成本则为空）
+    /// </summary>
+    public decimal? VariancePrice { get; set; }
+
+    /// <summary>
+    /// 组件差异（同机种各成品间用量或单价不一致的组件；格式 组件编码-用量:价格，价格 5 位小数，分号分隔）
+    /// </summary>
+    public string ComponentVarianceText { get; set; } = string.Empty;
 }
 
 /// <summary>
@@ -212,92 +112,47 @@ public class TaktBomModelCostTrendDto
 public class TaktBomModelCostTrendResultDto
 {
     /// <summary>
-    /// 分页分析行（组件合并键）
+    /// 分页成品行
     /// </summary>
     public TaktPagedResult<TaktBomModelCostTrendDto> Paged { get; set; } = null!;
 
     /// <summary>
-    /// 期间列顺序 yyyy-MM
+    /// 期间列 yyyy-MM
     /// </summary>
     public List<string> PeriodOrder { get; set; } = new();
 
     /// <summary>
-    /// 机种下产品编码列表（产品组）
-    /// </summary>
-    public List<string> ProductCodes { get; set; } = new();
-
-    /// <summary>
-    /// 机种各月材料成本（产品月成本算术平均，与主表机种月平均口径一致）
-    /// </summary>
-    public Dictionary<string, decimal> ModelPeriodMaterialCosts { get; set; } = new(StringComparer.Ordinal);
-
-    /// <summary>
-    /// 机种月材料成本环比涨跌
-    /// </summary>
-    public string ModelTrend { get; set; } = "none";
-
-    /// <summary>
-    /// 机种环比基准月
-    /// </summary>
-    public string? ModelBasePeriod { get; set; }
-
-    /// <summary>
-    /// 机种环比对比月
-    /// </summary>
-    public string? ModelComparePeriod { get; set; }
-
-    /// <summary>
-    /// 机种环比差额
-    /// </summary>
-    public decimal? ModelVarianceAmount { get; set; }
-
-    /// <summary>
-    /// 机种环比变动率（百分点，如 -0.34 表示 -0.34%；导出 Excel 时 ÷100）
-    /// </summary>
-    public decimal? ModelVariancePercent { get; set; }
-
-    /// <summary>
-    /// 合并分析行总数（分页前，已应用涨跌筛选）
-    /// </summary>
-    public int ComponentCount { get; set; }
-
-    /// <summary>
-    /// 环比基准期间（分析行）
-    /// </summary>
-    public string? BasePeriod { get; set; }
-
-    /// <summary>
-    /// 环比对比期间
+    /// 组件差异所取月份（期间止月）
     /// </summary>
     public string? ComparePeriod { get; set; }
 
     /// <summary>
-    /// 涨价分析行数（筛选前全量统计）
+    /// 机种数
     /// </summary>
-    public int UpCount { get; set; }
+    public int ModelCount { get; set; }
 
     /// <summary>
-    /// 跌价分析行数
+    /// 成品数（分页前）
     /// </summary>
-    public int DownCount { get; set; }
+    public int ProductCount { get; set; }
 
     /// <summary>
-    /// 持平行数
-    /// </summary>
-    public int FlatCount { get; set; }
-
-    /// <summary>
-    /// 无法比较行数
-    /// </summary>
-    public int NoneCount { get; set; }
-
-    /// <summary>
-    /// 全量分析行各期间材料成本合计（分页前、已应用涨跌筛选）
+    /// 各月成品成本合计（分页前）
     /// </summary>
     public Dictionary<string, decimal> PeriodCostTotals { get; set; } = new(StringComparer.Ordinal);
 
     /// <summary>
-    /// 全量分析行环比差额合计（分页前、已应用涨跌筛选）
+    /// 相邻月差额合计（分页前）
     /// </summary>
     public decimal? VarianceAmountTotal { get; set; }
+
+    /// <summary>
+    /// 共通价格合计（分页前）
+    /// </summary>
+    public decimal? CommonPriceTotal { get; set; }
+
+    /// <summary>
+    /// 差异价格合计（分页前）
+    /// </summary>
+    public decimal? VariancePriceTotal { get; set; }
 }

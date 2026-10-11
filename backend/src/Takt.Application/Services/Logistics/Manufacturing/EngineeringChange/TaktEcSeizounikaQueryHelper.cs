@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcSeizounikaQueryHelper.cs
 // 创建时间：2026-09-08
@@ -29,6 +29,7 @@ internal static class TaktEcSeizounikaQueryHelper
     internal static Expression<Func<TaktEcDetail, bool>> VisibleDetailExpression()
     {
         var purchaseTypeF = TaktEcScopeConstants.PurchaseTypeExternal;
+        var byEc = TaktEcDeptScopeConstants.ByEngineeringChange;
         var exp = Expressionable.Create<TaktEcDetail>();
         exp = exp.And(x => x.EcNewPurchaseType != purchaseTypeF);
         exp = exp.And(x =>
@@ -39,8 +40,7 @@ internal static class TaktEcSeizounikaQueryHelper
                     && s.IsDeleted == 0
                     && s.IsObsolete == 0
                     && s.EcCode == x.EcCode
-                    && s.EcModelCode == x.EcModelCode
-                    && s.EcRootMaterialCode == x.EcRootMaterialCode
+                    && (x.EcDeptScope == byEc || (s.EcModelCode == x.EcModelCode && s.EcRootMaterialCode == x.EcRootMaterialCode))
                     && s.EcNewPurchaseType != purchaseTypeF
                     && s.Id > x.Id)
                 .Any());

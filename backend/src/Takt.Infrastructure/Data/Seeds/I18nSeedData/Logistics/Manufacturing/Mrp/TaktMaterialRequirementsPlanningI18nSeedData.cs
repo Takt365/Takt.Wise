@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Mrp
 // 文件名称：TaktMaterialRequirementsPlanningI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktMaterialRequirementsPlanning 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -162,23 +162,23 @@ public class TaktMaterialRequirementsPlanningI18nSeedData : ITaktSeedDataCoordin
             // entity.materialrequirementsplanning.planperiodend
             new TranslationSeedItem("entity.materialrequirementsplanning.planperiodend", "zh-HK", "计划周期结束日期_hk", "计划周期结束日期"),
 
-            // entity.materialrequirementsplanning.planneremployeeid
-            new TranslationSeedItem("entity.materialrequirementsplanning.planneremployeeid", "en-US", "计划人员工ID_us", "计划人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.materialrequirementsplanning.planneremployeeid
-            new TranslationSeedItem("entity.materialrequirementsplanning.planneremployeeid", "ja-JP", "计划人员工ID_jp", "计划人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.materialrequirementsplanning.planneremployeeid
-            new TranslationSeedItem("entity.materialrequirementsplanning.planneremployeeid", "zh-CN", "计划人员工ID", "计划人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.materialrequirementsplanning.planneremployeeid
-            new TranslationSeedItem("entity.materialrequirementsplanning.planneremployeeid", "zh-HK", "计划人员工ID_hk", "计划人（选项 TaktEmployees/options；DictValue=Id）"),
+            // entity.materialrequirementsplanning.plannergroupcode
+            new TranslationSeedItem("entity.materialrequirementsplanning.plannergroupcode", "en-US", "计划组编码_us", "计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）"),
+            // entity.materialrequirementsplanning.plannergroupcode
+            new TranslationSeedItem("entity.materialrequirementsplanning.plannergroupcode", "ja-JP", "计划组编码_jp", "计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）"),
+            // entity.materialrequirementsplanning.plannergroupcode
+            new TranslationSeedItem("entity.materialrequirementsplanning.plannergroupcode", "zh-CN", "计划组编码", "计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）"),
+            // entity.materialrequirementsplanning.plannergroupcode
+            new TranslationSeedItem("entity.materialrequirementsplanning.plannergroupcode", "zh-HK", "计划组编码_hk", "计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）"),
 
-            // entity.materialrequirementsplanning.plannername
-            new TranslationSeedItem("entity.materialrequirementsplanning.plannername", "en-US", "计划人名称_us", "计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.materialrequirementsplanning.plannername
-            new TranslationSeedItem("entity.materialrequirementsplanning.plannername", "ja-JP", "计划人名称_jp", "计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.materialrequirementsplanning.plannername
-            new TranslationSeedItem("entity.materialrequirementsplanning.plannername", "zh-CN", "计划人名称", "计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.materialrequirementsplanning.plannername
-            new TranslationSeedItem("entity.materialrequirementsplanning.plannername", "zh-HK", "计划人名称_hk", "计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
+            // entity.materialrequirementsplanning.plannergroupname
+            new TranslationSeedItem("entity.materialrequirementsplanning.plannergroupname", "en-US", "计划组名称_us", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
+            // entity.materialrequirementsplanning.plannergroupname
+            new TranslationSeedItem("entity.materialrequirementsplanning.plannergroupname", "ja-JP", "计划组名称_jp", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
+            // entity.materialrequirementsplanning.plannergroupname
+            new TranslationSeedItem("entity.materialrequirementsplanning.plannergroupname", "zh-CN", "计划组名称", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
+            // entity.materialrequirementsplanning.plannergroupname
+            new TranslationSeedItem("entity.materialrequirementsplanning.plannergroupname", "zh-HK", "计划组名称_hk", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
 
             // entity.materialrequirementsplanning.runstatus
             new TranslationSeedItem("entity.materialrequirementsplanning.runstatus", "en-US", "运算状态_us", "运算状态（0=草稿，1=运算中，2=已运算，3=已发布，4=失败）"),

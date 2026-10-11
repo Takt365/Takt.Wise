@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/routine/meeting-center/meeting -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：会议中心管理页（工具栏含会议室/纪要/出席人窗口；右栏出席人明细） -->
@@ -212,25 +212,24 @@
  * 会议中心主实体 支持内部/外部/视频/混合会议排期、议程及参与人管理管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/routine/meeting-center/meeting
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import MeetingForm from './components/meeting-form.vue'
-import MeetingAttendeePanel from './components/meeting-attendee-panel.vue'
-import MeetingNotificationPanel from './components/meeting-notification-panel.vue'
-import MeetingMinutesPanel from './components/meeting-minutes-panel.vue'
-import { provideMeetingMasterContext, type MeetingRowRecord } from './composables/use-meeting-master-context'
-import { getMeetingList, getMeetingById, createMeeting, updateMeeting, deleteMeetingById, deleteMeetingBatch, getMeetingTemplate, importMeeting, exportMeeting, updateMeetingStatus } from '@/api/routine/meeting-center/meeting'
-import type { Meeting, MeetingQuery } from '@/types/routine/meeting-center/meeting'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import MeetingForm from './components/MeetingForm.vue'
+import MeetingAttendeePanel from './components/MeetingAttendeePanel.vue'
+import MeetingNotificationPanel from './components/MeetingNotificationPanel.vue'
+import MeetingMinutesPanel from './components/MeetingMinutesPanel.vue'
+import { provideMeetingMasterContext, type MeetingRowRecord } from './composables/useMeetingMasterContext'
+import { getMeetingList, getMeetingById, createMeeting, updateMeeting, deleteMeetingById, deleteMeetingBatch, getMeetingTemplate, importMeeting, exportMeeting, updateMeetingStatus } from '@/api/routine/meeting-center/meeting.api'
+import type { Meeting, MeetingQuery } from '@/types/routine/meeting-center/meeting.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiFileList3Line, RiGroupLine, RiMailLine } from '@remixicon/vue'
-import type { ToolBarAction } from '@/components/business/takt-tools-bar/index.vue'
+import type { ToolBarAction } from '@/components/business/TaktToolsBar/index.vue'
 
 import {
   useMeetingI18n,
@@ -238,7 +237,7 @@ import {
   MEETING_QUERY_STRING_FIELDS,
   MEETING_QUERY_FIELDS,
   MEETING_SELF_I18N_KEY,
-} from './composables/use-meeting-i18n'
+} from './composables/useMeetingI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useMeetingI18n()
@@ -542,7 +541,6 @@ onMounted(async () => {
   loadData()
 })
 
-
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
 
@@ -800,8 +798,6 @@ const getMeetingId = (record: MeetingRowRecord): string => {
  * @param field 字段名
  */
 const getMeetingField = (record: any, field: string): any => record?.[field]
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

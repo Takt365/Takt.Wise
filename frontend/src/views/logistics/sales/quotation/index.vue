@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/sales/quotation -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：Takt销售报价实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -482,22 +482,21 @@
  * Takt销售报价实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/sales/quotation
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import SalesQuotationForm from './components/quotation-form.vue'
-import SalesQuotationItemPanel from './components/quotation-item-panel.vue'
-import { provideSalesQuotationMasterContext, type SalesQuotationRowRecord } from './composables/use-quotation-master-context'
-import { getSalesQuotationList, getSalesQuotationById, createSalesQuotation, updateSalesQuotation, deleteSalesQuotationById, deleteSalesQuotationBatch, getSalesQuotationTemplate, importSalesQuotation, exportSalesQuotation, updateSalesQuotationStatus } from '@/api/logistics/sales/quotation'
-import type { SalesQuotation, SalesQuotationQuery } from '@/types/logistics/sales/quotation'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import SalesQuotationForm from './components/QuotationForm.vue'
+import SalesQuotationItemPanel from './components/QuotationItemPanel.vue'
+import { provideSalesQuotationMasterContext, type SalesQuotationRowRecord } from './composables/useQuotationMasterContext'
+import { getSalesQuotationList, getSalesQuotationById, createSalesQuotation, updateSalesQuotation, deleteSalesQuotationById, deleteSalesQuotationBatch, getSalesQuotationTemplate, importSalesQuotation, exportSalesQuotation, updateSalesQuotationStatus } from '@/api/logistics/sales/quotation.api'
+import type { SalesQuotation, SalesQuotationQuery } from '@/types/logistics/sales/quotation.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -506,7 +505,7 @@ import {
   SALESQUOTATION_QUERY_STRING_FIELDS,
   SALESQUOTATION_QUERY_FIELDS,
   SALESQUOTATION_SELF_I18N_KEY,
-} from './composables/use-quotation-i18n'
+} from './composables/useQuotationI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useSalesQuotationI18n()
@@ -693,7 +692,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -969,8 +967,6 @@ const getSalesQuotationDictValue = (
   if (typeof value === 'string' || typeof value === 'number') return value
   return String(value)
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

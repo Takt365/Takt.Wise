@@ -1,8 +1,8 @@
-# Takt.Plat
+# TaktWise
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [繁體中文（香港）](README.zh-HK.md)
 
-Takt Digital Factory · Full-stack enterprise platform (.NET 9 + Vue 3).
+TaktWise · Full-stack enterprise platform (.NET 9 + Vue 3).
 
 > ⚠️ **Important notice**: This project is AI-generated (using Cursor AI and other AI-assisted development tools). Code is automatically generated and optimized by AI.
 >
@@ -51,7 +51,7 @@ Covers **identity & permissions, foundation platform, human resources, logistics
 | Styling | Tailwind CSS 4.x |
 | State / router / HTTP | Pinia, vue-router 5, Axios |
 | i18n | vue-i18n (static `locales/**` + dynamic backend seeds) |
-| Workflow designer | **Primary** `takt-flow-antflow-designer` (AntFlow-style tree); LogicFlow is experimental |
+| Workflow designer | **Primary** `takt-flow-ant-designer` (AntFlow-style tree); LogicFlow is experimental |
 | Form designer | `@form-create/ant-design-vue` + antd-designer |
 | Rich text | `@umoteam/editor` |
 | Charts | ECharts 6 |
@@ -124,7 +124,7 @@ After login, **dual Hub** connections (`AddTaktSignalR`, JWT via `TaktSignalRTok
 | **TaktConnectHub** | `/hubs/TaktConnectHub` | Connect/disconnect, online users, online stats, `ForceLogout` |
 | **TaktNotificationHub** | `/hubs/TaktNotificationHub` | Direct messages, company broadcast, message/online stats push |
 
-Push targets **company + user** groups (`TaktSignalRGroupNames`). Dispatch: `ITaktSignalRDispatchService`. Frontend: `utils/takt-signalr.ts`, `stores/foundation/signalr.ts`.
+Push targets **company + user** groups (`TaktSignalRGroupNames`). Dispatch: `ITaktSignalRDispatchService`. Frontend: `utils/taktSignalr.ts`, `stores/foundation/signalr.ts`.
 
 ### Approval workflow
 
@@ -138,7 +138,7 @@ Form (FrmData) + process nodes + approver resolution + conditional gateways + ex
 |----------|-------|
 | Engine | `TaktFlowEngineService` / `TaktFlowEngineController` (runtime) |
 | Definition CRUD | `TaktFlowScheme` / `TaktFlowForm`, etc. |
-| Frontend designer | `components/business/takt-flow-antflow-designer/` |
+| Frontend designer | `components/business/TaktFlowAntDesigner/` |
 | Spec | `.cursor/rules/09-workflow.mdc` |
 
 ### Other capabilities
@@ -167,7 +167,7 @@ Backend `Controllers/` and `Domain/Entities/` share the same domain layout; fron
 | Domain | Submodules | Main capabilities |
 |--------|------------|-------------------|
 | **Identity** | Users, roles, menus, tenants, RBAC, auth | Login, permission assignment, multi-tenant/company authorization |
-| **Foundation** | Dict, translation, settings, numbering, messages, online, culture, admin division, files | Platform master data, in-app messages, dynamic i18n |
+| **Foundation** | Dict, translation, system property, numbering, messages, online, culture, admin division, files | Platform master data, in-app messages, dynamic i18n |
 | **HumanResource** | Organization, Personnel, Attendance, Talent, Benefits, Compensation, Performance, Training | Org, HR, attendance, payroll/benefits, performance & training |
 | **Logistics · Materials** | Material, supplier, manufacturer, plant, etc. | Material master data |
 | **Logistics · Procurement** | Purchase request / order / price, etc. | Procurement |
@@ -188,9 +188,9 @@ Backend `Controllers/` and `Domain/Entities/` share the same domain layout; fron
 ## Project structure
 
 ```
-Takt.Plat/
+TaktWise/
 ├── backend/
-│   ├── Takt.Plat.slnx
+│   ├── TaktWise.slnx
 │   └── src/
 │       ├── Takt.Shared/           # Shared types, Options, exceptions, Enums/Constants
 │       ├── Takt.Domain/           # Entities, repo interfaces (~320)
@@ -231,8 +231,8 @@ Takt.Plat/
 ### Backend
 
 ```bash
-dotnet restore backend/Takt.Plat.slnx
-dotnet build backend/Takt.Plat.slnx -c Release
+dotnet restore backend/TaktWise.slnx
+dotnet build backend/TaktWise.slnx -c Release
 dotnet run --project backend/src/Takt.WebApi/Takt.WebApi.csproj
 ```
 
@@ -310,4 +310,4 @@ Summarized from `.cursor/rules/` (00–17) and `.cursor/skills/`:
 
 [MIT License](LICENSE) · Copyright (c) 2026 Takt Technologies Co., Ltd.
 
-**Maintainer**: Takt.Plat (Cursor AI, etc.)
+**Maintainer**: TaktWise (Cursor AI, etc.)

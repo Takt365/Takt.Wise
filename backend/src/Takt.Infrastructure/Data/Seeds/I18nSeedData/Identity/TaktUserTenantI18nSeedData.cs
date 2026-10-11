@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Identity
 // 文件名称：TaktUserTenantI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktUserTenant 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -100,13 +100,13 @@ public class TaktUserTenantI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.usertenant.userid", "zh-HK", "用户ID_hk", "用户ID"),
 
             // entity.usertenant.isdefault
-            new TranslationSeedItem("entity.usertenant.isdefault", "en-US", "是否默认租户_us", "是否默认登录租户（字典 sys_yes_no；同一用户仅应有一条为是）"),
+            new TranslationSeedItem("entity.usertenant.isdefault", "en-US", "是否默认租户_us", "是否默认登录租户（字典 sys_yes_no；同一用户在同一公司下仅应有一条为是）"),
             // entity.usertenant.isdefault
-            new TranslationSeedItem("entity.usertenant.isdefault", "ja-JP", "是否默认租户_jp", "是否默认登录租户（字典 sys_yes_no；同一用户仅应有一条为是）"),
+            new TranslationSeedItem("entity.usertenant.isdefault", "ja-JP", "是否默认租户_jp", "是否默认登录租户（字典 sys_yes_no；同一用户在同一公司下仅应有一条为是）"),
             // entity.usertenant.isdefault
-            new TranslationSeedItem("entity.usertenant.isdefault", "zh-CN", "是否默认租户", "是否默认登录租户（字典 sys_yes_no；同一用户仅应有一条为是）"),
+            new TranslationSeedItem("entity.usertenant.isdefault", "zh-CN", "是否默认租户", "是否默认登录租户（字典 sys_yes_no；同一用户在同一公司下仅应有一条为是）"),
             // entity.usertenant.isdefault
-            new TranslationSeedItem("entity.usertenant.isdefault", "zh-HK", "是否默认租户_hk", "是否默认登录租户（字典 sys_yes_no；同一用户仅应有一条为是）"),
+            new TranslationSeedItem("entity.usertenant.isdefault", "zh-HK", "是否默认租户_hk", "是否默认登录租户（字典 sys_yes_no；同一用户在同一公司下仅应有一条为是）"),
 
             // entity.usertenant.user
             new TranslationSeedItem("entity.usertenant.user", "en-US", "用户_us", "用户（多对一）"),

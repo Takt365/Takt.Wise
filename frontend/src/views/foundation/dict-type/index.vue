@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/foundation/dict-type -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：字典类型实体 用于定义系统中使用的各种字典分类管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -301,22 +301,21 @@
  * 字典类型实体 用于定义系统中使用的各种字典分类管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/foundation/dict-type
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import DictTypeForm from './components/dict-type-form.vue'
-import DictDataPanel from './components/dict-data-panel.vue'
-import { provideDictTypeMasterContext, type DictTypeRowRecord } from './composables/use-dict-type-master-context'
-import { getDictTypeList, getDictTypeById, createDictType, updateDictType, deleteDictTypeById, deleteDictTypeBatch, getDictTypeTemplate, importDictType, exportDictType, updateDictTypeStatus, updateDictTypeBuiltIn } from '@/api/foundation/dict-type'
-import type { DictType, DictTypeQuery } from '@/types/foundation/dict-type'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import DictTypeForm from './components/DictTypeForm.vue'
+import DictDataPanel from './components/DictDataPanel.vue'
+import { provideDictTypeMasterContext, type DictTypeRowRecord } from './composables/useDictTypeMasterContext'
+import { getDictTypeList, getDictTypeById, createDictType, updateDictType, deleteDictTypeById, deleteDictTypeBatch, getDictTypeTemplate, importDictType, exportDictType, updateDictTypeStatus, updateDictTypeBuiltIn } from '@/api/foundation/dictType.api'
+import type { DictType, DictTypeQuery } from '@/types/foundation/dictType.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -325,7 +324,7 @@ import {
   DICTTYPE_QUERY_STRING_FIELDS,
   DICTTYPE_QUERY_FIELDS,
   DICTTYPE_SELF_I18N_KEY,
-} from './composables/use-dict-type-i18n'
+} from './composables/useDictTypeI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useDictTypeI18n()
@@ -484,7 +483,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -653,8 +651,6 @@ const toDictTypeNumber = (value: string | number | undefined | null): number => 
   const num = Number(value ?? 0)
   return Number.isFinite(num) ? num : 0
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

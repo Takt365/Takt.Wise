@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/quality/operation/ipqc-order -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：IPQC制程检验单实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -154,21 +154,20 @@
  * IPQC制程检验单实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/quality/operation/ipqc-order
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import IpqcOrderForm from './components/ipqc-order-form.vue'
-import IpqcOrderItemPanel from './components/ipqc-order-item-panel.vue'
-import { provideIpqcOrderMasterContext, type IpqcOrderRowRecord } from './composables/use-ipqc-order-master-context'
-import { getIpqcOrderList, getIpqcOrderById, createIpqcOrder, updateIpqcOrder, deleteIpqcOrderById, deleteIpqcOrderBatch, getIpqcOrderTemplate, importIpqcOrder, exportIpqcOrder, updateIpqcOrderStatus } from '@/api/logistics/quality/operation/ipqc-order'
-import type { IpqcOrder, IpqcOrderQuery } from '@/types/logistics/quality/operation/ipqc-order'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import IpqcOrderForm from './components/IpqcOrderForm.vue'
+import IpqcOrderItemPanel from './components/IpqcOrderItemPanel.vue'
+import { provideIpqcOrderMasterContext, type IpqcOrderRowRecord } from './composables/useIpqcOrderMasterContext'
+import { getIpqcOrderList, getIpqcOrderById, createIpqcOrder, updateIpqcOrder, deleteIpqcOrderById, deleteIpqcOrderBatch, getIpqcOrderTemplate, importIpqcOrder, exportIpqcOrder, updateIpqcOrderStatus } from '@/api/logistics/quality/operation/ipqcOrder.api'
+import type { IpqcOrder, IpqcOrderQuery } from '@/types/logistics/quality/operation/ipqcOrder.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
 
 import {
@@ -177,7 +176,7 @@ import {
   IPQCORDER_QUERY_STRING_FIELDS,
   IPQCORDER_QUERY_FIELDS,
   IPQCORDER_SELF_I18N_KEY,
-} from './composables/use-ipqc-order-i18n'
+} from './composables/useIpqcOrderI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useIpqcOrderI18n()
@@ -314,7 +313,6 @@ onMounted(async () => {
   await ensureTaktPaginationConfigAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -546,8 +544,6 @@ const getIpqcOrderId = (record: IpqcOrderRowRecord): string => {
  * @param field 字段名
  */
 const getIpqcOrderField = (record: any, field: string): any => record?.[field]
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

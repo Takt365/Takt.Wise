@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/accounting/financial/account-title -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：会计科目实体树表管理页（左右树表，超阈值懒加载+virtual，无分页），由 generate-vue-tree-from-api.cjs 自动生成 -->
@@ -499,45 +499,44 @@
  * 会计科目实体树表管理页 · 左右均为树表：超阈值懒加载+virtual，无分页
  * @module views/accounting/financial/account-title
  */
-import { ref, computed, watch, watchEffect, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktMaxPageSize } from '@/utils/takt-paged'
-import { shouldUseTreeLazyLoad } from '@/utils/takt-large-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktMaxPageSize } from '@/utils/taktPaged'
+import { shouldUseTreeLazyLoad } from '@/utils/taktLargeData'
 import {
   buildTaktTreeFromFlat,
   filterTaktTreeTableNodes,
   collectTaktTreeTableExpandableKeys,
   findTaktTreeTableSubtree,
   taktTreeTableNodeKey,
-} from '@/utils/takt-tree-table'
-import { useTableRefresh } from '@/composables/use-table-refresh'
+} from '@/utils/taktTreeTable'
+import { useTableRefresh } from '@/composables/useTableRefresh'
 import {
   mapLazyTreeNodes,
   mergeLoadedChildren,
   taktIsLeafFlag,
   type TaktLazyTreeNode,
-} from '@/composables/use-lazy-tree'
-import AccountTitleForm from './components/account-title-form.vue'
-import { getAccountTitleList, getAccountTitleTree, getAccountTitleById, createAccountTitle, updateAccountTitle, deleteAccountTitleById, deleteAccountTitleBatch, getAccountTitleTemplate, importAccountTitle, exportAccountTitle, updateAccountTitleStatus, updateAccountTitleSort } from '@/api/accounting/financial/account-title'
-import type { AccountTitle, AccountTitleTree, AccountTitleUpdate } from '@/types/accounting/financial/account-title'
-import type { TreeDropPayload } from '@/components/business/takt-tree-left-table/index.vue'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+} from '@/composables/useLazyTree'
+import AccountTitleForm from './components/AccountTitleForm.vue'
+import { getAccountTitleList, getAccountTitleTree, getAccountTitleById, createAccountTitle, updateAccountTitle, deleteAccountTitleById, deleteAccountTitleBatch, getAccountTitleTemplate, importAccountTitle, exportAccountTitle, updateAccountTitleStatus, updateAccountTitleSort } from '@/api/accounting/financial/accountTitle.api'
+import type { AccountTitle, AccountTitleTree, AccountTitleUpdate } from '@/types/accounting/financial/accountTitle.types'
+import type { TreeDropPayload } from '@/components/business/TaktTreeLeftTable/index.vue'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
-import { useUserStore } from '@/stores/identity/user'
+import { useUserStore } from '@/stores/identity/useUserStore'
 
 import {
   useAccountTitleI18n,
   ACCOUNTTITLE_QUERY_STRING_FIELDS,
   ACCOUNTTITLE_QUERY_FIELDS,
   ACCOUNTTITLE_SELF_I18N_KEY,
-} from './composables/use-account-title-i18n'
+} from './composables/useAccountTitleI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useAccountTitleI18n()
@@ -1127,8 +1126,6 @@ const toAccountTitleNumber = (value: string | number | undefined | null): number
   return Number.isFinite(num) ? num : 0
 }
 
-
-
 /** 从异常对象提取用户可见消息 */
 const getErrorMessage = (error: unknown, fallback: string): string => {
   if (typeof error === 'object' && error !== null && 'message' in error) {
@@ -1327,22 +1324,13 @@ const rowSelection = computed(() => ({
   },
 }))
 
-/** 加载左右树：先探测总数，达到阈值则一层懒加载，否则 list 组全量树 */
+/** 加载左右树：一律 parentId 一层懒加载 */
 async function loadData() {
   loading.value = true
   try {
-    await ensureTaktPaginationConfigAsync()
-    const probe = unwrapAccountTitleList(await getAccountTitleList({
-      pageIndex: 1,
-      pageSize: 1,
-    }))
-    useLazyTree.value = shouldUseTreeLazyLoad(probe.total)
-    if (useLazyTree.value) {
-      await reloadLeftTreeRoots()
-      await loadRightTree()
-    } else {
-      await loadFullTreeFromList(probe.total)
-    }
+    useLazyTree.value = true
+    await reloadLeftTreeRoots()
+    await loadRightTree()
   } catch (error: unknown) {
     logger.error('[AccountTitle] 加载树数据失败', undefined, error)
     message.error(getErrorMessage(error, t('common.feedback.load.data.failed')))
@@ -1360,23 +1348,10 @@ async function loadData() {
 async function refreshAfterMutation() {
   loading.value = true
   try {
-    if (useLazyTree.value) {
-      const parentKey = getRightListParentId()
-      await reloadLeftTreeChildren(parentKey)
-      await loadRightTree()
-    } else {
-      const probe = unwrapAccountTitleList(await getAccountTitleList({
-        pageIndex: 1,
-        pageSize: 1,
-      }))
-      useLazyTree.value = shouldUseTreeLazyLoad(probe.total)
-      if (useLazyTree.value) {
-        await reloadLeftTreeRoots()
-        await loadRightTree()
-      } else {
-        await loadFullTreeFromList(probe.total)
-      }
-    }
+    useLazyTree.value = true
+    const parentKey = getRightListParentId()
+    await reloadLeftTreeChildren(parentKey)
+    await loadRightTree()
   } catch (error: unknown) {
     logger.error('[AccountTitle] 刷新失败', undefined, error)
     message.error(getErrorMessage(error, t('common.feedback.load.data.failed')))
@@ -1393,7 +1368,6 @@ const handleReset = () => {
   queryKeyword.value = ''
   advancedQueryForm.value = createEmptyAdvancedQueryForm()
 }
-
 
 /**
  * 行内状态切换
@@ -1510,7 +1484,6 @@ async function handleDelete() {
     }
   })
 }
-
 
 /** 打开导入对话框 */
 function handleImport() {

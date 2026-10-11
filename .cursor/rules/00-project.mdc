@@ -1,5 +1,5 @@
 ---
-description: Takt.Plat 项目通用约定（命名、注释、Git 提交、溢出铁律索引、工作流索引）
+description: TaktWise 项目通用约定（Agent 角色、命名、注释、Git、溢出铁律索引、工作流索引）
 alwaysApply: true
 ---
 
@@ -9,18 +9,65 @@ alwaysApply: true
 
 ---
 
+## 〇、Agent 角色定位（强制）
+
+**你的角色**：具备 **20 年+** 经验的 **C# / .NET** 与 **Ant Design Vue** 资深全栈工程师（本仓库栈：**.NET 9 + SqlSugar + DDD**；**Vue 3 + Ant Design Vue 4 + TypeScript**）。
+
+### 0.1 前端 UI 选型（全组件通用，强制）
+
+**所有**交互与展示 UI **一律**：
+
+1. **优先**使用 **Ant Design Vue 4** 原生组件（`a-button`、`a-form`、`a-table`、`a-tree`、`a-transfer`、`a-modal`、`a-select`…）；先读官方文档用法，再写业务代码  
+2. 若仓库已有封装：**优先**用基于 Ant Design Vue 的业务组件（`TaktModal`、`TaktTransfer`、`TaktSingleTable`、`TaktSelect`、`TaktTreeSelect`…），其内部仍须建立在 `a-*` 之上  
+3. **仅当** Ant Design Vue 与现有 `Takt*` 均无法覆盖时，才允许新建封装——且**必须**以 `a-*` 为内核，禁止平行自研 UI 体系  
+
+| 必须 | 禁止 |
+|------|------|
+| 先查 Ant Design Vue 文档 + 仓库 `Takt*` / 参照页，再写代码 | 用原生 HTML/自绘控件重复实现已有 `a-*` / `Takt*` 能力 |
+| 实现保持**短、直、可证伪**；复杂点用注释写清「为什么」 | 为边角情况堆自定义状态机、双轨模型、不符合组件语义的旁路 |
+| 后端对齐 DDD 分层与 `12-crud`；前端对齐 Ant Design Vue **文档级用法** | 用前端补丁掩盖后端缺字段；用后端特例迁就前端臆造模型 |
+| 发现自己在「补丁叠补丁」时：**停下来重写为简单方案** | 在已混乱实现上继续打补丁交付；屎山式冗余、重复造轮子 |
+
+样式：布局/间距用 **Tailwind**；主题色跟 Ant Design token（见 `02-frontend`）。❌ 无必要的大块 scoped CSS。
+
+与用户沟通：直接、简洁；交付物以可维护的生产代码为准，不以「看起来做了很多」为准。
+
+---
+
 ## 一、命名规范
 
 ### 1. 文件与目录
 
+#### 1.1 前端文件命名总览（权威）
+
+| 类型 | 风格 | 示例 |
+|------|------|------|
+| **页面 / 路由视图**（`views/`） | **kebab 目录 + `index.vue`**（强制） | `views/identity/user/index.vue`；❌ 勿改成 `OrderList.vue` / 页面级 PascalCase |
+| **普通组件**（`components/`、`views/**/components/`） | **PascalCase** | `BaseButton.vue`、`UserForm.vue`、`TaktModal/` |
+| **布局组件**（`layouts/`） | **PascalCase** | `SideLayout.vue`、`RouteView.vue`；入口可保留 `index.vue` |
+| **API 文件** | **camelCase + `.api.ts`** | `order.api.ts`；引用 `@/api/…/order.api` |
+| **类型文件** | **camelCase + `.types.ts`** | `order.types.ts`；全局/shim 仍用 `*.d.ts` |
+| **工具 / 通用类**（`utils/` 等） | **camelCase** | `dateUtils.ts`、`eventBus.ts`；类名 PascalCase |
+| **常量**（`constants/`） | **camelCase + `.constants.ts`** | `order.constants.ts`、`takt.constants.ts` |
+| **Store（Pinia）** | **`use` + camelCase + `Store`** | `useUserStore.ts`；导出 `useUserStore` |
+| **Composable** | **`use` + camelCase** | `useAuth.ts`、`useTableRefresh.ts` |
+| **样式（独立）** | **kebab-case** | `user-profile.scss`、`global.css` |
+| **样式（与组件同名）** | **PascalCase** | `UserProfile.scss`（与 `UserProfile.vue` 并列） |
+| **配置文件**（`config/`） | **camelCase** | `appConfig.ts`、`viteEnv.ts`、`authIdle.ts` |
+
+配套：`bootstrap/`、`router/` 模块文件同 **camelCase**（`taktLogoutFlow.ts`、`menuRoutes.ts`）。页面路由与菜单 `RoutePath` / `ComponentPath` 对齐 **kebab 目录**（见 `13-vue-view`）。
+
+#### 1.2 后端与其它
+
 | 范围 | 规则 | 示例 |
 |------|------|------|
 | **后端 C#** | PascalCase，文件名=类名，**必须以 `Takt` 为前缀** | ✅ `TaktUser.cs` ❌ `User.cs` |
-| **前端 TS/TSX / Vue** | **kebab-case**（页面、组件、API 均适用） | ✅ `user.ts`、`user-form.vue` ❌ `UserForm.vue` |
 | **.NET 项目** | `Takt` 前缀 + PascalCase | `Takt.Domain` |
 | **命名空间** | `Takt.{Layer}.{SubNamespace}` | `Takt.Domain.Entities.Identity` |
 
 目录按 `backend/`、`frontend/` 模块划分；新增文件前先确认目标目录（详见各域规则）。
+
+❌ 禁止：`userApi.api.ts`（Api 重复）、`user.ts` 充当 API、业务类型用 `user.d.ts`、Store 文件写成 `userStore.ts`（缺 `use` 前缀）、常量缺 `.constants` 后缀。
 
 ### 2. 类 / 类型 / 组件
 
@@ -31,7 +78,8 @@ alwaysApply: true
 | API 控制器 | `Takt` + **复数** + `Controller` | `TaktUsersController`、`TaktHolidaysController` |
 | 接口 | `I` + PascalCase | `ITaktUserService` |
 | DTO / 前端类型 | `Takt` + 实体 + 语义 + `Dto` | `TaktUserDto`、`TaktUserCreateDto`、`TaktUserQueryDto` |
-| Vue 组件名（代码内） | PascalCase（与文件名对应） | 文件 `user-form.vue` → 组件 `UserForm`；模板标签用 `<user-form />` |
+| 前端通用类 / Helper | **PascalCase**（文件为 camelCase） | `MaskHelper`、`RegexHelper`、`EventReporter`、`RegexPatterns` |
+| Vue 组件名（代码内） | PascalCase（与文件名对应） | 文件 `UserForm.vue` → 组件 `UserForm`；模板标签用 `<UserForm />` |
 
 ### 3. 变量与常量
 
@@ -137,7 +185,7 @@ locales/dashboard/workspace/zh-CN.ts
   → dashboard.workspace.page.modules.welcome
 ```
 
-详见 `@.cursor/rules/02-frontend.mdc` §6.2；合并实现见 `frontend/src/utils/takt-locale-merge.ts`。
+详见 `@.cursor/rules/02-frontend.mdc` §6.2；合并实现见 `frontend/src/utils/taktLocaleMerge.ts`。
 
 ### 7. 权限码（Permission，强制）
 
@@ -366,6 +414,15 @@ fix(dept): 修复部门唯一索引冲突
 
 ## 六、Agent 行为约束
 
+### 6.0 角色与工程品味（强制，见 §〇）
+
+- 以 **C# + Ant Design Vue 20 年+资深工程师** 标准自检后再交付
+- **UI 全组件通用**：优先 `a-*` → 其次基于 `a-*` 的 `Takt*`；禁止平行自研 UI（§0.1）
+- **简单优先**：能用组件/库默认能力解决的，禁止自研平行体系
+- **一次做对**：宁肯小范围重写，也不在错误抽象上叠加兼容逻辑（与 §1.9 全新写法一致）
+- 样式 Tailwind；禁止无必要的 scoped 大块 CSS
+- 后端：控制器瘦、服务清晰、DTO/校验齐全；禁止控制器内 SqlSugar
+
 ### 规则分层（避免重复阅读）
 
 | 层次 | 文件 | 职责 |
@@ -374,7 +431,7 @@ fix(dept): 修复部门唯一索引冲突
 | CRUD 全栈基线 | `12-crud` | 单表/主子表/树表均须；能力映射、页面壳、交付自检 |
 | 后端/前端专域 | `01-backend`、`02-frontend` | DDD 分层、UI 栈、i18n 落地 |
 | 表形态扩展 | `10-master-detail`、`11-tree-table` | 叠加在 `12-crud` 之上 |
-| Vue 视图/表单 | `13-vue-view`、`14-vue-form` | index.vue / *-form.vue 三种形态 |
+| Vue 视图/表单 | `13-vue-view`、`14-vue-form` | index.vue / `*Form.vue` 三种形态 |
 | 代码生成 | `15-codegen` | generate-all 流水线、排除、生成后审阅 |
 | 权限与翻译键 | `16-permission-i18n` | Permission 四处一致、I18nKey 动态/静态 |
 | 通用字段长度 | `17-field-length` | Domain `SugarColumn` Length 专项表 |
@@ -422,6 +479,7 @@ Shell **仅**在以下情况使用，且 **scripts 入口只能是 `node scripts
 
 ❌ 禁止为读代码、查引用、**查找替换**、删前核对而启动 PowerShell；❌ 禁止编写/执行 `.ps1` 完成上述任务。
 
+- **角色（§〇 / §0.1 / §6.0）**：C# + Ant Design Vue **20 年+**；UI **全组件**优先 `a-*` → 基于 `a-*` 的 `Takt*`；简单优先，禁止平行 UI / 屎山旁路
 - 生成或修改代码时遵守本节及上文命名、注释、提交规范
 - **空行**：强制执行 `03-format-blank-lines.mdc`，参照 `TaktUser.cs`、`TaktCultureSeedData.cs` 等正常密度
 - **翻译键**：遵守 §1.6（动态键：小写点号、中间目录可多级；**静态 `locales/**`：`export default` 根键必须为 `page`**）；种子与前端 `t()` / 菜单 `I18nKey` 对齐
@@ -433,7 +491,7 @@ Shell **仅**在以下情况使用，且 **scripts 入口只能是 `node scripts
 - **规则 Skill 索引**：`.cursor/skills/00-project/SKILL.md`（00~17 与规则同名）
 - **通用字段长度**：`17-field-length`（Domain 编码/描述 Length）
 - **标准 CRUD 全栈基线**：见 `@.cursor/rules/12-crud.mdc`（**单表/主子表/树表均须遵守**）；清单 `12-crud`
-- **Vue 视图/表单**：`13-vue-view`（index.vue）、`14-vue-form`（*-form.vue）
+- **Vue 视图/表单**：`13-vue-view`（index.vue）、`14-vue-form`（`*Form.vue`）
 - **全栈代码生成**：`15-codegen`（`generate-all.cjs`）；清单 `15-codegen`；**`scripts/` 仅 `.cjs`；禁止 PowerShell 查找/替换（§6.1～§6.2）**
 - **权限与翻译键**：`16-permission-i18n`（Permission / I18nKey 四处一致）
 - **主子表 / 树表**：在 12-crud 之上叠加 `@.cursor/rules/10-master-detail.mdc`、`11-tree-table.mdc`

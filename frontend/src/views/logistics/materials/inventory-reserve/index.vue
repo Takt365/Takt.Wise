@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/materials/inventory-reserve -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：存货跌价准备实体管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -471,20 +471,19 @@
  * 存货跌价准备实体管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/logistics/materials/inventory-reserve
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import InventoryReserveForm from './components/inventory-reserve-form.vue'
-import { getInventoryReserveList, getInventoryReserveById, createInventoryReserve, updateInventoryReserve, deleteInventoryReserveById, deleteInventoryReserveBatch, getInventoryReserveTemplate, importInventoryReserve, exportInventoryReserve, updateInventoryReserveStatus } from '@/api/logistics/materials/inventory-reserve'
-import type { InventoryReserve, InventoryReserveQuery } from '@/types/logistics/materials/inventory-reserve'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import InventoryReserveForm from './components/InventoryReserveForm.vue'
+import { getInventoryReserveList, getInventoryReserveById, createInventoryReserve, updateInventoryReserve, deleteInventoryReserveById, deleteInventoryReserveBatch, getInventoryReserveTemplate, importInventoryReserve, exportInventoryReserve, updateInventoryReserveStatus } from '@/api/logistics/materials/inventoryReserve.api'
+import type { InventoryReserve, InventoryReserveQuery } from '@/types/logistics/materials/inventoryReserve.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -493,7 +492,7 @@ import {
   INVENTORYRESERVE_QUERY_STRING_FIELDS,
   INVENTORYRESERVE_QUERY_FIELDS,
   INVENTORYRESERVE_SELF_I18N_KEY,
-} from './composables/use-inventory-reserve-i18n'
+} from './composables/useInventoryReserveI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useInventoryReserveI18n()

@@ -1,5 +1,5 @@
-﻿// ========================================
-// 项目名称：节拍工厂·Takt Plat
+// ========================================
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/router
 // 文件名称：index.ts
 // 创建时间：2026-05-22
@@ -12,13 +12,13 @@
 
 import { createRouter, createWebHistory } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
-import { useUserStore } from '@/stores/identity/user';
-import { useTranslationStore } from '@/stores/foundation/translation';
-import { useMenuStore } from '@/stores/identity/menu';
-import { usePermissionStore } from '@/stores/identity/permission';
-import { useSignalRStore } from '@/stores/foundation/signalr';
-import { useHeaderNotificationStore } from '@/stores/navigation/header-notification';
-import { useTenantStore } from '@/stores/identity/tenant';
+import { useUserStore } from '@/stores/identity/useUserStore';
+import { useTranslationStore } from '@/stores/foundation/useTranslationStore';
+import { useMenuStore } from '@/stores/identity/useMenuStore';
+import { usePermissionStore } from '@/stores/identity/usePermissionStore';
+import { useSignalRStore } from '@/stores/foundation/useSignalrStore';
+import { useHeaderNotificationStore } from '@/stores/navigation/useHeaderNotificationStore';
+import { useTenantStore } from '@/stores/identity/useTenantStore';
 import i18n from '@/locales';
 import {
   LAYOUT_ROUTE_NAME,
@@ -26,10 +26,10 @@ import {
   registerDynamicRoutes,
   resetDynamicRoutes,
   resolveDefaultMenuPath,
-} from '@/router/menu-routes';
-import { translateLocaleMessage } from '@/utils/takt-i18n-message';
-import { ensureTaktPaginationConfigAsync } from '@/config/takt-pagination';
-import { useLocaleStore } from '@/stores/foundation/locale';
+} from '@/router/menuRoutes';
+import { translateLocaleMessage } from '@/utils/taktI18nMessage';
+import { ensureTaktPaginationConfigAsync } from '@/config/taktPagination';
+import { useLocaleStore } from '@/stores/foundation/useLocaleStore';
 
 /** 静态常量路由（业务页由菜单动态注册；404 在动态路由之后追加） */
 const constantRoutes: RouteRecordRaw[] = [
@@ -51,7 +51,7 @@ const constantRoutes: RouteRecordRaw[] = [
   {
     path: '/auth/callback',
     name: 'OAuthCallback',
-    component: () => import('@/views/login/components/callback.vue'),
+    component: () => import('@/views/login/components/Callback.vue'),
     meta: { titleKey: 'login.page.callback.title', requiresAuth: false },
   },
   {
@@ -163,9 +163,11 @@ router.beforeEach(async (to) => {
 
   const permissionStore = usePermissionStore();
   const permission = typeof to.meta.permission === 'string' ? to.meta.permission : undefined;
+  const skipRoutePathCheck = to.meta.skipRoutePathCheck === true;
   const allowed = permissionStore.canActivate({
     permission,
     path: to.path,
+    skipRoutePathCheck,
   });
 
   if (!allowed && to.name !== 'Forbidden') {

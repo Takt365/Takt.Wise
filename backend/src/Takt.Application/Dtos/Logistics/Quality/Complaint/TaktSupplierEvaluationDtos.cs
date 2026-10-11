@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Quality.Complaint
 // 文件名称：TaktSupplierEvaluationDtos.cs
 // 创建时间：2026-08-22
@@ -77,9 +77,14 @@ public class TaktSupplierEvaluationDto : TaktCompanyDtoBase
     public int EvaluationType { get; set; } = 0;
 
     /// <summary>
-    /// 评价人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 评价组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=4；DictValue=ComplaintGroupCode）
     /// </summary>
-    public string? EvaluatorByEmployeeName { get; set; } = string.Empty;
+    public string? EvaluatorByGroupCode { get; set; }
+
+    /// <summary>
+    /// 评价组名称（冗余：按 EvaluatorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
+    /// </summary>
+    public string? EvaluatorByGroupName { get; set; }
 
     /// <summary>
     /// 评价部门（选项 TaktDepts/tree-options；DictValue=DeptCode）
@@ -246,9 +251,14 @@ public class TaktSupplierEvaluationQueryDto : TaktPagedQuery
     public int? EvaluationType { get; set; }
 
     /// <summary>
-    /// 评价人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 评价组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=4；DictValue=ComplaintGroupCode）
     /// </summary>
-    public string? EvaluatorByEmployeeName { get; set; } = string.Empty;
+    public string? EvaluatorByGroupCode { get; set; }
+
+    /// <summary>
+    /// 评价组名称（冗余：按 EvaluatorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
+    /// </summary>
+    public string? EvaluatorByGroupName { get; set; }
 
     /// <summary>
     /// 评价部门（选项 TaktDepts/tree-options；DictValue=DeptCode）
@@ -429,9 +439,14 @@ public class TaktSupplierEvaluationCreateDto
     public int EvaluationType { get; set; } = 0;
 
     /// <summary>
-    /// 评价人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 评价组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=4；DictValue=ComplaintGroupCode）
     /// </summary>
-    public string? EvaluatorByEmployeeName { get; set; } = string.Empty;
+    public string? EvaluatorByGroupCode { get; set; }
+
+    /// <summary>
+    /// 评价组名称（冗余：按 EvaluatorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
+    /// </summary>
+    public string? EvaluatorByGroupName { get; set; }
 
     /// <summary>
     /// 评价部门（选项 TaktDepts/tree-options；DictValue=DeptCode）
@@ -669,9 +684,14 @@ public class TaktSupplierEvaluationTemplateDto
     public int? EvaluationType { get; set; }
 
     /// <summary>
-    /// 评价人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 评价组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=4；DictValue=ComplaintGroupCode）
     /// </summary>
-    public string? EvaluatorByEmployeeName { get; set; } = string.Empty;
+    public string? EvaluatorByGroupCode { get; set; }
+
+    /// <summary>
+    /// 评价组名称（冗余：按 EvaluatorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
+    /// </summary>
+    public string? EvaluatorByGroupName { get; set; }
 
     /// <summary>
     /// 评价部门（选项 TaktDepts/tree-options；DictValue=DeptCode）
@@ -832,9 +852,14 @@ public class TaktSupplierEvaluationImportDto
     public int? EvaluationType { get; set; }
 
     /// <summary>
-    /// 评价人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 评价组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=4；DictValue=ComplaintGroupCode）
     /// </summary>
-    public string? EvaluatorByEmployeeName { get; set; } = string.Empty;
+    public string? EvaluatorByGroupCode { get; set; }
+
+    /// <summary>
+    /// 评价组名称（冗余：按 EvaluatorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
+    /// </summary>
+    public string? EvaluatorByGroupName { get; set; }
 
     /// <summary>
     /// 评价部门（选项 TaktDepts/tree-options；DictValue=DeptCode）
@@ -1001,9 +1026,14 @@ public class TaktSupplierEvaluationExportDto
     public int EvaluationType { get; set; } = 0;
 
     /// <summary>
-    /// 评价人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 评价组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=4；DictValue=ComplaintGroupCode）
     /// </summary>
-    public string? EvaluatorByEmployeeName { get; set; } = string.Empty;
+    public string? EvaluatorByGroupCode { get; set; }
+
+    /// <summary>
+    /// 评价组名称（冗余：按 EvaluatorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
+    /// </summary>
+    public string? EvaluatorByGroupName { get; set; }
 
     /// <summary>
     /// 评价部门（选项 TaktDepts/tree-options；DictValue=DeptCode）

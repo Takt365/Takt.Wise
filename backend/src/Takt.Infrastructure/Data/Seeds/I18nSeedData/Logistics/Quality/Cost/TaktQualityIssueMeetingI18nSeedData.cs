@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Cost
 // 文件名称：TaktQualityIssueMeetingI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktQualityIssueMeeting 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -225,14 +225,23 @@ public class TaktQualityIssueMeetingI18nSeedData : ITaktSeedDataCoordinator
             // entity.qualityissuemeeting.otherapparatuscost
             new TranslationSeedItem("entity.qualityissuemeeting.otherapparatuscost", "zh-HK", "其他设备工程搬运费_hk", "其他设备购入费、工程费、搬运费等（元）"),
 
-            // entity.qualityissuemeeting.meetingrecorder
-            new TranslationSeedItem("entity.qualityissuemeeting.meetingrecorder", "en-US", "品质问题对应记录者_us", "品质问题対応记录者（会议调查试验记录者）"),
-            // entity.qualityissuemeeting.meetingrecorder
-            new TranslationSeedItem("entity.qualityissuemeeting.meetingrecorder", "ja-JP", "品质问题对应记录者_jp", "品质问题対応记录者（会议调查试验记录者）"),
-            // entity.qualityissuemeeting.meetingrecorder
-            new TranslationSeedItem("entity.qualityissuemeeting.meetingrecorder", "zh-CN", "品质问题对应记录者", "品质问题対応记录者（会议调查试验记录者）"),
-            // entity.qualityissuemeeting.meetingrecorder
-            new TranslationSeedItem("entity.qualityissuemeeting.meetingrecorder", "zh-HK", "品质问题对应记录者_hk", "品质问题対応记录者（会议调查试验记录者）"),
+            // entity.qualityissuemeeting.responsegroupcode
+            new TranslationSeedItem("entity.qualityissuemeeting.responsegroupcode", "en-US", "对应组编码_us", "对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）"),
+            // entity.qualityissuemeeting.responsegroupcode
+            new TranslationSeedItem("entity.qualityissuemeeting.responsegroupcode", "ja-JP", "对应组编码_jp", "对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）"),
+            // entity.qualityissuemeeting.responsegroupcode
+            new TranslationSeedItem("entity.qualityissuemeeting.responsegroupcode", "zh-CN", "对应组编码", "对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）"),
+            // entity.qualityissuemeeting.responsegroupcode
+            new TranslationSeedItem("entity.qualityissuemeeting.responsegroupcode", "zh-HK", "对应组编码_hk", "对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）"),
+
+            // entity.qualityissuemeeting.responsegroupname
+            new TranslationSeedItem("entity.qualityissuemeeting.responsegroupname", "en-US", "对应组名称_us", "对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）"),
+            // entity.qualityissuemeeting.responsegroupname
+            new TranslationSeedItem("entity.qualityissuemeeting.responsegroupname", "ja-JP", "对应组名称_jp", "对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）"),
+            // entity.qualityissuemeeting.responsegroupname
+            new TranslationSeedItem("entity.qualityissuemeeting.responsegroupname", "zh-CN", "对应组名称", "对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）"),
+            // entity.qualityissuemeeting.responsegroupname
+            new TranslationSeedItem("entity.qualityissuemeeting.responsegroupname", "zh-HK", "对应组名称_hk", "对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）"),
 
             // entity.qualityissuemeeting.isobsolete
             new TranslationSeedItem("entity.qualityissuemeeting.isobsolete", "en-US", "是否作废_us", "是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）"),

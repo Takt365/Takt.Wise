@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/foundation/numbering -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：编码规则实体 定义系统中各类业务单据的编码生成规则管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -167,7 +167,7 @@
         <TaktTreeSelect
           v-model:value="advancedQueryForm.documentType"
           api-url="TaktMenus/tree-options?valueBy=name"
-          :lazy="false"
+          :lazy="true"
           :placeholder="t('common.page.form.placeholder.select', { field: t('entity.numbering.documenttype') })"
           allow-clear
           :field-names="{ label: 'dictLabel', value: 'dictValue' }"
@@ -413,19 +413,18 @@
  * 编码规则实体 定义系统中各类业务单据的编码生成规则管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/foundation/numbering
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import NumberingForm from './components/numbering-form.vue'
-import { getNumberingList, getNumberingById, createNumbering, updateNumbering, deleteNumberingById, deleteNumberingBatch, getNumberingTemplate, importNumbering, exportNumbering, updateNumberingStatus } from '@/api/foundation/numbering'
-import type { Numbering, NumberingQuery } from '@/types/foundation/numbering'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import NumberingForm from './components/NumberingForm.vue'
+import { getNumberingList, getNumberingById, createNumbering, updateNumbering, deleteNumberingById, deleteNumberingBatch, getNumberingTemplate, importNumbering, exportNumbering, updateNumberingStatus } from '@/api/foundation/numbering.api'
+import type { Numbering, NumberingQuery } from '@/types/foundation/numbering.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 /** i18n 翻译函数 */

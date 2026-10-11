@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcNotification.cs
 // 创建时间：2026-05-07
@@ -32,7 +32,7 @@ public class TaktEcNotification : TaktApprovalEntityBase
 {
 
     /// <summary>
-    /// 通知单号（唯一，如：EC-2026-0001）
+    /// 通知单号（按通知方式经编码规则生成）
     /// </summary>
     [SugarColumn(ColumnName = "ec_notification_code", ColumnDescription = "通知单号", Length = 30, ColumnDataType = "nvarchar", IsNullable = false)]
     public string EcNotificationCode { get; set; } = string.Empty;
@@ -63,29 +63,28 @@ public class TaktEcNotification : TaktApprovalEntityBase
     public DateTime EcNotificationDate { get; set; }
 
     /// <summary>
-    /// 通知部门编码（多个部门用逗号分隔，如：Assy,PCBA,QC）
+    /// 通知部门编码（多选，逗号分隔；选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1；联动 TaktEcGroups/options?ecGroupCategory=；Length=500 容纳多个 6 位编码）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_notification_dept_codes", ColumnDescription = "通知部门编码", Length = 200, ColumnDataType = "nvarchar", IsNullable = true)]
+    [SugarColumn(ColumnName = "ec_notification_dept_codes", ColumnDescription = "通知部门组编码", ColumnDataType = "varchar", Length = 500, IsNullable = true)]
     public string? EcNotificationDeptCodes { get; set; }
 
     /// <summary>
-    /// 通知部门名称（多个部门用逗号分隔）
+    /// 通知部门名称（多选，逗号分隔，与编码同序；冗余：按 EcNotificationDeptCodes 取 TaktDept.DeptName1 联动；Length=500）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_notification_dept_names", ColumnDescription = "通知部门名称", Length = 500, ColumnDataType = "nvarchar", IsNullable = true)]
+    [SugarColumn(ColumnName = "ec_notification_dept_names", ColumnDescription = "通知部门组名称", ColumnDataType = "nvarchar", Length = 500, IsNullable = true)]
     public string? EcNotificationDeptNames { get; set; }
 
     /// <summary>
-    /// 通知人ID（序列化为string以避免Javascript精度问题）
+    /// 通知组编码（多选，逗号分隔；选项 TaktEcGroups/options?ecGroupCategory=EcNotificationDeptCodes；DictValue=EcGroupCode，DictLabel=EcGroupName；Length=500 容纳多个 6 位编码）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_notification_notifier_id", ColumnDescription = "通知人ID", ColumnDataType = "bigint", IsNullable = true)]
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcNotificationNotifierId { get; set; }
+    [SugarColumn(ColumnName = "ec_notification_notifier_group_code", ColumnDescription = "通知组编码", ColumnDataType = "varchar", Length = 500, IsNullable = true)]
+    public string? EcNotificationNotifierGroupCode { get; set; }
 
     /// <summary>
-    /// 通知人姓名
+    /// 通知组名称（多选，逗号分隔，与编码同序；冗余：按 EcNotificationNotifierGroupCode 取 TaktEcGroups.EcGroupName 联动；Length=500）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_notification_notifier_name", ColumnDescription = "通知人姓名", Length = 50, ColumnDataType = "nvarchar", IsNullable = true)]
-    public string? EcNotificationNotifierName { get; set; }
+    [SugarColumn(ColumnName = "ec_notification_notifier_group_name", ColumnDescription = "通知组名称", Length = 500, ColumnDataType = "nvarchar", IsNullable = true)]
+    public string? EcNotificationNotifierGroupName { get; set; }
 
     /// <summary>
     /// 通知方式（1=系统通知 2=邮件 3=纸质 4=会议）

@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Sales
 // 文件名称：TaktSalesOrderI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSalesOrder 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -217,13 +217,13 @@ public class TaktSalesOrderI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.salesorder.purchaseordercode", "zh-HK", "采购订单编码_hk", "采购订单编码"),
 
             // entity.salesorder.purchaseorderdate
-            new TranslationSeedItem("entity.salesorder.purchaseorderdate", "en-US", "采购订单日期_us", "采购订单日期"),
+            new TranslationSeedItem("entity.salesorder.purchaseorderdate", "en-US", "订单日期_us", "订单日期"),
             // entity.salesorder.purchaseorderdate
-            new TranslationSeedItem("entity.salesorder.purchaseorderdate", "ja-JP", "采购订单日期_jp", "采购订单日期"),
+            new TranslationSeedItem("entity.salesorder.purchaseorderdate", "ja-JP", "订单日期_jp", "订单日期"),
             // entity.salesorder.purchaseorderdate
-            new TranslationSeedItem("entity.salesorder.purchaseorderdate", "zh-CN", "采购订单日期", "采购订单日期"),
+            new TranslationSeedItem("entity.salesorder.purchaseorderdate", "zh-CN", "订单日期", "订单日期"),
             // entity.salesorder.purchaseorderdate
-            new TranslationSeedItem("entity.salesorder.purchaseorderdate", "zh-HK", "采购订单日期_hk", "采购订单日期"),
+            new TranslationSeedItem("entity.salesorder.purchaseorderdate", "zh-HK", "订单日期_hk", "订单日期"),
 
             // entity.salesorder.totalquantity
             new TranslationSeedItem("entity.salesorder.totalquantity", "en-US", "订单总数量_us", "订单总数量（基本单位数量）"),

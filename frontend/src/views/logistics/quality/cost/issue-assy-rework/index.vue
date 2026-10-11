@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/quality/cost/issue-assy-rework -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：品质问题应对主表管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -340,20 +340,19 @@
  * 品质问题应对主表管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/quality/cost/issue-assy-rework
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import QualityIssueForm from './components/issue-form.vue'
-import QualityIssueAssyReworkPanel from './components/issue-assy-rework-panel.vue'
-import { provideQualityIssueMasterContext } from './composables/use-issue-master-context'
-import { getQualityIssueList, getQualityIssueById, createQualityIssue, updateQualityIssue, deleteQualityIssueById, deleteQualityIssueBatch, getQualityIssueTemplate, importQualityIssue, exportQualityIssue } from '@/api/logistics/quality/cost/issue'
-import type { QualityIssue, QualityIssueQuery } from '@/types/logistics/quality/cost/issue'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import QualityIssueForm from './components/IssueForm.vue'
+import QualityIssueAssyReworkPanel from './components/IssueAssyReworkPanel.vue'
+import { provideQualityIssueMasterContext } from './composables/useIssueMasterContext'
+import { getQualityIssueList, getQualityIssueById, createQualityIssue, updateQualityIssue, deleteQualityIssueById, deleteQualityIssueBatch, getQualityIssueTemplate, importQualityIssue, exportQualityIssue } from '@/api/logistics/quality/cost/issue.api'
+import type { QualityIssue, QualityIssueQuery } from '@/types/logistics/quality/cost/issue.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 /** i18n 翻译函数 */

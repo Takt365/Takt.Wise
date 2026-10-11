@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/materials/material-document -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：Takt物料凭证主表实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -123,7 +123,247 @@
       @reset="handleAdvancedQueryReset"
     >
       <template #default="{ isFieldVisible }">
-
+      <div v-show="isFieldVisible('cultureCode')">
+      <a-form-item :label="pi.queryLabel('cultureCode')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.cultureCode"
+          dict-type="sys_culture_code"
+          :placeholder="pi.queryPh('cultureCode', 'select')"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('plantCode')">
+      <a-form-item :label="pi.queryLabel('plantCode')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.plantCode"
+          api-url="TaktPlants/options"
+          :placeholder="pi.queryPh('plantCode', 'select')"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('materialDocumentCode')">
+      <a-form-item :label="pi.queryLabel('materialDocumentCode')">
+        <a-input
+          v-model:value="advancedQueryForm.materialDocumentCode"
+          :placeholder="pi.queryPh('materialDocumentCode', 'required')"
+          show-count
+          :maxlength="10"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('materialDocumentYear')">
+      <a-form-item :label="pi.queryLabel('materialDocumentYear')">
+        <a-input
+          v-model:value="advancedQueryForm.materialDocumentYear"
+          :placeholder="pi.queryPh('materialDocumentYear', 'required')"
+          show-count
+          :maxlength="4"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('transactionEventType')">
+      <a-form-item :label="pi.queryLabel('transactionEventType')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.transactionEventType"
+          dict-type="logistics_material_document_transaction_event_type"
+          :placeholder="pi.queryPh('transactionEventType', 'select')"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('documentType')">
+      <a-form-item :label="pi.queryLabel('documentType')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.documentType"
+          dict-type="logistics_material_document_type"
+          :placeholder="pi.queryPh('documentType', 'select')"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('revaluationType')">
+      <a-form-item :label="pi.queryLabel('revaluationType')">
+        <a-input
+          v-model:value="advancedQueryForm.revaluationType"
+          :placeholder="pi.queryPh('revaluationType', 'required')"
+          show-count
+          :maxlength="2"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('documentDateStart')">
+      <a-form-item :label="pi.queryLabel('documentDateStart')">
+        <a-date-picker
+          v-model:value="advancedQueryForm.documentDateStart"
+          :placeholder="pi.queryPh('documentDateStart', 'select')"
+          value-format="YYYY-MM-DD"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('documentDateEnd')">
+      <a-form-item :label="pi.queryLabel('documentDateEnd')">
+        <a-date-picker
+          v-model:value="advancedQueryForm.documentDateEnd"
+          :placeholder="pi.queryPh('documentDateEnd', 'select')"
+          value-format="YYYY-MM-DD"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('postingDateStart')">
+      <a-form-item :label="pi.queryLabel('postingDateStart')">
+        <a-date-picker
+          v-model:value="advancedQueryForm.postingDateStart"
+          :placeholder="pi.queryPh('postingDateStart', 'select')"
+          value-format="YYYY-MM-DD"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('postingDateEnd')">
+      <a-form-item :label="pi.queryLabel('postingDateEnd')">
+        <a-date-picker
+          v-model:value="advancedQueryForm.postingDateEnd"
+          :placeholder="pi.queryPh('postingDateEnd', 'select')"
+          value-format="YYYY-MM-DD"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('referenceCode')">
+      <a-form-item :label="pi.queryLabel('referenceCode')">
+        <a-input
+          v-model:value="advancedQueryForm.referenceCode"
+          :placeholder="pi.queryPh('referenceCode', 'required')"
+          show-count
+          :maxlength="16"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('headerText')">
+      <a-form-item :label="pi.queryLabel('headerText')">
+        <a-input
+          v-model:value="advancedQueryForm.headerText"
+          :placeholder="pi.queryPh('headerText', 'required')"
+          show-count
+          :maxlength="25"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('billOfLadingCode')">
+      <a-form-item :label="pi.queryLabel('billOfLadingCode')">
+        <a-input
+          v-model:value="advancedQueryForm.billOfLadingCode"
+          :placeholder="pi.queryPh('billOfLadingCode', 'required')"
+          show-count
+          :maxlength="16"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('deliveryCode')">
+      <a-form-item :label="pi.queryLabel('deliveryCode')">
+        <a-input
+          v-model:value="advancedQueryForm.deliveryCode"
+          :placeholder="pi.queryPh('deliveryCode', 'required')"
+          show-count
+          :maxlength="10"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('transactionCode')">
+      <a-form-item :label="pi.queryLabel('transactionCode')">
+        <a-input
+          v-model:value="advancedQueryForm.transactionCode"
+          :placeholder="pi.queryPh('transactionCode', 'required')"
+          show-count
+          :maxlength="40"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('postedBy')">
+      <a-form-item :label="pi.queryLabel('postedBy')">
+        <a-input
+          v-model:value="advancedQueryForm.postedBy"
+          :placeholder="pi.queryPh('postedBy', 'required')"
+          show-count
+          :maxlength="6"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('createdAtStart')">
+      <a-form-item :label="pi.queryLabel('createdAtStart')">
+        <a-date-picker
+          v-model:value="advancedQueryForm.createdAtStart"
+          :placeholder="pi.queryPh('createdAtStart', 'select')"
+          value-format="YYYY-MM-DD HH:mm:ss"
+            show-time
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('createdAtEnd')">
+      <a-form-item :label="pi.queryLabel('createdAtEnd')">
+        <a-date-picker
+          v-model:value="advancedQueryForm.createdAtEnd"
+          :placeholder="pi.queryPh('createdAtEnd', 'select')"
+          value-format="YYYY-MM-DD HH:mm:ss"
+            show-time
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('extField')">
+      <a-form-item
+        name="extField"
+        class="takt-form-item-ext-field"
+        :label-col="{ style: { width: 'auto', maxWidth: 'none', flex: '0 0 auto' } }"
+        :wrapper-col="{ style: { flex: '1 1 0', minWidth: 0 } }"
+      >
+        <template #label>
+          <span class="takt-form-ext-field-label">
+            <a-tooltip
+              :title="t('common.page.entity.extfieldhint')"
+              placement="top"
+            >
+              <span class="takt-form-label-hint-icon"><RiQuestionLine class="takt-remix-icon" /></span>
+            </a-tooltip>
+            <span>{{ pi.queryLabel('extField') }}</span>
+          </span>
+        </template>
+        <a-textarea
+          v-model:value="advancedQueryForm.extField"
+          :placeholder="t('common.page.form.placeholder.extfield')"
+            :rows="4"
+            show-count
+            :maxlength="400"
+            allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('remark')">
+      <a-form-item :label="pi.queryLabel('remark')">
+        <a-textarea
+          v-model:value="advancedQueryForm.remark"
+          :placeholder="pi.queryPh('remark', 'optional')"
+            :rows="4"
+            show-count
+            :maxlength="400"
+            allow-clear
+        />
+      </a-form-item>
+      </div>
       </template>
     </TaktQueryDrawer>
 
@@ -169,23 +409,22 @@
  * Takt物料凭证主表实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/materials/material-document
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import MaterialDocumentForm from './components/material-document-form.vue'
-import MaterialDocumentItemPanel from './components/material-document-item-panel.vue'
-import { provideMaterialDocumentMasterContext, type MaterialDocumentRowRecord } from './composables/use-material-document-master-context'
-import { getMaterialDocumentList, getMaterialDocumentById, createMaterialDocument, updateMaterialDocument, deleteMaterialDocumentById, deleteMaterialDocumentBatch, getMaterialDocumentTemplate, importMaterialDocument, exportMaterialDocument } from '@/api/logistics/materials/material-document'
-import type { MaterialDocument, MaterialDocumentQuery } from '@/types/logistics/materials/material-document'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import MaterialDocumentForm from './components/MaterialDocumentForm.vue'
+import MaterialDocumentItemPanel from './components/MaterialDocumentItemPanel.vue'
+import { provideMaterialDocumentMasterContext, type MaterialDocumentRowRecord } from './composables/useMaterialDocumentMasterContext'
+import { getMaterialDocumentList, getMaterialDocumentById, createMaterialDocument, updateMaterialDocument, deleteMaterialDocumentById, deleteMaterialDocumentBatch, getMaterialDocumentTemplate, importMaterialDocument, exportMaterialDocument } from '@/api/logistics/materials/materialDocument.api'
+import type { MaterialDocument, MaterialDocumentQuery } from '@/types/logistics/materials/materialDocument.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
-import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
+import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
   useMaterialDocumentI18n,
@@ -193,7 +432,7 @@ import {
   MATERIALDOCUMENT_QUERY_STRING_FIELDS,
   MATERIALDOCUMENT_QUERY_FIELDS,
   MATERIALDOCUMENT_SELF_I18N_KEY,
-} from './composables/use-material-document-i18n'
+} from './composables/useMaterialDocumentI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useMaterialDocumentI18n()
@@ -398,6 +637,15 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getMaterialDocumentField(record, 'materialDocumentId') ?? ''
   },
   {
+    title: pi.label('materialDocumentCode'),
+    dataIndex: 'materialDocumentCode',
+    key: 'materialDocumentCode',
+    width: 120,
+    resizable: true,
+    ellipsis: true,
+    customRender: ({ record }: { record: any }) => getMaterialDocumentField(record, 'materialDocumentCode') ?? ''
+  },
+  {
     title: pi.label('materialDocumentYear'),
     dataIndex: 'materialDocumentYear',
     key: 'materialDocumentYear',
@@ -502,15 +750,6 @@ const columns = computed<TableColumnsType>(() => [
     resizable: true,
     ellipsis: true,
     customRender: ({ record }: { record: any }) => getMaterialDocumentField(record, 'postedBy') ?? ''
-  },
-  {
-    title: pi.label('remark'),
-    dataIndex: 'remark',
-    key: 'remark',
-    width: 120,
-    resizable: true,
-    ellipsis: true,
-    customRender: ({ record }: { record: any }) => getMaterialDocumentField(record, 'remark') ?? ''
   },
   CreateActionColumn({
     actions: [
@@ -625,7 +864,27 @@ function handleSearch() {
 function handleReset() {
   queryKeyword.value = ''
   advancedQueryForm.value = {
-
+  cultureCode: '',
+  plantCode: '',
+  materialDocumentCode: '',
+  materialDocumentYear: '',
+  transactionEventType: '',
+  documentType: '',
+  revaluationType: '',
+  documentDateStart: '',
+  documentDateEnd: '',
+  postingDateStart: '',
+  postingDateEnd: '',
+  referenceCode: '',
+  headerText: '',
+  billOfLadingCode: '',
+  deliveryCode: '',
+  transactionCode: '',
+  postedBy: '',
+  createdAtStart: '',
+  createdAtEnd: '',
+  extField: '',
+  remark: '',
   }
   currentPage.value = getTaktDefaultPageIndex()
   loadData()
@@ -823,7 +1082,27 @@ function handleAdvancedQuerySubmit() {
 
 function handleAdvancedQueryReset() {
   advancedQueryForm.value = {
-
+  cultureCode: '',
+  plantCode: '',
+  materialDocumentCode: '',
+  materialDocumentYear: '',
+  transactionEventType: '',
+  documentType: '',
+  revaluationType: '',
+  documentDateStart: '',
+  documentDateEnd: '',
+  postingDateStart: '',
+  postingDateEnd: '',
+  referenceCode: '',
+  headerText: '',
+  billOfLadingCode: '',
+  deliveryCode: '',
+  transactionCode: '',
+  postedBy: '',
+  createdAtStart: '',
+  createdAtEnd: '',
+  extField: '',
+  remark: '',
   }
 }
 

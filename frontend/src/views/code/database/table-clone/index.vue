@@ -1,5 +1,5 @@
 ﻿<!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/code/database/table-clone -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：跨租户整表克隆页（一次 1~5 张表；备份窗口确认后执行） -->
@@ -194,7 +194,7 @@
       />
     </a-card>
 
-    <takt-modal
+    <TaktModal
       v-model:open="backupModalVisible"
       :title="t('code.database.table-data-clone.page.backupmodaltitle')"
       :use-viewport-size="false"
@@ -251,7 +251,7 @@
           </a-button>
         </div>
       </template>
-    </takt-modal>
+    </TaktModal>
   </div>
 </template>
 
@@ -260,18 +260,17 @@
  * 跨租户整表克隆页：配置源/目标租户与表映射 → 备份窗口 → 确认后执行
  * @module views/code/database/table-clone
  */
-import { computed, onMounted, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { cloneTable, getTableClonePreview } from '@/api/code/database/table-clone'
-import { useDatabaseInfoCatalog } from '@/composables/use-database-info-catalog'
+import { cloneTable, getTableClonePreview } from '@/api/code/database/tableClone.api'
+import { useDatabaseInfoCatalog } from '@/composables/useDatabaseInfoCatalog'
 import type {
   TableClone,
   TableClonePreview,
   TableCloneResult,
   TableCloneTargetPreviewItem,
-} from '@/types/code/database/table-clone'
+} from '@/types/code/database/tableClone.types'
 
 /** 备份预览文案键前缀 */
 const TABLE_PREVIEW_KEY = 'code.database.table-data-clone.page.preview'

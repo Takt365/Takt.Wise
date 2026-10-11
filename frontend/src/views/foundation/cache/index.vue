@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/foundation/cache -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：缓存管理页面，展示配置与统计，支持按键检查/移除（权限 foundation:cache:list） -->
@@ -146,9 +146,9 @@ import {
   getCacheInfo,
   getCacheStatistics,
   removeCacheKey,
-} from '@/api/foundation/cache'
-import type { TaktCacheInfoDto, TaktCacheStatisticsDto } from '@/types/foundation/cache'
-import { usePermissionStore } from '@/stores/identity/permission'
+} from '@/api/foundation/cache.api'
+import type { TaktCacheInfoDto, TaktCacheStatisticsDto } from '@/types/foundation/cache.types'
+import { usePermissionStore } from '@/stores/identity/usePermissionStore'
 
 const { t } = useI18n()
 /** 权限 Store */

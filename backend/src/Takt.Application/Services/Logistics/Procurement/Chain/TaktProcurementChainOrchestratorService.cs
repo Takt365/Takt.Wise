@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Procurement.Chain
 // 文件名称：TaktProcurementChainOrchestratorService.cs
 // 创建时间：2026-06-24
@@ -33,7 +33,7 @@ public class TaktProcurementChainOrchestratorService : TaktServiceBase, ITaktPro
 {
     private readonly ITaktCompanyRepository<TaktPurchaseInquiry> _purchaseInquiryRepository;
     private readonly ITaktCompanyRepository<TaktPurchaseInquiryItem> _purchaseInquiryItemRepository;
-    private readonly ITaktCompanyRepository<TaktPurchasePrice> _purchasePriceRepository;
+    private readonly ITaktCompanyRepository<TaktPurchaseInfoRecord> _purchaseInfoRecordRepository;
     private readonly ITaktApprovalRepository<TaktCountersign> _countersignRepository;
     private readonly ITaktCompanyRepository<TaktCountersignDetail> _countersignDetailRepository;
     private readonly ITaktApprovalRepository<TaktPurchaseRequest> _purchaseRequestRepository;
@@ -41,7 +41,7 @@ public class TaktProcurementChainOrchestratorService : TaktServiceBase, ITaktPro
     private readonly ITaktCompanyRepository<TaktPurchaseOrder> _purchaseOrderRepository;
     private readonly ITaktApprovalRepository<TaktExpense> _expenseRepository;
     private readonly ITaktCompanyRepository<TaktExpenseDetail> _expenseDetailRepository;
-    private readonly ITaktPurchasePriceService _purchasePriceService;
+    private readonly ITaktPurchaseInfoRecordService _purchaseInfoRecordService;
     private readonly ITaktCountersignService _countersignService;
     private readonly ITaktPurchaseRequestService _purchaseRequestService;
     private readonly ITaktPurchaseOrderService _purchaseOrderService;
@@ -54,7 +54,7 @@ public class TaktProcurementChainOrchestratorService : TaktServiceBase, ITaktPro
     public TaktProcurementChainOrchestratorService(
         ITaktCompanyRepository<TaktPurchaseInquiry> purchaseInquiryRepository,
         ITaktCompanyRepository<TaktPurchaseInquiryItem> purchaseInquiryItemRepository,
-        ITaktCompanyRepository<TaktPurchasePrice> purchasePriceRepository,
+        ITaktCompanyRepository<TaktPurchaseInfoRecord> purchaseInfoRecordRepository,
         ITaktApprovalRepository<TaktCountersign> countersignRepository,
         ITaktCompanyRepository<TaktCountersignDetail> countersignDetailRepository,
         ITaktApprovalRepository<TaktPurchaseRequest> purchaseRequestRepository,
@@ -62,7 +62,7 @@ public class TaktProcurementChainOrchestratorService : TaktServiceBase, ITaktPro
         ITaktCompanyRepository<TaktPurchaseOrder> purchaseOrderRepository,
         ITaktApprovalRepository<TaktExpense> expenseRepository,
         ITaktCompanyRepository<TaktExpenseDetail> expenseDetailRepository,
-        ITaktPurchasePriceService purchasePriceService,
+        ITaktPurchaseInfoRecordService purchaseInfoRecordService,
         ITaktCountersignService countersignService,
         ITaktPurchaseRequestService purchaseRequestService,
         ITaktPurchaseOrderService purchaseOrderService,
@@ -74,7 +74,7 @@ public class TaktProcurementChainOrchestratorService : TaktServiceBase, ITaktPro
     {
         _purchaseInquiryRepository = purchaseInquiryRepository;
         _purchaseInquiryItemRepository = purchaseInquiryItemRepository;
-        _purchasePriceRepository = purchasePriceRepository;
+        _purchaseInfoRecordRepository = purchaseInfoRecordRepository;
         _countersignRepository = countersignRepository;
         _countersignDetailRepository = countersignDetailRepository;
         _purchaseRequestRepository = purchaseRequestRepository;
@@ -82,7 +82,7 @@ public class TaktProcurementChainOrchestratorService : TaktServiceBase, ITaktPro
         _purchaseOrderRepository = purchaseOrderRepository;
         _expenseRepository = expenseRepository;
         _expenseDetailRepository = expenseDetailRepository;
-        _purchasePriceService = purchasePriceService;
+        _purchaseInfoRecordService = purchaseInfoRecordService;
         _countersignService = countersignService;
         _purchaseRequestService = purchaseRequestService;
         _purchaseOrderService = purchaseOrderService;
@@ -226,7 +226,7 @@ public class TaktProcurementChainOrchestratorService : TaktServiceBase, ITaktPro
         var inquiry = await LoadPurchaseInquiryAsync(inquiryId);
         var items = await LoadPurchaseInquiryItemsAsync(inquiry.Id);
         var supplierCode = ResolveSupplierCode(inquiry, items);
-        await EnsurePurchasePriceFromInquiryAsync(inquiry, items, supplierCode);
+        await EnsurePurchaseInfoRecordFromInquiryAsync(inquiry, items, supplierCode);
         await EnsurePurchaseRequestFromInquiryAsync(inquiry, items, countersign);
         inquiry.ConvertedStatus = 2;
         inquiry.ConvertedQuantity = inquiry.TotalQuantity;
@@ -581,12 +581,12 @@ public class TaktProcurementChainOrchestratorService : TaktServiceBase, ITaktPro
     /// <summary>
     /// 幂等生成采购价格
     /// </summary>
-    private async Task EnsurePurchasePriceFromInquiryAsync(
+    private async Task EnsurePurchaseInfoRecordFromInquiryAsync(
         TaktPurchaseInquiry inquiry,
         IReadOnlyList<TaktPurchaseInquiryItem> items,
         string supplierCode)
     {
-        var existing = await _purchasePriceRepository.FirstAsync(x =>
+        var existing = await _purchaseInfoRecordRepository.FirstAsync(x =>
             x.PurchaseInquiryId == inquiry.Id && x.IsDeleted == 0);
         if (existing != null)
         {
@@ -599,9 +599,9 @@ public class TaktProcurementChainOrchestratorService : TaktServiceBase, ITaktPro
             return;
         }
         // 新定价模型：一头一物料；询价多物料时以首行物料建档，条件行承载报价
-        var createDto = new TaktPurchasePriceCreateDto
+        var createDto = new TaktPurchaseInfoRecordCreateDto
         {
-            PurchasePriceCode = priceCode,
+            PurchaseInfoRecordCode = priceCode,
             SupplierCode = supplierCode,
             MaterialCode = firstItem.MaterialCode,
             PriceType = "PB00",
@@ -609,10 +609,10 @@ public class TaktProcurementChainOrchestratorService : TaktServiceBase, ITaktPro
             ValidTo = inquiry.QuoteDeadlineDate ?? new DateTime(9999, 12, 31, 23, 59, 59),
             PurchaseInquiryId = inquiry.Id,
             PurchaseInquiryCode = inquiry.PurchaseInquiryCode,
-            Items = items.Select((item, index) => new TaktPurchasePriceItemCreateDto
+            Items = items.Select((item, index) => new TaktPurchaseInfoRecordItemCreateDto
             {
-                PurchasePriceCode = priceCode,
-                PurchasePriceSeq = (index + 1) * 10,
+                PurchaseInfoRecordCode = priceCode,
+                PurchaseInfoRecordSeq = (index + 1) * 10,
                 PriceType = "PB00",
                 ScaleBasis = "C",
                 ScaleUnit = item.InquiryUnit,
@@ -620,8 +620,8 @@ public class TaktProcurementChainOrchestratorService : TaktServiceBase, ITaktPro
                 Price = item.QuotedUnitPrice,
             }).ToList()
         };
-        var created = await _purchasePriceService.CreatePurchasePriceAsync(createDto);
-        await PatchPurchasePriceSourceAsync(created.PurchasePriceId, inquiry.Id, inquiry.PurchaseInquiryCode);
+        var created = await _purchaseInfoRecordService.CreatePurchaseInfoRecordAsync(createDto);
+        await PatchPurchaseInfoRecordSourceAsync(created.PurchaseInfoRecordId, inquiry.Id, inquiry.PurchaseInquiryCode);
     }
 
     /// <summary>
@@ -925,16 +925,16 @@ public class TaktProcurementChainOrchestratorService : TaktServiceBase, ITaktPro
     /// <summary>
     /// 回写采购价格来源询价
     /// </summary>
-    private async Task PatchPurchasePriceSourceAsync(long priceId, long inquiryId, string inquiryCode)
+    private async Task PatchPurchaseInfoRecordSourceAsync(long priceId, long inquiryId, string inquiryCode)
     {
-        var entity = await _purchasePriceRepository.GetByIdAsync(priceId);
+        var entity = await _purchaseInfoRecordRepository.GetByIdAsync(priceId);
         if (entity == null)
         {
             return;
         }
         entity.PurchaseInquiryId = inquiryId;
         entity.PurchaseInquiryCode = inquiryCode;
-        await _purchasePriceRepository.UpdateAsync(entity);
+        await _purchaseInfoRecordRepository.UpdateAsync(entity);
     }
 
     /// <summary>

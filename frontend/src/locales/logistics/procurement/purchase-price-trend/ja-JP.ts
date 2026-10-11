@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/procurement/purchase-price-trend
 // 文件名称：ja-JP.ts
 // 创建时间：2026-07-18
@@ -21,9 +21,12 @@ export default {
     selectPeriodRequired: '期間（年月）を選択してください',
     selectPriceTypeRequired: '条件タイプを選択してください',
     selectSupplierRequired: '仕入先を選択してください',
-    summary: '品目×仕入先行 {count} 件（欠月は直近有効価格で回填；* で価格日付）',
-    summaryModel: '品目×仕入先行 {count} 件（機種/製品グループは BOM；欠月回填は左と同じ）',
-    trendSummary: '前月比 {base} → {compare}：上昇 {up} · 下落 {down} · 横ばい {flat}',
+    summary: '品目×仕入先行 {count} 件（有効開始日ごとに1行；隣接比較、右側は初件対最終件）',
+    summaryModel: '品目×仕入先行 {count} 件（機種/製品グループは BOM；列と漲跌ルールは左と同じ）',
+    trendSummary: '{base} → {compare}：上昇 {up} · 下落 {down} · 横ばい {flat}',
+    trendSummaryValidFrom: '各行は第1件と最終件で比較：上昇 {up} · 下落 {down} · 横ばい {flat}',
+    adjacentVs: '{period} 比',
+    pointColumn: '第{n}件',
     carriedFrom: '直近価格日付 {period}（当月は有効価格なし・回填）',
     export: '一覧エクスポート',
     exportSuccess: 'エクスポート成功',
@@ -45,9 +48,12 @@ export default {
       flat: '横ばい',
     },
     columns: {
-      trend: '推移',
-      varianceAmount: '前月比差額',
-      variancePercent: '前月比%',
+      unitPrice: '単価',
+      validFrom: '有効開始日',
+      adjacent: '変動',
+      trend: '期間推移',
+      varianceAmount: '期間差額',
+      variancePercent: '期間%',
       modelGroup: '機種グループ',
       productGroup: '製品グループ',
       materialText: '品目テキスト',

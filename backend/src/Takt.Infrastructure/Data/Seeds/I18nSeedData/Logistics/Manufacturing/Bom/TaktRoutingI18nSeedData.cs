@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Bom
 // 文件名称：TaktRoutingI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktRouting 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -116,6 +116,24 @@ public class TaktRoutingI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.routing.name", "zh-CN", "工艺路线名称", "工艺路线名称"),
             // entity.routing.name
             new TranslationSeedItem("entity.routing.name", "zh-HK", "工艺路线名称_hk", "工艺路线名称"),
+
+            // entity.routing.groupcode
+            new TranslationSeedItem("entity.routing.groupcode", "en-US", "工艺路线组编码_us", "工艺路线组编码（选项 TaktBomGroups/options?bomGroupCategory=2；DictValue=BomGroupCode）"),
+            // entity.routing.groupcode
+            new TranslationSeedItem("entity.routing.groupcode", "ja-JP", "工艺路线组编码_jp", "工艺路线组编码（选项 TaktBomGroups/options?bomGroupCategory=2；DictValue=BomGroupCode）"),
+            // entity.routing.groupcode
+            new TranslationSeedItem("entity.routing.groupcode", "zh-CN", "工艺路线组编码", "工艺路线组编码（选项 TaktBomGroups/options?bomGroupCategory=2；DictValue=BomGroupCode）"),
+            // entity.routing.groupcode
+            new TranslationSeedItem("entity.routing.groupcode", "zh-HK", "工艺路线组编码_hk", "工艺路线组编码（选项 TaktBomGroups/options?bomGroupCategory=2；DictValue=BomGroupCode）"),
+
+            // entity.routing.groupname
+            new TranslationSeedItem("entity.routing.groupname", "en-US", "工艺路线组名称_us", "工艺路线组名称（冗余：按 RoutingGroupCode 取 TaktBomGroups.BomGroupName 联动）"),
+            // entity.routing.groupname
+            new TranslationSeedItem("entity.routing.groupname", "ja-JP", "工艺路线组名称_jp", "工艺路线组名称（冗余：按 RoutingGroupCode 取 TaktBomGroups.BomGroupName 联动）"),
+            // entity.routing.groupname
+            new TranslationSeedItem("entity.routing.groupname", "zh-CN", "工艺路线组名称", "工艺路线组名称（冗余：按 RoutingGroupCode 取 TaktBomGroups.BomGroupName 联动）"),
+            // entity.routing.groupname
+            new TranslationSeedItem("entity.routing.groupname", "zh-HK", "工艺路线组名称_hk", "工艺路线组名称（冗余：按 RoutingGroupCode 取 TaktBomGroups.BomGroupName 联动）"),
 
             // entity.routing.purpose
             new TranslationSeedItem("entity.routing.purpose", "en-US", "用途_us", "用途（字典 logistics_manufacturing_routing_purpose：1=生产，2=工程/设计，3=万能，4=工厂维护）"),

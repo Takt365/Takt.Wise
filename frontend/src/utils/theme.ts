@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/utils
 // 文件名称：theme.ts
 // 创建时间：2026-05-29
@@ -11,7 +11,7 @@
 // ========================================
 
 import type { GlobalToken } from 'ant-design-vue/es/theme/interface';
-import type { AppSetting, ThemeColorConfig } from '@/types/setting';
+import type { AppSetting, ThemeColorConfig } from '@/types/setting.types';
 import { TAKT_THEME_COLOR_STORAGE_KEY, TAKT_THEME_STORAGE_KEY } from '@/utils/common';
 
 export { TAKT_THEME_COLOR_STORAGE_KEY, TAKT_THEME_STORAGE_KEY };
@@ -119,7 +119,7 @@ export interface TaktHolidayThemeHint {
 }
 
 /**
- * AppSetting.themeColor.type 短键 → TaktThemeColorPreset（与 types/setting ThemeColor 一致）
+ * AppSetting.themeColor.type 短键 → TaktThemeColorPreset（与 types/setting.types ThemeColor 一致）
  */
 export const appSettingThemeColorToPreset = {
   green: 'mars-green',

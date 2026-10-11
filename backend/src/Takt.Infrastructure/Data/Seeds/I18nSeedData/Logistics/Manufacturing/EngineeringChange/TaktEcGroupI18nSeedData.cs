@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcGroupI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEcGroup 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktEcGroupI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecgroup._self", "zh-HK", "设变组主数据信息_hk", "实体名称"),
 
             // entity.ecgroup.code
-            new TranslationSeedItem("entity.ecgroup.code", "en-US", "设变组编码_us", "设变组编码（3）"),
+            new TranslationSeedItem("entity.ecgroup.code", "en-US", "设变组编码_us", "设变组编码（与员工编码同长 6，如 D10000）"),
             // entity.ecgroup.code
-            new TranslationSeedItem("entity.ecgroup.code", "ja-JP", "设变组编码_jp", "设变组编码（3）"),
+            new TranslationSeedItem("entity.ecgroup.code", "ja-JP", "设变组编码_jp", "设变组编码（与员工编码同长 6，如 D10000）"),
             // entity.ecgroup.code
-            new TranslationSeedItem("entity.ecgroup.code", "zh-CN", "设变组编码", "设变组编码（3）"),
+            new TranslationSeedItem("entity.ecgroup.code", "zh-CN", "设变组编码", "设变组编码（与员工编码同长 6，如 D10000）"),
             // entity.ecgroup.code
-            new TranslationSeedItem("entity.ecgroup.code", "zh-HK", "设变组编码_hk", "设变组编码（3）"),
+            new TranslationSeedItem("entity.ecgroup.code", "zh-HK", "设变组编码_hk", "设变组编码（与员工编码同长 6，如 D10000）"),
 
             // entity.ecgroup.name
             new TranslationSeedItem("entity.ecgroup.name", "en-US", "设变组名称_us", "设变组名称"),
@@ -118,13 +118,13 @@ public class TaktEcGroupI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecgroup.description", "zh-HK", "设变组描述_hk", "设变组描述"),
 
             // entity.ecgroup.category
-            new TranslationSeedItem("entity.ecgroup.category", "en-US", "设变组类别_us", "设变组类别（字典 logistics_manufacturing_ec_group_category；1=设变EC担当 2=SOP担当）"),
+            new TranslationSeedItem("entity.ecgroup.category", "en-US", "设变组类别_us", "设变组类别（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）"),
             // entity.ecgroup.category
-            new TranslationSeedItem("entity.ecgroup.category", "ja-JP", "设变组类别_jp", "设变组类别（字典 logistics_manufacturing_ec_group_category；1=设变EC担当 2=SOP担当）"),
+            new TranslationSeedItem("entity.ecgroup.category", "ja-JP", "设变组类别_jp", "设变组类别（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）"),
             // entity.ecgroup.category
-            new TranslationSeedItem("entity.ecgroup.category", "zh-CN", "设变组类别", "设变组类别（字典 logistics_manufacturing_ec_group_category；1=设变EC担当 2=SOP担当）"),
+            new TranslationSeedItem("entity.ecgroup.category", "zh-CN", "设变组类别", "设变组类别（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）"),
             // entity.ecgroup.category
-            new TranslationSeedItem("entity.ecgroup.category", "zh-HK", "设变组类别_hk", "设变组类别（字典 logistics_manufacturing_ec_group_category；1=设变EC担当 2=SOP担当）"),
+            new TranslationSeedItem("entity.ecgroup.category", "zh-HK", "设变组类别_hk", "设变组类别（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）"),
 
             // entity.ecgroup.contactphone
             new TranslationSeedItem("entity.ecgroup.contactphone", "en-US", "联系电话_us", "联系电话"),

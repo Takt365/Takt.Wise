@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.HumanResource.Attendance
 // 文件名称：TaktHoliday.cs
 // 创建时间：2026-05-23
@@ -60,7 +60,7 @@ public class TaktHoliday : TaktCompanyEntityBase
     /// <summary>
     /// 调休对应（多对；上班日=&gt;所补放假日，分号分隔；如 2026-09-20=&gt;2026-10-06;2026-10-10=&gt;2026-10-07；无可空串；Length=200）
     /// </summary>
-    [SugarColumn(ColumnName = "compensatory_work_dates", ColumnDescription = "调休对应（上班日=&gt;放假日）", ColumnDataType = "varchar", Length = 200, IsNullable = false, DefaultValue = "")]
+    [SugarColumn(ColumnName = "compensatory_work_dates", ColumnDescription = "调休对应", ColumnDataType = "varchar", Length = 200, IsNullable = false, DefaultValue = "")]
     public string CompensatoryWorkDates { get; set; } = string.Empty;
 
     /// <summary>

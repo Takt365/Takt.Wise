@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/manufacturing/bom/material-zero-price
 // 文件名称：en-US.ts
 // 创建时间：2026-08-13
@@ -30,10 +30,10 @@ export default {
     costSum: 'Calculate cost',
     costRecalculate: 'Recalculate cost',
     costAverage: 'Calculate average cost',
-    purchasePriceBackfill: 'Backfill purchase price',
-    purchasePriceBackfillSuccess:
+    purchaseInfoRecordBackfill: 'Backfill purchase price',
+    purchaseInfoRecordBackfillSuccess:
       '{month} purchase-price backfill done: scanned {scanned}, updated {updated}, no price {skipped}, unchanged {unchanged}',
-    purchasePriceBackfillFailed: 'Failed to backfill purchase price',
+    purchaseInfoRecordBackfillFailed: 'Failed to backfill purchase price',
     movingPriceBackfill: 'Backfill moving price',
     movingPriceBackfillBatch: 'Batch backfill moving price',
     movingPriceBackfillRow: 'Backfill moving price',
@@ -84,5 +84,12 @@ export default {
     pcbSectMarkSuccess:
       '{month} PCB SECT mark done: scanned {scanned}, tree rows {pcbSect}, newly marked {updated}, already marked {unchanged}',
     pcbSectMarkFailed: 'Failed to mark PCB SECT',
+    stripLeadingZeros: 'Strip leading zeros',
+    stripLeadingZerosConfirmTitle: 'Strip leading zeros?',
+    stripLeadingZerosConfirmContent:
+      'For plant {plant}, strip leading zeros from pure-numeric product codes on the cost header, and from product and component codes on cost items (including yearly tables). 000000001918610130 becomes 1918610130. Codes with letters, such as 0919MH8G93, stay unchanged. Rows that would collide on a unique key are skipped.',
+    stripLeadingZerosSuccess:
+      'Leading zeros stripped: header products {headerProduct}, item products {itemProduct}, item components {itemComponent}, skipped conflicts {skipped}',
+    stripLeadingZerosFailed: 'Failed to strip leading zeros',
   },
 }

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Statistics.Logging
 // 文件名称：TaktQuartzLogService.cs
 // 创建时间：2026-08-22
@@ -240,9 +240,12 @@ public class TaktQuartzLogService : TaktServiceBase, ITaktQuartzLogService
         if (!string.IsNullOrWhiteSpace(queryDto?.KeyWords))
         {
             var keywords = queryDto.KeyWords!.Trim();
+            var keywordsLower = keywords.ToLower();
             exp = exp.And(x =>
-                (x.CultureCode != null && x.CultureCode.Contains(keywords))
-                || (x.PlantCode != null && x.PlantCode.Contains(keywords))
+                (x.TenantCode != null && x.TenantCode.Contains(keywords))
+                || (x.PlantCode != null && x.PlantCode.ToLower().Contains(keywordsLower))
+                || (x.CompanyCode != null && x.CompanyCode.ToLower().Contains(keywordsLower))
+                || (x.CultureCode != null && x.CultureCode.Contains(keywords))
                 || (x.TaskName != null && x.TaskName.Contains(keywords))
                 || (x.JobGroup != null && x.JobGroup.Contains(keywords))
                 || (x.TaskType != null && x.TaskType.Contains(keywords))
@@ -264,8 +267,10 @@ public class TaktQuartzLogService : TaktServiceBase, ITaktQuartzLogService
 
         if (!string.IsNullOrWhiteSpace(queryDto?.PlantCode))
         {
-            var plantCode = queryDto.PlantCode;
-            exp = exp.And(x => x.PlantCode != null && x.PlantCode.Contains(plantCode));
+            var plantCode = queryDto.PlantCode.Trim();
+            exp = exp.And(x =>
+                x.PlantCode != null
+                && x.PlantCode.ToLower().Contains(plantCode.ToLower()));
         }
 
         if (queryDto?.QuartzTaskId.HasValue == true)

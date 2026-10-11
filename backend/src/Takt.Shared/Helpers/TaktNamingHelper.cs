@@ -1,9 +1,11 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Helpers
 // 文件名称：TaktNamingHelper.cs
-// 功能描述：通用命名约定：实体类名与 Takt 前缀、Excel 导入导出 sheet/file 默认值、entity.xxx._self / org.dept.* 资源键推导等。
+// 功能描述：通用命名约定：实体类名与 Takt 前缀、Excel 导入导出 sheet/file 默认值、entity.xxx._self / org.dept.* 资源键推导、推移导出 {工厂}_{报表名} 等。
 // ========================================
+
+using System.IO;
 
 namespace Takt.Shared.Helpers;
 
@@ -80,5 +82,65 @@ public static class TaktNamingHelper
         var sheet = string.IsNullOrWhiteSpace(sheetName) ? defaultSheet : sheetName.Trim();
         var file = string.IsNullOrWhiteSpace(fileName) ? entityTypeName : fileName.Trim();
         return (sheet, file);
+    }
+
+    /// <summary>
+    /// 推移分析报表导出文件基名：{工厂码}_{报表名}（不含扩展名；TaktExcelHelper 再追加 _yyyyMMddHHmmss.xlsx）。
+    /// </summary>
+    /// <param name="plantCode">选中工厂码，如 C100</param>
+    /// <param name="reportLabel">报表短名（建议已本地化）；可带或不带 .xlsx</param>
+    /// <returns>如 C100_采购价格推移 / C100_Purchase Price Trend</returns>
+    /// <exception cref="ArgumentException">plantCode 或 reportLabel 为空</exception>
+    public static string PlantPrefixedTrendExportBase(string plantCode, string reportLabel)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(plantCode);
+        ArgumentException.ThrowIfNullOrWhiteSpace(reportLabel);
+        var plant = SanitizeFileNameSegment(plantCode.Trim());
+        var label = reportLabel.Trim();
+        if (label.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
+        {
+            label = label[..^5].TrimEnd();
+        }
+        label = SanitizeFileNameSegment(label);
+        if (string.IsNullOrWhiteSpace(plant) || string.IsNullOrWhiteSpace(label))
+        {
+            throw new ArgumentException("plantCode / reportLabel 不能为空", nameof(reportLabel));
+        }
+        return $"{plant}_{label}";
+    }
+
+    /// <summary>
+    /// 去除文件名非法字符，空白压成单空格。
+    /// </summary>
+    private static string SanitizeFileNameSegment(string value)
+    {
+        var invalid = Path.GetInvalidFileNameChars();
+        Span<char> buffer = stackalloc char[value.Length];
+        var n = 0;
+        var prevSpace = false;
+        foreach (var c in value)
+        {
+            if (c <= 31 || Array.IndexOf(invalid, c) >= 0)
+            {
+                if (!prevSpace)
+                {
+                    buffer[n++] = '_';
+                    prevSpace = true;
+                }
+                continue;
+            }
+            if (char.IsWhiteSpace(c))
+            {
+                if (!prevSpace && n > 0)
+                {
+                    buffer[n++] = ' ';
+                    prevSpace = true;
+                }
+                continue;
+            }
+            buffer[n++] = c;
+            prevSpace = false;
+        }
+        return n == 0 ? string.Empty : new string(buffer[..n]).Trim().Trim('_');
     }
 }

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Sales
 // 文件名称：TaktSalesOrderDtos.cs
 // 创建时间：2026-09-04
@@ -106,7 +106,7 @@ public class TaktSalesOrderDto : TaktCompanyDtoBase
     public string? PurchaseOrderCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购订单日期
+    /// 订单日期
     /// </summary>
     public DateTime? PurchaseOrderDate { get; set; }
 
@@ -319,12 +319,12 @@ public class TaktSalesOrderQueryDto : TaktPagedQuery
     public string? PurchaseOrderCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购订单日期（范围查询-开始）
+    /// 订单日期（范围查询-开始）
     /// </summary>
     public DateTime? PurchaseOrderDateStart { get; set; }
 
     /// <summary>
-    /// 采购订单日期（范围查询-结束）
+    /// 订单日期（范围查询-结束）
     /// </summary>
     public DateTime? PurchaseOrderDateEnd { get; set; }
 
@@ -537,7 +537,7 @@ public class TaktSalesOrderCreateDto
     public string? PurchaseOrderCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购订单日期
+    /// 订单日期
     /// </summary>
     public DateTime? PurchaseOrderDate { get; set; }
 
@@ -793,7 +793,7 @@ public class TaktSalesOrderTemplateDto
     public string? PurchaseOrderCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购订单日期
+    /// 订单日期
     /// </summary>
     public DateTime? PurchaseOrderDate { get; set; }
 
@@ -995,7 +995,7 @@ public class TaktSalesOrderImportDto
     public string? PurchaseOrderCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购订单日期
+    /// 订单日期
     /// </summary>
     public DateTime? PurchaseOrderDate { get; set; }
 
@@ -1203,7 +1203,7 @@ public class TaktSalesOrderExportDto
     public string? PurchaseOrderCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购订单日期
+    /// 订单日期
     /// </summary>
     public DateTime? PurchaseOrderDate { get; set; }
 

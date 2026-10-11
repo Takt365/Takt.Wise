@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控·TaktWise (TDF) -->
 <!-- 命名空间：@/views/{{ table.frontend_module_path }}/{{ table.entity_name_kebab }} -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：{{ table.comment }}管理页面，含查询、增删改，由 GenFunction/ControllerActions 驱动 -->

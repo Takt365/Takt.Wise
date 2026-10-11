@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/materials/warehouse -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：Takt仓库主数据实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -176,22 +176,21 @@
  * Takt仓库主数据实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/materials/warehouse
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import WarehouseForm from './components/warehouse-form.vue'
-import StorageLocationPanel from './components/storage-location-panel.vue'
-import { provideWarehouseMasterContext, type WarehouseRowRecord } from './composables/use-warehouse-master-context'
-import { getWarehouseList, getWarehouseById, createWarehouse, updateWarehouse, deleteWarehouseById, deleteWarehouseBatch, getWarehouseTemplate, importWarehouse, exportWarehouse, updateWarehouseStatus } from '@/api/logistics/materials/warehouse'
-import type { Warehouse, WarehouseQuery } from '@/types/logistics/materials/warehouse'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import WarehouseForm from './components/WarehouseForm.vue'
+import StorageLocationPanel from './components/StorageLocationPanel.vue'
+import { provideWarehouseMasterContext, type WarehouseRowRecord } from './composables/useWarehouseMasterContext'
+import { getWarehouseList, getWarehouseById, createWarehouse, updateWarehouse, deleteWarehouseById, deleteWarehouseBatch, getWarehouseTemplate, importWarehouse, exportWarehouse, updateWarehouseStatus } from '@/api/logistics/materials/warehouse.api'
+import type { Warehouse, WarehouseQuery } from '@/types/logistics/materials/warehouse.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
 
 import {
@@ -200,7 +199,7 @@ import {
   WAREHOUSE_QUERY_STRING_FIELDS,
   WAREHOUSE_QUERY_FIELDS,
   WAREHOUSE_SELF_I18N_KEY,
-} from './composables/use-warehouse-i18n'
+} from './composables/useWarehouseI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useWarehouseI18n()
@@ -340,7 +339,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -563,8 +561,6 @@ const toWarehouseNumber = (value: string | number | undefined | null): number =>
   const num = Number(value ?? 0)
   return Number.isFinite(num) ? num : 0
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

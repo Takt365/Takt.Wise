@@ -1,5 +1,5 @@
 /* ========================================
- * 项目名称：节拍工厂·Takt Plat
+ * 项目名称：节拍智控·TaktWise
  * 命名空间：frontend/src/styles
  * 文件名称：global.css
  * 创建时间：2026-05-22
@@ -17,6 +17,7 @@
 @import './menu-base.css';
 @import './table-ellipsis-base.css';
 @import './table-loading-base.css';
+@import './table-analysis-base.css';
 @import './select-base.css';
 @import './dashboard-base.css';
 @import './utilities.css';
@@ -477,13 +478,98 @@ a:active {
   background-color: var(--ant-color-bg-container);
 }
 
-/** 分配弹窗 Transfer：配合 50vh 列表，中间操作列相对视口高度垂直居中 */
+/** 分配弹窗 Transfer：50vh 列表内可滚动（扁平 ul / 自定义树共用）；加载态见 .takt-transfer-spin */
+.takt-transfer-spin {
+  display: block;
+  width: 100%;
+}
+
+.takt-transfer-spin .ant-spin-container {
+  width: 100%;
+}
+
 .takt-transfer.ant-transfer {
   align-items: stretch;
+  width: 100%;
+}
+
+/** 中间 < > 操作列：随列表等高，按钮组垂直居中；按钮内图标再居中（避免偏下） */
+.takt-transfer .ant-transfer-operation {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-self: stretch;
+}
+
+.takt-transfer .ant-transfer-operation .ant-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.takt-transfer .ant-transfer-operation .ant-btn .anticon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  vertical-align: 0;
+}
+
+.takt-transfer .ant-transfer-operation .ant-btn .anticon > svg {
+  display: block;
+}
+
+.takt-transfer .ant-transfer-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.takt-transfer .ant-transfer-list-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.takt-transfer .ant-transfer-list-body-customize-wrapper {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.takt-transfer .takt-transfer-panel-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.takt-transfer .ant-transfer-list-content {
+  height: auto;
+  max-height: none;
+  overflow: visible;
 }
 
 .takt-transfer .ant-transfer-list-content-item:not(.ant-transfer-list-content-item-disabled) {
   cursor: pointer;
+}
+
+/** 隐藏表头全选（树形/大数据：避免未分配误全选） */
+.takt-transfer--hide-select-all .ant-transfer-list-header .ant-checkbox-wrapper {
+  display: none;
+}
+
+.takt-transfer .takt-transfer-panel-pagination {
+  flex: 0 0 auto;
+  margin: 4px 8px 8px;
+  text-align: right;
 }
 
 /** 左右主子表行点击选中高亮（与 takt-master-detail-table-lr masterCustomRow 一致） */

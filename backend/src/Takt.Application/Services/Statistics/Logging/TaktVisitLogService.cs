@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Statistics.Logging
 // 文件名称：TaktVisitLogService.cs
 // 创建时间：2026-06-25
@@ -221,18 +221,18 @@ public class TaktVisitLogService : TaktServiceBase, ITaktVisitLogService
     {
         var exp = Expressionable.Create<TaktVisitLog>();
 
-        if (!string.IsNullOrEmpty(queryDto?.KeyWords))
+        if (!string.IsNullOrWhiteSpace(queryDto?.KeyWords))
         {
-            var keywords = queryDto.KeyWords;
+            var keywords = queryDto.KeyWords!.Trim();
+            var keywordsLower = keywords.ToLower();
             exp = exp.And(x =>
-                (x.UserName != null && x.UserName.Contains(keywords))
-                || SqlFunc.ToString(x.UserId).Contains(keywords)
-                || SqlFunc.ToString(x.VisitCount).Contains(keywords)
+                (x.TenantCode != null && x.TenantCode.Contains(keywords))
+                || (x.PlantCode != null && x.PlantCode.ToLower().Contains(keywordsLower))
+                || (x.CompanyCode != null && x.CompanyCode.ToLower().Contains(keywordsLower))
                 || (x.CultureCode != null && x.CultureCode.Contains(keywords))
+                || (x.UserName != null && x.UserName.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
-                || SqlFunc.ToString(x.StatDate).Contains(keywords)
-                || SqlFunc.ToString(x.CreatedAt).Contains(keywords)
             );
         }
 
@@ -285,12 +285,14 @@ public class TaktVisitLogService : TaktServiceBase, ITaktVisitLogService
         {
             exp = exp.And(x => x.CreatedAt <= queryDto.CreatedAtEnd);
         }
+
         if (!string.IsNullOrWhiteSpace(queryDto?.PlantCode))
         {
-            var plantCode = queryDto.PlantCode;
-            exp = exp.And(x => x.PlantCode != null && x.PlantCode.Contains(plantCode));
+            var plantCode = queryDto.PlantCode.Trim();
+            exp = exp.And(x =>
+                x.PlantCode != null
+                && x.PlantCode.ToLower().Contains(plantCode.ToLower()));
         }
-
 
         return exp.ToExpression();
     }

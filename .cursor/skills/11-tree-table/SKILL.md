@@ -17,7 +17,7 @@ description: >-
 |----|------|
 | 前端大数据页 | `views/foundation/admin-division/index.vue` |
 | 生成脚本 | `scripts/gen/generate-vue-tree-from-api.cjs` |
-| 懒加载工具 | `frontend/src/composables/use-lazy-tree.ts` |
+| 懒加载工具 | `frontend/src/composables/useLazyTree.ts` |
 
 ## 交付顺序
 
@@ -29,11 +29,15 @@ description: >-
 ## 树表扩展清单
 
 ```
-- [ ] 1. 后端：GetXxxTreeAsync(parentId) / TreeOptions(parentId) 仅一层（禁止全表 Build）
-- [ ] 2. 前端：左树懒加载+virtual；右表 getXxxList 分页
-- [ ] 3. 表单 TaktTreeSelect :lazy="true"
+- [ ] 1. 后端：GetXxxTreeAsync(parentId) / TreeOptions(parentId) 仅一层（禁止全表 Build；禁止按阈值回退全量）
+- [ ] 2. 前端：左树懒加载+virtual；右表/右树按 parentId 一层；禁止 getXxxTree('0') 当全量
+- [ ] 3. 表单 TaktTreeSelect 默认懒加载（禁止 :lazy="false"）
 - [ ] 4. 流水线：services → controllers → from-backend → generate-vue-tree
 ```
+
+## 强制范围（须全部懒加载）
+
+菜单、部门、科目、成本中心、利润中心、成本要素、行政区划及一切 ParentId 树。
 
 ## 与 CRUD / 代码生成
 
@@ -46,6 +50,7 @@ description: >-
 
 - 只有 tree 接口、缺少节点 Create/Update/Delete（违反 12-crud）
 - 万级节点不拍平、不分页
+- 整表递归构树 / 前端一次拉全量树 / 按总数阈值回退 list 拼树 / TaktTreeSelect `:lazy="false"`
 
 ## 交叉规则
 

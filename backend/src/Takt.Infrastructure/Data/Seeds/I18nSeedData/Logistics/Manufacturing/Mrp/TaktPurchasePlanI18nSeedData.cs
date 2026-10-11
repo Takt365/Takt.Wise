@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Mrp
 // 文件名称：TaktPurchasePlanI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPurchasePlan 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -171,23 +171,23 @@ public class TaktPurchasePlanI18nSeedData : ITaktSeedDataCoordinator
             // entity.purchaseplan.purchasegroupcode
             new TranslationSeedItem("entity.purchaseplan.purchasegroupcode", "zh-HK", "采购组编码_hk", "采购组编码（选项 TaktPurchaseGroups/options；DictValue=PurchaseGroupCode）"),
 
-            // entity.purchaseplan.planneremployeeid
-            new TranslationSeedItem("entity.purchaseplan.planneremployeeid", "en-US", "计划人员工ID_us", "计划人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.purchaseplan.planneremployeeid
-            new TranslationSeedItem("entity.purchaseplan.planneremployeeid", "ja-JP", "计划人员工ID_jp", "计划人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.purchaseplan.planneremployeeid
-            new TranslationSeedItem("entity.purchaseplan.planneremployeeid", "zh-CN", "计划人员工ID", "计划人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.purchaseplan.planneremployeeid
-            new TranslationSeedItem("entity.purchaseplan.planneremployeeid", "zh-HK", "计划人员工ID_hk", "计划人（选项 TaktEmployees/options；DictValue=Id）"),
+            // entity.purchaseplan.plannergroupcode
+            new TranslationSeedItem("entity.purchaseplan.plannergroupcode", "en-US", "计划组编码_us", "计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）"),
+            // entity.purchaseplan.plannergroupcode
+            new TranslationSeedItem("entity.purchaseplan.plannergroupcode", "ja-JP", "计划组编码_jp", "计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）"),
+            // entity.purchaseplan.plannergroupcode
+            new TranslationSeedItem("entity.purchaseplan.plannergroupcode", "zh-CN", "计划组编码", "计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）"),
+            // entity.purchaseplan.plannergroupcode
+            new TranslationSeedItem("entity.purchaseplan.plannergroupcode", "zh-HK", "计划组编码_hk", "计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）"),
 
-            // entity.purchaseplan.plannername
-            new TranslationSeedItem("entity.purchaseplan.plannername", "en-US", "计划人名称_us", "计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.purchaseplan.plannername
-            new TranslationSeedItem("entity.purchaseplan.plannername", "ja-JP", "计划人名称_jp", "计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.purchaseplan.plannername
-            new TranslationSeedItem("entity.purchaseplan.plannername", "zh-CN", "计划人名称", "计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.purchaseplan.plannername
-            new TranslationSeedItem("entity.purchaseplan.plannername", "zh-HK", "计划人名称_hk", "计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
+            // entity.purchaseplan.plannergroupname
+            new TranslationSeedItem("entity.purchaseplan.plannergroupname", "en-US", "计划组名称_us", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
+            // entity.purchaseplan.plannergroupname
+            new TranslationSeedItem("entity.purchaseplan.plannergroupname", "ja-JP", "计划组名称_jp", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
+            // entity.purchaseplan.plannergroupname
+            new TranslationSeedItem("entity.purchaseplan.plannergroupname", "zh-CN", "计划组名称", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
+            // entity.purchaseplan.plannergroupname
+            new TranslationSeedItem("entity.purchaseplan.plannergroupname", "zh-HK", "计划组名称_hk", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
 
             // entity.purchaseplan.totalquantity
             new TranslationSeedItem("entity.purchaseplan.totalquantity", "en-US", "计划总数量_us", "计划总数量（基本单位数量）"),

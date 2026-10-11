@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Identity
 // 文件名称：TaktUserRoleDtos.cs
 // 创建时间：2026-05-28
@@ -18,7 +18,7 @@ namespace Takt.Application.Dtos.Identity;
 /// <summary>
 /// 用户-角色关联列表 DTO（对应 TaktUserRole）
 /// </summary>
-public class TaktUserRoleDto : TaktTenantCoreDtoBase
+public class TaktUserRoleDto : TaktCompanyDtoBase
 {
     /// <summary>
     /// 关联主键（适配实体 Id）

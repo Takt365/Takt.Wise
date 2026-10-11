@@ -1,6 +1,6 @@
 #nullable enable
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Manufacturing.Bom
 // 文件名称：TaktRouting.cs
 // 创建时间：2026-05-12
@@ -47,6 +47,18 @@ public class TaktRouting : TaktApprovalEntityBase
     /// </summary>
     [SugarColumn(ColumnName = "routing_name", ColumnDescription = "工艺路线名称", ColumnDataType = "nvarchar", Length = 100, IsNullable = false)]
     public string RoutingName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 工艺路线组编码（选项 TaktBomGroups/options?bomGroupCategory=2；DictValue=BomGroupCode）
+    /// </summary>
+    [SugarColumn(ColumnName = "routing_group_code", ColumnDescription = "工艺路线组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? RoutingGroupCode { get; set; }
+
+    /// <summary>
+    /// 工艺路线组名称（冗余：按 RoutingGroupCode 取 TaktBomGroups.BomGroupName 联动）
+    /// </summary>
+    [SugarColumn(ColumnName = "routing_group_name", ColumnDescription = "工艺路线组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? RoutingGroupName { get; set; }
 
     /// <summary>
     /// 用途（字典 logistics_manufacturing_routing_purpose：1=生产，2=工程/设计，3=万能，4=工厂维护）

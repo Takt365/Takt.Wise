@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Validators.HumanResource.Performance
 // 文件名称：TaktPerfAnalysisValidators.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：PerfAnalysis 模块 FluentValidation 验证器（由 generate-validators-from-entity.cjs 根据 TaktPerfAnalysis 生成，请按需审阅）
 // 
@@ -45,7 +45,7 @@ public class TaktPerfAnalysisCreateValidator : AbstractValidator<TaktPerfAnalysi
             .GreaterThanOrEqualTo(0).WithMessage("员工不能为负数");
         RuleFor(x => x.EmployeeName)
             .NotEmpty().WithMessage("员工姓名不能为空").When(x => x.EmployeeId <= 0)
-            .MaximumLength(50).WithMessage("员工姓名长度不能超过50个字符");
+            .MaximumLength(80).WithMessage("员工姓名长度不能超过80个字符");
         RuleFor(x => x.AssessmentId)
             .GreaterThanOrEqualTo(0).WithMessage("考核评估不能为负数");
         RuleFor(x => x.PlanTitle)
@@ -107,7 +107,7 @@ public class TaktPerfAnalysisUpdateValidator : AbstractValidator<TaktPerfAnalysi
             .GreaterThanOrEqualTo(0).WithMessage("员工不能为负数");
         RuleFor(x => x.EmployeeName)
             .NotEmpty().WithMessage("员工姓名不能为空").When(x => x.EmployeeId <= 0)
-            .MaximumLength(50).WithMessage("员工姓名长度不能超过50个字符");
+            .MaximumLength(80).WithMessage("员工姓名长度不能超过80个字符");
         RuleFor(x => x.AssessmentId)
             .GreaterThanOrEqualTo(0).WithMessage("考核评估不能为负数");
         RuleFor(x => x.PlanTitle)
@@ -163,7 +163,7 @@ public class TaktPerfAnalysisImportValidator : AbstractValidator<TaktPerfAnalysi
             .GreaterThanOrEqualTo(0).WithMessage("员工不能为负数");
         RuleFor(x => x.EmployeeName)
             .NotEmpty().WithMessage("员工姓名不能为空")
-            .MaximumLength(50).WithMessage("员工姓名长度不能超过50个字符");
+            .MaximumLength(80).WithMessage("员工姓名长度不能超过80个字符");
         RuleFor(x => x.AssessmentId)
             .GreaterThanOrEqualTo(0).WithMessage("考核评估不能为负数");
         RuleFor(x => x.PlanTitle)

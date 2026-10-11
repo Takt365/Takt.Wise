@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Statistics.Logging
 // 文件名称：TaktTrackingLogService.cs
 // 创建时间：2026-06-25
@@ -290,18 +290,19 @@ public class TaktTrackingLogService : TaktServiceBase, ITaktTrackingLogService
     {
         var exp = Expressionable.Create<TaktTrackingLog>();
 
-        if (!string.IsNullOrEmpty(queryDto?.KeyWords))
+        if (!string.IsNullOrWhiteSpace(queryDto?.KeyWords))
         {
-            var keywords = queryDto.KeyWords;
+            var keywords = queryDto.KeyWords!.Trim();
+            var keywordsLower = keywords.ToLower();
             exp = exp.And(x =>
-                (x.UserName != null && x.UserName.Contains(keywords))
-                || SqlFunc.ToString(x.UserId).Contains(keywords)
+                (x.TenantCode != null && x.TenantCode.Contains(keywords))
+                || (x.PlantCode != null && x.PlantCode.ToLower().Contains(keywordsLower))
+                || (x.CompanyCode != null && x.CompanyCode.ToLower().Contains(keywordsLower))
+                || (x.CultureCode != null && x.CultureCode.Contains(keywords))
+                || (x.UserName != null && x.UserName.Contains(keywords))
                 || (x.EventTrackingType != null && x.EventTrackingType.Contains(keywords))
                 || (x.EventTrackingCategory != null && x.EventTrackingCategory.Contains(keywords))
-                || SqlFunc.ToString(x.DurationMs).Contains(keywords)
-                || SqlFunc.ToString(x.PerformanceStartMs).Contains(keywords)
                 || (x.EntryName != null && x.EntryName.Contains(keywords))
-                || SqlFunc.ToString(x.TrackingLevel).Contains(keywords)
                 || (x.RoutePath != null && x.RoutePath.Contains(keywords))
                 || (x.PageUrl != null && x.PageUrl.Contains(keywords))
                 || (x.ContainerType != null && x.ContainerType.Contains(keywords))
@@ -311,11 +312,8 @@ public class TaktTrackingLogService : TaktServiceBase, ITaktTrackingLogService
                 || (x.AttributionJson != null && x.AttributionJson.Contains(keywords))
                 || (x.UserAgent != null && x.UserAgent.Contains(keywords))
                 || (x.ClientIp != null && x.ClientIp.Contains(keywords))
-                || (x.CultureCode != null && x.CultureCode.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
-                || SqlFunc.ToString(x.EventTime).Contains(keywords)
-                || SqlFunc.ToString(x.CreatedAt).Contains(keywords)
             );
         }
 
@@ -438,12 +436,14 @@ public class TaktTrackingLogService : TaktServiceBase, ITaktTrackingLogService
         {
             exp = exp.And(x => x.CreatedAt <= queryDto.CreatedAtEnd);
         }
+
         if (!string.IsNullOrWhiteSpace(queryDto?.PlantCode))
         {
-            var plantCode = queryDto.PlantCode;
-            exp = exp.And(x => x.PlantCode != null && x.PlantCode.Contains(plantCode));
+            var plantCode = queryDto.PlantCode.Trim();
+            exp = exp.And(x =>
+                x.PlantCode != null
+                && x.PlantCode.ToLower().Contains(plantCode.ToLower()));
         }
-
 
         return exp.ToExpression();
     }

@@ -1,6 +1,6 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
-<!-- 命名空间：frontend/src/views/dashboard/data-board/modules -->
+<!-- 项目名称：节拍智控·TaktWise -->
+<!-- 命名空间：frontend/src/views/dashboard/dataBoard.types/modules -->
 <!-- 文件名称：StatsHelpDeskModule.vue -->
 <!-- 功能描述：数据看板服务台工单（上月：件数/未处理/处理中/已处理） -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
@@ -29,12 +29,11 @@
 /**
  * 服务台工单：上月件数 / 未处理 / 处理中 / 已处理
  */
-import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import StatsMetricGrid from '../components/stats-metric-grid.vue'
-import { enrichDashboardMetricItems } from '../utils/stats-metric-dashboard'
-import { usePermissionStore } from '@/stores/identity/permission'
-import type { HelpDeskTicketStat } from '@/types/routine/help-desk/ticket-stat'
+import StatsMetricGrid from '../components/StatsMetricGrid.vue'
+import { enrichDashboardMetricItems } from '../utils/statsMetricDashboard'
+import { usePermissionStore } from '@/stores/identity/usePermissionStore'
+import type { HelpDeskTicketStat } from '@/types/routine/help-desk/ticketStat.types'
 import {
   DASHBOARD_STATS_API,
   DASHBOARD_STATS_PERMISSION,
@@ -42,8 +41,8 @@ import {
   fetchDashboardGet,
   fetchDashboardMetricIfPermitted,
   scheduleDashboardLoad,
-} from '../utils/stats-query'
-import { getDashboardInspectionMonthRange } from '../utils/stats-dashboard-plant'
+} from '../utils/statsQuery'
+import { getDashboardInspectionMonthRange } from '../utils/statsDashboardPlant'
 
 /** 空统计 */
 const EMPTY_STAT: HelpDeskTicketStat = {

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomCalculateDtos.cs
 // 创建时间：2026-08-14
@@ -206,7 +206,7 @@ public class TaktBomCalculateAverageResultDto
 /// <summary>
 /// 回填 BOM 明细采购价结果（采购组织=主表工厂编码；净价取条件行或数量/价值等级）
 /// </summary>
-public class TaktBomCalculatePurchasePriceBackfillResultDto
+public class TaktBomCalculatePurchaseInfoRecordBackfillResultDto
 {
     /// <summary>
     /// 扫描明细行数

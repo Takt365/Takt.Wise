@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcSourceEcMapper.cs
 // 创建时间：2026-06-29
@@ -11,6 +11,7 @@
 // ========================================
 
 using Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange;
+using Takt.Shared.Constants;
 using Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange;
 using Takt.Domain.Entities.Logistics.Materials;
 
@@ -63,7 +64,8 @@ public static class TaktEcSourceEcMapper
             EcContent = sourceEc.SourceEcContent ?? string.Empty,
             EcLeader = string.Empty,
             EcLossAmount = 0,
-            EcScope = 1,
+            EcScope = TaktEcScopeConstants.AllDestination,
+            EcDeptScope = TaktEcDeptScopeConstants.ByModel,
             EcEntryDate = today,
             ChangeStatus = TaktEcSourceStatusMapper.MapToChangeStatusOrThrow(sourceEc.SourceStatus),
             EcStatus = 1,

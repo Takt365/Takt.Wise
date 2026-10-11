@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcGroupService.cs
 // 创建时间：2026-07-08
@@ -93,14 +93,26 @@ public class TaktEcGroupService : TaktServiceBase, ITaktEcGroupService
     /// </summary>
     /// <param name="plantCode">工厂代码（可选，用于按工厂过滤）</param>
     /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
+    /// <param name="ecGroupCategory">设变组类别（可选；部门编码，多个逗号分隔）</param>
     /// <returns>下拉选项</returns>
-    public async Task<List<TaktSelectOption>> GetEcGroupOptionsAsync(string? plantCode = null, string? keyword = null)
+    public async Task<List<TaktSelectOption>> GetEcGroupOptionsAsync(string? plantCode = null, string? keyword = null, string? ecGroupCategory = null)
     {
         EnsureThreeLayerContext();
-        var list = await _ecGroupRepository.GetListAsync(
-            x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.GroupStatus == 1,
-            x => x.SortOrder,
-            false);
+        var normalizedPlantCode = plantCode?.Trim();
+        var normalizedKeyword = keyword?.Trim();
+        var categories = (ecGroupCategory ?? string.Empty)
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        var predicate = Expressionable.Create<TaktEcGroup>()
+            .And(x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.GroupStatus == 1)
+            .AndIF(!string.IsNullOrEmpty(normalizedPlantCode), x => x.PlantCode == normalizedPlantCode)
+            .AndIF(categories.Count > 0, x => categories.Contains(x.EcGroupCategory))
+            .AndIF(!string.IsNullOrEmpty(normalizedKeyword), x =>
+                (x.EcGroupCode != null && x.EcGroupCode.Contains(normalizedKeyword!))
+                || (x.EcGroupName != null && x.EcGroupName.Contains(normalizedKeyword!)))
+            .ToExpression();
+        var list = await _ecGroupRepository.GetListAsync(predicate, x => x.SortOrder, false);
         return list.Select(e => new TaktSelectOption
         {
             DictValue = e.EcGroupCode,

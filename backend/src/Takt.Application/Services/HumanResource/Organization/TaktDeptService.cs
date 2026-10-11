@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.HumanResource.Organization
 // 文件名称：TaktDeptService.cs
 // 创建时间：2026-08-22
@@ -132,6 +132,38 @@ public class TaktDeptService : TaktServiceBase, ITaktDeptService
                     IsLeaf = isLeaf,
                     Children = null,
                 };
+            })
+            .ToList();
+    }
+
+    /// <summary>
+    /// 获取部门选项（DictValue=DeptCode，DictLabel=DeptName1）
+    /// </summary>
+    /// <param name="plantCode">工厂代码（可选）</param>
+    /// <param name="keyword">搜索关键字（可选）</param>
+    /// <returns>下拉选项</returns>
+    public async Task<List<TaktSelectOption>> GetDeptOptionsAsync(string? plantCode = null, string? keyword = null)
+    {
+        EnsureThreeLayerContext();
+        var normalizedPlantCode = plantCode?.Trim();
+        var normalizedKeyword = keyword?.Trim();
+        var predicate = Expressionable.Create<TaktDept>()
+            .And(x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.DeptStatus == 1)
+            .AndIF(!string.IsNullOrEmpty(normalizedPlantCode), x => x.PlantCode == normalizedPlantCode)
+            .AndIF(!string.IsNullOrEmpty(normalizedKeyword), x =>
+                (x.DeptCode != null && x.DeptCode.Contains(normalizedKeyword!))
+                || (x.DeptName1 != null && x.DeptName1.Contains(normalizedKeyword!)))
+            .ToExpression();
+        var list = await _deptRepository.GetListAsync(predicate);
+        return list
+            .OrderBy(x => x.SortOrder)
+            .ThenBy(x => x.DeptCode)
+            .Select(item => new TaktSelectOption
+            {
+                DictValue = item.DeptCode,
+                DictLabel = string.IsNullOrWhiteSpace(item.DeptName1) ? item.DeptCode : item.DeptName1,
+                ExtLabel = item.DeptCode,
+                SortOrder = item.SortOrder,
             })
             .ToList();
     }

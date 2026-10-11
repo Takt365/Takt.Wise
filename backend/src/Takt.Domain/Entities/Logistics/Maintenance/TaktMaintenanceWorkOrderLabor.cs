@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Maintenance
 // 文件名称：TaktMaintenanceWorkOrderLabor.cs
 // 创建时间：2026-06-16
@@ -60,7 +60,7 @@ public class TaktMaintenanceWorkOrderLabor : TaktCompanyEntityBase
     /// <summary>
     /// 员工姓名（冗余）
     /// </summary>
-    [SugarColumn(ColumnName = "employee_name", ColumnDescription = "员工姓名", ColumnDataType = "nvarchar", Length = 50, IsNullable = true)]
+    [SugarColumn(ColumnName = "employee_name", ColumnDescription = "员工姓名", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
     public string? EmployeeName { get; set; }
 
     /// <summary>

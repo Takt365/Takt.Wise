@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Identity
 // 文件名称：TaktMenuDtos.cs
 // 创建时间：2026-08-11
@@ -152,6 +152,28 @@ public class TaktMenuTreeDto : TaktMenuDto
     /// 子节点（懒加载树接口返回 null，表示尚未加载；勿用空 List 冒充已加载）
     /// </summary>
     public List<TaktMenuTreeDto>? Children { get; set; }
+}
+
+/// <summary>
+/// 角色菜单分配：互斥懒加载树查询（未分配侧 / 已分配侧）
+/// </summary>
+public class TaktMenuAssignTreeQueryDto
+{
+    /// <summary>
+    /// 父级菜单 Id（0=根层；根层含「父在对侧」的提升节点）
+    /// </summary>
+    [JsonConverter(typeof(ValueToStringConverter))]
+    public long ParentId { get; set; }
+
+    /// <summary>
+    /// true=已分配侧；false=未分配侧
+    /// </summary>
+    public bool AssignedSide { get; set; }
+
+    /// <summary>
+    /// 当前已分配菜单 Id 列表（string，避免雪花精度丢失）
+    /// </summary>
+    public List<string>? AssignedMenuIds { get; set; }
 }
 
 // ========================================

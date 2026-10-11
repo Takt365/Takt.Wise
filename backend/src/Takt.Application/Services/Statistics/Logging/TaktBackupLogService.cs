@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Statistics.Logging
 // 文件名称：TaktBackupLogService.cs
 // 创建时间：2026-07-19
@@ -221,28 +221,24 @@ public class TaktBackupLogService : TaktServiceBase, ITaktBackupLogService
     {
         var exp = Expressionable.Create<TaktBackupLog>();
 
-        if (!string.IsNullOrEmpty(queryDto?.KeyWords))
+        if (!string.IsNullOrWhiteSpace(queryDto?.KeyWords))
         {
-            var keywords = queryDto.KeyWords;
+            var keywords = queryDto.KeyWords!.Trim();
+            var keywordsLower = keywords.ToLower();
             exp = exp.And(x =>
-                (x.BackupKind != null && x.BackupKind.Contains(keywords))
+                (x.TenantCode != null && x.TenantCode.Contains(keywords))
+                || (x.PlantCode != null && x.PlantCode.ToLower().Contains(keywordsLower))
+                || (x.CompanyCode != null && x.CompanyCode.ToLower().Contains(keywordsLower))
+                || (x.CultureCode != null && x.CultureCode.Contains(keywords))
+                || (x.BackupKind != null && x.BackupKind.Contains(keywords))
                 || (x.SourceId != null && x.SourceId.Contains(keywords))
                 || (x.SourceCode != null && x.SourceCode.Contains(keywords))
                 || (x.TargetName != null && x.TargetName.Contains(keywords))
                 || (x.TargetScope != null && x.TargetScope.Contains(keywords))
-                || SqlFunc.ToString(x.SyncMode).Contains(keywords)
-                || SqlFunc.ToString(x.ExecuteMode).Contains(keywords)
-                || SqlFunc.ToString(x.PathType).Contains(keywords)
                 || (x.ResultPath != null && x.ResultPath.Contains(keywords))
-                || SqlFunc.ToString(x.FileSizeBytes).Contains(keywords)
-                || SqlFunc.ToString(x.RunStatus).Contains(keywords)
                 || (x.ErrorMessage != null && x.ErrorMessage.Contains(keywords))
-                || (x.CultureCode != null && x.CultureCode.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
-                || SqlFunc.ToString(x.StartedAt).Contains(keywords)
-                || SqlFunc.ToString(x.FinishedAt).Contains(keywords)
-                || SqlFunc.ToString(x.CreatedAt).Contains(keywords)
             );
         }
 
@@ -350,12 +346,14 @@ public class TaktBackupLogService : TaktServiceBase, ITaktBackupLogService
         {
             exp = exp.And(x => x.CreatedAt <= queryDto.CreatedAtEnd);
         }
+
         if (!string.IsNullOrWhiteSpace(queryDto?.PlantCode))
         {
-            var plantCode = queryDto.PlantCode;
-            exp = exp.And(x => x.PlantCode != null && x.PlantCode.Contains(plantCode));
+            var plantCode = queryDto.PlantCode.Trim();
+            exp = exp.And(x =>
+                x.PlantCode != null
+                && x.PlantCode.ToLower().Contains(plantCode.ToLower()));
         }
-
 
         return exp.ToExpression();
     }

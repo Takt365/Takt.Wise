@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Quality.Cost
 // 文件名称：TaktQualityIssuePcbaReworkService.cs
 // 创建时间：2026-08-22
@@ -422,7 +422,7 @@ public class TaktQualityIssuePcbaReworkService : TaktServiceBase, ITaktQualityIs
                 || (x.PcbaCustomerName1 != null && x.PcbaCustomerName1.Contains(keywords))
                 || (x.PcbaDebitNoteCode != null && x.PcbaDebitNoteCode.Contains(keywords))
                 || (x.PcbaNote != null && x.PcbaNote.Contains(keywords))
-                || (x.PcbaRecorder != null && x.PcbaRecorder.Contains(keywords))
+                || (x.ResponseGroupName != null && x.ResponseGroupName.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
             );
@@ -536,10 +536,10 @@ public class TaktQualityIssuePcbaReworkService : TaktServiceBase, ITaktQualityIs
             exp = exp.And(x => x.PcbaNote != null && x.PcbaNote.Contains(pcbaNote));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.PcbaRecorder))
+        if (!string.IsNullOrWhiteSpace(queryDto?.ResponseGroupName))
         {
-            var pcbaRecorder = queryDto.PcbaRecorder;
-            exp = exp.And(x => x.PcbaRecorder != null && x.PcbaRecorder.Contains(pcbaRecorder));
+            var pcbaRecorder = queryDto.ResponseGroupName;
+            exp = exp.And(x => x.ResponseGroupName != null && x.ResponseGroupName.Contains(pcbaRecorder));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.ExtField))
@@ -656,7 +656,7 @@ public class TaktQualityIssuePcbaReworkService : TaktServiceBase, ITaktQualityIs
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.PcbaRecorder))
+        if (!string.IsNullOrWhiteSpace(queryDto.ResponseGroupName))
         {
             return true;
         }

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Identity
 // 文件名称：ITaktUserService.cs
 // 创建时间：2025-01-20
@@ -93,6 +93,20 @@ public interface ITaktUserService
     /// <param name="dto">修改密码 DTO</param>
     /// <returns>任务</returns>
     Task ChangePasswordAsync(TaktChangePasswordDto dto);
+
+    /// <summary>
+    /// 更新当前登录用户头像（写入关联员工 Avatar；须已绑定 EmployeeId；空串清除）
+    /// </summary>
+    /// <param name="dto">头像 DTO</param>
+    /// <returns>更新后的头像 URL（清除时为 null）</returns>
+    Task<string?> UpdateMyAvatarAsync(TaktUpdateMyAvatarDto dto);
+
+    /// <summary>
+    /// 更新当前登录用户个人资料（NickName→TaktUser；手机/邮箱→当前公司 TaktEmployee；姓名/性别只读）
+    /// </summary>
+    /// <param name="dto">个人资料 DTO</param>
+    /// <returns>更新后的可展示字段</returns>
+    Task<TaktUpdateMyProfileResultDto> UpdateMyProfileAsync(TaktUpdateMyProfileDto dto);
 
     /// <summary>
     /// 忘记密码（发送密码重置邮件）

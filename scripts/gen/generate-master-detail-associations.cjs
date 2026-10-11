@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：scripts
 // 文件名称：generate-master-detail-associations.cjs
 // 创建时间：2026-06-20
@@ -16,6 +16,9 @@ const {
   findDomainEntityFile,
   resolveFrontendModuleFileName,
   resolveFrontendOutputRelPath,
+  toFrontendApiFileName,
+  parseFrontendApiFileCamel,
+  camelToKebab,
 } = require('./generate-script-common.cjs');
 const { RBAC_ASSOCIATION_ENTITY_SHORT_NAMES } = require('./generate-entity-exclusions.cjs');
 const {
@@ -151,7 +154,7 @@ function resolveEntityModuleDir(entityPascal, backendRoot = CONFIG.backendRoot) 
 function resolveChildEntityFrontendKebab(childPascal, fallbackModuleDir = '') {
   const apiPath = resolveApiFilePathForEntity(childPascal);
   if (apiPath) {
-    return path.basename(apiPath, '.ts');
+    return camelToKebab(parseFrontendApiFileCamel(apiPath));
   }
   const moduleDir = resolveEntityModuleDir(childPascal) || fallbackModuleDir.replace(/\\/g, '/').toLowerCase();
   const rawKebab = pascalToKebab(childPascal);
@@ -197,9 +200,14 @@ function resolveApiFilePathForEntity(entityPascal, backendRoot = CONFIG.backendR
   }
   const apiBase = path.join(frontendRoot, CONFIG.apiDir);
   for (const fileKebab of candidates) {
-    const candidatePath = path.join(apiBase, `${fileKebab}.ts`);
+    const candidatePath = path.join(apiBase, toFrontendApiFileName(fileKebab));
     if (fs.existsSync(candidatePath)) {
       return candidatePath;
+    }
+    // 兼容迁移前残留
+    const legacyPath = path.join(apiBase, `${fileKebab}.ts`);
+    if (fs.existsSync(legacyPath)) {
+      return legacyPath;
     }
   }
   return null;

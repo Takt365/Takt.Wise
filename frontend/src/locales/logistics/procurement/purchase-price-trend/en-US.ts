@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/procurement/purchase-price-trend
 // 文件名称：en-US.ts
 // 创建时间：2026-07-18
@@ -21,9 +21,12 @@ export default {
     selectPeriodRequired: 'Please select a period range',
     selectPriceTypeRequired: 'Please select a condition type',
     selectSupplierRequired: 'Please select a supplier',
-    summary: '{count} material×supplier rows (gaps carry last valid price; hover * for price date)',
-    summaryModel: '{count} material×supplier rows (model/product groups from BOM; gap fill same as left)',
-    trendSummary: 'MoM {base} → {compare}: up {up} · down {down} · flat {flat}',
+    summary: '{count} material×supplier rows (one row per ValidFrom; adjacent compare, right side is first vs last)',
+    summaryModel: '{count} material×supplier rows (model/product groups from BOM; same columns and trend rules as the left tab)',
+    trendSummary: '{base} → {compare}: up {up} · down {down} · flat {flat}',
+    trendSummaryValidFrom: 'Each row compares first vs last point: up {up} · down {down} · flat {flat}',
+    adjacentVs: 'vs {period}',
+    pointColumn: 'Point {n}',
     carriedFrom: 'Latest price date {period} (no valid price this month; carried forward)',
     export: 'Export list',
     exportSuccess: 'Export succeeded',
@@ -45,9 +48,12 @@ export default {
       flat: 'Flat',
     },
     columns: {
-      trend: 'Trend',
-      varianceAmount: 'MoM delta',
-      variancePercent: 'MoM %',
+      unitPrice: 'Unit price',
+      validFrom: 'Valid from',
+      adjacent: 'Change',
+      trend: 'Period trend',
+      varianceAmount: 'Period delta',
+      variancePercent: 'Period %',
       modelGroup: 'Model group',
       productGroup: 'Product group',
       materialText: 'Material text',

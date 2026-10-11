@@ -1,6 +1,6 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
-<!-- 命名空间：frontend/src/views/dashboard/data-board/modules -->
+<!-- 项目名称：节拍智控·TaktWise -->
+<!-- 命名空间：frontend/src/views/dashboard/dataBoard.types/modules -->
 <!-- 文件名称：StatsCustomModule.vue -->
 <!-- 功能描述：数据看板自定义模块占位（dashboard 空态卡） -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->

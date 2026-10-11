@@ -27,8 +27,8 @@ description: >-
 | 后端（扩展） | `TaktUsersController.cs` |
 | 主子表 | `TaktDictTypesController` + `TaktDictDatasController` |
 | 树表 | `TaktDeptsController`（list + tree 并存） |
-| 前端 API | `api/identity/user.ts` |
-| 前端单表 | `views/identity/user/index.vue` + `components/user-form.vue` |
+| 前端 API | `api/identity/user.api.ts` |
+| 前端单表 | `views/identity/user/index.vue` + `components/UserForm.vue` |
 | 前端主子表 | `views/foundation/dict/index.vue` |
 | 前端树表 | `views/human-resource/organization/dept/index.vue` |
 

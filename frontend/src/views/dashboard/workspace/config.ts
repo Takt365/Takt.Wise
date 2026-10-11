@@ -1,7 +1,7 @@
 /**
  * 工作台模块默认配置与存储 key
  */
-import type { WorkspaceModuleItem, WorkspaceModuleMeta } from '@/types/dashboard/workspace'
+import type { WorkspaceModuleItem, WorkspaceModuleMeta } from '@/types/dashboard/workspace.types'
 
 export const WORKSPACE_STORAGE_KEY = 'takt-workspace-modules'
 

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi.Controllers.Statistics.Logging
 // 文件名称：TaktLoginLogsController.cs
 // 创建时间：2026-06-12
@@ -34,6 +34,25 @@ public class TaktLoginLogsController : TaktControllerBase
     public TaktLoginLogsController(ITaktLoginLogService loginLogService)
     {
         _loginLogService = loginLogService;
+    }
+
+    /// <summary>
+    /// 获取当前登录用户的登录日志列表（分页；个人中心，无需管理端 list 权限）
+    /// </summary>
+    /// <param name="queryDto">查询DTO（高级条件可用；UserName 由服务端强制为当前用户）</param>
+    /// <returns>分页结果</returns>
+    [HttpGet("me/list")]
+    public async Task<IActionResult> GetMyLoginLogListAsync([FromQuery] TaktLoginLogQueryDto queryDto)
+    {
+        try
+        {
+            var result = await _loginLogService.GetMyLoginLogListAsync(queryDto);
+            return Success(result.Data, result.Total, result.PageIndex, result.PageSize, "查询成功");
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
     }
 
     /// <summary>

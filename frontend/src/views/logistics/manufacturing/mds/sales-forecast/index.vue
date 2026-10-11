@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/mds/sales-forecast -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：Takt销售预测实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -176,22 +176,21 @@
  * Takt销售预测实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/mds/sales-forecast
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import SalesForecastForm from './components/sales-forecast-form.vue'
-import SalesForecastItemPanel from './components/sales-forecast-item-panel.vue'
-import { provideSalesForecastMasterContext, type SalesForecastRowRecord } from './composables/use-sales-forecast-master-context'
-import { getSalesForecastList, getSalesForecastById, createSalesForecast, updateSalesForecast, deleteSalesForecastById, deleteSalesForecastBatch, getSalesForecastTemplate, importSalesForecast, exportSalesForecast, updateSalesForecastStatus } from '@/api/logistics/manufacturing/mds/sales-forecast'
-import type { SalesForecast, SalesForecastQuery } from '@/types/logistics/manufacturing/mds/sales-forecast'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import SalesForecastForm from './components/SalesForecastForm.vue'
+import SalesForecastItemPanel from './components/SalesForecastItemPanel.vue'
+import { provideSalesForecastMasterContext, type SalesForecastRowRecord } from './composables/useSalesForecastMasterContext'
+import { getSalesForecastList, getSalesForecastById, createSalesForecast, updateSalesForecast, deleteSalesForecastById, deleteSalesForecastBatch, getSalesForecastTemplate, importSalesForecast, exportSalesForecast, updateSalesForecastStatus } from '@/api/logistics/manufacturing/mds/salesForecast.api'
+import type { SalesForecast, SalesForecastQuery } from '@/types/logistics/manufacturing/mds/salesForecast.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
 
 import {
@@ -200,7 +199,7 @@ import {
   SALESFORECAST_QUERY_STRING_FIELDS,
   SALESFORECAST_QUERY_FIELDS,
   SALESFORECAST_SELF_I18N_KEY,
-} from './composables/use-sales-forecast-i18n'
+} from './composables/useSalesForecastI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useSalesForecastI18n()
@@ -340,7 +339,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -512,13 +510,13 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getSalesForecastField(record, 'customerName1') ?? ''
   },
   {
-    title: pi.label('plannerId'),
-    dataIndex: 'plannerId',
-    key: 'plannerId',
+    title: pi.label('plannerGroupCode'),
+    dataIndex: 'plannerGroupCode',
+    key: 'plannerGroupCode',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getSalesForecastField(record, 'plannerId') ?? ''
+    customRender: ({ record }: { record: any }) => getSalesForecastField(record, 'plannerGroupCode') ?? ''
   },
   {
     title: pi.label('planBy'),
@@ -653,8 +651,6 @@ const toSalesForecastNumber = (value: string | number | undefined | null): numbe
   const num = Number(value ?? 0)
   return Number.isFinite(num) ? num : 0
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

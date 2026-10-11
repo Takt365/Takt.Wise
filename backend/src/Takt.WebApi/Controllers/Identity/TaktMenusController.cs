@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi.Controllers.Identity
 // 文件名称：TaktMenusController.cs
 // 创建时间：2026-06-09
@@ -110,6 +110,26 @@ public class TaktMenusController : TaktControllerBase
         try
         {
             var result = await _menuService.GetMenuTreeAsync(parentId, includeDisabled);
+            return Success(result, "查询成功");
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// 角色菜单分配：互斥懒加载树（未分配 / 已分配各一层）
+    /// </summary>
+    /// <param name="queryDto">父级、侧别、已分配 Id</param>
+    /// <returns>树形一层</returns>
+    [TaktPermission("identity:role:query", "角色菜单分配树")]
+    [HttpPost("assign-tree")]
+    public async Task<IActionResult> GetMenuAssignTreeAsync([FromBody] TaktMenuAssignTreeQueryDto queryDto)
+    {
+        try
+        {
+            var result = await _menuService.GetMenuAssignTreeAsync(queryDto);
             return Success(result, "查询成功");
         }
         catch (Exception ex)

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Helpers
 // 文件名称：TaktDictTypeAttributeHelper.cs
 // 功能描述：读取 DTO 上 TaktDictTypeAttribute（导出/显示名等）；运行时落库转换见 TaktDictStorageHelper，UI 提交由前端 dict-type 负责

@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData
 // 文件名称：TaktMenuI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Cursor AI)
 // 功能描述：菜单导航国际化翻译种子（menu.* 键，与 TaktMenuLevel1~4SeedData I18nKey 对齐）
 // 
@@ -623,14 +623,14 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.foundation.vocabulary
             ("menu.foundation.vocabulary", "zh-HK", "敏感词库_hk", "菜单导航"),
 
-            // menu.foundation.setting
-            ("menu.foundation.setting", "en-US", "系统设置_us", "菜单导航"),
-            // menu.foundation.setting
-            ("menu.foundation.setting", "ja-JP", "系统设置_jp", "菜单导航"),
-            // menu.foundation.setting
-            ("menu.foundation.setting", "zh-CN", "系统设置", "菜单导航"),
-            // menu.foundation.setting
-            ("menu.foundation.setting", "zh-HK", "系统设置_hk", "菜单导航"),
+            // menu.foundation.system.property
+            ("menu.foundation.system.property", "en-US", "系统属性_us", "菜单导航"),
+            // menu.foundation.system.property
+            ("menu.foundation.system.property", "ja-JP", "系统属性_jp", "菜单导航"),
+            // menu.foundation.system.property
+            ("menu.foundation.system.property", "zh-CN", "系统属性", "菜单导航"),
+            // menu.foundation.system.property
+            ("menu.foundation.system.property", "zh-HK", "系统属性_hk", "菜单导航"),
 
             // menu.foundation.online
             ("menu.foundation.online", "en-US", "在线用户_us", "菜单导航"),
@@ -884,15 +884,6 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.materials.warehouse
             ("menu.logistics.materials.warehouse", "zh-HK", "仓库信息_hk", "菜单导航"),
 
-            // menu.logistics.materials.material.group
-            ("menu.logistics.materials.material.group", "en-US", "物料组_us", "菜单导航"),
-            // menu.logistics.materials.material.group
-            ("menu.logistics.materials.material.group", "ja-JP", "物料组_jp", "菜单导航"),
-            // menu.logistics.materials.material.group
-            ("menu.logistics.materials.material.group", "zh-CN", "物料组", "菜单导航"),
-            // menu.logistics.materials.material.group
-            ("menu.logistics.materials.material.group", "zh-HK", "物料组_hk", "菜单导航"),
-
             // menu.logistics.materials.packaging.material
             ("menu.logistics.materials.packaging.material", "en-US", "包装物料_us", "菜单导航"),
             // menu.logistics.materials.packaging.material
@@ -920,6 +911,24 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.materials.material.document
             ("menu.logistics.materials.material.document", "zh-HK", "物料凭证_hk", "菜单导航"),
 
+            // menu.logistics.materials.material.inbound.trend
+            ("menu.logistics.materials.material.inbound.trend", "en-US", "物料入库推移_us", "菜单导航"),
+            // menu.logistics.materials.material.inbound.trend
+            ("menu.logistics.materials.material.inbound.trend", "ja-JP", "物料入库推移_jp", "菜单导航"),
+            // menu.logistics.materials.material.inbound.trend
+            ("menu.logistics.materials.material.inbound.trend", "zh-CN", "物料入库推移", "菜单导航"),
+            // menu.logistics.materials.material.inbound.trend
+            ("menu.logistics.materials.material.inbound.trend", "zh-HK", "物料入库推移_hk", "菜单导航"),
+
+            // menu.logistics.materials.material.outbound.trend
+            ("menu.logistics.materials.material.outbound.trend", "en-US", "物料出库推移_us", "菜单导航"),
+            // menu.logistics.materials.material.outbound.trend
+            ("menu.logistics.materials.material.outbound.trend", "ja-JP", "物料出库推移_jp", "菜单导航"),
+            // menu.logistics.materials.material.outbound.trend
+            ("menu.logistics.materials.material.outbound.trend", "zh-CN", "物料出库推移", "菜单导航"),
+            // menu.logistics.materials.material.outbound.trend
+            ("menu.logistics.materials.material.outbound.trend", "zh-HK", "物料出库推移_hk", "菜单导航"),
+
             // menu.logistics.materials.material.moving.price
             ("menu.logistics.materials.material.moving.price", "en-US", "移动价格_us", "菜单导航"),
             // menu.logistics.materials.material.moving.price
@@ -938,15 +947,6 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.materials.material.moving.trend
             ("menu.logistics.materials.material.moving.trend", "zh-HK", "移动价格推移_hk", "菜单导航"),
 
-            // menu.logistics.materials.material.model.trend
-            ("menu.logistics.materials.material.model.trend", "en-US", "机种价格推移_us", "菜单导航"),
-            // menu.logistics.materials.material.model.trend
-            ("menu.logistics.materials.material.model.trend", "ja-JP", "机种价格推移_jp", "菜单导航"),
-            // menu.logistics.materials.material.model.trend
-            ("menu.logistics.materials.material.model.trend", "zh-CN", "机种价格推移", "菜单导航"),
-            // menu.logistics.materials.material.model.trend
-            ("menu.logistics.materials.material.model.trend", "zh-HK", "机种价格推移_hk", "菜单导航"),
-
             // menu.logistics.materials.inventory.reserve
             ("menu.logistics.materials.inventory.reserve", "en-US", "存货跌价准备_us", "菜单导航"),
             // menu.logistics.materials.inventory.reserve
@@ -955,6 +955,96 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             ("menu.logistics.materials.inventory.reserve", "zh-CN", "存货跌价准备", "菜单导航"),
             // menu.logistics.materials.inventory.reserve
             ("menu.logistics.materials.inventory.reserve", "zh-HK", "存货跌价准备_hk", "菜单导航"),
+
+            // menu.logistics.materials.material.group
+            ("menu.logistics.materials.material.group", "en-US", "物料组_us", "菜单导航"),
+            // menu.logistics.materials.material.group
+            ("menu.logistics.materials.material.group", "ja-JP", "物料组_jp", "菜单导航"),
+            // menu.logistics.materials.material.group
+            ("menu.logistics.materials.material.group", "zh-CN", "物料组", "菜单导航"),
+            // menu.logistics.materials.material.group
+            ("menu.logistics.materials.material.group", "zh-HK", "物料组_hk", "菜单导航"),
+
+            // menu.logistics.procurement.purchase.forecast
+            ("menu.logistics.procurement.purchase.forecast", "en-US", "采购预测_us", "菜单导航"),
+            // menu.logistics.procurement.purchase.forecast
+            ("menu.logistics.procurement.purchase.forecast", "ja-JP", "采购预测_jp", "菜单导航"),
+            // menu.logistics.procurement.purchase.forecast
+            ("menu.logistics.procurement.purchase.forecast", "zh-CN", "采购预测", "菜单导航"),
+            // menu.logistics.procurement.purchase.forecast
+            ("menu.logistics.procurement.purchase.forecast", "zh-HK", "采购预测_hk", "菜单导航"),
+
+            // menu.logistics.procurement.purchase.inquiry
+            ("menu.logistics.procurement.purchase.inquiry", "en-US", "采购询价_us", "菜单导航"),
+            // menu.logistics.procurement.purchase.inquiry
+            ("menu.logistics.procurement.purchase.inquiry", "ja-JP", "采购询价_jp", "菜单导航"),
+            // menu.logistics.procurement.purchase.inquiry
+            ("menu.logistics.procurement.purchase.inquiry", "zh-CN", "采购询价", "菜单导航"),
+            // menu.logistics.procurement.purchase.inquiry
+            ("menu.logistics.procurement.purchase.inquiry", "zh-HK", "采购询价_hk", "菜单导航"),
+
+            // menu.logistics.procurement.purchase.request
+            ("menu.logistics.procurement.purchase.request", "en-US", "采购申请_us", "菜单导航"),
+            // menu.logistics.procurement.purchase.request
+            ("menu.logistics.procurement.purchase.request", "ja-JP", "采购申请_jp", "菜单导航"),
+            // menu.logistics.procurement.purchase.request
+            ("menu.logistics.procurement.purchase.request", "zh-CN", "采购申请", "菜单导航"),
+            // menu.logistics.procurement.purchase.request
+            ("menu.logistics.procurement.purchase.request", "zh-HK", "采购申请_hk", "菜单导航"),
+
+            // menu.logistics.procurement.purchase.order
+            ("menu.logistics.procurement.purchase.order", "en-US", "采购订单_us", "菜单导航"),
+            // menu.logistics.procurement.purchase.order
+            ("menu.logistics.procurement.purchase.order", "ja-JP", "采购订单_jp", "菜单导航"),
+            // menu.logistics.procurement.purchase.order
+            ("menu.logistics.procurement.purchase.order", "zh-CN", "采购订单", "菜单导航"),
+            // menu.logistics.procurement.purchase.order
+            ("menu.logistics.procurement.purchase.order", "zh-HK", "采购订单_hk", "菜单导航"),
+
+            // menu.logistics.procurement.purchase.info.record
+            ("menu.logistics.procurement.purchase.info.record", "en-US", "采购信息记录_us", "菜单导航"),
+            // menu.logistics.procurement.purchase.info.record
+            ("menu.logistics.procurement.purchase.info.record", "ja-JP", "采购信息记录_jp", "菜单导航"),
+            // menu.logistics.procurement.purchase.info.record
+            ("menu.logistics.procurement.purchase.info.record", "zh-CN", "采购信息记录", "菜单导航"),
+            // menu.logistics.procurement.purchase.info.record
+            ("menu.logistics.procurement.purchase.info.record", "zh-HK", "采购信息记录_hk", "菜单导航"),
+
+            // menu.logistics.procurement.purchase.price.trend
+            ("menu.logistics.procurement.purchase.price.trend", "en-US", "采购价格推移_us", "菜单导航"),
+            // menu.logistics.procurement.purchase.price.trend
+            ("menu.logistics.procurement.purchase.price.trend", "ja-JP", "采购价格推移_jp", "菜单导航"),
+            // menu.logistics.procurement.purchase.price.trend
+            ("menu.logistics.procurement.purchase.price.trend", "zh-CN", "采购价格推移", "菜单导航"),
+            // menu.logistics.procurement.purchase.price.trend
+            ("menu.logistics.procurement.purchase.price.trend", "zh-HK", "采购价格推移_hk", "菜单导航"),
+
+            // menu.logistics.procurement.po.price.pir.deviation
+            ("menu.logistics.procurement.po.price.pir.deviation", "en-US", "PO价偏离PIR_us", "菜单导航"),
+            // menu.logistics.procurement.po.price.pir.deviation
+            ("menu.logistics.procurement.po.price.pir.deviation", "ja-JP", "PO价偏离PIR_jp", "菜单导航"),
+            // menu.logistics.procurement.po.price.pir.deviation
+            ("menu.logistics.procurement.po.price.pir.deviation", "zh-CN", "PO价偏离PIR", "菜单导航"),
+            // menu.logistics.procurement.po.price.pir.deviation
+            ("menu.logistics.procurement.po.price.pir.deviation", "zh-HK", "PO价偏离PIR_hk", "菜单导航"),
+
+            // menu.logistics.procurement.purchase.invoice
+            ("menu.logistics.procurement.purchase.invoice", "en-US", "采购发票_us", "菜单导航"),
+            // menu.logistics.procurement.purchase.invoice
+            ("menu.logistics.procurement.purchase.invoice", "ja-JP", "采购发票_jp", "菜单导航"),
+            // menu.logistics.procurement.purchase.invoice
+            ("menu.logistics.procurement.purchase.invoice", "zh-CN", "采购发票", "菜单导航"),
+            // menu.logistics.procurement.purchase.invoice
+            ("menu.logistics.procurement.purchase.invoice", "zh-HK", "采购发票_hk", "菜单导航"),
+
+            // menu.logistics.procurement.purchase.actual.trend
+            ("menu.logistics.procurement.purchase.actual.trend", "en-US", "采购实绩推移_us", "菜单导航"),
+            // menu.logistics.procurement.purchase.actual.trend
+            ("menu.logistics.procurement.purchase.actual.trend", "ja-JP", "采购实绩推移_jp", "菜单导航"),
+            // menu.logistics.procurement.purchase.actual.trend
+            ("menu.logistics.procurement.purchase.actual.trend", "zh-CN", "采购实绩推移", "菜单导航"),
+            // menu.logistics.procurement.purchase.actual.trend
+            ("menu.logistics.procurement.purchase.actual.trend", "zh-HK", "采购实绩推移_hk", "菜单导航"),
 
             // menu.logistics.procurement.supplier
             ("menu.logistics.procurement.supplier", "en-US", "供应商_us", "菜单导航"),
@@ -991,78 +1081,6 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             ("menu.logistics.procurement.source.of.supply", "zh-CN", "货源清单", "菜单导航"),
             // menu.logistics.procurement.source.of.supply
             ("menu.logistics.procurement.source.of.supply", "zh-HK", "货源清单_hk", "菜单导航"),
-
-            // menu.logistics.procurement.purchase.forecast
-            ("menu.logistics.procurement.purchase.forecast", "en-US", "采购预测_us", "菜单导航"),
-            // menu.logistics.procurement.purchase.forecast
-            ("menu.logistics.procurement.purchase.forecast", "ja-JP", "采购预测_jp", "菜单导航"),
-            // menu.logistics.procurement.purchase.forecast
-            ("menu.logistics.procurement.purchase.forecast", "zh-CN", "采购预测", "菜单导航"),
-            // menu.logistics.procurement.purchase.forecast
-            ("menu.logistics.procurement.purchase.forecast", "zh-HK", "采购预测_hk", "菜单导航"),
-
-            // menu.logistics.procurement.purchase.request
-            ("menu.logistics.procurement.purchase.request", "en-US", "采购申请_us", "菜单导航"),
-            // menu.logistics.procurement.purchase.request
-            ("menu.logistics.procurement.purchase.request", "ja-JP", "采购申请_jp", "菜单导航"),
-            // menu.logistics.procurement.purchase.request
-            ("menu.logistics.procurement.purchase.request", "zh-CN", "采购申请", "菜单导航"),
-            // menu.logistics.procurement.purchase.request
-            ("menu.logistics.procurement.purchase.request", "zh-HK", "采购申请_hk", "菜单导航"),
-
-            // menu.logistics.procurement.purchase.inquiry
-            ("menu.logistics.procurement.purchase.inquiry", "en-US", "采购询价_us", "菜单导航"),
-            // menu.logistics.procurement.purchase.inquiry
-            ("menu.logistics.procurement.purchase.inquiry", "ja-JP", "采购询价_jp", "菜单导航"),
-            // menu.logistics.procurement.purchase.inquiry
-            ("menu.logistics.procurement.purchase.inquiry", "zh-CN", "采购询价", "菜单导航"),
-            // menu.logistics.procurement.purchase.inquiry
-            ("menu.logistics.procurement.purchase.inquiry", "zh-HK", "采购询价_hk", "菜单导航"),
-
-            // menu.logistics.procurement.purchase.order
-            ("menu.logistics.procurement.purchase.order", "en-US", "采购订单_us", "菜单导航"),
-            // menu.logistics.procurement.purchase.order
-            ("menu.logistics.procurement.purchase.order", "ja-JP", "采购订单_jp", "菜单导航"),
-            // menu.logistics.procurement.purchase.order
-            ("menu.logistics.procurement.purchase.order", "zh-CN", "采购订单", "菜单导航"),
-            // menu.logistics.procurement.purchase.order
-            ("menu.logistics.procurement.purchase.order", "zh-HK", "采购订单_hk", "菜单导航"),
-
-            // menu.logistics.procurement.purchase.price
-            ("menu.logistics.procurement.purchase.price", "en-US", "采购价格_us", "菜单导航"),
-            // menu.logistics.procurement.purchase.price
-            ("menu.logistics.procurement.purchase.price", "ja-JP", "采购价格_jp", "菜单导航"),
-            // menu.logistics.procurement.purchase.price
-            ("menu.logistics.procurement.purchase.price", "zh-CN", "采购价格", "菜单导航"),
-            // menu.logistics.procurement.purchase.price
-            ("menu.logistics.procurement.purchase.price", "zh-HK", "采购价格_hk", "菜单导航"),
-
-            // menu.logistics.procurement.purchase.price.trend
-            ("menu.logistics.procurement.purchase.price.trend", "en-US", "采购价格推移_us", "菜单导航"),
-            // menu.logistics.procurement.purchase.price.trend
-            ("menu.logistics.procurement.purchase.price.trend", "ja-JP", "采购价格推移_jp", "菜单导航"),
-            // menu.logistics.procurement.purchase.price.trend
-            ("menu.logistics.procurement.purchase.price.trend", "zh-CN", "采购价格推移", "菜单导航"),
-            // menu.logistics.procurement.purchase.price.trend
-            ("menu.logistics.procurement.purchase.price.trend", "zh-HK", "采购价格推移_hk", "菜单导航"),
-
-            // menu.logistics.procurement.purchase.model.trend
-            ("menu.logistics.procurement.purchase.model.trend", "en-US", "机种采购推移_us", "菜单导航"),
-            // menu.logistics.procurement.purchase.model.trend
-            ("menu.logistics.procurement.purchase.model.trend", "ja-JP", "机种采购推移_jp", "菜单导航"),
-            // menu.logistics.procurement.purchase.model.trend
-            ("menu.logistics.procurement.purchase.model.trend", "zh-CN", "机种采购推移", "菜单导航"),
-            // menu.logistics.procurement.purchase.model.trend
-            ("menu.logistics.procurement.purchase.model.trend", "zh-HK", "机种采购推移_hk", "菜单导航"),
-
-            // menu.logistics.procurement.purchase.invoice
-            ("menu.logistics.procurement.purchase.invoice", "en-US", "采购发票_us", "菜单导航"),
-            // menu.logistics.procurement.purchase.invoice
-            ("menu.logistics.procurement.purchase.invoice", "ja-JP", "采购发票_jp", "菜单导航"),
-            // menu.logistics.procurement.purchase.invoice
-            ("menu.logistics.procurement.purchase.invoice", "zh-CN", "采购发票", "菜单导航"),
-            // menu.logistics.procurement.purchase.invoice
-            ("menu.logistics.procurement.purchase.invoice", "zh-HK", "采购发票_hk", "菜单导航"),
 
             // menu.logistics.procurement.purchase.group
             ("menu.logistics.procurement.purchase.group", "en-US", "采购组_us", "菜单导航"),
@@ -1226,6 +1244,15 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.customer.service.ticket
             ("menu.logistics.customer.service.ticket", "zh-HK", "服务工单_hk", "菜单导航"),
 
+            // menu.logistics.customer.service.group
+            ("menu.logistics.customer.service.group", "en-US", "客户服务组_us", "菜单导航"),
+            // menu.logistics.customer.service.group
+            ("menu.logistics.customer.service.group", "ja-JP", "客户服务组_jp", "菜单导航"),
+            // menu.logistics.customer.service.group
+            ("menu.logistics.customer.service.group", "zh-CN", "客户服务组", "菜单导航"),
+            // menu.logistics.customer.service.group
+            ("menu.logistics.customer.service.group", "zh-HK", "客户服务组_hk", "菜单导航"),
+
             // menu.logistics.maintenance.equipment
             ("menu.logistics.maintenance.equipment", "en-US", "设备信息_us", "菜单导航"),
             // menu.logistics.maintenance.equipment
@@ -1262,6 +1289,78 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.maintenance.notification
             ("menu.logistics.maintenance.notification", "zh-HK", "维护通知_hk", "菜单导航"),
 
+            // menu.logistics.maintenance.group
+            ("menu.logistics.maintenance.group", "en-US", "设备维护组_us", "菜单导航"),
+            // menu.logistics.maintenance.group
+            ("menu.logistics.maintenance.group", "ja-JP", "设备维护组_jp", "菜单导航"),
+            // menu.logistics.maintenance.group
+            ("menu.logistics.maintenance.group", "zh-CN", "设备维护组", "菜单导航"),
+            // menu.logistics.maintenance.group
+            ("menu.logistics.maintenance.group", "zh-HK", "设备维护组_hk", "菜单导航"),
+
+            // menu.logistics.sales.quotation
+            ("menu.logistics.sales.quotation", "en-US", "销售报价_us", "菜单导航"),
+            // menu.logistics.sales.quotation
+            ("menu.logistics.sales.quotation", "ja-JP", "销售报价_jp", "菜单导航"),
+            // menu.logistics.sales.quotation
+            ("menu.logistics.sales.quotation", "zh-CN", "销售报价", "菜单导航"),
+            // menu.logistics.sales.quotation
+            ("menu.logistics.sales.quotation", "zh-HK", "销售报价_hk", "菜单导航"),
+
+            // menu.logistics.sales.order
+            ("menu.logistics.sales.order", "en-US", "销售订单_us", "菜单导航"),
+            // menu.logistics.sales.order
+            ("menu.logistics.sales.order", "ja-JP", "销售订单_jp", "菜单导航"),
+            // menu.logistics.sales.order
+            ("menu.logistics.sales.order", "zh-CN", "销售订单", "菜单导航"),
+            // menu.logistics.sales.order
+            ("menu.logistics.sales.order", "zh-HK", "销售订单_hk", "菜单导航"),
+
+            // menu.logistics.sales.condition.record
+            ("menu.logistics.sales.condition.record", "en-US", "销售条件记录_us", "菜单导航"),
+            // menu.logistics.sales.condition.record
+            ("menu.logistics.sales.condition.record", "ja-JP", "销售条件记录_jp", "菜单导航"),
+            // menu.logistics.sales.condition.record
+            ("menu.logistics.sales.condition.record", "zh-CN", "销售条件记录", "菜单导航"),
+            // menu.logistics.sales.condition.record
+            ("menu.logistics.sales.condition.record", "zh-HK", "销售条件记录_hk", "菜单导航"),
+
+            // menu.logistics.sales.price.trend
+            ("menu.logistics.sales.price.trend", "en-US", "销售价格推移_us", "菜单导航"),
+            // menu.logistics.sales.price.trend
+            ("menu.logistics.sales.price.trend", "ja-JP", "销售价格推移_jp", "菜单导航"),
+            // menu.logistics.sales.price.trend
+            ("menu.logistics.sales.price.trend", "zh-CN", "销售价格推移", "菜单导航"),
+            // menu.logistics.sales.price.trend
+            ("menu.logistics.sales.price.trend", "zh-HK", "销售价格推移_hk", "菜单导航"),
+
+            // menu.logistics.sales.so.price.scr.deviation
+            ("menu.logistics.sales.so.price.scr.deviation", "en-US", "SO价偏离SCR_us", "菜单导航"),
+            // menu.logistics.sales.so.price.scr.deviation
+            ("menu.logistics.sales.so.price.scr.deviation", "ja-JP", "SO价偏离SCR_jp", "菜单导航"),
+            // menu.logistics.sales.so.price.scr.deviation
+            ("menu.logistics.sales.so.price.scr.deviation", "zh-CN", "SO价偏离SCR", "菜单导航"),
+            // menu.logistics.sales.so.price.scr.deviation
+            ("menu.logistics.sales.so.price.scr.deviation", "zh-HK", "SO价偏离SCR_hk", "菜单导航"),
+
+            // menu.logistics.sales.invoice
+            ("menu.logistics.sales.invoice", "en-US", "销售发票_us", "菜单导航"),
+            // menu.logistics.sales.invoice
+            ("menu.logistics.sales.invoice", "ja-JP", "销售发票_jp", "菜单导航"),
+            // menu.logistics.sales.invoice
+            ("menu.logistics.sales.invoice", "zh-CN", "销售发票", "菜单导航"),
+            // menu.logistics.sales.invoice
+            ("menu.logistics.sales.invoice", "zh-HK", "销售发票_hk", "菜单导航"),
+
+            // menu.logistics.sales.actual.trend
+            ("menu.logistics.sales.actual.trend", "en-US", "销售实绩推移_us", "菜单导航"),
+            // menu.logistics.sales.actual.trend
+            ("menu.logistics.sales.actual.trend", "ja-JP", "销售实绩推移_jp", "菜单导航"),
+            // menu.logistics.sales.actual.trend
+            ("menu.logistics.sales.actual.trend", "zh-CN", "销售实绩推移", "菜单导航"),
+            // menu.logistics.sales.actual.trend
+            ("menu.logistics.sales.actual.trend", "zh-HK", "销售实绩推移_hk", "菜单导航"),
+
             // menu.logistics.sales.customer
             ("menu.logistics.sales.customer", "en-US", "客户信息_us", "菜单导航"),
             // menu.logistics.sales.customer
@@ -1288,69 +1387,6 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             ("menu.logistics.sales.seller.material", "zh-CN", "销售商物料", "菜单导航"),
             // menu.logistics.sales.seller.material
             ("menu.logistics.sales.seller.material", "zh-HK", "销售商物料_hk", "菜单导航"),
-
-            // menu.logistics.sales.quotation
-            ("menu.logistics.sales.quotation", "en-US", "销售报价_us", "菜单导航"),
-            // menu.logistics.sales.quotation
-            ("menu.logistics.sales.quotation", "ja-JP", "销售报价_jp", "菜单导航"),
-            // menu.logistics.sales.quotation
-            ("menu.logistics.sales.quotation", "zh-CN", "销售报价", "菜单导航"),
-            // menu.logistics.sales.quotation
-            ("menu.logistics.sales.quotation", "zh-HK", "销售报价_hk", "菜单导航"),
-
-            // menu.logistics.sales.price
-            ("menu.logistics.sales.price", "en-US", "销售价格_us", "菜单导航"),
-            // menu.logistics.sales.price
-            ("menu.logistics.sales.price", "ja-JP", "销售价格_jp", "菜单导航"),
-            // menu.logistics.sales.price
-            ("menu.logistics.sales.price", "zh-CN", "销售价格", "菜单导航"),
-            // menu.logistics.sales.price
-            ("menu.logistics.sales.price", "zh-HK", "销售价格_hk", "菜单导航"),
-
-            // menu.logistics.sales.price.trend
-            ("menu.logistics.sales.price.trend", "en-US", "销售价格推移_us", "菜单导航"),
-            // menu.logistics.sales.price.trend
-            ("menu.logistics.sales.price.trend", "ja-JP", "销售价格推移_jp", "菜单导航"),
-            // menu.logistics.sales.price.trend
-            ("menu.logistics.sales.price.trend", "zh-CN", "销售价格推移", "菜单导航"),
-            // menu.logistics.sales.price.trend
-            ("menu.logistics.sales.price.trend", "zh-HK", "销售价格推移_hk", "菜单导航"),
-
-            // menu.logistics.sales.model.trend
-            ("menu.logistics.sales.model.trend", "en-US", "机种销售推移_us", "菜单导航"),
-            // menu.logistics.sales.model.trend
-            ("menu.logistics.sales.model.trend", "ja-JP", "机种销售推移_jp", "菜单导航"),
-            // menu.logistics.sales.model.trend
-            ("menu.logistics.sales.model.trend", "zh-CN", "机种销售推移", "菜单导航"),
-            // menu.logistics.sales.model.trend
-            ("menu.logistics.sales.model.trend", "zh-HK", "机种销售推移_hk", "菜单导航"),
-
-            // menu.logistics.sales.order
-            ("menu.logistics.sales.order", "en-US", "销售订单_us", "菜单导航"),
-            // menu.logistics.sales.order
-            ("menu.logistics.sales.order", "ja-JP", "销售订单_jp", "菜单导航"),
-            // menu.logistics.sales.order
-            ("menu.logistics.sales.order", "zh-CN", "销售订单", "菜单导航"),
-            // menu.logistics.sales.order
-            ("menu.logistics.sales.order", "zh-HK", "销售订单_hk", "菜单导航"),
-
-            // menu.logistics.sales.monthly.trend
-            ("menu.logistics.sales.monthly.trend", "en-US", "月销售推移_us", "菜单导航"),
-            // menu.logistics.sales.monthly.trend
-            ("menu.logistics.sales.monthly.trend", "ja-JP", "月销售推移_jp", "菜单导航"),
-            // menu.logistics.sales.monthly.trend
-            ("menu.logistics.sales.monthly.trend", "zh-CN", "月销售推移", "菜单导航"),
-            // menu.logistics.sales.monthly.trend
-            ("menu.logistics.sales.monthly.trend", "zh-HK", "月销售推移_hk", "菜单导航"),
-
-            // menu.logistics.sales.invoice
-            ("menu.logistics.sales.invoice", "en-US", "销售发票_us", "菜单导航"),
-            // menu.logistics.sales.invoice
-            ("menu.logistics.sales.invoice", "ja-JP", "销售发票_jp", "菜单导航"),
-            // menu.logistics.sales.invoice
-            ("menu.logistics.sales.invoice", "zh-CN", "销售发票", "菜单导航"),
-            // menu.logistics.sales.invoice
-            ("menu.logistics.sales.invoice", "zh-HK", "销售发票_hk", "菜单导航"),
 
             // menu.logistics.sales.group
             ("menu.logistics.sales.group", "en-US", "销售组_us", "菜单导航"),
@@ -2000,6 +2036,15 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.manufacturing.bom.pricedelta.trend
             ("menu.logistics.manufacturing.bom.pricedelta.trend", "zh-HK", "成本差异推移_hk", "菜单导航"),
 
+            // menu.logistics.manufacturing.bom.group
+            ("menu.logistics.manufacturing.bom.group", "en-US", "BOM组_us", "菜单导航"),
+            // menu.logistics.manufacturing.bom.group
+            ("menu.logistics.manufacturing.bom.group", "ja-JP", "BOM组_jp", "菜单导航"),
+            // menu.logistics.manufacturing.bom.group
+            ("menu.logistics.manufacturing.bom.group", "zh-CN", "BOM组", "菜单导航"),
+            // menu.logistics.manufacturing.bom.group
+            ("menu.logistics.manufacturing.bom.group", "zh-HK", "BOM组_hk", "菜单导航"),
+
             // menu.logistics.manufacturing.mds.sales.forecast
             ("menu.logistics.manufacturing.mds.sales.forecast", "en-US", "销售预测_us", "菜单导航"),
             // menu.logistics.manufacturing.mds.sales.forecast
@@ -2251,6 +2296,15 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             ("menu.logistics.manufacturing.aps.production.order", "zh-CN", "生产工单", "菜单导航"),
             // menu.logistics.manufacturing.aps.production.order
             ("menu.logistics.manufacturing.aps.production.order", "zh-HK", "生产工单_hk", "菜单导航"),
+
+            // menu.logistics.manufacturing.aps.group
+            ("menu.logistics.manufacturing.aps.group", "en-US", "APS组_us", "菜单导航"),
+            // menu.logistics.manufacturing.aps.group
+            ("menu.logistics.manufacturing.aps.group", "ja-JP", "APS组_jp", "菜单导航"),
+            // menu.logistics.manufacturing.aps.group
+            ("menu.logistics.manufacturing.aps.group", "zh-CN", "APS组", "菜单导航"),
+            // menu.logistics.manufacturing.aps.group
+            ("menu.logistics.manufacturing.aps.group", "zh-HK", "APS组_hk", "菜单导航"),
 
             // menu.logistics.manufacturing.engineering.change.kanban
             ("menu.logistics.manufacturing.engineering.change.kanban", "en-US", "设变看板_us", "菜单导航"),
@@ -2612,6 +2666,15 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.manufacturing.sop.call
             ("menu.logistics.manufacturing.sop.call", "zh-HK", "安灯呼叫_hk", "菜单导航"),
 
+            // menu.logistics.manufacturing.sop.group
+            ("menu.logistics.manufacturing.sop.group", "en-US", "SOP组_us", "菜单导航"),
+            // menu.logistics.manufacturing.sop.group
+            ("menu.logistics.manufacturing.sop.group", "ja-JP", "SOP组_jp", "菜单导航"),
+            // menu.logistics.manufacturing.sop.group
+            ("menu.logistics.manufacturing.sop.group", "zh-CN", "SOP组", "菜单导航"),
+            // menu.logistics.manufacturing.sop.group
+            ("menu.logistics.manufacturing.sop.group", "zh-HK", "SOP组_hk", "菜单导航"),
+
             // menu.logistics.quality.cost.assurance
             ("menu.logistics.quality.cost.assurance", "en-US", "品质保证_us", "菜单导航"),
             // menu.logistics.quality.cost.assurance
@@ -2647,6 +2710,15 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             ("menu.logistics.quality.cost.trend", "zh-CN", "质量成本推移", "菜单导航"),
             // menu.logistics.quality.cost.trend
             ("menu.logistics.quality.cost.trend", "zh-HK", "质量成本推移_hk", "菜单导航"),
+
+            // menu.logistics.quality.cost.group
+            ("menu.logistics.quality.cost.group", "en-US", "成本组_us", "菜单导航"),
+            // menu.logistics.quality.cost.group
+            ("menu.logistics.quality.cost.group", "ja-JP", "成本组_jp", "菜单导航"),
+            // menu.logistics.quality.cost.group
+            ("menu.logistics.quality.cost.group", "zh-CN", "成本组", "菜单导航"),
+            // menu.logistics.quality.cost.group
+            ("menu.logistics.quality.cost.group", "zh-HK", "成本组_hk", "菜单导航"),
 
             // menu.logistics.quality.operation.group
             ("menu.logistics.quality.operation.group", "en-US", "质量组_us", "菜单导航"),
@@ -2782,6 +2854,15 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             ("menu.logistics.quality.complaint.supplier.evaluation", "zh-CN", "供应商评价考核", "菜单导航"),
             // menu.logistics.quality.complaint.supplier.evaluation
             ("menu.logistics.quality.complaint.supplier.evaluation", "zh-HK", "供应商评价考核_hk", "菜单导航"),
+
+            // menu.logistics.quality.complaint.group
+            ("menu.logistics.quality.complaint.group", "en-US", "客诉组_us", "菜单导航"),
+            // menu.logistics.quality.complaint.group
+            ("menu.logistics.quality.complaint.group", "ja-JP", "客诉组_jp", "菜单导航"),
+            // menu.logistics.quality.complaint.group
+            ("menu.logistics.quality.complaint.group", "zh-CN", "客诉组", "菜单导航"),
+            // menu.logistics.quality.complaint.group
+            ("menu.logistics.quality.complaint.group", "zh-HK", "客诉组_hk", "菜单导航"),
         };
     }
 

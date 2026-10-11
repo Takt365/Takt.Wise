@@ -69,7 +69,7 @@ export function getUserList() {
 
 - `@backend/src/Takt.Domain/Entities/Identity/TaktUser.cs`
 - `@backend/src/Takt.Infrastructure/Data/Seeds/EntitySeedData/TaktCultureSeedData.cs`
-- `@frontend/src/api/identity/user.ts`
+- `@frontend/src/api/identity/user.api.ts`
 
 同类文件行数应接近（同逻辑体量下）；若新文件行数约为「有效行数 × 2」，视为违反本规则，**必须重写为紧凑格式**。
 

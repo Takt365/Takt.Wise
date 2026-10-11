@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Materials
 // 文件名称：TaktMaterialDocumentItemDtos.cs
-// 创建时间：2026-08-22
+// 创建时间：2026-09-20
 // 创建人：Takt365(Auto Generated)
 // 功能描述：MaterialDocumentItem 模块 DTO（由 generate-dtos-from-entity.cjs 根据 TaktMaterialDocumentItem 生成，请按需审阅）
 // 
@@ -47,7 +47,7 @@ public class TaktMaterialDocumentItemDto : TaktCompanyDtoBase
     public string? MaterialDocumentName { get; set; }
 
     /// <summary>
-    /// 物料凭证（冗余字段，便于查询）
+    /// 物料凭证（冗余：按对应 Id 取主数据名称联动）
     /// </summary>
     public string MaterialDocumentCode { get; set; } = string.Empty;
 
@@ -441,7 +441,7 @@ public class TaktMaterialDocumentItemQueryDto : TaktPagedQuery
     public long? MaterialDocumentId { get; set; }
 
     /// <summary>
-    /// 物料凭证（冗余字段，便于查询）
+    /// 物料凭证（冗余：按对应 Id 取主数据名称联动）
     /// </summary>
     public string? MaterialDocumentCode { get; set; } = string.Empty;
 
@@ -837,7 +837,7 @@ public class TaktMaterialDocumentItemCreateDto
     public long MaterialDocumentId { get; set; }
 
     /// <summary>
-    /// 物料凭证（冗余字段，便于查询）
+    /// 物料凭证（冗余：按对应 Id 取主数据名称联动）
     /// </summary>
     public string MaterialDocumentCode { get; set; } = string.Empty;
 
@@ -1269,7 +1269,7 @@ public class TaktMaterialDocumentItemTemplateDto
     public long? MaterialDocumentId { get; set; }
 
     /// <summary>
-    /// 物料凭证（冗余字段，便于查询）
+    /// 物料凭证（冗余：按对应 Id 取主数据名称联动）
     /// </summary>
     public string? MaterialDocumentCode { get; set; } = string.Empty;
 
@@ -1652,7 +1652,7 @@ public class TaktMaterialDocumentItemImportDto
     public long? MaterialDocumentId { get; set; }
 
     /// <summary>
-    /// 物料凭证（冗余字段，便于查询）
+    /// 物料凭证（冗余：按对应 Id 取主数据名称联动）
     /// </summary>
     public string? MaterialDocumentCode { get; set; } = string.Empty;
 
@@ -2041,7 +2041,7 @@ public class TaktMaterialDocumentItemExportDto
     public long MaterialDocumentId { get; set; }
 
     /// <summary>
-    /// 物料凭证（冗余字段，便于查询）
+    /// 物料凭证（冗余：按对应 Id 取主数据名称联动）
     /// </summary>
     public string MaterialDocumentCode { get; set; } = string.Empty;
 

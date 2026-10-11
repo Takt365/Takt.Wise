@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Materials
 // 文件名称：TaktMaterialDocumentItem.cs
 // 创建时间：2026-06-20
@@ -125,7 +125,7 @@ public class TaktMaterialDocumentItem : TaktCompanyEntityBase
     public string? CustomerCode { get; set; }
 
     /// <summary>
-    /// 借/贷标识
+    /// 借/贷标识（S=借方入库/增加，H=贷方冲销退货/减少；入库实绩统计按此加减，不以移动类型取反）
     /// </summary>
     [SugarColumn(ColumnName = "debit_credit_indicator", ColumnDescription = "借/贷标识", ColumnDataType = "nvarchar", Length = 1, IsNullable = true)]
     public string? DebitCreditIndicator { get; set; }

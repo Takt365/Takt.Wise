@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Complaint
 // 文件名称：TaktSupplierEvaluationI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSupplierEvaluation 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -153,23 +153,23 @@ public class TaktSupplierEvaluationI18nSeedData : ITaktSeedDataCoordinator
             // entity.supplierevaluation.evaluationtype
             new TranslationSeedItem("entity.supplierevaluation.evaluationtype", "zh-HK", "评价类型_hk", "评价类型（0=常规评价，1=准入评价，2=年度评审，3=专项评价）"),
 
-            // entity.supplierevaluation.evaluatorbyemployeeid
-            new TranslationSeedItem("entity.supplierevaluation.evaluatorbyemployeeid", "en-US", "评价人ID_us", "评价人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.supplierevaluation.evaluatorbyemployeeid
-            new TranslationSeedItem("entity.supplierevaluation.evaluatorbyemployeeid", "ja-JP", "评价人ID_jp", "评价人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.supplierevaluation.evaluatorbyemployeeid
-            new TranslationSeedItem("entity.supplierevaluation.evaluatorbyemployeeid", "zh-CN", "评价人ID", "评价人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.supplierevaluation.evaluatorbyemployeeid
-            new TranslationSeedItem("entity.supplierevaluation.evaluatorbyemployeeid", "zh-HK", "评价人ID_hk", "评价人（选项 TaktEmployees/options；DictValue=Id）"),
+            // entity.supplierevaluation.evaluatorbygroupcode
+            new TranslationSeedItem("entity.supplierevaluation.evaluatorbygroupcode", "en-US", "评价组编码_us", "评价组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=4；DictValue=ComplaintGroupCode）"),
+            // entity.supplierevaluation.evaluatorbygroupcode
+            new TranslationSeedItem("entity.supplierevaluation.evaluatorbygroupcode", "ja-JP", "评价组编码_jp", "评价组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=4；DictValue=ComplaintGroupCode）"),
+            // entity.supplierevaluation.evaluatorbygroupcode
+            new TranslationSeedItem("entity.supplierevaluation.evaluatorbygroupcode", "zh-CN", "评价组编码", "评价组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=4；DictValue=ComplaintGroupCode）"),
+            // entity.supplierevaluation.evaluatorbygroupcode
+            new TranslationSeedItem("entity.supplierevaluation.evaluatorbygroupcode", "zh-HK", "评价组编码_hk", "评价组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=4；DictValue=ComplaintGroupCode）"),
 
-            // entity.supplierevaluation.evaluatorbyemployeename
-            new TranslationSeedItem("entity.supplierevaluation.evaluatorbyemployeename", "en-US", "评价人名称_us", "评价人名称（冗余：按 EvaluatorByEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.supplierevaluation.evaluatorbyemployeename
-            new TranslationSeedItem("entity.supplierevaluation.evaluatorbyemployeename", "ja-JP", "评价人名称_jp", "评价人名称（冗余：按 EvaluatorByEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.supplierevaluation.evaluatorbyemployeename
-            new TranslationSeedItem("entity.supplierevaluation.evaluatorbyemployeename", "zh-CN", "评价人名称", "评价人名称（冗余：按 EvaluatorByEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.supplierevaluation.evaluatorbyemployeename
-            new TranslationSeedItem("entity.supplierevaluation.evaluatorbyemployeename", "zh-HK", "评价人名称_hk", "评价人名称（冗余：按 EvaluatorByEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
+            // entity.supplierevaluation.evaluatorbygroupname
+            new TranslationSeedItem("entity.supplierevaluation.evaluatorbygroupname", "en-US", "评价组名称_us", "评价组名称（冗余：按 EvaluatorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）"),
+            // entity.supplierevaluation.evaluatorbygroupname
+            new TranslationSeedItem("entity.supplierevaluation.evaluatorbygroupname", "ja-JP", "评价组名称_jp", "评价组名称（冗余：按 EvaluatorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）"),
+            // entity.supplierevaluation.evaluatorbygroupname
+            new TranslationSeedItem("entity.supplierevaluation.evaluatorbygroupname", "zh-CN", "评价组名称", "评价组名称（冗余：按 EvaluatorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）"),
+            // entity.supplierevaluation.evaluatorbygroupname
+            new TranslationSeedItem("entity.supplierevaluation.evaluatorbygroupname", "zh-HK", "评价组名称_hk", "评价组名称（冗余：按 EvaluatorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）"),
 
             // entity.supplierevaluation.evaluationdeptid
             new TranslationSeedItem("entity.supplierevaluation.evaluationdeptid", "en-US", "评价部门ID_us", "评价部门（选项 TaktDepts/tree-options；DictValue=Id）"),

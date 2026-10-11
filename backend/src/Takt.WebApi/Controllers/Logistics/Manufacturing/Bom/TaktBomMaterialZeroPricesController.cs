@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi.Controllers.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomMaterialZeroPricesController.cs
 // 创建时间：2026-08-13
@@ -158,6 +158,27 @@ public class TaktBomMaterialZeroPricesController : TaktControllerBase
                 _messageService,
                 TaktBomZeroPriceOperationMessageHelper.BuildPcbSectMarkSuccess(result));
             return Success(result, "标记成功");
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// 去掉当前工厂纯数字产品/组件编码的前导 0
+    /// </summary>
+    /// <param name="dto">工厂</param>
+    /// <returns>更新统计</returns>
+    [TaktPermission("logistics:manufacturing:bom:material:zeroprice:update", "去掉BOM编码前导0")]
+    [HttpPost("strip-leading-zeros")]
+    public async Task<IActionResult> StripBomMaterialZeroPriceLeadingZerosAsync(
+        [FromBody] TaktBomMaterialZeroPriceStripLeadingZeroDto dto)
+    {
+        try
+        {
+            var result = await _bomMaterialZeroPriceService.StripBomMaterialZeroPriceLeadingZerosAsync(dto);
+            return Success(result, "更新成功");
         }
         catch (Exception ex)
         {

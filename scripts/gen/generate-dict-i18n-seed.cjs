@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 脚本名称：generate-dict-i18n-seed.cjs
 // 功能描述：从 TaktDictDataSeedData.cs 全量生成 TaktDictI18nSeedData.cs（dict.* 翻译键）
 // TranslationText：DictLabel + 语言后缀（en-US/_us、ja-JP/_jp、zh-CN/_cn、zh-HK/_hk）
@@ -132,7 +132,7 @@ const dictResourceType = TRANSLATION_RESOURCE_TYPE_FRONTEND;
 const lines = [];
 
 lines.push('// ========================================');
-lines.push('// 项目名称：节拍工厂·Takt Plat');
+lines.push('// 项目名称：节拍智控·TaktWise');
 lines.push('// 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData');
 lines.push('// 文件名称：TaktDictI18nSeedData.cs');
 lines.push(`// 创建时间：${today}`);

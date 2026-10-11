@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
+<!-- 项目名称：节拍智控·TaktWise -->
 <!-- 命名空间：frontend/src/views/dashboard/workspace/modules -->
 <!-- 文件名称：WelcomeModule.vue -->
 <!-- 功能描述：工作台欢迎问候模块（时段问候 / 假日问候与引用，依赖公开假日主题 API） -->
@@ -61,12 +61,12 @@ import weekOfYear from 'dayjs/plugin/weekOfYear'
 import quarterOfYear from 'dayjs/plugin/quarterOfYear'
 import { RiLightbulbLine } from '@remixicon/vue'
 import { storeToRefs } from 'pinia'
-import { getCurrentUser } from '@/api/identity/auths'
-import { useUserStore } from '@/stores/identity/user'
-import { useLocaleStore } from '@/stores/foundation/locale'
-import type { HolidayTheme } from '@/types/human-resource/attendance/holiday'
-import { normalizeUserInfoProfile } from '@/utils/takt-user-profile-normalize'
-import { resolveTaktSolarTermQuoteI18nKey } from '@/utils/takt-solar-term'
+import { getCurrentUser } from '@/api/identity/auth.api'
+import { useUserStore } from '@/stores/identity/useUserStore'
+import { useLocaleStore } from '@/stores/foundation/useLocaleStore'
+import type { HolidayTheme } from '@/types/human-resource/attendance/holiday.types'
+import { normalizeUserInfoProfile } from '@/utils/taktUserProfileNormalize'
+import { resolveTaktSolarTermQuoteI18nKey } from '@/utils/taktSolarTerm'
 
 dayjs.extend(localizedFormat)
 dayjs.extend(utc)

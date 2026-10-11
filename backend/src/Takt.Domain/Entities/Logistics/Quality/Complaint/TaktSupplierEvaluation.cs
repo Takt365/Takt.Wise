@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Quality.Complaint
 // 文件名称：TaktSupplierEvaluation.cs
 // 创建时间：2026-05-11
@@ -65,16 +65,15 @@ public class TaktSupplierEvaluation : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "evaluation_type", ColumnDescription = "评价类型", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
     public int EvaluationType { get; set; } = 0;
     /// <summary>
-    /// 评价人（选项 TaktEmployees/options；DictValue=Id）
+    /// 评价组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=4；DictValue=ComplaintGroupCode）
     /// </summary>
-    [SugarColumn(ColumnName = "evaluator_by_employee_id", ColumnDescription = "评价人ID", ColumnDataType = "bigint", IsNullable = true)]
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EvaluatorByEmployeeId { get; set; }
+    [SugarColumn(ColumnName = "evaluator_by_group_code", ColumnDescription = "评价组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? EvaluatorByGroupCode { get; set; }
     /// <summary>
-    /// 评价人名称（冗余：按 EvaluatorByEmployeeId 取 TaktEmployee.EmployeeName 联动）
+    /// 评价组名称（冗余：按 EvaluatorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    [SugarColumn(ColumnName = "evaluator_by_employee_name", ColumnDescription = "评价人名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
-    public string? EvaluatorByEmployeeName { get; set; }
+    [SugarColumn(ColumnName = "evaluator_by_group_name", ColumnDescription = "评价组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? EvaluatorByGroupName { get; set; }
     /// <summary>
     /// 评价部门（选项 TaktDepts/tree-options；DictValue=Id）
     /// </summary>

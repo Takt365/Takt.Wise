@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcDetailDtos.cs
 // 创建时间：2026-08-26
@@ -92,6 +92,10 @@ public class TaktEcDetailDto : TaktCompanyDtoBase
     /// 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
     /// </summary>
     public int EcScope { get; set; }
+    /// <summary>
+    /// 制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int EcDeptScope { get; set; } = 2;
 
     /// <summary>
     /// 旧物料编码
@@ -289,6 +293,10 @@ public class TaktEcDetailQueryDto : TaktPagedQuery
     /// 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
     /// </summary>
     public int? EcScope { get; set; }
+    /// <summary>
+    /// 制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int? EcDeptScope { get; set; }
 
     /// <summary>
     /// 旧物料编码
@@ -510,6 +518,10 @@ public class TaktEcDetailCreateDto
     /// 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
     /// </summary>
     public int EcScope { get; set; }
+    /// <summary>
+    /// 制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int EcDeptScope { get; set; } = 2;
 
     /// <summary>
     /// 旧物料编码
@@ -759,6 +771,10 @@ public class TaktEcDetailTemplateDto
     /// 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
     /// </summary>
     public int? EcScope { get; set; }
+    /// <summary>
+    /// 制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int? EcDeptScope { get; set; }
 
     /// <summary>
     /// 旧物料编码
@@ -961,6 +977,10 @@ public class TaktEcDetailImportDto
     /// 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
     /// </summary>
     public int? EcScope { get; set; }
+    /// <summary>
+    /// 制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int? EcDeptScope { get; set; }
 
     /// <summary>
     /// 旧物料编码
@@ -1169,6 +1189,10 @@ public class TaktEcDetailExportDto
     /// 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
     /// </summary>
     public int EcScope { get; set; }
+    /// <summary>
+    /// 制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// </summary>
+    public int EcDeptScope { get; set; } = 2;
 
     /// <summary>
     /// 旧物料编码

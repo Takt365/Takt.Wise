@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Helpers
 // 文件名称：TaktZeroCharHelper.cs
 // 创建时间：2026-08-12
@@ -32,9 +32,9 @@ public static class TaktZeroCharHelper
     public const char OneBit = '\u200C';
 
     /// <summary>
-    /// 明文：节拍技术有限公司（中文法定公司名场景）。
+    /// 明文：节拍科技有限公司（中文法定公司名场景）。
     /// </summary>
-    public const string PlainCompanyNameZh = "节拍技术有限公司";
+    public const string PlainCompanyNameZh = "节拍科技有限公司";
 
     /// <summary>
     /// 明文：Takt Technologies Co., Ltd.（英文法定公司名场景）。
@@ -52,7 +52,7 @@ public static class TaktZeroCharHelper
     public const string PlainBrandTakt365 = "Takt365";
 
     /// <summary>
-    /// 零宽水印：节拍技术有限公司。
+    /// 零宽水印：节拍科技有限公司。
     /// 场景：中文公司法定名、对内中文主体标识。
     /// </summary>
     public static readonly string CompanyNameZh = Encode(PlainCompanyNameZh);
@@ -77,7 +77,7 @@ public static class TaktZeroCharHelper
 
     /// <summary>
     /// 为可见名称插入零宽分隔：含 CJK/假名则逐字 U+200B，否则英文按空白分词 U+200C（无空格则逐字）。
-    /// 例：节拍技术有限公司 → 节\u200B拍\u200B技…；Takt Technologies Co., Ltd. → Takt\u200CTechnologies\u200C…
+    /// 例：节拍科技有限公司 → 节\u200B拍\u200B技…；Takt Technologies Co., Ltd. → Takt\u200CTechnologies\u200C…
     /// </summary>
     /// <param name="text">明文名称</param>
     /// <returns>带零宽分隔的显示名</returns>

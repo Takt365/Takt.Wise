@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/defect/defect-monthly -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：月生产不良推移（工厂×机种×不良类别×月份转置表） -->
@@ -9,7 +9,7 @@
 
 <template>
   <div class="flex h-full min-h-0 flex-col p-4">
-    <defect-monthly-query-form
+    <DefectMonthlyQueryForm
       v-model:plant-code="plantCode"
       v-model:period-range="periodRange"
       v-model:model-code="modelCode"
@@ -37,7 +37,7 @@
       @export="handleExport"
       @refresh="handleRefresh"
     />
-    <defect-monthly-panel
+    <DefectMonthlyPanel
       ref="panelRef"
       v-model:loading="panelLoading"
       v-model:has-rows="hasRows"
@@ -57,20 +57,24 @@
  */
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import type { ToolBarAction } from '@/components/business/takt-tools-bar/index.vue'
+import type { ToolBarAction } from '@/components/business/TaktToolsBar/index.vue'
 import {
   RiArrowDownLine,
   RiArrowUpDownLine,
   RiArrowUpLine,
   RiListCheck,
 } from '@remixicon/vue'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { useTenantStore } from '@/stores/identity/tenant'
-import { buildDefaultCostingPeriodRange } from '@/views/logistics/manufacturing/bom/material-cost/utils/bom-material-cost-period'
-import DefectMonthlyQueryForm from './components/defect-monthly-query-form.vue'
-import DefectMonthlyPanel from './components/defect-monthly-panel.vue'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { useTenantStore } from '@/stores/identity/useTenantStore'
+import DefectMonthlyQueryForm from './components/DefectMonthlyQueryForm.vue'
+import DefectMonthlyPanel from './components/DefectMonthlyPanel.vue'
+import { useAnalysisPeriodRangeLimit } from '@/composables/useAnalysisPeriodRangeLimit'
+import { useAnalysisQueryDefaults } from '@/composables/useAnalysisQueryDefaults'
 
 const { t } = useI18n()
+
+/** 期间最多 12 个月（查询前校验） */
+const { assertPeriodRangeOk } = useAnalysisPeriodRangeLimit()
 /** 静态 locales 前缀 */
 const localePrefix = 'logistics.manufacturing.defect.defect-monthly.page'
 const tenantStore = useTenantStore()
@@ -79,6 +83,9 @@ const tenantStore = useTenantStore()
 const plantCode = ref<string | undefined>()
 /** 期间年月 */
 const periodRange = ref<[string, string] | null>(null)
+
+/** 默认工厂=公司 RelatedPlant；期间=前三月（对齐成本差异推移） */
+const { applyDefaultPeriodRange, applyDefaultPlantFromCompany, applyAnalysisQueryDefaults } = useAnalysisQueryDefaults(plantCode, periodRange)
 /** 机种 */
 const modelCode = ref<string | undefined>()
 /** 不良类别 */
@@ -138,6 +145,9 @@ function handleSearch() {
     message.warning(t(`${localePrefix}.selectPeriodRequired`))
     return
   }
+  if (!assertPeriodRangeOk(periodRange.value)) {
+    return
+  }
   void panelRef.value?.reload?.()
 }
 
@@ -156,7 +166,6 @@ function handleRefresh() {
 
 /** 清空工厂级联与结果 */
 function clearPlantCascade() {
-  plantCode.value = undefined
   modelCode.value = undefined
   defectCategory.value = undefined
   hasRows.value = false
@@ -164,9 +173,9 @@ function clearPlantCascade() {
 }
 
 /** 重置 */
-function handleReset() {
+async function handleReset() {
   clearPlantCascade()
-  periodRange.value = buildDefaultCostingPeriodRange(3)
+  await applyAnalysisQueryDefaults()
   trendFilter.value = ''
 }
 
@@ -192,12 +201,13 @@ watch(
   () => tenantStore.companyCode,
   () => {
     clearPlantCascade()
+    void applyDefaultPlantFromCompany()
   },
 )
 
 onMounted(async () => {
   await ensureTaktPaginationConfigAsync()
-  periodRange.value = buildDefaultCostingPeriodRange(3)
+  await applyAnalysisQueryDefaults()
   void getTaktDefaultPageSize()
 })
 </script>

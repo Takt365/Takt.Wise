@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi.Controllers.HumanResource.Organization
 // 文件名称：TaktDeptsController.cs
 // 创建时间：2026-08-22
@@ -92,6 +92,27 @@ public class TaktDeptsController : TaktControllerBase
         try
         {
             var result = await _deptService.GetDeptTreeOptionsAsync(parentId, plantCode, keyword);
+            return Success(result, "查询成功");
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// 获取部门选项（DictValue=DeptCode，DictLabel=DeptName1）
+    /// </summary>
+    /// <param name="plantCode">工厂代码（可选）</param>
+    /// <param name="keyword">搜索关键字（可选）</param>
+    /// <returns>下拉选项</returns>
+    [TaktPermission("human:resource:organization:dept:query", "部门选项")]
+    [HttpGet("options")]
+    public async Task<IActionResult> GetDeptOptionsAsync([FromQuery] string? plantCode = null, [FromQuery] string? keyword = null)
+    {
+        try
+        {
+            var result = await _deptService.GetDeptOptionsAsync(plantCode, keyword);
             return Success(result, "查询成功");
         }
         catch (Exception ex)

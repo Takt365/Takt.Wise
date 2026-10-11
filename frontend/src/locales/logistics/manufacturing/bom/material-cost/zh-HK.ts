@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/manufacturing/bom/material-cost
 // 文件名称：zh-HK.ts
 // 创建时间：2026-07-14
@@ -26,7 +26,7 @@ export default {
     modalmasterhint: '左機種 → 中產品 → 右明細（不拆實體）；請匯入明細後合計或重算成本。',
     costSum: '成本合計',
     costRecalculate: '重算成本',
-    backfillPurchasePrice: '回填採購價格',
+    backfillPurchaseInfoRecord: '回填採購價格',
     refreshModelFields: '回填機種價格',
     costingMonth: '核算月份',
     costingMonthPlaceholder: '請選擇核算月份',
@@ -40,8 +40,8 @@ export default {
     costRecalculateFailed: '成本處理失敗',
     costRecalculateConfirmTitle: '確認重算成本？',
     costRecalculateConfirmContent: '將先歸零再按明細重算該核算月成本，完成後刷新匯總。',
-    backfillPurchasePriceSuccess: '{month} 回填完成：更新 {updated} 行，跳過 {skipped} 行（掃描 {scanned} 行）',
-    backfillPurchasePriceFailed: '回填採購價格失敗',
+    backfillPurchaseInfoRecordSuccess: '{month} 回填完成：更新 {updated} 行，跳過 {skipped} 行（掃描 {scanned} 行）',
+    backfillPurchaseInfoRecordFailed: '回填採購價格失敗',
     refreshModelFieldsSuccess:
       '{month} 回填機種價格完成：掃描 {scanned} 行，機種更新 {modelUpdated}，平均更新 {averageUpdated}（{groups} 組）',
     refreshModelFieldsFailed: '回填機種價格失敗',

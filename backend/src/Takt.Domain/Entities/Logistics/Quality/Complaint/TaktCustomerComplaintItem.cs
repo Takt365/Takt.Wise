@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Quality.Complaint
 // 文件名称：TaktCustomerComplaintItem.cs
 // 创建时间：2026-05-11
@@ -93,16 +93,15 @@ public class TaktCustomerComplaintItem : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "improvement_action", ColumnDescription = "改善对策", ColumnDataType = "nvarchar", Length = 1000, IsNullable = true)]
     public string? ImprovementAction { get; set; }
     /// <summary>
-    /// 改善责任人（选项 TaktEmployees/options；DictValue=Id）
+    /// 改善组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=3；DictValue=ComplaintGroupCode）
     /// </summary>
-    [SugarColumn(ColumnName = "improvement_responsible_id", ColumnDescription = "改善责任人ID", ColumnDataType = "bigint", IsNullable = true)]
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ImprovementResponsibleId { get; set; }
+    [SugarColumn(ColumnName = "improvement_responsible_group_code", ColumnDescription = "改善组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? ImprovementResponsibleGroupCode { get; set; }
     /// <summary>
-    /// 改善责任人名称（冗余：按 ImprovementResponsibleId 取 TaktEmployee.EmployeeName 联动）
+    /// 改善组名称（冗余：按 ImprovementResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    [SugarColumn(ColumnName = "improvement_responsible_name", ColumnDescription = "改善责任人名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
-    public string? ImprovementResponsibleName { get; set; }
+    [SugarColumn(ColumnName = "improvement_responsible_group_name", ColumnDescription = "改善组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? ImprovementResponsibleGroupName { get; set; }
     /// <summary>
     /// 计划完成日期
     /// </summary>

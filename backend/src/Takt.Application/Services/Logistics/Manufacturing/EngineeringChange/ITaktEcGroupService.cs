@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.EngineeringChange
 // 文件名称：ITaktEcGroupService.cs
 // 创建时间：2026-07-08
@@ -40,8 +40,9 @@ public interface ITaktEcGroupService
     /// </summary>
     /// <param name="plantCode">工厂代码（可选，用于按工厂过滤）</param>
     /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
+    /// <param name="ecGroupCategory">设变组类别（可选；部门编码，多个逗号分隔）</param>
     /// <returns>下拉选项</returns>
-    Task<List<TaktSelectOption>> GetEcGroupOptionsAsync(string? plantCode = null, string? keyword = null);
+    Task<List<TaktSelectOption>> GetEcGroupOptionsAsync(string? plantCode = null, string? keyword = null, string? ecGroupCategory = null);
 
     /// <summary>
     /// 创建设变组主数据

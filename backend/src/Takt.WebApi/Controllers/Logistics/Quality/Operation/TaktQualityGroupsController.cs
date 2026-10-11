@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi.Controllers.Logistics.Quality.Operation
 // 文件名称：TaktQualityGroupsController.cs
 // 创建时间：2026-07-09
@@ -83,14 +83,17 @@ public class TaktQualityGroupsController : TaktControllerBase
     /// <summary>
     /// 获取质量组主数据选项列表
     /// </summary>
+    /// <param name="plantCode">工厂代码（可选）</param>
+    /// <param name="keyword">搜索关键字（可选）</param>
+    /// <param name="qualityGroupCategory">质量组类别（字典 logistics_quality_group_category；为空则返回全部启用组）</param>
     /// <returns>下拉选项</returns>
     [TaktPermission("logistics:quality:operation:group:query", "质量组主数据选项")]
     [HttpGet("options")]
-    public async Task<IActionResult> GetQualityGroupOptionsAsync([FromQuery] string? plantCode = null, [FromQuery] string? keyword = null)
+    public async Task<IActionResult> GetQualityGroupOptionsAsync([FromQuery] string? plantCode = null, [FromQuery] string? keyword = null, [FromQuery] int? qualityGroupCategory = null)
     {
         try
         {
-            var result = await _qualityGroupService.GetQualityGroupOptionsAsync(plantCode, keyword);
+            var result = await _qualityGroupService.GetQualityGroupOptionsAsync(plantCode, keyword, qualityGroupCategory);
             return Success(result, "查询成功");
         }
         catch (Exception ex)

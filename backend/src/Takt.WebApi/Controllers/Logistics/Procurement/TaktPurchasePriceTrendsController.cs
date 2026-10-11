@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi.Controllers.Logistics.Procurement
 // 文件名称：TaktPurchasePriceTrendsController.cs
 // 创建时间：2026-08-23
@@ -20,7 +20,7 @@ using Takt.Shared.Options;
 namespace Takt.WebApi.Controllers.Logistics.Procurement;
 
 /// <summary>
-/// 采购价格推移转置分析控制器（与 TaktPurchasePrices CRUD 分离）
+/// 采购价格推移转置分析控制器（与 TaktPurchaseInfoRecords CRUD 分离）
 /// </summary>
 [ApiModule(4, "后勤管理")]
 [Route("api/[controller]", Name = "采购价格推移")]
@@ -106,11 +106,11 @@ public class TaktPurchasePriceTrendsController : TaktControllerBase
     }
 
     /// <summary>
-    /// 推移查询栏：按工厂+条件类型+供应商去重物料
+    /// 推移查询栏：按工厂+条件类型去重物料（供应商可选）
     /// </summary>
     /// <param name="plantCode">工厂代码</param>
     /// <param name="priceType">条件类型</param>
-    /// <param name="supplierCode">供应商编码</param>
+    /// <param name="supplierCode">供应商编码（可选）</param>
     /// <returns>下拉选项</returns>
     [TaktPermission("logistics:procurement:purchase:price:trend:list", "采购价格推移物料选项")]
     [HttpGet("material-options")]
@@ -118,9 +118,7 @@ public class TaktPurchasePriceTrendsController : TaktControllerBase
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(plantCode)
-                || string.IsNullOrWhiteSpace(priceType)
-                || string.IsNullOrWhiteSpace(supplierCode))
+            if (string.IsNullOrWhiteSpace(plantCode) || string.IsNullOrWhiteSpace(priceType))
             {
                 return Success(new List<TaktSelectOption>(), "查询成功");
             }

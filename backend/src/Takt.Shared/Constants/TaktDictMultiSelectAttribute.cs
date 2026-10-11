@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Constants
 // 文件名称：TaktDictMultiSelectAttribute.cs
 // 功能描述：标注字典字段为多选（逗号分隔）；与 TaktDictTypeAttribute 合用，落库走 TaktDictMultiValueHelper

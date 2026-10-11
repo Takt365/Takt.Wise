@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/quality/operation/ipqc-order-item -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：IPQC制程检验单明细实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -418,21 +418,20 @@
  * IPQC制程检验单明细实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/quality/operation/ipqc-order-item
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import IpqcOrderItemForm from './components/ipqc-order-item-form.vue'
-import IpqcDefectHandlingPanel from './components/ipqc-defect-handling-panel.vue'
-import { provideIpqcOrderItemMasterContext } from './composables/use-ipqc-order-item-master-context'
-import { getIpqcOrderItemList, getIpqcOrderItemById, createIpqcOrderItem, updateIpqcOrderItem, deleteIpqcOrderItemById, deleteIpqcOrderItemBatch, getIpqcOrderItemTemplate, importIpqcOrderItem, exportIpqcOrderItem, updateIpqcOrderItemStatus } from '@/api/logistics/quality/operation/ipqc-order-item'
-import type { IpqcOrderItem, IpqcOrderItemQuery } from '@/types/logistics/quality/operation/ipqc-order-item'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import IpqcOrderItemForm from './components/IpqcOrderItemForm.vue'
+import IpqcDefectHandlingPanel from './components/IpqcDefectHandlingPanel.vue'
+import { provideIpqcOrderItemMasterContext } from './composables/useIpqcOrderItemMasterContext'
+import { getIpqcOrderItemList, getIpqcOrderItemById, createIpqcOrderItem, updateIpqcOrderItem, deleteIpqcOrderItemById, deleteIpqcOrderItemBatch, getIpqcOrderItemTemplate, importIpqcOrderItem, exportIpqcOrderItem, updateIpqcOrderItemStatus } from '@/api/logistics/quality/operation/ipqcOrderItem.api'
+import type { IpqcOrderItem, IpqcOrderItemQuery } from '@/types/logistics/quality/operation/ipqcOrderItem.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 /** i18n 翻译函数 */

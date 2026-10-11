@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/legacy-product -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：设变旧品管制列表页，含查询、编辑、导出（无新增/删除/导入） -->
@@ -209,21 +209,21 @@
  */
 import { message } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import LegacyProductForm from './components/legacy-product-form.vue'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import LegacyProductForm from './components/LegacyProductForm.vue'
 import {
   getEcLegacyProductList,
   getEcLegacyProductByEcDetailId,
   updateEcLegacyProduct,
   exportEcLegacyProduct,
-} from '@/api/logistics/manufacturing/engineering-change/legacy-product'
-import type { EcLegacyProduct, EcLegacyProductQuery } from '@/types/logistics/manufacturing/engineering-change/legacy-product'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+} from '@/api/logistics/manufacturing/engineering-change/legacyProduct.api'
+import type { EcLegacyProduct, EcLegacyProductQuery } from '@/types/logistics/manufacturing/engineering-change/legacyProduct.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEditLine } from '@remixicon/vue'
 import {
   useEcLegacyProductI18n,
@@ -231,7 +231,7 @@ import {
   ECLEGACYPRODUCT_DEFAULT_VISIBLE_COLUMN_KEYS,
   ECLEGACYPRODUCT_QUERY_STRING_FIELDS,
   ECLEGACYPRODUCT_QUERY_FIELDS,
-} from './composables/use-ec-legacy-product-i18n'
+} from './composables/useEcLegacyProductI18n'
 
 /** 实体字段 i18n */
 const pi = useEcLegacyProductI18n()

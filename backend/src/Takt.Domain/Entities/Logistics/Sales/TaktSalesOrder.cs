@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Sales
 // 文件名称：TaktSalesOrder.cs
 // 创建时间：2025-01-20
@@ -99,9 +99,9 @@ public class TaktSalesOrder : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "purchase_order_code", ColumnDescription = "采购订单编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = true)]
     public string? PurchaseOrderCode { get; set; }
     /// <summary>
-    /// 采购订单日期
+    /// 订单日期
     /// </summary>
-    [SugarColumn(ColumnName = "purchase_order_date", ColumnDescription = "采购订单日期", ColumnDataType = "datetime", IsNullable = true)]
+    [SugarColumn(ColumnName = "purchase_order_date", ColumnDescription = "订单日期", ColumnDataType = "datetime", IsNullable = true)]
     public DateTime? PurchaseOrderDate { get; set; }
     /// <summary>
     /// 订单总数量（基本单位数量）

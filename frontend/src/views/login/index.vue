@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
+<!-- 项目名称：节拍智控·TaktWise -->
 <!-- 命名空间：frontend/src/views/login -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：登录页壳（品牌、展示区、布局切换、视图路由） -->
@@ -8,25 +8,25 @@
 <!-- ======================================== -->
 
 <template>
-  <register-form v-if="viewMode === 'register'" embedded @back="setViewModeLogin" />
-  <forgot-form v-else-if="viewMode === 'forget'" embedded @back="setViewModeLogin" />
+  <RegisterForm v-if="viewMode === 'register'" embedded @back="setViewModeLogin" />
+  <ForgotForm v-else-if="viewMode === 'forget'" embedded @back="setViewModeLogin" />
   <div
     v-else
     class="relative min-h-screen w-full bg-gradient-to-br from-[#667eea] to-[#764ba2]"
     style="background-color: #667eea"
   >
-    <login-brand />
+    <LoginBrand />
 
     <div class="takt-login-toolbar absolute top-4 right-4 z-10">
       <a-button-group size="small">
         <a-radio-button value="color">
-          <takt-color-toggle type="icon" size="small" />
+          <TaktColorToggle type="icon" size="small" />
         </a-radio-button>
         <a-radio-button value="layout">
-          <takt-layout-toggle v-model:position="layoutPosition" size="small" />
+          <TaktLayoutToggle v-model:position="layoutPosition" size="small" />
         </a-radio-button>
         <a-radio-button value="theme">
-          <takt-theme-toggle type="icon" size="small" />
+          <TaktThemeToggle type="icon" size="small" />
         </a-radio-button>
       </a-button-group>
     </div>
@@ -36,7 +36,7 @@
       class="relative z-[1] flex min-h-screen w-full"
       :class="loginPageSplitClass"
     >
-      <login-form
+      <LoginForm
         :layout-position="layoutPosition"
         @register="openRegisterView"
         @forgot="openForgotView"
@@ -45,7 +45,7 @@
         v-if="layoutPosition !== 'center'"
         class="takt-login-showcase hidden h-auto min-h-screen w-full shrink-0 items-center justify-center px-6 lg:flex lg:w-2/3 xl:px-12"
       >
-        <showcase-form class="takt-login-showcase h-full w-full" />
+        <ShowcaseForm class="takt-login-showcase h-full w-full" />
       </aside>
     </div>
   </div>
@@ -53,22 +53,22 @@
 
 <script setup lang="ts">
 /**
- * 登录页壳：视图切换、布局与展示区；主表单见 `login-form.vue`
+ * 登录页壳：视图切换、布局与展示区；主表单见 `LoginForm.vue`
  */
 import { message } from 'ant-design-vue';
-import { TAKT_LOGOUT_FLASH_STORAGE_KEY } from '@/bootstrap/takt-event-handlers';
-import { useLocaleStore } from '@/stores/foundation/locale';
-import { useTenantStore } from '@/stores/identity/tenant';
-import { useUserStore } from '@/stores/identity/user';
+import { TAKT_LOGOUT_FLASH_STORAGE_KEY } from '@/bootstrap/taktEventHandlers';
+import { useLocaleStore } from '@/stores/foundation/useLocaleStore';
+import { useTenantStore } from '@/stores/identity/useTenantStore';
+import { useUserStore } from '@/stores/identity/useUserStore';
 import {
   readStoredLoginLayoutPosition,
   type TaktLoginLayoutPosition,
-} from '@/utils/takt-login-layout-dom';
-import RegisterForm from '@/views/login/components/register-form.vue';
-import ForgotForm from '@/views/login/components/forgot-form.vue';
-import LoginBrand from '@/views/login/components/login-brand.vue';
-import ShowcaseForm from '@/views/login/components/showcase-form.vue';
-import LoginForm from '@/views/login/components/login-form.vue';
+} from '@/utils/taktLoginLayoutDom';
+import RegisterForm from '@/views/login/components/RegisterForm.vue';
+import ForgotForm from '@/views/login/components/ForgotForm.vue';
+import LoginBrand from '@/views/login/components/LoginBrand.vue';
+import ShowcaseForm from '@/views/login/components/ShowcaseForm.vue';
+import LoginForm from '@/views/login/components/LoginForm.vue';
 
 /** 登录页视图：登录表单 / 注册 / 忘记密码 */
 type TaktLoginViewMode = 'login' | 'register' | 'forget';

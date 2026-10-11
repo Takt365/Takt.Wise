@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Quality.Cost
 // 文件名称：TaktQualityIssueAssyReworkService.cs
 // 创建时间：2026-08-22
@@ -422,7 +422,7 @@ public class TaktQualityIssueAssyReworkService : TaktServiceBase, ITaktQualityIs
                 || (x.AssyCustomerName1 != null && x.AssyCustomerName1.Contains(keywords))
                 || (x.AssyDebitNoteCode != null && x.AssyDebitNoteCode.Contains(keywords))
                 || (x.AssyNote != null && x.AssyNote.Contains(keywords))
-                || (x.AssyRecorder != null && x.AssyRecorder.Contains(keywords))
+                || (x.ResponseGroupName != null && x.ResponseGroupName.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
             );
@@ -536,10 +536,10 @@ public class TaktQualityIssueAssyReworkService : TaktServiceBase, ITaktQualityIs
             exp = exp.And(x => x.AssyNote != null && x.AssyNote.Contains(assyNote));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.AssyRecorder))
+        if (!string.IsNullOrWhiteSpace(queryDto?.ResponseGroupName))
         {
-            var assyRecorder = queryDto.AssyRecorder;
-            exp = exp.And(x => x.AssyRecorder != null && x.AssyRecorder.Contains(assyRecorder));
+            var assyRecorder = queryDto.ResponseGroupName;
+            exp = exp.And(x => x.ResponseGroupName != null && x.ResponseGroupName.Contains(assyRecorder));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.ExtField))
@@ -656,7 +656,7 @@ public class TaktQualityIssueAssyReworkService : TaktServiceBase, ITaktQualityIs
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.AssyRecorder))
+        if (!string.IsNullOrWhiteSpace(queryDto.ResponseGroupName))
         {
             return true;
         }

@@ -1,8 +1,8 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/accounting/controlling/profit-center -->
 <!-- 文件名称：index.vue -->
-<!-- 功能描述：利润中心实体树表管理页（左树右表），由 generate-vue-tree-from-api.cjs 自动生成 -->
+<!-- 功能描述：利润中心实体树表管理页（仅 tree API；右表选中后展示子孙），由 generate-vue-tree-from-api.cjs 自动生成 -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->
@@ -29,7 +29,7 @@
       <TaktTreeLeftToolsBar
         v-model:expanded="treeExpanded"
         :loading="loading"
-        @search="loadFullProfitCenterTree"
+        @search="loadData"
       />
       <TaktTreeRightToolsBar
         create-permission="accounting:controlling:profit:center:create"
@@ -77,6 +77,9 @@
         :loading="loading"
         :virtual="true"
         :draggable="true"
+        :accordion="false"
+        :expand-action="false"
+        :load-data="useLazyTree ? handleLeftTreeLoadData : undefined"
         @tree-select="handleTreeSelect"
         @tree-drop="handleTreeDrop"
       />
@@ -89,10 +92,12 @@
         table-mode="tree"
         :data-source="tableFilteredTree"
         v-model:expanded-row-keys="tableExpandedRowKeys"
-        :loading="loading"
+        :load-children="useLazyTree ? handleRightTreeLoadChildren : undefined"
+        :loading="listLoading"
         :row-key="getProfitCenterId"
         :stripe="true"
         :row-selection="rowSelection"
+        :virtual="true"
         @change="handleTableChange"
         @resize-column="handleResizeColumn"
       >
@@ -391,38 +396,46 @@
 
 <script setup lang="ts">
 /**
- * 利润中心实体树表管理页 · 全量树左树右表（参照 identity/menu/index.vue）
+ * 利润中心实体树表管理页 · 左树选中后右表展示该节点+直接子级（更深展开懒加载）；默认右表为空
  * @module views/accounting/controlling/profit-center
  */
-import { ref, computed, watch, watchEffect, onMounted } from 'vue'
-import type { TreeDataItem } from 'ant-design-vue/es/tree'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { useTableRefresh } from '@/composables/use-table-refresh'
-import ProfitCenterForm from './components/profit-center-form.vue'
-import { getProfitCenterTree, getProfitCenterById, createProfitCenter, updateProfitCenter, deleteProfitCenterById, deleteProfitCenterBatch, getProfitCenterTemplate, importProfitCenter, exportProfitCenter, updateProfitCenterStatus, updateProfitCenterSort } from '@/api/accounting/controlling/profit-center'
-import type { ProfitCenter, ProfitCenterTree, ProfitCenterUpdate } from '@/types/accounting/controlling/profit-center'
-import type { TreeDropPayload } from '@/components/business/takt-tree-left-table/index.vue'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
-import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
-import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
-import { useUserStore } from '@/stores/identity/user'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
 import {
-  collectTaktTreeTableExpandableKeys,
   filterTaktTreeTableNodes,
+  collectTaktTreeTableExpandableKeys,
+  expandTaktLazyTreeFully,
+  runWithTaktTreeLoadConcurrency,
+  taktTreeExpandedKeysEqual,
   taktTreeTableNodeKey,
-} from '@/utils/takt-tree-table'
+  type TaktTreeTableNode,
+} from '@/utils/taktTreeTable'
+import { useTableRefresh } from '@/composables/useTableRefresh'
+import {
+  mapLazyTreeNodes,
+  mergeLoadedChildren,
+  taktIsLeafFlag,
+  type TaktLazyTreeNode,
+} from '@/composables/useLazyTree'
+import ProfitCenterForm from './components/ProfitCenterForm.vue'
+import { getProfitCenterTree, getProfitCenterById, createProfitCenter, updateProfitCenter, deleteProfitCenterById, deleteProfitCenterBatch, getProfitCenterTemplate, importProfitCenter, exportProfitCenter, updateProfitCenterStatus, updateProfitCenterSort } from '@/api/accounting/controlling/profitCenter.api'
+import type { ProfitCenter, ProfitCenterTree, ProfitCenterUpdate } from '@/types/accounting/controlling/profitCenter.types'
+import type { TreeDropPayload } from '@/components/business/TaktTreeLeftTable/index.vue'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
+import { taktExcelEntityNames } from '@/utils/naming'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
+import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
+import { useUserStore } from '@/stores/identity/useUserStore'
 import {
   useProfitCenterI18n,
   PROFITCENTER_QUERY_STRING_FIELDS,
   PROFITCENTER_QUERY_FIELDS,
   PROFITCENTER_SELF_I18N_KEY,
-} from './composables/use-profit-center-i18n'
+} from './composables/useProfitCenterI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useProfitCenterI18n()
@@ -440,11 +453,11 @@ const tableSearchPlaceholder = computed(() =>
   })
 )
 
-/** 左侧树关键字（客户端过滤，不重复请求 API） */
+/** 左侧树关键字（仅过滤已加载节点，不重复请求 API） */
 const treeQueryKeyword = ref('')
 /** 右侧树表快捷查询关键字 */
 const queryKeyword = ref('')
-/** 左侧树工具栏「展开/收缩」状态 */
+/** 左侧树工具栏「展开/收缩」状态（仅已加载层） */
 const treeExpanded = ref(false)
 /** 左侧树当前展开的节点 key 列表 */
 const treeExpandedKeys = ref<(string | number)[]>([])
@@ -452,12 +465,16 @@ const treeExpandedKeys = ref<(string | number)[]>([])
 const tableExpanded = ref(false)
 /** 右侧 a-table 树表当前展开行 key */
 const tableExpandedRowKeys = ref<(string | number)[]>([])
-/** 页面 loading（树加载、提交、导出等） */
+/** 达到阈值后左右树均按 parentId 一层懒加载 */
+const useLazyTree = ref(true)
+/** 左侧树 loading */
 const loading = ref(false)
-/** 全量树表节点（左侧树与右侧表共用，不受右侧查询过滤） */
-const fullTableTree = ref<Record<string, unknown>[]>([])
-/** 左侧 a-tree 绑定数据（由 fullTableTree 映射 title/key） */
-const entityTreeData = ref<TreeDataItem[]>([])
+/** 右侧树 loading */
+const listLoading = ref(false)
+/** 左侧 a-tree 数据（懒加载仅已展开路径） */
+const entityTreeData = ref<TaktLazyTreeNode[]>([])
+/** 右侧树表数据源（带 children / _hasChildren，组件内拍平 virtual） */
+const tableTreeData = ref<Record<string, unknown>[]>([])
 /** 左侧树当前选中的节点 key 列表 */
 const selectedTreeKeys = ref<(string | number)[]>([])
 /** 工具栏单选时当前行（编辑/删除） */
@@ -542,123 +559,6 @@ const treeTitleField = 'profitCenterName'
 /** Pinia：字典缓存（列表/查询 dict-type 渲染前预热） */
 const dictDataStore = useDictDataStore()
 
-/**
- * 将接口树转为树表节点（保留 children，供 getSubtree 与左侧树共用 key）
- * @param nodes 实体树 DTO 列表
- */
-function profitCenterTreeToTableNodes(nodes: ProfitCenterTree[]): Array<Record<string, unknown>> {
-  if (!nodes?.length) return []
-  return nodes.map((node) => {
-    const childNodes = node.children?.length ? profitCenterTreeToTableNodes(node.children) : []
-    return {
-      ...node,
-      key: String(node.profitCenterId ?? ''),
-      children: childNodes.length > 0 ? childNodes : undefined,
-    }
-  })
-}
-
-/** 解析树节点 key（与列表 profitCenterId、左侧树 key 一致） */
-function resolveProfitCenterNodeKey(node: Record<string, unknown>): string {
-  const raw = node.key ?? node.profitCenterId ?? node.id
-  return raw == null ? '' : String(raw)
-}
-
-/** 将 fullTableTree 转为左侧 a-tree（与右侧表共用 key，保证点选联动） */
-function mapFullTableTreeToTreeData(nodes: Array<Record<string, unknown>>): TreeDataItem[] {
-  if (!nodes?.length) return []
-  return nodes.map((n) => {
-    const title = String(n[treeTitleField] ?? n.title ?? '')
-    const key = resolveProfitCenterNodeKey(n)
-    const children = n.children as Array<Record<string, unknown>> | undefined
-    if (!children?.length) return { title, key }
-    const mapped = mapFullTableTreeToTreeData(children)
-    return mapped.length > 0 ? { title, key, children: mapped } : { title, key }
-  })
-}
-
-/**
- * 按 key 查找树节点（左侧树与右侧表共用 fullTableTree）
- * @param nodes 树节点列表
- * @param key 节点 key
- */
-function findTreeNodeByKey(
-  nodes: Array<Record<string, unknown>>,
-  key: string | number,
-): Record<string, unknown> | null {
-  const k = String(key)
-  for (const node of nodes) {
-    if (resolveProfitCenterNodeKey(node) === k) return node
-    const children = node.children as Array<Record<string, unknown>> | undefined
-    if (children?.length) {
-      const found = findTreeNodeByKey(children, key)
-      if (found) return found
-    }
-  }
-  return null
-}
-
-/** 从树中取以某 key 为根的子树（返回单元素数组，便于作为表格根） */
-function getSubtree(nodes: Array<Record<string, unknown>>, key: string | number): Array<Record<string, unknown>> {
-  const node = findTreeNodeByKey(nodes, key)
-  return node ? [node] : []
-}
-
-/**
- * 按关键字过滤左侧树：保留 title 匹配的节点及其祖先、子孙
- * @param nodes 树节点
- * @param keyword 关键字
- */
-function filterTreeByKeyword(nodes: TreeDataItem[], keyword: string): TreeDataItem[] {
-  const k = (keyword ?? '').trim().toLowerCase()
-  if (!k) return nodes
-  /** 递归过滤子树 */
-  function filter(list: TreeDataItem[]): TreeDataItem[] {
-    if (!list?.length) return []
-    return list
-      .map((node) => {
-        const title = String(node.title ?? '').toLowerCase()
-        const matched = title.includes(k)
-        const filteredChildren = node.children?.length ? filter(node.children) : undefined
-        const hasMatchInChildren = filteredChildren != null && filteredChildren.length > 0
-        if (matched || hasMatchInChildren) {
-          if (filteredChildren != null && filteredChildren.length > 0) {
-            return { ...node, children: filteredChildren } as TreeDataItem
-          }
-          const { children: _omitChildren, ...rest } = node
-          return rest as TreeDataItem
-        }
-        return null
-      })
-      .filter(Boolean) as TreeDataItem[]
-  }
-  return filter(nodes)
-}
-
-/** 左侧树绑定数据（按 treeQueryKeyword 客户端过滤） */
-const filteredTreeData = computed(() =>
-  filterTreeByKeyword(entityTreeData.value, treeQueryKeyword.value)
-)
-
-/** 从树数据中收集所有有子节点的 key（用于左侧树展开全部） */
-function collectTreeExpandableKeys(nodes: Array<Record<string, unknown>>): (string | number)[] {
-  return collectTaktTreeTableExpandableKeys(nodes, (node) => taktTreeTableNodeKey(node, 'profitCenterId'))
-}
-
-/** 右侧树表数据：选中左侧节点时显示该节点（含子级）；未选中时显示整棵树 */
-const tableTreeData = computed(() => {
-  const tree = fullTableTree.value
-  if (!tree?.length) return []
-  const keys = selectedTreeKeys.value
-  if (keys.length > 0) {
-    const activeKey = keys[keys.length - 1]
-    if (activeKey === undefined) return tree
-    const sub = getSubtree(tree, activeKey)
-    if (sub.length > 0) return sub
-  }
-  return tree
-})
-
 /** 右侧查询条件过滤（仅影响表格展示，不重建左侧树） */
 function matchesProfitCenterRightQuery(record: Record<string, unknown>): boolean {
   const kw = queryKeyword.value.trim()
@@ -687,32 +587,308 @@ function matchesProfitCenterRightQuery(record: Record<string, unknown>): boolean
   return true
 }
 
-/** 右侧过滤后的树（保留 children，供组件按展开路径拍平） */
-const tableFilteredTree = computed(() =>
-  filterTaktTreeTableNodes(tableTreeData.value, matchesProfitCenterRightQuery)
+/**
+ * 将树 API 一层 DTO 映射为左侧懒加载节点
+ * @param rows 一层子节点
+ */
+function mapProfitCenterLazyNodes(rows: ProfitCenterTree[]): TaktLazyTreeNode[] {
+  return mapLazyTreeNodes(rows, {
+    getKey: (n) => String(n.profitCenterId ?? ''),
+    getTitle: (n) => String(n.profitCenterName || n.profitCenterCode || n.profitCenterId || ''),
+    isLeaf: (n) => taktIsLeafFlag((n as { isLeaf?: unknown }).isLeaf),
+  })
+}
+
+/**
+ * 将一层 DTO 映射为右侧树表节点（未加载子级用 _hasChildren 显示展开箭头）
+ * @param rows 一层子节点
+ */
+function mapProfitCenterRightTreeNodes(rows: ProfitCenterTree[]): Record<string, unknown>[] {
+  return (rows ?? []).map((row) => {
+    const rec = row as Record<string, unknown>
+    const id = String(rec.profitCenterId ?? '')
+    const rawChildren = Array.isArray(rec.children) ? rec.children as ProfitCenterTree[] : []
+    const children = rawChildren.length > 0 ? mapProfitCenterRightTreeNodes(rawChildren) : undefined
+    return {
+      ...rec,
+      key: id,
+      children,
+      _hasChildren: (children != null && children.length > 0) || !taktIsLeafFlag(rec.isLeaf),
+    }
+  })
+}
+
+/**
+ * 按关键字过滤左侧树：仅过滤已加载节点（大规模树不做全量搜索）
+ * @param nodes 树节点
+ * @param keyword 关键字
+ */
+function filterTreeByKeyword(nodes: TaktLazyTreeNode[], keyword: string): TaktLazyTreeNode[] {
+  const k = (keyword ?? '').trim().toLowerCase()
+  if (!k) return nodes
+  /** 递归过滤子树 */
+  function filter(list: TaktLazyTreeNode[]): TaktLazyTreeNode[] {
+    if (!list?.length) return []
+    return list
+      .map((node) => {
+        const title = String(node.title ?? '').toLowerCase()
+        const matched = title.includes(k)
+        const filteredChildren = node.children?.length ? filter(node.children as TaktLazyTreeNode[]) : undefined
+        const hasMatchInChildren = filteredChildren != null && filteredChildren.length > 0
+        if (matched || hasMatchInChildren) {
+          if (filteredChildren != null && filteredChildren.length > 0) {
+            return { ...node, children: filteredChildren }
+          }
+          const { children: _omitChildren, ...rest } = node
+          return rest as TaktLazyTreeNode
+        }
+        return null
+      })
+      .filter(Boolean) as TaktLazyTreeNode[]
+  }
+  return filter(nodes)
+}
+
+/** 左侧树绑定数据（按 treeQueryKeyword 客户端过滤已加载节点） */
+const filteredTreeData = computed(() =>
+  filterTreeByKeyword(entityTreeData.value, treeQueryKeyword.value)
 )
 
 /**
- * 同步右侧树表全部展开/收缩
- * @returns {void}
+ * 收集左侧可展开 key（含尚未拉子的非叶子，供工具栏一次展开逐层 loadData）
+ * @param nodes 树节点
  */
-function applyProfitCenterTableExpandState() {
-  tableExpandedRowKeys.value = tableExpanded.value
-    ? collectTaktTreeTableExpandableKeys(tableFilteredTree.value, (node) =>
-        taktTreeTableNodeKey(node, 'profitCenterId'),
-      )
-    : []
+function collectTreeExpandableKeys(nodes: Array<Record<string, unknown>>): (string | number)[] {
+  return collectTaktTreeTableExpandableKeys(
+    nodes,
+    (node) => taktTreeTableNodeKey(node, 'profitCenterId'),
+    { includeUnloaded: true },
+  )
 }
 
-watch(tableExpanded, applyProfitCenterTableExpandState)
-watch(tableFilteredTree, () => {
-  if (tableExpanded.value) applyProfitCenterTableExpandState()
+/**
+ * 展开态下把「当前树中全部可展开节点」写入 expandedKeys（子节点 load 完后会再触发，直至拉齐）
+ */
+function applyLeftTreeExpandKeys() {
+  const next = collectTreeExpandableKeys(filteredTreeData.value)
+  if (taktTreeExpandedKeysEqual(treeExpandedKeys.value, next)) return
+  treeExpandedKeys.value = next
+}
+
+/**
+ * 当前左侧选中节点 Id；未选中返回 null（右表必须为空）
+ * @returns {string | null} 选中节点 Id
+ */
+function getSelectedTreeNodeId(): string | null {
+  const keys = selectedTreeKeys.value
+  if (keys.length > 0 && keys[keys.length - 1] != null) {
+    return String(keys[keys.length - 1])
+  }
+  return null
+}
+
+/** 从树 API 响应中取出一层节点 */
+function unwrapProfitCenterTree(res: unknown): ProfitCenterTree[] {
+  const resAny = res as { data?: ProfitCenterTree[]; Data?: ProfitCenterTree[] }
+  if (Array.isArray(res)) return res as ProfitCenterTree[]
+  return resAny?.data ?? resAny?.Data ?? []
+}
+
+/**
+ * 加载右侧树：仅 tree API；未选中则空；选中则该节点 + 直接子级一层（更深靠展开懒加载）
+ */
+async function loadRightTree() {
+  const selectedId = getSelectedTreeNodeId()
+  if (!selectedId) {
+    tableTreeData.value = []
+    tableExpandedRowKeys.value = []
+    tableExpanded.value = false
+    return
+  }
+  listLoading.value = true
+  try {
+    const detail = await getProfitCenterById(selectedId) as Record<string, unknown>
+    const childRows = unwrapProfitCenterTree(await getProfitCenterTree(selectedId, true))
+    const mappedChildren = mapProfitCenterRightTreeNodes(childRows)
+    const children = mappedChildren.length > 0 ? mappedChildren : undefined
+    const root: Record<string, unknown> = {
+      ...detail,
+      key: selectedId,
+      children,
+      _hasChildren: (children?.length ?? 0) > 0 || !taktIsLeafFlag(detail.isLeaf),
+    }
+    tableTreeData.value = [root]
+    rightExpandEpoch += 1
+    if (tableExpanded.value) {
+      tableExpanded.value = false
+      await nextTick()
+    }
+    tableExpandedRowKeys.value =
+      (children?.length ?? 0) > 0 || root._hasChildren === true ? [selectedId] : []
+  } catch (error: unknown) {
+    logger.error('[ProfitCenter] 加载右侧树失败', undefined, error)
+    message.error(getErrorMessage(error, t('common.feedback.load.data.failed')))
+    tableTreeData.value = []
+  } finally {
+    listLoading.value = false
+  }
+}
+
+/**
+ * 按父级 Id 拉取并合并右侧一层子节点
+ * @param parentId 父节点 Id
+ */
+async function loadRightChildrenByParentId(parentId: string) {
+  if (!parentId) return
+  const trees = unwrapProfitCenterTree(await getProfitCenterTree(parentId, true))
+  const children = mapProfitCenterRightTreeNodes(trees)
+  tableTreeData.value = mergeLoadedChildren(
+    tableTreeData.value as TaktLazyTreeNode[],
+    parentId,
+    children as TaktLazyTreeNode[],
+    { keyField: 'profitCenterId' },
+  )
+}
+
+/**
+ * 右侧树展开：再拉一层子节点（懒加载，并发受限）
+ * @param record 当前行
+ */
+async function handleRightTreeLoadChildren(record: Record<string, unknown>) {
+  const id = getProfitCenterId(record)
+  if (!id) return
+  await runWithTaktTreeLoadConcurrency(async () => {
+    await loadRightChildrenByParentId(id)
+  })
+}
+
+/**
+ * 加载左侧树根节点（仅 GET tree?parentId=0，一层）
+ */
+async function reloadLeftTreeRoots() {
+  const trees = unwrapProfitCenterTree(await getProfitCenterTree('0', true))
+  entityTreeData.value = mapProfitCenterLazyNodes(trees)
+  treeExpandedKeys.value = []
+  treeExpanded.value = false
+}
+
+/**
+ * 重新加载指定父节点下已展开的子节点（CRUD 后局部刷新）
+ * @param parentKey 父节点 key
+ */
+async function reloadLeftTreeChildren(parentKey: string) {
+  if (!parentKey || parentKey === '0') {
+    await reloadLeftTreeRoots()
+    return
+  }
+  const trees = unwrapProfitCenterTree(await getProfitCenterTree(parentKey, true))
+  const children = mapProfitCenterLazyNodes(trees)
+  entityTreeData.value = mergeLoadedChildren(
+    entityTreeData.value,
+    parentKey,
+    children,
+  ) as TaktLazyTreeNode[]
+}
+
+/**
+ * 按父级 Id 拉取并合并左侧一层子节点
+ * @param parentId 父节点 Id
+ * @returns {Promise<TaktLazyTreeNode[]>} 子节点
+ */
+async function loadLeftChildrenByParentId(parentId: string): Promise<TaktLazyTreeNode[]> {
+  if (!parentId) return []
+  const trees = unwrapProfitCenterTree(await getProfitCenterTree(parentId, true))
+  const children = mapProfitCenterLazyNodes(trees)
+  entityTreeData.value = mergeLoadedChildren(
+    entityTreeData.value,
+    parentId,
+    children,
+  ) as TaktLazyTreeNode[]
+  return children
+}
+
+/**
+ * 左侧树懒加载子节点（Ant Design loadData；并发受限）
+ * @param treeNode Ant Design Tree 节点
+ */
+async function handleLeftTreeLoadData(treeNode: Record<string, unknown>) {
+  const dataRef = (treeNode.dataRef ?? treeNode) as Record<string, unknown>
+  const key = dataRef.key ?? treeNode.key
+  if (key == null) return
+  if (Array.isArray(dataRef.children) && dataRef.children.length > 0) return
+  await runWithTaktTreeLoadConcurrency(async () => {
+    dataRef.children = await loadLeftChildrenByParentId(String(key))
+  })
+}
+
+/** 右侧展示树：未选中为空；选中后为该节点+直接子级（仅 tree API） */
+const tableDisplayTree = computed(() => {
+  if (!getSelectedTreeNodeId()) return []
+  return tableTreeData.value
 })
 
-/** 左侧树选中：过滤右侧子树 */
-const handleTreeSelect = (selectedKeys: (string | number)[]) => {
-  selectedTreeKeys.value = selectedKeys
+/** 右侧过滤后的树（保留 children，供组件按展开路径拍平） */
+const tableFilteredTree = computed(() =>
+  filterTaktTreeTableNodes(tableDisplayTree.value, matchesProfitCenterRightQuery)
+)
+
+/**
+ * 同步右侧树表 expandable keys（展开态；含未加载非叶子）
+ */
+function applyProfitCenterTableExpandState() {
+  if (!tableExpanded.value) {
+    tableExpandedRowKeys.value = []
+    return
+  }
+  const next = collectTaktTreeTableExpandableKeys(
+    tableFilteredTree.value,
+    (node) => taktTreeTableNodeKey(node, 'profitCenterId'),
+    { includeUnloaded: true },
+  )
+  if (!taktTreeExpandedKeysEqual(tableExpandedRowKeys.value, next)) {
+    tableExpandedRowKeys.value = next
+  }
 }
+
+/** 右侧工具栏展开任务世代 */
+let rightExpandEpoch = 0
+
+/**
+ * 右侧一次全部展开：仅工具栏触发；按层拉齐当前右表子树
+ */
+async function expandRightTreeFully() {
+  const epoch = (rightExpandEpoch += 1)
+  await expandTaktLazyTreeFully({
+    getNodes: () => tableFilteredTree.value as TaktTreeTableNode[],
+    getKey: (node) => taktTreeTableNodeKey(node, 'profitCenterId'),
+    setExpandedKeys: (keys) => {
+      if (epoch !== rightExpandEpoch) return
+      if (!taktTreeExpandedKeysEqual(tableExpandedRowKeys.value, keys)) {
+        tableExpandedRowKeys.value = keys
+      }
+    },
+    loadChildren: async (parentId) => {
+      await loadRightChildrenByParentId(parentId)
+    },
+    isActive: () => tableExpanded.value && epoch === rightExpandEpoch,
+  })
+}
+
+/** 右侧工具栏展开/收缩 */
+watch(tableExpanded, async (expanded) => {
+  if (!expanded) {
+    rightExpandEpoch += 1
+    tableExpandedRowKeys.value = []
+    return
+  }
+  await expandRightTreeFully()
+})
+
+watch(tableFilteredTree, () => {
+  if (tableExpanded.value) {
+    applyProfitCenterTableExpandState()
+  }
+})
 
 /**
  * 将详情 DTO 映射为更新载荷（树拖拽改 parentId/sortOrder 等场景）
@@ -777,7 +953,7 @@ const handleTreeDrop = async (payload: TreeDropPayload) => {
   if (!pos) return
   try {
     loading.value = true
-    entityTreeData.value = newTreeData as TreeDataItem[]
+    entityTreeData.value = newTreeData as TaktLazyTreeNode[]
     const full = await getProfitCenterById(String(dragKey))
     await updateProfitCenter(String(dragKey), buildProfitCenterUpdateDto(full, {
       parentId: pos.parentId,
@@ -788,34 +964,60 @@ const handleTreeDrop = async (payload: TreeDropPayload) => {
     await loadData()
   } catch (error: unknown) {
     message.error(getErrorMessage(error, t('common.feedback.update.failed', { target: pi.self() })))
-    await loadFullProfitCenterTree().catch(() => undefined)
+    await reloadLeftTreeRoots().catch(() => undefined)
   } finally {
     loading.value = false
   }
 }
 
-/** 左侧树关键字搜索（客户端过滤，不重复请求接口） */
+/** 左侧工具栏展开任务世代（收缩或再次展开时作废上一次全量展开） */
+let leftExpandEpoch = 0
+
+/** 左侧树关键字搜索（仅过滤已加载节点） */
 const handleTreeQuerySearch = () => {
   if (treeExpanded.value) {
-    treeExpandedKeys.value = collectTreeExpandableKeys(filteredTreeData.value)
+    applyLeftTreeExpandKeys()
   }
 }
 
-/** 左侧展开/收缩：工具栏展开状态与树展开 key 联动 */
-watch(treeExpanded, (expanded) => {
-  if (expanded) {
-    treeExpandedKeys.value = collectTreeExpandableKeys(filteredTreeData.value)
-  } else {
+/** 左侧工具栏展开/收缩：一次展开主动按层拉齐全部非叶子 */
+watch(treeExpanded, async (expanded) => {
+  if (!expanded) {
+    leftExpandEpoch += 1
     treeExpandedKeys.value = []
+    return
+  }
+  const epoch = (leftExpandEpoch += 1)
+  await nextTick()
+  if (epoch !== leftExpandEpoch || !treeExpanded.value) return
+  await expandTaktLazyTreeFully({
+    getNodes: () => filteredTreeData.value as TaktTreeTableNode[],
+    getKey: (node) => taktTreeTableNodeKey(node, 'profitCenterId'),
+    setExpandedKeys: (keys) => {
+      if (epoch !== leftExpandEpoch) return
+      if (!taktTreeExpandedKeysEqual(treeExpandedKeys.value, keys)) {
+        treeExpandedKeys.value = keys
+      }
+    },
+    loadChildren: async (parentId) => {
+      await loadLeftChildrenByParentId(parentId)
+    },
+    isActive: () => treeExpanded.value && epoch === leftExpandEpoch,
+  })
+})
+
+/** 三角展开 loadData 后：若工具栏仍为展开态，补齐 expandable keys */
+watch(filteredTreeData, () => {
+  if (treeExpanded.value) {
+    applyLeftTreeExpandKeys()
   }
 })
 
-/** 过滤后的左侧树变化且处于展开态时，同步 expandable keys */
-watch(filteredTreeData, () => {
-  if (treeExpanded.value) {
-    treeExpandedKeys.value = collectTreeExpandableKeys(filteredTreeData.value)
-  }
-})
+/** 左侧树选中：右表展示该节点+直接子级；取消选中则右表清空 */
+const handleTreeSelect = (selectedKeys: (string | number)[]) => {
+  selectedTreeKeys.value = selectedKeys
+  void loadRightTree()
+}
 
 /** 表格行记录（实体 DTO 或 ant-design-vue 模板 loose record） */
 type ProfitCenterRowRecord = ProfitCenter | Record<string, unknown>
@@ -849,8 +1051,6 @@ const toProfitCenterNumber = (value: string | number | undefined | null): number
   const num = Number(value ?? 0)
   return Number.isFinite(num) ? num : 0
 }
-
-
 
 /** 从异常对象提取用户可见消息 */
 const getErrorMessage = (error: unknown, fallback: string): string => {
@@ -1013,43 +1213,51 @@ const rowSelection = computed(() => ({
   },
 }))
 
-/** 加载全量树（左侧树 + 右侧树表共用数据源） */
-async function loadFullProfitCenterTree() {
-  const res = await getProfitCenterTree('0', true)
-  const resAny = res as { data?: ProfitCenterTree[]; Data?: ProfitCenterTree[] }
-  const trees: ProfitCenterTree[] = Array.isArray(res) ? res : (resAny?.data ?? resAny?.Data ?? [])
-  const tableNodes = profitCenterTreeToTableNodes(trees)
-  fullTableTree.value = tableNodes
-  entityTreeData.value = mapFullTableTreeToTreeData(tableNodes)
-  if (treeExpanded.value) {
-    treeExpandedKeys.value = collectTreeExpandableKeys(filteredTreeData.value)
-  }
-}
-
-/** 初始化或增删改后刷新全量树 */
+/** 加载左树：仅 GET …/tree?parentId=0；默认不选中、右表为空 */
 async function loadData() {
   loading.value = true
   try {
-    await loadFullProfitCenterTree()
+    useLazyTree.value = true
+    selectedTreeKeys.value = []
+    tableTreeData.value = []
+    tableExpandedRowKeys.value = []
+    tableExpanded.value = false
+    await reloadLeftTreeRoots()
   } catch (error: unknown) {
     logger.error('[ProfitCenter] 加载树数据失败', undefined, error)
     message.error(getErrorMessage(error, t('common.feedback.load.data.failed')))
-    fullTableTree.value = []
     entityTreeData.value = []
+    tableTreeData.value = []
   } finally {
     loading.value = false
   }
 }
 
-/** 右侧查询（客户端过滤，不请求接口） */
+/**
+ * CRUD / 状态变更后：刷新左树当前层 + 按选中重载右表（仅 tree）
+ */
+async function refreshAfterMutation() {
+  loading.value = true
+  try {
+    const selectedId = getSelectedTreeNodeId()
+    await reloadLeftTreeChildren(selectedId ?? '0')
+    await loadRightTree()
+  } catch (error: unknown) {
+    logger.error('[ProfitCenter] 刷新失败', undefined, error)
+    message.error(getErrorMessage(error, t('common.feedback.load.data.failed')))
+  } finally {
+    loading.value = false
+  }
+}
+
+/** 右侧查询（客户端过滤已加载树节点） */
 const handleSearch = () => {}
 
-/** 右侧重置（不影响左侧树与 fullTableTree） */
+/** 右侧重置（客户端过滤，不重建树） */
 const handleReset = () => {
   queryKeyword.value = ''
   advancedQueryForm.value = createEmptyAdvancedQueryForm()
 }
-
 
 /**
  * 行内状态切换
@@ -1063,7 +1271,7 @@ async function handleProfitCenterStatusChange(record: ProfitCenterRowRecord, che
   try {
     await updateProfitCenterStatus({ profitCenterId: id, profitCenterStatus: newVal })
     message.success(t('common.feedback.updated'))
-    await loadData()
+    await refreshAfterMutation()
   } catch (error: unknown) {
     message.error(t('common.feedback.failed'))
   }
@@ -1119,7 +1327,7 @@ async function handleFormSubmit() {
     formVisible.value = false
     formData.value = null
   nextTick(() => formRef.value?.resetFields())
-    await loadData()
+    await refreshAfterMutation()
   } finally {
     formLoading.value = false
   }
@@ -1142,7 +1350,7 @@ async function handleDeleteOne(record: ProfitCenterRowRecord) {
     onOk: async () => {
       await deleteProfitCenterById((record as any)[entityIdName])
       message.success(t('common.feedback.deleted', { target: pi.self() }))
-      await loadData()
+      await refreshAfterMutation()
     }
   })
 }
@@ -1162,11 +1370,10 @@ async function handleDelete() {
       const ids = selectedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
       await deleteProfitCenterBatch(ids)
       message.success(t('common.feedback.deleted', { target: pi.self() }))
-      await loadData()
+      await refreshAfterMutation()
     }
   })
 }
-
 
 /** 打开导入对话框 */
 function handleImport() {
@@ -1187,7 +1394,7 @@ async function handleImportFile(file: File, sheetName?: string): Promise<TaktImp
 
 /** 导入完成回调：刷新列表；全部成功时延迟关闭对话框 */
 function handleImportSuccess(result: TaktImportResult) {
-  void loadData()
+  void refreshAfterMutation()
   if (result.fail === 0 && result.success > 0) {
     setTimeout(() => { importVisible.value = false }, 2000)
   }
@@ -1270,7 +1477,7 @@ function handleTableChange() {}
 /** 列宽拖拽回调占位 */
 function handleResizeColumn() {}
 
-/** 页面挂载：加载字典与全量树 */
+/** 页面挂载：仅拉左树根（tree API）；右表待选中 */
 onMounted(() => {
   void dictDataStore.loadAllDictDataAsync()
   void loadData()

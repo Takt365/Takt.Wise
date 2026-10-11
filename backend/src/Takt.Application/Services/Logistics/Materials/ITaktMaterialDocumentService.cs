@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Materials
 // 文件名称：ITaktMaterialDocumentService.cs
-// 创建时间：2026-08-22
+// 创建时间：2026-09-20
 // 创建人：Takt365(Cursor AI)
 // 功能描述：物料凭证应用服务接口
 // 

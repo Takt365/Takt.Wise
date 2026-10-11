@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Quality.Cost
 // 文件名称：TaktQualityIssueMeetingDtos.cs
 // 创建时间：2026-08-22
@@ -117,9 +117,14 @@ public class TaktQualityIssueMeetingDto : TaktCompanyDtoBase
     public decimal OtherApparatusCost { get; set; }
 
     /// <summary>
-    /// 品质问题対応记录者（会议调查试验记录者）
+    /// 对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）
     /// </summary>
-    public string? MeetingRecorder { get; set; } = string.Empty;
+    public string? ResponseGroupCode { get; set; }
+
+    /// <summary>
+    /// 对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ResponseGroupName { get; set; }
 
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
@@ -241,9 +246,14 @@ public class TaktQualityIssueMeetingQueryDto : TaktPagedQuery
     public decimal? OtherApparatusCost { get; set; }
 
     /// <summary>
-    /// 品质问题対応记录者（会议调查试验记录者）
+    /// 对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）
     /// </summary>
-    public string? MeetingRecorder { get; set; } = string.Empty;
+    public string? ResponseGroupCode { get; set; }
+
+    /// <summary>
+    /// 对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ResponseGroupName { get; set; }
 
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
@@ -377,9 +387,14 @@ public class TaktQualityIssueMeetingCreateDto
     public decimal OtherApparatusCost { get; set; }
 
     /// <summary>
-    /// 品质问题対応记录者（会议调查试验记录者）
+    /// 对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）
     /// </summary>
-    public string? MeetingRecorder { get; set; } = string.Empty;
+    public string? ResponseGroupCode { get; set; }
+
+    /// <summary>
+    /// 对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ResponseGroupName { get; set; }
 
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
@@ -547,9 +562,14 @@ public class TaktQualityIssueMeetingTemplateDto
     public decimal? OtherApparatusCost { get; set; }
 
     /// <summary>
-    /// 品质问题対応记录者（会议调查试验记录者）
+    /// 对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）
     /// </summary>
-    public string? MeetingRecorder { get; set; } = string.Empty;
+    public string? ResponseGroupCode { get; set; }
+
+    /// <summary>
+    /// 对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ResponseGroupName { get; set; }
 
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
@@ -670,9 +690,14 @@ public class TaktQualityIssueMeetingImportDto
     public decimal? OtherApparatusCost { get; set; }
 
     /// <summary>
-    /// 品质问题対応记录者（会议调查试验记录者）
+    /// 对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）
     /// </summary>
-    public string? MeetingRecorder { get; set; } = string.Empty;
+    public string? ResponseGroupCode { get; set; }
+
+    /// <summary>
+    /// 对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ResponseGroupName { get; set; }
 
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
@@ -799,9 +824,14 @@ public class TaktQualityIssueMeetingExportDto
     public decimal OtherApparatusCost { get; set; }
 
     /// <summary>
-    /// 品质问题対応记录者（会议调查试验记录者）
+    /// 对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）
     /// </summary>
-    public string? MeetingRecorder { get; set; } = string.Empty;
+    public string? ResponseGroupCode { get; set; }
+
+    /// <summary>
+    /// 对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ResponseGroupName { get; set; }
 
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）

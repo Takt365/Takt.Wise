@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/routine/meeting-center/meeting-notification -->
 <!-- 文件名称：confirm.vue -->
 <!-- 功能描述：会议通知邮件回执确认页（匿名；query token） -->
@@ -33,10 +33,9 @@
 /**
  * 会议通知邮件回执确认（公开页）
  */
-import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { confirmMeetingNotificationReceiptByToken } from '@/api/routine/meeting-center/meeting-notification'
+import { confirmMeetingNotificationReceiptByToken } from '@/api/routine/meeting-center/meetingNotification.api'
 
 const { t } = useI18n()
 const route = useRoute()

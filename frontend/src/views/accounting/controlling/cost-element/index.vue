@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/accounting/controlling/cost-element -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：成本要素实体树表管理页（左右树表，超阈值懒加载+virtual，无分页），由 generate-vue-tree-from-api.cjs 自动生成 -->
@@ -396,45 +396,44 @@
  * 成本要素实体树表管理页 · 左树选中后右表展示该节点+直接子级（更深展开懒加载）；默认右表为空
  * @module views/accounting/controlling/cost-element
  */
-import { ref, computed, watch, watchEffect, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktMaxPageSize } from '@/utils/takt-paged'
-import { shouldUseTreeLazyLoad } from '@/utils/takt-large-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktMaxPageSize } from '@/utils/taktPaged'
+import { shouldUseTreeLazyLoad } from '@/utils/taktLargeData'
 import {
   buildTaktTreeFromFlat,
   filterTaktTreeTableNodes,
   collectTaktTreeTableExpandableKeys,
   findTaktTreeTableSubtree,
   taktTreeTableNodeKey,
-} from '@/utils/takt-tree-table'
-import { useTableRefresh } from '@/composables/use-table-refresh'
+} from '@/utils/taktTreeTable'
+import { useTableRefresh } from '@/composables/useTableRefresh'
 import {
   mapLazyTreeNodes,
   mergeLoadedChildren,
   taktIsLeafFlag,
   type TaktLazyTreeNode,
-} from '@/composables/use-lazy-tree'
-import CostElementForm from './components/cost-element-form.vue'
-import { getCostElementList, getCostElementTree, getCostElementById, createCostElement, updateCostElement, deleteCostElementById, deleteCostElementBatch, getCostElementTemplate, importCostElement, exportCostElement, updateCostElementStatus, updateCostElementSort } from '@/api/accounting/controlling/cost-element'
-import type { CostElement, CostElementTree, CostElementUpdate } from '@/types/accounting/controlling/cost-element'
-import type { TreeDropPayload } from '@/components/business/takt-tree-left-table/index.vue'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+} from '@/composables/useLazyTree'
+import CostElementForm from './components/CostElementForm.vue'
+import { getCostElementList, getCostElementTree, getCostElementById, createCostElement, updateCostElement, deleteCostElementById, deleteCostElementBatch, getCostElementTemplate, importCostElement, exportCostElement, updateCostElementStatus, updateCostElementSort } from '@/api/accounting/controlling/costElement.api'
+import type { CostElement, CostElementTree, CostElementUpdate } from '@/types/accounting/controlling/costElement.types'
+import type { TreeDropPayload } from '@/components/business/TaktTreeLeftTable/index.vue'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
-import { useUserStore } from '@/stores/identity/user'
+import { useUserStore } from '@/stores/identity/useUserStore'
 
 import {
   useCostElementI18n,
   COSTELEMENT_QUERY_STRING_FIELDS,
   COSTELEMENT_QUERY_FIELDS,
   COSTELEMENT_SELF_I18N_KEY,
-} from './composables/use-cost-element-i18n'
+} from './composables/useCostElementI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useCostElementI18n()
@@ -1007,8 +1006,6 @@ const toCostElementNumber = (value: string | number | undefined | null): number 
   return Number.isFinite(num) ? num : 0
 }
 
-
-
 /** 从异常对象提取用户可见消息 */
 const getErrorMessage = (error: unknown, fallback: string): string => {
   if (typeof error === 'object' && error !== null && 'message' in error) {
@@ -1150,25 +1147,16 @@ const rowSelection = computed(() => ({
   },
 }))
 
-/** 加载左树：先探测总数；默认不选中、右表为空 */
+/** 加载左树：一律 parentId 懒加载；默认不选中、右表为空 */
 async function loadData() {
   loading.value = true
   try {
-    await ensureTaktPaginationConfigAsync()
-    const probe = unwrapCostElementList(await getCostElementList({
-      pageIndex: 1,
-      pageSize: 1,
-    }))
-    useLazyTree.value = shouldUseTreeLazyLoad(probe.total)
+    useLazyTree.value = true
     selectedTreeKeys.value = []
     tableTreeData.value = []
     tableExpandedRowKeys.value = []
     tableExpanded.value = false
-    if (useLazyTree.value) {
-      await reloadLeftTreeRoots()
-    } else {
-      await loadFullTreeFromList(probe.total)
-    }
+    await reloadLeftTreeRoots()
   } catch (error: unknown) {
     logger.error('[CostElement] 加载树数据失败', undefined, error)
     message.error(getErrorMessage(error, t('common.feedback.load.data.failed')))
@@ -1186,24 +1174,10 @@ async function loadData() {
 async function refreshAfterMutation() {
   loading.value = true
   try {
-    if (useLazyTree.value) {
-      const selectedId = getSelectedTreeNodeId()
-      await reloadLeftTreeChildren(selectedId ?? '0')
-      await loadRightTree()
-    } else {
-      const probe = unwrapCostElementList(await getCostElementList({
-        pageIndex: 1,
-        pageSize: 1,
-      }))
-      useLazyTree.value = shouldUseTreeLazyLoad(probe.total)
-      if (useLazyTree.value) {
-        await reloadLeftTreeRoots()
-        await loadRightTree()
-      } else {
-        await loadFullTreeFromList(probe.total)
-        await loadRightTree()
-      }
-    }
+    useLazyTree.value = true
+    const selectedId = getSelectedTreeNodeId()
+    await reloadLeftTreeChildren(selectedId ?? '0')
+    await loadRightTree()
   } catch (error: unknown) {
     logger.error('[CostElement] 刷新失败', undefined, error)
     message.error(getErrorMessage(error, t('common.feedback.load.data.failed')))
@@ -1220,7 +1194,6 @@ const handleReset = () => {
   queryKeyword.value = ''
   advancedQueryForm.value = createEmptyAdvancedQueryForm()
 }
-
 
 /**
  * 行内状态切换
@@ -1337,7 +1310,6 @@ async function handleDelete() {
     }
   })
 }
-
 
 /** 打开导入对话框 */
 function handleImport() {

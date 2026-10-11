@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Constants
 // 文件名称：TaktGoldenLength.cs
 // 功能描述：业务实体字段黄金长度约定（Code/Name 统一 40）。

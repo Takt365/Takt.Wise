@@ -1,10 +1,10 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Quality.Operation
 // 文件名称：TaktQualityGroup.cs
 // 创建时间：2026-07-08
 // 创建人：Takt365(Cursor AI)
-// 功能描述：质量组主数据实体，按质量组类别（IQC/QA/IPQC）定义质量业务组织分组
+// 功能描述：质量组主数据实体，按质量组类别（IQC组、QA组、IPQC组、责任组、处理组、质量负责人组）定义质量业务组织分组
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -16,7 +16,7 @@ using Takt.Domain.Entities;
 namespace Takt.Domain.Entities.Logistics.Quality.Operation;
 
 /// <summary>
-/// 质量组主数据实体（公司级；按质量组类别区分的质量业务组织分组）
+/// 质量组主数据实体（公司级；按质量组类别 IQC组、QA组、IPQC组、责任组、处理组、质量负责人组 区分的质量业务组织分组）
 /// </summary>
 [SugarTable("takt_logistics_quality_operation_quality_group", "质量组主数据表")]
 [SugarIndex("ix_quality_group_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
@@ -27,9 +27,9 @@ namespace Takt.Domain.Entities.Logistics.Quality.Operation;
 public class TaktQualityGroup : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 质量组编码（3）
+    /// 质量组编码（与员工编码同长 6）
     /// </summary>
-    [SugarColumn(ColumnName = "quality_group_code", ColumnDescription = "质量组编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
+    [SugarColumn(ColumnName = "quality_group_code", ColumnDescription = "质量组编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string QualityGroupCode { get; set; } = string.Empty;
 
     /// <summary>
@@ -45,7 +45,7 @@ public class TaktQualityGroup : TaktCompanyEntityBase
     public string? QualityGroupDescription { get; set; }
 
     /// <summary>
-    /// 质量组类别（字典 logistics_quality_group_category；0=IQC，1=QA，2=IPQC）
+    /// 质量组类别（字典 logistics_quality_group_category；0=IQC组 1=QA组 2=IPQC组 3=责任组 4=处理组 5=质量负责人组）
     /// </summary>
     [SugarColumn(ColumnName = "quality_group_category", ColumnDescription = "质量组类别", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
     public int QualityGroupCategory { get; set; } = 0;

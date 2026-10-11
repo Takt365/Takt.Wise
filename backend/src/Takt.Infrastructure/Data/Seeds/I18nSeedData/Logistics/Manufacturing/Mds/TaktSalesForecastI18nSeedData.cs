@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Mds
 // 文件名称：TaktSalesForecastI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSalesForecast 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -198,23 +198,23 @@ public class TaktSalesForecastI18nSeedData : ITaktSeedDataCoordinator
             // entity.salesforecast.customername1
             new TranslationSeedItem("entity.salesforecast.customername1", "zh-HK", "客户名称1_hk", "客户名称1（冗余，与 TaktCustomer.CustomerName1 对齐）"),
 
-            // entity.salesforecast.planneremployeeid
-            new TranslationSeedItem("entity.salesforecast.planneremployeeid", "en-US", "计划人员工ID_us", "计划人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.salesforecast.planneremployeeid
-            new TranslationSeedItem("entity.salesforecast.planneremployeeid", "ja-JP", "计划人员工ID_jp", "计划人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.salesforecast.planneremployeeid
-            new TranslationSeedItem("entity.salesforecast.planneremployeeid", "zh-CN", "计划人员工ID", "计划人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.salesforecast.planneremployeeid
-            new TranslationSeedItem("entity.salesforecast.planneremployeeid", "zh-HK", "计划人员工ID_hk", "计划人（选项 TaktEmployees/options；DictValue=Id）"),
+            // entity.salesforecast.plannergroupcode
+            new TranslationSeedItem("entity.salesforecast.plannergroupcode", "en-US", "计划组编码_us", "计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）"),
+            // entity.salesforecast.plannergroupcode
+            new TranslationSeedItem("entity.salesforecast.plannergroupcode", "ja-JP", "计划组编码_jp", "计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）"),
+            // entity.salesforecast.plannergroupcode
+            new TranslationSeedItem("entity.salesforecast.plannergroupcode", "zh-CN", "计划组编码", "计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）"),
+            // entity.salesforecast.plannergroupcode
+            new TranslationSeedItem("entity.salesforecast.plannergroupcode", "zh-HK", "计划组编码_hk", "计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）"),
 
-            // entity.salesforecast.plannername
-            new TranslationSeedItem("entity.salesforecast.plannername", "en-US", "计划人名称_us", "计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.salesforecast.plannername
-            new TranslationSeedItem("entity.salesforecast.plannername", "ja-JP", "计划人名称_jp", "计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.salesforecast.plannername
-            new TranslationSeedItem("entity.salesforecast.plannername", "zh-CN", "计划人名称", "计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.salesforecast.plannername
-            new TranslationSeedItem("entity.salesforecast.plannername", "zh-HK", "计划人名称_hk", "计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
+            // entity.salesforecast.plannergroupname
+            new TranslationSeedItem("entity.salesforecast.plannergroupname", "en-US", "计划组名称_us", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
+            // entity.salesforecast.plannergroupname
+            new TranslationSeedItem("entity.salesforecast.plannergroupname", "ja-JP", "计划组名称_jp", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
+            // entity.salesforecast.plannergroupname
+            new TranslationSeedItem("entity.salesforecast.plannergroupname", "zh-CN", "计划组名称", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
+            // entity.salesforecast.plannergroupname
+            new TranslationSeedItem("entity.salesforecast.plannergroupname", "zh-HK", "计划组名称_hk", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
 
             // entity.salesforecast.totalquantity
             new TranslationSeedItem("entity.salesforecast.totalquantity", "en-US", "计划总数量_us", "计划总数量（基本单位数量；通常汇总版本 002）"),

@@ -102,7 +102,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
   RiDeleteBinLine,
@@ -113,7 +112,7 @@ import {
   RiLayoutRowLine
 } from '@remixicon/vue'
 import type { MenuInfo } from 'ant-design-vue/es/menu/src/interface'
-import type { WorkspaceModuleItem } from '@/types/dashboard/workspace'
+import type { WorkspaceModuleItem } from '@/types/dashboard/workspace.types'
 import { WORKSPACE_AVAILABLE_MODULES } from '../config'
 
 /** 卡片头按钮间距（px） */

@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/bom/material-cost-item -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：BOM 物料成本明细行页面（导入/导出/查询；无新增/更新/删除） -->
@@ -463,18 +463,17 @@
  * BOM 物料成本明细行页面（导入/导出/查询；无新增/更新/删除）
  * @module views/logistics/manufacturing/bom/material-cost-item
  */
-import { ref, computed, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { getBomMaterialCostItemList, getBomMaterialCostItemTemplate, importBomMaterialCostItem, exportBomMaterialCostItem } from '@/api/logistics/manufacturing/bom/material-cost-item'
-import type { BomMaterialCostItem, BomMaterialCostItemQuery } from '@/types/logistics/manufacturing/bom/material-cost-item'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { getBomMaterialCostItemList, getBomMaterialCostItemTemplate, importBomMaterialCostItem, exportBomMaterialCostItem } from '@/api/logistics/manufacturing/bom/materialCostItem.api'
+import type { BomMaterialCostItem, BomMaterialCostItemQuery } from '@/types/logistics/manufacturing/bom/materialCostItem.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
-import { sortBomMaterialCostItemRowsByProductCodeLineNumber } from '@/views/logistics/manufacturing/bom/material-cost/utils/bom-material-cost-item-sort'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
+import { sortBomMaterialCostItemRowsByProductCodeLineNumber } from '@/views/logistics/manufacturing/bom/material-cost/utils/bomMaterialCostItemSort'
 import { RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -483,7 +482,7 @@ import {
   BOMMATERIALCOSTITEM_QUERY_STRING_FIELDS,
   BOMMATERIALCOSTITEM_QUERY_FIELDS,
   BOMMATERIALCOSTITEM_SELF_I18N_KEY,
-} from './composables/use-material-cost-item-i18n'
+} from './composables/useMaterialCostItemI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useBomMaterialCostItemI18n()
@@ -593,7 +592,6 @@ const entityIdName = 'bomMaterialCostItemId'
 /** Pinia：字典缓存（列表/查询 dict-type 渲染前预热） */
 const dictDataStore = useDictDataStore()
 
-
 /**
  * 构建列表/导出查询参数（空字符串与未填数值/日期不下发，避免后端 DateTime? 模型绑定 400；无参不补默认）
  * @param overrides 覆盖分页或导出上限等字段
@@ -646,7 +644,6 @@ onMounted(async () => {
   loadData()
 })
 
-
 /**
  * 构建列表标准文本列
  * @param key 列 key / dataIndex
@@ -694,8 +691,6 @@ const getBomMaterialCostItemDictValue = (
   if (typeof value === 'string' || typeof value === 'number') return value
   return String(value)
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

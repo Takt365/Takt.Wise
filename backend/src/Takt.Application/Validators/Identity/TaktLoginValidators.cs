@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Validators.Identity
 // 文件名称：TaktLoginValidators.cs
 // 创建时间：2026-05-25
@@ -42,9 +42,9 @@ public class TaktLoginRequestValidator : AbstractValidator<TaktLoginRequestDto>
 
         RuleFor(x => x.UserName)
             .NotEmpty().WithMessage(TaktValidationMessageHelper.Build(T, TaktValidationI18nKeys.Required, TaktValidationI18nKeys.EntityUserName))
-            .MinimumLength(5)
+            .MinimumLength(4)
             .MaximumLength(20)
-            .WithMessage(TaktValidationMessageHelper.Build(T, TaktValidationI18nKeys.LengthBetween, TaktValidationI18nKeys.EntityUserName, min: 5, max: 20));
+            .WithMessage(TaktValidationMessageHelper.Build(T, TaktValidationI18nKeys.LengthBetween, TaktValidationI18nKeys.EntityUserName, min: 4, max: 20));
 
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage(TaktValidationMessageHelper.Build(T, TaktValidationI18nKeys.Required, TaktValidationI18nKeys.EntityUserPassword))
@@ -89,9 +89,9 @@ public class TaktSessionVerifyPasswordRequestValidator : AbstractValidator<TaktS
 
         RuleFor(x => x.UserName)
             .NotEmpty().WithMessage(TaktValidationMessageHelper.Build(T, TaktValidationI18nKeys.Required, TaktValidationI18nKeys.EntityUserName))
-            .MinimumLength(5)
+            .MinimumLength(4)
             .MaximumLength(20)
-            .WithMessage(TaktValidationMessageHelper.Build(T, TaktValidationI18nKeys.LengthBetween, TaktValidationI18nKeys.EntityUserName, min: 5, max: 20));
+            .WithMessage(TaktValidationMessageHelper.Build(T, TaktValidationI18nKeys.LengthBetween, TaktValidationI18nKeys.EntityUserName, min: 4, max: 20));
 
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage(TaktValidationMessageHelper.Build(T, TaktValidationI18nKeys.Required, TaktValidationI18nKeys.EntityUserPassword))

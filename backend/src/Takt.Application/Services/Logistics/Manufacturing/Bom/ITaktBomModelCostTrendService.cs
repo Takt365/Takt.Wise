@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Bom
 // 文件名称：ITaktBomModelCostTrendService.cs
 // 创建时间：2026-08-01
@@ -15,8 +15,7 @@ using Takt.Application.Dtos.Logistics.Manufacturing.Bom;
 namespace Takt.Application.Services.Logistics.Manufacturing.Bom;
 
 /// <summary>
-/// BOM 机种成本推移分析服务（读 BOM 成本本表；与产品推移 / CRUD 分离）。
-/// 查询栏工厂/期间/机种/物料选项统一走 ITaktBomMaterialCostAnalysisService。
+/// BOM 机种成本推移（一行一个成品：各月成本、相邻月差额、组件差异）。
 /// </summary>
 public interface ITaktBomModelCostTrendService
 {

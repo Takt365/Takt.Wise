@@ -1,10 +1,10 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Sales
 // 文件名称：TaktSalesPriceTrendService.cs
 // 创建时间：2026-07-23
 // 创建人：Takt365(Cursor AI)
-// 功能描述：销售价格月推移分析服务实现
+// 功能描述：销售价格推移分析服务实现
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -22,28 +22,28 @@ using Takt.Shared.Validation;
 namespace Takt.Application.Services.Logistics.Sales;
 
 /// <summary>
-/// 销售价格月推移分析服务（读销售价格本表；与 CRUD 服务分离）
+/// 销售价格推移分析服务（读销售价格本表；与 CRUD 服务分离）
 /// </summary>
 public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendService
 {
-    private readonly ITaktCompanyRepository<TaktSalesPrice> _salesPriceRepository;
+    private readonly ITaktCompanyRepository<TaktSalesConditionRecord> _salesConditionRecordRepository;
     private readonly ITaktSalesPriceTrendMonthlyAnalysisBuilder _monthlyAnalysisBuilder;
 
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="salesPriceRepository">销售价格仓储</param>
-    /// <param name="monthlyAnalysisBuilder">月推移分析构建器</param>
+    /// <param name="salesConditionRecordRepository">销售价格仓储</param>
+    /// <param name="monthlyAnalysisBuilder">推移分析构建器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktSalesPriceTrendService(
-        ITaktCompanyRepository<TaktSalesPrice> salesPriceRepository,
+        ITaktCompanyRepository<TaktSalesConditionRecord> salesConditionRecordRepository,
         ITaktSalesPriceTrendMonthlyAnalysisBuilder monthlyAnalysisBuilder,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
     {
-        _salesPriceRepository = salesPriceRepository;
+        _salesConditionRecordRepository = salesConditionRecordRepository;
         _monthlyAnalysisBuilder = monthlyAnalysisBuilder;
     }
 
@@ -56,7 +56,7 @@ public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendS
     public async Task<List<TaktSelectOption>> GetSalesPriceTrendPlantOptionsAsync(string? plantCode = null, string? keyword = null)
     {
         EnsureThreeLayerContext();
-        var list = await _salesPriceRepository.GetListAsync(
+        var list = await _salesConditionRecordRepository.GetListAsync(
             x => x.TenantCode == CurrentTenantCode
                 && x.CompanyCode == CurrentCompanyCode
                 && x.PlantCode != null
@@ -86,7 +86,7 @@ public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendS
         {
             return new List<TaktSelectOption>();
         }
-        var list = await _salesPriceRepository.GetListAsync(
+        var list = await _salesConditionRecordRepository.GetListAsync(
             x => x.TenantCode == CurrentTenantCode
                 && x.CompanyCode == CurrentCompanyCode
                 && x.PlantCode == plant
@@ -119,7 +119,7 @@ public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendS
         {
             return new List<TaktSelectOption>();
         }
-        var list = await _salesPriceRepository.GetListAsync(
+        var list = await _salesConditionRecordRepository.GetListAsync(
             x => x.TenantCode == CurrentTenantCode
                 && x.CompanyCode == CurrentCompanyCode
                 && x.PlantCode == plant
@@ -138,11 +138,11 @@ public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendS
     }
 
     /// <summary>
-    /// 推移查询栏：按工厂+条件类型+客户去重物料（级联第 4 级，查询时可空）
+    /// 推移查询栏：按工厂+条件类型去重物料（客户可选，传入则再过滤）
     /// </summary>
     /// <param name="plantCode">工厂代码</param>
     /// <param name="priceType">条件类型</param>
-    /// <param name="customerCode">客户编码</param>
+    /// <param name="customerCode">客户编码（可选）</param>
     /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
     /// <returns>下拉选项</returns>
     public async Task<List<TaktSelectOption>> GetSalesPriceTrendMaterialOptionsAsync(string? plantCode = null, string? keyword = null, string? priceType = null, string? customerCode = null)
@@ -151,18 +151,26 @@ public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendS
         var plant = plantCode?.Trim() ?? string.Empty;
         var type = priceType?.Trim() ?? string.Empty;
         var customer = customerCode?.Trim() ?? string.Empty;
-        if (string.IsNullOrEmpty(plant) || string.IsNullOrEmpty(type) || string.IsNullOrEmpty(customer))
+        if (string.IsNullOrEmpty(plant) || string.IsNullOrEmpty(type))
         {
             return new List<TaktSelectOption>();
         }
-        var list = await _salesPriceRepository.GetListAsync(
-            x => x.TenantCode == CurrentTenantCode
-                && x.CompanyCode == CurrentCompanyCode
-                && x.PlantCode == plant
-                && x.PriceType == type
-                && x.CustomerCode == customer
-                && x.MaterialCode != null
-                && x.MaterialCode != string.Empty);
+        var list = string.IsNullOrEmpty(customer)
+            ? await _salesConditionRecordRepository.GetListAsync(
+                x => x.TenantCode == CurrentTenantCode
+                    && x.CompanyCode == CurrentCompanyCode
+                    && x.PlantCode == plant
+                    && x.PriceType == type
+                    && x.MaterialCode != null
+                    && x.MaterialCode != string.Empty)
+            : await _salesConditionRecordRepository.GetListAsync(
+                x => x.TenantCode == CurrentTenantCode
+                    && x.CompanyCode == CurrentCompanyCode
+                    && x.PlantCode == plant
+                    && x.PriceType == type
+                    && x.CustomerCode == customer
+                    && x.MaterialCode != null
+                    && x.MaterialCode != string.Empty);
         return list
             .GroupBy(e => e.MaterialCode.Trim(), StringComparer.OrdinalIgnoreCase)
             .OrderBy(g => g.Key, StringComparer.Ordinal)
@@ -181,7 +189,7 @@ public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendS
     }
 
     /// <summary>
-    /// 销售价格月推移转置分析（工厂×物料×客户×月份）
+    /// 销售价格推移转置分析（工厂×物料×客户×ValidFrom）
     /// </summary>
     /// <param name="queryDto">查询条件</param>
     /// <returns>转置分析结果</returns>
@@ -210,7 +218,7 @@ public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendS
     }
 
     /// <summary>
-    /// 导出销售价格月推移转置分析（全量）
+    /// 导出销售价格推移转置分析（全量）
     /// </summary>
     /// <param name="query">查询条件</param>
     /// <param name="sheetName">工作表名称</param>
@@ -237,7 +245,7 @@ public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendS
             columnLabels.Add(period);
         }
         columnKeys.AddRange(new[] { "basePeriod", "comparePeriod", "varianceAmount", "variancePercent", "trend" });
-        columnLabels.AddRange(new[] { "基准月", "对比月", "环比差额", "环比%", "涨跌" });
+        columnLabels.AddRange(new[] { "基准有效起始日", "对比有效起始日", "环比差额", "环比%", "涨跌" });
         var exportRows = built.OrderedRows.Select(row =>
         {
             var dict = new Dictionary<string, object?>(StringComparer.Ordinal)
@@ -278,6 +286,6 @@ public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendS
             columnKeys,
             columnLabels,
             sheetName ?? "销售价格推移清单",
-            fileName ?? $"销售价格推移清单_{query.PlantCode}.xlsx");
+            fileName ?? TaktNamingHelper.PlantPrefixedTrendExportBase(query.PlantCode, "销售价格推移"));
     }
 }

@@ -1,7 +1,7 @@
 /**
  * 数据看板统计模块默认配置与存储 key（与工作台一致的可添加模块方式）
  */
-import type { DataBoardModuleItem, DataBoardModuleMeta } from '@/types/dashboard/data-board'
+import type { DataBoardModuleItem, DataBoardModuleMeta } from '@/types/dashboard/dataBoard.types'
 
 export const DATA_BOARD_STORAGE_KEY = 'takt-data-board-modules'
 

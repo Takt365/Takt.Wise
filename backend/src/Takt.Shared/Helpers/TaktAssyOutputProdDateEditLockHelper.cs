@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Helpers
 // 文件名称：TaktAssyOutputProdDateEditLockHelper.cs
 // 功能描述：组立日报生产日期编辑锁定（生产日期所属月份的下月 cutoff 日之后不可新增/修改）

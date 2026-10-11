@@ -1,5 +1,5 @@
 ﻿// ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcAttachment.cs
 // 功能描述：设变附件实体（技术阶段一 ②）；按设变ID+文件编码+行号唯一；技术维护联络/EPP/FPP 等文档，与主表、明细一并保存后触发通知自动生成

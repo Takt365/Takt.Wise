@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Routine.Announcement
 // 文件名称：TaktAnnouncementService.cs
-// 创建时间：2026-08-24
+// 创建时间：2026-09-11
 // 创建人：Takt365(Cursor AI)
 // 功能描述：公告通知应用服务实现
 // 
@@ -31,27 +31,23 @@ public class TaktAnnouncementService : TaktServiceBase, ITaktAnnouncementService
 {
     private readonly ITaktApprovalRepository<TaktAnnouncement> _announcementRepository;
     private readonly ITaktUniqueValidator _uniqueValidator;
-    private readonly ITaktNumberingGenerator _numberingGenerator;
 
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="announcementRepository">公告通知仓储</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
-    /// <param name="numberingGenerator">编码生成器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktAnnouncementService(
         ITaktApprovalRepository<TaktAnnouncement> announcementRepository,
         ITaktUniqueValidator uniqueValidator,
-        ITaktNumberingGenerator numberingGenerator,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
     {
         _announcementRepository = announcementRepository;
         _uniqueValidator = uniqueValidator;
-        _numberingGenerator = numberingGenerator;
     }
 
     /// <summary>
@@ -124,19 +120,6 @@ public class TaktAnnouncementService : TaktServiceBase, ITaktAnnouncementService
     public async Task<TaktAnnouncementDto> CreateAnnouncementAsync(TaktAnnouncementCreateDto dto)
     {
         var entity = dto.Adapt<TaktAnnouncement>();
-        if (!string.IsNullOrWhiteSpace(dto.NumberingRuleCode))
-        {
-            var generated = await _numberingGenerator.GenerateNextAsync(dto.NumberingRuleCode.Trim());
-            if (string.IsNullOrWhiteSpace(generated.BusinessCode))
-            {
-                throw new TaktBusinessException("业务编码生成失败");
-            }
-            entity.AnnouncementCode = generated.BusinessCode;
-        }
-        else if (string.IsNullOrWhiteSpace(entity.AnnouncementCode))
-        {
-            throw new TaktBusinessException("公告编码不能为空");
-        }
         var isUnique_ix_announcement_code_unique = await _uniqueValidator.IsUniqueAsync(
             _announcementRepository,
             x => x.AnnouncementCode == entity.AnnouncementCode);
@@ -616,39 +599,5 @@ public class TaktAnnouncementService : TaktServiceBase, ITaktAnnouncementService
             return true;
         }
         return false;
-    }
-
-    // ========================================
-    // 扩展方法（保留）
-    // ========================================
-
-    /// <summary>
-    /// 获取公告通知件数统计（数据看板；按 PublishTime）
-    /// </summary>
-    /// <param name="queryDto">查询 DTO</param>
-    /// <returns>公告通知件数统计</returns>
-    public async Task<TaktAnnouncementStatDto> GetAnnouncementStatAsync(TaktAnnouncementStatQueryDto queryDto)
-    {
-        ArgumentNullException.ThrowIfNull(queryDto);
-        EnsureThreeLayerContext();
-        var (start, end, statMonth) = TaktStatMonthRangeHelper.ResolveStatMonthRange(
-            queryDto.PublishTimeStart,
-            queryDto.PublishTimeEnd,
-            queryDto.StatMonth,
-            defaultMonthsAgo: 0);
-        var tenantCode = CurrentTenantCode;
-        var companyCode = CurrentCompanyCode;
-        Expression<Func<TaktAnnouncement, bool>> inMonth = x =>
-            x.TenantCode == tenantCode
-            && x.CompanyCode == companyCode
-            && x.PublishTime != null
-            && x.PublishTime >= start
-            && x.PublishTime <= end;
-        var monthAnnouncementCount = await _announcementRepository.CountAsync(inMonth);
-        return new TaktAnnouncementStatDto
-        {
-            StatMonth = statMonth,
-            MonthAnnouncementCount = monthAnnouncementCount,
-        };
     }
 }

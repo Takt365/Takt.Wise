@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/mrp/material-requirements-planning -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：物料需求计划 MRP 头表管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -154,21 +154,20 @@
  * 物料需求计划 MRP 头表管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/mrp/material-requirements-planning
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import MaterialRequirementsPlanningForm from './components/material-requirements-planning-form.vue'
-import MaterialRequirementsPlanningItemPanel from './components/material-requirements-planning-item-panel.vue'
-import { provideMaterialRequirementsPlanningMasterContext, type MaterialRequirementsPlanningRowRecord } from './composables/use-material-requirements-planning-master-context'
-import { getMaterialRequirementsPlanningList, getMaterialRequirementsPlanningById, createMaterialRequirementsPlanning, updateMaterialRequirementsPlanning, deleteMaterialRequirementsPlanningById, deleteMaterialRequirementsPlanningBatch, getMaterialRequirementsPlanningTemplate, importMaterialRequirementsPlanning, exportMaterialRequirementsPlanning, updateMaterialRequirementsPlanningStatus } from '@/api/logistics/manufacturing/mrp/material-requirements-planning'
-import type { MaterialRequirementsPlanning, MaterialRequirementsPlanningQuery } from '@/types/logistics/manufacturing/mrp/material-requirements-planning'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import MaterialRequirementsPlanningForm from './components/MaterialRequirementsPlanningForm.vue'
+import MaterialRequirementsPlanningItemPanel from './components/MaterialRequirementsPlanningItemPanel.vue'
+import { provideMaterialRequirementsPlanningMasterContext, type MaterialRequirementsPlanningRowRecord } from './composables/useMaterialRequirementsPlanningMasterContext'
+import { getMaterialRequirementsPlanningList, getMaterialRequirementsPlanningById, createMaterialRequirementsPlanning, updateMaterialRequirementsPlanning, deleteMaterialRequirementsPlanningById, deleteMaterialRequirementsPlanningBatch, getMaterialRequirementsPlanningTemplate, importMaterialRequirementsPlanning, exportMaterialRequirementsPlanning, updateMaterialRequirementsPlanningStatus } from '@/api/logistics/manufacturing/mrp/materialRequirementsPlanning.api'
+import type { MaterialRequirementsPlanning, MaterialRequirementsPlanningQuery } from '@/types/logistics/manufacturing/mrp/materialRequirementsPlanning.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
 
 import {
@@ -177,7 +176,7 @@ import {
   MATERIALREQUIREMENTSPLANNING_QUERY_STRING_FIELDS,
   MATERIALREQUIREMENTSPLANNING_QUERY_FIELDS,
   MATERIALREQUIREMENTSPLANNING_SELF_I18N_KEY,
-} from './composables/use-material-requirements-planning-i18n'
+} from './composables/useMaterialRequirementsPlanningI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useMaterialRequirementsPlanningI18n()
@@ -315,7 +314,6 @@ onMounted(async () => {
   loadData()
 })
 
-
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
 
@@ -451,13 +449,13 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getMaterialRequirementsPlanningField(record, 'planPeriodEnd') ?? ''
   },
   {
-    title: pi.label('plannerId'),
-    dataIndex: 'plannerId',
-    key: 'plannerId',
+    title: pi.label('plannerGroupCode'),
+    dataIndex: 'plannerGroupCode',
+    key: 'plannerGroupCode',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getMaterialRequirementsPlanningField(record, 'plannerId') ?? ''
+    customRender: ({ record }: { record: any }) => getMaterialRequirementsPlanningField(record, 'plannerGroupCode') ?? ''
   },
   {
     title: pi.label('planBy'),
@@ -564,8 +562,6 @@ const getMaterialRequirementsPlanningId = (record: MaterialRequirementsPlanningR
  * @param field 字段名
  */
 const getMaterialRequirementsPlanningField = (record: any, field: string): any => record?.[field]
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

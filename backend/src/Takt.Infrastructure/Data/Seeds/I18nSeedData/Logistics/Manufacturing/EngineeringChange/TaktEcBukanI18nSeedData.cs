@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcBukanI18nSeedData.cs
 // 创建时间：2026-08-26
@@ -91,13 +91,13 @@ public class TaktEcBukanI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecbukan._self", "zh-HK", "设变部管课信息_hk", "实体名称"),
 
             // entity.ecbukan.ecdetailid
-            new TranslationSeedItem("entity.ecbukan.ecdetailid", "en-US", "设变明细ID_us", "设变明细 ID（TaktEcDetail 主键；主表多对一导航 EcDetail；与 EcRootMaterialCode、EcNewMaterialCode、EcNewWarehouse 组成唯一键）"),
+            new TranslationSeedItem("entity.ecbukan.ecdetailid", "en-US", "设变明细ID_us", "设变明细 ID（TaktEcDetail 主键；主表多对一导航 EcDetail；去重组代表明细；执行行按设变单号+机种编码唯一）"),
             // entity.ecbukan.ecdetailid
-            new TranslationSeedItem("entity.ecbukan.ecdetailid", "ja-JP", "设变明细ID_jp", "设变明细 ID（TaktEcDetail 主键；主表多对一导航 EcDetail；与 EcRootMaterialCode、EcNewMaterialCode、EcNewWarehouse 组成唯一键）"),
+            new TranslationSeedItem("entity.ecbukan.ecdetailid", "ja-JP", "设变明细ID_jp", "设变明细 ID（TaktEcDetail 主键；主表多对一导航 EcDetail；去重组代表明细；执行行按设变单号+机种编码唯一）"),
             // entity.ecbukan.ecdetailid
-            new TranslationSeedItem("entity.ecbukan.ecdetailid", "zh-CN", "设变明细ID", "设变明细 ID（TaktEcDetail 主键；主表多对一导航 EcDetail；与 EcRootMaterialCode、EcNewMaterialCode、EcNewWarehouse 组成唯一键）"),
+            new TranslationSeedItem("entity.ecbukan.ecdetailid", "zh-CN", "设变明细ID", "设变明细 ID（TaktEcDetail 主键；主表多对一导航 EcDetail；去重组代表明细；执行行按设变单号+机种编码唯一）"),
             // entity.ecbukan.ecdetailid
-            new TranslationSeedItem("entity.ecbukan.ecdetailid", "zh-HK", "设变明细ID_hk", "设变明细 ID（TaktEcDetail 主键；主表多对一导航 EcDetail；与 EcRootMaterialCode、EcNewMaterialCode、EcNewWarehouse 组成唯一键）"),
+            new TranslationSeedItem("entity.ecbukan.ecdetailid", "zh-HK", "设变明细ID_hk", "设变明细 ID（TaktEcDetail 主键；主表多对一导航 EcDetail；去重组代表明细；执行行按设变单号+机种编码唯一）"),
 
             // entity.ecbukan.eccode
             new TranslationSeedItem("entity.ecbukan.eccode", "en-US", "设变单号_us", "设变单号（冗余，便于查询）"),
@@ -126,23 +126,14 @@ public class TaktEcBukanI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecbukan.ecmodelcode
             new TranslationSeedItem("entity.ecbukan.ecmodelcode", "zh-HK", "機種編碼_hk", "机种编码（冗余：来自 TaktEcDetail.EcModelCode）"),
 
-            // entity.ecbukan.ecrootmaterialcode
-            new TranslationSeedItem("entity.ecbukan.ecrootmaterialcode", "en-US", "根物料编码_us", "根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）"),
-            // entity.ecbukan.ecrootmaterialcode
-            new TranslationSeedItem("entity.ecbukan.ecrootmaterialcode", "ja-JP", "根物料编码_jp", "根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）"),
-            // entity.ecbukan.ecrootmaterialcode
-            new TranslationSeedItem("entity.ecbukan.ecrootmaterialcode", "zh-CN", "根物料编码", "根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）"),
-            // entity.ecbukan.ecrootmaterialcode
-            new TranslationSeedItem("entity.ecbukan.ecrootmaterialcode", "zh-HK", "根物料编码_hk", "根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）"),
-
-            // entity.ecbukan.ecrootmaterialdescription
-            new TranslationSeedItem("entity.ecbukan.ecrootmaterialdescription", "en-US", "根物料描述_us", "根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）"),
-            // entity.ecbukan.ecrootmaterialdescription
-            new TranslationSeedItem("entity.ecbukan.ecrootmaterialdescription", "ja-JP", "根物料描述_jp", "根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）"),
-            // entity.ecbukan.ecrootmaterialdescription
-            new TranslationSeedItem("entity.ecbukan.ecrootmaterialdescription", "zh-CN", "根物料描述", "根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）"),
-            // entity.ecbukan.ecrootmaterialdescription
-            new TranslationSeedItem("entity.ecbukan.ecrootmaterialdescription", "zh-HK", "根物料描述_hk", "根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）"),
+            // entity.ecbukan.ecrootmaterialcodegroup
+            new TranslationSeedItem("entity.ecbukan.ecrootmaterialcodegroup", "en-US", "根物料编码组_us", "根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔；ntext）"),
+            // entity.ecbukan.ecrootmaterialcodegroup
+            new TranslationSeedItem("entity.ecbukan.ecrootmaterialcodegroup", "ja-JP", "根物料编码组_jp", "根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔；ntext）"),
+            // entity.ecbukan.ecrootmaterialcodegroup
+            new TranslationSeedItem("entity.ecbukan.ecrootmaterialcodegroup", "zh-CN", "根物料编码组", "根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔；ntext）"),
+            // entity.ecbukan.ecrootmaterialcodegroup
+            new TranslationSeedItem("entity.ecbukan.ecrootmaterialcodegroup", "zh-HK", "根物料编码组_hk", "根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔；ntext）"),
 
             // entity.ecbukan.ecparentmaterialcode
             new TranslationSeedItem("entity.ecbukan.ecparentmaterialcode", "en-US", "上阶物料编码_us", "上阶物料编码（冗余：来自 TaktEcDetail.EcParentMaterialCode）"),

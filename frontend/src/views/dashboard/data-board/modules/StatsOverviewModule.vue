@@ -1,6 +1,6 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
-<!-- 命名空间：frontend/src/views/dashboard/data-board/modules -->
+<!-- 项目名称：节拍智控·TaktWise -->
+<!-- 命名空间：frontend/src/views/dashboard/dataBoard.types/modules -->
 <!-- 文件名称：StatsOverviewModule.vue -->
 <!-- 功能描述：数据看板统计概览（著名色 Popover：待办/消息/会议/通知/帮助台/在线） -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
@@ -38,20 +38,19 @@
 /**
  * 统计概览：六项指标著名色 Popover 预览 + 查看全部跳转
  */
-import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import StatsMetricGrid from '../components/stats-metric-grid.vue'
-import type { StatsMetricItem } from '../components/stats-metric-grid.vue'
-import StatsMetricPopoverPanel from '../components/stats-metric-popover-panel.vue'
-import { usePermissionStore } from '@/stores/identity/permission'
-import type { MessageStatistics } from '@/types/foundation/message'
-import type { OnlineDashboardStatistics } from '@/types/foundation/online'
+import StatsMetricGrid from '../components/StatsMetricGrid.vue'
+import type { StatsMetricItem } from '../components/StatsMetricGrid.vue'
+import StatsMetricPopoverPanel from '../components/StatsMetricPopoverPanel.vue'
+import { usePermissionStore } from '@/stores/identity/usePermissionStore'
+import type { MessageStatistics } from '@/types/foundation/message.types'
+import type { OnlineDashboardStatistics } from '@/types/foundation/online.types'
 import {
   loadOverviewPopoverPreview,
   type StatsOverviewPopoverPreview,
-} from '../utils/stats-overview-popover'
-import { enrichDashboardMetricItems } from '../utils/stats-metric-dashboard'
+} from '../utils/statsOverviewPopover'
+import { enrichDashboardMetricItems } from '../utils/statsMetricDashboard'
 import {
   DASHBOARD_STATS_API,
   DASHBOARD_STATS_PERMISSION,
@@ -60,7 +59,7 @@ import {
   fetchDashboardMetricIfPermitted,
   fetchDashboardPagedTotal,
   scheduleDashboardLoad,
-} from '../utils/stats-query'
+} from '../utils/statsQuery'
 
 const router = useRouter()
 const { t } = useI18n()

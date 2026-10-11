@@ -1,6 +1,6 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
-// 命名空间：frontend/src/locales/code/database/database-backup
+// 项目名称：节拍智控·TaktWise
+// 命名空间：frontend/src/locales/code/database/databaseBackup.types
 // 文件名称：zh-CN.ts
 // 创建时间：2026-07-19
 // 创建人：Takt365(Cursor AI)

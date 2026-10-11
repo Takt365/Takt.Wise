@@ -200,11 +200,7 @@
 
 </template>
 
-
-
 <script setup lang="ts">
-
-import { computed, ref } from 'vue'
 
 import { useI18n } from 'vue-i18n'
 
@@ -226,17 +222,13 @@ import {
 
 import type { MenuInfo } from 'ant-design-vue/es/menu/src/interface'
 
-import type { DataBoardModuleItem } from '@/types/dashboard/data-board'
+import type { DataBoardModuleItem } from '@/types/dashboard/dataBoard.types'
 
 import { DATA_BOARD_AVAILABLE_MODULES } from '../config'
-
-
 
 /** 卡片头按钮间距（px） */
 
 const HEAD_CONTROL_GAP = 4 as const
-
-
 
 const props = defineProps<{
 
@@ -248,8 +240,6 @@ const props = defineProps<{
 
 }>()
 
-
-
 const emit = defineEmits<{
 
   remove: []
@@ -258,11 +248,7 @@ const emit = defineEmits<{
 
 }>()
 
-
-
 const { t } = useI18n()
-
-
 
 const displayTitle = computed(() => {
 
@@ -272,11 +258,7 @@ const displayTitle = computed(() => {
 
 })
 
-
-
 const dragTooltip = computed(() => t('dashboard.data-board.page.dragtoreorder', { title: displayTitle.value }))
-
-
 
 const moduleSpan = computed(() => props.module.span ?? 24)
 
@@ -292,8 +274,6 @@ const layoutTooltip = computed(() => `${t('dashboard.data-board.page.layoutlabel
 
 const showLayoutSwitch = true
 
-
-
 /** 鼠标悬停卡片 */
 
 const isCardHovered = computed(() => props.hovered === true)
@@ -305,8 +285,6 @@ const isLayoutDropdownOpen = ref(false)
 /** 是否显示头部操作按钮 */
 
 const showHeadActions = computed(() => isCardHovered.value || isLayoutDropdownOpen.value)
-
-
 
 /**
 
@@ -322,8 +300,6 @@ function onLayoutDropdownOpenChange(open: boolean): void {
 
 }
 
-
-
 function onLayoutMenuClick(info: MenuInfo) {
 
   const key = String(info.key)
@@ -333,8 +309,6 @@ function onLayoutMenuClick(info: MenuInfo) {
   if (span !== moduleSpan.value) emit('change-span', props.module.id, span)
 
 }
-
-
 
 const bodyStyle = computed(() => ({
 
@@ -350,8 +324,6 @@ const bodyStyle = computed(() => ({
 
 }))
 
-
-
 function onRemove() {
 
   emit('remove')
@@ -359,5 +331,4 @@ function onRemove() {
 }
 
 </script>
-
 

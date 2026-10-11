@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Quality.Cost
 // 文件名称：TaktQualityIncidentDtos.cs
 // 创建时间：2026-08-22
@@ -59,6 +59,16 @@ public class TaktQualityIncidentDto : TaktCompanyDtoBase
     /// 事故内容(废弃原因)
     /// </summary>
     public string? IncidentReason { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 废弃组编码（选项 TaktCostGroups/options?costGroupCategory=2；DictValue=CostGroupCode）
+    /// </summary>
+    public string? ScrapGroupCode { get; set; }
+
+    /// <summary>
+    /// 废弃组名称（冗余：按 ScrapGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ScrapGroupName { get; set; }
 
     /// <summary>
     /// 废弃总数(自动计算 = 各子表废弃数量合计)
@@ -142,6 +152,16 @@ public class TaktQualityIncidentQueryDto : TaktPagedQuery
     /// 事故内容(废弃原因)
     /// </summary>
     public string? IncidentReason { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 废弃组编码（选项 TaktCostGroups/options?costGroupCategory=2；DictValue=CostGroupCode）
+    /// </summary>
+    public string? ScrapGroupCode { get; set; }
+
+    /// <summary>
+    /// 废弃组名称（冗余：按 ScrapGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ScrapGroupName { get; set; }
 
     /// <summary>
     /// 废弃总数(自动计算 = 各子表废弃数量合计)
@@ -234,6 +254,16 @@ public class TaktQualityIncidentCreateDto
     /// 事故内容(废弃原因)
     /// </summary>
     public string? IncidentReason { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 废弃组编码（选项 TaktCostGroups/options?costGroupCategory=2；DictValue=CostGroupCode）
+    /// </summary>
+    public string? ScrapGroupCode { get; set; }
+
+    /// <summary>
+    /// 废弃组名称（冗余：按 ScrapGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ScrapGroupName { get; set; }
 
     /// <summary>
     /// 废弃总数(自动计算 = 各子表废弃数量合计)
@@ -348,6 +378,16 @@ public class TaktQualityIncidentTemplateDto
     public string? IncidentReason { get; set; } = string.Empty;
 
     /// <summary>
+    /// 废弃组编码（选项 TaktCostGroups/options?costGroupCategory=2；DictValue=CostGroupCode）
+    /// </summary>
+    public string? ScrapGroupCode { get; set; }
+
+    /// <summary>
+    /// 废弃组名称（冗余：按 ScrapGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ScrapGroupName { get; set; }
+
+    /// <summary>
     /// 废弃总数(自动计算 = 各子表废弃数量合计)
     /// </summary>
     public decimal? TotalScrapQuantity { get; set; }
@@ -428,6 +468,16 @@ public class TaktQualityIncidentImportDto
     /// 事故内容(废弃原因)
     /// </summary>
     public string? IncidentReason { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 废弃组编码（选项 TaktCostGroups/options?costGroupCategory=2；DictValue=CostGroupCode）
+    /// </summary>
+    public string? ScrapGroupCode { get; set; }
+
+    /// <summary>
+    /// 废弃组名称（冗余：按 ScrapGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ScrapGroupName { get; set; }
 
     /// <summary>
     /// 废弃总数(自动计算 = 各子表废弃数量合计)
@@ -516,6 +566,16 @@ public class TaktQualityIncidentExportDto
     /// 事故内容(废弃原因)
     /// </summary>
     public string? IncidentReason { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 废弃组编码（选项 TaktCostGroups/options?costGroupCategory=2；DictValue=CostGroupCode）
+    /// </summary>
+    public string? ScrapGroupCode { get; set; }
+
+    /// <summary>
+    /// 废弃组名称（冗余：按 ScrapGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    public string? ScrapGroupName { get; set; }
 
     /// <summary>
     /// 废弃总数(自动计算 = 各子表废弃数量合计)

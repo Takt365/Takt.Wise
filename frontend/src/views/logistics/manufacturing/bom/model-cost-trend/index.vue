@@ -1,19 +1,18 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/bom/model-cost-trend -->
 <!-- 文件名称：index.vue -->
-<!-- 功能描述：机种成本推移（材料成本；机种/物料多选可空） -->
+<!-- 功能描述：机种成本推移（工厂、期间、物料类型、机种可选；一行一个成品） -->
 <!-- 版权信息：Copyright (c) 2026 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->
 
 <template>
   <div class="flex h-full min-h-0 min-w-0 w-full flex-col overflow-hidden p-4">
-    <model-cost-trend-query-form
+    <ModelCostTrendQueryForm
       v-model:plant-code="queryPlantCode"
       v-model:material-type="queryMaterialType"
-      v-model:model-codes="queryModelCodes"
-      v-model:component-codes="queryComponentCodes"
+      v-model:model-code="queryModelCode"
       v-model:period-range="periodRange"
       :loading="panelLoading"
       @search="handleSearch"
@@ -33,19 +32,15 @@
       :export-disabled="!canExport"
       :export-loading="exportLoading"
       :refresh-loading="panelLoading"
-      :right-actions="toolbarRightActions"
       export-permission="logistics:manufacturing:bom:model:cost:trend:export"
       @export="handleExport"
       @refresh="handleRefresh"
     />
-    <model-cost-trend-panel
+    <ModelCostTrendPanel
       ref="panelRef"
       v-model:loading="panelLoading"
       v-model:has-rows="hasRows"
       class="min-h-0 min-w-0 flex-1"
-      :trend-filter="trendFilter"
-      :sort-by="sortBy"
-      merge-mode="summary"
     />
   </div>
 </template>
@@ -56,35 +51,27 @@
  */
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import type { ToolBarAction } from '@/components/business/takt-tools-bar/index.vue'
-import {
-  RiArrowDownLine,
-  RiArrowUpDownLine,
-  RiArrowUpLine,
-  RiFundsLine,
-  RiLineChartLine,
-  RiListCheck,
-  RiSortNumberAsc,
-  RiSortNumberDesc,
-} from '@remixicon/vue'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { getBomCostOptionPlantOptions } from '@/api/logistics/manufacturing/bom/cost-option'
-import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/use-company-related-plant'
-import { useTenantStore } from '@/stores/identity/tenant'
-import ModelCostTrendQueryForm from './components/model-cost-trend-query-form.vue'
-import { provideBomMaterialCostAnalysisMasterContext } from '@/views/logistics/manufacturing/bom/material-cost-trend/composables/use-material-cost-analysis-master-context'
-import { buildDefaultCostingPeriodRange } from '@/views/logistics/manufacturing/bom/material-cost/utils/bom-material-cost-period'
-import ModelCostTrendPanel from './components/model-cost-trend-panel.vue'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { getBomCostOptionPlantOptions } from '@/api/logistics/manufacturing/bom/costOption.api'
+import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/useCompanyRelatedPlant'
+import { useTenantStore } from '@/stores/identity/useTenantStore'
+import ModelCostTrendQueryForm from './components/ModelCostTrendQueryForm.vue'
+import { provideBomMaterialCostAnalysisMasterContext } from '@/views/logistics/manufacturing/bom/material-cost-trend/composables/useMaterialCostAnalysisMasterContext'
+import { buildDefaultCostingPeriodRange } from '@/views/logistics/manufacturing/bom/material-cost/utils/bomMaterialCostPeriod'
+import ModelCostTrendPanel from './components/ModelCostTrendPanel.vue'
+import { useAnalysisPeriodRangeLimit } from '@/composables/useAnalysisPeriodRangeLimit'
 
 const { t } = useI18n()
+
+/** 期间最多 12 个月（查询前校验） */
+const { assertPeriodRangeOk } = useAnalysisPeriodRangeLimit()
 /** 静态 locales 前缀 */
 const localePrefix = 'logistics.manufacturing.bom.model-cost-trend.page'
 const tenantStore = useTenantStore()
 const {
   queryPlantCode,
   queryMaterialType,
-  queryModelCodes,
-  queryComponentCodes,
+  queryModelCode,
   periodRange,
 } = provideBomMaterialCostAnalysisMasterContext()
 
@@ -94,71 +81,9 @@ const panelLoading = ref(false)
 const exportLoading = ref(false)
 /** 是否有数据行 */
 const hasRows = ref(false)
-/** 涨跌筛选 */
-const trendFilter = ref('')
-/** 全量排序（分页前） */
-const sortBy = ref('productCountDesc')
-/** 右侧：全量排序 + 涨跌筛选 */
-const toolbarRightActions = computed<ToolBarAction[]>(() => [
-  {
-    key: 'sort-product-count-desc',
-    icon: RiSortNumberDesc,
-    tooltip: t(`${localePrefix}.sort.productCountDesc`),
-    active: sortBy.value === 'productCountDesc',
-    onClick: () => setSortBy('productCountDesc'),
-  },
-  {
-    key: 'sort-product-count-asc',
-    icon: RiSortNumberAsc,
-    tooltip: t(`${localePrefix}.sort.productCountAsc`),
-    active: sortBy.value === 'productCountAsc',
-    onClick: () => setSortBy('productCountAsc'),
-  },
-  {
-    key: 'sort-trend',
-    icon: RiLineChartLine,
-    tooltip: t(`${localePrefix}.sort.trend`),
-    active: sortBy.value === 'trend',
-    onClick: () => setSortBy('trend'),
-  },
-  {
-    key: 'sort-variance-desc',
-    icon: RiFundsLine,
-    tooltip: t(`${localePrefix}.sort.varianceDesc`),
-    active: sortBy.value === 'varianceDesc',
-    onClick: () => setSortBy('varianceDesc'),
-  },
-  {
-    key: 'trend-all',
-    icon: RiListCheck,
-    tooltip: t(`${localePrefix}.filter.all`),
-    active: trendFilter.value === '',
-    onClick: () => setTrendFilter(''),
-  },
-  {
-    key: 'trend-changed',
-    icon: RiArrowUpDownLine,
-    tooltip: t(`${localePrefix}.filter.changed`),
-    active: trendFilter.value === 'changed',
-    onClick: () => setTrendFilter('changed'),
-  },
-  {
-    key: 'trend-up',
-    icon: RiArrowUpLine,
-    tooltip: t(`${localePrefix}.trend.up`),
-    active: trendFilter.value === 'up',
-    onClick: () => setTrendFilter('up'),
-  },
-  {
-    key: 'trend-down',
-    icon: RiArrowDownLine,
-    tooltip: t(`${localePrefix}.trend.down`),
-    active: trendFilter.value === 'down',
-    onClick: () => setTrendFilter('down'),
-  }])
 /** 明细面板 */
 const panelRef = ref<{
-  reload?: (trendFilterOverride?: string, sortByOverride?: string) => Promise<void>
+  reload?: () => Promise<void>
   handleExport?: () => Promise<void>
   clear?: () => void
 } | null>(null)
@@ -192,6 +117,9 @@ function validateQuery(): boolean {
     message.warning(t(`${localePrefix}.selectPeriodRequired`))
     return false
   }
+  if (!assertPeriodRangeOk(periodRange.value)) {
+    return false
+  }
   return true
 }
 
@@ -201,36 +129,6 @@ function handleSearch() {
     return
   }
   void panelRef.value?.reload?.()
-}
-
-/**
- * 涨跌筛选
- * @param value 空 / changed / up / down
- */
-function setTrendFilter(value: string) {
-  if (trendFilter.value === value) {
-    return
-  }
-  trendFilter.value = value
-  if (!canQuery.value) {
-    return
-  }
-  void panelRef.value?.reload?.(value, sortBy.value)
-}
-
-/**
- * 全量排序（分页前作用于整表）
- * @param value productCountDesc / productCountAsc / trend
- */
-function setSortBy(value: string) {
-  if (sortBy.value === value) {
-    return
-  }
-  sortBy.value = value
-  if (!canQuery.value) {
-    return
-  }
-  void panelRef.value?.reload?.(trendFilter.value, value)
 }
 
 /** 刷新 */
@@ -266,8 +164,7 @@ async function applyDefaultPlantFromCompany(): Promise<void> {
   }
   queryPlantCode.value = matched
   queryMaterialType.value = undefined
-  queryModelCodes.value = []
-  queryComponentCodes.value = []
+  queryModelCode.value = undefined
 }
 
 /** 重置 */
@@ -275,8 +172,6 @@ async function handleReset() {
   await applyDefaultPlantFromCompany()
   queryMaterialType.value = undefined
   applyDefaultPeriodRange()
-  trendFilter.value = ''
-  sortBy.value = 'productCountDesc'
   hasRows.value = false
   panelRef.value?.clear?.()
 }

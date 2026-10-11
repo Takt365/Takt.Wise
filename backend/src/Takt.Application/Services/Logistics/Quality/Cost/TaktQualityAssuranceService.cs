@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Quality.Cost
 // 文件名称：TaktQualityAssuranceService.cs
 // 创建时间：2026-08-22
@@ -1333,7 +1333,7 @@ public class TaktQualityAssuranceService : TaktServiceBase, ITaktQualityAssuranc
                 || (x.AssuranceMonth != null && x.AssuranceMonth.Contains(keywords))
                 || (x.CustomerName1 != null && x.CustomerName1.Contains(keywords))
                 || (x.DebitNoteCode != null && x.DebitNoteCode.Contains(keywords))
-                || (x.Recorder != null && x.Recorder.Contains(keywords))
+                || (x.RecordGroupName != null && x.RecordGroupName.Contains(keywords))
                 || (x.CurrencyCode != null && x.CurrencyCode.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
@@ -1376,10 +1376,10 @@ public class TaktQualityAssuranceService : TaktServiceBase, ITaktQualityAssuranc
             exp = exp.And(x => x.DebitNoteCode != null && x.DebitNoteCode.Contains(debitNoteCode));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.Recorder))
+        if (!string.IsNullOrWhiteSpace(queryDto?.RecordGroupName))
         {
-            var recorder = queryDto.Recorder;
-            exp = exp.And(x => x.Recorder != null && x.Recorder.Contains(recorder));
+            var recorder = queryDto.RecordGroupName;
+            exp = exp.And(x => x.RecordGroupName != null && x.RecordGroupName.Contains(recorder));
         }
 
         if (queryDto?.TotalQualityCost.HasValue == true)
@@ -1460,7 +1460,7 @@ public class TaktQualityAssuranceService : TaktServiceBase, ITaktQualityAssuranc
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.Recorder))
+        if (!string.IsNullOrWhiteSpace(queryDto.RecordGroupName))
         {
             return true;
         }

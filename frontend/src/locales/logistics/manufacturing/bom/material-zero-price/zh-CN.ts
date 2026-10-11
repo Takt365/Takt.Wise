@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/manufacturing/bom/material-zero-price
 // 文件名称：zh-CN.ts
 // 创建时间：2026-08-13
@@ -30,10 +30,10 @@ export default {
     costSum: '计算成本',
     costRecalculate: '重算成本',
     costAverage: '计算平均成本',
-    purchasePriceBackfill: '回填采购价',
-    purchasePriceBackfillSuccess:
+    purchaseInfoRecordBackfill: '回填采购价',
+    purchaseInfoRecordBackfillSuccess:
       '{month} 回填采购价完成：扫描 {scanned} 行，更新 {updated}，无价格 {skipped}，未变化 {unchanged}',
-    purchasePriceBackfillFailed: '回填采购价失败',
+    purchaseInfoRecordBackfillFailed: '回填采购价失败',
     movingPriceBackfill: '回填移动价格',
     movingPriceBackfillBatch: '批量回填移动价格',
     movingPriceBackfillRow: '回填移动价格',
@@ -84,5 +84,12 @@ export default {
     pcbSectMarkSuccess:
       '{month} PCB SECT 打标完成：扫描 {scanned}，整树 {pcbSect}，新标 {updated}，已有 {unchanged}',
     pcbSectMarkFailed: 'PCB SECT 打标失败',
+    stripLeadingZeros: '去前导0',
+    stripLeadingZerosConfirmTitle: '确认去掉前导 0？',
+    stripLeadingZerosConfirmContent:
+      '将当前工厂 {plant} 的成本汇总表产品编码，以及明细表（含各年分表）的产品编码、组件编码中，纯数字且带前导 0 的值去掉前导 0。例如 000000001918610130 变为 1918610130。含字母的编码（如 0919MH8G93）不改。去掉后与已有唯一键冲突的行会跳过。',
+    stripLeadingZerosSuccess:
+      '去前导 0 完成：汇总产品 {headerProduct}，明细产品 {itemProduct}，明细组件 {itemComponent}，冲突跳过 {skipped}',
+    stripLeadingZerosFailed: '去前导 0 失败',
   },
 }

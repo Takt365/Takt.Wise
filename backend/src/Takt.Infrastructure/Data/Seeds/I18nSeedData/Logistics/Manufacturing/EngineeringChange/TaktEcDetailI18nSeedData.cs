@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcDetailI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEcDetail 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -368,6 +368,15 @@ public class TaktEcDetailI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecdetail.ecscope", "zh-CN", "实施范围", "实施范围（冗余：来自 TaktEcGijutsu.EcScope）"),
             // entity.ecdetail.ecscope
             new TranslationSeedItem("entity.ecdetail.ecscope", "zh-HK", "实施范围_hk", "实施范围（冗余：来自 TaktEcGijutsu.EcScope）"),
+
+            // entity.ecdetail.ecdeptscope
+            new TranslationSeedItem("entity.ecdetail.ecdeptscope", "en-US", "部门范围_us", "制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课的选择，执行行再按部门固定规则解析"),
+            // entity.ecdetail.ecdeptscope
+            new TranslationSeedItem("entity.ecdetail.ecdeptscope", "ja-JP", "部门范围_jp", "制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课的选择，执行行再按部门固定规则解析"),
+            // entity.ecdetail.ecdeptscope
+            new TranslationSeedItem("entity.ecdetail.ecdeptscope", "zh-CN", "部门范围", "制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课的选择，执行行再按部门固定规则解析"),
+            // entity.ecdetail.ecdeptscope
+            new TranslationSeedItem("entity.ecdetail.ecdeptscope", "zh-HK", "部门范围_hk", "制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课的选择，执行行再按部门固定规则解析"),
 
             // entity.ecdetail.ecgijutsuid
             new TranslationSeedItem("entity.ecdetail.ecgijutsuid", "en-US", "技术课主表ID_us", "技术课主表 ID（TaktEcGijutsu 主键；序列化为 string 避免 Javascript 精度问题）"),

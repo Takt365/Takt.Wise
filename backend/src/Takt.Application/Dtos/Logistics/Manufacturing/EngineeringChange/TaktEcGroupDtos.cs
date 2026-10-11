@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcGroupDtos.cs
 // 创建时间：2026-08-11
@@ -51,9 +51,9 @@ public class TaktEcGroupDto : TaktCompanyDtoBase
     public string? EcGroupDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 设变组类别（字典 logistics_manufacturing_ec_group_category；1=设变EC担当 2=SOP担当）
+    /// 设变组类别（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）
     /// </summary>
-    public int EcGroupCategory { get; set; } = 1;
+    public string EcGroupCategory { get; set; } = string.Empty;
 
     /// <summary>
     /// 联系电话
@@ -128,9 +128,9 @@ public class TaktEcGroupQueryDto : TaktPagedQuery
     public string? EcGroupDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 设变组类别（字典 logistics_manufacturing_ec_group_category；1=设变EC担当 2=SOP担当）
+    /// 设变组类别（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）
     /// </summary>
-    public int EcGroupCategory { get; set; } = 1;
+    public string EcGroupCategory { get; set; } = string.Empty;
 
     /// <summary>
     /// 联系电话
@@ -226,9 +226,9 @@ public class TaktEcGroupCreateDto
     public string? EcGroupDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 设变组类别（字典 logistics_manufacturing_ec_group_category；1=设变EC担当 2=SOP担当）
+    /// 设变组类别（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）
     /// </summary>
-    public int EcGroupCategory { get; set; } = 1;
+    public string EcGroupCategory { get; set; } = string.Empty;
 
     /// <summary>
     /// 联系电话
@@ -375,9 +375,9 @@ public class TaktEcGroupTemplateDto
     public string? EcGroupDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 设变组类别（字典 logistics_manufacturing_ec_group_category；1=设变EC担当 2=SOP担当）
+    /// 设变组类别（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）
     /// </summary>
-    public int EcGroupCategory { get; set; } = 1;
+    public string EcGroupCategory { get; set; } = string.Empty;
 
     /// <summary>
     /// 联系电话
@@ -452,9 +452,9 @@ public class TaktEcGroupImportDto
     public string? EcGroupDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 设变组类别（字典 logistics_manufacturing_ec_group_category；1=设变EC担当 2=SOP担当）
+    /// 设变组类别（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）
     /// </summary>
-    public int EcGroupCategory { get; set; } = 1;
+    public string EcGroupCategory { get; set; } = string.Empty;
 
     /// <summary>
     /// 联系电话
@@ -530,9 +530,9 @@ public class TaktEcGroupExportDto
     public string? EcGroupDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 设变组类别（字典 logistics_manufacturing_ec_group_category；1=设变EC担当 2=SOP担当）
+    /// 设变组类别（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）
     /// </summary>
-    public int EcGroupCategory { get; set; } = 1;
+    public string EcGroupCategory { get; set; } = string.Empty;
 
     /// <summary>
     /// 联系电话

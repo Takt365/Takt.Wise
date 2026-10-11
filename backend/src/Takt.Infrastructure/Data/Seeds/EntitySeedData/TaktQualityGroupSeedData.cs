@@ -1,10 +1,10 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.EntitySeedData
 // 文件名称：TaktQualityGroupSeedData.cs
 // 创建时间：2026-07-08
 // 创建人：Takt365(Cursor AI)
-// 功能描述：质量组主数据种子（IQC/QA/IPQC 各类别各 01/02 演示目录；幂等创建或更新）
+// 功能描述：质量组主数据种子（IQC组/QA组/IPQC组 各类别各 01/02 演示目录；责任组、处理组为字典类别；幂等创建或更新）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -22,7 +22,7 @@ using Takt.Shared.Options;
 namespace Takt.Infrastructure.Data.Seeds.EntitySeedData;
 
 /// <summary>
-/// 质量组主数据种子（按检查类别 IQC/QA/IPQC 分别写入；编码为工厂首字母+01/02）
+/// 质量组主数据种子（IQC组、QA组、IPQC组 各写入 01/02；责任组、处理组见字典 logistics_quality_group_category）
 /// </summary>
 public class TaktQualityGroupSeedData : ITaktSeedDataCoordinator
 {

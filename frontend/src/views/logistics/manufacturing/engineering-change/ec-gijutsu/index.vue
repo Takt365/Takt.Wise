@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/ec-gijutsu -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：设变管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -71,6 +71,9 @@
         </template>
         <template v-else-if="column.key === 'ecScope'">
           <TaktDictTag dict-type="logistics_manufacturing_ec_scope_category" :value="getEcField(record, 'ecScope')" />
+        </template>
+        <template v-else-if="column.key === 'ecDeptScope'">
+          <TaktDictTag dict-type="logistics_manufacturing_ec_dept_scope_category" :value="getEcField(record, 'ecDeptScope')" />
         </template>
         <template v-else-if="column.key === 'ecStatus'">
           <TaktDictTag dict-type="logistics_manufacturing_ec_gijutsu_status" :value="getEcField(record, 'ecStatus')" />
@@ -193,6 +196,7 @@
         <TaktSelect
           v-model:value="advancedQueryForm.ecLeader"
           api-url="TaktEcGroups/options"
+          :api-params="{ ecGroupCategory: 'D0710' }"
           :placeholder="pi.queryPh('ecLeader', 'select')"
           allow-clear
         />
@@ -213,6 +217,17 @@
           v-model:value="advancedQueryForm.ecScope"
           dict-type="logistics_manufacturing_ec_scope_category"
           :placeholder="pi.queryPh('ecScope', 'select')"
+          allow-clear
+          class="w-full"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('ecDeptScope')">
+      <a-form-item :label="pi.queryLabel('ecDeptScope')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.ecDeptScope"
+          dict-type="logistics_manufacturing_ec_dept_scope_category"
+          :placeholder="pi.queryPh('ecDeptScope', 'select')"
           allow-clear
           class="w-full"
         />
@@ -371,32 +386,31 @@
  * 设变管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/engineering-change/ec-gijutsu
  */
-import { ref, computed, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import EcForm from './components/ec-form.vue'
-import EcSubPanels from './components/ec-sub-panels.vue'
-import SourceEcInput from './components/source-ec-input.vue'
-import { provideEcMasterContext } from './composables/use-ec-master-context'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import EcForm from './components/EcForm.vue'
+import EcSubPanels from './components/EcSubPanels.vue'
+import SourceEcInput from './components/SourceEcInput.vue'
+import { provideEcMasterContext } from './composables/useEcMasterContext'
 import {
   useEcGijutsuI18n,
   ECGIJUTSU_QUERY_STRING_FIELDS,
   ECGIJUTSU_QUERY_FIELDS,
   ECGIJUTSU_SELF_I18N_KEY,
-} from './composables/use-ec-gijutsu-i18n'
-import { getEcGijutsuList, getEcGijutsuById, createEcGijutsu, updateEcGijutsu, getEcGijutsuTemplate, importEcGijutsu, exportEcGijutsu, updateEcGijutsuStatus } from '@/api/logistics/manufacturing/engineering-change/ec-gijutsu'
-import { getEcGroupOptions } from '@/api/logistics/manufacturing/engineering-change/ec-group'
-import type { EcGijutsu, EcGijutsuFormData, EcGijutsuQuery } from '@/types/logistics/manufacturing/engineering-change/ec-gijutsu'
+} from './composables/useEcGijutsuI18n'
+import { getEcGijutsuList, getEcGijutsuById, createEcGijutsu, updateEcGijutsu, getEcGijutsuTemplate, importEcGijutsu, exportEcGijutsu, updateEcGijutsuStatus } from '@/api/logistics/manufacturing/engineering-change/ecGijutsu.api'
+import { getEcGroupOptions } from '@/api/logistics/manufacturing/engineering-change/ecGroup.api'
+import type { EcGijutsu, EcGijutsuFormData, EcGijutsuQuery } from '@/types/logistics/manufacturing/engineering-change/ecGijutsu.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
 import {
   EC_GIJUTSU_TABLE_NAME,
   useEcGijutsuPersistSignalR,
-} from '@/composables/use-ec-gijutsu-persist-signalr'
+} from '@/composables/useEcGijutsuPersistSignalr'
 import { RiEditLine, RiQuestionLine } from '@remixicon/vue'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
@@ -461,6 +475,7 @@ function createEmptyAdvancedQueryForm() {
     changeStatus: undefined as number | undefined,
     ecLossAmount: undefined as number | undefined,
     ecScope: undefined as number | undefined,
+    ecDeptScope: undefined as number | undefined,
     ecStatus: undefined as number | undefined,
   }
 }
@@ -524,6 +539,9 @@ function buildListQuery(overrides?: Partial<EcGijutsuQuery>): EcGijutsuQuery {
   }
   if (form.ecScope !== undefined && form.ecScope !== null) {
     query.ecScope = form.ecScope
+  }
+  if (form.ecDeptScope !== undefined && form.ecDeptScope !== null) {
+    query.ecDeptScope = form.ecDeptScope
   }
   if (form.ecStatus !== undefined && form.ecStatus !== null) {
     query.ecStatus = form.ecStatus
@@ -680,6 +698,14 @@ const columns = computed<TableColumnsType>(() => [
     title: pi.label('ecScope'),
     dataIndex: 'ecScope',
     key: 'ecScope',
+    width: 120,
+    resizable: true,
+    ellipsis: true,
+  },
+  {
+    title: pi.label('ecDeptScope'),
+    dataIndex: 'ecDeptScope',
+    key: 'ecDeptScope',
     width: 120,
     resizable: true,
     ellipsis: true,

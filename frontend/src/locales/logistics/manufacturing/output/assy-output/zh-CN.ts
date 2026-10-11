@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/manufacturing/output/assy-output
 // 文件名称：zh-CN.ts
 // 功能描述：logistics/manufacturing/output/assy-output 页面静态文案；引用键 logistics.manufacturing.output.assy-output.page.*

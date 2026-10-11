@@ -29,7 +29,7 @@ alwaysApply: false
 | 6 | `i18n` | `generate-entity-i18n-seed.cjs` | ✅ | `TaktXxxI18nSeedData.cs`（`entity.*`） |
 | 7 | `dict-i18n` | `generate-dict-i18n-seed.cjs` | ✅ | `TaktDictI18nSeedData.cs`（`dict.*`） |
 | 8 | `menu-i18n` | `generate-menu-i18n-seed.cjs` | ✅ | 菜单 `menu.*` 种子 |
-| 9 | `vue` | `generate-vue-all-from-api.cjs` | — | `views/**/index.vue` + `components/*-form.vue` |
+| 9 | `vue` | `generate-vue-all-from-api.cjs` | — | `views/**/index.vue` + `components/*Form.vue` |
 
 `alwaysAll: true` → 子进程固定传 `--all`（全量重生成该步产物，与单实体 `--Holiday` 无关）。
 
@@ -115,17 +115,19 @@ alwaysApply: false
 
 **共享基础设施**：`generate-vue-common.cjs`（三脚本互不 `require`）
 
+**命名（强制）**：页面局部组件文件与模板标签一律 **PascalCase**（`UserForm.vue` / `<UserForm />`、`XxxPanel.vue`）；`index.vue` 与路由目录、CSS class 仍为 kebab；页面 composable 为 **camelCase**（`useXxxMasterContext.ts`、`useXxxI18n.ts`）。生成路径示例：`components/${entityPascal}Form.vue`、`components/${childPascal}Panel.vue`。
+
 | 能力 | 说明 |
 |------|------|
 | 单表壳 | `TaktQueryBar` → `TaktToolsBar` → `TaktSingleTable` → `TaktPagination` → `TaktModal`（`:width="formModalWidthPx"` = `useTaktContentModalWidth`；（视口 − 左侧菜单）× 80%；导入弹窗仍 `:width="600"`） |
 | 主子表 | CreateDto 含 `List<ChildCreate>` → 展开行懒加载 `getById` + 表单子表 Tab 行编辑 |
 | 表单 Tabs | 每 Tab 最多 10 字段；`tenantCode`/`companyCode` 隔离字段只读（Tenant/Company 实体除外） |
-| **`sortOrder`** | **禁止**入 `*-form.vue`（`SKIP_FORM_FIELDS`）；CreateDto 亦不含该字段（`CREATE_EXCLUDE_PROPERTY_NAMES`）；后端 Create/Import 自动回填；树拖拽改序走 Sort API |
+| **`sortOrder`** | **禁止**入 `*Form.vue`（`SKIP_FORM_FIELDS`）；CreateDto 亦不含该字段（`CREATE_EXCLUDE_PROPERTY_NAMES`）；后端 Create/Import 自动回填；树拖拽改序走 Sort API |
 | 表单控件尺寸 | **禁止** `size="small"`（`renderFormControl` / 主子表 Tab 内嵌表均须默认 `middle`）；写入前 `assertGeneratedFormNoSmallSize` 校验 |
 | 「xxx内容」字段 | 表单控件 **`takt-rich-editor`**（`inferHtmlType` ← `isRichTextContentField`：`content` / `XxxContent` 或摘要标题以「内容」结尾，或注释含「富文本 HTML」）。排除 `contentType` 等元数据、流程 `ProcessContent` / 快照、JSON 列。高级查询抽屉仍用 `a-textarea`；子表行内单元格空间不足仍用 `textarea` 编辑器 |
-| 文件名称 + 访问地址 | 表单控件 **`takt-upload-file`**（`fileName` + `accessUrl` 成对；`fileName` 上传后回填只读）。**排除** `TaktFile`（Pascal `File`）。查询抽屉仍用 `a-input`；子表行内单元格仍用 input。参照 `announcement-form.vue` |
+| 文件名称 + 访问地址 | 表单控件 **`takt-upload-file`**（`fileName` + `accessUrl` 成对；`fileName` 上传后回填只读）。**排除** `TaktFile`（Pascal `File`）。查询抽屉仍用 `a-input`；子表行内单元格仍用 input。参照 `AnnouncementForm.vue` |
 | TaktNumbering 表单编码 | 实体 XML 含「自动通过 TaktNumbering」且**无** MIME → 表单 **`numberingRule` + `numberingCode`**（`applyTaktNumberingFormMeta` / `useTaktFormNumbering`）；CreateDto 插入 `NumberingRuleCode`；Service Create 调 `ITaktNumberingGenerator.GenerateNextAsync`。含 MIME → **不**生成表单规则控件（`TaktFileUploadEngine` MIME→`FD-F*`） |
-| 只读/隔离字段 | **禁止** HTML `readonly`；须 `disabled`（`renderReadOnlyControlAttrs`，参照 `user-form.vue`） |
+| 只读/隔离字段 | **禁止** HTML `readonly`；须 `disabled`（`renderReadOnlyControlAttrs`，参照 `UserForm.vue`） |
 | 权限前缀 | 优先菜单 `ComponentPath`/`Permission`，其次控制器 `TaktPermission` |
 | `--view-path` | 覆盖 views 输出目录（相对 `src/views`） |
 

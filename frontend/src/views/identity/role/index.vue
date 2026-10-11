@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/identity/role -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：角色实体 代表系统角色管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -241,10 +241,10 @@
       </a-form-item>
       </div>
       <div v-show="isFieldVisible('ExtField')">
-      <a-form-item :label="t('common.page.entity.ExtField')">
+      <a-form-item :label="t('common.page.entity.extfield')">
         <a-input
           v-model:value="advancedQueryForm.ExtField"
-          :placeholder="t('common.page.form.placeholder.required', { field: t('common.page.entity.ExtField') })"
+          :placeholder="t('common.page.form.placeholder.required', { field: t('common.page.entity.extfield') })"
           allow-clear
         />
       </a-form-item>
@@ -299,24 +299,23 @@
 </template>
 
 <script setup lang="ts">
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 /**
  * 角色实体 代表系统角色管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/identity/role
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import RoleForm from './components/role-form.vue'
-import AssignRoleCompanies from './components/assign-role-companies.vue'
-import AssignRoleMenus from './components/assign-role-menus.vue'
-import { getRoleList, getRoleById, createRole, updateRole, deleteRoleById, deleteRoleBatch, updateRoleStatus, updateRoleBuiltIn, getRoleTemplate, importRole, exportRole } from '@/api/identity/role'
-import type { Role, RoleQuery, RoleCreate, RoleUpdate } from '@/types/identity/role'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import RoleForm from './components/RoleForm.vue'
+import AssignRoleCompanies from './components/AssignRoleCompanies.vue'
+import AssignRoleMenus from './components/AssignRoleMenus.vue'
+import { getRoleList, getRoleById, createRole, updateRole, deleteRoleById, deleteRoleBatch, updateRoleStatus, updateRoleBuiltIn, getRoleTemplate, importRole, exportRole } from '@/api/identity/role.api'
+import type { Role, RoleQuery, RoleCreate, RoleUpdate } from '@/types/identity/role.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEditLine, RiDeleteBinLine, RiBuilding2Line, RiMenuLine } from '@remixicon/vue'
 
 /** i18n 翻译函数 */
@@ -386,7 +385,7 @@ const queryFieldsMeta = computed(() => [
   { key: 'description', label: t('entity.role.description') },
   { key: 'createdAtStart', label: t('common.page.entity.createdatstart') },
   { key: 'createdAtEnd', label: t('common.page.entity.createdatend') },
-  { key: 'ExtField', label: t('common.page.entity.ExtField') },
+  { key: 'ExtField', label: t('common.page.entity.extfield') },
   { key: 'remark', label: t('common.page.entity.remark') }])
 /** 高级查询当前可见字段 key */
 const visibleQueryFieldKeys = ref<string[]>([])

@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="takt-error-page">
     <div v-if="code" class="takt-error-code">{{ code }}</div>
     <a-result :status="status" :title="resolvedTitle" :sub-title="t(subtitleKey)">

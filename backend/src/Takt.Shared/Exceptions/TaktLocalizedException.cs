@@ -1,5 +1,5 @@
 ﻿// ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Exceptions
 // 文件名称：TaktLocalizedException.cs
 // 功能描述：承载翻译键与参数的异常，用于跨层统一本地化

@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/procurement/purchase-forecast -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：Takt采购预测实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -176,22 +176,21 @@
  * Takt采购预测实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/procurement/purchase-forecast
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import PurchaseForecastForm from './components/purchase-forecast-form.vue'
-import PurchaseForecastItemPanel from './components/purchase-forecast-item-panel.vue'
-import { providePurchaseForecastMasterContext, type PurchaseForecastRowRecord } from './composables/use-purchase-forecast-master-context'
-import { getPurchaseForecastList, getPurchaseForecastById, createPurchaseForecast, updatePurchaseForecast, deletePurchaseForecastById, deletePurchaseForecastBatch, getPurchaseForecastTemplate, importPurchaseForecast, exportPurchaseForecast, updatePurchaseForecastStatus } from '@/api/logistics/procurement/purchase-forecast'
-import type { PurchaseForecast, PurchaseForecastQuery } from '@/types/logistics/procurement/purchase-forecast'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import PurchaseForecastForm from './components/PurchaseForecastForm.vue'
+import PurchaseForecastItemPanel from './components/PurchaseForecastItemPanel.vue'
+import { providePurchaseForecastMasterContext, type PurchaseForecastRowRecord } from './composables/usePurchaseForecastMasterContext'
+import { getPurchaseForecastList, getPurchaseForecastById, createPurchaseForecast, updatePurchaseForecast, deletePurchaseForecastById, deletePurchaseForecastBatch, getPurchaseForecastTemplate, importPurchaseForecast, exportPurchaseForecast, updatePurchaseForecastStatus } from '@/api/logistics/procurement/purchaseForecast.api'
+import type { PurchaseForecast, PurchaseForecastQuery } from '@/types/logistics/procurement/purchaseForecast.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
 
 import {
@@ -200,7 +199,7 @@ import {
   PURCHASEFORECAST_QUERY_STRING_FIELDS,
   PURCHASEFORECAST_QUERY_FIELDS,
   PURCHASEFORECAST_SELF_I18N_KEY,
-} from './composables/use-purchase-forecast-i18n'
+} from './composables/usePurchaseForecastI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = usePurchaseForecastI18n()
@@ -340,7 +339,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -512,13 +510,13 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getPurchaseForecastField(record, 'supplierName1') ?? ''
   },
   {
-    title: pi.label('plannerId'),
-    dataIndex: 'plannerId',
-    key: 'plannerId',
+    title: pi.label('plannerGroupCode'),
+    dataIndex: 'plannerGroupCode',
+    key: 'plannerGroupCode',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getPurchaseForecastField(record, 'plannerId') ?? ''
+    customRender: ({ record }: { record: any }) => getPurchaseForecastField(record, 'plannerGroupCode') ?? ''
   },
   {
     title: pi.label('planBy'),
@@ -653,8 +651,6 @@ const toPurchaseForecastNumber = (value: string | number | undefined | null): nu
   const num = Number(value ?? 0)
   return Number.isFinite(num) ? num : 0
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

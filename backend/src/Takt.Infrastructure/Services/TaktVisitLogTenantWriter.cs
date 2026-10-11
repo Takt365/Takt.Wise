@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Services
 // 文件名称：TaktVisitLogTenantWriter.cs
 // 创建时间：2026-06-25
@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 using Takt.Domain.Entities.Statistics.Logging;
 using Takt.Domain.Interfaces;
 using Takt.Infrastructure.Data.Context;
+using Takt.Infrastructure.Extensions;
 using Takt.Shared.Helpers;
 using Takt.Shared.Options;
 
@@ -94,6 +95,11 @@ public class TaktVisitLogTenantWriter : ITaktVisitLogTenantWriter
                 StatDate = statDate,
                 VisitCount = 1,
             };
+            TaktCompanyScopeFillHelper.ApplyCompanyScopeFromConfiguration(
+                entity,
+                entity.TenantCode,
+                entity.CompanyCode,
+                _configuration);
             entity.ApplyCreate(userId, now);
 
             await TaktPrimaryKeyInsertHelper.InsertEntityAsync(

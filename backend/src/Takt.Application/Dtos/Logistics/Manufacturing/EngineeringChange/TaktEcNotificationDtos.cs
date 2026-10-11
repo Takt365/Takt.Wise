@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcNotificationDtos.cs
 // 创建时间：2026-08-22
@@ -67,25 +67,24 @@ public class TaktEcNotificationDto : TaktApprovalDtoBase
     public DateTime EcNotificationDate { get; set; }
 
     /// <summary>
-    /// 通知部门编码（多个部门用逗号分隔，如：Assy,PCBA,QC）
+    /// 通知部门编码（字典 logistics_manufacturing_ec_group_category；DictValue=1～10；联动 TaktEcGroups/options?ecGroupCategory=）
     /// </summary>
     public string? EcNotificationDeptCodes { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知部门名称（多个部门用逗号分隔）
+    /// 通知部门名称（冗余：按 EcNotificationDeptCodes 取字典 logistics_manufacturing_ec_group_category 的 DictLabel）
     /// </summary>
     public string? EcNotificationDeptNames { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知人ID（序列化为string以避免Javascript精度问题）
+    /// 通知组编码（选项 TaktEcGroups/options?ecGroupCategory=EcNotificationDeptCodes；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcNotificationNotifierId { get; set; }
+    public string? EcNotificationNotifierGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知人姓名
+    /// 通知组名称（冗余：按 EcNotificationNotifierGroupCode 取 TaktEcGroups.EcGroupName 联动）
     /// </summary>
-    public string? EcNotificationNotifierName { get; set; } = string.Empty;
+    public string? EcNotificationNotifierGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 通知方式（1=系统通知 2=邮件 3=纸质 4=会议）
@@ -167,25 +166,24 @@ public class TaktEcNotificationQueryDto : TaktPagedQuery
     public DateTime? EcNotificationDateEnd { get; set; }
 
     /// <summary>
-    /// 通知部门编码（多个部门用逗号分隔，如：Assy,PCBA,QC）
+    /// 通知部门编码（字典 logistics_manufacturing_ec_group_category；DictValue=1～10；联动 TaktEcGroups/options?ecGroupCategory=）
     /// </summary>
     public string? EcNotificationDeptCodes { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知部门名称（多个部门用逗号分隔）
+    /// 通知部门名称（冗余：按 EcNotificationDeptCodes 取字典 logistics_manufacturing_ec_group_category 的 DictLabel）
     /// </summary>
     public string? EcNotificationDeptNames { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知人ID（序列化为string以避免Javascript精度问题）
+    /// 通知组编码（选项 TaktEcGroups/options?ecGroupCategory=EcNotificationDeptCodes；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcNotificationNotifierId { get; set; }
+    public string? EcNotificationNotifierGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知人姓名
+    /// 通知组名称（冗余：按 EcNotificationNotifierGroupCode 取 TaktEcGroups.EcGroupName 联动）
     /// </summary>
-    public string? EcNotificationNotifierName { get; set; } = string.Empty;
+    public string? EcNotificationNotifierGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 通知方式（1=系统通知 2=邮件 3=纸质 4=会议）
@@ -318,25 +316,24 @@ public class TaktEcNotificationCreateDto
     public DateTime EcNotificationDate { get; set; }
 
     /// <summary>
-    /// 通知部门编码（多个部门用逗号分隔，如：Assy,PCBA,QC）
+    /// 通知部门编码（字典 logistics_manufacturing_ec_group_category；DictValue=1～10；联动 TaktEcGroups/options?ecGroupCategory=）
     /// </summary>
     public string? EcNotificationDeptCodes { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知部门名称（多个部门用逗号分隔）
+    /// 通知部门名称（冗余：按 EcNotificationDeptCodes 取字典 logistics_manufacturing_ec_group_category 的 DictLabel）
     /// </summary>
     public string? EcNotificationDeptNames { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知人ID（序列化为string以避免Javascript精度问题）
+    /// 通知组编码（选项 TaktEcGroups/options?ecGroupCategory=EcNotificationDeptCodes；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcNotificationNotifierId { get; set; }
+    public string? EcNotificationNotifierGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知人姓名
+    /// 通知组名称（冗余：按 EcNotificationNotifierGroupCode 取 TaktEcGroups.EcGroupName 联动）
     /// </summary>
-    public string? EcNotificationNotifierName { get; set; } = string.Empty;
+    public string? EcNotificationNotifierGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 通知方式（1=系统通知 2=邮件 3=纸质 4=会议）
@@ -460,25 +457,24 @@ public class TaktEcNotificationTemplateDto
     public DateTime? EcNotificationDate { get; set; }
 
     /// <summary>
-    /// 通知部门编码（多个部门用逗号分隔，如：Assy,PCBA,QC）
+    /// 通知部门编码（字典 logistics_manufacturing_ec_group_category；DictValue=1～10；联动 TaktEcGroups/options?ecGroupCategory=）
     /// </summary>
     public string? EcNotificationDeptCodes { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知部门名称（多个部门用逗号分隔）
+    /// 通知部门名称（冗余：按 EcNotificationDeptCodes 取字典 logistics_manufacturing_ec_group_category 的 DictLabel）
     /// </summary>
     public string? EcNotificationDeptNames { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知人ID（序列化为string以避免Javascript精度问题）
+    /// 通知组编码（选项 TaktEcGroups/options?ecGroupCategory=EcNotificationDeptCodes；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcNotificationNotifierId { get; set; }
+    public string? EcNotificationNotifierGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知人姓名
+    /// 通知组名称（冗余：按 EcNotificationNotifierGroupCode 取 TaktEcGroups.EcGroupName 联动）
     /// </summary>
-    public string? EcNotificationNotifierName { get; set; } = string.Empty;
+    public string? EcNotificationNotifierGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 通知方式（1=系统通知 2=邮件 3=纸质 4=会议）
@@ -554,25 +550,24 @@ public class TaktEcNotificationImportDto
     public DateTime? EcNotificationDate { get; set; }
 
     /// <summary>
-    /// 通知部门编码（多个部门用逗号分隔，如：Assy,PCBA,QC）
+    /// 通知部门编码（字典 logistics_manufacturing_ec_group_category；DictValue=1～10；联动 TaktEcGroups/options?ecGroupCategory=）
     /// </summary>
     public string? EcNotificationDeptCodes { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知部门名称（多个部门用逗号分隔）
+    /// 通知部门名称（冗余：按 EcNotificationDeptCodes 取字典 logistics_manufacturing_ec_group_category 的 DictLabel）
     /// </summary>
     public string? EcNotificationDeptNames { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知人ID（序列化为string以避免Javascript精度问题）
+    /// 通知组编码（选项 TaktEcGroups/options?ecGroupCategory=EcNotificationDeptCodes；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcNotificationNotifierId { get; set; }
+    public string? EcNotificationNotifierGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知人姓名
+    /// 通知组名称（冗余：按 EcNotificationNotifierGroupCode 取 TaktEcGroups.EcGroupName 联动）
     /// </summary>
-    public string? EcNotificationNotifierName { get; set; } = string.Empty;
+    public string? EcNotificationNotifierGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 通知方式（1=系统通知 2=邮件 3=纸质 4=会议）
@@ -654,25 +649,24 @@ public class TaktEcNotificationExportDto
     public DateTime EcNotificationDate { get; set; }
 
     /// <summary>
-    /// 通知部门编码（多个部门用逗号分隔，如：Assy,PCBA,QC）
+    /// 通知部门编码（字典 logistics_manufacturing_ec_group_category；DictValue=1～10；联动 TaktEcGroups/options?ecGroupCategory=）
     /// </summary>
     public string? EcNotificationDeptCodes { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知部门名称（多个部门用逗号分隔）
+    /// 通知部门名称（冗余：按 EcNotificationDeptCodes 取字典 logistics_manufacturing_ec_group_category 的 DictLabel）
     /// </summary>
     public string? EcNotificationDeptNames { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知人ID（序列化为string以避免Javascript精度问题）
+    /// 通知组编码（选项 TaktEcGroups/options?ecGroupCategory=EcNotificationDeptCodes；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcNotificationNotifierId { get; set; }
+    public string? EcNotificationNotifierGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 通知人姓名
+    /// 通知组名称（冗余：按 EcNotificationNotifierGroupCode 取 TaktEcGroups.EcGroupName 联动）
     /// </summary>
-    public string? EcNotificationNotifierName { get; set; } = string.Empty;
+    public string? EcNotificationNotifierGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 通知方式（1=系统通知 2=邮件 3=纸质 4=会议）

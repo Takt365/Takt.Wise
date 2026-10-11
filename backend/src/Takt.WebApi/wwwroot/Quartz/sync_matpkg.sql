@@ -565,47 +565,9 @@ BEGIN
   THROW 50002, @count_msg, 1;
 END;
 
-INSERT INTO [takt_statistics_logging_delta_log] (
-  [id],[oper_type],[table_name],[primary_key_id],
-  [before_data],[after_data],[diff_data],[sql_statement],
-  [oper_ip],[oper_location],[user_agent],[browser],[os],[device_type],
-  [oper_time],[elapsed_time],[tenant_code],[company_code],[plant_code],[culture_code],
-  [ext_field],[remark],[created_by],[created_at]
-)
-SELECT
-  @base_id + d.rn,
-  d.oper_type,
-  N'takt_logistics_materials_packaging_material',
-  d.id,
-  ISNULL((
-    SELECT
-      d.material_description_old AS [material_description],
-      d.quantity_per_packing_old AS [quantity_per_packing],
-      d.packaging_type_old AS [packaging_type]
-    WHERE d.oper_type = 'UPDATE'
-    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-  ), '{}'),
-  (
-    SELECT
-      d.material_description_new AS [material_description],
-      d.quantity_per_packing_new AS [quantity_per_packing],
-      d.packaging_type_new AS [packaging_type]
-    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-  ),
-  ISNULL((
-    SELECT
-      CASE WHEN d.oper_type = 'UPDATE' THEN ISNULL(d.material_description_old, 'null') END AS [material_description.old],
-      CASE WHEN d.oper_type = 'UPDATE' THEN ISNULL(d.material_description_new, 'null') END AS [material_description.new],
-      CASE WHEN d.oper_type = 'UPDATE' THEN ISNULL(CAST(d.quantity_per_packing_old AS NVARCHAR), 'null') END AS [quantity_per_packing.old],
-      CASE WHEN d.oper_type = 'UPDATE' THEN ISNULL(CAST(d.quantity_per_packing_new AS NVARCHAR), 'null') END AS [quantity_per_packing.new]
-    WHERE d.oper_type = 'UPDATE'
-    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-  ), '{}'),
-  N'MERGE PackagingMaterial Sync',
-  '127.0.0.1','Server','SQLCMD','Server','Windows','Server',
-  @now,0,
-  d.tenant_code,d.company_code,d.plant_code,@culture_code,'{}',N'SYNC',COALESCE(d.change_by,@sync_user_id),@now
-FROM #delta d;
+
+/* per-row delta_log removed */
+
 
 DECLARE @insert_count INT = (SELECT COUNT(*) FROM #delta WHERE oper_type = 'INSERT');
 DECLARE @update_count INT = (SELECT COUNT(*) FROM #delta WHERE oper_type = 'UPDATE');
@@ -626,6 +588,31 @@ DECLARE @json_result NVARCHAR(MAX) =
   + N',"unchanged":' + CAST(@unchanged_count AS NVARCHAR)
   + N',"soft_delete_this_run":' + CAST(@delete_count AS NVARCHAR)
   + N',"soft_delete_keys":"' + REPLACE(@soft_deleted_keys, N'"', N'''') + N'"}';
+
+-- 批量同步：每次执行仅写 1 条摘要差异日志（非逐行）；明细变更见业务操作差异日志
+INSERT INTO [takt_statistics_logging_delta_log] (
+  [id],[oper_type],[table_name],[primary_key_id],
+  [before_data],[after_data],[diff_data],[sql_statement],
+  [oper_ip],[oper_location],[user_agent],[browser],[os],[device_type],
+  [oper_time],[elapsed_time],[tenant_code],[company_code],[plant_code],[culture_code],
+  [ext_field],[remark],[created_by],[created_at]
+)
+VALUES (
+  @base_id,
+  N'SYNC',
+  N'takt_logistics_materials_packaging_material',
+  NULL,
+  N'{}',
+  ISNULL(@json_result, N'{}'),
+  N'{}',
+  N'MERGE PackagingMaterial Sync (summary)',
+  N'127.0.0.1',N'Server',N'SQLCMD',N'Server',N'Windows',N'Server',
+  @now,0,
+  @tenant_code,@company_code,@plant_code,@culture_code,
+  N'{}',N'SYNC batch summary',@sync_user_id,@now
+);
+
+
 
 
 

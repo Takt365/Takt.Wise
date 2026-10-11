@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/labor-hour/pcba-repair-labor-hour -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：PCBA改修工数统计实体管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -319,20 +319,19 @@
  * PCBA改修工数统计实体管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/labor-hour/pcba-repair-labor-hour
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import PcbaRepairLaborHourForm from './components/pcba-repair-labor-hour-form.vue'
-import { getPcbaRepairLaborHourList, getPcbaRepairLaborHourById, createPcbaRepairLaborHour, updatePcbaRepairLaborHour, deletePcbaRepairLaborHourById, deletePcbaRepairLaborHourBatch, getPcbaRepairLaborHourTemplate, importPcbaRepairLaborHour, exportPcbaRepairLaborHour } from '@/api/logistics/manufacturing/labor-hour/pcba-repair-labor-hour'
-import type { PcbaRepairLaborHour, PcbaRepairLaborHourQuery } from '@/types/logistics/manufacturing/labor-hour/pcba-repair-labor-hour'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import PcbaRepairLaborHourForm from './components/PcbaRepairLaborHourForm.vue'
+import { getPcbaRepairLaborHourList, getPcbaRepairLaborHourById, createPcbaRepairLaborHour, updatePcbaRepairLaborHour, deletePcbaRepairLaborHourById, deletePcbaRepairLaborHourBatch, getPcbaRepairLaborHourTemplate, importPcbaRepairLaborHour, exportPcbaRepairLaborHour } from '@/api/logistics/manufacturing/labor-hour/pcbaRepairLaborHour.api'
+import type { PcbaRepairLaborHour, PcbaRepairLaborHourQuery } from '@/types/logistics/manufacturing/labor-hour/pcbaRepairLaborHour.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -341,7 +340,7 @@ import {
   PCBAREPAIRLABORHOUR_QUERY_STRING_FIELDS,
   PCBAREPAIRLABORHOUR_QUERY_FIELDS,
   PCBAREPAIRLABORHOUR_SELF_I18N_KEY,
-} from './composables/use-pcba-repair-labor-hour-i18n'
+} from './composables/usePcbaRepairLaborHourI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = usePcbaRepairLaborHourI18n()

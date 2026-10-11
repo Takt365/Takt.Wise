@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Mrp
 // 文件名称：TaktMaterialRequirementsPlanningService.cs
 // 创建时间：2026-08-22
@@ -509,7 +509,7 @@ public class TaktMaterialRequirementsPlanningService : TaktServiceBase, ITaktMat
                 || (x.MaterialRequirementsPlanningCode != null && x.MaterialRequirementsPlanningCode.Contains(keywords))
                 || (x.MpsCode != null && x.MpsCode.Contains(keywords))
                 || (x.MdsCode != null && x.MdsCode.Contains(keywords))
-                || (x.PlannerName != null && x.PlannerName.Contains(keywords))
+                || (x.PlannerGroupName != null && x.PlannerGroupName.Contains(keywords))
                 || (x.ProductionPlanCode != null && x.ProductionPlanCode.Contains(keywords))
                 || (x.PurchasePlanCode != null && x.PurchasePlanCode.Contains(keywords))
                 || (x.PlanDescription != null && x.PlanDescription.Contains(keywords))
@@ -560,16 +560,16 @@ public class TaktMaterialRequirementsPlanningService : TaktServiceBase, ITaktMat
             exp = exp.And(x => x.MdsCode != null && x.MdsCode.Contains(mdsCode));
         }
 
-        if (queryDto?.PlannerEmployeeId.HasValue == true)
+        if (!string.IsNullOrWhiteSpace(queryDto?.PlannerGroupCode))
         {
-            var plannerId = queryDto.PlannerEmployeeId.Value;
-            exp = exp.And(x => x.PlannerEmployeeId == plannerId);
+            var plannerGroupCode = queryDto.PlannerGroupCode;
+            exp = exp.And(x => x.PlannerGroupCode == plannerGroupCode);
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.PlannerName))
+        if (!string.IsNullOrWhiteSpace(queryDto?.PlannerGroupName))
         {
-            var planBy = queryDto.PlannerName;
-            exp = exp.And(x => x.PlannerName != null && x.PlannerName.Contains(planBy));
+            var planBy = queryDto.PlannerGroupName;
+            exp = exp.And(x => x.PlannerGroupName != null && x.PlannerGroupName.Contains(planBy));
         }
 
         if (queryDto?.RunStatus.HasValue == true)
@@ -714,11 +714,11 @@ public class TaktMaterialRequirementsPlanningService : TaktServiceBase, ITaktMat
         {
             return true;
         }
-        if (queryDto.PlannerEmployeeId.HasValue)
+        if (!string.IsNullOrWhiteSpace(queryDto.PlannerGroupCode))
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.PlannerName))
+        if (!string.IsNullOrWhiteSpace(queryDto.PlannerGroupName))
         {
             return true;
         }

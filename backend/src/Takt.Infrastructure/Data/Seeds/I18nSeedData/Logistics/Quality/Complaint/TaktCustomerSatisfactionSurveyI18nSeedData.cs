@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Complaint
 // 文件名称：TaktCustomerSatisfactionSurveyI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktCustomerSatisfactionSurvey 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -162,23 +162,23 @@ public class TaktCustomerSatisfactionSurveyI18nSeedData : ITaktSeedDataCoordinat
             // entity.customersatisfactionsurvey.surveyperiod
             new TranslationSeedItem("entity.customersatisfactionsurvey.surveyperiod", "zh-HK", "调查周期_hk", "调查周期（字典 logistics_quality_period）"),
 
-            // entity.customersatisfactionsurvey.surveyorbyemployeeid
-            new TranslationSeedItem("entity.customersatisfactionsurvey.surveyorbyemployeeid", "en-US", "调查人ID_us", "调查人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.customersatisfactionsurvey.surveyorbyemployeeid
-            new TranslationSeedItem("entity.customersatisfactionsurvey.surveyorbyemployeeid", "ja-JP", "调查人ID_jp", "调查人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.customersatisfactionsurvey.surveyorbyemployeeid
-            new TranslationSeedItem("entity.customersatisfactionsurvey.surveyorbyemployeeid", "zh-CN", "调查人ID", "调查人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.customersatisfactionsurvey.surveyorbyemployeeid
-            new TranslationSeedItem("entity.customersatisfactionsurvey.surveyorbyemployeeid", "zh-HK", "调查人ID_hk", "调查人（选项 TaktEmployees/options；DictValue=Id）"),
+            // entity.customersatisfactionsurvey.surveyorbygroupcode
+            new TranslationSeedItem("entity.customersatisfactionsurvey.surveyorbygroupcode", "en-US", "调查组编码_us", "调查组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=5；DictValue=ComplaintGroupCode）"),
+            // entity.customersatisfactionsurvey.surveyorbygroupcode
+            new TranslationSeedItem("entity.customersatisfactionsurvey.surveyorbygroupcode", "ja-JP", "调查组编码_jp", "调查组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=5；DictValue=ComplaintGroupCode）"),
+            // entity.customersatisfactionsurvey.surveyorbygroupcode
+            new TranslationSeedItem("entity.customersatisfactionsurvey.surveyorbygroupcode", "zh-CN", "调查组编码", "调查组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=5；DictValue=ComplaintGroupCode）"),
+            // entity.customersatisfactionsurvey.surveyorbygroupcode
+            new TranslationSeedItem("entity.customersatisfactionsurvey.surveyorbygroupcode", "zh-HK", "调查组编码_hk", "调查组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=5；DictValue=ComplaintGroupCode）"),
 
-            // entity.customersatisfactionsurvey.surveyorbyemployeename
-            new TranslationSeedItem("entity.customersatisfactionsurvey.surveyorbyemployeename", "en-US", "调查人名称_us", "调查人名称（冗余：按 SurveyorByEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.customersatisfactionsurvey.surveyorbyemployeename
-            new TranslationSeedItem("entity.customersatisfactionsurvey.surveyorbyemployeename", "ja-JP", "调查人名称_jp", "调查人名称（冗余：按 SurveyorByEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.customersatisfactionsurvey.surveyorbyemployeename
-            new TranslationSeedItem("entity.customersatisfactionsurvey.surveyorbyemployeename", "zh-CN", "调查人名称", "调查人名称（冗余：按 SurveyorByEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.customersatisfactionsurvey.surveyorbyemployeename
-            new TranslationSeedItem("entity.customersatisfactionsurvey.surveyorbyemployeename", "zh-HK", "调查人名称_hk", "调查人名称（冗余：按 SurveyorByEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
+            // entity.customersatisfactionsurvey.surveyorbygroupname
+            new TranslationSeedItem("entity.customersatisfactionsurvey.surveyorbygroupname", "en-US", "调查组名称_us", "调查组名称（冗余：按 SurveyorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）"),
+            // entity.customersatisfactionsurvey.surveyorbygroupname
+            new TranslationSeedItem("entity.customersatisfactionsurvey.surveyorbygroupname", "ja-JP", "调查组名称_jp", "调查组名称（冗余：按 SurveyorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）"),
+            // entity.customersatisfactionsurvey.surveyorbygroupname
+            new TranslationSeedItem("entity.customersatisfactionsurvey.surveyorbygroupname", "zh-CN", "调查组名称", "调查组名称（冗余：按 SurveyorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）"),
+            // entity.customersatisfactionsurvey.surveyorbygroupname
+            new TranslationSeedItem("entity.customersatisfactionsurvey.surveyorbygroupname", "zh-HK", "调查组名称_hk", "调查组名称（冗余：按 SurveyorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）"),
 
             // entity.customersatisfactionsurvey.customercontact
             new TranslationSeedItem("entity.customersatisfactionsurvey.customercontact", "en-US", "客户联系人_us", "客户联系人"),

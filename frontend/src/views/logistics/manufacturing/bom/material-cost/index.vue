@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/bom/material-cost -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：BOM 物料成本汇总页（导入/导出；无新增/更新/删除） -->
@@ -343,17 +343,16 @@
  * BOM 物料成本汇总页（导入/导出；无新增/更新/删除）
  * @module views/logistics/manufacturing/bom/material-cost
  */
-import { ref, computed, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { getBomMaterialCostList, getBomMaterialCostTemplate, importBomMaterialCost, exportBomMaterialCost } from '@/api/logistics/manufacturing/bom/material-cost'
-import type { BomMaterialCost, BomMaterialCostQuery } from '@/types/logistics/manufacturing/bom/material-cost'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { getBomMaterialCostList, getBomMaterialCostTemplate, importBomMaterialCost, exportBomMaterialCost } from '@/api/logistics/manufacturing/bom/materialCost.api'
+import type { BomMaterialCost, BomMaterialCostQuery } from '@/types/logistics/manufacturing/bom/materialCost.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -362,7 +361,7 @@ import {
   BOMMATERIALCOST_QUERY_STRING_FIELDS,
   BOMMATERIALCOST_QUERY_FIELDS,
   BOMMATERIALCOST_SELF_I18N_KEY,
-} from './composables/use-material-cost-i18n'
+} from './composables/useMaterialCostI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useBomMaterialCostI18n()
@@ -510,7 +509,6 @@ onMounted(async () => {
   loadData()
 })
 
-
 /**
  * 构建列表标准文本列
  * @param key 列 key / dataIndex
@@ -558,8 +556,6 @@ const getBomMaterialCostDictValue = (
   if (typeof value === 'string' || typeof value === 'number') return value
   return String(value)
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

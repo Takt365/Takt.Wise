@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Manufacturing.Mrp
 // 文件名称：TaktProductionPlan.cs
 // 创建时间：2026-06-15
@@ -80,16 +80,16 @@ public class TaktProductionPlan : TaktApprovalEntityBase
     public DateTime PlanPeriodEnd { get; set; } = DateTime.Now;
 
     /// <summary>
-    /// 计划人（选项 TaktEmployees/options；DictValue=Id）
+    /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    [SugarColumn(ColumnName = "planner_employee_id", ColumnDescription = "计划人员工ID", ColumnDataType = "bigint", IsNullable = true)]
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? PlannerEmployeeId { get; set; }
+    [SugarColumn(ColumnName = "planner_group_code", ColumnDescription = "计划组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? PlannerGroupCode { get; set; }
+
     /// <summary>
-    /// 计划人名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）
+    /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
     /// </summary>
-    [SugarColumn(ColumnName = "planner_name", ColumnDescription = "计划人名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
-    public string? PlannerName { get; set; }
+    [SugarColumn(ColumnName = "planner_group_name", ColumnDescription = "计划组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? PlannerGroupName { get; set; }
 
     /// <summary>
     /// 计划总数量（基本单位数量）

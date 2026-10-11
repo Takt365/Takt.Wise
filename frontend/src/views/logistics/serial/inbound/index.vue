@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/serial/inbound -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：序列号入库主表实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -304,22 +304,21 @@
  * 序列号入库主表实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/serial/inbound
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import SerialInboundForm from './components/inbound-form.vue'
-import SerialInboundItemPanel from './components/inbound-item-panel.vue'
-import { provideSerialInboundMasterContext, type SerialInboundRowRecord } from './composables/use-inbound-master-context'
-import { getSerialInboundList, getSerialInboundById, createSerialInbound, updateSerialInbound, deleteSerialInboundById, deleteSerialInboundBatch, getSerialInboundTemplate, importSerialInbound, exportSerialInbound } from '@/api/logistics/serial/inbound'
-import type { SerialInbound, SerialInboundQuery } from '@/types/logistics/serial/inbound'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import SerialInboundForm from './components/InboundForm.vue'
+import SerialInboundItemPanel from './components/InboundItemPanel.vue'
+import { provideSerialInboundMasterContext, type SerialInboundRowRecord } from './composables/useInboundMasterContext'
+import { getSerialInboundList, getSerialInboundById, createSerialInbound, updateSerialInbound, deleteSerialInboundById, deleteSerialInboundBatch, getSerialInboundTemplate, importSerialInbound, exportSerialInbound } from '@/api/logistics/serial/inbound.api'
+import type { SerialInbound, SerialInboundQuery } from '@/types/logistics/serial/inbound.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -328,7 +327,7 @@ import {
   SERIALINBOUND_QUERY_STRING_FIELDS,
   SERIALINBOUND_QUERY_FIELDS,
   SERIALINBOUND_SELF_I18N_KEY,
-} from './composables/use-inbound-i18n'
+} from './composables/useInboundI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useSerialInboundI18n()
@@ -480,7 +479,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -653,8 +651,6 @@ const getSerialInboundDictValue = (
   if (typeof value === 'string' || typeof value === 'number') return value
   return String(value)
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

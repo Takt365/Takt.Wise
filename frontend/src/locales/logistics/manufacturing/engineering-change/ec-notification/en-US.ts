@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 引用键 logistics.manufacturing.engineering-change.ec-notification.page.*
 // ========================================
 

@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Cost
 // 文件名称：TaktQualityAssuranceI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktQualityAssurance 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -126,14 +126,23 @@ public class TaktQualityAssuranceI18nSeedData : ITaktSeedDataCoordinator
             // entity.qualityassurance.debitnotecode
             new TranslationSeedItem("entity.qualityassurance.debitnotecode", "zh-HK", "Debit Note No_hk", "Debit Note No"),
 
-            // entity.qualityassurance.recorder
-            new TranslationSeedItem("entity.qualityassurance.recorder", "en-US", "记录者_us", "记录者"),
-            // entity.qualityassurance.recorder
-            new TranslationSeedItem("entity.qualityassurance.recorder", "ja-JP", "记录者_jp", "记录者"),
-            // entity.qualityassurance.recorder
-            new TranslationSeedItem("entity.qualityassurance.recorder", "zh-CN", "记录者", "记录者"),
-            // entity.qualityassurance.recorder
-            new TranslationSeedItem("entity.qualityassurance.recorder", "zh-HK", "记录者_hk", "记录者"),
+            // entity.qualityassurance.recordgroupcode
+            new TranslationSeedItem("entity.qualityassurance.recordgroupcode", "en-US", "记录组编码_us", "记录组编码（选项 TaktCostGroups/options?costGroupCategory=1；DictValue=CostGroupCode）"),
+            // entity.qualityassurance.recordgroupcode
+            new TranslationSeedItem("entity.qualityassurance.recordgroupcode", "ja-JP", "记录组编码_jp", "记录组编码（选项 TaktCostGroups/options?costGroupCategory=1；DictValue=CostGroupCode）"),
+            // entity.qualityassurance.recordgroupcode
+            new TranslationSeedItem("entity.qualityassurance.recordgroupcode", "zh-CN", "记录组编码", "记录组编码（选项 TaktCostGroups/options?costGroupCategory=1；DictValue=CostGroupCode）"),
+            // entity.qualityassurance.recordgroupcode
+            new TranslationSeedItem("entity.qualityassurance.recordgroupcode", "zh-HK", "记录组编码_hk", "记录组编码（选项 TaktCostGroups/options?costGroupCategory=1；DictValue=CostGroupCode）"),
+
+            // entity.qualityassurance.recordgroupname
+            new TranslationSeedItem("entity.qualityassurance.recordgroupname", "en-US", "记录组名称_us", "记录组名称（冗余：按 RecordGroupCode 取 TaktCostGroups.CostGroupName 联动）"),
+            // entity.qualityassurance.recordgroupname
+            new TranslationSeedItem("entity.qualityassurance.recordgroupname", "ja-JP", "记录组名称_jp", "记录组名称（冗余：按 RecordGroupCode 取 TaktCostGroups.CostGroupName 联动）"),
+            // entity.qualityassurance.recordgroupname
+            new TranslationSeedItem("entity.qualityassurance.recordgroupname", "zh-CN", "记录组名称", "记录组名称（冗余：按 RecordGroupCode 取 TaktCostGroups.CostGroupName 联动）"),
+            // entity.qualityassurance.recordgroupname
+            new TranslationSeedItem("entity.qualityassurance.recordgroupname", "zh-HK", "记录组名称_hk", "记录组名称（冗余：按 RecordGroupCode 取 TaktCostGroups.CostGroupName 联动）"),
 
             // entity.qualityassurance.totalqualitycost
             new TranslationSeedItem("entity.qualityassurance.totalqualitycost", "en-US", "质量总成本_us", "质量总成本(元,自动计算 = 各子表费用合计)"),

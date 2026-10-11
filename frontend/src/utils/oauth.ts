@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/utils
 // 文件名称：oauth.ts
 // 创建时间：2026-05-29
@@ -10,9 +10,9 @@
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
 // ========================================
 
-import { refreshAccessToken, type TaktOAuthTokenResponse } from '@/api/identity/oauth';
+import { refreshAccessToken, type TaktOAuthTokenResponse } from '@/api/identity/oauth.api';
 import { getOAuthConfig } from '@/config/oauth';
-import { useUserStore } from '@/stores/identity/user';
+import { useUserStore } from '@/stores/identity/useUserStore';
 
 const PKCE_VERIFIER_KEY = 'takt.oauth.pkce_verifier';
 const PKCE_STATE_KEY = 'takt.oauth.state';

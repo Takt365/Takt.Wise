@@ -1,8 +1,8 @@
-# Takt.Plat
+# TaktWise
 
 [English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja-JP.md) · [繁體中文（香港）](README.zh-HK.md)
 
-Takt デジタルファクトリー · フロント／バックエンド分離型エンタープライズプラットフォーム（.NET 9 + Vue 3）。
+TaktWise · フロント／バックエンド分離型エンタープライズプラットフォーム（.NET 9 + Vue 3）。
 
 > ⚠️ **重要な声明**：本プロジェクトは AI により生成されています（Cursor AI 等の AI 支援開発ツールを使用）。コードは AI により自動生成・最適化されています。
 >
@@ -51,7 +51,7 @@ Takt デジタルファクトリー · フロント／バックエンド分離�
 | スタイル | Tailwind CSS 4.x |
 | 状態 / ルータ / HTTP | Pinia、vue-router 5、Axios |
 | 国際化 | vue-i18n（静的 `locales/**` + バックエンド動的シード） |
-| ワークフロー設計 | **主経路** `takt-flow-antflow-designer`（AntFlow 風ツリー）；LogicFlow は実験ビュー |
+| ワークフロー設計 | **主経路** `takt-flow-ant-designer`（AntFlow 風ツリー）；LogicFlow は実験ビュー |
 | フォーム設計 | `@form-create/ant-design-vue` + antd-designer |
 | リッチテキスト | `@umoteam/editor` |
 | チャート | ECharts 6 |
@@ -124,7 +124,7 @@ Takt.Shared          → ページング、例外、Options、ヘルパ、Enums/
 | **TaktConnectHub** | `/hubs/TaktConnectHub` | 接続／切断、オンライン、統計、強制ログアウト |
 | **TaktNotificationHub** | `/hubs/TaktNotificationHub` | 私信、社内ブロードキャスト、メッセージ／オンライン統計 |
 
-配信は **会社 + ユーザ** グループ（`TaktSignalRGroupNames`）。入口：`ITaktSignalRDispatchService`。フロント：`utils/takt-signalr.ts`、`stores/foundation/signalr.ts`。
+配信は **会社 + ユーザ** グループ（`TaktSignalRGroupNames`）。入口：`ITaktSignalRDispatchService`。フロント：`utils/taktSignalr.ts`、`stores/foundation/signalr.ts`。
 
 ### 承認ワークフロー
 
@@ -138,7 +138,7 @@ Takt.Shared          → ページング、例外、Options、ヘルパ、Enums/
 |------|------|
 | エンジン | `TaktFlowEngineService` / `TaktFlowEngineController`（ランタイム） |
 | 定義 CRUD | `TaktFlowScheme` / `TaktFlowForm` 等 |
-| フロント設計器 | `components/business/takt-flow-antflow-designer/` |
+| フロント設計器 | `components/business/TaktFlowAntDesigner/` |
 | 規約 | `.cursor/rules/09-workflow.mdc` |
 
 ### その他の能力
@@ -167,7 +167,7 @@ Takt.Shared          → ページング、例外、Options、ヘルパ、Enums/
 | ドメイン | サブモジュール | 主な能力 |
 |----------|----------------|----------|
 | **Identity** | ユーザ、ロール、メニュー、テナント、RBAC、認証 | ログイン、権限付与、マルチテナント／会社 |
-| **Foundation** | 辞書、翻訳、設定、採番、メッセージ、オンライン、文化、行政区、ファイル | 基盤マスタ、社内メッセージ、動的 i18n |
+| **Foundation** | 辞書、翻訳、システムプロパティ、採番、メッセージ、オンライン、文化、行政区、ファイル | 基盤マスタ、社内メッセージ、動的 i18n |
 | **HumanResource** | Organization、Personnel、Attendance、Talent、Benefits、Compensation、Performance、Training | 組織、人事、勤怠、給与福利、業績・研修 |
 | **Logistics · Materials** | 品目、仕入先、メーカ、工場など | 品目マスタ |
 | **Logistics · Procurement** | 購買依頼／発注／価格など | 購買 |
@@ -188,9 +188,9 @@ Takt.Shared          → ページング、例外、Options、ヘルパ、Enums/
 ## プロジェクト構成
 
 ```
-Takt.Plat/
+TaktWise/
 ├── backend/
-│   ├── Takt.Plat.slnx
+│   ├── TaktWise.slnx
 │   └── src/
 │       ├── Takt.Shared/           # 共有型、Options、例外、Enums/Constants
 │       ├── Takt.Domain/           # エンティティ、リポジトリ IF（~320）
@@ -231,8 +231,8 @@ Takt.Plat/
 ### バックエンド
 
 ```bash
-dotnet restore backend/Takt.Plat.slnx
-dotnet build backend/Takt.Plat.slnx -c Release
+dotnet restore backend/TaktWise.slnx
+dotnet build backend/TaktWise.slnx -c Release
 dotnet run --project backend/src/Takt.WebApi/Takt.WebApi.csproj
 ```
 
@@ -310,4 +310,4 @@ node scripts/gen/generate-vue-all-from-api.cjs --CostCenter
 
 [MIT License](LICENSE) · Copyright (c) 2026 Takt Technologies Co., Ltd.
 
-**メンテナー**：Takt.Plat（Cursor AI 等）
+**メンテナー**：TaktWise（Cursor AI 等）

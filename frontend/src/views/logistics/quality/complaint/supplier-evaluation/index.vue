@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/quality/complaint/supplier-evaluation -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：供应商评价考核主表实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -163,22 +163,21 @@
  * 供应商评价考核主表实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/quality/complaint/supplier-evaluation
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import SupplierEvaluationForm from './components/supplier-evaluation-form.vue'
-import SupplierEvaluationItemPanel from './components/supplier-evaluation-item-panel.vue'
-import { provideSupplierEvaluationMasterContext, type SupplierEvaluationRowRecord } from './composables/use-supplier-evaluation-master-context'
-import { getSupplierEvaluationList, getSupplierEvaluationById, createSupplierEvaluation, updateSupplierEvaluation, deleteSupplierEvaluationById, deleteSupplierEvaluationBatch, getSupplierEvaluationTemplate, importSupplierEvaluation, exportSupplierEvaluation, updateSupplierEvaluationStatus } from '@/api/logistics/quality/complaint/supplier-evaluation'
-import type { SupplierEvaluation, SupplierEvaluationQuery } from '@/types/logistics/quality/complaint/supplier-evaluation'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import SupplierEvaluationForm from './components/SupplierEvaluationForm.vue'
+import SupplierEvaluationItemPanel from './components/SupplierEvaluationItemPanel.vue'
+import { provideSupplierEvaluationMasterContext, type SupplierEvaluationRowRecord } from './composables/useSupplierEvaluationMasterContext'
+import { getSupplierEvaluationList, getSupplierEvaluationById, createSupplierEvaluation, updateSupplierEvaluation, deleteSupplierEvaluationById, deleteSupplierEvaluationBatch, getSupplierEvaluationTemplate, importSupplierEvaluation, exportSupplierEvaluation, updateSupplierEvaluationStatus } from '@/api/logistics/quality/complaint/supplierEvaluation.api'
+import type { SupplierEvaluation, SupplierEvaluationQuery } from '@/types/logistics/quality/complaint/supplierEvaluation.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
 
 import {
@@ -187,7 +186,7 @@ import {
   SUPPLIEREVALUATION_QUERY_STRING_FIELDS,
   SUPPLIEREVALUATION_QUERY_FIELDS,
   SUPPLIEREVALUATION_SELF_I18N_KEY,
-} from './composables/use-supplier-evaluation-i18n'
+} from './composables/useSupplierEvaluationI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useSupplierEvaluationI18n()
@@ -328,7 +327,6 @@ onMounted(async () => {
   loadData()
 })
 
-
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
 
@@ -455,8 +453,6 @@ const getSupplierEvaluationDictValue = (
   if (typeof value === 'string' || typeof value === 'number') return value
   return String(value)
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

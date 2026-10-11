@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/bom/material-cost-trend -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：产品成本推移报表：必选单个产品 → 明细表组件月材料成本转置涨跌 -->
@@ -38,7 +38,7 @@
       @export="handleExport"
       @refresh="handleRefresh"
     />
-    <material-cost-trend-panel
+    <MaterialCostTrendPanel
       ref="panelRef"
       v-model:loading="panelLoading"
       v-model:has-rows="hasRows"
@@ -54,24 +54,28 @@
  */
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import type { ToolBarAction } from '@/components/business/takt-tools-bar/index.vue'
+import type { ToolBarAction } from '@/components/business/TaktToolsBar/index.vue'
 import {
   RiArrowDownLine,
   RiArrowUpDownLine,
   RiArrowUpLine,
   RiListCheck,
 } from '@remixicon/vue'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { getBomCostOptionPlantOptions } from '@/api/logistics/manufacturing/bom/cost-option'
-import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/use-company-related-plant'
-import { useTenantStore } from '@/stores/identity/tenant'
-import { buildDefaultCostingPeriodRange } from '@/views/logistics/manufacturing/bom/material-cost/utils/bom-material-cost-period'
-import MaterialCostTrendPanel from './components/material-cost-trend-panel.vue'
-import MaterialCostTrendQueryForm from './components/material-cost-item-analysis-query-form.vue'
-import { MATERIAL_COST_ANALYSIS_LOCALE_PREFIX } from './composables/use-material-cost-item-analysis'
-import { provideBomMaterialCostAnalysisMasterContext } from './composables/use-material-cost-analysis-master-context'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { getBomCostOptionPlantOptions } from '@/api/logistics/manufacturing/bom/costOption.api'
+import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/useCompanyRelatedPlant'
+import { useTenantStore } from '@/stores/identity/useTenantStore'
+import { buildDefaultCostingPeriodRange } from '@/views/logistics/manufacturing/bom/material-cost/utils/bomMaterialCostPeriod'
+import MaterialCostTrendPanel from './components/MaterialCostTrendPanel.vue'
+import MaterialCostTrendQueryForm from './components/MaterialCostItemAnalysisQueryForm.vue'
+import { MATERIAL_COST_ANALYSIS_LOCALE_PREFIX } from './composables/useMaterialCostItemAnalysis'
+import { provideBomMaterialCostAnalysisMasterContext } from './composables/useMaterialCostAnalysisMasterContext'
+import { useAnalysisPeriodRangeLimit } from '@/composables/useAnalysisPeriodRangeLimit'
 
 const { t } = useI18n()
+
+/** 期间最多 12 个月（查询前校验） */
+const { assertPeriodRangeOk } = useAnalysisPeriodRangeLimit()
 /** 静态 locales 前缀 */
 const localePrefix = MATERIAL_COST_ANALYSIS_LOCALE_PREFIX
 const tenantStore = useTenantStore()
@@ -152,6 +156,9 @@ function handleSearch() {
   }
   if (!periodRange.value?.[0]) {
     message.warning(t(`${localePrefix}.selectPeriodRequired`))
+    return
+  }
+  if (!assertPeriodRangeOk(periodRange.value)) {
     return
   }
   void panelRef.value?.reload?.()

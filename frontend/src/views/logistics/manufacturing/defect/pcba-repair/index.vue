@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/defect/pcba-repair -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：PCBA改修日报实体 不良率管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -169,22 +169,21 @@
  * PCBA改修日报实体 不良率管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/defect/pcba-repair
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import PcbaRepairForm from './components/pcba-repair-form.vue'
-import PcbaRepairDetailPanel from './components/pcba-repair-detail-panel.vue'
-import { providePcbaRepairMasterContext, type PcbaRepairRowRecord } from './composables/use-pcba-repair-master-context'
-import { getPcbaRepairList, getPcbaRepairById, createPcbaRepair, updatePcbaRepair, deletePcbaRepairById, deletePcbaRepairBatch, getPcbaRepairTemplate, importPcbaRepair, exportPcbaRepair } from '@/api/logistics/manufacturing/defect/pcba-repair'
-import type { PcbaRepair, PcbaRepairQuery } from '@/types/logistics/manufacturing/defect/pcba-repair'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import PcbaRepairForm from './components/PcbaRepairForm.vue'
+import PcbaRepairDetailPanel from './components/PcbaRepairDetailPanel.vue'
+import { providePcbaRepairMasterContext, type PcbaRepairRowRecord } from './composables/usePcbaRepairMasterContext'
+import { getPcbaRepairList, getPcbaRepairById, createPcbaRepair, updatePcbaRepair, deletePcbaRepairById, deletePcbaRepairBatch, getPcbaRepairTemplate, importPcbaRepair, exportPcbaRepair } from '@/api/logistics/manufacturing/defect/pcbaRepair.api'
+import type { PcbaRepair, PcbaRepairQuery } from '@/types/logistics/manufacturing/defect/pcbaRepair.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
 
 import {
@@ -193,7 +192,7 @@ import {
   PCBAREPAIR_QUERY_STRING_FIELDS,
   PCBAREPAIR_QUERY_FIELDS,
   PCBAREPAIR_SELF_I18N_KEY,
-} from './composables/use-pcba-repair-i18n'
+} from './composables/usePcbaRepairI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = usePcbaRepairI18n()
@@ -333,7 +332,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -541,8 +539,6 @@ const getPcbaRepairDictValue = (
   if (typeof value === 'string' || typeof value === 'number') return value
   return String(value)
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/mps/production-equipment -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：生产设备主数据管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -953,20 +953,19 @@
  * 生产设备主数据管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/mps/production-equipment
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import ProductionEquipmentForm from './components/production-equipment-form.vue'
-import { getProductionEquipmentList, getProductionEquipmentById, createProductionEquipment, updateProductionEquipment, deleteProductionEquipmentById, deleteProductionEquipmentBatch, getProductionEquipmentTemplate, importProductionEquipment, exportProductionEquipment, updateProductionEquipmentStatus } from '@/api/logistics/manufacturing/mps/production-equipment'
-import type { ProductionEquipment, ProductionEquipmentQuery } from '@/types/logistics/manufacturing/mps/production-equipment'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import ProductionEquipmentForm from './components/ProductionEquipmentForm.vue'
+import { getProductionEquipmentList, getProductionEquipmentById, createProductionEquipment, updateProductionEquipment, deleteProductionEquipmentById, deleteProductionEquipmentBatch, getProductionEquipmentTemplate, importProductionEquipment, exportProductionEquipment, updateProductionEquipmentStatus } from '@/api/logistics/manufacturing/mps/productionEquipment.api'
+import type { ProductionEquipment, ProductionEquipmentQuery } from '@/types/logistics/manufacturing/mps/productionEquipment.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -975,7 +974,7 @@ import {
   PRODUCTIONEQUIPMENT_QUERY_STRING_FIELDS,
   PRODUCTIONEQUIPMENT_QUERY_FIELDS,
   PRODUCTIONEQUIPMENT_SELF_I18N_KEY,
-} from './composables/use-production-equipment-i18n'
+} from './composables/useProductionEquipmentI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useProductionEquipmentI18n()

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcScopeExecOrchestrator.cs
 // 创建时间：2026-08-26
@@ -19,7 +19,7 @@ namespace Takt.Application.Services.Logistics.Manufacturing.EngineeringChange;
 
 /// <summary>
 /// 设变实施范围 → 部门执行行编排（新增/更新/来源导入共用）。
-/// 规则：停产≠Z0→「实施范围-{范围}-EOL」；全仕向空白待填；内部/技术→「实施范围-内部/技术」；部管时生管/采购/受检/部管/制二空白，其余→「实施范围-部管」。
+    /// 规则：停产≠Z0→「实施范围-{范围}-EOL」；按成品/按机种空白待填；内部/技术→「&lt;内部管理&gt;」「&lt;技术管理&gt;」；部管时生管/采购/受检/部管/SMT空白，制一/制二/品管→「&lt;部管管理&gt;」。
 /// </summary>
 public class TaktEcScopeExecOrchestrator
 {
@@ -86,7 +86,11 @@ public class TaktEcScopeExecOrchestrator
             var batch = await _ecExecPersistence.UpsertDeptExecBatchWithFillModeAsync(
                 active,
                 deptCode,
-                detail => ShouldAutoCompleteExec(gijutsu.EcScope, deptCode, detail),
+                detail => TaktEcScopeConstants.ShouldAutoCompleteExec(
+                    gijutsu.EcScope,
+                    deptCode,
+                    detail.EcNewPurchaseType,
+                    detail.EcNewWarehouse),
                 gijutsu.EcScope);
             deptSw.Stop();
 
@@ -120,34 +124,4 @@ public class TaktEcScopeExecOrchestrator
         return result;
     }
 
-    /// <summary>
-    /// 该部门执行行是否自动填完（false=待人工填写执行内容）
-    /// </summary>
-    /// <param name="ecScope">实施范围</param>
-    /// <param name="deptCode">部门编码</param>
-    /// <param name="detail">设变明细</param>
-    /// <returns>是否自动填完</returns>
-    private static bool ShouldAutoCompleteExec(int ecScope, string deptCode, TaktEcDetail detail)
-    {
-        // 全仕向：执行内容一律空白，各部门人工填写
-        if (ecScope == TaktEcScopeConstants.AllDestination)
-        {
-            return false;
-        }
-        // 内部/技术：各部门自动写「实施范围-内部/技术」
-        if (ecScope == TaktEcScopeConstants.Internal
-            || ecScope == TaktEcScopeConstants.Technical)
-        {
-            return true;
-        }
-        // 部管：生管/采购/受检/部管/制二以外自动写「实施范围-部管」
-        if (ecScope == TaktEcScopeConstants.MaterialControl)
-        {
-            return !TaktEcScopeConstants.IsMaterialControlNeedFillDept(
-                deptCode,
-                detail.EcNewPurchaseType,
-                detail.EcNewWarehouse);
-        }
-        return false;
-    }
 }

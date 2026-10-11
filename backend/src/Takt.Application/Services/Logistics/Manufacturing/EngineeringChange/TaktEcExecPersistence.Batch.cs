@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcExecPersistence.Batch.cs
 // 创建时间：2026-09-08
@@ -76,7 +76,21 @@ public partial class TaktEcExecPersistence
             .OfType<ITaktEcDeptExecEntity>()
             .GroupBy(x => x.EcDetailId)
             .ToDictionary(g => g.Key, g => (object)g.First());
-        var skipByDedup = BuildListDedupSkipDetailIds(details, deptCode);
+        var ecDeptScope = TaktEcDeptScopeConstants.ResolveForDept(deptCode, ecScope, details[0].EcDeptScope);
+        var dedupKind = TaktEcScopeRowGrain.ResolveKind(deptCode, ecDeptScope);
+        var fertRootKeys = deptCode == TaktEcDeptCodes.Assy
+            && ecDeptScope == TaktEcDeptScopeConstants.ByFinishedProduct
+            ? await LoadFertRootMaterialKeysAsync(details)
+            : null;
+        var skipByDedup = TaktEcScopeRowGrain.BuildSkipIds(details, deptCode, ecDeptScope, fertRootKeys);
+        var rootGroups = TaktEcScopeRowGrain.BuildRootGroups(details, deptCode, ecDeptScope, fertRootKeys);
+        var modelGroups = TaktEcScopeRowGrain.BuildModelGroups(details, deptCode, ecDeptScope, fertRootKeys);
+        var newMaterialGroups = deptCode == TaktEcDeptCodes.Pcba
+            ? TaktEcScopeRowGrain.BuildCodeGroups(details, deptCode, ecDeptScope, fertRootKeys, detail => detail.EcNewMaterialCode)
+            : null;
+        var parentMaterialGroups = deptCode == TaktEcDeptCodes.Pcba
+            ? TaktEcScopeRowGrain.BuildCodeGroups(details, deptCode, ecDeptScope, fertRootKeys, detail => detail.EcParentMaterialCode)
+            : null;
         if (skipByDedup.Count > 0)
         {
             TaktLogger.Information(
@@ -85,8 +99,11 @@ public partial class TaktEcExecPersistence
                 details.Count,
                 skipByDedup.Count);
         }
-        var applyNotRelatedAuto = ecScope == TaktEcScopeConstants.AllDestination
-            || ecScope == TaktEcScopeConstants.MaterialControl;
+        var applyNotRelatedAuto = TaktEcScopeConstants.AllowsNotRelatedFill(ecScope);
+        var nonFertRootKeys = deptCode == TaktEcDeptCodes.Assy
+            && dedupKind == TaktEcScopeDedupKind.ModelRoot
+            ? await LoadNonFertRootMaterialKeysAsync(details)
+            : null;
         var deptName = await ResolveDeptNameAsync(deptCode);
         var toCreate = new List<object>();
         var toUpdate = new List<object>();
@@ -95,19 +112,7 @@ public partial class TaktEcExecPersistence
         foreach (var detail in details)
         {
             existingByDetailId.TryGetValue(detail.Id, out var existing);
-            if (TaktEcScopeConstants.IsNewMaterialDependentDept(deptCode)
-                && !TaktEcScopeConstants.HasEffectiveNewMaterialCode(detail.EcNewMaterialCode))
-            {
-                if (TryMarkObsolete(existing))
-                {
-                    toUpdate.Add(existing!);
-                }
-                skippedCount++;
-                continue;
-            }
-            // 采购/受检/部管：非列表可见条件不落库（与 QueryHelper 一致；禁止对非可见明细灌满执行表）
-            if (TaktEcScopeConstants.IsNewMaterialDependentDept(deptCode)
-                && !IsNewMaterialDeptListVisible(detail, deptCode))
+            if (!TaktEcScopeRowGrain.IsEligible(detail, deptCode, ecScope, fertRootKeys))
             {
                 if (TryMarkObsolete(existing))
                 {
@@ -128,6 +133,22 @@ public partial class TaktEcExecPersistence
             var isNew = existing == null;
             var lineNumber = detail.LineNumber > 0 ? detail.LineNumber : 10;
             var exec = CreateConcreteExec(detail, deptCode, existing, lineNumber, applyNotRelatedAuto: false);
+            var groupKey = TaktEcScopeRowGrain.BuildKey(detail, dedupKind);
+            if (rootGroups.TryGetValue(groupKey, out var rootGroup))
+            {
+                AssignRootMaterialCodeGroup(exec, rootGroup);
+            }
+            if (modelGroups.TryGetValue(groupKey, out var modelGroup))
+            {
+                AssignModelCodeGroup(exec, modelGroup);
+            }
+            if (newMaterialGroups != null
+                && parentMaterialGroups != null
+                && newMaterialGroups.TryGetValue(groupKey, out var newMaterialGroup)
+                && parentMaterialGroups.TryGetValue(groupKey, out var parentMaterialGroup))
+            {
+                AssignPcbaMaterialGroups(exec, newMaterialGroup, parentMaterialGroup);
+            }
             EnsureDeptName(exec, deptName);
             if (exec is ITaktEcDeptExecEntity deptExec && deptExec.IsObsolete == 1)
             {
@@ -141,6 +162,12 @@ public partial class TaktEcExecPersistence
                 TaktEcExecNotRelated.TryAfterFill(exec, detail);
             }
             NormalizeExecContent(exec);
+            if (nonFertRootKeys != null
+                && exec is TaktEcSeizouikka assy
+                && nonFertRootKeys.Contains(BuildRootMaterialKey(detail)))
+            {
+                ApplySeizouikkaNonFertDefault(assy, isNew);
+            }
             if (isNew)
             {
                 toCreate.Add(exec);
@@ -151,6 +178,7 @@ public partial class TaktEcExecPersistence
             }
             savedCount++;
         }
+        await DeleteNonKeeperRowsForDeptAsync(deptCode, existingList, toCreate, toUpdate);
         await SaveTypedDeptRangeAsync(deptCode, toCreate, toUpdate);
         TaktLogger.Information(
             "[EcGijutsuPersist] 部门执行已落库 DeptCode={DeptCode} Saved={Saved} Skipped={Skipped}",
@@ -202,10 +230,15 @@ public partial class TaktEcExecPersistence
                 }
             }
         }
-        var skipSmt = BuildPcbaSmtSkipDetailIds(details);
-        var skipSeizounika = BuildPcbaSeizounikaSkipDetailIds(details);
-        var applyNotRelatedAuto = ecScope == TaktEcScopeConstants.AllDestination
-            || ecScope == TaktEcScopeConstants.MaterialControl;
+        var ecDeptScope = details[0].EcDeptScope > 0 ? details[0].EcDeptScope : TaktEcDeptScopeConstants.ByModel;
+        var smtKind = TaktEcScopeRowGrain.ResolveKind(TaktEcDeptCodes.Smt, ecDeptScope);
+        var nikaKind = TaktEcScopeRowGrain.ResolveKind(TaktEcDeptCodes.Pcba, ecDeptScope);
+        var skipSmt = TaktEcScopeRowGrain.BuildSkipIds(details, TaktEcDeptCodes.Smt, ecDeptScope, null);
+        var skipSeizounika = TaktEcScopeRowGrain.BuildSkipIds(details, TaktEcDeptCodes.Pcba, ecDeptScope, null);
+        var smtRootGroups = TaktEcScopeRowGrain.BuildRootGroups(details, TaktEcDeptCodes.Smt, ecDeptScope, null);
+        var nikaRootGroups = TaktEcScopeRowGrain.BuildRootGroups(details, TaktEcDeptCodes.Pcba, ecDeptScope, null);
+        _ = shouldAutoComplete;
+        var applyNotRelatedAuto = TaktEcScopeConstants.AllowsNotRelatedFill(ecScope);
         var smtDeptName = await ResolveDeptNameAsync(TaktEcDeptCodes.Smt);
         var seizounikaDeptName = await ResolveDeptNameAsync(TaktEcDeptCodes.Pcba);
         var smtCreate = new List<TaktEcSmt>();
@@ -216,42 +249,21 @@ public partial class TaktEcExecPersistence
         var skippedCount = 0;
         foreach (var detail in details)
         {
-            var route = TaktEcSmtRouteHelper.Resolve(detail);
             smtExisting.TryGetValue(detail.Id, out var smtRow);
             seizounikaExisting.TryGetValue(detail.Id, out var seizounikaRow);
-            if (route == TaktEcSmtRouteTarget.None)
+            var smtKeep = TaktEcScopeRowGrain.IsEligible(detail, TaktEcDeptCodes.Smt, ecScope, null)
+                && !skipSmt.Contains(detail.Id);
+            var nikaKeep = TaktEcScopeRowGrain.IsEligible(detail, TaktEcDeptCodes.Pcba, ecScope, null)
+                && !skipSeizounika.Contains(detail.Id);
+            if (!smtKeep)
             {
                 if (TryMarkObsolete(smtRow))
                 {
                     smtUpdate.Add(smtRow!);
                 }
-                if (TryMarkObsolete(seizounikaRow))
-                {
-                    seizounikaUpdate.Add(seizounikaRow!);
-                }
-                skippedCount++;
-                continue;
             }
-            if (route == TaktEcSmtRouteTarget.Smt)
+            else
             {
-                if (!TaktEcScopeConstants.HasEffectiveNewMaterialCode(detail.EcNewMaterialCode)
-                    || skipSmt.Contains(detail.Id))
-                {
-                    if (TryMarkObsolete(smtRow))
-                    {
-                        smtUpdate.Add(smtRow!);
-                    }
-                    if (TryMarkObsolete(seizounikaRow))
-                    {
-                        seizounikaUpdate.Add(seizounikaRow!);
-                    }
-                    skippedCount++;
-                    continue;
-                }
-                if (TryMarkObsolete(seizounikaRow))
-                {
-                    seizounikaUpdate.Add(seizounikaRow!);
-                }
                 var isNew = smtRow == null;
                 var lineNumber = detail.LineNumber > 0 ? detail.LineNumber : 10;
                 var exec = (TaktEcSmt)CreatePcbaConcreteExec(
@@ -260,12 +272,22 @@ public partial class TaktEcExecPersistence
                     smtRow,
                     lineNumber,
                     applyNotRelatedAuto: false);
+                var smtGroupKey = TaktEcScopeRowGrain.BuildKey(detail, smtKind);
+                if (smtRootGroups.TryGetValue(smtGroupKey, out var smtRootGroup))
+                {
+                    exec.EcRootMaterialCodeGroup = smtRootGroup;
+                }
                 EnsureDeptName(exec, smtDeptName);
                 if (exec.IsObsolete == 1)
                 {
                     exec.IsObsolete = 0;
                 }
-                ApplyScopeFillMode(exec, isNew, shouldAutoComplete(detail), ecScope, detail);
+                ApplyScopeFillMode(
+                    exec,
+                    isNew,
+                    TaktEcScopeConstants.ShouldAutoCompleteExec(ecScope, TaktEcDeptCodes.Smt, detail.EcNewPurchaseType, detail.EcNewWarehouse),
+                    ecScope,
+                    detail);
                 ApplyPostFillNotRelated(exec, detail, applyNotRelatedAuto);
                 NormalizeExecContent(exec);
                 if (isNew)
@@ -277,25 +299,15 @@ public partial class TaktEcExecPersistence
                     smtUpdate.Add(exec);
                 }
                 savedCount++;
-                continue;
             }
-            if (skipSeizounika.Contains(detail.Id))
+            if (!nikaKeep)
             {
-                if (TryMarkObsolete(smtRow))
-                {
-                    smtUpdate.Add(smtRow!);
-                }
                 if (TryMarkObsolete(seizounikaRow))
                 {
                     seizounikaUpdate.Add(seizounikaRow!);
                 }
-                skippedCount++;
-                continue;
             }
-            if (TryMarkObsolete(smtRow))
-            {
-                smtUpdate.Add(smtRow!);
-            }
+            else
             {
                 var isNew = seizounikaRow == null;
                 var lineNumber = detail.LineNumber > 0 ? detail.LineNumber : 10;
@@ -305,12 +317,22 @@ public partial class TaktEcExecPersistence
                     seizounikaRow,
                     lineNumber,
                     applyNotRelatedAuto: false);
+                var nikaGroupKey = TaktEcScopeRowGrain.BuildKey(detail, nikaKind);
+                if (nikaRootGroups.TryGetValue(nikaGroupKey, out var nikaRootGroup))
+                {
+                    exec.EcRootMaterialCodeGroup = nikaRootGroup;
+                }
                 EnsureDeptName(exec, seizounikaDeptName);
                 if (exec.IsObsolete == 1)
                 {
                     exec.IsObsolete = 0;
                 }
-                ApplyScopeFillMode(exec, isNew, shouldAutoComplete(detail), ecScope, detail);
+                ApplyScopeFillMode(
+                    exec,
+                    isNew,
+                    TaktEcScopeConstants.ShouldAutoCompleteExec(ecScope, TaktEcDeptCodes.Pcba, detail.EcNewPurchaseType, detail.EcNewWarehouse),
+                    ecScope,
+                    detail);
                 ApplyPostFillNotRelated(exec, detail, applyNotRelatedAuto);
                 NormalizeExecContent(exec);
                 if (isNew)
@@ -323,6 +345,40 @@ public partial class TaktEcExecPersistence
                 }
                 savedCount++;
             }
+            if (!smtKeep && !nikaKeep)
+            {
+                skippedCount++;
+            }
+        }
+        var smtKeeperDetailIds = smtCreate
+            .Concat(smtUpdate)
+            .Where(x => x.IsObsolete == 0)
+            .Select(x => x.EcDetailId)
+            .ToHashSet();
+        var smtDeleteIds = smtExisting.Values
+            .Where(x => x.Id > 0 && !smtKeeperDetailIds.Contains(x.EcDetailId))
+            .Select(x => x.Id)
+            .Distinct()
+            .ToList();
+        if (smtDeleteIds.Count > 0)
+        {
+            await _smtRepository.DeleteAsync(x => smtDeleteIds.Contains(x.Id));
+            smtUpdate.RemoveAll(x => smtDeleteIds.Contains(x.Id));
+        }
+        var nikaKeeperDetailIds = seizounikaCreate
+            .Concat(seizounikaUpdate)
+            .Where(x => x.IsObsolete == 0)
+            .Select(x => x.EcDetailId)
+            .ToHashSet();
+        var nikaDeleteIds = seizounikaExisting.Values
+            .Where(x => x.Id > 0 && !nikaKeeperDetailIds.Contains(x.EcDetailId))
+            .Select(x => x.Id)
+            .Distinct()
+            .ToList();
+        if (nikaDeleteIds.Count > 0)
+        {
+            await _seizounikaRepository.DeleteAsync(x => nikaDeleteIds.Contains(x.Id));
+            seizounikaUpdate.RemoveAll(x => nikaDeleteIds.Contains(x.Id));
         }
         if (smtCreate.Count > 0)
         {
@@ -372,6 +428,248 @@ public partial class TaktEcExecPersistence
             entity,
             TaktEcDeptEntityHelper.GetExecContent(entity),
             overwrite: true);
+    }
+
+    /// <summary>
+    /// 制一课：根物料类型不是 FERT 时默认已实施，预定日期为当天，预定批次与实施批次为制一课无关。
+    /// 已手填过其它批次的旧行不覆盖；已是无关文案时保留原预定日期，只补回已实施。
+    /// </summary>
+    /// <param name="row">制一执行行</param>
+    /// <param name="isNew">是否新建</param>
+    private static void ApplySeizouikkaNonFertDefault(TaktEcSeizouikka row, bool isNew)
+    {
+        var marker = TaktEcSeizouikkaConstants.NotRelatedBatch;
+        var scheduled = row.ScheduledBatch?.Trim() ?? string.Empty;
+        var implementation = row.ImplementationBatch?.Trim() ?? string.Empty;
+        var marked = string.Equals(scheduled, marker, StringComparison.Ordinal)
+            && string.Equals(implementation, marker, StringComparison.Ordinal);
+        var empty = scheduled.Length == 0 && implementation.Length == 0;
+        if (!isNew && !empty && !marked)
+        {
+            return;
+        }
+        row.IsImplemented = 1;
+        row.ScheduledBatch = marker;
+        row.ImplementationBatch = marker;
+        if (row.ScheduledDate == null)
+        {
+            row.ScheduledDate = DateTime.Today;
+        }
+    }
+
+    /// <summary>
+    /// 制一行是否已按非 FERT 写成制一课无关（生管冗余同步时保留）
+    /// </summary>
+    /// <param name="row">制一执行行</param>
+    /// <returns>是否无关默认</returns>
+    private static bool IsSeizouikkaNotRelatedDefault(TaktEcSeizouikka row)
+    {
+        return TaktEcSeizouikkaConstants.IsNotRelatedBatch(row.ScheduledBatch)
+            || TaktEcSeizouikkaConstants.IsNotRelatedBatch(row.ImplementationBatch);
+    }
+
+    /// <summary>
+    /// 工厂 + 根物料编码键（忽略大小写比较）
+    /// </summary>
+    /// <param name="detail">设变明细</param>
+    /// <returns>组合键</returns>
+    private static string BuildRootMaterialKey(TaktEcDetail detail)
+    {
+        return BuildRootMaterialKey(detail.PlantCode, detail.EcRootMaterialCode);
+    }
+
+    /// <summary>
+    /// 工厂 + 物料编码键
+    /// </summary>
+    /// <param name="plantCode">工厂代码</param>
+    /// <param name="materialCode">物料编码</param>
+    /// <returns>组合键</returns>
+    private static string BuildRootMaterialKey(string? plantCode, string? materialCode)
+    {
+        return (plantCode?.Trim() ?? string.Empty) + "\u001f" + (materialCode?.Trim() ?? string.Empty);
+    }
+
+    /// <summary>
+    /// 批量解析根物料类型不是 FERT 的工厂物料键（未建档的编码不计入）
+    /// </summary>
+    /// <param name="details">设变明细</param>
+    /// <returns>非 FERT 的工厂+物料键</returns>
+    private async Task<HashSet<string>> LoadNonFertRootMaterialKeysAsync(IReadOnlyList<TaktEcDetail> details)
+    {
+        var codesByPlant = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+        foreach (var detail in details)
+        {
+            var materialCode = detail.EcRootMaterialCode?.Trim();
+            var plantCode = detail.PlantCode?.Trim();
+            if (string.IsNullOrEmpty(materialCode) || string.IsNullOrEmpty(plantCode))
+            {
+                continue;
+            }
+            if (!codesByPlant.TryGetValue(plantCode, out var codes))
+            {
+                codes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                codesByPlant[plantCode] = codes;
+            }
+            codes.Add(materialCode);
+        }
+        var nonFert = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        const int chunkSize = 500;
+        foreach (var pair in codesByPlant)
+        {
+            var plantCode = pair.Key;
+            var codeList = pair.Value.ToList();
+            for (var offset = 0; offset < codeList.Count; offset += chunkSize)
+            {
+                var count = Math.Min(chunkSize, codeList.Count - offset);
+                var chunk = codeList.GetRange(offset, count);
+                var materials = await _materialPlantRepository.GetListAsync(x =>
+                    x.PlantCode == plantCode && chunk.Contains(x.MaterialCode));
+                foreach (var material in materials)
+                {
+                    if (string.Equals(
+                        material.MaterialType?.Trim(),
+                        TaktEcSeizouikkaConstants.FertMaterialType,
+                        StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+                    nonFert.Add(BuildRootMaterialKey(material.PlantCode, material.MaterialCode));
+                }
+            }
+        }
+        return nonFert;
+    }
+
+    /// <summary>
+    /// 批量解析根物料类型为 FERT 的工厂物料键（未建档的编码不计入）
+    /// </summary>
+    /// <param name="details">设变明细</param>
+    /// <returns>FERT 的工厂+物料键</returns>
+    private async Task<HashSet<string>> LoadFertRootMaterialKeysAsync(IReadOnlyList<TaktEcDetail> details)
+    {
+        var codesByPlant = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+        foreach (var detail in details)
+        {
+            var materialCode = detail.EcRootMaterialCode?.Trim();
+            var plantCode = detail.PlantCode?.Trim();
+            if (string.IsNullOrEmpty(materialCode) || string.IsNullOrEmpty(plantCode))
+            {
+                continue;
+            }
+            if (!codesByPlant.TryGetValue(plantCode, out var codes))
+            {
+                codes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                codesByPlant[plantCode] = codes;
+            }
+            codes.Add(materialCode);
+        }
+        var fert = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        const int chunkSize = 500;
+        foreach (var pair in codesByPlant)
+        {
+            var plantCode = pair.Key;
+            var codeList = pair.Value.ToList();
+            for (var offset = 0; offset < codeList.Count; offset += chunkSize)
+            {
+                var count = Math.Min(chunkSize, codeList.Count - offset);
+                var chunk = codeList.GetRange(offset, count);
+                var materials = await _materialPlantRepository.GetListAsync(x =>
+                    x.PlantCode == plantCode && chunk.Contains(x.MaterialCode));
+                foreach (var material in materials)
+                {
+                    if (!string.Equals(
+                        material.MaterialType?.Trim(),
+                        TaktEcSeizouikkaConstants.FertMaterialType,
+                        StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+                    fert.Add(BuildRootMaterialKey(material.PlantCode, material.MaterialCode));
+                }
+            }
+        }
+        return fert;
+    }
+
+    /// <summary>
+    /// 写入根物料编码组（无该字段的部门忽略）
+    /// </summary>
+    /// <param name="exec">部门执行实体</param>
+    /// <param name="rootGroup">分号分隔的根物料编码</param>
+    private static void AssignRootMaterialCodeGroup(object exec, string rootGroup)
+    {
+        switch (exec)
+        {
+            case TaktEcSeikan row:
+                row.EcRootMaterialCodeGroup = rootGroup;
+                break;
+            case TaktEcBukan row:
+                row.EcRootMaterialCodeGroup = rootGroup;
+                break;
+            case TaktEcSmt row:
+                row.EcRootMaterialCodeGroup = rootGroup;
+                break;
+            case TaktEcSeizouikka row:
+                row.EcRootMaterialCodeGroup = rootGroup;
+                break;
+            case TaktEcSeizounika row:
+                row.EcRootMaterialCodeGroup = rootGroup;
+                break;
+            case TaktEcHinkan row:
+                row.EcRootMaterialCodeGroup = rootGroup;
+                break;
+            case TaktEcKoubai row:
+                row.EcRootMaterialCodeGroup = rootGroup;
+                break;
+            case TaktEcUkeken row:
+                row.EcRootMaterialCodeGroup = rootGroup;
+                break;
+            case TaktEcSeizougijutsu row:
+                row.EcRootMaterialCodeGroup = rootGroup;
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 写入机种编码组（采购/受检）
+    /// </summary>
+    /// <param name="exec">部门执行实体</param>
+    /// <param name="modelGroup">分号分隔的机种编码</param>
+    private static void AssignModelCodeGroup(object exec, string modelGroup)
+    {
+        switch (exec)
+        {
+            case TaktEcKoubai row:
+                row.EcModelCodeGroup = modelGroup;
+                break;
+            case TaktEcUkeken row:
+                row.EcModelCodeGroup = modelGroup;
+                break;
+            case TaktEcSeizounika row:
+                row.EcModelCodeGroup = modelGroup;
+                break;
+            case TaktEcSeizouikka row:
+                row.EcModelCodeGroup = modelGroup;
+                break;
+            case TaktEcHinkan row:
+                row.EcModelCodeGroup = modelGroup;
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 按设变时写入制二的新物料编码组与上阶物料编码组
+    /// </summary>
+    /// <param name="exec">部门执行实体</param>
+    /// <param name="newMaterialGroup">新物料编码组</param>
+    /// <param name="parentMaterialGroup">上阶物料编码组</param>
+    private static void AssignPcbaMaterialGroups(object exec, string newMaterialGroup, string parentMaterialGroup)
+    {
+        if (exec is TaktEcSeizounika row)
+        {
+            row.EcNewMaterialCodeGroup = newMaterialGroup;
+            row.EcParentMaterialCodeGroup = parentMaterialGroup;
+        }
     }
 
     /// <summary>
@@ -444,6 +742,96 @@ public partial class TaktEcExecPersistence
     }
 
     /// <summary>
+    /// 删掉同设变单号+机种下非代表明细的执行行，避免唯一键（设变单号+机种编码）冲突
+    /// </summary>
+    /// <typeparam name="TEntity">部管或 SMT 执行实体</typeparam>
+    /// <param name="existing">本设变已有执行行</param>
+    /// <param name="keepers">本次保留的执行行</param>
+    /// <param name="repository">对应仓储</param>
+    /// <param name="toUpdate">待更新列表（去掉已删除行）</param>
+    private static async Task DeleteNonKeeperEcModelRowsAsync<TEntity>(
+        IEnumerable<TEntity> existing,
+        IEnumerable<TEntity> keepers,
+        ITaktCompanyRepository<TEntity> repository,
+        List<object> toUpdate)
+        where TEntity : TaktCompanyEntityBase, ITaktEcDeptExecEntity, new()
+    {
+        var keeperDetailIds = keepers
+            .Where(x => x.IsObsolete == 0)
+            .Select(x => x.EcDetailId)
+            .ToHashSet();
+        var deleteIds = existing
+            .Where(x => x.Id > 0 && !keeperDetailIds.Contains(x.EcDetailId))
+            .Select(x => x.Id)
+            .Distinct()
+            .ToList();
+        if (deleteIds.Count == 0)
+        {
+            return;
+        }
+        await repository.DeleteAsync(x => deleteIds.Contains(x.Id));
+        toUpdate.RemoveAll(x => x is TEntity row && deleteIds.Contains(row.Id));
+    }
+
+    /// <summary>
+    /// 删掉本设变中本次未保留的执行行，使落库行数与实施范围去重键一致
+    /// </summary>
+    /// <param name="deptCode">部门编码</param>
+    /// <param name="existing">本设变已有执行行</param>
+    /// <param name="toCreate">待新增</param>
+    /// <param name="toUpdate">待更新</param>
+    /// <returns>任务</returns>
+    private async Task DeleteNonKeeperRowsForDeptAsync(
+        string deptCode,
+        IEnumerable<object> existing,
+        IEnumerable<object> toCreate,
+        List<object> toUpdate)
+    {
+        switch (deptCode)
+        {
+            case TaktEcDeptCodes.Pmc:
+                await DeleteNonKeeperEcModelRowsAsync(existing.OfType<TaktEcSeikan>(), toCreate.OfType<TaktEcSeikan>().Concat(toUpdate.OfType<TaktEcSeikan>()), _pmcRepository, toUpdate);
+                break;
+            case TaktEcDeptCodes.Mp:
+                await DeleteNonKeeperEcModelRowsAsync(existing.OfType<TaktEcKoubai>(), toCreate.OfType<TaktEcKoubai>().Concat(toUpdate.OfType<TaktEcKoubai>()), _mpRepository, toUpdate);
+                break;
+            case TaktEcDeptCodes.Iqc:
+                await DeleteNonKeeperEcModelRowsAsync(existing.OfType<TaktEcUkeken>(), toCreate.OfType<TaktEcUkeken>().Concat(toUpdate.OfType<TaktEcUkeken>()), _iqcRepository, toUpdate);
+                break;
+            case TaktEcDeptCodes.Mc:
+                await DeleteNonKeeperEcModelRowsAsync(existing.OfType<TaktEcBukan>(), toCreate.OfType<TaktEcBukan>().Concat(toUpdate.OfType<TaktEcBukan>()), _mcRepository, toUpdate);
+                break;
+            case TaktEcDeptCodes.Assy:
+                await DeleteNonKeeperEcModelRowsAsync(existing.OfType<TaktEcSeizouikka>(), toCreate.OfType<TaktEcSeizouikka>().Concat(toUpdate.OfType<TaktEcSeizouikka>()), _assyRepository, toUpdate);
+                break;
+            case TaktEcDeptCodes.Qa:
+                await DeleteNonKeeperEcModelRowsAsync(existing.OfType<TaktEcHinkan>(), toCreate.OfType<TaktEcHinkan>().Concat(toUpdate.OfType<TaktEcHinkan>()), _qaRepository, toUpdate);
+                break;
+            case TaktEcDeptCodes.Te:
+                await DeleteNonKeeperEcModelRowsAsync(existing.OfType<TaktEcSeizougijutsu>(), toCreate.OfType<TaktEcSeizougijutsu>().Concat(toUpdate.OfType<TaktEcSeizougijutsu>()), _teRepository, toUpdate);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 按设变单号+机种编码汇总可见明细的根物料编码组
+    /// </summary>
+    /// <param name="details">同一设变明细</param>
+    /// <param name="visible">是否计入编码组</param>
+    /// <returns>键为设变单号与机种编码</returns>
+    private static Dictionary<(string EcCode, string Model), string> BuildEcModelRootMaterialCodeGroups(
+        IReadOnlyList<TaktEcDetail> details,
+        Func<TaktEcDetail, bool> visible)
+    {
+        return details
+            .Where(d => d.IsObsolete == 0 && visible(d))
+            .GroupBy(d => (d.EcCode ?? string.Empty, d.EcModelCode ?? string.Empty))
+            .ToDictionary(
+                g => g.Key,
+                g => TaktEcRootMaterialCodeGroup.Join(g.Select(x => x.EcRootMaterialCode)));
+    }
+
+    /// <summary>
     /// 采购/受检/部管是否属于列表可见条件（不含组内去重）
     /// </summary>
     private static bool IsNewMaterialDeptListVisible(TaktEcDetail detail, string deptCode)
@@ -510,6 +898,7 @@ public partial class TaktEcExecPersistence
             && TaktEcScopeConstants.HasEffectiveNewMaterialCode(d.EcNewMaterialCode));
         foreach (var group in visible.GroupBy(d => (
             EcCode: d.EcCode ?? string.Empty,
+            PurchaseType: d.EcNewPurchaseType ?? string.Empty,
             Material: d.EcNewMaterialCode ?? string.Empty)))
         {
             var maxId = group.Max(x => x.Id);
@@ -525,7 +914,7 @@ public partial class TaktEcExecPersistence
     }
 
     /// <summary>
-    /// 受检课可见组去重跳过 Id
+    /// 受检课可见组去重跳过 Id（设变单号+新品检验+新物料编码）
     /// </summary>
     private static HashSet<long> BuildUkekenSkipDetailIds(IReadOnlyList<TaktEcDetail> details)
     {
@@ -535,6 +924,7 @@ public partial class TaktEcExecPersistence
             && TaktEcScopeConstants.HasEffectiveNewMaterialCode(d.EcNewMaterialCode));
         foreach (var group in visible.GroupBy(d => (
             EcCode: d.EcCode ?? string.Empty,
+            Inspection: d.EcNewRequiresInspection,
             Material: d.EcNewMaterialCode ?? string.Empty)))
         {
             var maxId = group.Max(x => x.Id);
@@ -550,7 +940,7 @@ public partial class TaktEcExecPersistence
     }
 
     /// <summary>
-    /// 部管课可见组去重跳过 Id
+    /// 部管课可见组去重跳过 Id（设变单号+机种编码）
     /// </summary>
     private static HashSet<long> BuildBukanSkipDetailIds(IReadOnlyList<TaktEcDetail> details)
     {
@@ -560,8 +950,7 @@ public partial class TaktEcExecPersistence
             && TaktEcScopeConstants.HasEffectiveNewMaterialCode(d.EcNewMaterialCode));
         foreach (var group in visible.GroupBy(d => (
             EcCode: d.EcCode ?? string.Empty,
-            Model: d.EcModelCode ?? string.Empty,
-            Material: d.EcNewMaterialCode ?? string.Empty)))
+            Model: d.EcModelCode ?? string.Empty)))
         {
             var maxId = group.Max(x => x.Id);
             foreach (var d in group)
@@ -576,16 +965,17 @@ public partial class TaktEcExecPersistence
     }
 
     /// <summary>
-    /// SMT 可见组去重跳过 Id
+    /// SMT 可见组去重跳过 Id（设变单号+机种编码）
     /// </summary>
     private static HashSet<long> BuildPcbaSmtSkipDetailIds(IReadOnlyList<TaktEcDetail> details)
     {
         var skip = new HashSet<long>();
         var visible = details.Where(d =>
-            TaktEcScopeConstants.IsPcbaC003ExternalGroup(d.EcNewPurchaseType, d.EcNewWarehouse));
+            TaktEcScopeConstants.IsPcbaC003ExternalGroup(d.EcNewPurchaseType, d.EcNewWarehouse)
+            && TaktEcScopeConstants.HasEffectiveNewMaterialCode(d.EcNewMaterialCode));
         foreach (var group in visible.GroupBy(d => (
             EcCode: d.EcCode ?? string.Empty,
-            Parent: d.EcParentMaterialCode ?? string.Empty)))
+            Model: d.EcModelCode ?? string.Empty)))
         {
             var maxId = group.Max(x => x.Id);
             foreach (var d in group)

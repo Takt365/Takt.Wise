@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.DependencyInjection
 // 文件名称：TaktAutofacModule.cs
 // 创建时间：2025-01-20
@@ -65,6 +65,18 @@ public class TaktAutofacModule : Autofac.Module
         builder.RegisterType<TaktRoleCompanyRepository>()
             .As<ITaktCompanyRepository<Takt.Domain.Entities.Identity.TaktRoleCompany>>()
             .InstancePerLifetimeScope();
+        builder.RegisterType<TaktUserRoleRepository>()
+            .As<ITaktCompanyRepository<Takt.Domain.Entities.Identity.TaktUserRole>>()
+            .InstancePerLifetimeScope();
+        builder.RegisterType<TaktRoleMenuRepository>()
+            .As<ITaktCompanyRepository<Takt.Domain.Entities.Identity.TaktRoleMenu>>()
+            .InstancePerLifetimeScope();
+        builder.RegisterType<TaktUserTenantRepository>()
+            .As<ITaktCompanyRepository<Takt.Domain.Entities.Identity.TaktUserTenant>>()
+            .InstancePerLifetimeScope();
+        builder.RegisterType<TaktEmployeeProfileResolver>()
+            .As<ITaktEmployeeProfileResolver>()
+            .InstancePerLifetimeScope();
         builder.RegisterGeneric(typeof(TaktCompanyRepository<>))
             .As(typeof(ITaktCompanyRepository<>))
             .InstancePerLifetimeScope();
@@ -125,6 +137,8 @@ public class TaktAutofacModule : Autofac.Module
             .InstancePerLifetimeScope();
         builder.RegisterType<Takt.Application.Services.Logistics.Manufacturing.EngineeringChange.TaktEcGijutsuStatusSynchronizer>()
             .InstancePerLifetimeScope();
+        builder.RegisterType<Takt.Application.Services.Logistics.Manufacturing.EngineeringChange.TaktEcHandoffMailService>()
+            .InstancePerLifetimeScope();
         builder.RegisterType<Takt.Application.Services.Logistics.Manufacturing.EngineeringChange.TaktEcScopeExecOrchestrator>()
             .InstancePerLifetimeScope();
 
@@ -134,6 +148,22 @@ public class TaktAutofacModule : Autofac.Module
 
         builder.RegisterType<Takt.Application.Services.Logistics.Procurement.TaktPurchasePriceTrendMonthlyAnalysisBuilder>()
             .As<Takt.Application.Services.Logistics.Procurement.ITaktPurchasePriceTrendMonthlyAnalysisBuilder>()
+            .InstancePerLifetimeScope();
+
+        builder.RegisterType<Takt.Application.Services.Logistics.Materials.TaktInboundActualTrendAnalysisBuilder>()
+            .As<Takt.Application.Services.Logistics.Materials.ITaktInboundActualTrendAnalysisBuilder>()
+            .InstancePerLifetimeScope();
+
+        builder.RegisterType<Takt.Application.Services.Logistics.Materials.TaktOutboundActualTrendAnalysisBuilder>()
+            .As<Takt.Application.Services.Logistics.Materials.ITaktOutboundActualTrendAnalysisBuilder>()
+            .InstancePerLifetimeScope();
+
+        builder.RegisterType<Takt.Application.Services.Logistics.Procurement.TaktPurchaseActualTrendAnalysisBuilder>()
+            .As<Takt.Application.Services.Logistics.Procurement.ITaktPurchaseActualTrendAnalysisBuilder>()
+            .InstancePerLifetimeScope();
+
+        builder.RegisterType<Takt.Application.Services.Logistics.Sales.TaktSalesActualTrendAnalysisBuilder>()
+            .As<Takt.Application.Services.Logistics.Sales.ITaktSalesActualTrendAnalysisBuilder>()
             .InstancePerLifetimeScope();
 
         builder.RegisterType<TaktLineNumberGenerator>()

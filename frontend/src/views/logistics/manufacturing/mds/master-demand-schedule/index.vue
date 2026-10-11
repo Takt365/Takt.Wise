@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/mds/master-demand-schedule -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：主需求计划 MDS 头表管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -170,22 +170,21 @@
  * 主需求计划 MDS 头表管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/mds/master-demand-schedule
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import MasterDemandScheduleForm from './components/master-demand-schedule-form.vue'
-import MasterDemandScheduleLinePanel from './components/master-demand-schedule-line-panel.vue'
-import { provideMasterDemandScheduleMasterContext, type MasterDemandScheduleRowRecord } from './composables/use-master-demand-schedule-master-context'
-import { getMasterDemandScheduleList, getMasterDemandScheduleById, createMasterDemandSchedule, updateMasterDemandSchedule, deleteMasterDemandScheduleById, deleteMasterDemandScheduleBatch, getMasterDemandScheduleTemplate, importMasterDemandSchedule, exportMasterDemandSchedule, updateMasterDemandScheduleStatus } from '@/api/logistics/manufacturing/mds/master-demand-schedule'
-import type { MasterDemandSchedule, MasterDemandScheduleQuery } from '@/types/logistics/manufacturing/mds/master-demand-schedule'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import MasterDemandScheduleForm from './components/MasterDemandScheduleForm.vue'
+import MasterDemandScheduleLinePanel from './components/MasterDemandScheduleLinePanel.vue'
+import { provideMasterDemandScheduleMasterContext, type MasterDemandScheduleRowRecord } from './composables/useMasterDemandScheduleMasterContext'
+import { getMasterDemandScheduleList, getMasterDemandScheduleById, createMasterDemandSchedule, updateMasterDemandSchedule, deleteMasterDemandScheduleById, deleteMasterDemandScheduleBatch, getMasterDemandScheduleTemplate, importMasterDemandSchedule, exportMasterDemandSchedule, updateMasterDemandScheduleStatus } from '@/api/logistics/manufacturing/mds/masterDemandSchedule.api'
+import type { MasterDemandSchedule, MasterDemandScheduleQuery } from '@/types/logistics/manufacturing/mds/masterDemandSchedule.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
 
 import {
@@ -194,7 +193,7 @@ import {
   MASTERDEMANDSCHEDULE_QUERY_STRING_FIELDS,
   MASTERDEMANDSCHEDULE_QUERY_FIELDS,
   MASTERDEMANDSCHEDULE_SELF_I18N_KEY,
-} from './composables/use-master-demand-schedule-i18n'
+} from './composables/useMasterDemandScheduleI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useMasterDemandScheduleI18n()
@@ -334,7 +333,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -504,8 +502,6 @@ const toMasterDemandScheduleNumber = (value: string | number | undefined | null)
   const num = Number(value ?? 0)
   return Number.isFinite(num) ? num : 0
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

@@ -1,5 +1,5 @@
 <!-- ========================================
-项目名称：节拍工厂·Takt Plat
+项目名称：节拍智控·TaktWise
 命名空间：frontend/src/layouts
 文件名称：index.vue
 创建时间：2025-01-20
@@ -11,25 +11,25 @@
 ======================================== -->
 
 <template>
-  <takt-watermark>
-    <takt-force-logout-banner />
+  <TaktWatermark>
+    <TaktForceLogoutBanner />
     <side-layout v-if="settingSafe.layout === 'side'" />
     <top-layout v-else-if="settingSafe.layout === 'top'" />
     <mix-layout v-else-if="settingSafe.layout === 'mix'" />
     <side-layout v-else />
-  </takt-watermark>
+  </TaktWatermark>
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { defaultSetting, useSettingStore } from '@/stores/common/setting';
-import { useEventBus } from '@/utils/event-bus';
+import { defaultSetting, useSettingStore } from '@/stores/common/useSettingStore';
+import { useEventBus } from '@/utils/eventBus';
 import { createLogger } from '@/utils/logger';
 import { ensureMenuAndRoutesLoaded } from '@/router';
-import TaktWatermark from '@/components/navigation/takt-watermark/index.vue';
-import SideLayout from './side/index.vue';
-import TopLayout from './top/index.vue';
-import MixLayout from './mix/index.vue';
+import TaktWatermark from '@/components/navigation/TaktWatermark/index.vue';
+import SideLayout from './SideLayout.vue';
+import TopLayout from './TopLayout.vue';
+import MixLayout from './MixLayout.vue';
 
 const layoutLogger = createLogger('layout');
 const { setting } = storeToRefs(useSettingStore());

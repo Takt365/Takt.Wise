@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi.Controllers.Routine.VisitorCenter
 // 文件名称：TaktVisitorsController.cs
 // 创建时间：2026-06-23

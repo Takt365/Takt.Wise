@@ -1,11 +1,11 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/utils
 // 文件名称：upload.ts
 // 创建时间：2025-01-20
 // 创建人：Takt365(Cursor AI)
 // 功能描述：通用上传工具（MD5 标识 + 可选 UploadHelper）。
-//           Foundation 文件模块请使用 api/foundation/file.ts + takt-file-chunk-upload.ts（对接 TaktFiles/upload-policy）。
+//           Foundation 文件模块请使用 api/foundation/file.api.ts + takt-file-chunk-upload.ts（对接 TaktFiles/upload-policy）。
 // 
 // 版权信息：Copyright (c) 2025 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。

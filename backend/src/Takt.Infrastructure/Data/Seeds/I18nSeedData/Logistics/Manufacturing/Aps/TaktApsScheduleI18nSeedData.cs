@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Aps
 // 文件名称：TaktApsScheduleI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktApsSchedule 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -243,23 +243,23 @@ public class TaktApsScheduleI18nSeedData : ITaktSeedDataCoordinator
             // entity.apsschedule.schedulestatus
             new TranslationSeedItem("entity.apsschedule.schedulestatus", "zh-HK", "排程状态_hk", "排程状态（0=草稿，1=计算中，2=已计算，3=已发布，4=执行中，5=已完成，6=已取消）"),
 
-            // entity.apsschedule.planneremployeeid
-            new TranslationSeedItem("entity.apsschedule.planneremployeeid", "en-US", "计划员员工ID_us", "计划员（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.apsschedule.planneremployeeid
-            new TranslationSeedItem("entity.apsschedule.planneremployeeid", "ja-JP", "计划员员工ID_jp", "计划员（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.apsschedule.planneremployeeid
-            new TranslationSeedItem("entity.apsschedule.planneremployeeid", "zh-CN", "计划员员工ID", "计划员（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.apsschedule.planneremployeeid
-            new TranslationSeedItem("entity.apsschedule.planneremployeeid", "zh-HK", "计划员员工ID_hk", "计划员（选项 TaktEmployees/options；DictValue=Id）"),
+            // entity.apsschedule.plannergroupcode
+            new TranslationSeedItem("entity.apsschedule.plannergroupcode", "en-US", "计划组编码_us", "计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）"),
+            // entity.apsschedule.plannergroupcode
+            new TranslationSeedItem("entity.apsschedule.plannergroupcode", "ja-JP", "计划组编码_jp", "计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）"),
+            // entity.apsschedule.plannergroupcode
+            new TranslationSeedItem("entity.apsschedule.plannergroupcode", "zh-CN", "计划组编码", "计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）"),
+            // entity.apsschedule.plannergroupcode
+            new TranslationSeedItem("entity.apsschedule.plannergroupcode", "zh-HK", "计划组编码_hk", "计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）"),
 
-            // entity.apsschedule.plannername
-            new TranslationSeedItem("entity.apsschedule.plannername", "en-US", "计划员名称_us", "计划员名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.apsschedule.plannername
-            new TranslationSeedItem("entity.apsschedule.plannername", "ja-JP", "计划员名称_jp", "计划员名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.apsschedule.plannername
-            new TranslationSeedItem("entity.apsschedule.plannername", "zh-CN", "计划员名称", "计划员名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.apsschedule.plannername
-            new TranslationSeedItem("entity.apsschedule.plannername", "zh-HK", "计划员名称_hk", "计划员名称（冗余：按 PlannerEmployeeId 取 TaktEmployee.EmployeeName 联动）"),
+            // entity.apsschedule.plannergroupname
+            new TranslationSeedItem("entity.apsschedule.plannergroupname", "en-US", "计划组名称_us", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
+            // entity.apsschedule.plannergroupname
+            new TranslationSeedItem("entity.apsschedule.plannergroupname", "ja-JP", "计划组名称_jp", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
+            // entity.apsschedule.plannergroupname
+            new TranslationSeedItem("entity.apsschedule.plannergroupname", "zh-CN", "计划组名称", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
+            // entity.apsschedule.plannergroupname
+            new TranslationSeedItem("entity.apsschedule.plannergroupname", "zh-HK", "计划组名称_hk", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
 
             // entity.apsschedule.publishtime
             new TranslationSeedItem("entity.apsschedule.publishtime", "en-US", "发布时间_us", "发布时间"),
@@ -271,22 +271,22 @@ public class TaktApsScheduleI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.apsschedule.publishtime", "zh-HK", "发布时间_hk", "发布时间"),
 
             // entity.apsschedule.publishuserid
-            new TranslationSeedItem("entity.apsschedule.publishuserid", "en-US", "发布人ID_us", "发布人ID（选项 TaktEmployees/options；DictValue=Id）"),
+            new TranslationSeedItem("entity.apsschedule.publishuserid", "en-US", "发布人ID_us", "发布人（选项 TaktApsGroups/options?apsGroupCategory=2；DictValue=Id）"),
             // entity.apsschedule.publishuserid
-            new TranslationSeedItem("entity.apsschedule.publishuserid", "ja-JP", "发布人ID_jp", "发布人ID（选项 TaktEmployees/options；DictValue=Id）"),
+            new TranslationSeedItem("entity.apsschedule.publishuserid", "ja-JP", "发布人ID_jp", "发布人（选项 TaktApsGroups/options?apsGroupCategory=2；DictValue=Id）"),
             // entity.apsschedule.publishuserid
-            new TranslationSeedItem("entity.apsschedule.publishuserid", "zh-CN", "发布人ID", "发布人ID（选项 TaktEmployees/options；DictValue=Id）"),
+            new TranslationSeedItem("entity.apsschedule.publishuserid", "zh-CN", "发布人ID", "发布人（选项 TaktApsGroups/options?apsGroupCategory=2；DictValue=Id）"),
             // entity.apsschedule.publishuserid
-            new TranslationSeedItem("entity.apsschedule.publishuserid", "zh-HK", "发布人ID_hk", "发布人ID（选项 TaktEmployees/options；DictValue=Id）"),
+            new TranslationSeedItem("entity.apsschedule.publishuserid", "zh-HK", "发布人ID_hk", "发布人（选项 TaktApsGroups/options?apsGroupCategory=2；DictValue=Id）"),
 
             // entity.apsschedule.publishusername
-            new TranslationSeedItem("entity.apsschedule.publishusername", "en-US", "发布人姓名_us", "发布人姓名"),
+            new TranslationSeedItem("entity.apsschedule.publishusername", "en-US", "发布人姓名_us", "发布人姓名（冗余字段,便于查询）"),
             // entity.apsschedule.publishusername
-            new TranslationSeedItem("entity.apsschedule.publishusername", "ja-JP", "发布人姓名_jp", "发布人姓名"),
+            new TranslationSeedItem("entity.apsschedule.publishusername", "ja-JP", "发布人姓名_jp", "发布人姓名（冗余字段,便于查询）"),
             // entity.apsschedule.publishusername
-            new TranslationSeedItem("entity.apsschedule.publishusername", "zh-CN", "发布人姓名", "发布人姓名"),
+            new TranslationSeedItem("entity.apsschedule.publishusername", "zh-CN", "发布人姓名", "发布人姓名（冗余字段,便于查询）"),
             // entity.apsschedule.publishusername
-            new TranslationSeedItem("entity.apsschedule.publishusername", "zh-HK", "发布人姓名_hk", "发布人姓名"),
+            new TranslationSeedItem("entity.apsschedule.publishusername", "zh-HK", "发布人姓名_hk", "发布人姓名（冗余字段,便于查询）"),
 
             // entity.apsschedule.scheduledescription
             new TranslationSeedItem("entity.apsschedule.scheduledescription", "en-US", "排程说明_us", "排程说明"),

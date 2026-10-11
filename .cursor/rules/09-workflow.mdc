@@ -76,7 +76,7 @@ alwaysApply: true
 
 ## 四、流程节点（设计器 ↔ 引擎）
 
-**标准参照**：`frontend/.../takt-flow-antflow-designer/config/takt-flow-tree.ts` ↔ `TaktFlowProcessModels.cs`
+**标准参照**：`frontend/.../TaktFlowAntDesigner/config/taktFlowTree.ts` ↔ `TaktFlowProcessModels.cs`
 
 | nodeType | 含义 | 运行时 |
 |----------|------|--------|
@@ -98,7 +98,7 @@ alwaysApply: true
 | 5 | 发起人自己 |
 | 6 | 层层审批（多级主管） |
 
-**设计器约束**（`07-overflow-vue` §3）：递归深度 ≤ **10**；条件/并行分支数 ≤ **20**；发布前跑 `takt-flow-design-validate.ts`。
+**设计器约束**（`07-overflow-vue` §3）：递归深度 ≤ **10**；条件/并行分支数 ≤ **20**；发布前跑 `taktFlowDesignValidate.ts`。
 
 ---
 
@@ -142,8 +142,8 @@ alwaysApply: true
 
 | 路径 | 职责 |
 |------|------|
-| `components/business/takt-flow-antflow-designer/` | **主设计器**（方案编辑） |
-| `components/business/takt-flow-logic-designer/` | LogicFlow 实验视图，**非**主路径 |
+| `components/business/TaktFlowAntDesigner/` | **主设计器**（方案编辑） |
+| `components/business/TaktFlowLogicDesigner/` | LogicFlow 实验视图，**非**主路径 |
 | `views/workflow/` | todo / my / processed / instance / scheme / form |
 | `api/workflow/` | `instance.ts`（引擎 + 实例）、`flow-scheme.ts` 等 |
 | `types/workflow/` | 与 DTO 对齐；主键 **`string`** |
@@ -197,8 +197,8 @@ alwaysApply: true
 | 树模型 | `TaktFlowProcessModels.cs` |
 | 运行时 API | `TaktFlowEngineController.cs` |
 | 枚举 | `Takt.Shared/Enums/TaktFlowEnums.cs` |
-| 设计器类型 | `frontend/.../takt-flow-tree.ts` |
-| 方案表单页 | `frontend/src/views/workflow/scheme/components/scheme-form.vue` |
+| 设计器类型 | `frontend/.../taktFlowTree.ts` |
+| 方案表单页 | `frontend/src/views/workflow/scheme/components/SchemeForm.vue` |
 | 待办审批 | `frontend/src/views/workflow/todo/index.vue` |
 
 新增 CRUD 模块对齐 `TaktLoginLogService`；**流程运行时**对齐 `TaktFlowEngineService` 方法命名与异常处理。
@@ -225,10 +225,10 @@ alwaysApply: true
 
 - 新业务流程：**先**方案（`ProcessKey`）+ 表单 + 设计器树，**再**业务页集成 `startFlowInstance`
 - 运行时变更只改 `FlowEngine/` 与 `TaktFlowEngineController`；定义管理走 `TaktFlowSchemeService`
-- 前后端 `nodeType`/`setType`/`signType` 与 `takt-flow-tree.ts`、`TaktFlowEnums` **必须一致**
+- 前后端 `nodeType`/`setType`/`signType` 与 `taktFlowTree.ts`、`TaktFlowEnums` **必须一致**
 - 权限：`TaktFlowEngineController`、`v-permission`、菜单种子三者对齐
 - i18n：`entity.flow*`、`menu.workflow.*` 与种子一致；静态文案 `workflow.*.page.*`（`locales/workflow/`）
-- 设计器：仅用 `takt-flow-antflow-designer` 作方案编辑；样式仅 `workflow.css`
+- 设计器：仅用 `TaktFlowAntDesigner` 作方案编辑；样式仅 `workflow.css`
 - 溢出：设计器递归/分支上限；待办/实例列表 **分页**（`07-overflow-vue`、`08-overflow-fullstack`）
 - 未完成能力（§十）不得写进用户可见文案或种子按钮
 - 本域实现清单：`.cursor/skills/09-workflow/SKILL.md`

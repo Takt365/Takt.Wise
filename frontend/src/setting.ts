@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src
 // 文件名称：setting.ts
 // 创建时间：2026-05-26
@@ -10,7 +10,7 @@
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
 // ========================================
 
-import type { AppSetting, ThemeColor, ThemeColorConfig } from '@/types/setting';
+import type { AppSetting, ThemeColor, ThemeColorConfig } from '@/types/setting.types';
 import {
   appSettingThemeColorToPreset,
   getThemeColorValue as getPresetThemeColorValue,
@@ -18,7 +18,7 @@ import {
 } from '@/utils/theme';
 import { createLogger } from '@/utils/logger';
 
-export type { ThemeColor, ThemeColorConfig, AppSetting } from '@/types/setting';
+export type { ThemeColor, ThemeColorConfig, AppSetting } from '@/types/setting.types';
 
 const settingLogger = createLogger('setting');
 
@@ -49,12 +49,12 @@ export const defaultSetting: AppSetting = {
   contentWidth: 'fluid',
   multiTab: true,
   watermark: false,
-  watermarkContent: 'Takt Plat',
+  watermarkContent: 'TaktWise',
   demo: false,
   menuAccordion: true,
   menuStyle: 'plain',
   logo: '@/assets/images/takt.svg',
-  logoText: 'Takt Plat',
+  logoText: 'TaktWise',
   logoCollapsedText: 'T',
   showForgotPassword: false,
   showRegister: false,
@@ -209,6 +209,10 @@ export function normalizeSetting(raw: Partial<AppSetting>): AppSetting {
   }
   if (typeof base.watermark !== 'boolean') {
     base.watermark = defaultSetting.watermark;
+  }
+  // Demo 开启时强制启用水印（演示标识联动）
+  if (base.demo) {
+    base.watermark = true;
   }
   if (typeof base.showFooter !== 'boolean') {
     base.showFooter = defaultSetting.showFooter;

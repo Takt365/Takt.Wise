@@ -1,12 +1,14 @@
 ---
 description: Takt 树表（ParentId 层级）前后端规范；与 00-project、01-backend、02-frontend、07-overflow 一并生效
-globs: backend/**/TaktDept*.cs,backend/**/TaktMenu*.cs,backend/**/*Tree*.cs,frontend/src/components/business/takt-tree-*/**/*,frontend/src/views/human-resource/organization/dept/**/*
+globs: backend/**/TaktDept*.cs,backend/**/TaktMenu*.cs,backend/**/*Tree*.cs,frontend/src/components/business/TaktTree*/**/*,frontend/src/views/human-resource/organization/dept/**/*
 alwaysApply: true
 ---
 
 # 树表（Tree Table）规范
 
-**强制基线**：树节点实体须遵守 `@.cursor/rules/12-crud.mdc`。本章规定 **ParentId 层级与树形 UI 扩展**。
+**强制（全树统一）**：菜单、部门、科目、成本中心、利润中心、成本要素、行政区划及一切 `ParentId` 树——`GetXxxTreeAsync` / `TreeOptions` / 左树 / `TaktTreeSelect` **一律**按 `parentId` **一层懒加载**。❌ 禁止整表 `GetList` + 内存递归 Build；❌ 禁止前端 `getXxxTree('0')` 一次当全量；❌ 禁止按数据量阈值回退「list 拼全树」；❌ 禁止 `TaktTreeSelect :lazy="false"`（仅历史兼容探测，新代码不得写）。
+
+标准参照：`TaktAdminDivisionService` + `views/foundation/admin-division/index.vue` + `TaktLazyTreeHelper`。
 
 **代码生成**：实体含 `ParentId` 时，`generate-all` 生成懒加载 `Get*TreeAsync(parentId)` / `TreeOptions(parentId)`（一层子节点）+ Vue 懒加载左树（`15-codegen`）；排除实体（Dept/Menu 等）Vue 须手工对齐 `admin-division`。
 
@@ -140,11 +142,11 @@ GET api/TaktXxxs/tree-options?parentId=0
 - **禁止** `getXxxTree('0')` 拉整棵树进 `fullTableTree` 再 `flatten` + 客户端 slice
 - **禁止** 左侧 `:virtual="false"` 绑全量树节点
 - 展开「全部」仅作用于**已加载**节点（`collectTreeExpandableKeys`），不触发全量展开
-- 表单 `TaktTreeSelect`：**必须** `:lazy="true"`（与 `use-lazy-tree` / `takt-tree-select` 对齐）
+- 表单 `TaktTreeSelect`：**必须** `:lazy="true"`（与 `useLazyTree` / `TaktTreeSelect` 对齐）
 
 ### 4.3 页面内编排（生成脚本产出）
 
-- `mapXxxLazyNodes` / `mergeLoadedChildren` / `taktIsLeafFlag`（`@/composables/use-lazy-tree`）
+- `mapXxxLazyNodes` / `mergeLoadedChildren` / `taktIsLeafFlag`（`@/composables/useLazyTree`）
 - `reloadLeftTreeRoots` / `handleLeftTreeLoadData` / `loadRightList` / `refreshAfterMutation`
 - `findParentAndOrderNum`：拖拽改 `parentId` + `sortOrder`
 

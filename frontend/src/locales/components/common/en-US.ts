@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/components/common
 // 文件名称：en-US.ts
 // 创建时间：2026-06-16
@@ -71,6 +71,8 @@ export default {
       images: "Image upload",
       imageonly: "Only image files are allowed",
       imagesizeexceed: "Image size must not exceed {max}MB",
+      imagepixelmin: "Image must be at least {min}×{min} pixels",
+      imagepixelmax: "Avatar output must not exceed {max}×{max} pixels",
       imagereadfail: "Failed to read image",
       ok: "OK",
       operationfail: "Operation failed",

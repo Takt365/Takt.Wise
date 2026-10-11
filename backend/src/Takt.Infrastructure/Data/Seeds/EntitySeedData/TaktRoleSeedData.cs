@@ -1,5 +1,5 @@
 ﻿// ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds
 // 文件名称：TaktRoleSeedData.cs
 // 创建时间：2025-01-20
@@ -80,16 +80,60 @@ public class TaktRoleSeedData : ITaktSeedDataCoordinator
     }
 
     /// <summary>
+    /// 部门管理员（短码与 TaktDept.DeptShortName 对齐；DeptCode 为 DTA 一/二/三级部门）
+    /// </summary>
+    internal static readonly (string RoleCode, string RoleName, string DeptCode, string ShortName)[] DeptAdminRoles =
+    {
+        // 一级
+        ("ROLE_GM_DEPT_ADMIN", "总经理室", "D1000", "GM"),
+        ("ROLE_GA_DEPT_ADMIN", "总务部", "D0100", "GA"),
+        ("ROLE_FIN_DEPT_ADMIN", "财务部", "D0200", "FIN"),
+        ("ROLE_IT_DEPT_ADMIN", "IT部", "D0300", "IT"),
+        ("ROLE_ADM_DEPT_ADMIN", "管理部", "D0400", "ADM"),
+        ("ROLE_MAT_DEPT_ADMIN", "资材部", "D0500", "MAT"),
+        ("ROLE_PROD_DEPT_ADMIN", "生产部", "D0600", "PROD"),
+        ("ROLE_ENG_DEPT_ADMIN", "技术部", "D0700", "ENG"),
+        ("ROLE_QA_DEPT_ADMIN", "品保部", "D0800", "QA"),
+        ("ROLE_OEM_DEPT_ADMIN", "OEM部", "D0900", "OEM"),
+        // 二级 / 制造2课下属
+        ("ROLE_GAS_DEPT_ADMIN", "总务课", "D0110", "GAS"),
+        ("ROLE_FAC_DEPT_ADMIN", "财务课", "D0210", "FAC"),
+        ("ROLE_MIS_DEPT_ADMIN", "电脑课", "D0310", "MIS"),
+        ("ROLE_PUR_DEPT_ADMIN", "采购课", "D0510", "PUR"),
+        ("ROLE_MFG1_DEPT_ADMIN", "制造1课", "D0610", "MFG1"),
+        ("ROLE_MFG2_DEPT_ADMIN", "制造2课", "D0620", "MFG2"),
+        ("ROLE_MTE_DEPT_ADMIN", "制造技术课", "D0630", "MTE"),
+        ("ROLE_SMT_DEPT_ADMIN", "SMT", "D0621", "SMT"),
+        ("ROLE_AI_DEPT_ADMIN", "自插", "D0622", "AI"),
+        ("ROLE_REW_DEPT_ADMIN", "修正", "D0623", "REW"),
+        ("ROLE_MI_DEPT_ADMIN", "手插", "D0624", "MI"),
+        ("ROLE_MTL_DEPT_ADMIN", "物料", "D0625", "MTL"),
+        ("ROLE_MFG2I_DEPT_ADMIN", "制造2课-间接", "D0626", "MFG2I"),
+        ("ROLE_TEC_DEPT_ADMIN", "技术课", "D0710", "TEC"),
+        ("ROLE_IQC_DEPT_ADMIN", "受检课", "D0810", "IQC"),
+        ("ROLE_QC_DEPT_ADMIN", "品管课", "D0820", "QC"),
+        ("ROLE_OEMQA_DEPT_ADMIN", "OEM QA课", "D0910", "OEMQA"),
+        ("ROLE_OEMADM_DEPT_ADMIN", "OEM管理课", "D0920", "OEMADM"),
+    };
+
+    /// <summary>
     /// 获取当前租户的标准角色列表
     /// </summary>
     private static List<(string RoleCode, string RoleName, int DataScope, int SortOrder)> GetStandardRoles(string tenantCode)
     {
-        return new List<(string, string, int, int)>
+        var list = new List<(string, string, int, int)>
         {
-            ("ROLE_SUPER_ADMIN", "超级管理员", (int)1, 1),
-            ("ROLE_DEPT_ADMIN", "部门管理员", (int)3, 2),
-            ("ROLE_EMPLOYEE", "普通员工", (int)4, 3)
+            ("ROLE_SUPER_ADMIN", "超级管理员", 1, 1),
         };
+        var sort = 2;
+        foreach (var d in DeptAdminRoles)
+        {
+            // DataScope=3：本部门数据范围
+            list.Add((d.RoleCode, d.RoleName, 3, sort++));
+        }
+        list.Add(("ROLE_EMPLOYEE", "普通员工", 4, sort++));
+        list.Add(("ROLE_DEMO", "演示访客", 4, sort));
+        return list;
     }
 
     /// <summary>

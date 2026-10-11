@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/statistics/logging/archive-log -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：归档日志只读审计页，含查询、详情、删除、导出（无新增/编辑），对齐 delta-log -->
@@ -324,18 +324,17 @@
  * 归档日志管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/statistics/logging/archive-log
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import ArchiveLogDetail from './components/archive-log-detail.vue'
-import { getArchiveLogList, getArchiveLogById, deleteArchiveLogById, deleteArchiveLogBatch, exportArchiveLog } from '@/api/statistics/logging/archive-log'
-import type { ArchiveLog, ArchiveLogQuery } from '@/types/statistics/logging/archive-log'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import ArchiveLogDetail from './components/ArchiveLogDetail.vue'
+import { getArchiveLogList, getArchiveLogById, deleteArchiveLogById, deleteArchiveLogBatch, exportArchiveLog } from '@/api/statistics/logging/archiveLog.api'
+import type { ArchiveLog, ArchiveLogQuery } from '@/types/statistics/logging/archiveLog.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEyeLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -344,7 +343,7 @@ import {
   ARCHIVELOG_QUERY_STRING_FIELDS,
   ARCHIVELOG_QUERY_FIELDS,
   ARCHIVELOG_SELF_I18N_KEY,
-} from './composables/use-archive-log-i18n'
+} from './composables/useArchiveLogI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useArchiveLogI18n()

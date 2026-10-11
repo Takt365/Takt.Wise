@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/procurement/purchase-invoice -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：Takt采购发票主表实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -558,22 +558,21 @@
  * Takt采购发票主表实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/procurement/purchase-invoice
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import PurchaseInvoiceForm from './components/purchase-invoice-form.vue'
-import PurchaseInvoiceItemPanel from './components/purchase-invoice-item-panel.vue'
-import { providePurchaseInvoiceMasterContext, type PurchaseInvoiceRowRecord } from './composables/use-purchase-invoice-master-context'
-import { getPurchaseInvoiceList, getPurchaseInvoiceById, createPurchaseInvoice, updatePurchaseInvoice, deletePurchaseInvoiceById, deletePurchaseInvoiceBatch, getPurchaseInvoiceTemplate, importPurchaseInvoice, exportPurchaseInvoice } from '@/api/logistics/procurement/purchase-invoice'
-import type { PurchaseInvoice, PurchaseInvoiceQuery } from '@/types/logistics/procurement/purchase-invoice'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import PurchaseInvoiceForm from './components/PurchaseInvoiceForm.vue'
+import PurchaseInvoiceItemPanel from './components/PurchaseInvoiceItemPanel.vue'
+import { providePurchaseInvoiceMasterContext, type PurchaseInvoiceRowRecord } from './composables/usePurchaseInvoiceMasterContext'
+import { getPurchaseInvoiceList, getPurchaseInvoiceById, createPurchaseInvoice, updatePurchaseInvoice, deletePurchaseInvoiceById, deletePurchaseInvoiceBatch, getPurchaseInvoiceTemplate, importPurchaseInvoice, exportPurchaseInvoice } from '@/api/logistics/procurement/purchaseInvoice.api'
+import type { PurchaseInvoice, PurchaseInvoiceQuery } from '@/types/logistics/procurement/purchaseInvoice.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -582,7 +581,7 @@ import {
   PURCHASEINVOICE_QUERY_STRING_FIELDS,
   PURCHASEINVOICE_QUERY_FIELDS,
   PURCHASEINVOICE_SELF_I18N_KEY,
-} from './composables/use-purchase-invoice-i18n'
+} from './composables/usePurchaseInvoiceI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = usePurchaseInvoiceI18n()
@@ -755,7 +754,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -1087,8 +1085,6 @@ const getPurchaseInvoiceDictValue = (
   if (typeof value === 'string' || typeof value === 'number') return value
   return String(value)
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

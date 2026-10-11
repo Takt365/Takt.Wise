@@ -414,55 +414,9 @@ BEGIN
   THROW 50002, @count_msg, 1;
 END;
 
-INSERT INTO [takt_statistics_logging_delta_log] (
-  [id],[oper_type],[table_name],[primary_key_id],
-  [before_data],[after_data],[diff_data],[sql_statement],
-  [oper_ip],[oper_location],[user_agent],[browser],[os],[device_type],
-  [oper_time],[elapsed_time],[tenant_code],[company_code],[plant_code],[culture_code],
-  [ext_field],[remark],[created_by],[created_at]
-)
-SELECT
-  @base_id + d.rn,
-  d.oper_type,
-  N'takt_logistics_manufacturing_bom_standard_operation_time',
-  d.id,
-  ISNULL((
-    SELECT
-      d.standard_minutes_old AS [standard_minutes],
-      d.time_unit_old AS [time_unit],
-      d.standard_shorts_old AS [standard_shorts],
-      d.points_unit_old AS [points_unit],
-      d.points_to_minutes_rate_old AS [points_to_minutes_rate],
-      d.converted_minutes_old AS [converted_minutes]
-    WHERE d.oper_type = 'UPDATE'
-    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-  ), '{}'),
-  (
-    SELECT
-      d.standard_minutes_new AS [standard_minutes],
-      d.time_unit_new AS [time_unit],
-      d.standard_shorts_new AS [standard_shorts],
-      d.points_unit_new AS [points_unit],
-      d.points_to_minutes_rate_new AS [points_to_minutes_rate],
-      d.converted_minutes_new AS [converted_minutes]
-    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-  ),
-  ISNULL((
-    SELECT
-      CASE WHEN d.oper_type = 'UPDATE' THEN ISNULL(CAST(d.standard_minutes_old AS NVARCHAR), 'null') END AS [standard_minutes.old],
-      CASE WHEN d.oper_type = 'UPDATE' THEN ISNULL(CAST(d.standard_minutes_new AS NVARCHAR), 'null') END AS [standard_minutes.new],
-      CASE WHEN d.oper_type = 'UPDATE' THEN ISNULL(CAST(d.converted_minutes_old AS NVARCHAR), 'null') END AS [converted_minutes.old],
-      CASE WHEN d.oper_type = 'UPDATE' THEN ISNULL(CAST(d.converted_minutes_new AS NVARCHAR), 'null') END AS [converted_minutes.new],
-      CASE WHEN d.oper_type = 'UPDATE' THEN ISNULL(CAST(d.points_to_minutes_rate_old AS NVARCHAR), 'null') END AS [points_to_minutes_rate.old],
-      CASE WHEN d.oper_type = 'UPDATE' THEN ISNULL(CAST(d.points_to_minutes_rate_new AS NVARCHAR), 'null') END AS [points_to_minutes_rate.new]
-    WHERE d.oper_type = 'UPDATE'
-    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
-  ), '{}'),
-  N'MERGE Manhour Sync',
-  '127.0.0.1','Server','SQLCMD','Server','Windows','Server',
-  @now,0,
-  d.tenant_code,d.company_code,@plant_code,@culture_code,'{}',N'SYNC',COALESCE(d.change_by,@sync_user_id),@now
-FROM #delta d;
+
+/* per-row delta_log removed */
+
 
 DECLARE @insert_count INT = (SELECT COUNT(*) FROM #delta WHERE oper_type = 'INSERT');
 DECLARE @update_count INT = (SELECT COUNT(*) FROM #delta WHERE oper_type = 'UPDATE');
@@ -480,6 +434,31 @@ DECLARE @json_result NVARCHAR(MAX) =
   + N',"unchanged":' + CAST(@unchanged_count AS NVARCHAR)
   + N',"soft_delete_this_run":' + CAST(@delete_count AS NVARCHAR)
   + N',"soft_delete_keys":"' + REPLACE(@soft_deleted_keys, N'"', N'''') + N'"}';
+
+-- 批量同步：每次执行仅写 1 条摘要差异日志（非逐行）；明细变更见业务操作差异日志
+INSERT INTO [takt_statistics_logging_delta_log] (
+  [id],[oper_type],[table_name],[primary_key_id],
+  [before_data],[after_data],[diff_data],[sql_statement],
+  [oper_ip],[oper_location],[user_agent],[browser],[os],[device_type],
+  [oper_time],[elapsed_time],[tenant_code],[company_code],[plant_code],[culture_code],
+  [ext_field],[remark],[created_by],[created_at]
+)
+VALUES (
+  @base_id,
+  N'SYNC',
+  N'takt_logistics_manufacturing_bom_standard_operation_time',
+  NULL,
+  N'{}',
+  ISNULL(@json_result, N'{}'),
+  N'{}',
+  N'MERGE Manhour Sync (summary)',
+  N'127.0.0.1',N'Server',N'SQLCMD',N'Server',N'Windows',N'Server',
+  @now,0,
+  @tenant_code,@company_code,@plant_code,@culture_code,
+  N'{}',N'SYNC batch summary',@sync_user_id,@now
+);
+
+
 
 
 

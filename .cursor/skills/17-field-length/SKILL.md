@@ -25,6 +25,7 @@ description: >-
 | **字典扩展标签/值** `ext_label` / `ext_value` | **140** |
 | **本地化名称** `native_name` | **40** |
 | 币种 `CurrencyCode`（含 from/to/scale/condition 等） | 3 |
+| **员工姓名** `employee_name`（及同义冗余） | **80**（校验 2–80） |
 | 物料编码 / 短描述 / 规格·型号 / 长描述 | 20 / 40 / 70 / 200 |
 | **特例** 制造商/销售商物料编码 `manufacturer_material_code` / `seller_material_code` | **40**（❌ 勿套物料编码 20） |
 | 工作中心编码 / 描述 / 工单多值汇总 | 10 / 70 / 500（production_order.work_center） |

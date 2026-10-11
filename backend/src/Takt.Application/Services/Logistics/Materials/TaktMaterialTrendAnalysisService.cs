@@ -1,10 +1,10 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Materials
 // 文件名称：TaktMaterialTrendAnalysisService.cs
 // 创建时间：2026-08-01
 // 创建人：Takt365(Cursor AI)
-// 功能描述：物料移动价格/机种推移分析核心分析服务实现
+// 功能描述：物料移动价格推移分析核心分析服务实现
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -29,7 +29,7 @@ using Takt.Shared.Validation;
 namespace Takt.Application.Services.Logistics.Materials;
 
 /// <summary>
-/// 物料移动价格/机种推移分析核心分析服务（读移动价格本表；与 CRUD 服务分离）
+/// 物料移动价格推移分析核心分析服务（读移动价格本表；与 CRUD 服务分离）
 /// </summary>
 public class TaktMaterialTrendAnalysisService : TaktServiceBase, ITaktMaterialTrendAnalysisService
 {
@@ -37,11 +37,6 @@ public class TaktMaterialTrendAnalysisService : TaktServiceBase, ITaktMaterialTr
     /// 物料名称按编码分批查询，避免超长 IN 列表
     /// </summary>
     private const int MaterialNameLookupBatchSize = 500;
-
-    /// <summary>
-    /// 物料-机种-价格推移默认：领涨 / 领跌各取前 N 个物料（环比差额排序）
-    /// </summary>
-    private const int ModelTrendLeadingMaterialCount = 50;
 
     /// <summary>
     /// 移动价格按年分表基表名
@@ -296,216 +291,7 @@ public class TaktMaterialTrendAnalysisService : TaktServiceBase, ITaktMaterialTr
             columnKeys,
             columnLabels,
             sheetName ?? "物料移动价格推移清单",
-            fileName ?? $"物料移动价格推移清单_{query.PlantCode}.xlsx");
-    }
-
-    /// <summary>
-    /// 物料-机种-价格推移分析（物料清单 + BOM 机种/产品组）
-    /// </summary>
-    /// <param name="queryDto">查询条件</param>
-    /// <returns>转置分析结果</returns>
-    public async Task<TaktMaterialModelTrendResultDto> GetMaterialModelTrendAnalysisAsync(
-        TaktMaterialModelTrendQueryDto queryDto)
-    {
-        ArgumentNullException.ThrowIfNull(queryDto);
-        var pageIndex = TaktPagedClamp.NormalizePageIndex(queryDto.PageIndex);
-        var pageSize = TaktPagedClamp.NormalizePageSize(queryDto.PageSize);
-        var skip = TaktPagedClamp.ComputeSkip(pageIndex, pageSize);
-        var monthly = await BuildMonthlyTrendAnalysisAsync(ToMovingTrendQuery(queryDto), queryDto.MaterialType);
-        var orderedRows = ShouldSkipModelTrendLeadingDefault(queryDto)
-            ? monthly.OrderedRows.ToList()
-            : ApplyModelTrendLeadingDefault(monthly.OrderedRows, queryDto.TrendFilter);
-        if (orderedRows.Count == 0)
-        {
-            return new TaktMaterialModelTrendResultDto
-            {
-                Paged = TaktPagedResult<TaktMaterialModelTrendDto>.Create(
-                    new List<TaktMaterialModelTrendDto>(), 0, pageIndex, pageSize),
-                PeriodOrder = monthly.PeriodOrder,
-                MaterialCount = 0,
-                BasePeriod = monthly.BasePeriod,
-                ComparePeriod = monthly.ComparePeriod,
-            };
-        }
-        var materialType = RequireModelTrendMaterialType(queryDto.MaterialType);
-        // 仅对当前页物料做 BOM 关联（全量 2 万+ 物料关联明细会超时）
-        var pageMonthly = orderedRows.Skip(skip).Take(pageSize).ToList();
-        var usage = await LoadBomMaterialUsageLookupAsync(
-            queryDto.PlantCode.Trim(),
-            pageMonthly.Select(r => r.MaterialCode).ToList(),
-            materialType);
-        var pageRows = EnrichModelTrendRows(pageMonthly, usage);
-        return new TaktMaterialModelTrendResultDto
-        {
-            Paged = TaktPagedResult<TaktMaterialModelTrendDto>.Create(
-                pageRows, orderedRows.Count, pageIndex, pageSize),
-            PeriodOrder = monthly.PeriodOrder,
-            MaterialCount = orderedRows.Count,
-            BasePeriod = pageRows.FirstOrDefault()?.BasePeriod ?? monthly.BasePeriod,
-            ComparePeriod = monthly.ComparePeriod,
-            UpCount = monthly.UpCount,
-            DownCount = monthly.DownCount,
-            FlatCount = monthly.FlatCount,
-            NoneCount = monthly.NoneCount,
-        };
-    }
-
-    /// <summary>
-    /// 导出物料-机种-价格推移分析（全量）
-    /// </summary>
-    /// <param name="query">查询条件</param>
-    /// <param name="sheetName">工作表名称</param>
-    /// <param name="fileName">文件名</param>
-    /// <returns>Excel 文件</returns>
-    public async Task<(string fileName, byte[] fileContent)> ExportMaterialModelTrendAnalysisAsync(
-        TaktMaterialModelTrendQueryDto query,
-        string? sheetName = null,
-        string? fileName = null)
-    {
-        ArgumentNullException.ThrowIfNull(query);
-        var built = await BuildModelTrendAnalysisAsync(query);
-        var columnKeys = new List<string>
-        {
-            "materialCode", "modelGroup", "productGroup", "materialText",
-        };
-        var columnLabels = new List<string>
-        {
-            "物料编码", "机种组", "产品组", "物料描述",
-        };
-        foreach (var period in built.PeriodOrder)
-        {
-            columnKeys.Add($"period_{period}");
-            columnLabels.Add(period);
-        }
-        columnKeys.AddRange(new[] { "trend", "varianceAmount", "variancePercent" });
-        columnLabels.AddRange(new[] { "涨跌", "差额", "变动率" });
-        var exportRows = built.OrderedRows.Select(row =>
-        {
-            var dict = new Dictionary<string, object?>(StringComparer.Ordinal)
-            {
-                ["materialCode"] = row.MaterialCode,
-                ["modelGroup"] = row.ModelGroup,
-                ["productGroup"] = row.ProductGroup,
-                ["materialText"] = row.MaterialText,
-                ["trend"] = row.Trend,
-                ["varianceAmount"] = row.VarianceAmount,
-                ["variancePercent"] = row.VariancePercent,
-            };
-            foreach (var period in built.PeriodOrder)
-            {
-                if (!row.PeriodUnitPrices.TryGetValue(period, out var price))
-                {
-                    dict[$"period_{period}"] = null;
-                    continue;
-                }
-                var isCarried = row.PeriodPriceSourcePeriods.TryGetValue(period, out var source)
-                    && !string.IsNullOrWhiteSpace(source)
-                    && !string.Equals(source, period, StringComparison.Ordinal);
-                dict[$"period_{period}"] = isCarried
-                    ? $"{price.ToString("0.00000", System.Globalization.CultureInfo.InvariantCulture)}*"
-                    : price;
-            }
-            return (IReadOnlyDictionary<string, object?>)dict;
-        }).ToList();
-        return await TaktExcelHelper.ExportDictionaryRowsAsync(
-            exportRows,
-            columnKeys,
-            columnLabels,
-            sheetName ?? "物料机种价格推移清单",
-            fileName ?? $"物料机种价格推移清单_{query.PlantCode}.xlsx");
-    }
-
-    /// <summary>
-    /// 构建物料-机种-价格推移全量结果（导出用；BOM 用 DISTINCT 轻量查询）
-    /// </summary>
-    /// <param name="queryDto">查询条件</param>
-    /// <returns>构建结果</returns>
-    
-    private static TaktMaterialMovingTrendQueryDto ToMovingTrendQuery(TaktMaterialModelTrendQueryDto queryDto) =>
-        new()
-        {
-            PlantCode = queryDto.PlantCode,
-            PeriodDateStart = queryDto.PeriodDateStart,
-            PeriodDateEnd = queryDto.PeriodDateEnd,
-            FocusPeriod = queryDto.FocusPeriod,
-            Valuation = queryDto.Valuation,
-            MaterialCode = queryDto.MaterialCode,
-            TrendFilter = queryDto.TrendFilter,
-            PageIndex = queryDto.PageIndex,
-            PageSize = queryDto.PageSize,
-        };
-
-    private async Task<ModelTrendAnalysisBuilt> BuildModelTrendAnalysisAsync(
-        TaktMaterialModelTrendQueryDto queryDto)
-    {
-        var monthly = await BuildMonthlyTrendAnalysisAsync(ToMovingTrendQuery(queryDto), queryDto.MaterialType);
-        var orderedRows = ShouldSkipModelTrendLeadingDefault(queryDto)
-            ? monthly.OrderedRows.ToList()
-            : ApplyModelTrendLeadingDefault(monthly.OrderedRows, queryDto.TrendFilter);
-        if (orderedRows.Count == 0)
-        {
-            return ModelTrendAnalysisBuilt.Empty();
-        }
-        var plantCode = queryDto.PlantCode.Trim();
-        var materialType = RequireModelTrendMaterialType(queryDto.MaterialType);
-        var usage = await LoadBomMaterialUsageLookupAsync(
-            plantCode,
-            orderedRows.Select(r => r.MaterialCode).ToList(),
-            materialType);
-        var enriched = EnrichModelTrendRows(orderedRows, usage);
-        return new ModelTrendAnalysisBuilt
-        {
-            OrderedRows = enriched,
-            PeriodOrder = monthly.PeriodOrder,
-            BasePeriod = monthly.BasePeriod,
-            ComparePeriod = monthly.ComparePeriod,
-            UpCount = monthly.UpCount,
-            DownCount = monthly.DownCount,
-            FlatCount = monthly.FlatCount,
-            NoneCount = monthly.NoneCount,
-        };
-    }
-
-    /// <summary>
-    /// 月推移行附加 BOM 机种/产品组
-    /// </summary>
-    /// <param name="monthlyRows">月推移行</param>
-    /// <param name="usage">物料 BOM 使用关系</param>
-    /// <returns>机种推移行</returns>
-    private static List<TaktMaterialModelTrendDto> EnrichModelTrendRows(
-        IReadOnlyList<TaktMaterialMovingTrendDto> monthlyRows,
-        IReadOnlyDictionary<string, BomMaterialUsageInfo> usage)
-    {
-        return monthlyRows.Select(row =>
-        {
-            usage.TryGetValue(row.MaterialCode, out var info);
-            var productCodes = info?.ProductCodes ?? new List<string>();
-            var modelCodes = info?.ModelCodes ?? new List<string>();
-            var bomText = info?.ComponentDescription ?? string.Empty;
-            var materialText = !string.IsNullOrWhiteSpace(row.MaterialName)
-                ? row.MaterialName
-                : bomText;
-            return new TaktMaterialModelTrendDto
-            {
-                PlantCode = row.PlantCode,
-                MaterialCode = row.MaterialCode,
-                MaterialName = row.MaterialName,
-                Valuation = row.Valuation,
-                CurrencyCode = row.CurrencyCode,
-                PeriodUnitPrices = row.PeriodUnitPrices,
-                PeriodPriceSourcePeriods = row.PeriodPriceSourcePeriods,
-                Trend = row.Trend,
-                BasePeriod = row.BasePeriod,
-                ComparePeriod = row.ComparePeriod,
-                VarianceAmount = row.VarianceAmount,
-                VariancePercent = row.VariancePercent,
-                ProductCodes = productCodes,
-                ModelCodes = modelCodes,
-                ProductGroup = string.Join(", ", productCodes),
-                ModelGroup = string.Join(", ", modelCodes),
-                MaterialText = materialText,
-            };
-        }).ToList();
+            fileName ?? TaktNamingHelper.PlantPrefixedTrendExportBase(query.PlantCode, "移动价格推移"));
     }
 
     /// <summary>
@@ -796,21 +582,6 @@ public class TaktMaterialTrendAnalysisService : TaktServiceBase, ITaktMaterialTr
                 models.Add(model);
             }
         }
-    }
-
-    /// <summary>
-    /// 机种推移必填产品物料类型
-    /// </summary>
-    /// <param name="materialType">查询物料类型</param>
-    /// <returns>规范化类型码</returns>
-    private string RequireModelTrendMaterialType(string? materialType)
-    {
-        var type = materialType?.Trim();
-        if (string.IsNullOrWhiteSpace(type))
-        {
-            ThrowBusinessExceptionLocalized("validation.required", "MaterialType");
-        }
-        return type!;
     }
 
     /// <summary>
@@ -1432,71 +1203,6 @@ public class TaktMaterialTrendAnalysisService : TaktServiceBase, ITaktMaterialTr
     }
 
     /// <summary>
-    /// 指定物料编码查询时跳过领涨/领跌截取（避免无价/持平行被默认筛选丢掉）
-    /// </summary>
-    /// <param name="queryDto">查询条件</param>
-    /// <returns>true=保留全量命中行</returns>
-    private static bool ShouldSkipModelTrendLeadingDefault(TaktMaterialModelTrendQueryDto queryDto)
-    {
-        return !string.IsNullOrWhiteSpace(queryDto.MaterialCode);
-    }
-
-    /// <summary>
-    /// 机种价格推移：空或 leading 时默认取领涨/领跌各前 N 条（按环比差额）
-    /// </summary>
-    /// <param name="orderedRows">已排序全量行</param>
-    /// <param name="trendFilter">涨跌筛选码</param>
-    /// <returns>应用默认领涨领跌后的行</returns>
-    private static List<TaktMaterialMovingTrendDto> ApplyModelTrendLeadingDefault(
-        IReadOnlyList<TaktMaterialMovingTrendDto> orderedRows,
-        string? trendFilter)
-    {
-        if (!ShouldApplyModelTrendLeadingDefault(trendFilter))
-        {
-            return orderedRows.ToList();
-        }
-        return TakeLeadingTrendRows(orderedRows, ModelTrendLeadingMaterialCount);
-    }
-
-    /// <summary>
-    /// 是否应用机种推移默认领涨/领跌截取
-    /// </summary>
-    /// <param name="trendFilter">涨跌筛选码</param>
-    /// <returns>true=截取领涨领跌各 N</returns>
-    private static bool ShouldApplyModelTrendLeadingDefault(string? trendFilter)
-    {
-        if (string.IsNullOrWhiteSpace(trendFilter))
-        {
-            return true;
-        }
-        return string.Equals(trendFilter.Trim(), "leading", StringComparison.OrdinalIgnoreCase);
-    }
-
-    /// <summary>
-    /// 取领涨 / 领跌各前 N 条（涨：差额降序；跌：差额升序）
-    /// </summary>
-    /// <param name="rows">行集合</param>
-    /// <param name="takeEach">涨、跌各自条数上限</param>
-    /// <returns>领涨后接领跌</returns>
-    private static List<TaktMaterialMovingTrendDto> TakeLeadingTrendRows(
-        IReadOnlyList<TaktMaterialMovingTrendDto> rows,
-        int takeEach)
-    {
-        var limit = Math.Max(0, takeEach);
-        var up = rows
-            .Where(r => r.Trend == "up")
-            .OrderByDescending(r => r.VarianceAmount ?? 0m)
-            .ThenBy(r => r.MaterialCode, StringComparer.Ordinal)
-            .Take(limit);
-        var down = rows
-            .Where(r => r.Trend == "down")
-            .OrderBy(r => r.VarianceAmount ?? 0m)
-            .ThenBy(r => r.MaterialCode, StringComparer.Ordinal)
-            .Take(limit);
-        return up.Concat(down).ToList();
-    }
-
-    /// <summary>
     /// 涨跌优先排序
     /// </summary>
     private static List<TaktMaterialMovingTrendDto> OrderTrendRows(
@@ -1625,57 +1331,6 @@ public class TaktMaterialTrendAnalysisService : TaktServiceBase, ITaktMaterialTr
         /// 空结果
         /// </summary>
         public static MonthlyTrendAnalysisBuilt Empty() => new();
-    }
-
-    /// <summary>
-    /// 物料-机种推移内存构建结果
-    /// </summary>
-    private sealed class ModelTrendAnalysisBuilt
-    {
-        /// <summary>
-        /// 过滤并排序后的全量行
-        /// </summary>
-        public List<TaktMaterialModelTrendDto> OrderedRows { get; init; } = new();
-
-        /// <summary>
-        /// 期间列顺序
-        /// </summary>
-        public List<string> PeriodOrder { get; init; } = new();
-
-        /// <summary>
-        /// 基准期间
-        /// </summary>
-        public string? BasePeriod { get; init; }
-
-        /// <summary>
-        /// 对比期间
-        /// </summary>
-        public string? ComparePeriod { get; init; }
-
-        /// <summary>
-        /// 上涨行数
-        /// </summary>
-        public int UpCount { get; init; }
-
-        /// <summary>
-        /// 下跌行数
-        /// </summary>
-        public int DownCount { get; init; }
-
-        /// <summary>
-        /// 持平行数
-        /// </summary>
-        public int FlatCount { get; init; }
-
-        /// <summary>
-        /// 无趋势行数
-        /// </summary>
-        public int NoneCount { get; init; }
-
-        /// <summary>
-        /// 空结果
-        /// </summary>
-        public static ModelTrendAnalysisBuilt Empty() => new();
     }
 
     /// <summary>

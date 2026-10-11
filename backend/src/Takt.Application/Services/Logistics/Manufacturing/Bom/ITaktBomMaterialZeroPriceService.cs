@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Bom
 // 文件名称：ITaktBomMaterialZeroPriceService.cs
 // 创建时间：2026-08-13
@@ -63,6 +63,14 @@ public interface ITaktBomMaterialZeroPriceService
     /// <returns>打标统计</returns>
     Task<TaktBomMaterialZeroPricePcbSectMarkResultDto> MarkBomMaterialZeroPricePcbSectAsync(
         TaktBomMaterialZeroPricePcbSectMarkDto dto);
+
+    /// <summary>
+    /// 去掉当前工厂纯数字 ProductCode/ComponentCode 的前导 0（含字母的编码不改；明细含年分表）
+    /// </summary>
+    /// <param name="dto">工厂</param>
+    /// <returns>更新与冲突跳过行数</returns>
+    Task<TaktBomMaterialZeroPriceStripLeadingZeroResultDto> StripBomMaterialZeroPriceLeadingZerosAsync(
+        TaktBomMaterialZeroPriceStripLeadingZeroDto dto);
 
     /// <summary>
     /// Quartz：判定日所在自然月，按明细/主表行内 PlantCode 回填零价移动价

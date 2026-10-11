@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat 
+// 项目名称：节拍智控·TaktWise 
 // 命名空间：Takt.Shared.Helpers
 // 文件名称：TaktExcelHelper.cs
 // 创建时间：2025-01-20
@@ -14,9 +14,11 @@ using OfficeOpenXml;
 using OfficeOpenXml.DataValidation;
 using OfficeOpenXml.Style;
 using System.ComponentModel;
+using System.Drawing;
 using System.Globalization;
 using System.IO.Compression;
 using System.Reflection;
+using System.Text;
 using System.Xml;
 using Takt.Shared.Exceptions;
 using Takt.Shared.Options;
@@ -67,7 +69,7 @@ public static class TaktExcelHelper
     {
         // EPPlus 8.0+ 设置非商业许可证（官方API）
         // 根据EPPlus 8官方文档：https://www.epplussoftware.com/
-        ExcelPackage.License.SetNonCommercialPersonal("Takt Plat (TDF) ");
+        ExcelPackage.License.SetNonCommercialPersonal("TaktWise (TDF) ");
     }
 
     /// <summary>
@@ -324,7 +326,7 @@ public static class TaktExcelHelper
     }
 
     /// <summary>
-    /// 导出动态字典行（定制报表 查询结果）
+    /// 导出动态字典行（定制报表查询结果）。单元格须写入真实 CLR 类型：DateTime/DateOnly→Excel 日期，decimal/int→数值；禁止先 ToString 成文本。
     /// </summary>
     /// <param name="rows">数据行</param>
     /// <param name="columnKeys">列键（与行字典键一致）</param>
@@ -332,6 +334,7 @@ public static class TaktExcelHelper
     /// <param name="sheetName">工作表名称</param>
     /// <param name="fileName">文件名（不含扩展名）</param>
     /// <param name="excelOptions">工作簿元数据</param>
+    /// <param name="columnWidths">按列键覆盖标准列宽；为空则全部标准宽</param>
     /// <returns>文件名与内容</returns>
     public static async Task<(string fileName, byte[] content)> ExportDictionaryRowsAsync(
         IReadOnlyList<IReadOnlyDictionary<string, object?>> rows,
@@ -339,44 +342,100 @@ public static class TaktExcelHelper
         IReadOnlyList<string> columnLabels,
         string sheetName = "Data",
         string? fileName = null,
-        TaktExcelOptions? excelOptions = null)
+        TaktExcelOptions? excelOptions = null,
+        IReadOnlyDictionary<string, double>? columnWidths = null)
     {
         ArgumentNullException.ThrowIfNull(rows);
         ArgumentNullException.ThrowIfNull(columnKeys);
         ArgumentNullException.ThrowIfNull(columnLabels);
         ArgumentException.ThrowIfNullOrEmpty(sheetName);
-        if (columnKeys.Count == 0)
-        {
-            throw new ArgumentException("columnKeys 不能为空", nameof(columnKeys));
-        }
-        if (columnLabels.Count != columnKeys.Count)
-        {
-            throw new ArgumentException("columnLabels 必须与 columnKeys 数量一致", nameof(columnLabels));
-        }
+        ValidateDictionarySheetColumns(columnKeys, columnLabels);
         var workbookOptions = ResolveExcelOptions(excelOptions);
         using var package = new ExcelPackage();
         SetWorkbookProperties(package.Workbook, workbookOptions);
-        var worksheet = package.Workbook.Worksheets.Add(sheetName);
-        worksheet.Cells[1, 1].LoadFromArrays(new[] { columnLabels.ToArray() });
-        if (rows.Count > 0)
-        {
-            var dataArray = new List<object[]>(rows.Count);
-            foreach (var row in rows)
-            {
-                var line = new object[columnKeys.Count];
-                for (var i = 0; i < columnKeys.Count; i++)
-                {
-                    row.TryGetValue(columnKeys[i], out var cell);
-                    line[i] = cell ?? DBNull.Value;
-                }
-                dataArray.Add(line);
-            }
-            worksheet.Cells[2, 1].LoadFromArrays(dataArray);
-        }
-        ApplyFixedStandardColumnWidths(worksheet, columnKeys.Count);
+        WriteDictionarySheet(package, sheetName, rows, columnKeys, columnLabels, columnWidths);
         var actualFileName = GenerateTimestampFileName(fileName ?? sheetName);
         var content = await package.GetAsByteArrayAsync();
         TaktLogger.Information("[TaktExcelHelper] 导出动态报表成功，Sheet: {SheetName}, 文件名: {FileName}, 行数: {RowCount}", sheetName, actualFileName, rows.Count);
+        return (actualFileName, content);
+    }
+
+    /// <summary>
+    /// 导出多个字典行动态 Sheet（列键可按 Sheet 不同）
+    /// </summary>
+    /// <param name="sheets">工作表清单（至少 1 个）</param>
+    /// <param name="fileName">文件名（不含扩展名）</param>
+    /// <param name="excelOptions">工作簿元数据</param>
+    /// <returns>文件名与内容</returns>
+    /// <exception cref="ArgumentNullException">sheets 为空</exception>
+    /// <exception cref="ArgumentException">Sheet 名称/列为空或列标题数量不一致</exception>
+    public static async Task<(string fileName, byte[] content)> ExportDictionarySheetsAsync(
+        IReadOnlyList<TaktExcelDictionarySheet> sheets,
+        string? fileName = null,
+        TaktExcelOptions? excelOptions = null)
+    {
+        ArgumentNullException.ThrowIfNull(sheets);
+        if (sheets.Count == 0)
+        {
+            throw new ArgumentException("sheets 不能为空", nameof(sheets));
+        }
+        var workbookOptions = ResolveExcelOptions(excelOptions);
+        var maxSheetsPerFile = ResolveMaxExportSheetsPerFile(excelOptions);
+        var maxRowsPerSheet = ResolveMaxExportRowsPerSheet(excelOptions);
+        if (sheets.Count > maxSheetsPerFile)
+        {
+            throw new TaktLocalizedException(
+                ExportSheetLimitExceededKey,
+                "Frontend",
+                null,
+                new Dictionary<string, string>(StringComparer.Ordinal)
+                {
+                    ["count"] = sheets.Count.ToString(CultureInfo.InvariantCulture),
+                    ["max"] = maxSheetsPerFile.ToString(CultureInfo.InvariantCulture),
+                },
+                null);
+        }
+        using var package = new ExcelPackage();
+        SetWorkbookProperties(package.Workbook, workbookOptions);
+        var totalRows = 0;
+        foreach (var sheet in sheets)
+        {
+            ArgumentNullException.ThrowIfNull(sheet);
+            ArgumentException.ThrowIfNullOrWhiteSpace(sheet.SheetName);
+            ArgumentNullException.ThrowIfNull(sheet.Rows);
+            ArgumentNullException.ThrowIfNull(sheet.ColumnKeys);
+            ArgumentNullException.ThrowIfNull(sheet.ColumnLabels);
+            ValidateDictionarySheetColumns(sheet.ColumnKeys, sheet.ColumnLabels);
+            if (sheet.Rows.Count > maxRowsPerSheet)
+            {
+                throw new TaktLocalizedException(
+                    ExportSheetRowLimitExceededKey,
+                    "Frontend",
+                    null,
+                    new Dictionary<string, string>(StringComparer.Ordinal)
+                    {
+                        ["sheet"] = sheet.SheetName,
+                        ["count"] = sheet.Rows.Count.ToString(CultureInfo.InvariantCulture),
+                        ["max"] = maxRowsPerSheet.ToString(CultureInfo.InvariantCulture),
+                    },
+                    null);
+            }
+            WriteDictionarySheet(
+                package,
+                sheet.SheetName,
+                sheet.Rows,
+                sheet.ColumnKeys,
+                sheet.ColumnLabels,
+                sheet.ColumnWidths);
+            totalRows = checked(totalRows + sheet.Rows.Count);
+        }
+        var actualFileName = GenerateTimestampFileName(fileName ?? "Data");
+        var content = await package.GetAsByteArrayAsync();
+        TaktLogger.Information(
+            "[TaktExcelHelper] 导出多Sheet动态报表成功，Sheet数量: {SheetCount}, 总数据行数: {RowCount}, 文件名: {FileName}",
+            sheets.Count,
+            totalRows,
+            actualFileName);
         return (actualFileName, content);
     }
 
@@ -396,6 +455,78 @@ public static class TaktExcelHelper
         for (var i = 1; i <= columnCount; i++)
         {
             worksheet.Column(i).Width = ExcelStandardColumnWidth;
+        }
+    }
+
+    /// <summary>
+    /// 按列键覆盖指定列宽（未给出的列保持标准宽）
+    /// </summary>
+    /// <param name="worksheet">工作表</param>
+    /// <param name="columnKeys">列键顺序</param>
+    /// <param name="columnWidths">列键→宽度</param>
+    private static void ApplyNamedColumnWidths(
+        ExcelWorksheet worksheet,
+        IReadOnlyList<string> columnKeys,
+        IReadOnlyDictionary<string, double>? columnWidths)
+    {
+        ArgumentNullException.ThrowIfNull(worksheet);
+        ArgumentNullException.ThrowIfNull(columnKeys);
+        if (columnWidths == null || columnWidths.Count == 0)
+        {
+            return;
+        }
+        for (var i = 0; i < columnKeys.Count; i++)
+        {
+            if (columnWidths.TryGetValue(columnKeys[i], out var width) && width > 0)
+            {
+                worksheet.Column(i + 1).Width = width;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 含换行的单元格开启自动换行，并按行内最大行数抬高行高
+    /// </summary>
+    /// <param name="worksheet">工作表</param>
+    private static void ApplyWrapTextForMultilineCells(ExcelWorksheet worksheet)
+    {
+        ArgumentNullException.ThrowIfNull(worksheet);
+        if (worksheet.Dimension == null)
+        {
+            return;
+        }
+        const double defaultRowHeight = 15d;
+        const int maxVisibleLines = 16;
+        var endRow = worksheet.Dimension.End.Row;
+        var endCol = worksheet.Dimension.End.Column;
+        for (var r = 1; r <= endRow; r++)
+        {
+            var maxLines = 1;
+            for (var c = 1; c <= endCol; c++)
+            {
+                if (worksheet.Cells[r, c].Value is not string text || text.IndexOf('\n') < 0)
+                {
+                    continue;
+                }
+                worksheet.Cells[r, c].Style.WrapText = true;
+                var lines = 1;
+                foreach (var ch in text)
+                {
+                    if (ch == '\n')
+                    {
+                        lines = checked(lines + 1);
+                    }
+                }
+                if (lines > maxLines)
+                {
+                    maxLines = lines;
+                }
+            }
+            if (maxLines > 1)
+            {
+                var visible = Math.Min(maxLines, maxVisibleLines);
+                worksheet.Row(r).Height = defaultRowHeight * visible;
+            }
         }
     }
 
@@ -705,7 +836,8 @@ public static class TaktExcelHelper
                     validation.Formula2.Value = 255;
                 }
             }
-            else if (propertyType == typeof(DateTime) || propertyType == typeof(DateTime?))
+            else if (propertyType == typeof(DateTime) || propertyType == typeof(DateTime?)
+                || propertyType == typeof(DateOnly) || propertyType == typeof(DateOnly?))
             {
                 // 日期类型添加日期验证
                 var validation = worksheet.DataValidations.AddDateTimeValidation(column);
@@ -717,7 +849,9 @@ public static class TaktExcelHelper
                     validation.Formula.Value = new DateTime(1900, 1, 1);
                     validation.Formula2.Value = new DateTime(9999, 12, 31, 23, 59, 59);
                 }
-                worksheet.Column(i + 1).Style.Numberformat.Format = "yyyy-MM-dd HH:mm:ss";
+                var underlying = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
+                worksheet.Column(i + 1).Style.Numberformat.Format =
+                    underlying == typeof(DateOnly) ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss";
             }
             else if (propertyType == typeof(decimal) || propertyType == typeof(decimal?) ||
                      propertyType == typeof(double) || propertyType == typeof(double?) ||
@@ -824,7 +958,7 @@ public static class TaktExcelHelper
             var row = new object[properties.Count];
             for (int i = 0; i < properties.Count; i++)
             {
-                row[i] = properties[i].GetValue(item) ?? DBNull.Value;
+                row[i] = NormalizeExportPropertyCellValue(properties[i].GetValue(item));
             }
             dataArray.Add(row);
         }
@@ -834,15 +968,29 @@ public static class TaktExcelHelper
             worksheet.Cells[2, 1].LoadFromArrays(dataArray);
         }
 
-        // 优化：设置列格式
+        // 按属性 CLR 类型 + 样例值套 Excel 格式（纯日期 vs 日期时间）
         for (int i = 0; i < properties.Count; i++)
         {
-            var propertyType = properties[i].PropertyType;
+            var propertyType = Nullable.GetUnderlyingType(properties[i].PropertyType) ?? properties[i].PropertyType;
             var column = worksheet.Column(i + 1);
-            if (propertyType == typeof(DateTime) || propertyType == typeof(DateTime?))
-                column.Style.Numberformat.Format = "yyyy-MM-dd HH:mm:ss";
-            else if (propertyType == typeof(decimal) || propertyType == typeof(decimal?))
+            if (propertyType == typeof(DateOnly))
+            {
+                column.Style.Numberformat.Format = "yyyy-MM-dd";
+            }
+            else if (propertyType == typeof(DateTime) || propertyType == typeof(DateTimeOffset))
+            {
+                column.Style.Numberformat.Format = ResolveTypedExportDateTimeFormat(dataArray, i);
+            }
+            else if (propertyType == typeof(decimal) || propertyType == typeof(double) || propertyType == typeof(float))
+            {
                 column.Style.Numberformat.Format = "#,##0.00";
+            }
+            else if (propertyType == typeof(int) || propertyType == typeof(long) || propertyType == typeof(short)
+                || propertyType == typeof(byte) || propertyType == typeof(uint) || propertyType == typeof(ulong)
+                || propertyType == typeof(ushort))
+            {
+                column.Style.Numberformat.Format = "#,##0";
+            }
         }
 
         // 列宽：固定 Excel 标准列宽（不按内容 AutoFit）
@@ -1004,5 +1152,714 @@ public static class TaktExcelHelper
         return (zipName, ms.ToArray());
     }
 
+    /// <summary>
+    /// 校验动态报表列键与标题
+    /// </summary>
+    /// <param name="columnKeys">列键</param>
+    /// <param name="columnLabels">列标题</param>
+    /// <exception cref="ArgumentException">列为空或数量不一致</exception>
+    private static void ValidateDictionarySheetColumns(
+        IReadOnlyList<string> columnKeys,
+        IReadOnlyList<string> columnLabels)
+    {
+        if (columnKeys.Count == 0)
+        {
+            throw new ArgumentException("columnKeys 不能为空", nameof(columnKeys));
+        }
+        if (columnLabels.Count != columnKeys.Count)
+        {
+            throw new ArgumentException("columnLabels 必须与 columnKeys 数量一致", nameof(columnLabels));
+        }
+    }
+
+    /// <summary>
+    /// 向工作簿写入一个字典行动态 Sheet
+    /// </summary>
+    /// <param name="package">工作簿</param>
+    /// <param name="sheetName">工作表名称</param>
+    /// <param name="rows">数据行</param>
+    /// <param name="columnKeys">列键</param>
+    /// <param name="columnLabels">列标题</param>
+    /// <param name="columnWidths">按列键覆盖列宽</param>
+    private static void WriteDictionarySheet(
+        ExcelPackage package,
+        string sheetName,
+        IReadOnlyList<IReadOnlyDictionary<string, object?>> rows,
+        IReadOnlyList<string> columnKeys,
+        IReadOnlyList<string> columnLabels,
+        IReadOnlyDictionary<string, double>? columnWidths)
+    {
+        ArgumentNullException.ThrowIfNull(package);
+        ArgumentException.ThrowIfNullOrEmpty(sheetName);
+        ArgumentNullException.ThrowIfNull(rows);
+        ArgumentNullException.ThrowIfNull(columnKeys);
+        ArgumentNullException.ThrowIfNull(columnLabels);
+        var worksheet = package.Workbook.Worksheets.Add(sheetName);
+        worksheet.Cells[1, 1].LoadFromArrays(new[] { columnLabels.ToArray() });
+        if (rows.Count > 0)
+        {
+            var dataArray = new List<object[]>(rows.Count);
+            foreach (var row in rows)
+            {
+                var line = new object[columnKeys.Count];
+                for (var i = 0; i < columnKeys.Count; i++)
+                {
+                    row.TryGetValue(columnKeys[i], out var cell);
+                    line[i] = NormalizeDictionaryCellValue(cell, columnKeys[i]);
+                }
+                dataArray.Add(line);
+            }
+            worksheet.Cells[2, 1].LoadFromArrays(dataArray);
+        }
+        ApplyFixedStandardColumnWidths(worksheet, columnKeys.Count);
+        ApplyNamedColumnWidths(worksheet, columnKeys, columnWidths);
+        ApplyWrapTextForMultilineCells(worksheet);
+        ApplyDictionaryRichTextCells(worksheet, rows, columnKeys);
+        ApplyDictionaryTypedColumnFormats(worksheet, rows, columnKeys);
+        ApplyDictionaryTrendValueFontColors(worksheet, rows, columnKeys);
+        ApplyDictionarySheetFilterAndFreeze(worksheet);
+    }
+
+    /// <summary>
+    /// 字典 Sheet：表头自动筛选 + 冻结首行（便于全量清单筛部件）
+    /// </summary>
+    /// <param name="worksheet">工作表</param>
+    private static void ApplyDictionarySheetFilterAndFreeze(ExcelWorksheet worksheet)
+    {
+        ArgumentNullException.ThrowIfNull(worksheet);
+        if (worksheet.Dimension == null)
+        {
+            return;
+        }
+        worksheet.Cells[worksheet.Dimension.Address].AutoFilter = true;
+        worksheet.View.FreezePanes(2, 1);
+    }
+
+    /// <summary>
+    /// 字典 Sheet：按单元格 CLR 类型套 Excel 数字/日期格式（与字段数据类型对齐）
+    /// </summary>
+    /// <param name="worksheet">工作表</param>
+    /// <param name="rows">数据行（须写入 DateTime/DateOnly/数值等真实类型，勿先 ToString）</param>
+    /// <param name="columnKeys">列键</param>
+    private static void ApplyDictionaryTypedColumnFormats(
+        ExcelWorksheet worksheet,
+        IReadOnlyList<IReadOnlyDictionary<string, object?>> rows,
+        IReadOnlyList<string> columnKeys)
+    {
+        ArgumentNullException.ThrowIfNull(worksheet);
+        ArgumentNullException.ThrowIfNull(rows);
+        ArgumentNullException.ThrowIfNull(columnKeys);
+        if (rows.Count == 0 || worksheet.Dimension == null)
+        {
+            return;
+        }
+        var lastRow = checked(rows.Count + 1);
+        for (var c = 0; c < columnKeys.Count; c++)
+        {
+            var key = columnKeys[c];
+            object? sample = null;
+            foreach (var row in rows)
+            {
+                if (!row.TryGetValue(key, out var value) || value == null || value is TaktExcelRichText)
+                {
+                    continue;
+                }
+                // 与写入一致：先把 ISO 日期字符串等强制为真实类型再判格式
+                sample = CoerceDictionaryCellType(value);
+                if (sample == null || sample is TaktExcelRichText || sample is string)
+                {
+                    continue;
+                }
+                break;
+            }
+            if (sample == null || sample is string)
+            {
+                continue;
+            }
+            var format = ResolveExcelNumberFormatForValue(sample, key);
+            if (string.IsNullOrEmpty(format))
+            {
+                continue;
+            }
+            var col = checked(c + 1);
+            worksheet.Cells[2, col, lastRow, col].Style.Numberformat.Format = format;
+        }
+    }
+
+    /// <summary>
+    /// 按 CLR 值类型解析 Excel 数字格式（日期 / 年月 / 小数 / 整数 / 比率）
+    /// </summary>
+    /// <param name="value">样例单元格值（已 Coerce）</param>
+    /// <param name="columnKey">列键（比率/年月列名约定）</param>
+    /// <returns>EPPlus Numberformat；无需格式时返回 null</returns>
+    private static string? ResolveExcelNumberFormatForValue(object value, string columnKey)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        ArgumentNullException.ThrowIfNull(columnKey);
+        if (value is DateOnly)
+        {
+            return "yyyy-MM-dd";
+        }
+        if (value is DateTime dt)
+        {
+            return ResolveExcelDateTimeNumberFormat(dt, columnKey);
+        }
+        if (value is DateTimeOffset dto)
+        {
+            return ResolveExcelDateTimeNumberFormat(dto.DateTime, columnKey);
+        }
+        if (value is decimal or double or float)
+        {
+            if (columnKey.EndsWith("Percent", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(columnKey, "adjacentPercent", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(columnKey, "adjacent", StringComparison.OrdinalIgnoreCase))
+            {
+                return "0.00%";
+            }
+            return "#,##0.000##";
+        }
+        if (value is int or long or short or byte or uint or ulong or ushort)
+        {
+            return "#,##0";
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// DateTime → Excel 日期/年月/日期时间格式
+    /// </summary>
+    /// <param name="dateTime">日期时间</param>
+    /// <param name="columnKey">列键</param>
+    /// <returns>Numberformat</returns>
+    private static string ResolveExcelDateTimeNumberFormat(DateTime dateTime, string columnKey)
+    {
+        if (dateTime.TimeOfDay != TimeSpan.Zero)
+        {
+            return "yyyy-MM-dd HH:mm:ss";
+        }
+        if (IsYearMonthExcelColumnKey(columnKey) && dateTime.Day == 1)
+        {
+            return "yyyy-MM";
+        }
+        return "yyyy-MM-dd";
+    }
+
+    /// <summary>
+    /// 年月语义列（非 period_yyyy-MM 数值列）：导出为 yyyy-MM
+    /// </summary>
+    /// <param name="columnKey">列键</param>
+    /// <returns>是否年月列</returns>
+    private static bool IsYearMonthExcelColumnKey(string columnKey)
+    {
+        if (string.Equals(columnKey, "month", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+        // basePeriod / comparePeriod / focusPeriod 等；排除 period_2024-01 数值列
+        if (columnKey.EndsWith("Period", StringComparison.OrdinalIgnoreCase)
+            && !columnKey.StartsWith("period_", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 涨：与列表 text-red-500 对齐
+    /// </summary>
+    private const int TrendUpFontArgb = unchecked((int)0xFFEF4444);
+
+    /// <summary>
+    /// 跌：与列表 text-green-600 对齐
+    /// </summary>
+    private const int TrendDownFontArgb = unchecked((int)0xFF16A34A);
+
+    /// <summary>
+    /// 字典 Sheet：涨跌相关列按正负 / 「涨」「跌」着字体色（保留数值便于筛选）
+    /// </summary>
+    /// <param name="worksheet">工作表</param>
+    /// <param name="rows">原始字典行</param>
+    /// <param name="columnKeys">列键</param>
+    private static void ApplyDictionaryTrendValueFontColors(
+        ExcelWorksheet worksheet,
+        IReadOnlyList<IReadOnlyDictionary<string, object?>> rows,
+        IReadOnlyList<string> columnKeys)
+    {
+        ArgumentNullException.ThrowIfNull(worksheet);
+        ArgumentNullException.ThrowIfNull(rows);
+        ArgumentNullException.ThrowIfNull(columnKeys);
+        if (rows.Count == 0)
+        {
+            return;
+        }
+        for (var r = 0; r < rows.Count; r++)
+        {
+            var row = rows[r];
+            for (var c = 0; c < columnKeys.Count; c++)
+            {
+                var key = columnKeys[c];
+                if (!IsTrendColorColumnKey(key))
+                {
+                    continue;
+                }
+                if (!row.TryGetValue(key, out var value) || value == null || value is TaktExcelRichText)
+                {
+                    continue;
+                }
+                var argb = ResolveTrendFontArgbFromCellValue(value);
+                if (!argb.HasValue)
+                {
+                    continue;
+                }
+                worksheet.Cells[checked(r + 2), checked(c + 1)].Style.Font.Color.SetColor(Color.FromArgb(argb.Value));
+            }
+        }
+    }
+
+    /// <summary>
+    /// 是否为需按涨跌着色的列键
+    /// </summary>
+    /// <param name="key">列键</param>
+    /// <returns>需要着色则为 true</returns>
+    private static bool IsTrendColorColumnKey(string key)
+    {
+        if (string.IsNullOrEmpty(key))
+        {
+            return false;
+        }
+        if (string.Equals(key, "adjacent", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(key, "adjacentPercent", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(key, "varianceAmount", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(key, "variancePercent", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(key, "trend", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+        return key.EndsWith("VarianceAmount", StringComparison.OrdinalIgnoreCase)
+            || key.EndsWith("VariancePercent", StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// 由单元格值解析涨跌字体色（正/涨=红，负/跌=绿）
+    /// </summary>
+    /// <param name="value">单元格原始值</param>
+    /// <returns>ARGB；无需着色则为空</returns>
+    private static int? ResolveTrendFontArgbFromCellValue(object value)
+    {
+        switch (value)
+        {
+            case decimal d:
+                return ResolveTrendFontArgbFromSign(d);
+            case double db:
+                return ResolveTrendFontArgbFromSign((decimal)db);
+            case float f:
+                return ResolveTrendFontArgbFromSign((decimal)f);
+            case int i:
+                return ResolveTrendFontArgbFromSign(i);
+            case long l:
+                return ResolveTrendFontArgbFromSign(l);
+            case short s:
+                return ResolveTrendFontArgbFromSign(s);
+            case string text:
+                return ResolveTrendFontArgbFromLabel(text);
+            default:
+                return null;
+        }
+    }
+
+    /// <summary>
+    /// 按数值正负解析涨跌色
+    /// </summary>
+    /// <param name="value">有符号数值</param>
+    /// <returns>ARGB；零则为空</returns>
+    private static int? ResolveTrendFontArgbFromSign(decimal value)
+    {
+        if (value > 0m)
+        {
+            return TrendUpFontArgb;
+        }
+        if (value < 0m)
+        {
+            return TrendDownFontArgb;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// 按涨跌文案解析字体色
+    /// </summary>
+    /// <param name="text">涨 / 跌 / up / down 等</param>
+    /// <returns>ARGB；非涨跌文案则为空</returns>
+    private static int? ResolveTrendFontArgbFromLabel(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return null;
+        }
+        var trimmed = text.Trim();
+        if (string.Equals(trimmed, "涨", StringComparison.Ordinal)
+            || string.Equals(trimmed, "up", StringComparison.OrdinalIgnoreCase))
+        {
+            return TrendUpFontArgb;
+        }
+        if (string.Equals(trimmed, "跌", StringComparison.Ordinal)
+            || string.Equals(trimmed, "down", StringComparison.OrdinalIgnoreCase))
+        {
+            return TrendDownFontArgb;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// 字典单元格：富文本先落成纯文字，便于 LoadFromArrays
+    /// </summary>
+    /// <param name="cell">单元格值</param>
+    /// <returns>写入数组的值</returns>
+    /// <summary>
+    /// 强类型导出：按列内首个 DateTime 样例决定纯日期或日期时间格式
+    /// </summary>
+    /// <param name="dataArray">已规范化的导出行</param>
+    /// <param name="columnIndex">列下标（0 起）</param>
+    /// <returns>Numberformat</returns>
+    private static string ResolveTypedExportDateTimeFormat(List<object[]> dataArray, int columnIndex)
+    {
+        ArgumentNullException.ThrowIfNull(dataArray);
+        foreach (var row in dataArray)
+        {
+            if (columnIndex < 0 || columnIndex >= row.Length)
+            {
+                break;
+            }
+            var cell = row[columnIndex];
+            if (cell is DateTime dt)
+            {
+                return dt.TimeOfDay == TimeSpan.Zero ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss";
+            }
+        }
+        return "yyyy-MM-dd HH:mm:ss";
+    }
+
+    /// <summary>
+    /// 强类型导出行：DateOnly / DateTimeOffset / ISO 日期字符串 → EPPlus 可写的 DateTime
+    /// </summary>
+    /// <param name="value">属性值</param>
+    /// <returns>单元格值</returns>
+    private static object NormalizeExportPropertyCellValue(object? value)
+    {
+        var coerced = CoerceDictionaryCellType(value);
+        return coerced ?? DBNull.Value;
+    }
+
+    /// <summary>
+    /// 字典 Sheet：涨跌% 列值为 0 时写空（仅该单元格，不删行）
+    /// </summary>
+    /// <param name="cell">原始单元格</param>
+    /// <param name="columnKey">列键</param>
+    /// <returns>写入 Excel 的值</returns>
+    private static object NormalizeDictionaryCellValue(object? cell, string columnKey)
+    {
+        ArgumentNullException.ThrowIfNull(columnKey);
+        if (cell is TaktExcelRichText rich)
+        {
+            return rich.ToPlainText();
+        }
+        if (IsAnalysisVariancePercentColumnKey(columnKey) && IsNearZeroNumericCell(cell))
+        {
+            return DBNull.Value;
+        }
+        return CoerceDictionaryCellType(cell) ?? DBNull.Value;
+    }
+
+    /// <summary>
+    /// 分析涨跌百分比列（0% 不导出）
+    /// </summary>
+    /// <param name="columnKey">列键</param>
+    /// <returns>是否涨跌%列</returns>
+    private static bool IsAnalysisVariancePercentColumnKey(string columnKey)
+    {
+        if (string.Equals(columnKey, "adjacentPercent", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+        if (string.Equals(columnKey, "adjacent", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+        if (string.Equals(columnKey, "variancePercent", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+        if (string.Equals(columnKey, "modelVariancePercent", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 数值是否接近 0（含 Excel 百分比小数与百分点）
+    /// </summary>
+    /// <param name="cell">单元格值</param>
+    /// <returns>接近 0 则为 true</returns>
+    private static bool IsNearZeroNumericCell(object? cell)
+    {
+        return cell switch
+        {
+            null => true,
+            decimal d => d == 0m,
+            double db => Math.Abs(db) < 1e-12,
+            float f => Math.Abs(f) < 1e-12f,
+            int i => i == 0,
+            long l => l == 0L,
+            _ => false,
+        };
+    }
+
+    /// <summary>
+    /// 将导出单元格强制为 Excel 可识别的真实类型（DateOnly/DateTimeOffset/ISO 日期字符串→DateTime）
+    /// </summary>
+    /// <param name="cell">原始值</param>
+    /// <returns>强制后的值；null 保持 null</returns>
+    private static object? CoerceDictionaryCellType(object? cell)
+    {
+        if (cell == null)
+        {
+            return null;
+        }
+        if (cell is DateOnly dateOnly)
+        {
+            return dateOnly.ToDateTime(TimeOnly.MinValue);
+        }
+        if (cell is DateTimeOffset dateTimeOffset)
+        {
+            return dateTimeOffset.DateTime;
+        }
+        if (cell is string text && TryCoerceExcelDateFromString(text, out var parsed))
+        {
+            return parsed;
+        }
+        return cell;
+    }
+
+    /// <summary>
+    /// 仅识别严格 ISO 日期/年月/日期时间字符串，避免业务编码被误当日期
+    /// </summary>
+    /// <param name="text">原始文本</param>
+    /// <param name="date">解析结果</param>
+    /// <returns>是否解析成功</returns>
+    private static bool TryCoerceExcelDateFromString(string text, out DateTime date)
+    {
+        date = default;
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+        var trimmed = text.Trim();
+        if (trimmed.Length == 10
+            && DateTime.TryParseExact(
+                trimmed,
+                "yyyy-MM-dd",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out date))
+        {
+            date = date.Date;
+            return true;
+        }
+        if (trimmed.Length == 7
+            && DateTime.TryParseExact(
+                trimmed,
+                "yyyy-MM",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out date))
+        {
+            date = new DateTime(date.Year, date.Month, 1);
+            return true;
+        }
+        if (DateTime.TryParseExact(
+                trimmed,
+                "yyyy-MM-ddTHH:mm:ss",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out date))
+        {
+            return true;
+        }
+        if (DateTime.TryParseExact(
+                trimmed,
+                "yyyy-MM-dd HH:mm:ss",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out date))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 将字典行中的富文本覆盖到已写入的单元格（涨跌百分比着色）
+    /// </summary>
+    /// <param name="worksheet">工作表</param>
+    /// <param name="rows">原始字典行</param>
+    /// <param name="columnKeys">列键</param>
+    private static void ApplyDictionaryRichTextCells(
+        ExcelWorksheet worksheet,
+        IReadOnlyList<IReadOnlyDictionary<string, object?>> rows,
+        IReadOnlyList<string> columnKeys)
+    {
+        ArgumentNullException.ThrowIfNull(worksheet);
+        ArgumentNullException.ThrowIfNull(rows);
+        ArgumentNullException.ThrowIfNull(columnKeys);
+        for (var r = 0; r < rows.Count; r++)
+        {
+            var row = rows[r];
+            for (var c = 0; c < columnKeys.Count; c++)
+            {
+                if (!row.TryGetValue(columnKeys[c], out var value) || value is not TaktExcelRichText rich)
+                {
+                    continue;
+                }
+                WriteExcelRichText(worksheet.Cells[checked(r + 2), checked(c + 1)], rich);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 写入带字体色的富文本
+    /// </summary>
+    /// <param name="cell">目标单元格</param>
+    /// <param name="rich">富文本</param>
+    private static void WriteExcelRichText(ExcelRange cell, TaktExcelRichText rich)
+    {
+        ArgumentNullException.ThrowIfNull(cell);
+        ArgumentNullException.ThrowIfNull(rich);
+        cell.Value = null;
+        cell.RichText.Clear();
+        var hasNewline = false;
+        foreach (var run in rich.Runs)
+        {
+            if (string.IsNullOrEmpty(run.Text))
+            {
+                continue;
+            }
+            if (!hasNewline && run.Text.IndexOf('\n') >= 0)
+            {
+                hasNewline = true;
+            }
+            var excelRun = cell.RichText.Add(run.Text);
+            if (run.FontArgb.HasValue)
+            {
+                excelRun.Color = Color.FromArgb(run.FontArgb.Value);
+            }
+        }
+        if (hasNewline)
+        {
+            cell.Style.WrapText = true;
+        }
+    }
+
     #endregion 私有辅助方法
+}
+
+/// <summary>
+/// 字典行动态工作表（多 Sheet 导出；列键可按 Sheet 不同）
+/// </summary>
+public sealed class TaktExcelDictionarySheet
+{
+    /// <summary>
+    /// 工作表名称
+    /// </summary>
+    public string SheetName { get; init; } = "Data";
+
+    /// <summary>
+    /// 数据行（键与 ColumnKeys 对齐）
+    /// </summary>
+    public IReadOnlyList<IReadOnlyDictionary<string, object?>> Rows { get; init; } = Array.Empty<IReadOnlyDictionary<string, object?>>();
+
+    /// <summary>
+    /// 列键
+    /// </summary>
+    public IReadOnlyList<string> ColumnKeys { get; init; } = Array.Empty<string>();
+
+    /// <summary>
+    /// 列标题（与 ColumnKeys 一一对应）
+    /// </summary>
+    public IReadOnlyList<string> ColumnLabels { get; init; } = Array.Empty<string>();
+
+    /// <summary>
+    /// 按列键覆盖标准列宽
+    /// </summary>
+    public IReadOnlyDictionary<string, double>? ColumnWidths { get; init; }
+}
+
+/// <summary>
+/// Excel 单元格富文本（用于同一格内涨跌百分比红/绿着色）
+/// </summary>
+public sealed class TaktExcelRichText
+{
+    /// <summary>
+    /// 文本片段
+    /// </summary>
+    public IReadOnlyList<TaktExcelRichRun> Runs { get; init; } = Array.Empty<TaktExcelRichRun>();
+
+    /// <summary>
+    /// 拼接为纯文字
+    /// </summary>
+    /// <returns>纯文字</returns>
+    public string ToPlainText()
+    {
+        if (Runs.Count == 0)
+        {
+            return string.Empty;
+        }
+        var builder = new StringBuilder();
+        foreach (var run in Runs)
+        {
+            builder.Append(run.Text);
+        }
+        return builder.ToString();
+    }
+
+    /// <summary>
+    /// 纯文字（供 LoadFromArrays 与调试）
+    /// </summary>
+    /// <returns>纯文字</returns>
+    public override string ToString()
+    {
+        return ToPlainText();
+    }
+
+    /// <summary>
+    /// 单片段富文本
+    /// </summary>
+    /// <param name="text">文本</param>
+    /// <param name="fontArgb">字体 ARGB；空则默认色</param>
+    /// <returns>富文本</returns>
+    /// <exception cref="ArgumentNullException">text 为空</exception>
+    public static TaktExcelRichText FromSingle(string text, int? fontArgb)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        return new TaktExcelRichText
+        {
+            Runs = new[] { new TaktExcelRichRun { Text = text, FontArgb = fontArgb } },
+        };
+    }
+}
+
+/// <summary>
+/// Excel 富文本片段
+/// </summary>
+public sealed class TaktExcelRichRun
+{
+    /// <summary>
+    /// 文本
+    /// </summary>
+    public string Text { get; init; } = string.Empty;
+
+    /// <summary>
+    /// 字体 ARGB（含 alpha）；空则使用 Excel 默认色
+    /// </summary>
+    public int? FontArgb { get; init; }
 }

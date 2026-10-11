@@ -1,10 +1,10 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcSmtQueryHelper.cs
 // 创建时间：2026-09-08
 // 创建人：Takt365(Cursor AI)
-// 功能描述：SMT主表/子表可见明细：F+C003，设变+上阶物料去重（保留最大 Id）
+// 功能描述：SMT主表/子表可见明细：F+C003，设变单号+机种编码去重（保留最大 Id）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -23,7 +23,7 @@ namespace Takt.Application.Services.Logistics.Manufacturing.EngineeringChange;
 internal static class TaktEcSmtQueryHelper
 {
     /// <summary>
-    /// 新采购类型 F、新品仓库 C003，且同设变单号+上阶物料仅保留最大 Id 一行
+    /// 新采购类型 F、新品仓库 C003，且同设变单号+机种编码仅保留最大 Id 一行
     /// </summary>
     /// <returns>明细过滤表达式</returns>
     internal static Expression<Func<TaktEcDetail, bool>> VisibleDetailExpression()
@@ -41,7 +41,7 @@ internal static class TaktEcSmtQueryHelper
                     && s.IsDeleted == 0
                     && s.IsObsolete == 0
                     && s.EcCode == x.EcCode
-                    && s.EcParentMaterialCode == x.EcParentMaterialCode
+                    && s.EcModelCode == x.EcModelCode
                     && s.EcNewPurchaseType == purchaseTypeF
                     && s.EcNewWarehouse != null
                     && s.EcNewWarehouse == warehouseC003
@@ -51,16 +51,22 @@ internal static class TaktEcSmtQueryHelper
     }
 
     /// <summary>
-    /// SMT 执行列表可见：本表自去重（F+C003，同设变+上阶物料保留最大 EcDetailId）
+    /// SMT 执行列表可见：本表自去重（F+C003，同设变单号+机种编码保留最大 EcDetailId）
     /// </summary>
     /// <returns>执行表过滤表达式</returns>
     internal static Expression<Func<TaktEcSmt, bool>> VisibleExecExpression()
     {
         var purchaseTypeF = TaktEcScopeConstants.PurchaseTypeExternal;
         var warehouseC003 = TaktEcScopeConstants.NewWarehousePcbaGate;
-        return x => x.EcNewPurchaseType == purchaseTypeF
-            && x.EcNewWarehouse != null
-            && x.EcNewWarehouse == warehouseC003
+        var finished = TaktEcDeptScopeConstants.ByFinishedProduct;
+        var byModel = TaktEcDeptScopeConstants.ByModel;
+        var byEc = TaktEcDeptScopeConstants.ByEngineeringChange;
+        var internalScope = TaktEcScopeConstants.Internal;
+        var technicalScope = TaktEcScopeConstants.Technical;
+        return x =>
+            (x.EcScope == internalScope
+                || x.EcScope == technicalScope
+                || (x.EcNewPurchaseType == purchaseTypeF && x.EcNewWarehouse != null && x.EcNewWarehouse == warehouseC003))
             && !SqlFunc.Subqueryable<TaktEcSmt>()
                 .Where(s =>
                     s.TenantCode == x.TenantCode
@@ -68,10 +74,13 @@ internal static class TaktEcSmtQueryHelper
                     && s.IsDeleted == 0
                     && s.IsObsolete == 0
                     && s.EcCode == x.EcCode
-                    && s.EcParentMaterialCode == x.EcParentMaterialCode
-                    && s.EcNewPurchaseType == purchaseTypeF
-                    && s.EcNewWarehouse != null
-                    && s.EcNewWarehouse == warehouseC003
+                    && s.EcDeptScope == x.EcDeptScope
+                    && s.EcModelCode == x.EcModelCode
+                    && (x.EcDeptScope == byEc
+                        || (x.EcDeptScope == byModel && s.EcNewMaterialCode == x.EcNewMaterialCode)
+                        || (x.EcDeptScope == finished
+                            && s.EcRootMaterialCodeGroup == x.EcRootMaterialCodeGroup
+                            && s.EcNewMaterialCode == x.EcNewMaterialCode))
                     && s.EcDetailId > x.EcDetailId)
                 .Any();
     }

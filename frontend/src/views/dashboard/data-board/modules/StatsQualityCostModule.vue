@@ -1,6 +1,6 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
-<!-- 命名空间：frontend/src/views/dashboard/data-board/modules -->
+<!-- 项目名称：节拍智控·TaktWise -->
+<!-- 命名空间：frontend/src/views/dashboard/dataBoard.types/modules -->
 <!-- 文件名称：StatsQualityCostModule.vue -->
 <!-- 功能描述：数据看板质量成本（上月：品质业务/事故/应对金额） -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
@@ -29,12 +29,11 @@
 /**
  * 质量成本：品质业务 / 事故 / 应对 三项金额（上月）
  */
-import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import StatsMetricGrid from '../components/stats-metric-grid.vue'
-import { enrichDashboardMetricItems } from '../utils/stats-metric-dashboard'
-import { usePermissionStore } from '@/stores/identity/permission'
-import type { QualityCostStat } from '@/types/logistics/quality/cost/quality-cost-stat'
+import StatsMetricGrid from '../components/StatsMetricGrid.vue'
+import { enrichDashboardMetricItems } from '../utils/statsMetricDashboard'
+import { usePermissionStore } from '@/stores/identity/usePermissionStore'
+import type { QualityCostStat } from '@/types/logistics/quality/cost/qualityCostStat.types'
 import {
   DASHBOARD_STATS_API,
   DASHBOARD_STATS_PERMISSION,
@@ -42,11 +41,11 @@ import {
   fetchDashboardGet,
   fetchDashboardMetricIfPermitted,
   scheduleDashboardLoad,
-} from '../utils/stats-query'
+} from '../utils/statsQuery'
 import {
   getDashboardFocusMonth,
   getDashboardInspectionMonthRange,
-} from '../utils/stats-dashboard-plant'
+} from '../utils/statsDashboardPlant'
 
 /** 空金额统计 */
 const EMPTY_STAT: QualityCostStat = {

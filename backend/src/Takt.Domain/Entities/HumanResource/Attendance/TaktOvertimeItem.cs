@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.HumanResource.Attendance
 // 文件名称：TaktOvertimeItem.cs
 // 创建时间：2026-06-04
@@ -45,7 +45,7 @@ public class TaktOvertimeItem : TaktCompanyEntityBase
     /// <summary>
     /// 员工姓名
     /// </summary>
-    [SugarColumn(ColumnName = "employee_name", ColumnDescription = "员工姓名", ColumnDataType = "nvarchar", Length = 50, IsNullable = false)]
+    [SugarColumn(ColumnName = "employee_name", ColumnDescription = "员工姓名", ColumnDataType = "nvarchar", Length = 80, IsNullable = false)]
     public string EmployeeName { get; set; } = string.Empty;
     /// <summary>
     /// 计划加班小时数

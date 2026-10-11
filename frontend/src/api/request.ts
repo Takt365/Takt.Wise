@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/api
 // 文件名称：request.ts
 // 创建时间：2026-05-22
@@ -18,28 +18,28 @@ import type {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from 'axios';
-import { useUserStore } from '@/stores/identity/user';
-import { useTenantStore } from '@/stores/identity/tenant';
-import { resolveRequestLocale } from '@/stores/foundation/locale';
-import type { TaktApiResult, TaktBinaryDownload } from '@/types/common';
+import { useUserStore } from '@/stores/identity/useUserStore';
+import { useTenantStore } from '@/stores/identity/useTenantStore';
+import { resolveRequestLocale } from '@/stores/foundation/useLocaleStore';
+import type { TaktApiResult, TaktBinaryDownload } from '@/types/common.types';
 import { TaktResultCode } from '@/utils/common';
 import { createLogger } from '@/utils/logger';
-import { resolveHttpErrorMessage } from '@/utils/takt-http-error-message';
-import { translateLocaleMessage } from '@/utils/takt-i18n-message';
-import { EventBus, emitNotification } from '@/utils/event-bus';
+import { resolveHttpErrorMessage } from '@/utils/taktHttpErrorMessage';
+import { translateLocaleMessage } from '@/utils/taktI18nMessage';
+import { EventBus, emitNotification } from '@/utils/eventBus';
 import {
   attachApiPerformanceStart,
   observeApiPerformanceError,
   observeApiPerformanceResponse,
-} from '@/utils/takt-api-performance-tracker';
+} from '@/utils/taktApiPerformanceTracker';
 import { ensureValidAccessToken, refreshOAuthTokens } from '@/utils/oauth';
-import { isLogoutInProgress } from '@/bootstrap/takt-logout-flow';
-import { buildTaktClientProfileHeaders } from '@/utils/takt-client-profile';
+import { isLogoutInProgress } from '@/bootstrap/taktLogoutFlow';
+import { buildTaktClientProfileHeaders } from '@/utils/taktClientProfile';
 import {
   isDemoReadonly,
   isDemoWriteExemptUrl,
   isMutatingHttpMethod,
-} from '@/utils/takt-demo-mode';
+} from '@/utils/taktDemoMode';
 
 const requestLogger = createLogger('request');
 

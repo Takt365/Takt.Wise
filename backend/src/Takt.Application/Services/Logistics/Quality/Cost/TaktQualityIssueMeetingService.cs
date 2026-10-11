@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Quality.Cost
 // 文件名称：TaktQualityIssueMeetingService.cs
 // 创建时间：2026-08-22
@@ -418,7 +418,7 @@ public class TaktQualityIssueMeetingService : TaktServiceBase, ITaktQualityIssue
                 || (x.PlantCode != null && x.PlantCode.Contains(keywords))
                 || (x.QualityIssueCode != null && x.QualityIssueCode.Contains(keywords))
                 || (x.MeetingInvestigationContent != null && x.MeetingInvestigationContent.Contains(keywords))
-                || (x.MeetingRecorder != null && x.MeetingRecorder.Contains(keywords))
+                || (x.ResponseGroupName != null && x.ResponseGroupName.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
             );
@@ -526,10 +526,10 @@ public class TaktQualityIssueMeetingService : TaktServiceBase, ITaktQualityIssue
             exp = exp.And(x => x.OtherApparatusCost == otherApparatusCost);
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.MeetingRecorder))
+        if (!string.IsNullOrWhiteSpace(queryDto?.ResponseGroupName))
         {
-            var meetingRecorder = queryDto.MeetingRecorder;
-            exp = exp.And(x => x.MeetingRecorder != null && x.MeetingRecorder.Contains(meetingRecorder));
+            var meetingRecorder = queryDto.ResponseGroupName;
+            exp = exp.And(x => x.ResponseGroupName != null && x.ResponseGroupName.Contains(meetingRecorder));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.ExtField))
@@ -642,7 +642,7 @@ public class TaktQualityIssueMeetingService : TaktServiceBase, ITaktQualityIssue
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.MeetingRecorder))
+        if (!string.IsNullOrWhiteSpace(queryDto.ResponseGroupName))
         {
             return true;
         }

@@ -36,7 +36,7 @@ description: >-
 - [ ] TaktSingleTable :pagination="false" + 外置 TaktPagination
 - [ ] row-key string；loadData/handleSearch/CRUD/import/export 对齐 12-crud §六
 - [ ] `useTableRefresh(loadData)`（`loadData` 定义之后；订阅租户/公司切换）
-- [ ] TaktModal `:width="formModalWidthPx"`（`useTaktContentModalWidth`）+ <xxx-form ref="formRef" />（勿双层 a-modal）
+- [ ] TaktModal `:width="formModalWidthPx"`（`useTaktContentModalWidth`）+ <XxxForm ref="formRef" />（勿双层 a-modal）
 - [ ] 列标题 entity.*；loading 态；07/08 分页
 - [ ] 03-format-blank-lines
 ```

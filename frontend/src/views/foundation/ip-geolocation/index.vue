@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/foundation/ip-geolocation -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：IP归属（ip2region；权限 foundation:ip:geolocation:list；expose 无） -->
@@ -108,9 +108,9 @@ import { useI18n } from 'vue-i18n'
 import {
   searchClientIpGeolocation,
   searchIpGeolocation,
-} from '@/api/foundation/ip-geolocation'
-import type { IpGeolocation } from '@/types/foundation/ip-geolocation'
-import { usePermissionStore } from '@/stores/identity/permission'
+} from '@/api/foundation/ipGeolocation.api'
+import type { IpGeolocation } from '@/types/foundation/ipGeolocation.types'
+import { usePermissionStore } from '@/stores/identity/usePermissionStore'
 
 const { t } = useI18n()
 

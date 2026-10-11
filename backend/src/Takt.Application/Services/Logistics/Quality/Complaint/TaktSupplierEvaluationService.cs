@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Quality.Complaint
 // 文件名称：TaktSupplierEvaluationService.cs
 // 创建时间：2026-08-22
@@ -539,7 +539,7 @@ public class TaktSupplierEvaluationService : TaktServiceBase, ITaktSupplierEvalu
                 || (x.SupplierEvaluationCode != null && x.SupplierEvaluationCode.Contains(keywords))
                 || (x.SupplierName1 != null && x.SupplierName1.Contains(keywords))
                 || (x.SupplierCode != null && x.SupplierCode.Contains(keywords))
-                || (x.EvaluatorByEmployeeName != null && x.EvaluatorByEmployeeName.Contains(keywords))
+                || (x.EvaluatorByGroupName != null && x.EvaluatorByGroupName.Contains(keywords))
                 || (x.EvaluationDeptName != null && x.EvaluationDeptName.Contains(keywords))
                 || (x.MainStrengths != null && x.MainStrengths.Contains(keywords))
                 || (x.MainIssues != null && x.MainIssues.Contains(keywords))
@@ -598,10 +598,10 @@ public class TaktSupplierEvaluationService : TaktServiceBase, ITaktSupplierEvalu
             exp = exp.And(x => x.EvaluationType == evaluationType);
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.EvaluatorByEmployeeName))
+        if (!string.IsNullOrWhiteSpace(queryDto?.EvaluatorByGroupName))
         {
-            var evaluatorBy = queryDto.EvaluatorByEmployeeName;
-            exp = exp.And(x => x.EvaluatorByEmployeeName != null && x.EvaluatorByEmployeeName.Contains(evaluatorBy));
+            var evaluatorBy = queryDto.EvaluatorByGroupName;
+            exp = exp.And(x => x.EvaluatorByGroupName != null && x.EvaluatorByGroupName.Contains(evaluatorBy));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.EvaluationDeptName))
@@ -798,7 +798,7 @@ public class TaktSupplierEvaluationService : TaktServiceBase, ITaktSupplierEvalu
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.EvaluatorByEmployeeName))
+        if (!string.IsNullOrWhiteSpace(queryDto.EvaluatorByGroupName))
         {
             return true;
         }

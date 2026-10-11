@@ -2,7 +2,7 @@
 name: 10-master-detail
 description: >-
   主子表 OneToMany 扩展（级联 Fill/Save、左右/上下 UI）；须先满足 12-crud（主表+子表双实体 CRUD）。
-  用于 master-detail、TaktMasterDetailTableLr/Tb、*-panel、use-*-master-context、sub 模板。
+  用于 master-detail、TaktMasterDetailTableLr/Tb、*Panel、use-*-master-context、sub 模板。
 ---
 
 # 主子表（Master-Detail）
@@ -19,7 +19,7 @@ description: >-
 |------|------|------|----------|
 | **左右（LR）** | `TaktMasterDetailTableLr` + `#detail` 插槽 | 从表列多、需独立 QueryBar/ToolsBar/权限/列设置 | **主流**（`generate-vue-master-detail-from-api` 默认） |
 | **上下（TB）** | `TaktMasterDetailTableTb` | 从表列少、主从同页内嵌双表、从表走组件 props | 组件已就绪，简单主子表可选用 |
-| **弹窗上下** | `TaktEditableTable`（在 `*-form.vue`） | 新建/编辑一次级联提交子表行 | 生成脚本与手工表单共用 |
+| **弹窗上下** | `TaktEditableTable`（在 `*Form.vue`） | 新建/编辑一次级联提交子表行 | 生成脚本与手工表单共用 |
 | **展开行** | `TaktSingleTable` + `expandedRowRender` | 子表预览、行数极少 | 遗留/特例（如 `dict/index.vue`） |
 | **独立窗口** | `DictDataWindow` 等 | 子表 CRUD 极复杂、独立权限 | 手工增强 |
 
@@ -30,8 +30,8 @@ index.vue（h-full flex flex-col min-h-0）
  → TaktQueryBar + TaktToolsBar（:show-expand="false"）
  → TaktMasterDetailTableLr
       左 ~2/5：主表分页 + 行选
-      右 ~3/5：#detail → *-panel.vue（子表完整 CRUD 壳）
- → TaktModal + *-form.vue
+      右 ~3/5：#detail → *Panel.vue（子表完整 CRUD 壳）
+ → TaktModal + *Form.vue
 ```
 
 **标准参照**：
@@ -39,10 +39,10 @@ index.vue（h-full flex flex-col min-h-0）
 | 层 | 文件 |
 |----|------|
 | 列表壳 | `views/logistics/manufacturing/aps/work-center/index.vue` |
-| 右侧从表面板 | `.../work-center/components/work-center-resource-panel.vue` |
-| 主表上下文 | `.../work-center/composables/use-work-center-master-context.ts` |
-| LR 组件 | `components/business/takt-master-detail-table-lr/index.vue` |
-| 共享 scroll.y | `composables/use-takt-master-detail-lr-scroll-y.ts`（`scrollLayout="masterDetailLr"`） |
+| 右侧从表面板 | `.../work-center/components/WorkCenterResourcePanel.vue` |
+| 主表上下文 | `.../work-center/composables/useWorkCenterMasterContext.ts` |
+| LR 组件 | `components/business/TaktMasterDetailTableLr/index.vue` |
+| 共享 scroll.y | `composables/useTaktMasterDetailLrScrollY.ts`（`scrollLayout="masterDetailLr"`） |
 
 **主表页必备**：
 
@@ -66,7 +66,7 @@ TaktMasterDetailTableTb
  下 flex-1：从表（props 传 detailColumns / detailDataSource，或 detail-* 插槽）
 ```
 
-**组件**：`components/business/takt-master-detail-table-tb/index.vue`
+**组件**：`components/business/TaktMasterDetailTableTb/index.vue`
 
 - 主表：`showMasterPagination`、超阈值自动 `virtual`
 - 从表：默认 `show-pagination="false"` + `virtual`（大数据内嵌展示）
@@ -77,12 +77,12 @@ TaktMasterDetailTableTb
 ### 1.3 弹窗上下（表单级联）
 
 ```text
-TaktModal → *-form.vue
+TaktModal → *Form.vue
   上：a-form 主表字段
   下：TaktEditableTable（子表行编辑，随 createXxx/updateXxx 一次提交）
 ```
 
-**标准参照**：`work-center-form.vue`（生成）、`routing-form.vue`（手工）
+**标准参照**：`WorkCenterForm.vue`（生成）、`RoutingForm.vue`（手工）
 
 - `getValues()` 返回主表字段 + `items` / `dictDataList` 等子表数组
 - 与后端 `TaktXxxCreateDto` / `UpdateDto` 字段名对齐
@@ -107,7 +107,7 @@ TaktModal → *-form.vue
 
 | 脚本 | 产出 |
 |------|------|
-| `generate-vue-master-detail-from-api.cjs` | `index.vue`（**LR** + `*-panel.vue` + `use-*-master-context.ts`）+ `*-form.vue`（**TaktEditableTable** 上下） |
+| `generate-vue-master-detail-from-api.cjs` | `index.vue`（**LR** + `*Panel.vue` + `use-*-master-context.ts`）+ `*Form.vue`（**TaktEditableTable** 上下） |
 | `generate-vue-master-detail-layout.cjs` | 布局片段（被上者 require） |
 | `generate-all.cjs --Xxx` | 实体含 `OneToMany` → 全流程 sub 模板 |
 

@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/identity/user -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：用户管理列表页；查询、CRUD、导入导出、分配角色/部门/岗位/租户、改密/重置/解锁 -->
@@ -214,23 +214,22 @@
 </template>
 
 <script setup lang="ts">
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 /**
  * 用户列表页脚本模块。
- * - API：@/api/identity/user；表单子组件为 ./components/user-form.vue。
+ * - API：@/api/identity/user.api；表单子组件为 ./components/UserForm.vue。
  * - 列表字段与后端 User / UserQuery 对齐（userName、nickName 等）。
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import UserForm from './components/user-form.vue'
-import AssignUserRoles from './components/assign-user-roles.vue'
-import AssignUserTenants from './components/assign-user-tenants.vue'
-import AssignUserCompanies from './components/assign-user-companies.vue'
-import UserChangePassword from './components/user-change-password.vue'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import UserForm from './components/UserForm.vue'
+import AssignUserRoles from './components/AssignUserRoles.vue'
+import AssignUserTenants from './components/AssignUserTenants.vue'
+import AssignUserCompanies from './components/AssignUserCompanies.vue'
+import UserChangePassword from './components/UserChangePassword.vue'
 import {
   getUserList,
   createUser,
@@ -244,17 +243,17 @@ import {
   importUserData,
   resetPassword,
   changePassword
-} from '@/api/identity/user'
-import type { TaktBinaryDownload } from '@/types/common'
+} from '@/api/identity/user.api'
+import type { TaktBinaryDownload } from '@/types/common.types'
 import type {
   CreateUser,
   UpdateUser,
   User,
   UserQuery
-} from '@/types/identity/user'
-import type { UserFormValues } from '@/types/identity/user-form-view'
-import { resolveRequestLocale } from '@/stores/foundation/locale'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+} from '@/types/identity/user.types'
+import type { UserFormValues } from '@/types/identity/userFormView.types'
+import { resolveRequestLocale } from '@/stores/foundation/useLocaleStore'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { taktExcelEntityNames } from '@/utils/naming'
 import {
   RiEditLine,

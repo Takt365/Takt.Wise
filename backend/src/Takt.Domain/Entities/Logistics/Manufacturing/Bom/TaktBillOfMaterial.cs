@@ -1,5 +1,5 @@
 ﻿// ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Manufacturing.Bom
 // 文件名称：TaktBillOfMaterial.cs
 // 创建时间：2025-01-20
@@ -99,6 +99,18 @@ public class TaktBillOfMaterial : TaktCompanyEntityBase
     /// </summary>
     [SugarColumn(ColumnName = "bom_description", ColumnDescription = "BOM描述", ColumnDataType = "nvarchar", Length = 1000, IsNullable = true)]
     public string? BomDescription { get; set; }
+
+    /// <summary>
+    /// BOM组编码（选项 TaktBomGroups/options?bomGroupCategory=1；DictValue=BomGroupCode）
+    /// </summary>
+    [SugarColumn(ColumnName = "bom_group_code", ColumnDescription = "BOM组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? BomGroupCode { get; set; }
+
+    /// <summary>
+    /// BOM组名称（冗余：按 BomGroupCode 取 TaktBomGroups.BomGroupName 联动）
+    /// </summary>
+    [SugarColumn(ColumnName = "bom_group_name", ColumnDescription = "BOM组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? BomGroupName { get; set; }
 
     /// <summary>
     /// 排序号（回填）（越小越靠前）

@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/bom/bill-of-material-item -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：Takt物料清单明细实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -430,22 +430,21 @@
  * Takt物料清单明细实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/bom/bill-of-material-item
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import BillOfMaterialItemForm from './components/bill-of-material-item-form.vue'
-import BillOfMaterialSubstitutePanel from './components/bill-of-material-substitute-panel.vue'
-import { provideBillOfMaterialItemMasterContext, type BillOfMaterialItemRowRecord } from './composables/use-bill-of-material-item-master-context'
-import { getBillOfMaterialItemList, getBillOfMaterialItemById, createBillOfMaterialItem, updateBillOfMaterialItem, deleteBillOfMaterialItemById, deleteBillOfMaterialItemBatch, getBillOfMaterialItemTemplate, importBillOfMaterialItem, exportBillOfMaterialItem } from '@/api/logistics/manufacturing/bom/bill-of-material-item'
-import type { BillOfMaterialItem, BillOfMaterialItemQuery } from '@/types/logistics/manufacturing/bom/bill-of-material-item'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import BillOfMaterialItemForm from './components/BillOfMaterialItemForm.vue'
+import BillOfMaterialSubstitutePanel from './components/BillOfMaterialSubstitutePanel.vue'
+import { provideBillOfMaterialItemMasterContext, type BillOfMaterialItemRowRecord } from './composables/useBillOfMaterialItemMasterContext'
+import { getBillOfMaterialItemList, getBillOfMaterialItemById, createBillOfMaterialItem, updateBillOfMaterialItem, deleteBillOfMaterialItemById, deleteBillOfMaterialItemBatch, getBillOfMaterialItemTemplate, importBillOfMaterialItem, exportBillOfMaterialItem } from '@/api/logistics/manufacturing/bom/billOfMaterialItem.api'
+import type { BillOfMaterialItem, BillOfMaterialItemQuery } from '@/types/logistics/manufacturing/bom/billOfMaterialItem.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -454,7 +453,7 @@ import {
   BILLOFMATERIALITEM_QUERY_STRING_FIELDS,
   BILLOFMATERIALITEM_QUERY_FIELDS,
   BILLOFMATERIALITEM_SELF_I18N_KEY,
-} from './composables/use-bill-of-material-item-i18n'
+} from './composables/useBillOfMaterialItemI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useBillOfMaterialItemI18n()
@@ -655,7 +654,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -915,8 +913,6 @@ const getBillOfMaterialItemDictValue = (
   if (typeof value === 'string' || typeof value === 'number') return value
   return String(value)
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

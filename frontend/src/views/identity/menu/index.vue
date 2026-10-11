@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节节拍工厂·Takt Plat  -->
+<!-- 项目名称：节拍智控·TaktWise  -->
 <!-- 命名空间：@/views/identity/menu -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：菜单管理页面，包含菜单列表、查询、新增、编辑、删除、导入、导出等 -->
@@ -27,7 +27,7 @@
       <TaktTreeLeftToolsBar
         v-model:expanded="treeExpanded"
         :loading="loading"
-        @search="loadMenuTree"
+        @search="loadData"
       />
       <TaktTreeRightToolsBar
         create-permission="identity:menu:create"
@@ -69,12 +69,15 @@
       <TaktTreeLeftTable
         v-model:expanded-keys="treeExpandedKeys"
         v-model:selected-keys="selectedTreeKeys"
-        :tree-data="filteredMenuTreeData"
+        :tree-data="filteredTreeData"
         :tree-field-names="{ title: 'title', key: 'key', children: 'children' }"
         :tree-width-ratio="0.2"
         :loading="loading"
         :virtual="true"
         :draggable="true"
+        :accordion="false"
+        :expand-action="false"
+        :load-data="handleLeftTreeLoadData"
         @tree-select="handleTreeSelect"
         @tree-drop="handleMenuTreeDrop"
       />
@@ -87,10 +90,12 @@
         table-mode="tree"
         :data-source="tableFilteredTree"
         v-model:expanded-row-keys="tableExpandedRowKeys"
-        :loading="loading"
+        :load-children="handleRightTreeLoadChildren"
+        :loading="listLoading"
         :row-key="getMenuId"
         :stripe="true"
         :row-selection="rowSelection"
+        :virtual="true"
         @change="handleTableChange"
         @resize-column="handleResizeColumn"
       >
@@ -103,7 +108,7 @@
               class="inline-flex items-center gap-1"
               :title="String(getMenuField(record, 'icon') ?? '')"
             >
-              <takt-remix-icon
+              <TaktRemixIcon
                 :name="String(getMenuField(record, 'icon') ?? '')"
                 :size="18"
                 :show-placeholder="!!getMenuField(record, 'icon')"
@@ -245,26 +250,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
-import type { TreeDataItem } from 'ant-design-vue/es/tree'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import MenuForm from './components/menu-form.vue'
-import AssignMenuRoles from './components/assign-menu-roles.vue'
-import { getMenuTree, getMenuById, createMenu, updateMenu, updateMenuStatus, deleteMenuById, getMenuTemplate, importMenu, exportMenu } from '@/api/identity/menu'
-import type { Menu, MenuQuery, MenuTree } from '@/types/identity/menu'
-import type { TreeDropPayload } from '@/components/business/takt-tree-left-table/index.vue'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import {
+  filterTaktTreeTableNodes,
+  collectTaktTreeTableExpandableKeys,
+  expandTaktLazyTreeFully,
+  runWithTaktTreeLoadConcurrency,
+  taktTreeExpandedKeysEqual,
+  taktTreeTableNodeKey,
+  type TaktTreeTableNode,
+} from '@/utils/taktTreeTable'
+import {
+  mapLazyTreeNodes,
+  mergeLoadedChildren,
+  taktIsLeafFlag,
+  type TaktLazyTreeNode,
+} from '@/composables/useLazyTree'
+import MenuForm from './components/MenuForm.vue'
+import AssignMenuRoles from './components/AssignMenuRoles.vue'
+import { getMenuTree, getMenuById, createMenu, updateMenu, updateMenuStatus, deleteMenuById, getMenuTemplate, importMenu, exportMenu } from '@/api/identity/menu.api'
+import type { Menu, MenuQuery, MenuTree } from '@/types/identity/menu.types'
+import type { TreeDropPayload } from '@/components/business/TaktTreeLeftTable/index.vue'
 import { taktExcelEntityNames } from '@/utils/naming'
 import { RiEditLine, RiDeleteBinLine, RiUserSettingsLine } from '@remixicon/vue'
 import { TaktMenuType } from '@/utils/common'
-import {
-  collectTaktTreeTableExpandableKeys,
-  filterTaktTreeTableNodes,
-  taktTreeTableNodeKey,
-} from '@/utils/takt-tree-table'
 
 const { t } = useI18n()
 const menuExcelNames = taktExcelEntityNames('TaktMenu')
@@ -279,13 +292,14 @@ const treeExpandedKeys = ref<(string | number)[]>([])
 const tableExpanded = ref(false)
 /** 右侧 a-table 树表当前展开行 key（与 row-key / menuId 一致） */
 const tableExpandedRowKeys = ref<(string | number)[]>([])
+/** 左侧树 loading */
 const loading = ref(false)
-/** 左侧导航树数据源（getMenuTree 全量，不受右侧查询影响） */
-const navFullTableTree = ref<any[]>([])
-/** 右侧树表数据源（与左侧共用 getMenuTree 结构，点选联动） */
-const fullTableTree = ref<any[]>([])
-/** 左侧树数据（由 navFullTableTree 派生） */
-const menuTreeData = ref<TreeDataItem[]>([])
+/** 右侧树 loading */
+const listLoading = ref(false)
+/** 左侧 a-tree 数据（懒加载仅已展开路径） */
+const entityTreeData = ref<TaktLazyTreeNode[]>([])
+/** 右侧树表数据源（带 children / _hasChildren，组件内拍平 virtual） */
+const tableTreeData = ref<Record<string, unknown>[]>([])
 const selectedTreeKeys = ref<(string | number)[]>([])
 const selectedRow = ref<Menu | null>(null)
 const selectedRows = ref<Menu[]>([])
@@ -310,143 +324,258 @@ const visibleColumnKeys = ref<string[]>([])
 /** 开关列加载状态：key 为 `${menuId}:${field}` */
 const switchLoadingMap = ref(new Map<string, boolean>())
 
-/** 菜单类型：0=目录，1=菜单，2=按钮；TreeDataItem 排除类型为 2 的节点 */
-function isMenuTypeButton(n: any): boolean {
+/** 菜单类型：0=目录，1=菜单，2=按钮；左侧导航树排除类型为 2 的节点 */
+function isMenuTypeButton(n: { menuType?: unknown; type?: unknown; MenuType?: unknown }): boolean {
   const typeVal = n?.menuType ?? n?.type ?? n?.MenuType
   return typeVal === TaktMenuType.Button || Number(typeVal) === TaktMenuType.Button
 }
 
-/**
- * 将接口菜单树转为右侧树表节点（保留 children，供 getSubtree 与 a-table 树形展示）
- * @param nodes 菜单树
- */
-function menuTreeToTableNodes(nodes: MenuTree[]): any[] {
-  if (!nodes?.length) return []
-  return nodes.map((node) => {
-    const childNodes = node.children?.length ? menuTreeToTableNodes(node.children) : []
-    return {
-      ...node,
-      key: String(node.menuId),
-      children: childNodes.length > 0 ? childNodes : undefined,
-    }
-  })
+/** 左侧导航树：过滤按钮类型 */
+function filterNavMenuRows(rows: MenuTree[]): MenuTree[] {
+  return (rows ?? []).filter((n) => !isMenuTypeButton(n))
 }
 
 const getMenuId = (record: { menuId?: string; id?: string } | null | undefined): string =>
   record?.menuId != null ? String(record.menuId) : (record?.id != null ? String(record.id) : '')
 
-/** 将 fullTableTree 转为左侧 a-tree 的 TreeDataItem（title, key, children）；排除类型为 2（按钮） */
-function mapFullTableTreeToTreeData(nodes: any[]): TreeDataItem[] {
-  if (!nodes?.length) return []
-  return nodes
-    .filter((n: any) => !isMenuTypeButton(n))
-    .map((n: any): TreeDataItem => {
-      const title = n.menuName ?? n.title ?? ''
-      const key = String(n.menuId ?? n.key ?? n.id ?? '')
-      if (!n.children?.length) {
-        return { title, key }
-      }
-      const children = mapFullTableTreeToTreeData(n.children)
-      return children.length > 0 ? { title, key, children } : { title, key }
-    })
+/** 从树 API 响应中取出一层节点 */
+function unwrapMenuTree(res: unknown): MenuTree[] {
+  const resAny = res as { data?: MenuTree[]; Data?: MenuTree[] }
+  if (Array.isArray(res)) return res as MenuTree[]
+  return resAny?.data ?? resAny?.Data ?? []
 }
 
 /**
- * 按 key 查找树节点（与左侧树、右侧表共用 fullTableTree）
- * @param nodes 树节点列表
- * @param key 节点 key（menuId）
+ * 将树 API 一层 DTO 映射为左侧懒加载节点（排除按钮类型）
+ * @param rows 一层子节点
  */
-function findTreeNodeByKey(nodes: any[], key: string | number): any | null {
-  const k = String(key)
-  for (const node of nodes) {
-    if (String(node.key ?? node.menuId ?? node.id) === k) {
-      return node
-    }
-    if (node.children?.length) {
-      const found = findTreeNodeByKey(node.children, key)
-      if (found) return found
-    }
-  }
-  return null
+function mapMenuLazyNodes(rows: MenuTree[]): TaktLazyTreeNode[] {
+  return mapLazyTreeNodes(filterNavMenuRows(rows), {
+    getKey: (n) => String(n.menuId ?? ''),
+    getTitle: (n) => String(n.menuName || n.menuCode || n.menuId || ''),
+    isLeaf: (n) => taktIsLeafFlag(n.isLeaf),
+  })
 }
 
-/** 从树中取以某 key 为根的子树（返回单元素数组，便于作为表格根） */
-function getSubtree(nodes: any[], key: string | number): any[] {
-  const node = findTreeNodeByKey(nodes, key)
-  return node ? [node] : []
+/**
+ * 将一层 DTO 映射为右侧树表节点（未加载子级用 _hasChildren 显示展开箭头）
+ * @param rows 一层子节点
+ */
+function mapMenuRightTreeNodes(rows: MenuTree[]): Record<string, unknown>[] {
+  return (rows ?? []).map((row) => {
+    const rec = row as Record<string, unknown>
+    const id = String(rec.menuId ?? '')
+    const rawChildren = Array.isArray(rec.children) ? rec.children as MenuTree[] : []
+    const children = rawChildren.length > 0 ? mapMenuRightTreeNodes(rawChildren) : undefined
+    return {
+      ...rec,
+      key: id,
+      children,
+      _hasChildren: (children != null && children.length > 0) || !taktIsLeafFlag(rec.isLeaf),
+    }
+  })
 }
 
-/** 按关键字过滤树：保留 title 包含关键字的节点及其祖先、子孙 */
-function filterTreeByKeyword(nodes: TreeDataItem[], keyword: string): TreeDataItem[] {
+/**
+ * 按关键字过滤左侧树：仅过滤已加载节点
+ * @param nodes 树节点
+ * @param keyword 关键字
+ */
+function filterTreeByKeyword(nodes: TaktLazyTreeNode[], keyword: string): TaktLazyTreeNode[] {
   const k = (keyword ?? '').trim().toLowerCase()
   if (!k) return nodes
-  function filter(nodes: TreeDataItem[]): TreeDataItem[] {
-    if (!nodes?.length) return []
-    return nodes
-      .map(node => {
+  function filter(list: TaktLazyTreeNode[]): TaktLazyTreeNode[] {
+    if (!list?.length) return []
+    return list
+      .map((node) => {
         const title = String(node.title ?? '').toLowerCase()
         const matched = title.includes(k)
-        const filteredChildren = node.children?.length ? filter(node.children) : undefined
+        const filteredChildren = node.children?.length ? filter(node.children as TaktLazyTreeNode[]) : undefined
         const hasMatchInChildren = filteredChildren != null && filteredChildren.length > 0
         if (matched || hasMatchInChildren) {
           if (filteredChildren != null && filteredChildren.length > 0) {
-            return { ...node, children: filteredChildren } as TreeDataItem
+            return { ...node, children: filteredChildren }
           }
           const { children: _omitChildren, ...rest } = node
-          return rest as TreeDataItem
+          return rest as TaktLazyTreeNode
         }
         return null
       })
-      .filter(Boolean) as TreeDataItem[]
+      .filter(Boolean) as TaktLazyTreeNode[]
   }
   return filter(nodes)
 }
 
-const filteredMenuTreeData = computed(() =>
-  filterTreeByKeyword(menuTreeData.value, treeQueryKeyword.value)
+/** 左侧树绑定数据（按 treeQueryKeyword 客户端过滤已加载节点） */
+const filteredTreeData = computed(() =>
+  filterTreeByKeyword(entityTreeData.value, treeQueryKeyword.value)
 )
 
-/** 收集树中所有有子节点的 key（用于“全部展开”） */
-function getAllParentKeys(nodes: TreeDataItem[]): (string | number)[] {
-  const keys: (string | number)[] = []
-  function walk(list: TreeDataItem[]) {
-    if (!list?.length) return
-    for (const node of list) {
-      if (node.children?.length) {
-        keys.push(node.key)
-        walk(node.children)
-      }
-    }
-  }
-  walk(nodes)
-  return keys
+/**
+ * 收集左侧可展开 key（含尚未拉子的非叶子，供工具栏一次展开逐层 loadData）
+ * @param nodes 树节点
+ */
+function collectTreeExpandableKeys(nodes: Array<Record<string, unknown>>): (string | number)[] {
+  return collectTaktTreeTableExpandableKeys(
+    nodes,
+    (node) => taktTreeTableNodeKey(node, 'menuId'),
+    { includeUnloaded: true },
+  )
 }
 
-/** 工具栏「全部展开/收缩」仅切换 treeExpanded，不随关键字过滤清空用户已展开节点 */
-watch(treeExpanded, (expanded) => {
-  treeExpandedKeys.value = expanded ? getAllParentKeys(filteredMenuTreeData.value) : []
-})
+/** 展开态下把当前树中全部可展开节点写入 expandedKeys */
+function applyLeftTreeExpandKeys() {
+  const next = collectTreeExpandableKeys(filteredTreeData.value)
+  if (taktTreeExpandedKeysEqual(treeExpandedKeys.value, next)) return
+  treeExpandedKeys.value = next
+}
 
-watch(filteredMenuTreeData, () => {
-  if (treeExpanded.value) {
-    treeExpandedKeys.value = getAllParentKeys(filteredMenuTreeData.value)
+/**
+ * 当前左侧选中节点 Id；未选中返回 null（右表必须为空）
+ * @returns {string | null} 选中节点 Id
+ */
+function getSelectedTreeNodeId(): string | null {
+  const keys = selectedTreeKeys.value
+  if (keys.length > 0 && keys[keys.length - 1] != null) {
+    return String(keys[keys.length - 1])
   }
+  return null
+}
+
+/**
+ * 加载右侧树：未选中则空；选中则该节点 + 直接子级一层（更深靠展开懒加载）
+ */
+async function loadRightTree() {
+  const selectedId = getSelectedTreeNodeId()
+  if (!selectedId) {
+    tableTreeData.value = []
+    tableExpandedRowKeys.value = []
+    tableExpanded.value = false
+    return
+  }
+  listLoading.value = true
+  try {
+    const detail = await getMenuById(selectedId) as Record<string, unknown>
+    const childRows = unwrapMenuTree(await getMenuTree(selectedId, true))
+    const mappedChildren = mapMenuRightTreeNodes(childRows)
+    const children = mappedChildren.length > 0 ? mappedChildren : undefined
+    const root: Record<string, unknown> = {
+      ...detail,
+      key: selectedId,
+      children,
+      _hasChildren: (children?.length ?? 0) > 0 || !taktIsLeafFlag(detail.isLeaf),
+    }
+    tableTreeData.value = [root]
+    rightExpandEpoch += 1
+    if (tableExpanded.value) {
+      tableExpanded.value = false
+      await nextTick()
+    }
+    tableExpandedRowKeys.value =
+      (children?.length ?? 0) > 0 || root._hasChildren === true ? [selectedId] : []
+  } catch (error: unknown) {
+    logger.error('[Menu] 加载右侧树失败', undefined, error)
+    message.error((error as { message?: string })?.message || t('common.feedback.load.data.failed'))
+    tableTreeData.value = []
+  } finally {
+    listLoading.value = false
+  }
+}
+
+/**
+ * 按父级 Id 拉取并合并右侧一层子节点
+ * @param parentId 父节点 Id
+ */
+async function loadRightChildrenByParentId(parentId: string) {
+  if (!parentId) return
+  const trees = unwrapMenuTree(await getMenuTree(parentId, true))
+  const children = mapMenuRightTreeNodes(trees)
+  tableTreeData.value = mergeLoadedChildren(
+    tableTreeData.value as TaktLazyTreeNode[],
+    parentId,
+    children as TaktLazyTreeNode[],
+    { keyField: 'menuId' },
+  )
+}
+
+/**
+ * 右侧树展开：再拉一层子节点（懒加载，并发受限）
+ * @param record 当前行
+ */
+async function handleRightTreeLoadChildren(record: Record<string, unknown>) {
+  const id = getMenuId(record)
+  if (!id) return
+  await runWithTaktTreeLoadConcurrency(async () => {
+    await loadRightChildrenByParentId(id)
+  })
+}
+
+/** 加载左侧树根节点（仅 GET tree?parentId=0，一层） */
+async function reloadLeftTreeRoots() {
+  const trees = unwrapMenuTree(await getMenuTree('0', true))
+  entityTreeData.value = mapMenuLazyNodes(trees)
+  treeExpandedKeys.value = []
+  treeExpanded.value = false
+}
+
+/**
+ * 重新加载指定父节点下已展开的子节点（CRUD 后局部刷新）
+ * @param parentKey 父节点 key
+ */
+async function reloadLeftTreeChildren(parentKey: string) {
+  if (!parentKey || parentKey === '0') {
+    await reloadLeftTreeRoots()
+    return
+  }
+  const trees = unwrapMenuTree(await getMenuTree(parentKey, true))
+  const children = mapMenuLazyNodes(trees)
+  entityTreeData.value = mergeLoadedChildren(
+    entityTreeData.value,
+    parentKey,
+    children,
+  ) as TaktLazyTreeNode[]
+}
+
+/**
+ * 按父级 Id 拉取并合并左侧一层子节点
+ * @param parentId 父节点 Id
+ * @returns {Promise<TaktLazyTreeNode[]>} 子节点
+ */
+async function loadLeftChildrenByParentId(parentId: string): Promise<TaktLazyTreeNode[]> {
+  if (!parentId) return []
+  const trees = unwrapMenuTree(await getMenuTree(parentId, true))
+  const children = mapMenuLazyNodes(trees)
+  entityTreeData.value = mergeLoadedChildren(
+    entityTreeData.value,
+    parentId,
+    children,
+  ) as TaktLazyTreeNode[]
+  return children
+}
+
+/**
+ * 左侧树懒加载子节点（Ant Design loadData；并发受限）
+ * @param treeNode Ant Design Tree 节点
+ */
+async function handleLeftTreeLoadData(treeNode: Record<string, unknown>) {
+  const dataRef = (treeNode.dataRef ?? treeNode) as Record<string, unknown>
+  const key = dataRef.key ?? treeNode.key
+  if (key == null) return
+  if (Array.isArray(dataRef.children) && dataRef.children.length > 0) return
+  await runWithTaktTreeLoadConcurrency(async () => {
+    dataRef.children = await loadLeftChildrenByParentId(String(key))
+  })
+}
+
+/** 右侧展示树：未选中为空；选中后为该节点+直接子级 */
+const tableDisplayTree = computed(() => {
+  if (!getSelectedTreeNodeId()) return []
+  return tableTreeData.value
 })
 
 const getMenuField = (record: any, field: string): any => record?.[field]
 
-/** 右侧树表数据：仅当左侧选中节点时显示该节点（含全部子孙）；默认左树不选中、右表为空 */
-const tableTreeData = computed(() => {
-  const tree = fullTableTree.value
-  if (!tree?.length) return []
-  const keys = selectedTreeKeys.value
-  if (keys.length === 0) return []
-  const activeKey = keys[keys.length - 1]
-  if (activeKey === undefined) return []
-  return getSubtree(tree, activeKey)
-})
-
-/** 右侧查询条件过滤（仅影响表格展示，不替换 fullTableTree） */
+/** 右侧查询条件过滤（仅影响表格展示） */
 function matchesMenuRightQuery(record: Record<string, unknown>): boolean {
   const kw = queryKeyword.value.trim()
   if (kw) {
@@ -465,35 +594,107 @@ function matchesMenuRightQuery(record: Record<string, unknown>): boolean {
 
 /** 右侧过滤后的树（保留 children，供 a-table 展开/收缩） */
 const tableFilteredTree = computed(() =>
-  filterTaktTreeTableNodes(tableTreeData.value, matchesMenuRightQuery)
+  filterTaktTreeTableNodes(tableDisplayTree.value, matchesMenuRightQuery)
 )
 
-/**
- * 同步右侧树表全部展开/收缩
- * @returns {void}
- */
+/** 同步右侧树表 expandable keys（展开态；含未加载非叶子） */
 function applyMenuTableExpandState() {
-  tableExpandedRowKeys.value = tableExpanded.value
-    ? collectTaktTreeTableExpandableKeys(tableFilteredTree.value, (node) =>
-        taktTreeTableNodeKey(node, 'menuId'),
-      )
-    : []
+  if (!tableExpanded.value) {
+    tableExpandedRowKeys.value = []
+    return
+  }
+  const next = collectTaktTreeTableExpandableKeys(
+    tableFilteredTree.value,
+    (node) => taktTreeTableNodeKey(node, 'menuId'),
+    { includeUnloaded: true },
+  )
+  if (!taktTreeExpandedKeysEqual(tableExpandedRowKeys.value, next)) {
+    tableExpandedRowKeys.value = next
+  }
 }
 
-watch(tableExpanded, applyMenuTableExpandState)
-watch(tableFilteredTree, () => {
-  if (tableExpanded.value) applyMenuTableExpandState()
+/** 右侧工具栏展开任务世代 */
+let rightExpandEpoch = 0
+
+/** 右侧一次全部展开：按层拉齐当前右表子树 */
+async function expandRightTreeFully() {
+  const epoch = (rightExpandEpoch += 1)
+  await expandTaktLazyTreeFully({
+    getNodes: () => tableFilteredTree.value as TaktTreeTableNode[],
+    getKey: (node) => taktTreeTableNodeKey(node, 'menuId'),
+    setExpandedKeys: (keys) => {
+      if (epoch !== rightExpandEpoch) return
+      if (!taktTreeExpandedKeysEqual(tableExpandedRowKeys.value, keys)) {
+        tableExpandedRowKeys.value = keys
+      }
+    },
+    loadChildren: async (parentId) => {
+      await loadRightChildrenByParentId(parentId)
+    },
+    isActive: () => tableExpanded.value && epoch === rightExpandEpoch,
+  })
+}
+
+watch(tableExpanded, async (expanded) => {
+  if (!expanded) {
+    rightExpandEpoch += 1
+    tableExpandedRowKeys.value = []
+    return
+  }
+  await expandRightTreeFully()
 })
 
+watch(tableFilteredTree, () => {
+  if (tableExpanded.value) {
+    applyMenuTableExpandState()
+  }
+})
+
+/** 左侧工具栏展开任务世代 */
+let leftExpandEpoch = 0
+
+watch(treeExpanded, async (expanded) => {
+  if (!expanded) {
+    leftExpandEpoch += 1
+    treeExpandedKeys.value = []
+    return
+  }
+  const epoch = (leftExpandEpoch += 1)
+  await nextTick()
+  if (epoch !== leftExpandEpoch || !treeExpanded.value) return
+  await expandTaktLazyTreeFully({
+    getNodes: () => filteredTreeData.value as TaktTreeTableNode[],
+    getKey: (node) => taktTreeTableNodeKey(node, 'menuId'),
+    setExpandedKeys: (keys) => {
+      if (epoch !== leftExpandEpoch) return
+      if (!taktTreeExpandedKeysEqual(treeExpandedKeys.value, keys)) {
+        treeExpandedKeys.value = keys
+      }
+    },
+    loadChildren: async (parentId) => {
+      await loadLeftChildrenByParentId(parentId)
+    },
+    isActive: () => treeExpanded.value && epoch === leftExpandEpoch,
+  })
+})
+
+watch(filteredTreeData, () => {
+  if (treeExpanded.value) {
+    applyLeftTreeExpandKeys()
+  }
+})
+
+/** 左侧树选中：右表展示该节点+直接子级；取消选中则右表清空 */
 const handleTreeSelect = (selectedKeys: (string | number)[]) => {
   selectedTreeKeys.value = selectedKeys
+  void loadRightTree()
 }
 
 /** 从树结构中查找节点 key 的父级 key 与在同级中的序号（用于 parentId / sortOrder） */
 function findParentAndOrderNum(
-  tree: any[],
+  tree: Array<Record<string, unknown>>,
   targetKey: string | number,
-  parentKey: string = '0'
+  parentKey: string = '0',
 ): { parentId: string; sortOrder: number } | null {
   const keyStr = String(targetKey)
   for (let i = 0; i < tree.length; i++) {
@@ -502,7 +703,7 @@ function findParentAndOrderNum(
     if (k === keyStr) {
       return { parentId: parentKey, sortOrder: i }
     }
-    const children = node?.children ?? []
+    const children = (node?.children as Array<Record<string, unknown>> | undefined) ?? []
     if (children.length) {
       const found = findParentAndOrderNum(children, targetKey, k)
       if (found) return found
@@ -515,9 +716,9 @@ const handleMenuTreeDrop = async (payload: TreeDropPayload) => {
   const { newTreeData, dragKey } = payload
   const pos = findParentAndOrderNum(newTreeData, dragKey)
   if (!pos) return
-  menuTreeData.value = newTreeData as TreeDataItem[]
   try {
     loading.value = true
+    entityTreeData.value = newTreeData as TaktLazyTreeNode[]
     const full = await getMenuById(String(dragKey))
     await updateMenu(String(dragKey), {
       ...full,
@@ -526,10 +727,10 @@ const handleMenuTreeDrop = async (payload: TreeDropPayload) => {
       sortOrder: pos.sortOrder,
     })
     message.success(t('identity.menu.page.msg.orderupdated'))
-    loadData()
+    await loadData()
   } catch (error: any) {
     message.error(error?.message ?? t('common.feedback.failed'))
-    loadData()
+    await reloadLeftTreeRoots().catch(() => undefined)
   } finally {
     loading.value = false
   }
@@ -556,7 +757,7 @@ async function handleMenuSwitch(record: Menu, field: 'isVisible' | 'isCached' | 
       [field]: value,
     })
     message.success(t('common.feedback.updated'))
-    await loadData()
+    await refreshAfterMutation()
   } catch (error: any) {
     message.error(error?.message ?? t('common.feedback.failed'))
   } finally {
@@ -572,7 +773,7 @@ async function handleMenuStatusSwitch(record: any, menuStatus: number) {
   try {
     await updateMenuStatus({ menuId: id, menuStatus })
     message.success(t('common.feedback.updated'))
-    await loadData()
+    await refreshAfterMutation()
   } catch (error: any) {
     message.error(error?.message ?? t('common.feedback.failed'))
   } finally {
@@ -580,33 +781,52 @@ async function handleMenuStatusSwitch(record: any, menuStatus: number) {
   }
 }
 
-/** 左侧树关键字搜索（客户端过滤，不重复请求列表接口） */
+/** 左侧树关键字搜索（客户端过滤已加载节点） */
 const handleTreeQuerySearch = () => {
   if (treeExpanded.value) {
-    treeExpandedKeys.value = getAllParentKeys(filteredMenuTreeData.value)
+    applyLeftTreeExpandKeys()
   }
 }
 
-/**
- * 加载左侧菜单树（含禁用项，供管理页筛选）
- */
-const loadMenuTree = async (): Promise<MenuTree[]> => {
-  const res = await getMenuTree('0', true)
-  const resAny = res as { data?: MenuTree[]; Data?: MenuTree[] }
-  const trees: MenuTree[] = Array.isArray(res) ? res : (resAny?.data ?? resAny?.Data ?? [])
-  const tableNodes = menuTreeToTableNodes(trees)
-  navFullTableTree.value = tableNodes
-  fullTableTree.value = tableNodes
-  menuTreeData.value = mapFullTableTreeToTreeData(tableNodes)
-  if (treeExpanded.value) {
-    treeExpandedKeys.value = getAllParentKeys(filteredMenuTreeData.value)
+/** 加载左树根；默认不选中、右表为空 */
+async function loadData() {
+  loading.value = true
+  try {
+    selectedTreeKeys.value = []
+    tableTreeData.value = []
+    tableExpandedRowKeys.value = []
+    tableExpanded.value = false
+    await reloadLeftTreeRoots()
+  } catch (error: unknown) {
+    logger.error('[Menu] 加载数据失败', undefined, error)
+    message.error((error as { message?: string })?.message || t('common.feedback.load.data.failed'))
+    entityTreeData.value = []
+    tableTreeData.value = []
+  } finally {
+    loading.value = false
   }
-  return trees
+}
+
+/** CRUD / 状态变更后：刷新左树当前层 + 按选中重载右表 */
+async function refreshAfterMutation() {
+  loading.value = true
+  try {
+    const selectedId = getSelectedTreeNodeId()
+    await reloadLeftTreeChildren(selectedId ?? '0')
+    await loadRightTree()
+  } catch (error: unknown) {
+    logger.error('[Menu] 刷新失败', undefined, error)
+    message.error((error as { message?: string })?.message || t('common.feedback.load.data.failed'))
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(() => {
   loadData()
 })
+
+useTableRefresh(loadData)
 
 // 列顺序与 Menu 类型字段一致
 const columns = computed<TableColumnsType>(() => [
@@ -777,29 +997,10 @@ const rowSelection = computed(() => ({
   }
 }))
 
-/** 初始化或增删改后刷新全量菜单树（左右共用 fullTableTree） */
-const loadData = async () => {
-  loading.value = true
-  try {
-    await loadMenuTree()
-  } catch (error: unknown) {
-    logger.error('[Menu] 加载数据失败', undefined, error)
-    message.error((error as { message?: string })?.message || t('common.feedback.load.data.failed'))
-    menuTreeData.value = []
-    navFullTableTree.value = []
-    fullTableTree.value = []
-  } finally {
-    loading.value = false
-  }
-}
-
-/** 租户/公司切换时由 bootstrap 发出 table:refresh，自动重载列表 */
-useTableRefresh(loadData)
-
-/** 右侧查询（不影响左侧树与 fullTableTree；过滤为 computed） */
+/** 右侧查询（客户端过滤已加载树节点） */
 const handleSearch = () => {}
 
-/** 右侧重置（不影响左侧树） */
+/** 右侧重置（客户端过滤，不重建树） */
 const handleReset = () => {
   queryKeyword.value = ''
   advancedQueryForm.value = emptyMenuAdvancedQueryForm()
@@ -836,7 +1037,7 @@ const handleAssignMenuRoles = (record: Menu) => {
 }
 
 const handleAssignSuccess = () => {
-  loadData()
+  void refreshAfterMutation()
 }
 
 const handleUpdate = () => {
@@ -856,7 +1057,7 @@ const handleDeleteOne = (record: Menu) => {
         loading.value = true
         await deleteMenuById(getMenuId(record))
         message.success(t('common.feedback.deleted'))
-        loadData()
+        await refreshAfterMutation()
       } catch (error: any) {
         message.error(error?.message || t('common.feedback.delete.failed'))
       } finally {
@@ -884,7 +1085,7 @@ const handleDelete = () => {
         selectedRows.value = []
         selectedRowKeys.value = []
         selectedRow.value = null
-        loadData()
+        await refreshAfterMutation()
       } catch (error: any) {
         message.error(error?.message || t('common.feedback.delete.failed'))
       } finally {
@@ -910,7 +1111,7 @@ const handleFormSubmit = async () => {
     formRef.value?.resetFields()
     formData.value = {}
     formVisible.value = false
-    loadData()
+    await refreshAfterMutation()
   } catch (error: any) {
     if (error?.errorFields) return
     message.error(error?.message || t('common.feedback.failed'))
@@ -933,7 +1134,7 @@ const handleImportFile = async (file: File, sheetName?: string): Promise<{ succe
   return await importMenu(file, sheetName)
 }
 const handleImportSuccess = (result: { success: number; fail: number; errors: string[] }) => {
-  loadData()
+  void refreshAfterMutation()
   if (result.fail === 0) setTimeout(() => { importVisible.value = false }, 2000)
 }
 const handleImportCancel = () => { importVisible.value = false }
@@ -982,7 +1183,7 @@ const handleColumnKeysChange = (keys: (string | number)[]) => {
 }
 const handleColumnSettingReset = () => { visibleColumnKeys.value = [] }
 
-const handleRefresh = () => { handleSearch() }
+const handleRefresh = () => { void loadData() }
 </script>
 
 <style scoped lang="css">

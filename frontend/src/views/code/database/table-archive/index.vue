@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/code/database/table-archive -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：数据表归档标准 CRUD；工具栏/行内按年归档（预览/立即/后台）与预建年表 -->
@@ -476,12 +476,11 @@
  * 数据表归档标准 CRUD 列表页
  * @module views/code/database/table-archive
  */
-import { computed, onMounted, ref } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
 import {
   RiAddLine,
   RiInboxArchiveLine,
@@ -508,23 +507,23 @@ import {
   scheduleTableArchive,
   updateTableArchive,
   updateTableArchiveStatus,
-} from '@/api/code/database/table-archive'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
+} from '@/api/code/database/tableArchive.api'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import type {
   TableArchive,
   TableArchivePreviewItem,
   TableArchiveQuery,
-} from '@/types/code/database/table-archive'
-import TableArchiveForm from './components/table-archive-form.vue'
+} from '@/types/code/database/tableArchive.types'
+import TableArchiveForm from './components/TableArchiveForm.vue'
 import {
   useTableArchiveI18n,
   TABLE_ARCHIVE_LIST_FIELDS,
   TABLE_ARCHIVE_QUERY_FIELDS,
   TABLE_ARCHIVE_QUERY_STRING_FIELDS,
   TABLE_ARCHIVE_SELF_I18N_KEY,
-} from './composables/use-table-archive-i18n'
+} from './composables/useTableArchiveI18n'
 
 const pi = useTableArchiveI18n()
 type TableArchiveRowRecord = TableArchive | Record<string, unknown>

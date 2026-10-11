@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Helpers
 // 文件名称：TaktTicketPriorityHelper.cs
 // 功能描述：ITSM 紧急度×影响范围 → 优先级矩阵（与 sys_priority_level 字典对齐）

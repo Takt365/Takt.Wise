@@ -1,5 +1,5 @@
 ﻿// ========================================
-// 项目名称:节拍数字工厂 ·Takt Plat (TDF)
+// 项目名称:节拍智控 ·TaktWise (TDF)
 // 命名空间:Takt.Domain.Entities.Logistics.Quality.Cost
 // 文件名称:TaktQualityIssueAssyRework.cs
 // 创建时间:2026-05-07
@@ -124,10 +124,16 @@ public class TaktQualityIssueAssyRework : TaktCompanyEntityBase
     public string? AssyNote { get; set; }
 
     /// <summary>
-    /// 组装不良改修应对记录者
+    /// 对应组编码（选项 TaktCostGroups/options?costGroupCategory=3；DictValue=CostGroupCode）
     /// </summary>
-    [SugarColumn(ColumnName = "assy_recorder", ColumnDescription = "组装不良改修对应记录者", Length = 30, ColumnDataType = "nvarchar", IsNullable = true)]
-    public string? AssyRecorder { get; set; }
+    [SugarColumn(ColumnName = "response_group_code", ColumnDescription = "对应组编码", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? ResponseGroupCode { get; set; }
+
+    /// <summary>
+    /// 对应组名称（冗余：按 ResponseGroupCode 取 TaktCostGroups.CostGroupName 联动）
+    /// </summary>
+    [SugarColumn(ColumnName = "response_group_name", ColumnDescription = "对应组名称", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? ResponseGroupName { get; set; }
 
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Quality.Operation
 // 文件名称：TaktFqcDefectHandlingService.cs
 // 创建时间：2026-08-22
@@ -442,8 +442,13 @@ public class TaktFqcDefectHandlingService : TaktServiceBase, ITaktFqcDefectHandl
                 || (x.DefectDescription != null && x.DefectDescription.Contains(keywords))
                 || (x.HandlingDescription != null && x.HandlingDescription.Contains(keywords))
                 || (x.ResponsibleDeptName != null && x.ResponsibleDeptName.Contains(keywords))
-                || (x.ResponsiblePersonName != null && x.ResponsiblePersonName.Contains(keywords))
-                || (x.HandlerName != null && x.HandlerName.Contains(keywords))
+                || (x.ResponsibleGroupCode != null && x.ResponsibleGroupCode.Contains(keywords))
+                || (x.ResponsibleGroupName != null && x.ResponsibleGroupName.Contains(keywords))
+                || (x.HandlerGroupCode != null && x.HandlerGroupCode.Contains(keywords))
+                || (x.HandlerGroupName != null && x.HandlerGroupName.Contains(keywords))
+                || (x.VerifyDeptName != null && x.VerifyDeptName.Contains(keywords))
+                || (x.QualityOwnerGroupCode != null && x.QualityOwnerGroupCode.Contains(keywords))
+                || (x.QualityOwnerGroupName != null && x.QualityOwnerGroupName.Contains(keywords))
                 || (x.CorrectiveAction != null && x.CorrectiveAction.Contains(keywords))
                 || (x.DefectImages != null && x.DefectImages.Contains(keywords))
                 || (x.Attachments != null && x.Attachments.Contains(keywords))
@@ -530,16 +535,52 @@ public class TaktFqcDefectHandlingService : TaktServiceBase, ITaktFqcDefectHandl
             exp = exp.And(x => x.ResponsibleDeptName != null && x.ResponsibleDeptName.Contains(responsibleDept));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.ResponsiblePersonName))
+        if (!string.IsNullOrWhiteSpace(queryDto?.ResponsibleGroupCode))
         {
-            var responsibleBy = queryDto.ResponsiblePersonName;
-            exp = exp.And(x => x.ResponsiblePersonName != null && x.ResponsiblePersonName.Contains(responsibleBy));
+            var responsibleGroupCode = queryDto.ResponsibleGroupCode;
+            exp = exp.And(x => x.ResponsibleGroupCode == responsibleGroupCode);
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.HandlerName))
+        if (!string.IsNullOrWhiteSpace(queryDto?.ResponsibleGroupName))
         {
-            var handlerBy = queryDto.HandlerName;
-            exp = exp.And(x => x.HandlerName != null && x.HandlerName.Contains(handlerBy));
+            var responsibleGroupName = queryDto.ResponsibleGroupName;
+            exp = exp.And(x => x.ResponsibleGroupName != null && x.ResponsibleGroupName.Contains(responsibleGroupName));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.HandlerGroupCode))
+        {
+            var handlerGroupCode = queryDto.HandlerGroupCode;
+            exp = exp.And(x => x.HandlerGroupCode == handlerGroupCode);
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.HandlerGroupName))
+        {
+            var handlerGroupName = queryDto.HandlerGroupName;
+            exp = exp.And(x => x.HandlerGroupName != null && x.HandlerGroupName.Contains(handlerGroupName));
+        }
+
+        if (queryDto?.VerifyDeptId.HasValue == true)
+        {
+            var verifyDeptId = queryDto.VerifyDeptId.Value;
+            exp = exp.And(x => x.VerifyDeptId == verifyDeptId);
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.VerifyDeptName))
+        {
+            var verifyDeptName = queryDto.VerifyDeptName;
+            exp = exp.And(x => x.VerifyDeptName != null && x.VerifyDeptName.Contains(verifyDeptName));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.QualityOwnerGroupCode))
+        {
+            var qualityOwnerGroupCode = queryDto.QualityOwnerGroupCode;
+            exp = exp.And(x => x.QualityOwnerGroupCode == qualityOwnerGroupCode);
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.QualityOwnerGroupName))
+        {
+            var qualityOwnerGroupName = queryDto.QualityOwnerGroupName;
+            exp = exp.And(x => x.QualityOwnerGroupName != null && x.QualityOwnerGroupName.Contains(qualityOwnerGroupName));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.CorrectiveAction))
@@ -566,6 +607,12 @@ public class TaktFqcDefectHandlingService : TaktServiceBase, ITaktFqcDefectHandl
             exp = exp.And(x => x.HandlingStatus == handlingStatus);
         }
 
+        if (queryDto?.VerifyStatus.HasValue == true)
+        {
+            var verifyStatus = queryDto.VerifyStatus.Value;
+            exp = exp.And(x => x.VerifyStatus == verifyStatus);
+        }
+
         if (!string.IsNullOrWhiteSpace(queryDto?.ExtField))
         {
             var extField = queryDto.ExtField;
@@ -588,6 +635,18 @@ public class TaktFqcDefectHandlingService : TaktServiceBase, ITaktFqcDefectHandl
         {
             var handlingAtEnd = queryDto.HandlingAtEnd.Value;
             exp = exp.And(x => x.HandlingAt <= handlingAtEnd);
+        }
+
+        if (queryDto?.VerifyAtStart.HasValue == true)
+        {
+            var verifyAtStart = queryDto.VerifyAtStart.Value;
+            exp = exp.And(x => x.VerifyAt >= verifyAtStart);
+        }
+
+        if (queryDto?.VerifyAtEnd.HasValue == true)
+        {
+            var verifyAtEnd = queryDto.VerifyAtEnd.Value;
+            exp = exp.And(x => x.VerifyAt <= verifyAtEnd);
         }
 
         if (queryDto?.CreatedAtStart.HasValue == true)
@@ -672,11 +731,35 @@ public class TaktFqcDefectHandlingService : TaktServiceBase, ITaktFqcDefectHandl
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.ResponsiblePersonName))
+        if (!string.IsNullOrWhiteSpace(queryDto.ResponsibleGroupCode))
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.HandlerName))
+        if (!string.IsNullOrWhiteSpace(queryDto.ResponsibleGroupName))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.HandlerGroupCode))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.HandlerGroupName))
+        {
+            return true;
+        }
+        if (queryDto.VerifyDeptId.HasValue)
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.VerifyDeptName))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.QualityOwnerGroupCode))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.QualityOwnerGroupName))
         {
             return true;
         }
@@ -696,6 +779,10 @@ public class TaktFqcDefectHandlingService : TaktServiceBase, ITaktFqcDefectHandl
         {
             return true;
         }
+        if (queryDto.VerifyStatus.HasValue)
+        {
+            return true;
+        }
         if (!string.IsNullOrWhiteSpace(queryDto.ExtField))
         {
             return true;
@@ -709,6 +796,10 @@ public class TaktFqcDefectHandlingService : TaktServiceBase, ITaktFqcDefectHandl
             return true;
         }
         if (queryDto.HandlingAtStart.HasValue || queryDto.HandlingAtEnd.HasValue)
+        {
+            return true;
+        }
+        if (queryDto.VerifyAtStart.HasValue || queryDto.VerifyAtEnd.HasValue)
         {
             return true;
         }

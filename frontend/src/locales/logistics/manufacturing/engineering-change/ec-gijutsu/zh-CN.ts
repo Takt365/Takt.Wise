@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/manufacturing/engineering-change/ec-gijutsu
 // 文件名称：zh-CN.ts
 // 创建时间：2026-06-29
@@ -51,6 +51,20 @@ export default {
     },
     tabs: {
       oldNewMaterial: '旧新物料',
+      scope: '实施范围',
+    },
+    scopeDepts: {
+      master: '部门实施范围',
+      autoFill: '自动填写',
+      pmc: '生管',
+      mp: '采购',
+      iqc: '受检',
+      mc: '部管',
+      smt: 'SMT',
+      pcba: '制二',
+      assy: '制一',
+      qa: '品管',
+      te: '制技',
     },
     persist: {
       submitted: '已提交设变 {ecCode} 后台{action}（明细 {detailCount} 行，含各部门执行派生），完成后将通知您',

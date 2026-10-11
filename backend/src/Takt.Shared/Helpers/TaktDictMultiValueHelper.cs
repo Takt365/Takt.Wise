@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Helpers
 // 文件名称：TaktDictMultiValueHelper.cs
 // 功能描述：多选字典逗号分隔串：sortOrder 排序、DictValue↔DictLabel 转换（单选见 TaktDictValueHelper；与前端 takt-dict-convert.ts 对齐）

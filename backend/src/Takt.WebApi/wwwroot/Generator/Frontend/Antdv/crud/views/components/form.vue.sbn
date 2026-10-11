@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控·TaktWise (TDF) -->
 <!-- 命名空间：@/views/{{ table.frontend_module_path }}/{{ table.entity_name_kebab }}/components -->
 <!-- 文件名称：{{ table.entity_name_kebab }}-form.vue -->
 <!-- 功能描述：{{ table.comment }}维护弹窗内嵌表单。由同目录上级 index.vue 引用；defineExpose 提供 validate、getValues、resetFields、setServerValidationErrors。a-form 内 a-tabs：每标签最多 10 个 IsCreate 字段；布局由表配置 front_form_layout 决定——与实体 TaktGenTable.FrontFormLayout 及字典 gen_frontend_form_layout 一致：12=一行一列（普通字段与 textarea 均为 a-col span 24），24=一行两列（普通字段 span 12，textarea span 24）。与 identity/user/components/user-form.vue 的表单骨架风格一致。 -->

@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/procurement/purchase-order -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：Takt采购订单实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -624,22 +624,21 @@
  * Takt采购订单实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/procurement/purchase-order
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import PurchaseOrderForm from './components/purchase-order-form.vue'
-import PurchaseOrderItemPanel from './components/purchase-order-item-panel.vue'
-import { providePurchaseOrderMasterContext, type PurchaseOrderRowRecord } from './composables/use-purchase-order-master-context'
-import { getPurchaseOrderList, getPurchaseOrderById, createPurchaseOrder, updatePurchaseOrder, deletePurchaseOrderById, deletePurchaseOrderBatch, getPurchaseOrderTemplate, importPurchaseOrder, exportPurchaseOrder, updatePurchaseOrderStatus } from '@/api/logistics/procurement/purchase-order'
-import type { PurchaseOrder, PurchaseOrderQuery } from '@/types/logistics/procurement/purchase-order'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import PurchaseOrderForm from './components/PurchaseOrderForm.vue'
+import PurchaseOrderItemPanel from './components/PurchaseOrderItemPanel.vue'
+import { providePurchaseOrderMasterContext, type PurchaseOrderRowRecord } from './composables/usePurchaseOrderMasterContext'
+import { getPurchaseOrderList, getPurchaseOrderById, createPurchaseOrder, updatePurchaseOrder, deletePurchaseOrderById, deletePurchaseOrderBatch, getPurchaseOrderTemplate, importPurchaseOrder, exportPurchaseOrder, updatePurchaseOrderStatus } from '@/api/logistics/procurement/purchaseOrder.api'
+import type { PurchaseOrder, PurchaseOrderQuery } from '@/types/logistics/procurement/purchaseOrder.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -648,7 +647,7 @@ import {
   PURCHASEORDER_QUERY_STRING_FIELDS,
   PURCHASEORDER_QUERY_FIELDS,
   PURCHASEORDER_SELF_I18N_KEY,
-} from './composables/use-purchase-order-i18n'
+} from './composables/usePurchaseOrderI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = usePurchaseOrderI18n()
@@ -884,7 +883,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -1262,8 +1260,6 @@ const toPurchaseOrderNumber = (value: string | number | undefined | null): numbe
   const num = Number(value ?? 0)
   return Number.isFinite(num) ? num : 0
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

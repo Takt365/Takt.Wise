@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/utils
 // 文件名称：appMeta.ts
 // 创建时间：2026-05-26
@@ -10,7 +10,7 @@
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
 // ========================================
 
-import { readViteEnv } from '@/config/vite-env';
+import { readViteEnv } from '@/config/viteEnv';
 import appInfoJson from 'virtual:app-info';
 
 /**

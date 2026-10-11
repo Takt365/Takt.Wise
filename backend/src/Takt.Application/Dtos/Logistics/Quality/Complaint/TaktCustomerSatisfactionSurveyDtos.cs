@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Quality.Complaint
 // 文件名称：TaktCustomerSatisfactionSurveyDtos.cs
 // 创建时间：2026-08-22
@@ -82,9 +82,14 @@ public class TaktCustomerSatisfactionSurveyDto : TaktCompanyDtoBase
     public int SurveyPeriod { get; set; } = 0;
 
     /// <summary>
-    /// 调查人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 调查组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=5；DictValue=ComplaintGroupCode）
     /// </summary>
-    public string? SurveyorByEmployeeName { get; set; } = string.Empty;
+    public string? SurveyorByGroupCode { get; set; }
+
+    /// <summary>
+    /// 调查组名称（冗余：按 SurveyorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
+    /// </summary>
+    public string? SurveyorByGroupName { get; set; }
 
     /// <summary>
     /// 客户联系人
@@ -262,9 +267,14 @@ public class TaktCustomerSatisfactionSurveyQueryDto : TaktPagedQuery
     public int? SurveyPeriod { get; set; }
 
     /// <summary>
-    /// 调查人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 调查组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=5；DictValue=ComplaintGroupCode）
     /// </summary>
-    public string? SurveyorByEmployeeName { get; set; } = string.Empty;
+    public string? SurveyorByGroupCode { get; set; }
+
+    /// <summary>
+    /// 调查组名称（冗余：按 SurveyorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
+    /// </summary>
+    public string? SurveyorByGroupName { get; set; }
 
     /// <summary>
     /// 客户联系人
@@ -446,9 +456,14 @@ public class TaktCustomerSatisfactionSurveyCreateDto
     public int SurveyPeriod { get; set; } = 0;
 
     /// <summary>
-    /// 调查人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 调查组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=5；DictValue=ComplaintGroupCode）
     /// </summary>
-    public string? SurveyorByEmployeeName { get; set; } = string.Empty;
+    public string? SurveyorByGroupCode { get; set; }
+
+    /// <summary>
+    /// 调查组名称（冗余：按 SurveyorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
+    /// </summary>
+    public string? SurveyorByGroupName { get; set; }
 
     /// <summary>
     /// 客户联系人
@@ -692,9 +707,14 @@ public class TaktCustomerSatisfactionSurveyTemplateDto
     public int? SurveyPeriod { get; set; }
 
     /// <summary>
-    /// 调查人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 调查组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=5；DictValue=ComplaintGroupCode）
     /// </summary>
-    public string? SurveyorByEmployeeName { get; set; } = string.Empty;
+    public string? SurveyorByGroupCode { get; set; }
+
+    /// <summary>
+    /// 调查组名称（冗余：按 SurveyorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
+    /// </summary>
+    public string? SurveyorByGroupName { get; set; }
 
     /// <summary>
     /// 客户联系人
@@ -861,9 +881,14 @@ public class TaktCustomerSatisfactionSurveyImportDto
     public int? SurveyPeriod { get; set; }
 
     /// <summary>
-    /// 调查人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 调查组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=5；DictValue=ComplaintGroupCode）
     /// </summary>
-    public string? SurveyorByEmployeeName { get; set; } = string.Empty;
+    public string? SurveyorByGroupCode { get; set; }
+
+    /// <summary>
+    /// 调查组名称（冗余：按 SurveyorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
+    /// </summary>
+    public string? SurveyorByGroupName { get; set; }
 
     /// <summary>
     /// 客户联系人
@@ -1036,9 +1061,14 @@ public class TaktCustomerSatisfactionSurveyExportDto
     public int SurveyPeriod { get; set; } = 0;
 
     /// <summary>
-    /// 调查人（选项 TaktEmployees/options；DictValue=EmployeeCode）
+    /// 调查组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=5；DictValue=ComplaintGroupCode）
     /// </summary>
-    public string? SurveyorByEmployeeName { get; set; } = string.Empty;
+    public string? SurveyorByGroupCode { get; set; }
+
+    /// <summary>
+    /// 调查组名称（冗余：按 SurveyorByGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
+    /// </summary>
+    public string? SurveyorByGroupName { get; set; }
 
     /// <summary>
     /// 客户联系人

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Options
 // 文件名称：TaktLoggingOptions.cs
 // 创建时间：2026-05-25
@@ -24,7 +24,7 @@ public class TaktLoggingOptions
     /// <summary>
     /// 应用名称
     /// </summary>
-    public string AppName { get; set; } = "Takt Plat";
+    public string AppName { get; set; } = "TaktWise";
 
     /// <summary>
     /// 应用版本

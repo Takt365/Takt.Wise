@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/quality/operation/group -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：质量组主数据实体管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -332,20 +332,19 @@
  * 质量组主数据实体管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/logistics/quality/operation/group
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import QualityGroupForm from './components/group-form.vue'
-import { getQualityGroupList, getQualityGroupById, createQualityGroup, updateQualityGroup, deleteQualityGroupById, deleteQualityGroupBatch, getQualityGroupTemplate, importQualityGroup, exportQualityGroup, updateQualityGroupStatus } from '@/api/logistics/quality/operation/group'
-import type { QualityGroup, QualityGroupQuery } from '@/types/logistics/quality/operation/group'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import QualityGroupForm from './components/GroupForm.vue'
+import { getQualityGroupList, getQualityGroupById, createQualityGroup, updateQualityGroup, deleteQualityGroupById, deleteQualityGroupBatch, getQualityGroupTemplate, importQualityGroup, exportQualityGroup, updateQualityGroupStatus } from '@/api/logistics/quality/operation/group.api'
+import type { QualityGroup, QualityGroupQuery } from '@/types/logistics/quality/operation/group.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -354,7 +353,7 @@ import {
   QUALITYGROUP_QUERY_STRING_FIELDS,
   QUALITYGROUP_QUERY_FIELDS,
   QUALITYGROUP_SELF_I18N_KEY,
-} from './composables/use-group-i18n'
+} from './composables/useGroupI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useQualityGroupI18n()

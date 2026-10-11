@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/identity/tenant -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：租户实体 代表系统中的独立租户管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -251,10 +251,10 @@
       </a-form-item>
       </div>
       <div v-show="isFieldVisible('ExtField')">
-      <a-form-item :label="t('common.page.entity.ExtField')">
+      <a-form-item :label="t('common.page.entity.extfield')">
         <a-input
           v-model:value="advancedQueryForm.ExtField"
-          :placeholder="t('common.page.form.placeholder.required', { field: t('common.page.entity.ExtField') })"
+          :placeholder="t('common.page.form.placeholder.required', { field: t('common.page.entity.extfield') })"
           allow-clear
         />
       </a-form-item>
@@ -288,24 +288,23 @@
 </template>
 
 <script setup lang="ts">
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 /**
  * 租户实体 代表系统中的独立租户管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/identity/tenant
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import TenantForm from './components/tenant-form.vue'
-import AssignTenantUsers from './components/assign-tenant-users.vue'
-import { getTenantList,createTenant, updateTenant, deleteTenantById, deleteTenantBatch, exportTenant } from '@/api/identity/tenant'
-import { getTenantUserIds } from '@/api/identity/rbac'
-import type { Tenant, TenantQuery} from '@/types/identity/tenant'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import TenantForm from './components/TenantForm.vue'
+import AssignTenantUsers from './components/AssignTenantUsers.vue'
+import { getTenantList,createTenant, updateTenant, deleteTenantById, deleteTenantBatch, exportTenant } from '@/api/identity/tenant.api'
+import { getTenantUserIds } from '@/api/identity/rbac.api'
+import type { Tenant, TenantQuery} from '@/types/identity/tenant.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEditLine, RiDeleteBinLine, RiUserSettingsLine } from '@remixicon/vue'
 
 /** i18n 翻译函数 */
@@ -381,7 +380,7 @@ const queryFieldsMeta = computed(() => [
   { key: 'tenantStatus', label: t('entity.tenant.status') },
   { key: 'createdAtStart', label: t('common.page.entity.createdatstart') },
   { key: 'createdAtEnd', label: t('common.page.entity.createdatend') },
-  { key: 'ExtField', label: t('common.page.entity.ExtField') },
+  { key: 'ExtField', label: t('common.page.entity.extfield') },
   { key: 'remark', label: t('common.page.entity.remark') }])
 /** 高级查询当前可见字段 key */
 const visibleQueryFieldKeys = ref<string[]>([])

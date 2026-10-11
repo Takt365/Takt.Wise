@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/statistics/logging/delta-log -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：差异日志实体管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -249,10 +249,10 @@
       </a-form-item>
       </div>
       <div v-show="isFieldVisible('ExtField')">
-      <a-form-item :label="t('common.page.entity.ExtField')">
+      <a-form-item :label="t('common.page.entity.extfield')">
         <a-input
           v-model:value="advancedQueryForm.ExtField"
-          :placeholder="t('common.page.form.placeholder.required', { field: t('common.page.entity.ExtField') })"
+          :placeholder="t('common.page.form.placeholder.required', { field: t('common.page.entity.extfield') })"
           allow-clear
         />
       </a-form-item>
@@ -286,23 +286,22 @@
 </template>
 
 <script setup lang="ts">
-import { operTypeOptions } from '@/constants/takt-constants'
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
+import { operTypeOptions } from '@/constants/takt.constants'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 /**
  * 差异日志实体管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/statistics/logging/delta-log
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import DeltaLogDetail from './components/delta-log-detail.vue'
-import { getDeltaLogList, getDeltaLogById, deleteDeltaLogById, deleteDeltaLogBatch, exportDeltaLog } from '@/api/statistics/logging/delta-log'
-import type { DeltaLog, DeltaLogQuery } from '@/types/statistics/logging/delta-log'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import DeltaLogDetail from './components/DeltaLogDetail.vue'
+import { getDeltaLogList, getDeltaLogById, deleteDeltaLogById, deleteDeltaLogBatch, exportDeltaLog } from '@/api/statistics/logging/deltaLog.api'
+import type { DeltaLog, DeltaLogQuery } from '@/types/statistics/logging/deltaLog.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEyeLine, RiDeleteBinLine } from '@remixicon/vue'
 
 /** i18n 翻译函数 */
@@ -374,7 +373,7 @@ const queryFieldsMeta = computed(() => [
   { key: 'elapsedTime', label: t('entity.deltalog.elapsedtime') },
   { key: 'createdAtStart', label: t('common.page.entity.createdatstart') },
   { key: 'createdAtEnd', label: t('common.page.entity.createdatend') },
-  { key: 'ExtField', label: t('common.page.entity.ExtField') },
+  { key: 'ExtField', label: t('common.page.entity.extfield') },
   { key: 'remark', label: t('common.page.entity.remark') }])
 /** 高级查询当前可见字段 key */
 const visibleQueryFieldKeys = ref<string[]>([])

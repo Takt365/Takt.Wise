@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Quality.Complaint
 // 文件名称：TaktCustomerComplaintItemService.cs
 // 创建时间：2026-09-04
@@ -441,7 +441,7 @@ public class TaktCustomerComplaintItemService : TaktServiceBase, ITaktCustomerCo
                 || (x.DefectLevel != null && x.DefectLevel.Contains(keywords))
                 || (x.CauseAnalysis != null && x.CauseAnalysis.Contains(keywords))
                 || (x.ImprovementAction != null && x.ImprovementAction.Contains(keywords))
-                || (x.ImprovementResponsibleName != null && x.ImprovementResponsibleName.Contains(keywords))
+                || (x.ImprovementResponsibleGroupName != null && x.ImprovementResponsibleGroupName.Contains(keywords))
                 || (x.FileName != null && x.FileName.Contains(keywords))
                 || (x.AccessUrl != null && x.AccessUrl.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
@@ -539,16 +539,16 @@ public class TaktCustomerComplaintItemService : TaktServiceBase, ITaktCustomerCo
             exp = exp.And(x => x.ImprovementAction != null && x.ImprovementAction.Contains(improvementAction));
         }
 
-        if (queryDto?.ImprovementResponsibleId.HasValue == true)
+        if (!string.IsNullOrWhiteSpace(queryDto?.ImprovementResponsibleGroupCode))
         {
-            var improvementResponsibleId = queryDto.ImprovementResponsibleId.Value;
-            exp = exp.And(x => x.ImprovementResponsibleId == improvementResponsibleId);
+            var improvementResponsibleGroupCode = queryDto.ImprovementResponsibleGroupCode;
+            exp = exp.And(x => x.ImprovementResponsibleGroupCode == improvementResponsibleGroupCode);
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.ImprovementResponsibleName))
+        if (!string.IsNullOrWhiteSpace(queryDto?.ImprovementResponsibleGroupName))
         {
-            var improvementResponsibleName = queryDto.ImprovementResponsibleName;
-            exp = exp.And(x => x.ImprovementResponsibleName != null && x.ImprovementResponsibleName.Contains(improvementResponsibleName));
+            var improvementResponsibleGroupName = queryDto.ImprovementResponsibleGroupName;
+            exp = exp.And(x => x.ImprovementResponsibleGroupName != null && x.ImprovementResponsibleGroupName.Contains(improvementResponsibleGroupName));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.FileName))
@@ -695,11 +695,11 @@ public class TaktCustomerComplaintItemService : TaktServiceBase, ITaktCustomerCo
         {
             return true;
         }
-        if (queryDto.ImprovementResponsibleId.HasValue)
+        if (!string.IsNullOrWhiteSpace(queryDto.ImprovementResponsibleGroupCode))
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.ImprovementResponsibleName))
+        if (!string.IsNullOrWhiteSpace(queryDto.ImprovementResponsibleGroupName))
         {
             return true;
         }

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Workflow.FlowEngine
 // 文件名称：TaktFlowApproverResolverService.cs
 // 创建时间：2026-06-03
@@ -28,7 +28,7 @@ public class TaktFlowApproverResolverService
     private readonly ITaktCompanyRepository<TaktEmployeeDept> _employeeDeptRepository;
     private readonly ITaktCompanyRepository<TaktDept> _deptRepository;
     private readonly ITaktTenantRepository<TaktUser> _userRepository;
-    private readonly ITaktTenantRepository<TaktUserRole> _userRoleRepository;
+    private readonly ITaktCompanyRepository<TaktUserRole> _userRoleRepository;
 
     /// <summary>
     /// 构造函数
@@ -45,7 +45,7 @@ public class TaktFlowApproverResolverService
         ITaktCompanyRepository<TaktEmployeeDept> employeeDeptRepository,
         ITaktCompanyRepository<TaktDept> deptRepository,
         ITaktTenantRepository<TaktUser> userRepository,
-        ITaktTenantRepository<TaktUserRole> userRoleRepository)
+        ITaktCompanyRepository<TaktUserRole> userRoleRepository)
     {
         _employeeRepository = employeeRepository;
         _employeeJoinedRepository = employeeJoinedRepository;
@@ -75,7 +75,7 @@ public class TaktFlowApproverResolverService
             5 => await ResolveStarterAsync(startUserId, tenantCode),
             2 => await ResolveDirectorAsync(startUserId, node.DirectorLevel ?? 1, tenantCode, companyCode, singleLevel: true),
             6 => await ResolveDirectorAsync(startUserId, node.DirectorLevel ?? 1, tenantCode, companyCode, singleLevel: false),
-            3 => await ResolveRoleUsersAsync(node, tenantCode),
+            3 => await ResolveRoleUsersAsync(node, tenantCode, companyCode),
             4 => await ResolveDeptUsersAsync(node, tenantCode, companyCode),
             _ => await ResolveSpecifiedUsersAsync(node, tenantCode)
         };
@@ -184,8 +184,12 @@ public class TaktFlowApproverResolverService
     /// </summary>
     /// <param name="node">节点</param>
     /// <param name="tenantCode">租户</param>
+    /// <param name="companyCode">公司</param>
     /// <returns>办理人</returns>
-    private async Task<List<TaktFlowResolvedApprover>> ResolveRoleUsersAsync(TaktFlowTreeNode node, string tenantCode)
+    private async Task<List<TaktFlowResolvedApprover>> ResolveRoleUsersAsync(
+        TaktFlowTreeNode node,
+        string tenantCode,
+        string companyCode)
     {
         var roleIds = (node.NodeApproveList ?? new List<TaktFlowNodeApproveItem>())
             .Select(x => long.TryParse(x.TargetId, out var id) ? id : 0)
@@ -196,7 +200,9 @@ public class TaktFlowApproverResolverService
             return new List<TaktFlowResolvedApprover>();
         }
         var userRoles = await _userRoleRepository.GetListAsync(x =>
-            x.TenantCode == tenantCode && roleIds.Contains(x.RoleId));
+            x.TenantCode == tenantCode
+            && x.CompanyCode == companyCode
+            && roleIds.Contains(x.RoleId));
         var userIds = userRoles.Select(x => x.UserId).Distinct().ToList();
         var result = new List<TaktFlowResolvedApprover>();
         foreach (var userId in userIds)

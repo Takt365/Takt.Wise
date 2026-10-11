@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Quality.Complaint
 // 文件名称：TaktCustomerComplaintHandlingDtos.cs
 // 创建时间：2026-08-28
@@ -109,26 +109,24 @@ public class TaktCustomerComplaintHandlingDto : TaktCompanyDtoBase
     public string? ResponsibleDeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人（选项 TaktEmployees/options；DictValue=Id）
+    /// 责任组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=1；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ResponsiblePersonId { get; set; }
+    public string? ResponsibleGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人名称（冗余：按 ResponsiblePersonId 取 TaktEmployee.EmployeeName 联动）
+    /// 责任组名称（冗余：按 ResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? ResponsiblePersonName { get; set; } = string.Empty;
+    public string? ResponsibleGroupName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 处理人（选项 TaktEmployees/options；DictValue=Id）
+    /// 处理组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=2；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? HandlerId { get; set; }
+    public string? HandlerGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 处理人名称（冗余：按 HandlerId 取 TaktEmployee.EmployeeName 联动）
+    /// 处理组名称（冗余：按 HandlerGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? HandlerName { get; set; } = string.Empty;
+    public string? HandlerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 处理时间
@@ -277,26 +275,24 @@ public class TaktCustomerComplaintHandlingQueryDto : TaktPagedQuery
     public string? ResponsibleDeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人（选项 TaktEmployees/options；DictValue=Id）
+    /// 责任组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=1；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ResponsiblePersonId { get; set; }
+    public string? ResponsibleGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人名称（冗余：按 ResponsiblePersonId 取 TaktEmployee.EmployeeName 联动）
+    /// 责任组名称（冗余：按 ResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? ResponsiblePersonName { get; set; } = string.Empty;
+    public string? ResponsibleGroupName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 处理人（选项 TaktEmployees/options；DictValue=Id）
+    /// 处理组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=2；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? HandlerId { get; set; }
+    public string? HandlerGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 处理人名称（冗余：按 HandlerId 取 TaktEmployee.EmployeeName 联动）
+    /// 处理组名称（冗余：按 HandlerGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? HandlerName { get; set; } = string.Empty;
+    public string? HandlerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 处理时间（范围查询-开始）
@@ -474,26 +470,24 @@ public class TaktCustomerComplaintHandlingCreateDto
     public string? ResponsibleDeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人（选项 TaktEmployees/options；DictValue=Id）
+    /// 责任组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=1；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ResponsiblePersonId { get; set; }
+    public string? ResponsibleGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人名称（冗余：按 ResponsiblePersonId 取 TaktEmployee.EmployeeName 联动）
+    /// 责任组名称（冗余：按 ResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? ResponsiblePersonName { get; set; } = string.Empty;
+    public string? ResponsibleGroupName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 处理人（选项 TaktEmployees/options；DictValue=Id）
+    /// 处理组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=2；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? HandlerId { get; set; }
+    public string? HandlerGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 处理人名称（冗余：按 HandlerId 取 TaktEmployee.EmployeeName 联动）
+    /// 处理组名称（冗余：按 HandlerGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? HandlerName { get; set; } = string.Empty;
+    public string? HandlerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 处理时间
@@ -689,26 +683,24 @@ public class TaktCustomerComplaintHandlingTemplateDto
     public string? ResponsibleDeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人（选项 TaktEmployees/options；DictValue=Id）
+    /// 责任组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=1；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ResponsiblePersonId { get; set; }
+    public string? ResponsibleGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人名称（冗余：按 ResponsiblePersonId 取 TaktEmployee.EmployeeName 联动）
+    /// 责任组名称（冗余：按 ResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? ResponsiblePersonName { get; set; } = string.Empty;
+    public string? ResponsibleGroupName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 处理人（选项 TaktEmployees/options；DictValue=Id）
+    /// 处理组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=2；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? HandlerId { get; set; }
+    public string? HandlerGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 处理人名称（冗余：按 HandlerId 取 TaktEmployee.EmployeeName 联动）
+    /// 处理组名称（冗余：按 HandlerGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? HandlerName { get; set; } = string.Empty;
+    public string? HandlerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 处理时间
@@ -856,26 +848,24 @@ public class TaktCustomerComplaintHandlingImportDto
     public string? ResponsibleDeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人（选项 TaktEmployees/options；DictValue=Id）
+    /// 责任组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=1；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ResponsiblePersonId { get; set; }
+    public string? ResponsibleGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人名称（冗余：按 ResponsiblePersonId 取 TaktEmployee.EmployeeName 联动）
+    /// 责任组名称（冗余：按 ResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? ResponsiblePersonName { get; set; } = string.Empty;
+    public string? ResponsibleGroupName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 处理人（选项 TaktEmployees/options；DictValue=Id）
+    /// 处理组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=2；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? HandlerId { get; set; }
+    public string? HandlerGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 处理人名称（冗余：按 HandlerId 取 TaktEmployee.EmployeeName 联动）
+    /// 处理组名称（冗余：按 HandlerGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? HandlerName { get; set; } = string.Empty;
+    public string? HandlerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 处理时间
@@ -1029,26 +1019,24 @@ public class TaktCustomerComplaintHandlingExportDto
     public string? ResponsibleDeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人（选项 TaktEmployees/options；DictValue=Id）
+    /// 责任组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=1；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? ResponsiblePersonId { get; set; }
+    public string? ResponsibleGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 责任人名称（冗余：按 ResponsiblePersonId 取 TaktEmployee.EmployeeName 联动）
+    /// 责任组名称（冗余：按 ResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? ResponsiblePersonName { get; set; } = string.Empty;
+    public string? ResponsibleGroupName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 处理人（选项 TaktEmployees/options；DictValue=Id）
+    /// 处理组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=2；DictValue=ComplaintGroupCode）
     /// </summary>
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long? HandlerId { get; set; }
+    public string? HandlerGroupCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 处理人名称（冗余：按 HandlerId 取 TaktEmployee.EmployeeName 联动）
+    /// 处理组名称（冗余：按 HandlerGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）
     /// </summary>
-    public string? HandlerName { get; set; } = string.Empty;
+    public string? HandlerGroupName { get; set; } = string.Empty;
 
     /// <summary>
     /// 处理时间

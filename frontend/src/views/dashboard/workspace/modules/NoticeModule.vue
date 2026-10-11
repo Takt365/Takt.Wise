@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
+<!-- 项目名称：节拍智控·TaktWise -->
 <!-- 命名空间：frontend/src/views/dashboard/workspace/modules -->
 <!-- 文件名称：NoticeModule.vue -->
 <!-- 功能描述：工作台通知公告模块（已发布公告摘要与详情预览） -->
@@ -104,14 +104,13 @@
 /**
  * 工作台通知公告模块：展示已发布公告摘要，支持弹窗预览详情
  */
-import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { Empty } from 'ant-design-vue'
 import dayjs from 'dayjs'
-import { getAnnouncementList, getAnnouncementById } from '@/api/routine/announcement/announcement'
-import type { Announcement } from '@/types/routine/announcement/announcement'
-import { getTaktDefaultPageIndex } from '@/utils/takt-paged'
+import { getAnnouncementList, getAnnouncementById } from '@/api/routine/announcement.api'
+import type { Announcement } from '@/types/routine/announcement.types'
+import { getTaktDefaultPageIndex } from '@/utils/taktPaged'
 
 /** 工作台模块列表条数上限 */
 const WORKSPACE_MODULE_LIST_SIZE = 8

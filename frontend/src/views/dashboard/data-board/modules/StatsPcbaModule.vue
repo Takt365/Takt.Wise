@@ -1,6 +1,6 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍工厂·Takt Plat -->
-<!-- 命名空间：frontend/src/views/dashboard/data-board/modules -->
+<!-- 项目名称：节拍智控·TaktWise -->
+<!-- 命名空间：frontend/src/views/dashboard/dataBoard.types/modules -->
 <!-- 文件名称：StatsPcbaModule.vue -->
 <!-- 功能描述：数据看板 PCBA 不良（班别 SMT/修理：检查数、修理数） -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
@@ -35,12 +35,11 @@
 /**
  * PCBA 不良：上月 SMT 检查数 + 修理数
  */
-import { ref, computed, onMounted } from 'vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { usePermissionStore } from '@/stores/identity/permission'
-import type { PcbaDefectBoardStat } from '@/types/logistics/manufacturing/defect/pcba-defect-board-stat'
+import { usePermissionStore } from '@/stores/identity/usePermissionStore'
+import type { PcbaDefectBoardStat } from '@/types/logistics/manufacturing/defect/pcbaDefectBoardStat.types'
 import {
   DASHBOARD_STATS_API,
   DASHBOARD_STATS_PERMISSION,
@@ -49,7 +48,7 @@ import {
   fetchDashboardMetricIfPermitted,
   getLastMonthRange,
   scheduleDashboardLoad,
-} from '../utils/stats-query'
+} from '../utils/statsQuery'
 
 /** 空统计 */
 const EMPTY_STAT: PcbaDefectBoardStat = {

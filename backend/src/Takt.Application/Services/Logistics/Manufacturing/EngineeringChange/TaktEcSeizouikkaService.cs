@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcSeizouikkaService.cs
 // 创建时间：2026-07-09
@@ -131,7 +131,7 @@ public class TaktEcSeizouikkaService : TaktServiceBase, ITaktEcSeizouikkaService
         var isUnique_ix_takt_logistics_manufacturing_ec_seizouikka_unique = await _uniqueValidator.IsUniqueAsync(
             _ecSeizouikkaRepository,
             x => x.EcDetailId == entity.EcDetailId
-                && x.EcRootMaterialCode == entity.EcRootMaterialCode);
+);
         if (!isUnique_ix_takt_logistics_manufacturing_ec_seizouikka_unique)
         {
             throw new TaktBusinessException("设变制一执行的EcDetailId、EcRootMaterialCode已存在");
@@ -166,7 +166,7 @@ public class TaktEcSeizouikkaService : TaktServiceBase, ITaktEcSeizouikkaService
         var isUnique_ix_takt_logistics_manufacturing_ec_seizouikka_unique = await _uniqueValidator.IsUniqueAsync(
             _ecSeizouikkaRepository,
             x => x.EcDetailId == entity.EcDetailId
-                && x.EcRootMaterialCode == entity.EcRootMaterialCode,
+,
             id);
         if (!isUnique_ix_takt_logistics_manufacturing_ec_seizouikka_unique)
         {
@@ -302,7 +302,7 @@ public class TaktEcSeizouikkaService : TaktServiceBase, ITaktEcSeizouikkaService
             try
             {
                 var entity = rows[i].Adapt<TaktEcSeizouikka>();
-                var importKey = $"{entity.EcDetailId}|{entity.EcRootMaterialCode}";
+                var importKey = $"{entity.EcDetailId}";
                 if (!importSeenKeys.Add(importKey))
                 {
                     throw new TaktBusinessException("与Excel中其他行重复（EcDetailId、EcRootMaterialCode）");
@@ -310,7 +310,7 @@ public class TaktEcSeizouikkaService : TaktServiceBase, ITaktEcSeizouikkaService
                 var isUnique_ix_takt_logistics_manufacturing_ec_seizouikka_unique = await _uniqueValidator.IsUniqueAsync(
                     _ecSeizouikkaRepository,
                     x => x.EcDetailId == entity.EcDetailId
-                        && x.EcRootMaterialCode == entity.EcRootMaterialCode);
+        );
                 if (!isUnique_ix_takt_logistics_manufacturing_ec_seizouikka_unique)
                 {
                     throw new TaktBusinessException("设变制一执行的EcDetailId、EcRootMaterialCode已存在");

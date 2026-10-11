@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/human-resource/training/training-plan -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：培训计划管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -479,20 +479,19 @@
  * 培训计划管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/human-resource/training/training-plan
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import TrainingPlanForm from './components/plan-form.vue'
-import { getTrainingPlanList, getTrainingPlanById, createTrainingPlan, updateTrainingPlan, deleteTrainingPlanById, deleteTrainingPlanBatch, getTrainingPlanTemplate, importTrainingPlan, exportTrainingPlan, updateTrainingPlanStatus } from '@/api/human-resource/training/plan'
-import type { TrainingPlan, TrainingPlanQuery } from '@/types/human-resource/training/plan'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import TrainingPlanForm from './components/PlanForm.vue'
+import { getTrainingPlanList, getTrainingPlanById, createTrainingPlan, updateTrainingPlan, deleteTrainingPlanById, deleteTrainingPlanBatch, getTrainingPlanTemplate, importTrainingPlan, exportTrainingPlan, updateTrainingPlanStatus } from '@/api/human-resource/training/plan.api'
+import type { TrainingPlan, TrainingPlanQuery } from '@/types/human-resource/training/plan.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -501,7 +500,7 @@ import {
   TRAININGPLAN_QUERY_STRING_FIELDS,
   TRAININGPLAN_QUERY_FIELDS,
   TRAININGPLAN_SELF_I18N_KEY,
-} from './composables/use-plan-i18n'
+} from './composables/usePlanI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useTrainingPlanI18n()
@@ -624,7 +623,6 @@ const deleteDisabled = computed(() => selectedRows.value.length === 0)
 /** Pinia：字典缓存（列表/查询 dict-type 渲染前预热） */
 const dictDataStore = useDictDataStore()
 
-
 /**
  * 构建列表/导出查询参数（空字符串与未填数值/日期不下发，避免后端 DateTime? 模型绑定 400；无参不补默认）
  * @param overrides 覆盖分页或导出上限等字段
@@ -673,7 +671,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /**
  * 构建列表标准文本列
@@ -749,8 +746,6 @@ const toTrainingPlanNumber = (value: string | number | undefined | null): number
   const num = Number(value ?? 0)
   return Number.isFinite(num) ? num : 0
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

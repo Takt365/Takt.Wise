@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/manufacturing/bom/material-cost
 // 文件名称：en-US.ts
 // 创建时间：2026-07-14
@@ -26,7 +26,7 @@ export default {
     modalmasterhint: 'Left model → center product → right lines (no entity split). Import lines, then sum or recalculate cost.',
     costSum: 'Cost sum',
     costRecalculate: 'Recalculate cost',
-    backfillPurchasePrice: 'Backfill purchase price',
+    backfillPurchaseInfoRecord: 'Backfill purchase price',
     refreshModelFields: 'Backfill model price',
     costingMonth: 'Costing month',
     costingMonthPlaceholder: 'Select costing month',
@@ -40,9 +40,9 @@ export default {
     costRecalculateFailed: 'Cost processing failed',
     costRecalculateConfirmTitle: 'Recalculate cost?',
     costRecalculateConfirmContent: 'Zero existing totals for this costing month, then rebuild from item lines and refresh the summary.',
-    backfillPurchasePriceSuccess:
+    backfillPurchaseInfoRecordSuccess:
       '{month} backfill done: updated {updated}, skipped {skipped} (scanned {scanned})',
-    backfillPurchasePriceFailed: 'Failed to backfill purchase price',
+    backfillPurchaseInfoRecordFailed: 'Failed to backfill purchase price',
     refreshModelFieldsSuccess:
       '{month} model price backfill done: scanned {scanned}, model updated {modelUpdated}, average updated {averageUpdated} ({groups} groups)',
     refreshModelFieldsFailed: 'Failed to backfill model price',

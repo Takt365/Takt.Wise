@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Complaint
 // 文件名称：TaktCustomerComplaintItemI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktCustomerComplaintItem 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -207,23 +207,23 @@ public class TaktCustomerComplaintItemI18nSeedData : ITaktSeedDataCoordinator
             // entity.customercomplaintitem.improvementaction
             new TranslationSeedItem("entity.customercomplaintitem.improvementaction", "zh-HK", "改善对策_hk", "改善对策"),
 
-            // entity.customercomplaintitem.improvementresponsibleid
-            new TranslationSeedItem("entity.customercomplaintitem.improvementresponsibleid", "en-US", "改善责任人ID_us", "改善责任人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.customercomplaintitem.improvementresponsibleid
-            new TranslationSeedItem("entity.customercomplaintitem.improvementresponsibleid", "ja-JP", "改善责任人ID_jp", "改善责任人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.customercomplaintitem.improvementresponsibleid
-            new TranslationSeedItem("entity.customercomplaintitem.improvementresponsibleid", "zh-CN", "改善责任人ID", "改善责任人（选项 TaktEmployees/options；DictValue=Id）"),
-            // entity.customercomplaintitem.improvementresponsibleid
-            new TranslationSeedItem("entity.customercomplaintitem.improvementresponsibleid", "zh-HK", "改善责任人ID_hk", "改善责任人（选项 TaktEmployees/options；DictValue=Id）"),
+            // entity.customercomplaintitem.improvementresponsiblegroupcode
+            new TranslationSeedItem("entity.customercomplaintitem.improvementresponsiblegroupcode", "en-US", "改善组编码_us", "改善组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=3；DictValue=ComplaintGroupCode）"),
+            // entity.customercomplaintitem.improvementresponsiblegroupcode
+            new TranslationSeedItem("entity.customercomplaintitem.improvementresponsiblegroupcode", "ja-JP", "改善组编码_jp", "改善组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=3；DictValue=ComplaintGroupCode）"),
+            // entity.customercomplaintitem.improvementresponsiblegroupcode
+            new TranslationSeedItem("entity.customercomplaintitem.improvementresponsiblegroupcode", "zh-CN", "改善组编码", "改善组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=3；DictValue=ComplaintGroupCode）"),
+            // entity.customercomplaintitem.improvementresponsiblegroupcode
+            new TranslationSeedItem("entity.customercomplaintitem.improvementresponsiblegroupcode", "zh-HK", "改善组编码_hk", "改善组编码（选项 TaktComplaintGroups/options?complaintGroupCategory=3；DictValue=ComplaintGroupCode）"),
 
-            // entity.customercomplaintitem.improvementresponsiblename
-            new TranslationSeedItem("entity.customercomplaintitem.improvementresponsiblename", "en-US", "改善责任人名称_us", "改善责任人名称（冗余：按 ImprovementResponsibleId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.customercomplaintitem.improvementresponsiblename
-            new TranslationSeedItem("entity.customercomplaintitem.improvementresponsiblename", "ja-JP", "改善责任人名称_jp", "改善责任人名称（冗余：按 ImprovementResponsibleId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.customercomplaintitem.improvementresponsiblename
-            new TranslationSeedItem("entity.customercomplaintitem.improvementresponsiblename", "zh-CN", "改善责任人名称", "改善责任人名称（冗余：按 ImprovementResponsibleId 取 TaktEmployee.EmployeeName 联动）"),
-            // entity.customercomplaintitem.improvementresponsiblename
-            new TranslationSeedItem("entity.customercomplaintitem.improvementresponsiblename", "zh-HK", "改善责任人名称_hk", "改善责任人名称（冗余：按 ImprovementResponsibleId 取 TaktEmployee.EmployeeName 联动）"),
+            // entity.customercomplaintitem.improvementresponsiblegroupname
+            new TranslationSeedItem("entity.customercomplaintitem.improvementresponsiblegroupname", "en-US", "改善组名称_us", "改善组名称（冗余：按 ImprovementResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）"),
+            // entity.customercomplaintitem.improvementresponsiblegroupname
+            new TranslationSeedItem("entity.customercomplaintitem.improvementresponsiblegroupname", "ja-JP", "改善组名称_jp", "改善组名称（冗余：按 ImprovementResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）"),
+            // entity.customercomplaintitem.improvementresponsiblegroupname
+            new TranslationSeedItem("entity.customercomplaintitem.improvementresponsiblegroupname", "zh-CN", "改善组名称", "改善组名称（冗余：按 ImprovementResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）"),
+            // entity.customercomplaintitem.improvementresponsiblegroupname
+            new TranslationSeedItem("entity.customercomplaintitem.improvementresponsiblegroupname", "zh-HK", "改善组名称_hk", "改善组名称（冗余：按 ImprovementResponsibleGroupCode 取 TaktComplaintGroups.ComplaintGroupName 联动）"),
 
             // entity.customercomplaintitem.plannedcompletiondate
             new TranslationSeedItem("entity.customercomplaintitem.plannedcompletiondate", "en-US", "计划完成日期_us", "计划完成日期"),

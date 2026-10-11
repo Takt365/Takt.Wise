@@ -52,20 +52,20 @@ alwaysApply: true
 |--------|--------|
 | 新建 `<style scoped>` 大块布局/颜色（验证码、登录、CRUD 页） | 模板 `class="..."` Tailwind 工具类 |
 | 新增 `lang="css"` / `sass` 业务样式 | `frontend/src/styles/global.css` 内 `@layer components` 复用块（如 `.takt-captcha-shine`） |
-| 重复造轮子 Modal / Form / Table | 业务封装：`takt-modal` 等，内部仍基于 `a-modal` |
+| 重复造轮子 Modal / Form / Table | 业务封装：`TaktModal` 等，内部仍基于 `a-modal` |
 | 硬编码中文文案 | `vue-i18n` 的 `t('...')` |
 
 **例外（须极简）**：
 
 1. 动态像素（滑块 `left`、`width`、缩放 `transform`）→ 仅用 `:style` 绑定。
 2. 覆盖 Ant Design **内部** DOM → 优先 `global.css` 的 `@layer components`（如 `.takt-login-toolbar .ant-radio-button-wrapper`）；确属单组件且无法抽离时，简短 `:deep()` 并注释原因。
-3. `takt-modal` 视口级弹窗尺寸 → 保留 teleport 到 `body` 的全局类（`.takt-modal-viewport-size`），新弹窗默认用 `takt-modal`，紧凑窗体设 `:use-viewport-size="false"`。
+3. `TaktModal` 视口级弹窗尺寸 → 保留 teleport 到 `body` 的全局类（`.takt-modal-viewport-size`），新弹窗默认用 `<TaktModal />`，紧凑窗体设 `:use-viewport-size="false"`。
 
 ### 1.3 参照实现
 
 - 全局入口与 token：`frontend/src/styles/global.css`
-- 紧凑弹窗 + 默认底栏：`frontend/src/components/business/takt-modal/index.vue`
-- 验证码：`frontend/src/components/common/takt-captcha-slider`、`takt-captcha-behavior`
+- 紧凑弹窗 + 默认底栏：`frontend/src/components/business/TaktModal/index.vue`
+- 验证码：`frontend/src/components/common/TaktCaptchaSlider`、`TaktCaptchaBehavior`
 - 登录页：`frontend/src/views/login/index.vue`
 
 ---
@@ -74,21 +74,23 @@ alwaysApply: true
 
 | 目录 | 职责 |
 |------|------|
-| `api/` | 按后端模块划分；`routine/business/` 与 `routine/tasks/` 分开 |
-| `types/` | 与 `api/` 一一对应；ID 与后端 `long` 对齐用 **`string`** |
-| `views/` | 页面；子组件放 `components/`；页面私有 composable 放 `views/.../composables/` |
-| `components/common/` | 通用展示组件 |
-| `components/business/` | 业务通用组件（`takt-modal`、`takt-action-column` 等） |
-| `stores/` | Pinia，按模块拆分 |
+| `api/` | 按后端模块划分；业务文件 **`camelCase.api.ts`**（`request.ts` 除外）；目录仍 kebab |
+| `types/` | 业务类型 **`camelCase.types.ts`**；全局扩展 / 模块声明保留 **`*.d.ts`**（如 `virtual-modules.d.ts`、`global.d.ts`、`vue-shim.d.ts`）；ID 用 **`string`** |
+| `views/` | **kebab 目录 + `index.vue`**（页面入口强制）；子组件 `components/` **PascalCase**；页面 composable **`useXxx.ts`** |
+| `components/common/` | 通用展示组件（**PascalCase**） |
+| `components/business/` | 业务通用组件（目录/组件名 **PascalCase**：`TaktModal`、`TaktActionColumn` 等） |
+| `stores/` | Pinia；**文件名 `useXxxStore.ts`**（如 `useUserStore.ts`） |
 | `locales/` | 静态文案（`{目录}.page.*`，见 §6.2）；动态 `entity.*` 与后端种子对齐 |
-| `config/` | 环境变量与静态配置解析（`vite-env`、`oauth`、`auth-idle`）；无 Vue 生命周期副作用 |
-| `bootstrap/` | 应用启动编排（`main.ts` 调用）；全局 EventBus、空闲会话、登出防重入 |
-| `composables/` | 全局可复用 `useXxx`（响应式 + 生命周期）；供 views/components 按需挂载 |
-| `utils/` | 纯函数与运行时网关（`oauth.ts`、`event-bus.ts` 等）；禁止 `ref`/`onMounted` |
-| `router/` | 路由（懒加载） |
-| `styles/` | `global.css`（入口）、`color-base.css`、`button-base.css`、`action-column-base.css`、`dict-tag-base.css` |
+| `config/` | 环境变量与静态配置；**camelCase**（`viteEnv.ts`、`authIdle.ts`） |
+| `bootstrap/` | 应用启动编排；**camelCase**（`taktLogoutFlow.ts`） |
+| `composables/` | 全局 `useXxx`；**`use` + camelCase**（`useTableRefresh.ts`） |
+| `utils/` | 纯函数与运行时网关；**camelCase**；禁止 `ref`/`onMounted` |
+| `constants/` | 业务/静态常量；**`*.constants.ts`**（`takt.constants.ts`、`ecDeptCodes.constants.ts`） |
+| `router/` | 路由；**camelCase**（`menuRoutes.ts`；入口可 `index.ts`） |
+| `layouts/` | 布局组件 **PascalCase**（`SideLayout.vue`、`RouteView.vue`）；入口可 `index.vue` |
+| `styles/` | 独立样式 **kebab**（`global.css`）；与组件同名则 **PascalCase** |
 
-文件名 **kebab-case**（`user-form.vue`、`user.ts`），见 `00-project` §1.1。
+文件名分层见 `00-project` §1.1 总览表（**views = kebab + index.vue**；`components/` / `layouts/` PascalCase；api/types/constants/store/composable/config 等按表执行）。
 
 ### 2.1 配置 / 启动 / 组合式分层（强制）
 
@@ -108,17 +110,19 @@ views / components → composables → api / stores / utils
 api / utils → config
 ```
 
-- `composables/` **不得** import `bootstrap/`（租户/公司切换通过 EventBus `table:refresh` 解耦，见 `use-table-refresh.ts`）
+- `composables/` **不得** import `bootstrap/`（租户/公司切换通过 EventBus `table:refresh` 解耦，见 `useTableRefresh.ts`）
 - `config/` **不得** import `bootstrap/` 或 `composables/`
-- 构建期 Vite 插件（`config/vite-dev-plugin.ts`）仅由 `vite.config.ts` 引用，不属于 SPA 运行时
+- 构建期 Vite 插件（`config/viteDevPlugin.ts`）仅由 `vite.config.ts` 引用，不属于 SPA 运行时
 
 ---
 
 ## 三、API 层（`api/`）
 
-- **唯一请求实例**：`import request from '@/api/request'`
+- **唯一请求实例**：`import request from '@/api/request'`（基础设施，保留 `request.ts`）
+- 业务模块文件：**`camelCase.api.ts`**（如 `user.api.ts`、`costCenter.api.ts`）；引用 `@/api/identity/user.api`
 - ❌ 禁止在 `api/` 内用相对路径引用 request（`../request`）
 - ❌ 禁止 `getList`、`create`、`remove` 等无实体前缀导出名
+- ❌ 禁止业务 API 再用 `user.ts` / `userApi.api.ts`（主名不加重复 Api）
 
 | 功能 | 规范 | User 示例 |
 |------|------|-----------|
@@ -141,10 +145,15 @@ api / utils → config
 
 ## 四、类型（`types/`）
 
-- 主实体对齐 `TaktCompanyEntityBase`（`@/types/common`）
-- 分页：`TaktPagedQuery` / `TaktPagedResult<T>`
-- DTO：`TaktUserDto`、`TaktUserCreateDto`、`TaktUserQueryDto`
-- 字段多行 JSDoc；主键 `id: string`
+| 类别 | 命名 | 示例 |
+|------|------|------|
+| 业务类型（实体 / 请求响应） | `camelCase.types.ts` | `order.types.ts`、`user.types.ts`、`common.types.ts` |
+| 全局类型扩展 | `*.d.ts` | `global.d.ts`（`Window`、第三方补丁） |
+| 模块声明（shim） | `*.d.ts` | `vue-shim.d.ts`、`virtual-modules.d.ts` |
+
+- 主实体对齐 `TaktCompanyEntityBase`（`@/types/common.types`）
+- 分页：`TaktPagedQuery` / `TaktPagedResult<T>`；主键 `id: string`
+- ❌ 业务类型勿再用 `user.d.ts`；❌ 勿把 `declare module '*.vue'` 写进 `*.types.ts`
 
 ---
 
@@ -153,7 +162,7 @@ api / utils → config
 - **Composition API**：`<script setup lang="ts">`
 - **自动导入**（`vite.config.ts`）：
   - `unplugin-auto-import`：`vue`、`vue-router`、`pinia`、`logger` / `createLogger`（`@/utils/logger`，`main.ts` 中 `initLogger` 初始化）→ ❌ 视图/表单 `.vue` 中勿重复 `import` 上述 API
-  - `unplugin-vue-components`：`src/components/**` 与 Ant Design Vue → ❌ `.vue` 中勿重复 `import TaktModal from '@/components/...'`（模板 `<takt-modal />` 即可；类型见 `components.d.ts`）
+  - `unplugin-vue-components`：`src/components/**` 与 Ant Design Vue → ❌ `.vue` 中勿重复 `import TaktModal from '@/components/...'`（模板 `<TaktModal />` 即可；类型见 `components.d.ts`）
   - ✅ 仍须显式 import：`vue-i18n`、`ant-design-vue`（非 `a-*` 的 API，如 `message`）、`composables`、`api`、`stores`、`types`、脚本内用到的 `import type`、**未**列入 auto-import 的 API（如 `render` from `vue`）
   - `composables/`、`stores/` 等 `.ts` 可保留显式 import（非 SFC 场景）
 - **`<script setup>` 注释**（强制）：
@@ -161,10 +170,10 @@ api / utils → config
   - 每个 `ref` / `reactive` / `computed` 及 Pinia、composable 解构项：单行 `/** … */`
   - 每个函数：`/**` + `@param` / `@returns`（见 `00-project` JSDoc）
 - 模板分区注释：查询栏、工具栏、表格、分页、表单等
-- 模板标签 kebab-case：`<user-form />`
+- 模板标签：全局自研组件 **PascalCase**（`<TaktModal />`）；页面局部表单仍可用 kebab（`<UserForm />`）
 - 用户可见文案 **必须** `t('...')`
 
-**标准 CRUD 页**：`index.vue` 见 `13-vue-view`（单表/主子表/树表）；`*-form.vue` 见 `14-vue-form`；能力映射见 `12-crud`。
+**标准 CRUD 页**：`index.vue` 见 `13-vue-view`（单表/主子表/树表）；`*Form.vue` 见 `14-vue-form`；能力映射见 `12-crud`。
 
 **权限按钮**（`领域:目录[:子目录…]:实体:操作`，段数随菜单深度，见 `00-project` §1.7）：
 
@@ -172,7 +181,7 @@ api / utils → config
 <a-button v-permission="'identity:user:create'">新增</a-button>
 ```
 
-**弹窗**：使用 `<takt-modal v-model:open="..." />`，勿再包一层 `a-modal` 重复底栏。
+**弹窗**：使用 `<TaktModal v-model:open="..." />`，勿再包一层 `a-modal` 重复底栏。
 
 ---
 
@@ -184,7 +193,7 @@ api / utils → config
 
 | 来源 | 目录 / 机制 | 引用键格式 |
 |------|-------------|------------|
-| **静态**（本仓库 `locales/**/*.ts`） | `import.meta.glob` + `takt-locale-merge` 按**文件路径**嵌套 | **`{业务目录}.page.*`**（点多段，见 §6.2） |
+| **静态**（本仓库 `locales/**/*.ts`） | `import.meta.glob` + `taktLocaleMerge` 按**文件路径**嵌套 | **`{业务目录}.page.*`**（点多段，见 §6.2） |
 | **动态**（登录后后端种子） | `mergeDynamicLocaleMessages` | 与后端 `I18nKey` 一致：`entity.*`、`common.page.*`、`menu.*`、`org.dept.*` 等 |
 
 - 用户可见文案一律 `t('...')` / `$t('...')`，禁止硬编码。
@@ -208,7 +217,7 @@ api / utils → config
 | 禁止 | 根级直接写字段、`{ 模块名: { page: … } }` 重复包一层、无 `page` 的对象 |
 | `t()` 键 | **`{路径前缀}.page.*`**，不可省略 `.page`，不可用 `page.` 作业务前缀 |
 
-合并逻辑见 `frontend/src/locales/index.ts`、`frontend/src/utils/takt-locale-merge.ts`。
+合并逻辑见 `frontend/src/locales/index.ts`、`frontend/src/utils/taktLocaleMerge.ts`。
 
 | 语言文件路径 | 文件内 `export default` | 组件中引用 |
 |--------------|-------------------------|------------|
@@ -282,6 +291,7 @@ export default { title: '用户管理' };
 
 ## 八、Pinia
 
+- 文件：`stores/{域}/useXxxStore.ts`（**`use` + camelCase + `Store`**）；导出同名 `useXxxStore`
 - 按模块 `defineStore`；调 API 的 action 为 **async**
 
 ---
@@ -306,7 +316,7 @@ export default { title: '用户管理' };
 - **动态 i18n / 权限**：`t()` 键遵守 `00-project` §1.6；`v-permission` 遵守 §1.7
 - 列表/虚拟滚动/主键 string/禁止全量拉数：见 `@.cursor/rules/07-overflow-vue.mdc`；联调见 `08-overflow-fullstack`
 - **Vue 视图**：`index.vue` 见 `@.cursor/rules/13-vue-view.mdc`；清单 `13-vue-view`
-- **Vue 表单**：`*-form.vue` 见 `@.cursor/rules/14-vue-form.mdc`；清单 `14-vue-form`
+- **Vue 表单**：`*Form.vue` 见 `@.cursor/rules/14-vue-form.mdc`；清单 `14-vue-form`
 - **代码生成**：`generate-vue-*-from-api` 见 `15-codegen` §3.6；排除实体须手工
 - 主子表 UI 扩展：见 `@.cursor/rules/10-master-detail.mdc`（叠加 12-crud）
 - 树表 UI 扩展：见 `@.cursor/rules/11-tree-table.mdc`（叠加 12-crud）

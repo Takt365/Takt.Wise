@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Procurement
 // 文件名称：TaktPurchaseGroupI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPurchaseGroup 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktPurchaseGroupI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.purchasegroup._self", "zh-HK", "Takt采购组主数据信息_hk", "实体名称"),
 
             // entity.purchasegroup.code
-            new TranslationSeedItem("entity.purchasegroup.code", "en-US", "采购组编码_us", "采购组编码（3）"),
+            new TranslationSeedItem("entity.purchasegroup.code", "en-US", "采购组编码_us", "采购组编码（与员工编码同长 6）"),
             // entity.purchasegroup.code
-            new TranslationSeedItem("entity.purchasegroup.code", "ja-JP", "采购组编码_jp", "采购组编码（3）"),
+            new TranslationSeedItem("entity.purchasegroup.code", "ja-JP", "采购组编码_jp", "采购组编码（与员工编码同长 6）"),
             // entity.purchasegroup.code
-            new TranslationSeedItem("entity.purchasegroup.code", "zh-CN", "采购组编码", "采购组编码（3）"),
+            new TranslationSeedItem("entity.purchasegroup.code", "zh-CN", "采购组编码", "采购组编码（与员工编码同长 6）"),
             // entity.purchasegroup.code
-            new TranslationSeedItem("entity.purchasegroup.code", "zh-HK", "采购组编码_hk", "采购组编码（3）"),
+            new TranslationSeedItem("entity.purchasegroup.code", "zh-HK", "采购组编码_hk", "采购组编码（与员工编码同长 6）"),
 
             // entity.purchasegroup.name
             new TranslationSeedItem("entity.purchasegroup.name", "en-US", "采购组名称_us", "采购组名称"),

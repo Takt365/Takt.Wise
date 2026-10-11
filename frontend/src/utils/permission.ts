@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/utils
 // 文件名称：permission.ts
 // 创建时间：2026-05-23
@@ -82,6 +82,7 @@ export function canAccessRoute(routePaths: string[], targetPath: string): boolea
  * @param {string[]} options.routePaths 可访问路由列表
  * @param {string} [options.permission] 路由 meta.permission
  * @param {string} options.path 目标 path
+ * @param {boolean} [options.skipRoutePathCheck] 跳过菜单 routePaths 校验（个人中心等登录即可访问页）
  * @returns {boolean} 是否允许
  */
 export function canActivateRoute(options: {
@@ -89,14 +90,19 @@ export function canActivateRoute(options: {
   routePaths: string[];
   permission?: string;
   path: string;
+  skipRoutePathCheck?: boolean;
 }): boolean {
   if (options.permission && !hasPermissionCode(options.permissions, options.permission)) {
     return false;
   }
 
+  if (options.skipRoutePathCheck) {
+    return true;
+  }
+
   if (options.routePaths.length === 0 && options.permissions.length === 0) {
     const path = normalizeRoutePath(options.path);
-    return path === '/dashboard' || path === '/403';
+    return path === '/dashboard' || path === '/403' || path === '/profile';
   }
 
   if (options.routePaths.length === 0) {

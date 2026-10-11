@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcNotificationDeliveryI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEcNotificationDelivery 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -126,23 +126,23 @@ public class TaktEcNotificationDeliveryI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecnotificationdelivery.eccode
             new TranslationSeedItem("entity.ecnotificationdelivery.eccode", "zh-HK", "设变单号_hk", "设变单号（冗余）"),
 
-            // entity.ecnotificationdelivery.deptcode
-            new TranslationSeedItem("entity.ecnotificationdelivery.deptcode", "en-US", "目标部门编码_us", "目标部门编码（TaktDept.DeptCode，如 D0710、D0810）"),
-            // entity.ecnotificationdelivery.deptcode
-            new TranslationSeedItem("entity.ecnotificationdelivery.deptcode", "ja-JP", "目标部门编码_jp", "目标部门编码（TaktDept.DeptCode，如 D0710、D0810）"),
-            // entity.ecnotificationdelivery.deptcode
-            new TranslationSeedItem("entity.ecnotificationdelivery.deptcode", "zh-CN", "目标部门编码", "目标部门编码（TaktDept.DeptCode，如 D0710、D0810）"),
-            // entity.ecnotificationdelivery.deptcode
-            new TranslationSeedItem("entity.ecnotificationdelivery.deptcode", "zh-HK", "目标部门编码_hk", "目标部门编码（TaktDept.DeptCode，如 D0710、D0810）"),
+            // entity.ecnotificationdelivery.ecdeptgroupcode
+            new TranslationSeedItem("entity.ecnotificationdelivery.ecdeptgroupcode", "en-US", "设变部门编码_us", "设变部门编码（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）"),
+            // entity.ecnotificationdelivery.ecdeptgroupcode
+            new TranslationSeedItem("entity.ecnotificationdelivery.ecdeptgroupcode", "ja-JP", "设变部门编码_jp", "设变部门编码（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）"),
+            // entity.ecnotificationdelivery.ecdeptgroupcode
+            new TranslationSeedItem("entity.ecnotificationdelivery.ecdeptgroupcode", "zh-CN", "设变部门编码", "设变部门编码（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）"),
+            // entity.ecnotificationdelivery.ecdeptgroupcode
+            new TranslationSeedItem("entity.ecnotificationdelivery.ecdeptgroupcode", "zh-HK", "设变部门编码_hk", "设变部门编码（选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1）"),
 
-            // entity.ecnotificationdelivery.deptname
-            new TranslationSeedItem("entity.ecnotificationdelivery.deptname", "en-US", "目标部门名称_us", "目标部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）"),
-            // entity.ecnotificationdelivery.deptname
-            new TranslationSeedItem("entity.ecnotificationdelivery.deptname", "ja-JP", "目标部门名称_jp", "目标部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）"),
-            // entity.ecnotificationdelivery.deptname
-            new TranslationSeedItem("entity.ecnotificationdelivery.deptname", "zh-CN", "目标部门名称", "目标部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）"),
-            // entity.ecnotificationdelivery.deptname
-            new TranslationSeedItem("entity.ecnotificationdelivery.deptname", "zh-HK", "目标部门名称_hk", "目标部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）"),
+            // entity.ecnotificationdelivery.ecdeptgroupname
+            new TranslationSeedItem("entity.ecnotificationdelivery.ecdeptgroupname", "en-US", "设变部门名称_us", "设变部门名称（冗余：按 EcDeptGroupCode 取 TaktDept.DeptName1 联动）"),
+            // entity.ecnotificationdelivery.ecdeptgroupname
+            new TranslationSeedItem("entity.ecnotificationdelivery.ecdeptgroupname", "ja-JP", "设变部门名称_jp", "设变部门名称（冗余：按 EcDeptGroupCode 取 TaktDept.DeptName1 联动）"),
+            // entity.ecnotificationdelivery.ecdeptgroupname
+            new TranslationSeedItem("entity.ecnotificationdelivery.ecdeptgroupname", "zh-CN", "设变部门名称", "设变部门名称（冗余：按 EcDeptGroupCode 取 TaktDept.DeptName1 联动）"),
+            // entity.ecnotificationdelivery.ecdeptgroupname
+            new TranslationSeedItem("entity.ecnotificationdelivery.ecdeptgroupname", "zh-HK", "设变部门名称_hk", "设变部门名称（冗余：按 EcDeptGroupCode 取 TaktDept.DeptName1 联动）"),
 
             // entity.ecnotificationdelivery.priority
             new TranslationSeedItem("entity.ecnotificationdelivery.priority", "en-US", "优先级_us", "优先级（1=普通，2=高，3=紧急）"),
@@ -171,23 +171,23 @@ public class TaktEcNotificationDeliveryI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecnotificationdelivery.sentat
             new TranslationSeedItem("entity.ecnotificationdelivery.sentat", "zh-HK", "发送时间_hk", "发送时间"),
 
-            // entity.ecnotificationdelivery.confirmedbyuserid
-            new TranslationSeedItem("entity.ecnotificationdelivery.confirmedbyuserid", "en-US", "确认人用户ID_us", "确认人用户 ID"),
-            // entity.ecnotificationdelivery.confirmedbyuserid
-            new TranslationSeedItem("entity.ecnotificationdelivery.confirmedbyuserid", "ja-JP", "确认人用户ID_jp", "确认人用户 ID"),
-            // entity.ecnotificationdelivery.confirmedbyuserid
-            new TranslationSeedItem("entity.ecnotificationdelivery.confirmedbyuserid", "zh-CN", "确认人用户ID", "确认人用户 ID"),
-            // entity.ecnotificationdelivery.confirmedbyuserid
-            new TranslationSeedItem("entity.ecnotificationdelivery.confirmedbyuserid", "zh-HK", "确认人用户ID_hk", "确认人用户 ID"),
+            // entity.ecnotificationdelivery.confirmedbygroupcode
+            new TranslationSeedItem("entity.ecnotificationdelivery.confirmedbygroupcode", "en-US", "确认组编码_us", "确认组编码（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
+            // entity.ecnotificationdelivery.confirmedbygroupcode
+            new TranslationSeedItem("entity.ecnotificationdelivery.confirmedbygroupcode", "ja-JP", "确认组编码_jp", "确认组编码（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
+            // entity.ecnotificationdelivery.confirmedbygroupcode
+            new TranslationSeedItem("entity.ecnotificationdelivery.confirmedbygroupcode", "zh-CN", "确认组编码", "确认组编码（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
+            // entity.ecnotificationdelivery.confirmedbygroupcode
+            new TranslationSeedItem("entity.ecnotificationdelivery.confirmedbygroupcode", "zh-HK", "确认组编码_hk", "确认组编码（选项 TaktEcGroups/options；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
 
-            // entity.ecnotificationdelivery.confirmedbyusername
-            new TranslationSeedItem("entity.ecnotificationdelivery.confirmedbyusername", "en-US", "确认人用户名_us", "确认人用户名"),
-            // entity.ecnotificationdelivery.confirmedbyusername
-            new TranslationSeedItem("entity.ecnotificationdelivery.confirmedbyusername", "ja-JP", "确认人用户名_jp", "确认人用户名"),
-            // entity.ecnotificationdelivery.confirmedbyusername
-            new TranslationSeedItem("entity.ecnotificationdelivery.confirmedbyusername", "zh-CN", "确认人用户名", "确认人用户名"),
-            // entity.ecnotificationdelivery.confirmedbyusername
-            new TranslationSeedItem("entity.ecnotificationdelivery.confirmedbyusername", "zh-HK", "确认人用户名_hk", "确认人用户名"),
+            // entity.ecnotificationdelivery.confirmedbygroupname
+            new TranslationSeedItem("entity.ecnotificationdelivery.confirmedbygroupname", "en-US", "确认组名称_us", "确认组名称（冗余：按 ConfirmedByGroupCode 取 TaktEcGroups.EcGroupName 联动）"),
+            // entity.ecnotificationdelivery.confirmedbygroupname
+            new TranslationSeedItem("entity.ecnotificationdelivery.confirmedbygroupname", "ja-JP", "确认组名称_jp", "确认组名称（冗余：按 ConfirmedByGroupCode 取 TaktEcGroups.EcGroupName 联动）"),
+            // entity.ecnotificationdelivery.confirmedbygroupname
+            new TranslationSeedItem("entity.ecnotificationdelivery.confirmedbygroupname", "zh-CN", "确认组名称", "确认组名称（冗余：按 ConfirmedByGroupCode 取 TaktEcGroups.EcGroupName 联动）"),
+            // entity.ecnotificationdelivery.confirmedbygroupname
+            new TranslationSeedItem("entity.ecnotificationdelivery.confirmedbygroupname", "zh-HK", "确认组名称_hk", "确认组名称（冗余：按 ConfirmedByGroupCode 取 TaktEcGroups.EcGroupName 联动）"),
 
             // entity.ecnotificationdelivery.confirmedat
             new TranslationSeedItem("entity.ecnotificationdelivery.confirmedat", "en-US", "确认时间_us", "确认时间"),

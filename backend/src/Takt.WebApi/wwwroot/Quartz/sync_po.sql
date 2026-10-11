@@ -35,7 +35,8 @@ DECLARE @base_id BIGINT = DATEDIFF_BIG(MICROSECOND, '1970-01-01', @now) * 1000;
 -- {{SourceDatabase}}.dbo.takt_logistics_procurement_purchase_order[_item] → 当前租户库同名表
 -- 主表唯一键：Tenant+Company+Plant+purchase_order_code+supplier_code+order_date(日)
 -- 明细唯一键：purchase_order_id+line_number+material_code
--- 源明细 FK：先按 plant+purchase_order_code 回填 purchase_order_id，再 SH.id=R.purchase_order_id 装入
+-- 源明细装入：SH.id=R.purchase_order_id，并携带 SH.supplier_code+order_date
+-- 目标 FK 回填：#hdr 按 plant+code+supplier+order_date(日) 对齐（与主表唯一键一致；禁止仅 plant+code）
 -- tenant/company/plant/culture 取自各源表本列；任一层为空则丢弃，不回退任务参数
 
 IF OBJECT_ID('tempdb..#hdr') IS NOT NULL DROP TABLE #hdr;
@@ -66,7 +67,7 @@ CREATE TABLE #hdr (
 CREATE TABLE #item (
   [rn] INT, [id] BIGINT, [purchase_order_id] BIGINT,
   [company_code] NVARCHAR(4), [plant_code] NVARCHAR(4), [tenant_code] NVARCHAR(3), [culture_code] NVARCHAR(5),
-  [purchase_order_code] NVARCHAR(20), [line_number] INT,
+  [purchase_order_code] NVARCHAR(20), [supplier_code] NVARCHAR(10), [order_date] DATETIME, [line_number] INT,
   [request_code] NVARCHAR(20), [request_line_number] INT,
   [material_code] NVARCHAR(20), [material_description] NVARCHAR(40), [material_specification] NVARCHAR(70),
   [purchase_unit] NVARCHAR(20),
@@ -342,21 +343,34 @@ WHERE T.[is_deleted]=0
   AND NOT EXISTS (SELECT 1 FROM #hdr S WHERE S.[id]=T.[id]);
 DECLARE @hdr_delete INT = @@ROWCOUNT;
 
--- 源库回填：明细 purchase_order_id → 主表雪花 id
+-- 源库回填：仅当 plant+code 在源主表唯一时才写 purchase_order_id（避免同码多供应商/多日期误绑）
 UPDATE I
-SET I.[purchase_order_id] = H.[id]
+SET I.[purchase_order_id] = U.[id]
 FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_order_item] AS I
-INNER JOIN [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_order] AS H
-  ON LTRIM(RTRIM(H.[purchase_order_code])) = LTRIM(RTRIM(I.[purchase_order_code]))
- AND LEFT(LTRIM(RTRIM(ISNULL(H.[plant_code], N''))), 4)
-   = LEFT(LTRIM(RTRIM(ISNULL(I.[plant_code], N''))), 4)
- AND LEFT(LTRIM(RTRIM(ISNULL(H.[company_code], N''))), 4)
-   = LEFT(LTRIM(RTRIM(ISNULL(I.[company_code], N''))), 4)
-WHERE I.[purchase_order_id] IS NULL OR I.[purchase_order_id] <> H.[id];
+INNER JOIN (
+  SELECT
+    LEFT(LTRIM(RTRIM(ISNULL(H.[company_code], N''))), 4) AS [company_code],
+    LEFT(LTRIM(RTRIM(ISNULL(H.[plant_code], N''))), 4) AS [plant_code],
+    LTRIM(RTRIM(H.[purchase_order_code])) AS [purchase_order_code],
+    MIN(H.[id]) AS [id]
+  FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_order] AS H
+  WHERE LTRIM(RTRIM(ISNULL(H.[purchase_order_code], N''))) <> N''
+    AND LTRIM(RTRIM(ISNULL(H.[plant_code], N''))) <> N''
+  GROUP BY
+    LEFT(LTRIM(RTRIM(ISNULL(H.[company_code], N''))), 4),
+    LEFT(LTRIM(RTRIM(ISNULL(H.[plant_code], N''))), 4),
+    LTRIM(RTRIM(H.[purchase_order_code]))
+  HAVING COUNT(*) = 1
+) AS U
+  ON U.[company_code] = LEFT(LTRIM(RTRIM(ISNULL(I.[company_code], N''))), 4)
+ AND U.[plant_code] = LEFT(LTRIM(RTRIM(ISNULL(I.[plant_code], N''))), 4)
+ AND U.[purchase_order_code] = LTRIM(RTRIM(I.[purchase_order_code]))
+WHERE I.[purchase_order_id] IS NULL OR I.[purchase_order_id] <> U.[id];
 
 INSERT INTO #item
 SELECT S.rn, @base_id+1000000000+S.rn, 0,
-  S.[company_code], S.[plant_code], S.[tenant_code], S.[culture_code], S.[purchase_order_code], S.[line_number],
+  S.[company_code], S.[plant_code], S.[tenant_code], S.[culture_code],
+  S.[purchase_order_code], S.[supplier_code], S.[order_date], S.[line_number],
   S.[request_code], S.[request_line_number],
   S.[material_code], S.[material_description], S.[material_specification],
   S.[purchase_unit], S.[order_quantity], S.[received_quantity],
@@ -368,7 +382,7 @@ SELECT S.rn, @base_id+1000000000+S.rn, 0,
   S.[created_by], S.[created_at], S.[updated_by], S.[updated_at], S.[deleted_by], S.[deleted_at], S.[is_deleted]
 FROM (
   SELECT N.*, ROW_NUMBER() OVER (
-    ORDER BY N.[company_code], N.[plant_code], N.[purchase_order_code], N.[line_number], N.[material_code]
+    ORDER BY N.[company_code], N.[plant_code], N.[purchase_order_code], N.[supplier_code], N.[order_date], N.[line_number], N.[material_code]
   ) AS rn
   FROM (
     SELECT
@@ -377,6 +391,8 @@ FROM (
       LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3) AS [tenant_code],
       LTRIM(RTRIM(ISNULL(R.[culture_code], N''))) AS [culture_code],
       ISNULL(NULLIF(LEFT(LTRIM(RTRIM(R.[purchase_order_code])), 20), N''), N'') AS [purchase_order_code],
+      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(SH.[supplier_code])), 10), N''), N'') AS [supplier_code],
+      ISNULL(TRY_CAST(SH.[order_date] AS DATETIME), CAST(CONVERT(DATE, @now) AS DATETIME)) AS [order_date],
       COALESCE(TRY_CAST(R.[line_number] AS INT), 0) AS [line_number],
       NULLIF(LEFT(LTRIM(RTRIM(R.[request_code])), 20), N'') AS [request_code],
       TRY_CAST(R.[request_line_number] AS INT) AS [request_line_number],
@@ -409,11 +425,19 @@ FROM (
       TRY_CAST(R.[deleted_by] AS BIGINT) AS [deleted_by],
       R.[deleted_at] AS [deleted_at],
       CASE WHEN ISNULL(R.[is_deleted], 0)=0 THEN 0 ELSE 1 END AS [is_deleted],
-            ROW_NUMBER() OVER (
+      ROW_NUMBER() OVER (
         PARTITION BY
+          LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4),
+          LEFT(LTRIM(RTRIM(ISNULL(R.[plant_code], N''))), 4),
           LTRIM(RTRIM(R.[purchase_order_code])),
+          LTRIM(RTRIM(SH.[supplier_code])),
+          CAST(ISNULL(TRY_CAST(SH.[order_date] AS DATETIME), CAST(CONVERT(DATE, @now) AS DATETIME)) AS DATE),
           COALESCE(TRY_CAST(R.[line_number] AS INT), 0),
-          ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[material_code], N''))), 20), N''), N'')
+          CASE
+            WHEN LEN(LTRIM(RTRIM(ISNULL(R.[material_code], N''))))=18 AND LTRIM(RTRIM(R.[material_code])) NOT LIKE '%[^0-9]%'
+            THEN RIGHT(LTRIM(RTRIM(R.[material_code])), 10)
+            ELSE ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[material_code], N''))), 20), N''), N'')
+          END
         ORDER BY COALESCE(TRY_CAST(R.[line_number] AS INT), 0)
       ) AS dup_rn
     FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_order_item] R
@@ -422,6 +446,7 @@ FROM (
     WHERE LTRIM(RTRIM(ISNULL(R.[purchase_order_code], N'')))<>N''
       AND COALESCE(TRY_CAST(R.[line_number] AS INT), 0)>0
       AND LTRIM(RTRIM(ISNULL(R.[plant_code], N'')))<>N''
+      AND LTRIM(RTRIM(ISNULL(SH.[supplier_code], N'')))<>N''
       AND LTRIM(RTRIM(ISNULL(R.[tenant_code], N'')))<>N''
       AND LTRIM(RTRIM(ISNULL(R.[company_code], N'')))<>N''
       AND LTRIM(RTRIM(ISNULL(R.[culture_code], N'')))<>N''
@@ -436,6 +461,8 @@ INNER JOIN #hdr H
   ON H.[company_code]=I.[company_code]
  AND H.[plant_code]=I.[plant_code]
  AND H.[purchase_order_code]=I.[purchase_order_code]
+ AND H.[supplier_code]=I.[supplier_code]
+ AND CAST(H.[order_date] AS DATE)=CAST(I.[order_date] AS DATE)
 LEFT JOIN [takt_logistics_procurement_purchase_order_item] T
   ON T.[tenant_code]=I.[tenant_code] AND T.[company_code]=I.[company_code]
  AND T.[purchase_order_id]=H.[id] AND T.[line_number]=I.[line_number]
@@ -460,19 +487,35 @@ SET @progress_msg = CONCAT(
 RAISERROR(@progress_msg, 10, 1) WITH NOWAIT;
 DECLARE @item_sap_keys INT = (
   SELECT COUNT(*) FROM (
-    SELECT LTRIM(RTRIM(R.[purchase_order_code])) AS [purchase_order_code],
+    SELECT
+      LTRIM(RTRIM(R.[purchase_order_code])) AS [purchase_order_code],
+      LTRIM(RTRIM(SH.[supplier_code])) AS [supplier_code],
+      CAST(ISNULL(TRY_CAST(SH.[order_date] AS DATETIME), CAST(CONVERT(DATE, @now) AS DATETIME)) AS DATE) AS [order_day],
       COALESCE(TRY_CAST(R.[line_number] AS INT),0) AS [line_number],
-      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[material_code], N''))), 20), N''), N'') AS [material_code]
+      CASE
+        WHEN LEN(LTRIM(RTRIM(ISNULL(R.[material_code], N''))))=18 AND LTRIM(RTRIM(R.[material_code])) NOT LIKE '%[^0-9]%'
+        THEN RIGHT(LTRIM(RTRIM(R.[material_code])), 10)
+        ELSE ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[material_code], N''))), 20), N''), N'')
+      END AS [material_code]
     FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_order_item] R
     INNER JOIN [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_order] SH ON SH.[id]=R.[purchase_order_id]
     WHERE LTRIM(RTRIM(ISNULL(R.[purchase_order_code], N'')))<>N''
       AND COALESCE(TRY_CAST(R.[line_number] AS INT),0)>0
       AND LTRIM(RTRIM(ISNULL(R.[plant_code], N'')))<>N''
+      AND LTRIM(RTRIM(ISNULL(SH.[supplier_code], N'')))<>N''
       AND LTRIM(RTRIM(ISNULL(R.[tenant_code], N'')))<>N''
       AND LTRIM(RTRIM(ISNULL(R.[company_code], N'')))<>N''
       AND LTRIM(RTRIM(ISNULL(R.[culture_code], N'')))<>N''
-    GROUP BY LTRIM(RTRIM(R.[purchase_order_code])), COALESCE(TRY_CAST(R.[line_number] AS INT),0),
-      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[material_code], N''))), 20), N''), N'')
+    GROUP BY
+      LTRIM(RTRIM(R.[purchase_order_code])),
+      LTRIM(RTRIM(SH.[supplier_code])),
+      CAST(ISNULL(TRY_CAST(SH.[order_date] AS DATETIME), CAST(CONVERT(DATE, @now) AS DATETIME)) AS DATE),
+      COALESCE(TRY_CAST(R.[line_number] AS INT),0),
+      CASE
+        WHEN LEN(LTRIM(RTRIM(ISNULL(R.[material_code], N''))))=18 AND LTRIM(RTRIM(R.[material_code])) NOT LIKE '%[^0-9]%'
+        THEN RIGHT(LTRIM(RTRIM(R.[material_code])), 10)
+        ELSE ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[material_code], N''))), 20), N''), N'')
+      END
   ) K
 );
 IF @item_source <> @item_sap_keys

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi
 // 文件名称：Program.cs
 // 创建时间：2025-01-20
@@ -41,7 +41,7 @@ Log.Logger = TaktLoggingCollectionExtensions.CreateTaktGlobalLogger(bootstrapCon
 try
 {
     TaktLogger.Information("╔══════════════════════════════════════════════════════════╗");
-    TaktLogger.Information("║          Takt Plat (TDF) 启动中...           ║");
+    TaktLogger.Information("║          TaktWise (TDF) 启动中...            ║");
     TaktLogger.Information("╚══════════════════════════════════════════════════════════╝");
 
     var builder = WebApplication.CreateBuilder(args);
@@ -302,7 +302,7 @@ try
     // 8. 输出启动完成信息
     // ========================================
     TaktLogger.Information("╔══════════════════════════════════════════════════════════╗");
-    TaktLogger.Information("║              Takt Plat 启动成功！             ║");
+    TaktLogger.Information("║              TaktWise 启动成功！              ║");
     TaktLogger.Information("╠══════════════════════════════════════════════════════════╣");
     TaktLogger.Information("║  环境: {Environment,-42} ║", app.Environment.EnvironmentName);
     TaktLogger.Information("║  时间: {Timestamp,-42} ║", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));

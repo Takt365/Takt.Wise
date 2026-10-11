@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcDetailService.cs
 // 创建时间：2026-08-22
@@ -416,6 +416,7 @@ public class TaktEcDetailService : TaktServiceBase, ITaktEcDetailService
         // 冗余：始终由主表带入，禁止客户端默认值
         entity.EcCode = master.EcCode;
         entity.EcScope = master.EcScope;
+        entity.EcDeptScope = master.EcDeptScope;
     }
     // ========================================
     // 查询表达式

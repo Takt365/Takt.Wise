@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Helpers
 // 文件名称：TaktRegexHelper.cs
 // 功能描述：通用正则与格式验证（与前端 regex.ts 对齐）。
@@ -42,9 +42,19 @@ public static class TaktRegexHelper
     public const int NickNameMinLength = 2;
 
     /// <summary>
-    /// 用户昵称最大长度（与 TaktUser.NickName nvarchar(40) 一致）。
+    /// 用户昵称最大长度（与 TaktUser.NickName nvarchar(20) 一致）。
     /// </summary>
-    public const int NickNameMaxLength = 40;
+    public const int NickNameMaxLength = 20;
+
+    /// <summary>
+    /// 员工姓名最小长度。
+    /// </summary>
+    public const int EmployeeNameMinLength = 2;
+
+    /// <summary>
+    /// 员工姓名最大长度（与 TaktEmployee.EmployeeName nvarchar(80) 一致）。
+    /// </summary>
+    public const int EmployeeNameMaxLength = 80;
 
     /// <summary>
     /// 中国大陆手机号位数。
@@ -167,9 +177,9 @@ public static class TaktRegexHelper
     /// </summary>
     public static readonly Regex UserName = new(@"^[a-z][a-z0-9]{3,19}$", Opt);
     /// <summary>
-    /// 登录账号（小写字母开头，5-20 位，与前端 RegexPatterns.LOGIN_USER_NAME 对齐）。
+    /// 登录账号（小写字母开头，4-20 位，与 UserName / 前端 RegexPatterns.LOGIN_USER_NAME / 种子用户 demo 对齐）。
     /// </summary>
-    public static readonly Regex LoginUserName = new(@"^[a-z][a-z0-9]{4,19}$", Opt);
+    public static readonly Regex LoginUserName = new(@"^[a-z][a-z0-9]{3,19}$", Opt);
     /// <summary>
     /// 租户编码（3 位数字，与前端 RegexPatterns.TENANT_CODE 对齐）。
     /// </summary>
@@ -183,9 +193,13 @@ public static class TaktRegexHelper
     /// </summary>
     public static readonly Regex FullName = new(@"^[\u4e00-\u9fa5a-zA-Z0-9\s.\-]{2,100}$", Opt);
     /// <summary>
-    /// 昵称（中文、英文、数字、下划线、横线、点，2-40 位）。
+    /// 昵称（中文、英文、数字、下划线、横线、点，2-20 位）。
     /// </summary>
-    public static readonly Regex NickName = new(@"^[\u4e00-\u9fa5a-zA-Z0-9_.-]{2,40}$", Opt);
+    public static readonly Regex NickName = new(@"^[\u4e00-\u9fa5a-zA-Z0-9_.-]{2,20}$", Opt);
+    /// <summary>
+    /// 员工姓名（中文、英文、数字、空格、点、横线，2-80 位；与 TaktEmployee.EmployeeName 对齐）。
+    /// </summary>
+    public static readonly Regex EmployeeName = new(@"^[\u4e00-\u9fa5a-zA-Z0-9\s.\-]{2,80}$", Opt);
     /// <summary>
     /// 英文名（字母开头结尾，可含数字、空格、点、横线、单引号）。
     /// </summary>
@@ -578,7 +592,7 @@ public static class TaktRegexHelper
         => IsValidPhoneByCulture(value, cultureCode);
 
     /// <summary>
-    /// 是否为有效登录账号（5-20 位小写字母开头）。
+    /// 是否为有效登录账号（4-20 位小写字母开头）。
     /// </summary>
     public static bool IsValidLoginUserName(string? value) => IsMatch(LoginUserName, value);
 
@@ -588,7 +602,7 @@ public static class TaktRegexHelper
     public static bool IsValidTenantCode(string? value) => IsMatch(TenantCode, value);
 
     /// <summary>
-    /// 是否为有效用户昵称（可为空；非空时 2–40 位且符合 NickName）。
+    /// 是否为有效用户昵称（可为空；非空时 2–20 位且符合 NickName）。
     /// </summary>
     public static bool IsValidUserNickName(string? value)
     {
@@ -599,6 +613,11 @@ public static class TaktRegexHelper
 
         return IsMatch(NickName, value);
     }
+
+    /// <summary>
+    /// 是否为有效员工姓名（非空时 2–80 位且符合 EmployeeName）。
+    /// </summary>
+    public static bool IsValidEmployeeName(string? value) => IsMatch(EmployeeName, value);
 
     /// <summary>
     /// 是否为有效用户名。

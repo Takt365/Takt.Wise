@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcNotificationI18nSeedData.cs
-// 创建时间：2026-09-10
+// 创建时间：2026-10-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEcNotification 实体字段国际化种子（已对齐前端 locales：src/locales/logistics/manufacturing/engineering-change/ec-notification）
 // 
@@ -91,13 +91,13 @@ public class TaktEcNotificationI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecnotification._self", "zh-HK", "工程变更通知单信息_hk", "实体名称"),
 
             // entity.ecnotification.code
-            new TranslationSeedItem("entity.ecnotification.code", "en-US", "通知单号_us", "通知单号（唯一，如：EC-2026-0001）"),
+            new TranslationSeedItem("entity.ecnotification.code", "en-US", "通知单号_us", "通知单号（按通知方式经编码规则生成）"),
             // entity.ecnotification.code
-            new TranslationSeedItem("entity.ecnotification.code", "ja-JP", "通知单号_jp", "通知单号（唯一，如：EC-2026-0001）"),
+            new TranslationSeedItem("entity.ecnotification.code", "ja-JP", "通知单号_jp", "通知单号（按通知方式经编码规则生成）"),
             // entity.ecnotification.code
-            new TranslationSeedItem("entity.ecnotification.code", "zh-CN", "通知单号", "通知单号（唯一，如：EC-2026-0001）"),
+            new TranslationSeedItem("entity.ecnotification.code", "zh-CN", "通知单号", "通知单号（按通知方式经编码规则生成）"),
             // entity.ecnotification.code
-            new TranslationSeedItem("entity.ecnotification.code", "zh-HK", "通知单号_hk", "通知单号（唯一，如：EC-2026-0001）"),
+            new TranslationSeedItem("entity.ecnotification.code", "zh-HK", "通知单号_hk", "通知单号（按通知方式经编码规则生成）"),
 
             // entity.ecnotification.ecgijutsuid
             new TranslationSeedItem("entity.ecnotification.ecgijutsuid", "en-US", "技术课主表ID_us", "技术课主表 ID（TaktEcGijutsu 主键；序列化为 string 避免 Javascript 精度问题）"),
@@ -136,40 +136,40 @@ public class TaktEcNotificationI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecnotification.date", "zh-HK", "通知日期_hk", "通知日期"),
 
             // entity.ecnotification.deptcodes
-            new TranslationSeedItem("entity.ecnotification.deptcodes", "en-US", "通知部门编码_us", "通知部门编码（多个部门用逗号分隔，如：Assy,PCBA,QC）"),
+            new TranslationSeedItem("entity.ecnotification.deptcodes", "en-US", "通知部门组编码_us", "通知部门编码（多选，逗号分隔；选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1；联动 TaktEcGroups/options?ecGroupCategory=；Length=500 容纳多个 6 位编码）"),
             // entity.ecnotification.deptcodes
-            new TranslationSeedItem("entity.ecnotification.deptcodes", "ja-JP", "通知部门编码_jp", "通知部门编码（多个部门用逗号分隔，如：Assy,PCBA,QC）"),
+            new TranslationSeedItem("entity.ecnotification.deptcodes", "ja-JP", "通知部门组编码_jp", "通知部门编码（多选，逗号分隔；选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1；联动 TaktEcGroups/options?ecGroupCategory=；Length=500 容纳多个 6 位编码）"),
             // entity.ecnotification.deptcodes
-            new TranslationSeedItem("entity.ecnotification.deptcodes", "zh-CN", "通知部门编码", "通知部门编码（多个部门用逗号分隔，如：Assy,PCBA,QC）"),
+            new TranslationSeedItem("entity.ecnotification.deptcodes", "zh-CN", "通知部门组编码", "通知部门编码（多选，逗号分隔；选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1；联动 TaktEcGroups/options?ecGroupCategory=；Length=500 容纳多个 6 位编码）"),
             // entity.ecnotification.deptcodes
-            new TranslationSeedItem("entity.ecnotification.deptcodes", "zh-HK", "通知部门编码_hk", "通知部门编码（多个部门用逗号分隔，如：Assy,PCBA,QC）"),
+            new TranslationSeedItem("entity.ecnotification.deptcodes", "zh-HK", "通知部门组编码_hk", "通知部门编码（多选，逗号分隔；选项 TaktDepts/options；DictValue=DeptCode，DictLabel=DeptName1；联动 TaktEcGroups/options?ecGroupCategory=；Length=500 容纳多个 6 位编码）"),
 
             // entity.ecnotification.deptnames
-            new TranslationSeedItem("entity.ecnotification.deptnames", "en-US", "通知部门名称_us", "通知部门名称（多个部门用逗号分隔）"),
+            new TranslationSeedItem("entity.ecnotification.deptnames", "en-US", "通知部门组名称_us", "通知部门名称（多选，逗号分隔，与编码同序；冗余：按 EcNotificationDeptCodes 取 TaktDept.DeptName1 联动；Length=500）"),
             // entity.ecnotification.deptnames
-            new TranslationSeedItem("entity.ecnotification.deptnames", "ja-JP", "通知部门名称_jp", "通知部门名称（多个部门用逗号分隔）"),
+            new TranslationSeedItem("entity.ecnotification.deptnames", "ja-JP", "通知部门组名称_jp", "通知部门名称（多选，逗号分隔，与编码同序；冗余：按 EcNotificationDeptCodes 取 TaktDept.DeptName1 联动；Length=500）"),
             // entity.ecnotification.deptnames
-            new TranslationSeedItem("entity.ecnotification.deptnames", "zh-CN", "通知部门名称", "通知部门名称（多个部门用逗号分隔）"),
+            new TranslationSeedItem("entity.ecnotification.deptnames", "zh-CN", "通知部门组名称", "通知部门名称（多选，逗号分隔，与编码同序；冗余：按 EcNotificationDeptCodes 取 TaktDept.DeptName1 联动；Length=500）"),
             // entity.ecnotification.deptnames
-            new TranslationSeedItem("entity.ecnotification.deptnames", "zh-HK", "通知部门名称_hk", "通知部门名称（多个部门用逗号分隔）"),
+            new TranslationSeedItem("entity.ecnotification.deptnames", "zh-HK", "通知部门组名称_hk", "通知部门名称（多选，逗号分隔，与编码同序；冗余：按 EcNotificationDeptCodes 取 TaktDept.DeptName1 联动；Length=500）"),
 
-            // entity.ecnotification.notifierid
-            new TranslationSeedItem("entity.ecnotification.notifierid", "en-US", "通知人ID_us", "通知人ID（序列化为string以避免Javascript精度问题）"),
-            // entity.ecnotification.notifierid
-            new TranslationSeedItem("entity.ecnotification.notifierid", "ja-JP", "通知人ID_jp", "通知人ID（序列化为string以避免Javascript精度问题）"),
-            // entity.ecnotification.notifierid
-            new TranslationSeedItem("entity.ecnotification.notifierid", "zh-CN", "通知人ID", "通知人ID（序列化为string以避免Javascript精度问题）"),
-            // entity.ecnotification.notifierid
-            new TranslationSeedItem("entity.ecnotification.notifierid", "zh-HK", "通知人ID_hk", "通知人ID（序列化为string以避免Javascript精度问题）"),
+            // entity.ecnotification.notifiergroupcode
+            new TranslationSeedItem("entity.ecnotification.notifiergroupcode", "en-US", "通知组编码_us", "通知组编码（多选，逗号分隔；选项 TaktEcGroups/options?ecGroupCategory=EcNotificationDeptCodes；DictValue=EcGroupCode，DictLabel=EcGroupName；Length=500 容纳多个 6 位编码）"),
+            // entity.ecnotification.notifiergroupcode
+            new TranslationSeedItem("entity.ecnotification.notifiergroupcode", "ja-JP", "通知组编码_jp", "通知组编码（多选，逗号分隔；选项 TaktEcGroups/options?ecGroupCategory=EcNotificationDeptCodes；DictValue=EcGroupCode，DictLabel=EcGroupName；Length=500 容纳多个 6 位编码）"),
+            // entity.ecnotification.notifiergroupcode
+            new TranslationSeedItem("entity.ecnotification.notifiergroupcode", "zh-CN", "通知组编码", "通知组编码（多选，逗号分隔；选项 TaktEcGroups/options?ecGroupCategory=EcNotificationDeptCodes；DictValue=EcGroupCode，DictLabel=EcGroupName；Length=500 容纳多个 6 位编码）"),
+            // entity.ecnotification.notifiergroupcode
+            new TranslationSeedItem("entity.ecnotification.notifiergroupcode", "zh-HK", "通知组编码_hk", "通知组编码（多选，逗号分隔；选项 TaktEcGroups/options?ecGroupCategory=EcNotificationDeptCodes；DictValue=EcGroupCode，DictLabel=EcGroupName；Length=500 容纳多个 6 位编码）"),
 
-            // entity.ecnotification.notifiername
-            new TranslationSeedItem("entity.ecnotification.notifiername", "en-US", "通知人姓名_us", "通知人姓名"),
-            // entity.ecnotification.notifiername
-            new TranslationSeedItem("entity.ecnotification.notifiername", "ja-JP", "通知人姓名_jp", "通知人姓名"),
-            // entity.ecnotification.notifiername
-            new TranslationSeedItem("entity.ecnotification.notifiername", "zh-CN", "通知人姓名", "通知人姓名"),
-            // entity.ecnotification.notifiername
-            new TranslationSeedItem("entity.ecnotification.notifiername", "zh-HK", "通知人姓名_hk", "通知人姓名"),
+            // entity.ecnotification.notifiergroupname
+            new TranslationSeedItem("entity.ecnotification.notifiergroupname", "en-US", "通知组名称_us", "通知组名称（多选，逗号分隔，与编码同序；冗余：按 EcNotificationNotifierGroupCode 取 TaktEcGroups.EcGroupName 联动；Length=500）"),
+            // entity.ecnotification.notifiergroupname
+            new TranslationSeedItem("entity.ecnotification.notifiergroupname", "ja-JP", "通知组名称_jp", "通知组名称（多选，逗号分隔，与编码同序；冗余：按 EcNotificationNotifierGroupCode 取 TaktEcGroups.EcGroupName 联动；Length=500）"),
+            // entity.ecnotification.notifiergroupname
+            new TranslationSeedItem("entity.ecnotification.notifiergroupname", "zh-CN", "通知组名称", "通知组名称（多选，逗号分隔，与编码同序；冗余：按 EcNotificationNotifierGroupCode 取 TaktEcGroups.EcGroupName 联动；Length=500）"),
+            // entity.ecnotification.notifiergroupname
+            new TranslationSeedItem("entity.ecnotification.notifiergroupname", "zh-HK", "通知组名称_hk", "通知组名称（多选，逗号分隔，与编码同序；冗余：按 EcNotificationNotifierGroupCode 取 TaktEcGroups.EcGroupName 联动；Length=500）"),
 
             // entity.ecnotification.method
             new TranslationSeedItem("entity.ecnotification.method", "en-US", "通知方式_us", "通知方式（1=系统通知 2=邮件 3=纸质 4=会议）"),

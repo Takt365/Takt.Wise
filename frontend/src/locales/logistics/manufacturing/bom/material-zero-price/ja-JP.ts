@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/locales/logistics/manufacturing/bom/material-zero-price
 // 文件名称：ja-JP.ts
 // 创建时间：2026-08-13
@@ -30,10 +30,10 @@ export default {
     costSum: 'コスト計算',
     costRecalculate: '再計算コスト',
     costAverage: '平均コスト計算',
-    purchasePriceBackfill: '購買価格補完',
-    purchasePriceBackfillSuccess:
+    purchaseInfoRecordBackfill: '購買価格補完',
+    purchaseInfoRecordBackfillSuccess:
       '{month} 購買価格補完完了：スキャン {scanned}、更新 {updated}、価格なし {skipped}、変更なし {unchanged}',
-    purchasePriceBackfillFailed: '購買価格補完に失敗しました',
+    purchaseInfoRecordBackfillFailed: '購買価格補完に失敗しました',
     movingPriceBackfill: '移動価格を補完',
     movingPriceBackfillBatch: '移動価格を一括補完',
     movingPriceBackfillRow: '移動価格を補完',
@@ -84,5 +84,12 @@ export default {
     pcbSectMarkSuccess:
       '{month} PCB SECT 標記完了：スキャン {scanned}、ツリー {pcbSect}、新規 {updated}、既存 {unchanged}',
     pcbSectMarkFailed: 'PCB SECT 標記に失敗しました',
+    stripLeadingZeros: '先頭0を除去',
+    stripLeadingZerosConfirmTitle: '先頭の 0 を除去しますか？',
+    stripLeadingZerosConfirmContent:
+      '工場 {plant} の原価ヘッダの製品コード、および明細（年次表を含む）の製品コード・部品コードのうち、数字のみで先頭が 0 の値から先頭 0 を除きます。例：000000001918610130 → 1918610130。0919MH8G93 のように文字を含むコードは変更しません。一意キーが衝突する行はスキップします。',
+    stripLeadingZerosSuccess:
+      '先頭 0 の除去完了：ヘッダ製品 {headerProduct}、明細製品 {itemProduct}、明細部品 {itemComponent}、衝突スキップ {skipped}',
+    stripLeadingZerosFailed: '先頭 0 の除去に失敗しました',
   },
 }

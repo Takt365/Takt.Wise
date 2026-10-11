@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/output/production-changeover -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：生产切换记录实体管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -414,26 +414,25 @@
  * 生产切换记录实体管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/output/production-changeover
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import ProductionChangeoverForm from './components/production-changeover-form.vue'
-import { getProductionChangeoverList, getProductionChangeoverById, createProductionChangeover, updateProductionChangeover, deleteProductionChangeoverById, deleteProductionChangeoverBatch, getProductionChangeoverTemplate, importProductionChangeover, exportProductionChangeover } from '@/api/logistics/manufacturing/output/production-changeover'
-import type { ProductionChangeover, ProductionChangeoverQuery } from '@/types/logistics/manufacturing/output/production-changeover'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import ProductionChangeoverForm from './components/ProductionChangeoverForm.vue'
+import { getProductionChangeoverList, getProductionChangeoverById, createProductionChangeover, updateProductionChangeover, deleteProductionChangeoverById, deleteProductionChangeoverBatch, getProductionChangeoverTemplate, importProductionChangeover, exportProductionChangeover } from '@/api/logistics/manufacturing/output/productionChangeover.api'
+import type { ProductionChangeover, ProductionChangeoverQuery } from '@/types/logistics/manufacturing/output/productionChangeover.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 import {
   getOutputProdDateYmdFromRecord,
   isOutputProdDateLocked,
-} from '../composables/takt-output-prod-date-edit-lock'
-import { useOutputProdDateI18n } from '../composables/use-output-prod-date-i18n'
+} from '../composables/taktOutputProdDateEditLock'
+import { useOutputProdDateI18n } from '../composables/useOutputProdDateI18n'
 
 import {
   useProductionChangeoverI18n,
@@ -441,7 +440,7 @@ import {
   PRODUCTIONCHANGEOVER_QUERY_STRING_FIELDS,
   PRODUCTIONCHANGEOVER_QUERY_FIELDS,
   PRODUCTIONCHANGEOVER_SELF_I18N_KEY,
-} from './composables/use-production-changeover-i18n'
+} from './composables/useProductionChangeoverI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useProductionChangeoverI18n()

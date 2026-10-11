@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：scripts
 // 文件名称：generate-script-common.cjs
 // 创建时间：2026-05-23
@@ -853,7 +853,7 @@ function resolveTaktModuleInt(moduleName) {
 }
 
 /**
- * 三个实体基类字段（与 frontend/src/utils/table-columns.ts ENTITY_BASE_FIELDS 保持同步，不含 id）
+ * 三个实体基类字段（与 frontend/src/utils/tableColumns.ts ENTITY_BASE_FIELDS 保持同步，不含 id）
  */
 const TENANT_CORE_AUDIT_FIELDS = [
   'tenantCode', 'ExtField', 'remark',
@@ -966,6 +966,147 @@ function resolveFrontendOutputRelPath(modulePath, fileKebab) {
     file,
     importPath: `${modulePath}/${file}`,
   };
+}
+
+/**
+ * kebab-case → camelCase（api/types 文件主名）
+ * @param {string} kebab
+ * @returns {string}
+ */
+function kebabToCamel(kebab) {
+  const parts = String(kebab || '')
+    .split(/[-_/]/)
+    .filter(Boolean);
+  if (!parts.length) {
+    return '';
+  }
+  return (
+    parts[0].toLowerCase() +
+    parts
+      .slice(1)
+      .map((s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
+      .join('')
+  );
+}
+
+/**
+ * camelCase → kebab-case
+ * @param {string} camel
+ * @returns {string}
+ */
+function camelToKebab(camel) {
+  return String(camel || '')
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/_/g, '-')
+    .toLowerCase();
+}
+
+/**
+ * 规范化实体文件主名（kebab 或 camel → camelCase；去掉误加的 Api / .api / .types 后缀）
+ * @param {string} stem
+ * @returns {string}
+ */
+function toFrontendEntityFileCamel(stem) {
+  let s = String(stem || '').replace(/\\/g, '/').split('/').pop() || '';
+  // 先剥完整扩展名，再剥残留的 .api / .types（resolveModuleContext 曾只去 .ts 留下 announcement.api）
+  s = s
+    .replace(/\.d\.ts$/i, '')
+    .replace(/\.types\.ts$/i, '')
+    .replace(/\.api\.ts$/i, '')
+    .replace(/\.ts$/i, '')
+    .replace(/\.types$/i, '')
+    .replace(/\.api$/i, '');
+  // 兼容「announcement.api」被 Api$ 剥成「announcement.」的历史坏输入
+  s = s.replace(/\.+$/g, '');
+  s = s.replace(/Types$/i, '').replace(/Api$/i, '');
+  s = s.replace(/\.+$/g, '').trim();
+  if (!s) {
+    return '';
+  }
+  if (/[-_]/.test(s)) {
+    return kebabToCamel(s);
+  }
+  return s;
+}
+
+/**
+ * 实体 kebab/camel → API 文件名（含扩展名）：`user.api.ts`（不以 Api 重复缀主名）
+ * @param {string} fileKebabOrCamel
+ * @returns {string}
+ */
+function toFrontendApiFileName(fileKebabOrCamel) {
+  return `${toFrontendEntityFileCamel(fileKebabOrCamel)}.api.ts`;
+}
+
+/**
+ * 实体 kebab/camel → types 文件名（含扩展名）：`user.types.ts`
+ * @param {string} fileKebabOrCamel
+ * @returns {string}
+ */
+function toFrontendTypesFileName(fileKebabOrCamel) {
+  return `${toFrontendEntityFileCamel(fileKebabOrCamel)}.types.ts`;
+}
+
+/**
+ * resolveFrontendOutputRelPath.importPath（kebab）→ API import 路径
+ * @param {string} importPath 如 identity/user
+ * @returns {string} identity/user.api
+ */
+function toFrontendApiImportPath(importPath) {
+  const normalized = String(importPath || '').replace(/\\/g, '/').replace(/^\//, '');
+  const parts = normalized.split('/').filter(Boolean);
+  const file = parts.pop() || '';
+  const camel = toFrontendEntityFileCamel(file);
+  return [...parts, `${camel}.api`].join('/');
+}
+
+/**
+ * resolveFrontendOutputRelPath.importPath（kebab）→ types import 路径
+ * @param {string} importPath 如 identity/user
+ * @returns {string} identity/user.types
+ */
+function toFrontendTypesImportPath(importPath) {
+  const normalized = String(importPath || '').replace(/\\/g, '/').replace(/^\//, '');
+  const parts = normalized.split('/').filter(Boolean);
+  const file = parts.pop() || '';
+  const camel = toFrontendEntityFileCamel(file);
+  return [...parts, `${camel}.types`].join('/');
+}
+
+/**
+ * 从 types 文件名解析实体 camel（user.types.ts → user）
+ * @param {string} fileName
+ * @returns {string}
+ */
+function parseFrontendTypesFileCamel(fileName) {
+  return toFrontendEntityFileCamel(path.basename(String(fileName || '')));
+}
+
+/**
+ * 从 API 文件名解析实体 camel（user.api.ts → user）
+ * @param {string} fileName
+ * @returns {string}
+ */
+function parseFrontendApiFileCamel(fileName) {
+  return toFrontendEntityFileCamel(path.basename(String(fileName || '')));
+}
+
+/**
+ * 实体短名（Pascal）→ API import 尾段
+ * @param {string} entityPascal
+ * @returns {string} user.api
+ */
+function entityPascalToApiImportTail(entityPascal) {
+  return `${pascalToCamel(entityPascal)}.api`;
+}
+
+/**
+ * 实体短名（Pascal）→ types import 尾段
+ * @param {string} entityPascal
+ * @returns {string} user.types
+ */
+function entityPascalToTypesImportTail(entityPascal) {
+  return `${pascalToCamel(entityPascal)}.types`;
 }
 
 /**
@@ -1169,6 +1310,17 @@ module.exports = {
   isModuleLeafSameAsEntityKebab,
   resolveViewModulePath,
   resolveFrontendOutputRelPath,
+  kebabToCamel,
+  camelToKebab,
+  toFrontendEntityFileCamel,
+  toFrontendApiFileName,
+  toFrontendTypesFileName,
+  toFrontendApiImportPath,
+  toFrontendTypesImportPath,
+  parseFrontendTypesFileCamel,
+  parseFrontendApiFileCamel,
+  entityPascalToApiImportTail,
+  entityPascalToTypesImportTail,
   entityShortToPermissionSlug,
   dedupePermissionEntitySlugAgainstModule,
   PERMISSION_PATH_PART_ALIASES,

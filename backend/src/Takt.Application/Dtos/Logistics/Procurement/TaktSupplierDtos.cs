@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Procurement
 // 文件名称：TaktSupplierDtos.cs
 // 创建时间：2026-08-23
@@ -211,7 +211,7 @@ public class TaktSupplierDto : TaktCompanyDtoBase
     public int AutomaticPurchaseOrder { get; set; } = 0;
 
     /// <summary>
-    /// 定价日期控制（字典 logistics_procurement_pricing_date_control；1=采购订单日期，2=交货日期，3=当前日期，4=手动，5=收货日期；默认 1）
+    /// 定价日期控制（字典 logistics_procurement_pricing_date_control；1=订单日期，2=交货日期，3=当前日期，4=手动，5=收货日期；默认 1）
     /// </summary>
     public int PricingDateControl { get; set; } = 0;
 
@@ -463,7 +463,7 @@ public class TaktSupplierQueryDto : TaktPagedQuery
     public int? AutomaticPurchaseOrder { get; set; }
 
     /// <summary>
-    /// 定价日期控制（字典 logistics_procurement_pricing_date_control；1=采购订单日期，2=交货日期，3=当前日期，4=手动，5=收货日期；默认 1）
+    /// 定价日期控制（字典 logistics_procurement_pricing_date_control；1=订单日期，2=交货日期，3=当前日期，4=手动，5=收货日期；默认 1）
     /// </summary>
     public int? PricingDateControl { get; set; }
 
@@ -746,7 +746,7 @@ public class TaktSupplierCreateDto
     public int AutomaticPurchaseOrder { get; set; } = 0;
 
     /// <summary>
-    /// 定价日期控制（字典 logistics_procurement_pricing_date_control；1=采购订单日期，2=交货日期，3=当前日期，4=手动，5=收货日期；默认 1）
+    /// 定价日期控制（字典 logistics_procurement_pricing_date_control；1=订单日期，2=交货日期，3=当前日期，4=手动，5=收货日期；默认 1）
     /// </summary>
     public int PricingDateControl { get; set; } = 0;
 
@@ -1072,7 +1072,7 @@ public class TaktSupplierTemplateDto
     public int? AutomaticPurchaseOrder { get; set; }
 
     /// <summary>
-    /// 定价日期控制（字典 logistics_procurement_pricing_date_control；1=采购订单日期，2=交货日期，3=当前日期，4=手动，5=收货日期；默认 1）
+    /// 定价日期控制（字典 logistics_procurement_pricing_date_control；1=订单日期，2=交货日期，3=当前日期，4=手动，5=收货日期；默认 1）
     /// </summary>
     public int? PricingDateControl { get; set; }
 
@@ -1324,7 +1324,7 @@ public class TaktSupplierImportDto
     public int? AutomaticPurchaseOrder { get; set; }
 
     /// <summary>
-    /// 定价日期控制（字典 logistics_procurement_pricing_date_control；1=采购订单日期，2=交货日期，3=当前日期，4=手动，5=收货日期；默认 1）
+    /// 定价日期控制（字典 logistics_procurement_pricing_date_control；1=订单日期，2=交货日期，3=当前日期，4=手动，5=收货日期；默认 1）
     /// </summary>
     public int? PricingDateControl { get; set; }
 
@@ -1582,7 +1582,7 @@ public class TaktSupplierExportDto
     public int AutomaticPurchaseOrder { get; set; } = 0;
 
     /// <summary>
-    /// 定价日期控制（字典 logistics_procurement_pricing_date_control；1=采购订单日期，2=交货日期，3=当前日期，4=手动，5=收货日期；默认 1）
+    /// 定价日期控制（字典 logistics_procurement_pricing_date_control；1=订单日期，2=交货日期，3=当前日期，4=手动，5=收货日期；默认 1）
     /// </summary>
     public int PricingDateControl { get; set; } = 0;
 

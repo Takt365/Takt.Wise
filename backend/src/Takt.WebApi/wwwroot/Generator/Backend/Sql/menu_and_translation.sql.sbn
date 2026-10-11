@@ -1,5 +1,5 @@
 -- ========================================
--- 项目名称：节拍工厂·Takt Plat (TDF)
+-- 项目名称：节拍智控·TaktWise (TDF)
 -- 文件名称：menu_and_translation.sql
 -- 功能描述：根据 IsGenMenu、IsGenTranslation 生成菜单与翻译 SQL（租户隔离：TenantCode，无 ConfigId）
 -- 数据源格式：table.data_source =「数据库名:TenantCode」，如 Takt_000_Dev:000

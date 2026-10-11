@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：scripts
 // 文件名称：generate-vue-tree-from-api.cjs
 // 创建时间：2026-06-08
@@ -60,6 +60,7 @@ const {
   buildEntityI18nFormImportBlock,
   buildAdvancedQueryFactoryBlock,
   entityRowRecordTypeName,
+  toFrontendEntityFileCamel,
 } = require('./generate-vue-common.cjs');
 
 /**
@@ -433,7 +434,7 @@ ${dictBodyCellExtra}
     queryFields: fields.queryFields,
   });
   return `<!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/${viewModulePath} -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：${comment}树表管理页（仅 tree API；右表选中后展示子孙），由 generate-vue-tree-from-api.cjs 自动生成 -->
@@ -574,10 +575,9 @@ ${importBlock}
  * ${comment}树表管理页 · 左树选中后右表展示该节点+直接子级（更深展开懒加载）；默认右表为空
  * @module views/${viewModulePath}
  */
-import { ref, computed, watch, watchEffect, onMounted, nextTick } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
 import {
   filterTaktTreeTableNodes,
@@ -587,18 +587,18 @@ import {
   taktTreeExpandedKeysEqual,
   taktTreeTableNodeKey,
   type TaktTreeTableNode,
-} from '@/utils/takt-tree-table'
-import { useTableRefresh } from '@/composables/use-table-refresh'
+} from '@/utils/taktTreeTable'
+import { useTableRefresh } from '@/composables/useTableRefresh'
 ${(caps.hasCreate || caps.hasUpdate) ? TAKT_FORM_MODAL_WIDTH_IMPORT : ''}import {
   mapLazyTreeNodes,
   mergeLoadedChildren,
   taktIsLeafFlag,
   type TaktLazyTreeNode,
-} from '@/composables/use-lazy-tree'
-${(caps.hasCreate || caps.hasUpdate) ? `import ${entityPascal}Form from './components/${viewEntityKebab}-form.vue'\n` : ''}import { ${importApiNames.join(', ')} } from '@/api/${modulePath}/${entityKebab}'
-import type { ${entityPascal}, ${caps.entityTreeType}, ${entityPascal}Update } from '@/types/${modulePath}/${entityKebab}'
-import type { TreeDropPayload } from '@/components/business/takt-tree-left-table/index.vue'
-${indexDictImport}${(caps.hasImport || caps.hasExport) ? "import { taktExcelEntityNames } from '@/utils/naming'\n" : ''}${caps.hasExport ? "import { resolveExportDownloadFileName } from '@/utils/export-download-name'\n" : ''}${(caps.hasImport && caps.hasGetTemplate) ? buildVueImportResultUtilImportLine() : ''}${remixIconImport}${needsUserStoreForTreeDrop ? "import { useUserStore } from '@/stores/identity/user'\n" : ''}
+} from '@/composables/useLazyTree'
+${(caps.hasCreate || caps.hasUpdate) ? `import ${entityPascal}Form from './components/${entityPascal}Form.vue'\n` : ''}import { ${importApiNames.join(', ')} } from '@/api/${modulePath}/${toFrontendEntityFileCamel(entityKebab)}.api'
+import type { ${entityPascal}, ${caps.entityTreeType}, ${entityPascal}Update } from '@/types/${modulePath}/${toFrontendEntityFileCamel(entityKebab)}.types'
+import type { TreeDropPayload } from '@/components/business/TaktTreeLeftTable/index.vue'
+${indexDictImport}${(caps.hasImport || caps.hasExport) ? "import { taktExcelEntityNames } from '@/utils/naming'\n" : ''}${caps.hasExport ? "import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'\n" : ''}${(caps.hasImport && caps.hasGetTemplate) ? buildVueImportResultUtilImportLine() : ''}${remixIconImport}${needsUserStoreForTreeDrop ? "import { useUserStore } from '@/stores/identity/useUserStore'\n" : ''}
 ${entityI18nIndexImport}
 ${treeStateBlock}
 ${indexDictSetup}
@@ -1355,9 +1355,6 @@ function generateTreeFormBase(ctx) {
     hasMasterDetail,
   });
   const formContentClassExpr = buildFormContentClassComputedExpr();
-  const needsTaktSelect = treeFormFields.some((f) => f.htmlType === 'select' && f.dictType)
-    || treeFormFields.some((f) => f.htmlType === 'apiSelect' || f.htmlType === 'numberingRule')
-    || mdFormParts.needsTaktSelect;
   const masterDetailChildren = fields.masterDetailChildren || [];
   const hasScopeContextFields = hasScopeContextFormFields(treeFormFields, masterDetailChildren);
   const scopePresence = resolveScopeFormFieldPresence(treeFormFields, masterDetailChildren);
@@ -1378,9 +1375,7 @@ function generateTreeFormBase(ctx) {
   const resetChildRows = hasMasterDetail
     ? (fields.masterDetailChildren || []).map((c) => `  child${c.childPascal}Rows.value = []`).join('\n')
     : '';
-  const taktSelectImport = needsTaktSelect
-    ? "import TaktSelect from '@/components/business/takt-select/index.vue'\n"
-    : '';
+  // TaktSelect 等业务 SFC：unplugin-vue-components 自动注册，禁止手写 import
   const extFieldIconImport = buildExtFieldIconImportLine(treeFormFields);
   const formScriptFragments = buildGeneratedFormVueScriptFragments({
     formFields: treeFormFields,
@@ -1401,9 +1396,9 @@ function generateTreeFormBase(ctx) {
     entityIdField,
   });
   return `<!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/${viewModulePath}/components -->
-<!-- 文件名称：${viewEntityKebab}-form.vue -->
+<!-- 文件名称：${entityPascal}Form.vue -->
 <!-- 功能描述：${comment}维护弹窗内嵌表单。由 ${generatorScript} 根据 types/api 自动生成；defineExpose 提供 validate、getValues、resetFields -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
@@ -1437,8 +1432,8 @@ ${formScriptFragments.vueImportLine}
 import { useI18n } from 'vue-i18n'
 import type { Rule } from 'ant-design-vue/es/form'
 ${buildEntityI18nFormImportBlock(entityPascal, viewEntityKebab)}
-import type { ${typeImportLine} } from '@/types/${modulePath}/${entityKebab}'
-${taktSelectImport}${extFieldIconImport}${formScriptFragments.dictImportLine}${formScriptFragments.fileUploadImportLine}${formScriptFragments.numberingImportLine || ''}${scopeStoreImports}
+import type { ${typeImportLine} } from '@/types/${modulePath}/${toFrontendEntityFileCamel(entityKebab)}.types'
+${extFieldIconImport}${formScriptFragments.dictImportLine}${formScriptFragments.fileUploadImportLine}${formScriptFragments.numberingImportLine || ''}${scopeStoreImports}
 ${formScriptState}
 ${formScriptFragments.defaultsBlock}
 ${formScriptFragments.normalizerBlock}
@@ -1492,7 +1487,7 @@ defineExpose({ validate, getValues, resetFields })
 }
 
 /**
- * 树表表单 parentId 默认根节点 0（无树数据 / tree-options 为空时，参照 dept-form.vue）
+ * 树表表单 parentId 默认根节点 0（无树数据 / tree-options 为空时，参照 DeptForm.vue）
  * @param {string} content
  * @returns {string}
  */
@@ -1582,7 +1577,7 @@ function applyFormDefaults(target: Record<string, unknown>) {
 }
 
 /**
- * 生成树表 *-form.vue（含 TaktTreeSelect parentId，参照 dept-form.vue）
+ * 生成树表 *Form.vue（含 TaktTreeSelect parentId，参照 DeptForm.vue）
  * @param {object} ctx
  * @param {object} helpers
  */
@@ -1624,7 +1619,7 @@ function generateTreeFormVue(ctx, helpers) {
             </a-col>`;
   let content = base.replace(
     "import { useI18n } from 'vue-i18n'",
-    "import { useI18n } from 'vue-i18n'\nimport TaktTreeSelect from '@/components/business/takt-tree-select/index.vue'",
+    "import { useI18n } from 'vue-i18n'",
   );
   content = content.replace(
     /功能描述：.*由 generate-vue-(?:crud|tree|master-detail)-from-api/,

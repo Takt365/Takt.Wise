@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/mps/master-production-schedule -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：主生产计划 MPS 头表管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -170,22 +170,21 @@
  * 主生产计划 MPS 头表管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/mps/master-production-schedule
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import MasterProductionScheduleForm from './components/master-production-schedule-form.vue'
-import MasterProductionScheduleLinePanel from './components/master-production-schedule-line-panel.vue'
-import { provideMasterProductionScheduleMasterContext, type MasterProductionScheduleRowRecord } from './composables/use-master-production-schedule-master-context'
-import { getMasterProductionScheduleList, getMasterProductionScheduleById, createMasterProductionSchedule, updateMasterProductionSchedule, deleteMasterProductionScheduleById, deleteMasterProductionScheduleBatch, getMasterProductionScheduleTemplate, importMasterProductionSchedule, exportMasterProductionSchedule, updateMasterProductionScheduleStatus } from '@/api/logistics/manufacturing/mps/master-production-schedule'
-import type { MasterProductionSchedule, MasterProductionScheduleQuery } from '@/types/logistics/manufacturing/mps/master-production-schedule'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import MasterProductionScheduleForm from './components/MasterProductionScheduleForm.vue'
+import MasterProductionScheduleLinePanel from './components/MasterProductionScheduleLinePanel.vue'
+import { provideMasterProductionScheduleMasterContext, type MasterProductionScheduleRowRecord } from './composables/useMasterProductionScheduleMasterContext'
+import { getMasterProductionScheduleList, getMasterProductionScheduleById, createMasterProductionSchedule, updateMasterProductionSchedule, deleteMasterProductionScheduleById, deleteMasterProductionScheduleBatch, getMasterProductionScheduleTemplate, importMasterProductionSchedule, exportMasterProductionSchedule, updateMasterProductionScheduleStatus } from '@/api/logistics/manufacturing/mps/masterProductionSchedule.api'
+import type { MasterProductionSchedule, MasterProductionScheduleQuery } from '@/types/logistics/manufacturing/mps/masterProductionSchedule.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
 
 import {
@@ -194,7 +193,7 @@ import {
   MASTERPRODUCTIONSCHEDULE_QUERY_STRING_FIELDS,
   MASTERPRODUCTIONSCHEDULE_QUERY_FIELDS,
   MASTERPRODUCTIONSCHEDULE_SELF_I18N_KEY,
-} from './composables/use-master-production-schedule-i18n'
+} from './composables/useMasterProductionScheduleI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useMasterProductionScheduleI18n()
@@ -334,7 +333,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -522,8 +520,6 @@ const toMasterProductionScheduleNumber = (value: string | number | undefined | n
   const num = Number(value ?? 0)
   return Number.isFinite(num) ? num : 0
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：scripts
 // 文件名称：generate-controllers-from-services.cjs
 // 创建时间：2026-05-23
@@ -1100,7 +1100,7 @@ function generateController(interfaceFile, entityName, methods, options) {
 
   let file = '';
   file += '// ========================================\n';
-  file += '// 项目名称：节拍工厂·Takt Plat\n';
+  file += '// 项目名称：节拍智控·TaktWise\n';
   file += `// 命名空间：${controllerNs}\n`;
   file += `// 文件名称：${controllerClass}.cs\n`;
   file += `// 创建时间：${todayFileHeaderDate()}\n`;

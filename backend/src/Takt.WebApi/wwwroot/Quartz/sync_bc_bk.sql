@@ -44,24 +44,24 @@ DECLARE @period_end_exclusive DATE = DATEADD(MONTH, 1, @period_start);
 DECLARE @costing_period NVARCHAR(7) = CONVERT(CHAR(7), @period_start, 23);
 
 -- =============================================================================
--- QT_SYNC_BC_BK：BOM 物料成本明细采购价回填（对齐 TaktBomCalculatePurchasePriceHelper）
+-- QT_SYNC_BC_BK：BOM 物料成本明细采购价回填（对齐 TaktBomCalculatePurchaseInfoRecordHelper）
 -- 大数据：采购价主/条件/等级一次性装入临时表；BOM 明细按核算月 + TOP(@apply_chunk=20000) 循环
 -- 须选业务库（如 zTakt_000_Dev），勿选暂存库 zTakt_900_Dev
 -- 核算月：ExecuteParams.costingPeriod（yyyy-MM）；空则当月
 -- 唯一写入目标：takt_logistics_manufacturing_bom_material_cost_item
---   purchase_organization ← 采购价格主表 plant_code（采购组织=工厂码）
+--   purchase_organization ← 采购信息记录主表 plant_code（采购组织=工厂码）
 --   purchase_group        ← 主表 purchase_group
 --   supplier_code         ← 主表 supplier_code
 --   net_purchase_price    ← 条件行/数量等级/价值等级解析净价（5 位）
 --   purchase_price_unit   ← 条件行 price_unit（≤0 则 1）
 --   purchase_currency_code← 条件行 condition_currency_code
--- 匹配：BOM 组件 material_key ↔ 采购价格 material_key（不按工厂过滤）
+-- 匹配：BOM 组件 material_key ↔ 采购信息记录 material_key（不按工厂过滤）
 -- 选价：仅 ValidFrom≤核算日取最晚（例：6/1 与 7/1 → 核算 6/30 用 6/1，核算 7/31 用 7/1）
 -- ❌ 不用未来 ValidFrom；无 ≤核算日 价格则跳过（不回填 0）
 -- 仅空回填：已有采购组织/组/供应商/货币/净价≠0/价格单位>1 一律保留
 -- 本次写入合并到 ext_field：$._bk.bc（含 price_info=定价记录号：供应商：有效起始日：价格）
 -- 同序：PB00 / Id 大优先
--- 条件行：未作废；PB00 优先，再按 purchase_price_seq / id
+-- 条件行：未作废；PB00 优先，再按 purchase_info_record_seq / id
 -- 净价：scale_basis=C 或（非 B 且有数量等级）→ 数量等级；否则有价值等级 → 价值等级；否则条件行 price
 -- 建议：在 QT_SYNC_BC / QT_SYNC_PUP 之后执行
 -- =============================================================================
@@ -82,7 +82,7 @@ CREATE TABLE #hdr (
   [purchase_organization] NVARCHAR(4) NOT NULL,
   [purchase_group] NVARCHAR(3) NOT NULL,
   [supplier_code] NVARCHAR(10) NOT NULL,
-  [purchase_price_code] NVARCHAR(20) NOT NULL,
+  [purchase_info_record_code] NVARCHAR(20) NOT NULL,
   [valid_from_d] DATE NOT NULL,
   [pb00_rank] INT NOT NULL
 );
@@ -116,7 +116,7 @@ CREATE TABLE #done (
 
 INSERT INTO #hdr (
   [header_id], [mat_key], [purchase_organization], [purchase_group],
-  [supplier_code], [purchase_price_code], [valid_from_d], [pb00_rank]
+  [supplier_code], [purchase_info_record_code], [valid_from_d], [pb00_rank]
 )
 SELECT
   h.[id],
@@ -129,10 +129,10 @@ SELECT
   LEFT(LTRIM(RTRIM(ISNULL(h.[plant_code], N''))), 4),
   LEFT(LTRIM(RTRIM(ISNULL(h.[purchase_group], N''))), 3),
   LEFT(LTRIM(RTRIM(ISNULL(h.[supplier_code], N''))), 10),
-  LEFT(LTRIM(RTRIM(ISNULL(h.[purchase_price_code], N''))), 20),
+  LEFT(LTRIM(RTRIM(ISNULL(h.[purchase_info_record_code], N''))), 20),
   CAST(h.[valid_from] AS DATE),
   CASE WHEN UPPER(LTRIM(RTRIM(h.[price_type]))) = N'PB00' THEN 0 ELSE 1 END
-FROM [dbo].[takt_logistics_procurement_purchase_price] AS h
+FROM [dbo].[takt_logistics_procurement_purchase_info_record] AS h
 WHERE h.[tenant_code] = @tenant_code
   AND h.[company_code] = @company_code
   AND h.[is_deleted] = 0
@@ -143,19 +143,19 @@ CREATE NONCLUSTERED INDEX [ix_hdr_mat] ON #hdr ([mat_key], [valid_from_d]);
 ;WITH items AS (
   SELECT
     i.[id] AS [item_id],
-    i.[purchase_price_id] AS [header_id],
+    i.[purchase_info_record_id] AS [header_id],
     LTRIM(RTRIM(ISNULL(i.[scale_basis], N''))) AS [scale_basis],
     CAST(i.[price] AS DECIMAL(18,5)) AS [item_price],
     CASE WHEN i.[price_unit] <= 0 THEN 1 ELSE i.[price_unit] END AS [purchase_price_unit],
     LEFT(LTRIM(RTRIM(ISNULL(i.[condition_currency_code], N''))), 3) AS [purchase_currency_code],
     ROW_NUMBER() OVER (
-      PARTITION BY i.[purchase_price_id]
+      PARTITION BY i.[purchase_info_record_id]
       ORDER BY
         CASE WHEN UPPER(LTRIM(RTRIM(i.[price_type]))) = N'PB00' THEN 0 ELSE 1 END,
-        i.[purchase_price_seq] ASC,
+        i.[purchase_info_record_seq] ASC,
         i.[id] ASC
     ) AS [rn]
-  FROM [dbo].[takt_logistics_procurement_purchase_price_item] AS i
+  FROM [dbo].[takt_logistics_procurement_purchase_info_record_item] AS i
   WHERE i.[tenant_code] = @tenant_code
     AND i.[company_code] = @company_code
     AND i.[is_deleted] = 0
@@ -171,12 +171,12 @@ WHERE [rn] = 1;
 
 INSERT INTO #qty_scale ([item_id], [scale_quantity], [price], [id])
 SELECT
-  q.[purchase_price_item_id],
+  q.[purchase_info_record_item_id],
   CAST(q.[scale_quantity] AS DECIMAL(18,5)),
   CAST(q.[price] AS DECIMAL(18,5)),
   q.[id]
-FROM [dbo].[takt_logistics_procurement_purchase_price_scale_quantity] AS q
-INNER JOIN #pp_item AS p ON p.[item_id] = q.[purchase_price_item_id]
+FROM [dbo].[takt_logistics_procurement_purchase_info_record_scale_quantity] AS q
+INNER JOIN #pp_item AS p ON p.[item_id] = q.[purchase_info_record_item_id]
 WHERE q.[tenant_code] = @tenant_code
   AND q.[company_code] = @company_code
   AND q.[is_deleted] = 0
@@ -186,12 +186,12 @@ CREATE NONCLUSTERED INDEX [ix_qty_item] ON #qty_scale ([item_id], [scale_quantit
 
 INSERT INTO #val_scale ([item_id], [scale_value], [price], [id])
 SELECT
-  v.[purchase_price_item_id],
+  v.[purchase_info_record_item_id],
   CAST(v.[scale_value] AS DECIMAL(18,5)),
   CAST(v.[price] AS DECIMAL(18,5)),
   v.[id]
-FROM [dbo].[takt_logistics_procurement_purchase_price_scale_value] AS v
-INNER JOIN #pp_item AS p ON p.[item_id] = v.[purchase_price_item_id]
+FROM [dbo].[takt_logistics_procurement_purchase_info_record_scale_value] AS v
+INNER JOIN #pp_item AS p ON p.[item_id] = v.[purchase_info_record_item_id]
 WHERE v.[tenant_code] = @tenant_code
   AND v.[company_code] = @company_code
   AND v.[is_deleted] = 0
@@ -254,7 +254,7 @@ BEGIN
       h.[purchase_organization],
       h.[purchase_group],
       h.[supplier_code],
-      h.[purchase_price_code],
+      h.[purchase_info_record_code],
       h.[valid_from_d],
       h.[pb00_rank]
     FROM #chunk AS c
@@ -282,7 +282,7 @@ BEGIN
     [purchase_organization],
     [purchase_group],
     [supplier_code],
-    [purchase_price_code],
+    [purchase_info_record_code],
     [valid_from_d]
   INTO #hdr_pick
   FROM ranked
@@ -295,7 +295,7 @@ BEGIN
     h.[purchase_organization],
     h.[purchase_group],
     h.[supplier_code],
-    h.[purchase_price_code],
+    h.[purchase_info_record_code],
     h.[valid_from_d],
     i.[item_id],
     i.[scale_basis],
@@ -312,7 +312,7 @@ BEGIN
     LEFT(p.[purchase_organization], 4) AS [purchase_organization],
     LEFT(p.[purchase_group], 3) AS [purchase_group],
     LEFT(p.[supplier_code], 10) AS [supplier_code],
-    LEFT(p.[purchase_price_code], 20) AS [purchase_price_code],
+    LEFT(p.[purchase_info_record_code], 20) AS [purchase_info_record_code],
     p.[valid_from_d],
     ROUND(
       CASE
@@ -423,11 +423,11 @@ BEGIN
                         JSON_MODIFY(N'{}', N'$.at', CONVERT(VARCHAR(19), @now, 126)),
                         N'$.price_info',
                         CONCAT(
-                          N'定价记录号：', ISNULL(f.[purchase_price_code], N''),
+                          N'定价记录号：', ISNULL(f.[purchase_info_record_code], N''),
                           N'：供应商：', ISNULL(f.[supplier_code], N''),
                           N'：有效起始日：', CONVERT(VARCHAR(10), f.[valid_from_d], 23),
                           N'：价格：', CONVERT(VARCHAR(40), f.[net_purchase_price]))),
-                      N'$.purchase_price_code', f.[purchase_price_code]),
+                      N'$.purchase_info_record_code', f.[purchase_info_record_code]),
                     N'$.valid_from', CONVERT(VARCHAR(10), f.[valid_from_d], 23)),
                   N'$.price', f.[net_purchase_price]),
                 N'$.purchase_organization',

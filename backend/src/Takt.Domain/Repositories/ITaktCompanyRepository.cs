@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Repositories
 // 文件名称：ITaktCompanyRepository.cs
 // 创建时间：2025-01-20
@@ -208,6 +208,13 @@ public interface ITaktCompanyRepository<TEntity> : ITaktUniqueExistenceRepositor
     /// <param name="predicate">删除条件</param>
     /// <returns>删除的实体数量</returns>
     Task<int> DeleteAsync(Expression<Func<TEntity, bool>> predicate);
+
+    /// <summary>
+    /// 按条件物理删除（含已软删行；用于关联表全量覆盖，避免唯一索引冲突）
+    /// </summary>
+    /// <param name="predicate">删除条件</param>
+    /// <returns>删除行数</returns>
+    Task<int> DeletePhysicallyAsync(Expression<Func<TEntity, bool>> predicate);
 
     // ========================================
     // 存在性检查

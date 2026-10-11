@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/procurement/purchase-inquiry -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：采购询价实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -543,22 +543,21 @@
  * 采购询价实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/logistics/procurement/purchase-inquiry
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import PurchaseInquiryForm from './components/purchase-inquiry-form.vue'
-import PurchaseInquiryItemPanel from './components/purchase-inquiry-item-panel.vue'
-import { providePurchaseInquiryMasterContext, type PurchaseInquiryRowRecord } from './composables/use-purchase-inquiry-master-context'
-import { getPurchaseInquiryList, getPurchaseInquiryById, createPurchaseInquiry, updatePurchaseInquiry, deletePurchaseInquiryById, deletePurchaseInquiryBatch, getPurchaseInquiryTemplate, importPurchaseInquiry, exportPurchaseInquiry, updatePurchaseInquiryStatus } from '@/api/logistics/procurement/purchase-inquiry'
-import type { PurchaseInquiry, PurchaseInquiryQuery } from '@/types/logistics/procurement/purchase-inquiry'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import PurchaseInquiryForm from './components/PurchaseInquiryForm.vue'
+import PurchaseInquiryItemPanel from './components/PurchaseInquiryItemPanel.vue'
+import { providePurchaseInquiryMasterContext, type PurchaseInquiryRowRecord } from './composables/usePurchaseInquiryMasterContext'
+import { getPurchaseInquiryList, getPurchaseInquiryById, createPurchaseInquiry, updatePurchaseInquiry, deletePurchaseInquiryById, deletePurchaseInquiryBatch, getPurchaseInquiryTemplate, importPurchaseInquiry, exportPurchaseInquiry, updatePurchaseInquiryStatus } from '@/api/logistics/procurement/purchaseInquiry.api'
+import type { PurchaseInquiry, PurchaseInquiryQuery } from '@/types/logistics/procurement/purchaseInquiry.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
@@ -567,7 +566,7 @@ import {
   PURCHASEINQUIRY_QUERY_STRING_FIELDS,
   PURCHASEINQUIRY_QUERY_FIELDS,
   PURCHASEINQUIRY_SELF_I18N_KEY,
-} from './composables/use-purchase-inquiry-i18n'
+} from './composables/usePurchaseInquiryI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = usePurchaseInquiryI18n()
@@ -768,7 +767,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -1084,8 +1082,6 @@ const toPurchaseInquiryNumber = (value: string | number | undefined | null): num
   const num = Number(value ?? 0)
   return Number.isFinite(num) ? num : 0
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

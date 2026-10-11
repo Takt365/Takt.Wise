@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi.Controllers.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcGroupsController.cs
 // 创建时间：2026-07-08
@@ -83,14 +83,17 @@ public class TaktEcGroupsController : TaktControllerBase
     /// <summary>
     /// 获取设变组主数据选项列表
     /// </summary>
+    /// <param name="plantCode">工厂代码（可选）</param>
+    /// <param name="keyword">搜索关键字（可选）</param>
+    /// <param name="ecGroupCategory">设变组类别（可选；部门编码，多个逗号分隔）</param>
     /// <returns>下拉选项</returns>
     [TaktPermission("logistics:manufacturing:engineering:change:ec:group:query", "设变组主数据选项")]
     [HttpGet("options")]
-    public async Task<IActionResult> GetEcGroupOptionsAsync([FromQuery] string? plantCode = null, [FromQuery] string? keyword = null)
+    public async Task<IActionResult> GetEcGroupOptionsAsync([FromQuery] string? plantCode = null, [FromQuery] string? keyword = null, [FromQuery] string? ecGroupCategory = null)
     {
         try
         {
-            var result = await _ecGroupService.GetEcGroupOptionsAsync(plantCode, keyword);
+            var result = await _ecGroupService.GetEcGroupOptionsAsync(plantCode, keyword, ecGroupCategory);
             return Success(result, "查询成功");
         }
         catch (Exception ex)

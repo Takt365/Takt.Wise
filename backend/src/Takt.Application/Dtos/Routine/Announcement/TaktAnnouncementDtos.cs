@@ -1,8 +1,8 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Routine.Announcement
 // 文件名称：TaktAnnouncementDtos.cs
-// 创建时间：2026-08-24
+// 创建时间：2026-09-11
 // 创建人：Takt365(Auto Generated)
 // 功能描述：Announcement 模块 DTO（由 generate-dtos-from-entity.cjs 根据 TaktAnnouncement 生成，请按需审阅）
 // 
@@ -36,7 +36,7 @@ public class TaktAnnouncementDto : TaktApprovalDtoBase
     public long AnnouncementId { get; set; }
 
     /// <summary>
-    /// 公告编码（租户+公司内唯一）
+    /// 公告编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 公告编码规则生成并展示，非手输；单据类型菜单：公告通知）
     /// </summary>
     public string AnnouncementCode { get; set; } = string.Empty;
 
@@ -158,7 +158,7 @@ public class TaktAnnouncementQueryDto : TaktPagedQuery
     public string? PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 公告编码（租户+公司内唯一）
+    /// 公告编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 公告编码规则生成并展示，非手输；单据类型菜单：公告通知）
     /// </summary>
     public string? AnnouncementCode { get; set; } = string.Empty;
 
@@ -351,13 +351,13 @@ public class TaktAnnouncementCreateDto
     public string PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 公告编码（租户+公司内唯一）
+    /// 公告编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 公告编码规则生成并展示，非手输；单据类型菜单：公告通知）
     /// </summary>
-    [Required(ErrorMessage = "公告编码（租户+公司内唯一）不能为空")]
+    [Required(ErrorMessage = "公告编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 公告编码规则生成并展示，非手输；单据类型菜单：公告通知）不能为空")]
     public string AnnouncementCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 编码规则编码（表单选类型后自动取号；对应 TaktNumbering.RuleCode；不落库）
+    /// 编码规则编码（前端表单从 TaktNumberings/options 选择；对应 TaktNumbering.RuleCode；不落库）
     /// </summary>
     public string? NumberingRuleCode { get; set; }
 
@@ -534,7 +534,7 @@ public class TaktAnnouncementTemplateDto
     public string? PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 公告编码（租户+公司内唯一）
+    /// 公告编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 公告编码规则生成并展示，非手输；单据类型菜单：公告通知）
     /// </summary>
     public string? AnnouncementCode { get; set; } = string.Empty;
 
@@ -661,7 +661,7 @@ public class TaktAnnouncementImportDto
     public string? PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 公告编码（租户+公司内唯一）
+    /// 公告编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 公告编码规则生成并展示，非手输；单据类型菜单：公告通知）
     /// </summary>
     public string? AnnouncementCode { get; set; } = string.Empty;
 
@@ -794,7 +794,7 @@ public class TaktAnnouncementExportDto
     public string CultureCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 公告编码（租户+公司内唯一）
+    /// 公告编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 公告编码规则生成并展示，非手输；单据类型菜单：公告通知）
     /// </summary>
     public string AnnouncementCode { get; set; } = string.Empty;
 

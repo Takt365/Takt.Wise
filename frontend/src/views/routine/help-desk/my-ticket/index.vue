@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/routine/help-desk/my-ticket -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：服务台「我的工单」门户页，仅展示当前用户提交的工单 -->
@@ -134,18 +134,17 @@
  * 服务台我的工单门户页
  * @module views/routine/help-desk/my-ticket
  */
-import { ref, computed, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 import type { Rule } from 'ant-design-vue/es/form'
-import { getMyTicketList, submitTicket } from '@/api/routine/help-desk/ticket'
-import { getAssetList } from '@/api/accounting/financial/asset'
-import type { Ticket, TicketSubmit } from '@/types/routine/help-desk/ticket'
-import { resolveTicketPriority } from '@/utils/takt-ticket-priority'
-import TicketWorkflowDrawer from '../ticket/components/ticket-workflow-drawer.vue'
+import { getMyTicketList, submitTicket } from '@/api/routine/help-desk/ticket.api'
+import { getAssetList } from '@/api/accounting/financial/asset.api'
+import type { Ticket, TicketSubmit } from '@/types/routine/help-desk/ticket.types'
+import { resolveTicketPriority } from '@/utils/taktTicketPriority'
+import TicketWorkflowDrawer from '../ticket/components/TicketWorkflowDrawer.vue'
 
 /** i18n 翻译函数 */
 const { t } = useI18n()

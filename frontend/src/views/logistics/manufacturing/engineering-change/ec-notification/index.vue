@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/ec-notification -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：工程变更通知单管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -206,24 +206,23 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('ecNotificationNotifierId')">
-      <a-form-item :label="pi.queryLabel('ecNotificationNotifierId')">
-        <a-input
-          v-model:value="advancedQueryForm.ecNotificationNotifierId"
-          :placeholder="pi.queryPh('ecNotificationNotifierId', 'required')"
-          show-count
-          :maxlength="20"
+      <div v-show="isFieldVisible('ecNotificationNotifierGroupCode')">
+      <a-form-item :label="pi.queryLabel('ecNotificationNotifierGroupCode')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.ecNotificationNotifierGroupCode"
+          api-url="TaktEcGroups/options"
+          :placeholder="pi.queryPh('ecNotificationNotifierGroupCode', 'select')"
           allow-clear
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('ecNotificationNotifierName')">
-      <a-form-item :label="pi.queryLabel('ecNotificationNotifierName')">
+      <div v-show="isFieldVisible('ecNotificationNotifierGroupName')">
+      <a-form-item :label="pi.queryLabel('ecNotificationNotifierGroupName')">
         <a-input
-          v-model:value="advancedQueryForm.ecNotificationNotifierName"
-          :placeholder="pi.queryPh('ecNotificationNotifierName', 'required')"
+          v-model:value="advancedQueryForm.ecNotificationNotifierGroupName"
+          :placeholder="pi.queryPh('ecNotificationNotifierGroupName', 'optional')"
           show-count
-          :maxlength="50"
+          :maxlength="80"
           allow-clear
         />
       </a-form-item>
@@ -438,25 +437,24 @@
  * 工程变更通知单管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/engineering-change/ec-notification
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import EcNotificationForm from './components/ec-notification-form.vue'
-import { getEcNotificationList, getEcNotificationById, createEcNotification, updateEcNotification, deleteEcNotificationById, deleteEcNotificationBatch, getEcNotificationTemplate, importEcNotification, exportEcNotification, updateEcNotificationStatus } from '@/api/logistics/manufacturing/engineering-change/ec-notification'
-import type { EcNotification, EcNotificationQuery } from '@/types/logistics/manufacturing/engineering-change/ec-notification'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import EcNotificationForm from './components/EcNotificationForm.vue'
+import { getEcNotificationList, getEcNotificationById, createEcNotification, updateEcNotification, deleteEcNotificationById, deleteEcNotificationBatch, getEcNotificationTemplate, importEcNotification, exportEcNotification, updateEcNotificationStatus } from '@/api/logistics/manufacturing/engineering-change/ecNotification.api'
+import type { EcNotification, EcNotificationQuery } from '@/types/logistics/manufacturing/engineering-change/ecNotification.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 import {
   useEcNotificationI18n,
   ECNOTIFICATION_QUERY_FIELDS,
   ECNOTIFICATION_SELF_I18N_KEY,
-} from './composables/use-ec-notification-i18n'
+} from './composables/useEcNotificationI18n'
 
 /** 实体字段 i18n（视图只传小驼峰字段名） */
 const pi = useEcNotificationI18n()
@@ -514,8 +512,8 @@ const advancedQueryForm = ref({
   ecNotificationDateEnd: '',
   ecNotificationDeptCodes: '',
   ecNotificationDeptNames: '',
-  ecNotificationNotifierId: '',
-  ecNotificationNotifierName: '',
+  ecNotificationNotifierGroupCode: '',
+  ecNotificationNotifierGroupName: '',
   ecNotificationMethod: undefined as number | undefined,
   ecNotificationStatus: undefined as number | undefined,
   approvalStatus: undefined as number | undefined,
@@ -581,8 +579,8 @@ function buildListQuery(overrides?: Partial<EcNotificationQuery>): EcNotificatio
   assignTrimmed('ecNotificationDateEnd', form.ecNotificationDateEnd)
   assignTrimmed('ecNotificationDeptCodes', form.ecNotificationDeptCodes)
   assignTrimmed('ecNotificationDeptNames', form.ecNotificationDeptNames)
-  assignTrimmed('ecNotificationNotifierId', form.ecNotificationNotifierId)
-  assignTrimmed('ecNotificationNotifierName', form.ecNotificationNotifierName)
+  assignTrimmed('ecNotificationNotifierGroupCode', form.ecNotificationNotifierGroupCode)
+  assignTrimmed('ecNotificationNotifierGroupName', form.ecNotificationNotifierGroupName)
   if (form.ecNotificationMethod !== undefined && form.ecNotificationMethod !== null) {
     query.ecNotificationMethod = form.ecNotificationMethod
   }
@@ -696,22 +694,22 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getEcNotificationField(record, 'ecNotificationDeptNames') ?? ''
   },
   {
-    title: pi.label('ecNotificationNotifierId'),
-    dataIndex: 'ecNotificationNotifierId',
-    key: 'ecNotificationNotifierId',
+    title: pi.label('ecNotificationNotifierGroupCode'),
+    dataIndex: 'ecNotificationNotifierGroupCode',
+    key: 'ecNotificationNotifierGroupCode',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getEcNotificationField(record, 'ecNotificationNotifierId') ?? ''
+    customRender: ({ record }: { record: any }) => getEcNotificationField(record, 'ecNotificationNotifierGroupCode') ?? ''
   },
   {
-    title: pi.label('ecNotificationNotifierName'),
-    dataIndex: 'ecNotificationNotifierName',
-    key: 'ecNotificationNotifierName',
+    title: pi.label('ecNotificationNotifierGroupName'),
+    dataIndex: 'ecNotificationNotifierGroupName',
+    key: 'ecNotificationNotifierGroupName',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getEcNotificationField(record, 'ecNotificationNotifierName') ?? ''
+    customRender: ({ record }: { record: any }) => getEcNotificationField(record, 'ecNotificationNotifierGroupName') ?? ''
   },
   {
     title: pi.label('ecNotificationMethod'),
@@ -839,8 +837,8 @@ function handleReset() {
   ecNotificationDateEnd: '',
   ecNotificationDeptCodes: '',
   ecNotificationDeptNames: '',
-  ecNotificationNotifierId: '',
-  ecNotificationNotifierName: '',
+  ecNotificationNotifierGroupCode: '',
+  ecNotificationNotifierGroupName: '',
   ecNotificationMethod: undefined as number | undefined,
   ecNotificationStatus: undefined as number | undefined,
   approvalStatus: undefined as number | undefined,
@@ -1037,8 +1035,8 @@ function handleAdvancedQueryReset() {
   ecNotificationDateEnd: '',
   ecNotificationDeptCodes: '',
   ecNotificationDeptNames: '',
-  ecNotificationNotifierId: '',
-  ecNotificationNotifierName: '',
+  ecNotificationNotifierGroupCode: '',
+  ecNotificationNotifierGroupName: '',
   ecNotificationMethod: undefined as number | undefined,
   ecNotificationStatus: undefined as number | undefined,
   approvalStatus: undefined as number | undefined,

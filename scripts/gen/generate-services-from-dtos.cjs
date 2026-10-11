@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：scripts
 // 文件名称：generate-services-from-dtos.cjs
 // 创建时间：2026-05-23
@@ -3173,7 +3173,7 @@ function generateServiceInterface(
 
   let content = '';
   content += '// ========================================\n';
-  content += '// 项目名称：节拍工厂·Takt Plat\n';
+  content += '// 项目名称：节拍智控·TaktWise\n';
   content += `// 命名空间：${serviceNs}\n`;
   content += `// 文件名称：I${entityName}Service.cs\n`;
   content += `// 创建时间：${todayFileHeaderDate()}\n`;
@@ -3699,7 +3699,7 @@ function generateServiceImplementation(
 
   let content = '';
   content += '// ========================================\n';
-  content += '// 项目名称：节拍工厂·Takt Plat\n';
+  content += '// 项目名称：节拍智控·TaktWise\n';
   content += `// 命名空间：${serviceNs}\n`;
   content += `// 文件名称：${entityName}Service.cs\n`;
   content += `// 创建时间：${todayFileHeaderDate()}\n`;

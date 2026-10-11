@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/bom/material-zero-price -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：BOM 零价格清单 + 成本计算操作（原 BOM计算页按钮迁入；defineExpose 无） -->
@@ -156,7 +156,7 @@
     />
 
     <!-- 手工替换更新移动价格：原组件/价 → 新组件/价/单位/币种 -->
-    <takt-modal
+    <TaktModal
       v-model:open="manualMovingVisible"
       :title="t(`${localePrefix}.movingPriceManualTitle`)"
       :confirm-loading="manualMovingPending"
@@ -241,7 +241,7 @@
           </a-row>
         </div>
       </a-form>
-    </takt-modal>
+    </TaktModal>
   </div>
 </template>
 
@@ -251,54 +251,55 @@
  */
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import type { ToolBarAction } from '@/components/business/takt-tools-bar/index.vue'
+import type { ToolBarAction } from '@/components/business/TaktToolsBar/index.vue'
 import { useI18n } from 'vue-i18n'
 import {
   getBomCostOptionPlantOptions,
   getBomCostOptionPlantOptionsUrl,
   getBomCostOptionModelOptionsUrl,
-} from '@/api/logistics/manufacturing/bom/cost-option'
+} from '@/api/logistics/manufacturing/bom/costOption.api'
 import {
   exportBomMaterialZeroPriceData,
   getBomMaterialZeroPriceList,
   backfillBomMaterialZeroPriceMoving,
   manualUpdateBomMaterialZeroPriceMoving,
   markBomMaterialZeroPricePcbSect,
-} from '@/api/logistics/manufacturing/bom/material-zero-price'
-import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/use-company-related-plant'
-import { useTenantStore } from '@/stores/identity/tenant'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+  stripBomMaterialZeroPriceLeadingZeros,
+} from '@/api/logistics/manufacturing/bom/materialZeroPrice.api'
+import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/useCompanyRelatedPlant'
+import { useTenantStore } from '@/stores/identity/useTenantStore'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import {
-  backfillBomCalculatePurchasePrice,
+  backfillBomCalculatePurchaseInfoRecord,
   calculateBomCalculateAverage,
   recalculateBomCalculateCost,
   sumBomCalculateCost,
   sumBomCalculateLatestPurchaseCost,
-} from '@/api/logistics/manufacturing/bom/calculate'
+} from '@/api/logistics/manufacturing/bom/calculate.api'
 import type {
   BomMaterialZeroPrice,
   BomMaterialZeroPriceQuery,
-} from '@/types/logistics/manufacturing/bom/material-zero-price'
-import type { BomCalculateQuery } from '@/types/logistics/manufacturing/bom/calculate'
+} from '@/types/logistics/manufacturing/bom/materialZeroPrice.types'
+import type { BomCalculateQuery } from '@/types/logistics/manufacturing/bom/calculate.types'
 import {
   ensureTaktPaginationConfigAsync,
   getTaktDefaultPageIndex,
   getTaktDefaultPageSize,
-} from '@/utils/takt-paged'
+} from '@/utils/taktPaged'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import {
   formatBomMaterialCostItemRecalculateDuration,
   useBomMaterialCostItemRecalculateSignalR,
-} from '@/composables/use-bom-material-cost-item-recalculate-signalr'
-import { RiCalculatorLine, RiCoinLine, RiEditLine, RiFlagLine, RiFundsLine, RiPriceTag3Line, RiRefreshLine, RiSearchLine, RiShoppingCart2Line } from '@remixicon/vue'
+} from '@/composables/useBomMaterialCostItemRecalculateSignalr'
+import { RiCalculatorLine, RiCoinLine, RiEditLine, RiEraserLine, RiFlagLine, RiFundsLine, RiPriceTag3Line, RiRefreshLine, RiSearchLine, RiShoppingCart2Line } from '@remixicon/vue'
 import {
   buildDefaultCostingMonth,
   costingMonthToDateQuery,
   isCostingPeriodMonthDisabled,
-} from './utils/bom-material-cost-period'
-import { BOM_ANALYSIS_PREFERRED_MATERIAL_TYPE } from '@/views/logistics/manufacturing/bom/material-cost/utils/bom-material-type-options'
-import { buildBomCostOptionParams } from '@/views/logistics/manufacturing/bom/material-cost/utils/bom-cost-option-params'
+} from './utils/bomMaterialCostPeriod'
+import { BOM_ANALYSIS_PREFERRED_MATERIAL_TYPE } from '@/views/logistics/manufacturing/bom/material-cost/utils/bomMaterialTypeOptions'
+import { buildBomCostOptionParams } from '@/views/logistics/manufacturing/bom/material-cost/utils/bomCostOptionParams'
 
 /** 静态文案键前缀 */
 const localePrefix = 'logistics.manufacturing.bom.material-zero-price.page'
@@ -385,6 +386,8 @@ const manualMovingForm = reactive({
 const latestPurchaseCostPending = ref(false)
 /** PCB SECT 打标提交中 */
 const pcbSectMarkPending = ref(false)
+/** 去前导 0 */
+const stripLeadingZeroPending = ref(false)
 /** 页码 */
 const pageIndex = ref(getTaktDefaultPageIndex())
 /** 页大小 */
@@ -454,12 +457,12 @@ const toolbarLeftActions = computed<ToolBarAction[]>(() => [
   },
   {
     key: 'purchase-price-backfill',
-    label: t(`${localePrefix}.purchasePriceBackfill`),
+    label: t(`${localePrefix}.purchaseInfoRecordBackfill`),
     icon: RiShoppingCart2Line,
     buttonClass: 'takt-button-sync',
     permission: calculateUpdatePermission,
     loading: purchaseBackfillPending.value,
-    onClick: () => handlePurchasePriceBackfill(),
+    onClick: () => handlePurchaseInfoRecordBackfill(),
   },
   {
     key: 'moving-price-backfill-batch',
@@ -487,6 +490,15 @@ const toolbarLeftActions = computed<ToolBarAction[]>(() => [
     permission: calculateUpdatePermission,
     loading: pcbSectMarkPending.value,
     onClick: () => handleMarkPcbSect(),
+  },
+  {
+    key: 'strip-leading-zeros',
+    label: t(`${localePrefix}.stripLeadingZeros`),
+    icon: RiEraserLine,
+    buttonClass: 'takt-button-sync',
+    permission: calculateUpdatePermission,
+    loading: stripLeadingZeroPending.value,
+    onClick: () => handleStripLeadingZeros(),
   },
 ])
 
@@ -868,14 +880,14 @@ async function handleAverage(): Promise<void> {
 }
 
 /** 回填采购价 */
-async function handlePurchasePriceBackfill(): Promise<void> {
+async function handlePurchaseInfoRecordBackfill(): Promise<void> {
   const query = buildCostQuery()
   if (!query) return
   purchaseBackfillPending.value = true
   try {
-    const result = await backfillBomCalculatePurchasePrice(query)
+    const result = await backfillBomCalculatePurchaseInfoRecord(query)
     message.success(
-      t(`${localePrefix}.purchasePriceBackfillSuccess`, {
+      t(`${localePrefix}.purchaseInfoRecordBackfillSuccess`, {
         month: result.processedMonth,
         scanned: result.scannedRowCount,
         updated: result.updatedRowCount,
@@ -885,7 +897,7 @@ async function handlePurchasePriceBackfill(): Promise<void> {
     )
   } catch (error: unknown) {
     const err = error as { message?: string }
-    message.error(err?.message || t(`${localePrefix}.purchasePriceBackfillFailed`))
+    message.error(err?.message || t(`${localePrefix}.purchaseInfoRecordBackfillFailed`))
   } finally {
     purchaseBackfillPending.value = false
   }
@@ -1152,6 +1164,48 @@ async function handleMarkPcbSect(): Promise<void> {
     message.error(err?.message || t(`${localePrefix}.pcbSectMarkFailed`))
   } finally {
     pcbSectMarkPending.value = false
+  }
+}
+
+/**
+ * 去掉当前工厂纯数字产品/组件编码的前导 0
+ */
+async function handleStripLeadingZeros(): Promise<void> {
+  const plant = queryForm.plantCode?.trim() ?? ''
+  if (!plant) {
+    message.warning(t(`${localePrefix}.selectPlantRequired`))
+    return
+  }
+  const confirmed = await new Promise<boolean>((resolve) => {
+    Modal.confirm({
+      title: t(`${localePrefix}.stripLeadingZerosConfirmTitle`),
+      content: t(`${localePrefix}.stripLeadingZerosConfirmContent`, { plant }),
+      okText: t('common.page.button.ok'),
+      cancelText: t('common.page.button.cancel'),
+      onOk: () => resolve(true),
+      onCancel: () => resolve(false),
+    })
+  })
+  if (!confirmed) {
+    return
+  }
+  stripLeadingZeroPending.value = true
+  try {
+    const result = await stripBomMaterialZeroPriceLeadingZeros({ plantCode: plant })
+    message.success(
+      t(`${localePrefix}.stripLeadingZerosSuccess`, {
+        headerProduct: result.headerProductUpdatedCount ?? 0,
+        itemProduct: result.itemProductUpdatedCount ?? 0,
+        itemComponent: result.itemComponentUpdatedCount ?? 0,
+        skipped: result.skippedConflictCount ?? 0,
+      }),
+    )
+    await loadData()
+  } catch (error: unknown) {
+    const err = error as { message?: string }
+    message.error(err?.message || t(`${localePrefix}.stripLeadingZerosFailed`))
+  } finally {
+    stripLeadingZeroPending.value = false
   }
 }
 

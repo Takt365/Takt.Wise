@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节节拍工厂·Takt Plat  -->
+<!-- 项目名称：节拍智控·TaktWise  -->
 <!-- 命名空间：@/views/foundation/i18n -->
 <!-- 文件名称：index.vue -->
 <!-- 创建时间：2025-01-20 -->
@@ -184,13 +184,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize, ensureTaktPaginationConfigAsync } from '@/utils/takt-paged'
-import TranslationTransposedForm from './components/translation-transposed-form.vue'
-import CultureTable from './components/culture-table.vue'
-import type { ToolBarAction } from '@/components/business/takt-tools-bar/index.vue'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize, ensureTaktPaginationConfigAsync } from '@/utils/taktPaged'
+import TranslationTransposedForm from './components/TranslationTransposedForm.vue'
+import CultureTable from './components/CultureTable.vue'
+import type { ToolBarAction } from '@/components/business/TaktToolsBar/index.vue'
 import {
   getTranslationList,
   getTranslationTransposedList,
@@ -198,7 +197,7 @@ import {
   updateTranslation,
   deleteTranslationById,
   exportTranslation
-} from '@/api/foundation/translation'
+} from '@/api/foundation/translation.api'
 import type {
   Translation,
   TranslationQuery,
@@ -207,11 +206,11 @@ import type {
   TranslationTransposedResult,
   TranslationCreate,
   TranslationUpdate
-} from '@/types/foundation/translation'
-import { CreateActionColumn, type ActionRecord } from '@/components/business/takt-action-column/index'
+} from '@/types/foundation/translation.types'
+import { CreateActionColumn, type ActionRecord } from '@/components/business/TaktActionColumn/index'
 import { RiEditLine, RiDeleteBinLine, RiGlobalLine } from '@remixicon/vue'
-import { useTenantStore } from '@/stores/identity/tenant'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+import { useTenantStore } from '@/stores/identity/useTenantStore'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 
 const { t } = useI18n()
 /** 当前租户编码（翻译 Create/Update DTO 必填，与请求头 X-Tenant-Code 一致） */

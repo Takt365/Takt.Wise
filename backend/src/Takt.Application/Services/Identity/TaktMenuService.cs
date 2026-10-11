@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Identity
 // 文件名称：TaktMenuService.cs
 // 创建时间：2026-06-09
@@ -98,84 +98,243 @@ public class TaktMenuService : TaktServiceBase, ITaktMenuService
         return dto;    }
 
     /// <summary>
-    /// 获取菜单树形选项列表
+    /// 获取菜单树形选项（一律懒加载一层 parentId；valueBy=name 时 DictValue=MenuName、ExtValue=Id 供展开）
     /// </summary>
-    /// <param name="valueBy">选项值：id=菜单Id（默认）；name=菜单名称 MenuName</param>
+    /// <param name="valueBy">选项值：id=菜单Id（默认）；name=菜单名称 MenuName（仍按 parentId 懒加载）</param>
     /// <param name="parentId">父级ID（0=根）</param>
     /// <param name="plantCode">工厂代码（可选，用于按工厂过滤）</param>
-    /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
-    /// <returns>树形选项</returns>
+    /// <param name="keyword">搜索关键字（可选，模糊匹配当前层 MenuName）</param>
+    /// <returns>树形选项（一层）</returns>
     public async Task<List<TaktTreeSelectOption>> GetMenuTreeOptionsAsync(long parentId = 0, string? plantCode = null, string? keyword = null, string? valueBy = null)
     {
-        var list = await _menuRepository.GetListAsync(x => x.TenantCode == CurrentTenantCode && x.MenuStatus == 1);
         var useMenuName = string.Equals(valueBy?.Trim(), "name", StringComparison.OrdinalIgnoreCase);
-        return BuildMenuTreeOptions(list, 0, useMenuName);
-    }
-
-    /// <summary>
-    /// 在内存中构建菜单树形选项（递归，按 ParentId）
-    /// </summary>
-    /// <param name="all">全部菜单</param>
-    /// <param name="parentId">父级 Id</param>
-    /// <param name="useMenuName">true 时 DictValue=MenuName，否则为菜单 Id</param>
-    private List<TaktTreeSelectOption> BuildMenuTreeOptions(List<TaktMenu> all, long parentId, bool useMenuName)
-    {
-        var result = new List<TaktTreeSelectOption>();
-        foreach (var item in all.Where(x => x.ParentId == parentId).OrderBy(x => x.SortOrder))
+        Expression<Func<TaktMenu, bool>> predicate = useMenuName
+            ? (x => x.TenantCode == CurrentTenantCode
+                && x.ParentId == parentId
+                && x.MenuStatus == 1
+                && x.MenuType == 1)
+            : (x => x.TenantCode == CurrentTenantCode
+                && x.ParentId == parentId
+                && x.MenuStatus == 1);
+        var list = await _menuRepository.GetListAsync(predicate);
+        var kw = keyword?.Trim();
+        if (!string.IsNullOrEmpty(kw))
         {
-            var label = item.MenuName ?? item.Id.ToString();
-            var option = new TaktTreeSelectOption
-            {
-                DictValue = useMenuName ? label : item.Id,
-                DictLabel = label,
-                SortOrder = item.SortOrder,
-            };
-            var children = BuildMenuTreeOptions(all, item.Id, useMenuName);
-            if (children.Count > 0)
-            {
-                option.Children = children;
-            }
-            result.Add(option);
+            list = list
+                .Where(x => (x.MenuName ?? string.Empty).Contains(kw, StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
-        return result;
+        return list
+            .OrderBy(x => x.SortOrder)
+            .Select(item =>
+            {
+                var label = item.MenuName ?? item.Id.ToString();
+                var isLeaf = TaktLazyTreeHelper.ToAntIsLeaf(item.IsLeaf);
+                return new TaktTreeSelectOption
+                {
+                    DictValue = useMenuName ? label : item.Id.ToString(),
+                    DictLabel = label,
+                    ExtValue = useMenuName ? item.Id.ToString() : null,
+                    SortOrder = item.SortOrder,
+                    IsLeaf = isLeaf,
+                    Children = null,
+                };
+            })
+            .ToList();
     }
 
     /// <summary>
-    /// 获取菜单树形列表
+    /// 获取菜单树形列表（懒加载：仅 parentId 直接子级一层；不整表加载、不递归构树）
     /// </summary>
     /// <param name="parentId">父级ID</param>
     /// <param name="includeDisabled">是否包含禁用项</param>
-    /// <returns>树形列表</returns>
+    /// <returns>树形列表（一层）</returns>
     public async Task<List<TaktMenuTreeDto>> GetMenuTreeAsync(long parentId = 0, bool includeDisabled = false)
     {
-        var list = await _menuRepository.GetListAsync(x => x.TenantCode == CurrentTenantCode);
-        var filtered = includeDisabled
-            ? list
-            : list.Where(x => x.MenuStatus == 1).ToList();
-        return BuildMenuTree(filtered, parentId);
+        Expression<Func<TaktMenu, bool>> predicate = includeDisabled
+            ? (x => x.TenantCode == CurrentTenantCode && x.ParentId == parentId)
+            : (x => x.TenantCode == CurrentTenantCode && x.ParentId == parentId && x.MenuStatus == 1);
+        var list = await _menuRepository.GetListAsync(predicate);
+        return list
+            .OrderBy(x => x.SortOrder)
+            .Select(item =>
+            {
+                var treeDto = item.Adapt<TaktMenuTreeDto>();
+                treeDto.Children = null;
+                return treeDto;
+            })
+            .ToList();
     }
 
     /// <summary>
-    /// 在内存中构建菜单树（递归，按 ParentId）
+    /// 角色菜单分配：互斥懒加载树（一层）。
+    /// 性能：一律先按 ParentId 取一层再内存过滤，禁止把上万 AssignedIds 丢进 SQL IN。
+    /// 根层提升节点分批按 ParentId 查询。
     /// </summary>
-    private List<TaktMenuTreeDto> BuildMenuTree(List<TaktMenu> allRecords, long parentId)
+    /// <param name="queryDto">查询</param>
+    /// <returns>一层树节点</returns>
+    public async Task<List<TaktMenuTreeDto>> GetMenuAssignTreeAsync(TaktMenuAssignTreeQueryDto queryDto)
     {
-        var children = allRecords
-            .Where(x => x.ParentId == parentId)
-            .OrderBy(x => x.SortOrder)
-            .ToList();
-        var treeList = new List<TaktMenuTreeDto>();
-        foreach (var item in children)
+        ArgumentNullException.ThrowIfNull(queryDto);
+
+        var assignedSet = new HashSet<long>();
+        if (queryDto.AssignedMenuIds != null)
         {
-            var treeDto = item.Adapt<TaktMenuTreeDto>();
-            var childTree = BuildMenuTree(allRecords, item.Id);
-            if (childTree.Count > 0)
+            foreach (var raw in queryDto.AssignedMenuIds)
             {
-                treeDto.Children = childTree;
+                if (long.TryParse(raw, out var id) && id > 0)
+                {
+                    assignedSet.Add(id);
+                }
             }
-            treeList.Add(treeDto);
         }
-        return treeList;
+
+        var parentId = queryDto.ParentId;
+        var assignedSide = queryDto.AssignedSide;
+        var tenantCode = CurrentTenantCode;
+
+        if (parentId != 0)
+        {
+            var parentAssigned = assignedSet.Contains(parentId);
+            if (assignedSide && !parentAssigned)
+            {
+                return new List<TaktMenuTreeDto>();
+            }
+            if (!assignedSide && parentAssigned)
+            {
+                return new List<TaktMenuTreeDto>();
+            }
+
+            // 【懒加载】只查当前父下一层，再内存按已分配集过滤
+            var children = await _menuRepository.GetListAsync(x =>
+                x.TenantCode == tenantCode
+                && x.MenuStatus == 1
+                && x.ParentId == parentId);
+            var filtered = assignedSide
+                ? children.Where(x => assignedSet.Contains(x.Id)).ToList()
+                : children.Where(x => !assignedSet.Contains(x.Id)).ToList();
+            return await MapAssignTreeLayerAsync(filtered, assignedSet, assignedSide, tenantCode);
+        }
+
+        // ========== 根层 ==========
+        var rootMenus = await _menuRepository.GetListAsync(x =>
+            x.TenantCode == tenantCode
+            && x.MenuStatus == 1
+            && x.ParentId == 0);
+
+        List<TaktMenu> layer;
+        if (assignedSide)
+        {
+            if (assignedSet.Count == 0)
+            {
+                return new List<TaktMenuTreeDto>();
+            }
+
+            layer = rootMenus.Where(x => assignedSet.Contains(x.Id)).ToList();
+
+            // 提升根：已分配且父未分配 — 按已分配 Id 分批取实体，内存判断
+            const int batchSize = 500;
+            var assignedIdList = assignedSet.ToList();
+            for (var i = 0; i < assignedIdList.Count; i = checked(i + batchSize))
+            {
+                var batch = assignedIdList.Skip(i).Take(batchSize).ToList();
+                var menus = await _menuRepository.GetListAsync(m =>
+                    m.TenantCode == tenantCode
+                    && m.MenuStatus == 1
+                    && batch.Contains(m.Id));
+                foreach (var m in menus)
+                {
+                    if (m.ParentId != 0 && !assignedSet.Contains(m.ParentId))
+                    {
+                        layer.Add(m);
+                    }
+                }
+            }
+
+            layer = layer
+                .GroupBy(x => x.Id)
+                .Select(g => g.First())
+                .OrderBy(x => x.SortOrder)
+                .ToList();
+        }
+        else
+        {
+            layer = rootMenus.Where(x => !assignedSet.Contains(x.Id)).ToList();
+
+            // 提升根：未分配且父已分配 — 分批 ParentId IN (assigned)
+            if (assignedSet.Count > 0)
+            {
+                const int batchSize = 500;
+                var assignedIdList = assignedSet.ToList();
+                var promoted = new List<TaktMenu>();
+                for (var i = 0; i < assignedIdList.Count; i = checked(i + batchSize))
+                {
+                    var batch = assignedIdList.Skip(i).Take(batchSize).ToList();
+                    var children = await _menuRepository.GetListAsync(m =>
+                        m.TenantCode == tenantCode
+                        && m.MenuStatus == 1
+                        && batch.Contains(m.ParentId));
+                    foreach (var m in children)
+                    {
+                        if (!assignedSet.Contains(m.Id))
+                        {
+                            promoted.Add(m);
+                        }
+                    }
+                }
+
+                layer = layer
+                    .Concat(promoted)
+                    .GroupBy(x => x.Id)
+                    .Select(g => g.First())
+                    .OrderBy(x => x.SortOrder)
+                    .ToList();
+            }
+        }
+
+        return await MapAssignTreeLayerAsync(layer, assignedSet, assignedSide, tenantCode);
+    }
+
+    /// <summary>
+    /// 映射分配树一层，并按本侧是否仍有子设置 IsLeaf（子查询仅按 ParentId，内存过滤）
+    /// </summary>
+    /// <param name="layer">本层实体</param>
+    /// <param name="assignedSet">已分配集</param>
+    /// <param name="assignedSide">是否已分配侧</param>
+    /// <param name="tenantCode">租户</param>
+    /// <returns>DTO 一层</returns>
+    private async Task<List<TaktMenuTreeDto>> MapAssignTreeLayerAsync(
+        List<TaktMenu> layer,
+        HashSet<long> assignedSet,
+        bool assignedSide,
+        string tenantCode)
+    {
+        if (layer.Count == 0)
+        {
+            return new List<TaktMenuTreeDto>();
+        }
+
+        var layerIds = layer.Select(x => x.Id).ToList();
+        var allChildren = await _menuRepository.GetListAsync(x =>
+            x.TenantCode == tenantCode
+            && x.MenuStatus == 1
+            && layerIds.Contains(x.ParentId));
+
+        var parentsWithSideChildren = allChildren
+            .Where(c => assignedSide ? assignedSet.Contains(c.Id) : !assignedSet.Contains(c.Id))
+            .Select(c => c.ParentId)
+            .ToHashSet();
+
+        return layer
+            .OrderBy(x => x.SortOrder)
+            .Select(item =>
+            {
+                var treeDto = item.Adapt<TaktMenuTreeDto>();
+                treeDto.IsLeaf = parentsWithSideChildren.Contains(item.Id) ? 0 : 1;
+                treeDto.Children = null;
+                return treeDto;
+            })
+            .ToList();
     }
 
     /// <summary>

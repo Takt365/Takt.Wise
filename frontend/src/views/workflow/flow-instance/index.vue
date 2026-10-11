@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/workflow/flow-instance -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：流程实例实体管理页面，含查询、增删改，由 generate-vue-master-detail-from-api.cjs 根据 types/api 自动生成 -->
@@ -154,21 +154,20 @@
  * 流程实例实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/workflow/flow-instance
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import FlowInstanceForm from './components/flow-instance-form.vue'
-import FlowTaskPanel from './components/flow-task-panel.vue'
-import { provideFlowInstanceMasterContext, type FlowInstanceRowRecord } from './composables/use-flow-instance-master-context'
-import { getFlowInstanceList, getFlowInstanceById, createFlowInstance, updateFlowInstance, deleteFlowInstanceById, deleteFlowInstanceBatch, getFlowInstanceTemplate, importFlowInstance, exportFlowInstance, updateFlowInstanceStatus } from '@/api/workflow/flow-instance'
-import type { FlowInstance, FlowInstanceQuery } from '@/types/workflow/flow-instance'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import FlowInstanceForm from './components/FlowInstanceForm.vue'
+import FlowTaskPanel from './components/FlowTaskPanel.vue'
+import { provideFlowInstanceMasterContext, type FlowInstanceRowRecord } from './composables/useFlowInstanceMasterContext'
+import { getFlowInstanceList, getFlowInstanceById, createFlowInstance, updateFlowInstance, deleteFlowInstanceById, deleteFlowInstanceBatch, getFlowInstanceTemplate, importFlowInstance, exportFlowInstance, updateFlowInstanceStatus } from '@/api/workflow/flowInstance.api'
+import type { FlowInstance, FlowInstanceQuery } from '@/types/workflow/flowInstance.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
 import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
 
 import {
@@ -177,7 +176,7 @@ import {
   FLOWINSTANCE_QUERY_STRING_FIELDS,
   FLOWINSTANCE_QUERY_FIELDS,
   FLOWINSTANCE_SELF_I18N_KEY,
-} from './composables/use-flow-instance-i18n'
+} from './composables/useFlowInstanceI18n'
 
 /** 实体字段 i18n（标签/占位符统一入口） */
 const pi = useFlowInstanceI18n()
@@ -314,7 +313,6 @@ onMounted(async () => {
   await ensureTaktPaginationConfigAsync()
   loadData()
 })
-
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selectedMasterKey = ref('')
@@ -528,8 +526,6 @@ const getFlowInstanceId = (record: FlowInstanceRowRecord): string => {
  * @param field 字段名
  */
 const getFlowInstanceField = (record: any, field: string): any => record?.[field]
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

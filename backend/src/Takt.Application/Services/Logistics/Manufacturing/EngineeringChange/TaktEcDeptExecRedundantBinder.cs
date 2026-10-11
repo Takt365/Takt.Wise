@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcDeptExecRedundantBinder.cs
 // 创建时间：2026-09-02
@@ -12,6 +12,7 @@
 
 using Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange;
 using Takt.Domain.Interfaces;
+using Takt.Shared.Constants;
 
 namespace Takt.Application.Services.Logistics.Manufacturing.EngineeringChange;
 
@@ -36,7 +37,9 @@ internal static class TaktEcDeptExecRedundantBinder
                 ApplyIdentity(koubai, detail, lineNumberForCreate);
                 ApplyEcScope(koubai, detail);
                 koubai.DiscontinuedStatus = detail.DiscontinuedStatus ?? string.Empty;
+                koubai.EcModelCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcModelCode]);
                 koubai.EcNewMaterialCode = detail.EcNewMaterialCode ?? string.Empty;
+                koubai.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
                 koubai.EcNewMaterialDescription = detail.EcNewMaterialDescription ?? string.Empty;
                 koubai.EcNewWarehouse = detail.EcNewWarehouse ?? string.Empty;
                 koubai.EcNewPurchaseType = detail.EcNewPurchaseType ?? string.Empty;
@@ -46,7 +49,9 @@ internal static class TaktEcDeptExecRedundantBinder
                 ApplyIdentity(ukeken, detail, lineNumberForCreate);
                 ApplyEcScope(ukeken, detail);
                 ukeken.DiscontinuedStatus = detail.DiscontinuedStatus ?? string.Empty;
+                ukeken.EcModelCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcModelCode]);
                 ukeken.EcNewMaterialCode = detail.EcNewMaterialCode ?? string.Empty;
+                ukeken.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
                 ukeken.EcNewMaterialDescription = detail.EcNewMaterialDescription ?? string.Empty;
                 ukeken.EcNewWarehouse = detail.EcNewWarehouse ?? string.Empty;
                 ukeken.EcNewRequiresInspection = detail.EcNewRequiresInspection;
@@ -60,8 +65,7 @@ internal static class TaktEcDeptExecRedundantBinder
                 bukan.EcNewPurchaseType = detail.EcNewPurchaseType ?? string.Empty;
                 bukan.EcNewWarehouse = detail.EcNewWarehouse ?? string.Empty;
                 bukan.EcModelCode = detail.EcModelCode ?? string.Empty;
-                bukan.EcRootMaterialCode = detail.EcRootMaterialCode ?? string.Empty;
-                bukan.EcRootMaterialDescription = detail.EcRootMaterialDescription ?? string.Empty;
+                bukan.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
                 break;
             case TaktEcSmt smt:
                 ApplyIdentity(smt, detail, lineNumberForCreate);
@@ -74,8 +78,7 @@ internal static class TaktEcDeptExecRedundantBinder
                 smt.EcNewPurchaseType = detail.EcNewPurchaseType ?? string.Empty;
                 smt.EcNewWarehouse = detail.EcNewWarehouse ?? string.Empty;
                 smt.EcModelCode = detail.EcModelCode ?? string.Empty;
-                smt.EcRootMaterialCode = detail.EcRootMaterialCode ?? string.Empty;
-                smt.EcRootMaterialDescription = detail.EcRootMaterialDescription ?? string.Empty;
+                smt.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
                 break;
             case TaktEcSeizounika seizounika:
                 ApplyIdentity(seizounika, detail, lineNumberForCreate);
@@ -84,7 +87,12 @@ internal static class TaktEcDeptExecRedundantBinder
                 seizounika.EcParentMaterialDescription = detail.EcParentMaterialDescription ?? string.Empty;
                 seizounika.DiscontinuedStatus = detail.DiscontinuedStatus ?? string.Empty;
                 seizounika.EcModelCode = detail.EcModelCode ?? string.Empty;
-                seizounika.EcRootMaterialCode = detail.EcRootMaterialCode ?? string.Empty;
+                seizounika.EcModelCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcModelCode]);
+                seizounika.EcNewMaterialCode = detail.EcNewMaterialCode ?? string.Empty;
+                seizounika.EcNewMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcNewMaterialCode]);
+                seizounika.EcNewMaterialDescription = detail.EcNewMaterialDescription ?? string.Empty;
+                seizounika.EcParentMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcParentMaterialCode]);
+                seizounika.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
                 seizounika.EcRootMaterialDescription = detail.EcRootMaterialDescription ?? string.Empty;
                 break;
             case TaktEcSeikan seikan:
@@ -92,7 +100,7 @@ internal static class TaktEcDeptExecRedundantBinder
                 ApplyEcScope(seikan, detail);
                 seikan.DiscontinuedStatus = detail.DiscontinuedStatus ?? string.Empty;
                 seikan.EcModelCode = detail.EcModelCode ?? string.Empty;
-                seikan.EcRootMaterialCode = detail.EcRootMaterialCode ?? string.Empty;
+                seikan.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
                 seikan.EcRootMaterialDescription = detail.EcRootMaterialDescription ?? string.Empty;
                 seikan.EcOldPartDisposition = detail.EcOldPartDisposition;
                 break;
@@ -101,7 +109,8 @@ internal static class TaktEcDeptExecRedundantBinder
                 ApplyEcScope(seizouikka, detail);
                 seizouikka.DiscontinuedStatus = detail.DiscontinuedStatus ?? string.Empty;
                 seizouikka.EcModelCode = detail.EcModelCode ?? string.Empty;
-                seizouikka.EcRootMaterialCode = detail.EcRootMaterialCode ?? string.Empty;
+                seizouikka.EcModelCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcModelCode]);
+                seizouikka.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
                 seizouikka.EcRootMaterialDescription = detail.EcRootMaterialDescription ?? string.Empty;
                 break;
             case TaktEcHinkan hinkan:
@@ -109,7 +118,8 @@ internal static class TaktEcDeptExecRedundantBinder
                 ApplyEcScope(hinkan, detail);
                 hinkan.DiscontinuedStatus = detail.DiscontinuedStatus ?? string.Empty;
                 hinkan.EcModelCode = detail.EcModelCode ?? string.Empty;
-                hinkan.EcRootMaterialCode = detail.EcRootMaterialCode ?? string.Empty;
+                hinkan.EcModelCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcModelCode]);
+                hinkan.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
                 hinkan.EcRootMaterialDescription = detail.EcRootMaterialDescription ?? string.Empty;
                 break;
             case TaktEcSeizougijutsu seizougijutsu:
@@ -117,7 +127,7 @@ internal static class TaktEcDeptExecRedundantBinder
                 ApplyEcScope(seizougijutsu, detail);
                 seizougijutsu.DiscontinuedStatus = detail.DiscontinuedStatus ?? string.Empty;
                 seizougijutsu.EcModelCode = detail.EcModelCode ?? string.Empty;
-                seizougijutsu.EcRootMaterialCode = detail.EcRootMaterialCode ?? string.Empty;
+                seizougijutsu.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
                 seizougijutsu.EcRootMaterialDescription = detail.EcRootMaterialDescription ?? string.Empty;
                 break;
             default:
@@ -146,7 +156,7 @@ internal static class TaktEcDeptExecRedundantBinder
     }
 
     /// <summary>
-    /// 同步明细冗余区分（各执行部门 EcScope）
+    /// 同步实施范围，并按部门写入部门实施范围（采购/受检/部管/SMT/制技固定按设变）
     /// </summary>
     /// <param name="exec">部门执行实体</param>
     /// <param name="detail">设变明细</param>
@@ -156,30 +166,39 @@ internal static class TaktEcDeptExecRedundantBinder
         {
             case TaktEcKoubai koubai:
                 koubai.EcScope = detail.EcScope;
+                koubai.EcDeptScope = TaktEcDeptScopeConstants.ResolveForDept(TaktEcDeptCodes.Mp, detail.EcScope, detail.EcDeptScope);
                 break;
             case TaktEcUkeken ukeken:
                 ukeken.EcScope = detail.EcScope;
+                ukeken.EcDeptScope = TaktEcDeptScopeConstants.ResolveForDept(TaktEcDeptCodes.Iqc, detail.EcScope, detail.EcDeptScope);
                 break;
             case TaktEcBukan bukan:
                 bukan.EcScope = detail.EcScope;
+                bukan.EcDeptScope = TaktEcDeptScopeConstants.ResolveForDept(TaktEcDeptCodes.Mc, detail.EcScope, detail.EcDeptScope);
                 break;
             case TaktEcSmt smt:
                 smt.EcScope = detail.EcScope;
+                smt.EcDeptScope = TaktEcDeptScopeConstants.ResolveForDept(TaktEcDeptCodes.Smt, detail.EcScope, detail.EcDeptScope);
                 break;
             case TaktEcSeizounika seizounika:
                 seizounika.EcScope = detail.EcScope;
+                seizounika.EcDeptScope = TaktEcDeptScopeConstants.ResolveForDept(TaktEcDeptCodes.Pcba, detail.EcScope, detail.EcDeptScope);
                 break;
             case TaktEcSeikan seikan:
                 seikan.EcScope = detail.EcScope;
+                seikan.EcDeptScope = TaktEcDeptScopeConstants.ResolveForDept(TaktEcDeptCodes.Pmc, detail.EcScope, detail.EcDeptScope);
                 break;
             case TaktEcSeizouikka seizouikka:
                 seizouikka.EcScope = detail.EcScope;
+                seizouikka.EcDeptScope = TaktEcDeptScopeConstants.ResolveForDept(TaktEcDeptCodes.Assy, detail.EcScope, detail.EcDeptScope);
                 break;
             case TaktEcHinkan hinkan:
                 hinkan.EcScope = detail.EcScope;
+                hinkan.EcDeptScope = TaktEcDeptScopeConstants.ResolveForDept(TaktEcDeptCodes.Qa, detail.EcScope, detail.EcDeptScope);
                 break;
             case TaktEcSeizougijutsu seizougijutsu:
                 seizougijutsu.EcScope = detail.EcScope;
+                seizougijutsu.EcDeptScope = TaktEcDeptScopeConstants.ResolveForDept(TaktEcDeptCodes.Te, detail.EcScope, detail.EcDeptScope);
                 break;
         }
     }

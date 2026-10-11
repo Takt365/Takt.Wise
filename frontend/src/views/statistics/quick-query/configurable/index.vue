@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/statistics/quick-query/configurable -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：定制报表主实体管理页面，含查询、增删改、设计器与运行时 -->
@@ -305,24 +305,23 @@
 </template>
 
 <script setup lang="ts">
-import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
+import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 /**
  * 定制报表主实体管理页 · 由 generate-vue-master-detail-from-api.cjs 根据 types/api 生成
  * @module views/statistics/quick-query/configurable
  */
-import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import ConfigurableDesigner from './components/configurable-designer.vue'
-import { getConfigurableList, getConfigurableById, createConfigurable, updateConfigurable, deleteConfigurableById, deleteConfigurableBatch, getConfigurableTemplate, importConfigurable, exportConfigurable } from '@/api/statistics/quick-query/configurable'
-import type { Configurable, ConfigurableQuery } from '@/types/statistics/quick-query/configurable'
+import ConfigurableDesigner from './components/ConfigurableDesigner.vue'
+import { getConfigurableList, getConfigurableById, createConfigurable, updateConfigurable, deleteConfigurableById, deleteConfigurableBatch, getConfigurableTemplate, importConfigurable, exportConfigurable } from '@/api/statistics/quick-query/configurable.api'
+import type { Configurable, ConfigurableQuery } from '@/types/statistics/quick-query/configurable.types'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEditLine, RiDeleteBinLine, RiPlayLine } from '@remixicon/vue'
-import { useConfigurableCategory } from './composables/use-configurable-category'
+import { useConfigurableCategory } from './composables/useConfigurableCategory'
 
 /** i18n 翻译函数 */
 const { t } = useI18n()

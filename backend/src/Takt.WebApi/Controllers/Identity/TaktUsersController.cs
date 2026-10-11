@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi.Controllers.Identity
 // 文件名称：TaktUsersController.cs
 // 创建时间：2025-01-20
@@ -266,6 +266,44 @@ public class TaktUsersController : TaktControllerBase
         {
             await _userService.ChangePasswordAsync(dto);
             return Success("密码修改成功");
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// 更新当前登录用户头像（个人中心；写入关联员工 Avatar；无需管理端 update 权限）
+    /// </summary>
+    /// <param name="dto">头像 DTO</param>
+    /// <returns>更新后的头像 URL</returns>
+    [HttpPut("me/avatar")]
+    public async Task<IActionResult> UpdateMyAvatarAsync([FromBody] TaktUpdateMyAvatarDto dto)
+    {
+        try
+        {
+            var avatar = await _userService.UpdateMyAvatarAsync(dto);
+            return Success(avatar, "头像更新成功");
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// 更新当前登录用户个人资料（NickName→用户表；手机/邮箱→当前公司员工表；姓名/性别不可改）
+    /// </summary>
+    /// <param name="dto">个人资料 DTO</param>
+    /// <returns>更新后的可展示字段</returns>
+    [HttpPut("me/profile")]
+    public async Task<IActionResult> UpdateMyProfileAsync([FromBody] TaktUpdateMyProfileDto dto)
+    {
+        try
+        {
+            var result = await _userService.UpdateMyProfileAsync(dto);
+            return Success(result, "个人资料更新成功");
         }
         catch (Exception ex)
         {

@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 文件名称：en-US.ts
 // 功能描述：Manufacturing MRP page static copy; keys logistics.manufacturing.mrp.page.*
 //

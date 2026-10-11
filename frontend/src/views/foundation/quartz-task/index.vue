@@ -1,5 +1,5 @@
 <!-- ======================================== -->
-<!-- 项目名称：节拍数字工厂 · Takt Plat (TDF) -->
+<!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/foundation/quartz-task -->
 <!-- 文件名称：index.vue -->
 <!-- 功能描述：Quartz 定时任务实体管理页面，含查询、增删改，由 generate-vue-crud-from-api.cjs 根据 types/api 自动生成 -->
@@ -626,14 +626,13 @@
  * Quartz 定时任务实体管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/foundation/quartz-task
  */
-import { ref, computed, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
-import { CreateActionColumn } from '@/components/business/takt-action-column/index'
+import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/use-takt-content-modal-width'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/takt-paged'
-import QuartzTaskForm from './components/quartz-task-form.vue'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import QuartzTaskForm from './components/QuartzTaskForm.vue'
 import {
   getQuartzTaskList,
   getQuartzTaskById,
@@ -646,14 +645,14 @@ import {
   exportQuartzTask,
   updateQuartzTaskStatus,
   executeQuartzTaskNow,
-} from '@/api/foundation/quartz-task'
-import type { QuartzTask, QuartzTaskQuery } from '@/types/foundation/quartz-task'
-import { useDictDataStore } from '@/stores/foundation/dict-data'
+} from '@/api/foundation/quartzTask.api'
+import type { QuartzTask, QuartzTaskQuery } from '@/types/foundation/quartzTask.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
-import { resolveExportDownloadFileName } from '@/utils/export-download-name'
-import { normalizeImportResult, type TaktImportResult } from '@/utils/takt-import-result'
-import { useQuartzSignalRRefresh } from '@/composables/use-quartz-signalr-refresh'
-import { useDatabaseInfoCatalog } from '@/composables/use-database-info-catalog'
+import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
+import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
+import { useQuartzSignalRRefresh } from '@/composables/useQuartzSignalrRefresh'
+import { useDatabaseInfoCatalog } from '@/composables/useDatabaseInfoCatalog'
 import {
   DEFAULT_STAGING_SOURCE_DATABASE,
   buildBomDbAndMonthExecuteParams,
@@ -662,7 +661,7 @@ import {
   needsSyncSourceTargetPicker,
   needsSyncTargetOnlyFromTask,
   parseSyncExecuteDatabaseParams,
-} from './utils/quartz-sync-db-fields'
+} from './utils/quartzSyncDbFields'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine, RiPlayLine, RiPauseLine, RiFlashlightLine } from '@remixicon/vue'
 
 import {
@@ -671,7 +670,7 @@ import {
   QUARTZTASK_QUERY_STRING_FIELDS,
   QUARTZTASK_QUERY_FIELDS,
   QUARTZTASK_SELF_I18N_KEY,
-} from './composables/use-quartz-task-i18n'
+} from './composables/useQuartzTaskI18n'
 
 /** 任务状态：正常（字典 sys_quartz_task_status） */
 const QUARTZ_TASK_STATUS_NORMAL = 0
@@ -838,7 +837,6 @@ const deleteDisabled = computed(() => selectedRows.value.length === 0)
 /** Pinia：字典缓存（列表/查询 dict-type 渲染前预热） */
 const dictDataStore = useDictDataStore()
 
-
 /**
  * 构建列表/导出查询参数（空字符串与未填数值/日期不下发，避免后端 DateTime? 模型绑定 400；无参不补默认）
  * @param overrides 覆盖分页或导出上限等字段
@@ -890,7 +888,6 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
-
 
 /**
  * 构建列表标准文本列
@@ -997,8 +994,6 @@ const getQuartzTaskDictValue = (
   if (typeof value === 'string' || typeof value === 'number') return value
   return String(value)
 }
-
-
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({

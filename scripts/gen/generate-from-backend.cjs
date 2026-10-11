@@ -1,5 +1,5 @@
 // ========================================
-// 项目名称：节拍工厂·Takt Plat
+// 项目名称：节拍智控·TaktWise
 // 命名空间：scripts
 // 文件名称：generate-from-backend.cjs
 // 创建时间：2026-05-22
@@ -23,6 +23,10 @@ const {
   sanitizeXmlDocPlainText,
   resolveFrontendModuleFileName,
   resolveFrontendOutputRelPath,
+  toFrontendApiFileName,
+  toFrontendTypesFileName,
+  toFrontendApiImportPath,
+  toFrontendTypesImportPath,
 } = require('./generate-script-common.cjs');
 const {
   shouldExcludeDtoSourceBase,
@@ -74,7 +78,7 @@ const FRAMEWORK_TS_TYPE_NAMES = new Set([
   'TaktApiResult',
 ]);
 
-/** 后端 DTO/Query 基类（映射为 frontend/src/types/common.d.ts 中的类型） */
+/** 后端 DTO/Query 基类（映射为 frontend/src/types/common.types.ts 中的类型） */
 const COMMON_TYPES_FROM_COMMON_MODULE = new Set([
   'TaktTenantCoreDtoBase',
   'TaktTenantCultureDtoBase',
@@ -506,7 +510,7 @@ function getTypesImportPath(moduleName, controllerName, entityPrefix) {
   const entity = entityPrefix || entityShortFromControllerClassName(controllerName);
   const rawTypeFile = dtosSourceFileToOutputName(`Takt${entity}Dtos`);
   const { importPath } = resolveFrontendOutputRelPath(moduleName, rawTypeFile);
-  return `@/types/${importPath}`;
+  return `@/types/${toFrontendTypesImportPath(importPath)}`;
 }
 
 /**
@@ -516,7 +520,7 @@ function getTypesImportPath(moduleName, controllerName, entityPrefix) {
  */
 function getTypeImportPathForDtoClass(dtoClassName, moduleName) {
   if (dtoClassName === 'TaktSelectOption' || dtoClassName === 'TaktTreeSelectOption') {
-    return '@/types/common';
+    return '@/types/common.types';
   }
   const backendName = dtoClassName.startsWith('Takt')
     ? dtoClassName
@@ -524,10 +528,10 @@ function getTypeImportPathForDtoClass(dtoClassName, moduleName) {
   const indexed = DTO_TYPE_INDEX.get(dtoClassName) || (backendName && DTO_TYPE_INDEX.get(backendName));
   if (indexed) {
     const importPath = indexed.importPath || `${indexed.moduleName}/${indexed.typeFile}`;
-    return `@/types/${importPath}`;
+    return `@/types/${toFrontendTypesImportPath(importPath)}`;
   }
   const typeFile = dtoClassToFileName(backendName || dtoClassName);
-  return `@/types/${moduleName}/${typeFile}`;
+  return `@/types/${toFrontendTypesImportPath(`${moduleName}/${typeFile}`)}`;
 }
 
 /**
@@ -722,7 +726,7 @@ function buildGroupedTypeImports(dtoTypeNames, moduleName, fallbackImportPath, a
       (typeName.startsWith('Takt') ? typeName : null);
     const indexed = lookupName ? DTO_TYPE_INDEX.get(lookupName) : DTO_TYPE_INDEX.get(typeName);
     const importPath =
-      (indexed && `@/types/${indexed.moduleName}/${indexed.typeFile}`) ||
+      (indexed && `@/types/${toFrontendTypesImportPath(`${indexed.moduleName}/${indexed.typeFile}`)}`) ||
       getTypeImportPathForDtoClass(lookupName || typeName, moduleName) ||
       fallbackImportPath;
     if (!importPath) {
@@ -926,7 +930,7 @@ function parseInheritanceBaseNames(inheritance) {
 }
 
 /**
- * 收集 types 文件需从 @/types/common 导入的继承基类（Tenant/Company/Approval DtoBase、TaktPagedQuery）
+ * 收集 types 文件需从 @/types/common.types 导入的继承基类（Tenant/Company/Approval DtoBase、TaktPagedQuery）
  * @param {object[]} dtos parseDtoClass 结果
  * @returns {string[]} 前端类型名（已排序）
  */
@@ -975,7 +979,7 @@ function collectCrossModuleTypeImports(dtos, currentModuleName) {
         if (!indexed || indexed.moduleName === currentModuleName) {
           return;
         }
-        const key = `@/types/${indexed.moduleName}/${indexed.typeFile}`;
+        const key = `@/types/${toFrontendTypesImportPath(`${indexed.moduleName}/${indexed.typeFile}`)}`;
         if (!groups.has(key)) {
           groups.set(key, new Set());
         }
@@ -999,9 +1003,9 @@ function generateTypesFile(dtos, moduleName, typeFileName) {
   
   // 文件头
   lines.push(`// ========================================`);
-  lines.push(`// 项目名称：节拍工厂·Takt Plat`);
+  lines.push(`// 项目名称：节拍智控·TaktWise`);
   lines.push(`// 命名空间：frontend/src/types/${moduleName}`);
-  lines.push(`// 文件名称：${typeFileName}.d.ts`);
+  lines.push(`// 文件名称：${toFrontendTypesFileName(typeFileName)}`);
   lines.push(`// 创建时间：${new Date().toISOString().split('T')[0]}`);
   lines.push(`// 创建人：Takt365(Auto Generated)`);
   lines.push(
@@ -1014,7 +1018,7 @@ function generateTypesFile(dtos, moduleName, typeFileName) {
   lines.push('');
   const commonBaseTypes = collectCommonBaseTypeImports(dtos);
   if (commonBaseTypes.length) {
-    formatTypeImportLines(commonBaseTypes, '@/types/common').forEach((l) => lines.push(l));
+    formatTypeImportLines(commonBaseTypes, '@/types/common.types').forEach((l) => lines.push(l));
   }
   const crossImports = collectCrossModuleTypeImports(dtos, moduleName);
   if (crossImports.length) {
@@ -1450,9 +1454,9 @@ function generateApiFile(methods, moduleName, fileName, typesImportPath, meta, c
   const aliasEntityFile = apiMethodsUseDomFile(methods) && apiMethodsUseEntityFileType(methods, dtoTypes);
 
   lines.push('// ========================================');
-  lines.push('// 项目名称：节拍工厂·Takt Plat');
+  lines.push('// 项目名称：节拍智控·TaktWise');
   lines.push(`// 命名空间：frontend/src/api/${moduleName}`);
-  lines.push(`// 文件名称：${fileName}.ts`);
+  lines.push(`// 文件名称：${toFrontendApiFileName(fileName)}`);
   lines.push(`// 创建时间：${new Date().toISOString().split('T')[0]}`);
   lines.push('// 创建人：Takt365(Auto Generated)');
   lines.push(`// 功能描述：${moduleName} 模块 API（自动生成，请勿手改路由常量）`);
@@ -1476,7 +1480,7 @@ function generateApiFile(methods, moduleName, fileName, typesImportPath, meta, c
     });
   });
 
-  formatTypeImportLines([...commonImports].sort(), '@/types/common').forEach((l) => lines.push(l));
+  formatTypeImportLines([...commonImports].sort(), '@/types/common.types').forEach((l) => lines.push(l));
   if (entityDtoTypes.size > 0) {
     buildGroupedTypeImports(entityDtoTypes, moduleName, typesImportPath, aliasEntityFile).forEach((l) => lines.push(l));
   }
@@ -1533,7 +1537,7 @@ function processDtos(entityPrefix = null) {
   /** @type {Array<{ moduleName: string, sourceFileBase: string, dtos: object[] }>} */
   const results = [];
 
-  // 递归扫描DTO目录（每个 *Dtos.cs 单独生成一个 .d.ts，禁止按模块目录合并）
+  // 递归扫描DTO目录（每个 *Dtos.cs 单独生成一个 .types.ts，禁止按模块目录合并）
   function scanDir(dir, parentModule = '') {
     const files = fs.readdirSync(dir);
 
@@ -1607,7 +1611,7 @@ function processDtos(entityPrefix = null) {
     const outputPath = path.join(CONFIG.frontendRoot, CONFIG.output.types, outputRel.relDir);
 
     const content = generateTypesFile(dtos, moduleName, outputRel.file);
-    const filePath = path.join(outputPath, `${outputRel.file}.d.ts`);
+    const filePath = path.join(outputPath, toFrontendTypesFileName(outputRel.file));
     const writeResult = writeGeneratedFile(filePath, content);
     if (writeResult.created) {
       created += 1;
@@ -1682,7 +1686,7 @@ function processControllers(entityPrefix = null) {
 
     const typesImportPath = getTypesImportPath(moduleName, controllerName, entityPrefix);
     const content = generateApiFile(methods, moduleName, outputRel.file, typesImportPath, meta, controllerName);
-    const filePath = path.join(outputPath, `${outputRel.file}.ts`);
+    const filePath = path.join(outputPath, toFrontendApiFileName(outputRel.file));
     const writeResult = writeGeneratedFile(filePath, content);
     if (writeResult.created) {
       created += 1;
@@ -1714,10 +1718,10 @@ function printUsage() {
 
 说明:
   - 已禁用 --all；每次必须指定一个实体
-  - 跳过 types：Holiday（TaktHolidayThemeDto 手工 DTO，须手工维护 holiday.d.ts）
+  - 跳过 types：Holiday（TaktHolidayThemeDto 手工 DTO，须手工维护 holiday.types.ts）
 
 输出策略:
-  - 目标 .d.ts / .ts 不存在则创建，已存在则覆盖更新（与 generate-script-common.cjs 一致）
+  - 目标 .types.ts / .api.ts 不存在则创建，已存在则覆盖更新（与 generate-script-common.cjs 一致）
 
 示例:
   node scripts/generate-from-backend.cjs --CostCenter
