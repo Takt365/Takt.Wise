@@ -46,17 +46,15 @@ jobs:
           GITHUB_REPO: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Commit changelog to isolated branch
+      - name: Commit changelog to the same branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           COMMIT_DATE=$(TZ=Asia/Shanghai date +%Y-%m-%d)
-          # 创建孤立分支（无历史）
-          git checkout --orphan changelog
-          # 重置暂存区，移除所有文件
-          git reset
-          # 只添加 CHANGELOG.md
           git add CHANGELOG.md
+          if git diff --cached --quiet; then
+            echo "CHANGELOG.md unchanged, skip commit"
+            exit 0
+          fi
           git commit -m "chore(changelog): 同步 CHANGELOG ${COMMIT_DATE} [skip ci]"
-          # 强制推送
-          git push origin changelog --force
+          git push origin "HEAD:${GITHUB_REF_NAME}"
