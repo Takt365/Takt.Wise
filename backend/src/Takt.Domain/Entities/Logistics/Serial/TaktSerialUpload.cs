@@ -35,13 +35,13 @@ public class TaktSerialUpload : TaktCompanyEntityBase
     public DateTime OutboundDate { get; set; } = DateTime.Today;
 
     /// <summary>
-    /// 发货单号（固定 9 位）
+    /// 发货单号（固定 9 位；前端表单选择编码规则后自动通过 TaktNumbering 发货单号规则生成并展示，非手输；单据类型菜单：序列号上传）
     /// </summary>
     [SugarColumn(ColumnName = "shipping_invoice_code", ColumnDescription = "发货单号", ColumnDataType = "nvarchar", Length = 9, IsNullable = false)]
     public string ShippingInvoiceCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 序号（同一工厂+发货单号内唯一）
+    /// 序号（同一租户、公司、工厂+发货单号内唯一）
     /// </summary>
     [SugarColumn(ColumnName = "sequence_code", ColumnDescription = "序号", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
     public int SequenceCode { get; set; }

@@ -25,7 +25,7 @@ namespace Takt.Domain.Entities.Logistics.Quality.Operation;
 public class TaktInspectionStandard : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 检验标准编码（唯一索引）
+    /// 检验标准编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 检验标准编码规则生成并展示，非手输；单据类型菜单：检验标准）
     /// </summary>
     [SugarColumn(ColumnName = "standard_code", ColumnDescription = "检验标准编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string StandardCode { get; set; } = string.Empty;

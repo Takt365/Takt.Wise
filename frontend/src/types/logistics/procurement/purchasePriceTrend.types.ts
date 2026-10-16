@@ -88,6 +88,8 @@ export interface PurchasePriceTrendAdjacent {
 export interface PurchasePriceTrend {
   /** 工厂代码 */
   plantCode: string;
+  /** 定价记录号 */
+  purchaseInfoCode?: string;
   /** 物料编码 */
   materialCode: string;
   /** 物料描述 */

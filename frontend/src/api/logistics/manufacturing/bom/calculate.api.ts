@@ -15,7 +15,7 @@ import type {
   BomCalculateAverageQuery,
   BomCalculateAverageResult,
   BomCalculateCostResult,
-  BomCalculatePurchaseInfoRecordBackfillResult,
+  BomCalculatePurchaseInfoBackfillResult,
   BomCalculateQuery,
   BomCalculateSubmitted,
 } from '@/types/logistics/manufacturing/bom/calculate.types'
@@ -76,12 +76,12 @@ export function calculateBomCalculateAverage(
 /**
  * 按核算日回填 BOM 明细采购组织/采购组/供应商/净价/采购货币/采购价格单位
  * @param {BomCalculateQuery} queryDto 工厂/物料类型/机种可选；须单个核算月
- * @returns {Promise<BomCalculatePurchaseInfoRecordBackfillResult>} 回填统计
+ * @returns {Promise<BomCalculatePurchaseInfoBackfillResult>} 回填统计
  */
-export function backfillBomCalculatePurchaseInfoRecord(
+export function backfillBomCalculatePurchaseInfo(
   queryDto: BomCalculateQuery,
-): Promise<BomCalculatePurchaseInfoRecordBackfillResult> {
-  return request<BomCalculatePurchaseInfoRecordBackfillResult>({
+): Promise<BomCalculatePurchaseInfoBackfillResult> {
+  return request<BomCalculatePurchaseInfoBackfillResult>({
     url: `${BOM_CALCULATE_API_BASE}/purchase-price`,
     method: 'put',
     data: queryDto,

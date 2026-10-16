@@ -48,8 +48,8 @@ export const DASHBOARD_STATS_API = {
   salesOrderList: 'TaktSalesOrders/list',
   /** 销售订单统计（TaktSalesOrders/order-stat） */
   salesOrderStat: 'TaktSalesOrders/order-stat',
-  /** 销售发票统计（本月销售；TaktSalesInvoices/invoice-stat） */
-  salesInvoiceStat: 'TaktSalesInvoices/invoice-stat',
+  /** 销售发票统计（销售实绩推移；TaktSalesActualTrends/invoice-stat） */
+  salesInvoiceStat: 'TaktSalesActualTrends/invoice-stat',
   /** 设变部门执行行数统计（8 张部门表；TaktEcKanbans/dept-execution-count） */
   ecDeptExecutionCount: 'TaktEcKanbans/dept-execution-count',
   /** 设变实施路径 / 卡点部门（TaktEcKanban / ITaktEcKanbanService） */
@@ -90,8 +90,8 @@ export const DASHBOARD_STATS_API = {
   serviceContractStat: 'TaktCustomerServiceStats/contract-stat',
   /** 采购订单统计（TaktPurchaseOrders/order-stat） */
   purchaseOrderStat: 'TaktPurchaseOrders/order-stat',
-  /** 采购发票统计（TaktPurchaseInvoices/invoice-stat） */
-  purchaseInvoiceStat: 'TaktPurchaseInvoices/invoice-stat',
+  /** 采购发票统计（采购实绩推移；TaktPurchaseActualTrends/invoice-stat） */
+  purchaseInvoiceStat: 'TaktPurchaseActualTrends/invoice-stat',
   /** 采购申请统计（TaktPurchaseRequests/request-stat） */
   purchaseRequestStat: 'TaktPurchaseRequests/request-stat',
   /** 在库金额统计（TaktMaterialMovingPrices/stock-stat） */
@@ -111,7 +111,7 @@ export const DASHBOARD_STATS_PERMISSION = {
   helpDeskMyTicketList: 'routine:help:desk:my:ticket:list',
   salesOrderList: 'logistics:sales:order:list',
   salesOrderStat: 'logistics:sales:order:list',
-  salesInvoiceStat: 'logistics:sales:invoice:list',
+  salesInvoiceStat: 'logistics:sales:actual:trend:list',
   ecDeptExecutionCount: 'logistics:manufacturing:engineering:change:kanban:list',
   ecKanbanList: 'logistics:manufacturing:engineering:change:kanban:list',
   ecList: 'logistics:manufacturing:engineering:change:gijutsu:list',
@@ -135,7 +135,7 @@ export const DASHBOARD_STATS_PERMISSION = {
   serviceTicketStat: 'logistics:customer:service:ticket:query',
   serviceContractStat: 'logistics:customer:service:contract:query',
   purchaseOrderStat: 'logistics:procurement:purchase:order:list',
-  purchaseInvoiceStat: 'logistics:procurement:purchase:invoice:list',
+  purchaseInvoiceStat: 'logistics:procurement:purchase:actual:trend:list',
   purchaseRequestStat: 'logistics:procurement:purchase:request:list',
   materialMovingPriceList: 'logistics:materials:material:moving:price:list',
 } as const;

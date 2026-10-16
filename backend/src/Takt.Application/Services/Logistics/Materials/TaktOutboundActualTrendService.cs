@@ -249,9 +249,11 @@ public class TaktOutboundActualTrendService : TaktServiceBase, ITaktOutboundActu
         string? fileName = null)
     {
         ArgumentNullException.ThrowIfNull(query);
+        ArgumentException.ThrowIfNullOrWhiteSpace(query.PlantCode);
         var built = await _analysisBuilder.BuildAsync(query);
+        var plantRows = TaktPurchasePriceTrendExportHelper.WhereSelectedPlant(built.OrderedRows, query.PlantCode);
         var summaries = built.MonthSummaries ?? new List<TaktPurchasePriceTrendMonthSummaryDto>();
-        var detailRows = TaktPurchasePriceTrendExportHelper.BuildHistoryDetailExpandedSheetRows(built.OrderedRows);
+        var detailRows = TaktPurchasePriceTrendExportHelper.BuildHistoryDetailExpandedSheetRows(plantRows);
         var trendRows = TaktPurchasePriceTrendExportHelper.BuildHistoryTrendSheetRows(
             summaries,
             built.TotalAmount,
@@ -259,12 +261,12 @@ public class TaktOutboundActualTrendService : TaktServiceBase, ITaktOutboundActu
             built.TotalDownAmount);
         var allDetailKeys = new[]
         {
-            "materialCode", "materialDescription", "customerCode", "customerName", "currencyCode", "unit",
+            "plantCode", "materialCode", "materialDescription", "customerCode", "customerName", "currencyCode", "unit",
             "amount", "unitPrice", "quantity", "month", "adjacent", "trend", "varianceAmount",
         };
         var allDetailLabels = new[]
         {
-            "物料编码", "物料描述", "客户编码", "客户名称", "币种", "单位",
+            "工厂代码", "物料编码", "物料描述", "客户编码", "客户名称", "币种", "单位",
             "金额", "单价", "数量", "月份", "单价涨跌%", "期间涨跌", "期间单价影响金额",
         };
         var (detailKeys, detailLabels) = ResolveDetailExportColumns(
@@ -335,6 +337,12 @@ public class TaktOutboundActualTrendService : TaktServiceBase, ITaktOutboundActu
             selected.RemoveAll(k => string.Equals(k, "points", StringComparison.OrdinalIgnoreCase));
             selected.AddRange(new[] { "amount", "unitPrice", "quantity", "month", "adjacent" });
             selected = selected.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        }
+        if (selected.Count > 0
+            && allKeys.Contains("plantCode", StringComparer.OrdinalIgnoreCase)
+            && !selected.Exists(k => string.Equals(k, "plantCode", StringComparison.OrdinalIgnoreCase)))
+        {
+            selected.Insert(0, "plantCode");
         }
         var selectedSet = selected.ToHashSet(StringComparer.OrdinalIgnoreCase);
         if (selectedSet.Count == 0)

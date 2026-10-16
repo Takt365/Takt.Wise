@@ -110,6 +110,85 @@ public static class TaktNamingHelper
     }
 
     /// <summary>
+    /// 应用服务命名空间尾段转成导出工作簿类别（菜单目录名，| 连接）。与菜单种子 MenuName 一致。
+    /// </summary>
+    /// <param name="namespaceTail">Takt.Application.Services. 之后的命名空间，如 Logistics.Procurement</param>
+    /// <returns>如 后勤管理|采购管理；无法识别时为空</returns>
+    /// <exception cref="ArgumentException"><paramref name="namespaceTail"/> 为空</exception>
+    public static string ExportModuleCategory(string namespaceTail)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(namespaceTail);
+        var names = new List<string>();
+        foreach (var segment in namespaceTail.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            if (ExportModuleMenuNames.TryGetValue(segment, out var menuName)
+                && (names.Count == 0 || !string.Equals(names[^1], menuName, StringComparison.Ordinal)))
+            {
+                names.Add(menuName);
+            }
+        }
+        return string.Join("|", names);
+    }
+
+    /// <summary>
+    /// 服务目录段 → 菜单目录名。只收模块目录，不收页面名。
+    /// </summary>
+    private static readonly Dictionary<string, string> ExportModuleMenuNames = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Dashboard"] = "仪表盘",
+        ["Routine"] = "日常事务",
+        ["Announcement"] = "公告通知",
+        ["MeetingCenter"] = "会议中心",
+        ["DocumentCenter"] = "文管中心",
+        ["NewsCenter"] = "新闻中心",
+        ["HelpDesk"] = "服务台",
+        ["Visitor"] = "访客中心",
+        ["Accounting"] = "财务核算",
+        ["Financial"] = "管理会计",
+        ["Controlling"] = "控制会计",
+        ["Logistics"] = "后勤管理",
+        ["Sales"] = "销售管理",
+        ["Materials"] = "物料管理",
+        ["Procurement"] = "采购管理",
+        ["Manufacturing"] = "生产执行",
+        ["Quality"] = "质量管理",
+        ["CustomerService"] = "客户服务",
+        ["Maintenance"] = "工厂维护",
+        ["Serial"] = "序列号管理",
+        ["Bom"] = "BOM管理",
+        ["EngineeringChange"] = "工程设变",
+        ["Mds"] = "MDS计划",
+        ["Mps"] = "MPS计划",
+        ["Mrp"] = "MRP计划",
+        ["Aps"] = "APS排程",
+        ["Output"] = "OPH管理",
+        ["Defect"] = "生产不良",
+        ["LaborHour"] = "OPH工数",
+        ["Sop"] = "SOP管理",
+        ["Operation"] = "质量业务",
+        ["Complaint"] = "客诉管理",
+        ["Cost"] = "品质成本",
+        ["HumanResource"] = "人力资源",
+        ["Organization"] = "组织管理",
+        ["Personnel"] = "人事管理",
+        ["Attendance"] = "考勤管理",
+        ["Compensation"] = "薪酬管理",
+        ["Benefits"] = "福利管理",
+        ["Performance"] = "绩效管理",
+        ["Training"] = "教育培训",
+        ["Talent"] = "人才管理",
+        ["Identity"] = "身份认证",
+        ["Workflow"] = "工作流",
+        ["Code"] = "代码管理",
+        ["Generator"] = "代码生成",
+        ["Database"] = "数据库信息",
+        ["Foundation"] = "基础数据",
+        ["Statistics"] = "统计看板",
+        ["QuickQuery"] = "快速查询",
+        ["Logging"] = "日志管理",
+    };
+
+    /// <summary>
     /// 去除文件名非法字符，空白压成单空格。
     /// </summary>
     private static string SanitizeFileNameSegment(string value)

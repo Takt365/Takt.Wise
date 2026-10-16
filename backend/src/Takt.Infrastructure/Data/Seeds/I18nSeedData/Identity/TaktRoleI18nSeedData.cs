@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Identity
 // 文件名称：TaktRoleI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktRole 实体字段国际化种子（已对齐前端 locales：src/locales/identity/role）
 // 
@@ -91,13 +91,13 @@ public class TaktRoleI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.role._self", "zh-HK", "角色信息_hk", "实体名称"),
 
             // entity.role.code
-            new TranslationSeedItem("entity.role.code", "en-US", "角色编码_us", "角色编码（唯一索引：租户内唯一，见 ix_role_code_unique）"),
+            new TranslationSeedItem("entity.role.code", "en-US", "角色编码_us", "角色编码（唯一索引：租户内唯一，见 ix_role_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 角色编码规则生成并展示，非手输；单据类型菜单：角色管理）"),
             // entity.role.code
-            new TranslationSeedItem("entity.role.code", "ja-JP", "角色编码_jp", "角色编码（唯一索引：租户内唯一，见 ix_role_code_unique）"),
+            new TranslationSeedItem("entity.role.code", "ja-JP", "角色编码_jp", "角色编码（唯一索引：租户内唯一，见 ix_role_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 角色编码规则生成并展示，非手输；单据类型菜单：角色管理）"),
             // entity.role.code
-            new TranslationSeedItem("entity.role.code", "zh-CN", "角色编码", "角色编码（唯一索引：租户内唯一，见 ix_role_code_unique）"),
+            new TranslationSeedItem("entity.role.code", "zh-CN", "角色编码", "角色编码（唯一索引：租户内唯一，见 ix_role_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 角色编码规则生成并展示，非手输；单据类型菜单：角色管理）"),
             // entity.role.code
-            new TranslationSeedItem("entity.role.code", "zh-HK", "角色编码_hk", "角色编码（唯一索引：租户内唯一，见 ix_role_code_unique）"),
+            new TranslationSeedItem("entity.role.code", "zh-HK", "角色编码_hk", "角色编码（唯一索引：租户内唯一，见 ix_role_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 角色编码规则生成并展示，非手输；单据类型菜单：角色管理）"),
 
             // entity.role.name
             new TranslationSeedItem("entity.role.name", "en-US", "角色名称_us", "角色名称"),

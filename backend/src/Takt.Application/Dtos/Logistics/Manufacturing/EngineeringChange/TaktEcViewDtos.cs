@@ -571,7 +571,7 @@ public class TaktEcKanbanDto : TaktCompanyDtoBase
     /// <summary>
     /// 设变单号
     /// </summary>
-    public string EcNo { get; set; } = string.Empty;
+    public string EcCode { get; set; } = string.Empty;
     /// <summary>
     /// 设变标题
     /// </summary>
@@ -601,7 +601,7 @@ public class TaktEcKanbanDto : TaktCompanyDtoBase
     /// </summary>
     public string? CurrentDeptCode { get; set; }
     /// <summary>
-    /// 当前部门待实施明细数
+    /// 待实施数（各执行部门行数之和，与明细数 DetailCount 分开）
     /// </summary>
     public int PendingAtCurrentDeptCount { get; set; }
     /// <summary>
@@ -624,11 +624,11 @@ public class TaktEcKanbanDeptStageDto
     /// </summary>
     public string DeptCode { get; set; } = string.Empty;
     /// <summary>
-    /// 已实施明细数
+    /// 已实施执行行数
     /// </summary>
     public int ImplementedCount { get; set; }
     /// <summary>
-    /// 明细总数
+    /// 该执行部门行数
     /// </summary>
     public int TotalCount { get; set; }
 }
@@ -813,7 +813,7 @@ public class TaktEcKakuninDto : TaktCompanyDtoBase
     /// <summary>
     /// 设变单号
     /// </summary>
-    public string EcNo { get; set; } = string.Empty;
+    public string EcCode { get; set; } = string.Empty;
     /// <summary>
     /// 行号
     /// </summary>
@@ -827,13 +827,21 @@ public class TaktEcKakuninDto : TaktCompanyDtoBase
     /// </summary>
     public string? EcOldMaterialCode { get; set; }
     /// <summary>
-    /// 新料号
+    /// 旧物料描述
     /// </summary>
-    public string? EcNewMaterialCode { get; set; }
+    public string? EcOldMaterialDescription { get; set; }
     /// <summary>
     /// 旧采购类型（F=外部采购，E=自制生产）
     /// </summary>
     public string? EcOldPurchaseType { get; set; }
+    /// <summary>
+    /// 新料号
+    /// </summary>
+    public string? EcNewMaterialCode { get; set; }
+    /// <summary>
+    /// 新物料描述
+    /// </summary>
+    public string? EcNewMaterialDescription { get; set; }
     /// <summary>
     /// 旧品检验（0=否 1=是）
     /// </summary>
@@ -873,6 +881,21 @@ public class TaktEcKakuninQueryDto : TaktPagedQuery
     /// 新料号
     /// </summary>
     public string? EcNewMaterialCode { get; set; }
+
+    /// <summary>
+    /// 旧料号
+    /// </summary>
+    public string? EcOldMaterialCode { get; set; }
+
+    /// <summary>
+    /// 旧采购类型（F=外部采购，E=自制生产）
+    /// </summary>
+    public string? EcOldPurchaseType { get; set; }
+
+    /// <summary>
+    /// 新采购类型（F=外部采购，E=自制生产）
+    /// </summary>
+    public string? EcNewPurchaseType { get; set; }
 
     /// <summary>
     /// 区域文化编码（业务字段；字典 sys_culture_code；BCP47 如 zh-CN、en-US、ja-JP；DictData 另可用 mul=多种语言内容）

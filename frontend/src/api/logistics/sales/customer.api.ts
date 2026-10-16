@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/api/logistics/sales
 // 文件名称：customer.api.ts
-// 创建时间：2026-08-23
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：logistics/sales 模块 API（自动生成，请勿手改路由常量）
 // 
@@ -53,8 +53,11 @@ export function getCustomerList(queryDto: any): Promise<TaktPagedResult<Customer
  */
 export function getCustomerById(id: string): Promise<Customer> {
   return request<Customer>({
-    url: `${CUSTOMER_API_BASE}/${id}`,
+    url: `${CUSTOMER_API_BASE}/{id:long}`,
     method: 'get',
+    params: {
+      id
+    },
   });
 }
 
@@ -142,21 +145,17 @@ export function updateCustomerSort(dto: CustomerSort): Promise<Customer> {
 
 /**
  * 获取客户信息选项列表
+ * @param {string} plantCode 工厂代码（可选，用于按工厂过滤）
+ * @param {string} keyword 搜索关键字（可选，模糊匹配）
  * @returns {Promise<TaktSelectOption[]>} 下拉选项
  */
-export function getCustomerOptions(
-  plantCode?: string,
-  keyword?: string
-): Promise<TaktSelectOption[]> {
-  const plant = plantCode?.trim()
-  const kw = keyword?.trim()
+export function getCustomerOptions(plantCode?: string, keyword?: string): Promise<TaktSelectOption[]> {
   return request<TaktSelectOption[]>({
     url: `${CUSTOMER_API_BASE}/options`,
     method: 'get',
     params: {
-      
-      ...(plant ? { plantCode: plant } : {}),
-      ...(kw ? { keyword: kw } : {}),
+      plantCode,
+      keyword
     },
   });
 }

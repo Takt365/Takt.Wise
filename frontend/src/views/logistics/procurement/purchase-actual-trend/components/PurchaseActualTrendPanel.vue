@@ -407,7 +407,7 @@ const trendSummaryText = computed(() => {
 /** 明细列（与采购价格推移一致） */
 const detailColumns = computed<TableColumnsType>(() => [
   {
-    title: t('entity.purchaseinforecord.materialcode'),
+    title: t('entity.purchaseinvoiceitem.materialcode'),
     dataIndex: 'materialCode',
     key: 'materialCode',
     width: 140,
@@ -415,34 +415,34 @@ const detailColumns = computed<TableColumnsType>(() => [
     fixed: 'left',
   },
   {
-    title: t('entity.purchaseinforecord.materialdescription'),
+    title: t('entity.materialplant.materialdescription'),
     dataIndex: 'materialDescription',
     key: 'materialDescription',
     width: 160,
     ellipsis: true,
   },
   {
-    title: t('entity.purchaseinforecord.suppliercode'),
+    title: t('entity.purchaseinfo.suppliercode'),
     dataIndex: 'supplierCode',
     key: 'supplierCode',
     width: 120,
     ellipsis: true,
   },
   {
-    title: t('entity.supplier.name1'),
+    title: t('entity.supplier.shortname'),
     dataIndex: 'supplierName',
     key: 'supplierName',
     width: 160,
     ellipsis: true,
   },
   {
-    title: t('entity.purchaseinforecorditem.conditioncurrencycode'),
+    title: t('entity.purchaseinfoitem.conditioncurrencycode'),
     dataIndex: 'currencyCode',
     key: 'currencyCode',
     width: 80,
   },
   {
-    title: t('entity.purchaseinforecorditem.unitofmeasure'),
+    title: t('entity.purchaseinfoitem.unitofmeasure'),
     dataIndex: 'unit',
     key: 'unit',
     width: 80,

@@ -24,7 +24,7 @@ namespace Takt.Domain.Entities.HumanResource.Training;
 public class TaktTrainingPlan : TaktApprovalEntityBase
 {
     /// <summary>
-    /// 计划编码（租户+公司内唯一）
+    /// 计划编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 计划编码规则生成并展示，非手输；单据类型菜单：年度计划）
     /// </summary>
     [SugarColumn(ColumnName = "plan_code", ColumnDescription = "计划编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string PlanCode { get; set; } = string.Empty;

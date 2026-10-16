@@ -27,7 +27,7 @@ public static class TaktPagedClamp
     /// <summary>
     /// 列表接口允许的最大每页条数
     /// </summary>
-    public static int DefaultMaxPageSize { get; private set; } = 100;
+    public static int DefaultMaxPageSize { get; private set; } = 1000;
 
     /// <summary>
     /// 默认每页条数
@@ -42,7 +42,7 @@ public static class TaktPagedClamp
     /// <summary>
     /// 前端可选每页条数
     /// </summary>
-    public static int[] PageSizeOptions { get; private set; } = [10, 20, 50, 100];
+    public static int[] PageSizeOptions { get; private set; } = [20, 50, 100, 500, 1000];
 
     /// <summary>
     /// 从 appsettings Paged 节注入运行时默认值（Program 启动时调用一次）

@@ -28,7 +28,7 @@ namespace Takt.Application.Services.Logistics.Procurement;
 public class TaktPurchaseActualTrendAnalysisBuilder : TaktServiceBase, ITaktPurchaseActualTrendAnalysisBuilder
 {
     /// <summary>
-    /// 物料/供应商名称按编码分批查询，避免超长 IN 列表
+    /// 供应商简称按编码分批查询，避免超长 IN 列表
     /// </summary>
     private const int MaterialNameLookupBatchSize = 500;
 
@@ -76,9 +76,9 @@ public class TaktPurchaseActualTrendAnalysisBuilder : TaktServiceBase, ITaktPurc
         var materialFilter = string.IsNullOrWhiteSpace(queryDto.MaterialCode) ? null : queryDto.MaterialCode.Trim();
         var (rangeStart, rangeEndExclusive) = ResolveActualTrendDateBounds(queryDto);
         var periodOrder = BuildPeriodMonthKeys(rangeStart, rangeEndExclusive);
-        if (periodOrder.Count > TaktPriceTrendAnalysisHelper.MaxTrendMonths)
+        if (periodOrder.Count > TaktPriceTrendAnalysisHelper.AnalysisPeriodMaxMonths)
         {
-            throw new ArgumentException($"分析区间不得超过 {TaktPriceTrendAnalysisHelper.MaxTrendMonths} 个月");
+            throw new ArgumentException($"分析区间不得超过 {TaktPriceTrendAnalysisHelper.AnalysisPeriodMaxMonths} 个月");
         }
         var invoices = await _invoiceRepository.GetListAsync(
             BuildInvoiceExpression(rangeStart, rangeEndExclusive));
@@ -122,7 +122,7 @@ public class TaktPurchaseActualTrendAnalysisBuilder : TaktServiceBase, ITaktPurc
         }
         var allRows = facts
             .GroupBy(
-                r => new PurchaseActualTrendRowKey(r.PlantCode, r.MaterialCode, string.Empty),
+                r => new PurchaseActualTrendRowKey(r.PlantCode, r.MaterialCode, r.SupplierCode),
                 PurchaseActualTrendRowKeyComparer.Instance)
             .Select(g => BuildActualTrendRow(g.Key, g.ToList(), periodOrder))
             .Where(r => (r.PeriodPoints?.Count ?? 0) > 0)
@@ -267,9 +267,9 @@ public class TaktPurchaseActualTrendAnalysisBuilder : TaktServiceBase, ITaktPurc
                 (startMonth, endMonth) = (endMonth, startMonth);
             }
             var monthCount = ((endMonth.Year - startMonth.Year) * 12) + endMonth.Month - startMonth.Month + 1;
-            if (monthCount > TaktPriceTrendAnalysisHelper.MaxTrendMonths)
+            if (monthCount > TaktPriceTrendAnalysisHelper.AnalysisPeriodMaxMonths)
             {
-                throw new ArgumentException($"分析区间不得超过 {TaktPriceTrendAnalysisHelper.MaxTrendMonths} 个月");
+                throw new ArgumentException($"分析区间不得超过 {TaktPriceTrendAnalysisHelper.AnalysisPeriodMaxMonths} 个月");
             }
             return (startMonth, endMonth.AddMonths(1));
         }
@@ -319,8 +319,8 @@ public class TaktPurchaseActualTrendAnalysisBuilder : TaktServiceBase, ITaktPurc
     /// <summary>
     /// 构建单行采购实绩推移
     /// </summary>
-    /// <param name="key">行键（工厂+物料）</param>
-    /// <param name="groupRows">同物料明细</param>
+    /// <param name="key">行键（工厂+物料+供应商）</param>
+    /// <param name="groupRows">同键明细</param>
     /// <param name="periodOrder">期间年月</param>
     /// <returns>转置行</returns>
     private static TaktPurchasePriceTrendDto BuildActualTrendRow(
@@ -346,11 +346,6 @@ public class TaktPurchaseActualTrendAnalysisBuilder : TaktServiceBase, ITaktPurc
                     return (Quantity: quantity, Amount: amount, UnitPrice: unitPrice, Unit: unit, Currency: currency);
                 },
                 StringComparer.Ordinal);
-        var suppliers = groupRows
-            .Select(x => x.SupplierCode)
-            .Where(c => !string.IsNullOrWhiteSpace(c))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
         var periodUnitPrices = new Dictionary<string, decimal>(StringComparer.Ordinal);
         var periodPriceSourcePeriods = new Dictionary<string, string>(StringComparer.Ordinal);
         var periodPoints = new List<TaktPurchasePriceTrendPointDto>();
@@ -358,7 +353,7 @@ public class TaktPurchaseActualTrendAnalysisBuilder : TaktServiceBase, ITaktPurc
         {
             PlantCode = key.PlantCode,
             MaterialCode = key.MaterialCode,
-            SupplierCode = suppliers.Count == 1 ? suppliers[0] : string.Empty,
+            SupplierCode = key.SupplierCode,
             MaterialDescription = string.Empty,
             CurrencyCode = byMonth.Values
                 .Select(v => v.Currency)
@@ -403,7 +398,7 @@ public class TaktPurchaseActualTrendAnalysisBuilder : TaktServiceBase, ITaktPurc
     }
 
     /// <summary>
-    /// 回填物料描述与供应商名称
+    /// 回填供应商简称；物料描述仅在行为空时取工厂物料，不写回发票
     /// </summary>
     /// <param name="plantCode">工厂</param>
     /// <param name="rows">推移行</param>
@@ -424,8 +419,8 @@ public class TaktPurchaseActualTrendAnalysisBuilder : TaktServiceBase, ITaktPurc
             .Where(c => !string.IsNullOrWhiteSpace(c))
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
-        var materialNames = await LoadMaterialNameLookupAsync(plantCode, materialCodes);
-        var supplierNames = await LoadSupplierNameLookupAsync(plantCode, supplierCodes);
+        var materialNames = await LoadMaterialPlantDescriptionLookupAsync(plantCode, materialCodes);
+        var supplierNames = await LoadSupplierShortNameLookupAsync(plantCode, supplierCodes);
         foreach (var row in rows)
         {
             if (string.IsNullOrWhiteSpace(row.MaterialDescription)
@@ -433,20 +428,19 @@ public class TaktPurchaseActualTrendAnalysisBuilder : TaktServiceBase, ITaktPurc
             {
                 row.MaterialDescription = materialDescription;
             }
-            if (supplierNames.TryGetValue(row.SupplierCode, out var supplierName))
-            {
-                row.SupplierName = supplierName;
-            }
+            row.SupplierName = supplierNames.TryGetValue(row.SupplierCode, out var supplierShortName)
+                ? supplierShortName
+                : string.Empty;
         }
     }
 
     /// <summary>
-    /// 加载工厂物料描述字典
+    /// 按工厂加载物料描述（工厂物料无描述则空）
     /// </summary>
     /// <param name="plantCode">工厂</param>
     /// <param name="materialCodes">物料编码</param>
-    /// <returns>编码→名称</returns>
-    private async Task<Dictionary<string, string>> LoadMaterialNameLookupAsync(
+    /// <returns>编码→描述</returns>
+    private async Task<Dictionary<string, string>> LoadMaterialPlantDescriptionLookupAsync(
         string plantCode,
         IReadOnlyList<string> materialCodes)
     {
@@ -480,12 +474,12 @@ public class TaktPurchaseActualTrendAnalysisBuilder : TaktServiceBase, ITaktPurc
     }
 
     /// <summary>
-    /// 加载供应商名称字典
+    /// 加载供应商简称字典（优先同工厂；无简称不回退名称）
     /// </summary>
     /// <param name="plantCode">工厂</param>
     /// <param name="supplierCodes">供应商编码</param>
-    /// <returns>编码→名称</returns>
-    private async Task<Dictionary<string, string>> LoadSupplierNameLookupAsync(
+    /// <returns>编码→简称</returns>
+    private async Task<Dictionary<string, string>> LoadSupplierShortNameLookupAsync(
         string plantCode,
         IReadOnlyList<string> supplierCodes)
     {
@@ -524,7 +518,7 @@ public class TaktPurchaseActualTrendAnalysisBuilder : TaktServiceBase, ITaktPurc
                 {
                     continue;
                 }
-                map[group.Key] = group.Select(x => x.SupplierName1)
+                map[group.Key] = group.Select(x => x.SupplierShortName)
                     .FirstOrDefault(n => !string.IsNullOrWhiteSpace(n))?.Trim() ?? string.Empty;
             }
         }

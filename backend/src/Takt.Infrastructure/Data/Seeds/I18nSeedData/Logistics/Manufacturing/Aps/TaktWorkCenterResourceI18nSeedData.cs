@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Aps
 // 文件名称：TaktWorkCenterResourceI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktWorkCenterResource 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -109,13 +109,13 @@ public class TaktWorkCenterResourceI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.workcenterresource.workcentercode", "zh-HK", "工作中心编码_hk", "工作中心编码（关联 TaktWorkCenter.WorkCenterCode，冗余；选项 TaktWorkCenters/options，DictValue=WorkCenterCode）"),
 
             // entity.workcenterresource.resourcecode
-            new TranslationSeedItem("entity.workcenterresource.resourcecode", "en-US", "资源编码_us", "资源编码"),
+            new TranslationSeedItem("entity.workcenterresource.resourcecode", "en-US", "资源编码_us", "资源编码（前端表单选择编码规则后自动通过 TaktNumbering 资源编码规则生成并展示，非手输；单据类型菜单：工作中心）"),
             // entity.workcenterresource.resourcecode
-            new TranslationSeedItem("entity.workcenterresource.resourcecode", "ja-JP", "资源编码_jp", "资源编码"),
+            new TranslationSeedItem("entity.workcenterresource.resourcecode", "ja-JP", "资源编码_jp", "资源编码（前端表单选择编码规则后自动通过 TaktNumbering 资源编码规则生成并展示，非手输；单据类型菜单：工作中心）"),
             // entity.workcenterresource.resourcecode
-            new TranslationSeedItem("entity.workcenterresource.resourcecode", "zh-CN", "资源编码", "资源编码"),
+            new TranslationSeedItem("entity.workcenterresource.resourcecode", "zh-CN", "资源编码", "资源编码（前端表单选择编码规则后自动通过 TaktNumbering 资源编码规则生成并展示，非手输；单据类型菜单：工作中心）"),
             // entity.workcenterresource.resourcecode
-            new TranslationSeedItem("entity.workcenterresource.resourcecode", "zh-HK", "资源编码_hk", "资源编码"),
+            new TranslationSeedItem("entity.workcenterresource.resourcecode", "zh-HK", "资源编码_hk", "资源编码（前端表单选择编码规则后自动通过 TaktNumbering 资源编码规则生成并展示，非手输；单据类型菜单：工作中心）"),
 
             // entity.workcenterresource.resourcename
             new TranslationSeedItem("entity.workcenterresource.resourcename", "en-US", "资源名称_us", "资源名称"),

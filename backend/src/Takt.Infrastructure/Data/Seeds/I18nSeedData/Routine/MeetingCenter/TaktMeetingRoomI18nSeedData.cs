@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Routine.MeetingCenter
 // 文件名称：TaktMeetingRoomI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktMeetingRoom 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktMeetingRoomI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.meetingroom._self", "zh-HK", "会议室信息_hk", "实体名称"),
 
             // entity.meetingroom.roomcode
-            new TranslationSeedItem("entity.meetingroom.roomcode", "en-US", "会议室编码_us", "会议室编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.meetingroom.roomcode", "en-US", "会议室编码_us", "会议室编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 会议室编码规则生成并展示，非手输；单据类型菜单：会议室）"),
             // entity.meetingroom.roomcode
-            new TranslationSeedItem("entity.meetingroom.roomcode", "ja-JP", "会议室编码_jp", "会议室编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.meetingroom.roomcode", "ja-JP", "会议室编码_jp", "会议室编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 会议室编码规则生成并展示，非手输；单据类型菜单：会议室）"),
             // entity.meetingroom.roomcode
-            new TranslationSeedItem("entity.meetingroom.roomcode", "zh-CN", "会议室编码", "会议室编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.meetingroom.roomcode", "zh-CN", "会议室编码", "会议室编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 会议室编码规则生成并展示，非手输；单据类型菜单：会议室）"),
             // entity.meetingroom.roomcode
-            new TranslationSeedItem("entity.meetingroom.roomcode", "zh-HK", "会议室编码_hk", "会议室编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.meetingroom.roomcode", "zh-HK", "会议室编码_hk", "会议室编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 会议室编码规则生成并展示，非手输；单据类型菜单：会议室）"),
 
             // entity.meetingroom.roomname
             new TranslationSeedItem("entity.meetingroom.roomname", "en-US", "会议室名称_us", "会议室名称"),

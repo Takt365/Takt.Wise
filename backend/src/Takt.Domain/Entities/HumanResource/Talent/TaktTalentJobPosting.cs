@@ -30,7 +30,7 @@ public class TaktTalentJobPosting : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "staffing_requirement_id", ColumnDescription = "用人需求ID", ColumnDataType = "bigint", IsNullable = false)]
     public long StaffingRequirementId { get; set; }
     /// <summary>
-    /// 发布编码（租户+公司内唯一）
+    /// 发布编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 发布编码规则生成并展示，非手输；单据类型菜单：职位发布）
     /// </summary>
     [SugarColumn(ColumnName = "posting_code", ColumnDescription = "发布编码", ColumnDataType = "varchar", Length = 20, IsNullable = false)]
     public string PostingCode { get; set; } = string.Empty;

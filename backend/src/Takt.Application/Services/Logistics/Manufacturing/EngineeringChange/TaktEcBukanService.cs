@@ -131,7 +131,6 @@ public class TaktEcBukanService : TaktServiceBase, ITaktEcBukanService
         var isUnique_ix_takt_logistics_manufacturing_ec_bukan_unique = await _uniqueValidator.IsUniqueAsync(
             _ecBukanRepository,
             x => x.EcCode == entity.EcCode
-                && x.EcModelCode == entity.EcModelCode
                 && x.EcDetailId == entity.EcDetailId
                 && x.EcNewMaterialCode == entity.EcNewMaterialCode);
         if (!isUnique_ix_takt_logistics_manufacturing_ec_bukan_unique)
@@ -168,7 +167,6 @@ public class TaktEcBukanService : TaktServiceBase, ITaktEcBukanService
         var isUnique_ix_takt_logistics_manufacturing_ec_bukan_unique = await _uniqueValidator.IsUniqueAsync(
             _ecBukanRepository,
             x => x.EcCode == entity.EcCode
-                && x.EcModelCode == entity.EcModelCode
                 && x.EcDetailId == entity.EcDetailId
                 && x.EcNewMaterialCode == entity.EcNewMaterialCode,
             id);
@@ -310,7 +308,7 @@ public class TaktEcBukanService : TaktServiceBase, ITaktEcBukanService
             try
             {
                 var entity = rows[i].Adapt<TaktEcBukan>();
-                var importKey = $"{entity.EcCode}|{entity.EcModelCode}|{entity.EcDetailId}|{entity.EcNewMaterialCode}";
+                var importKey = $"{entity.EcCode}|{entity.EcModelCodeGroup}|{entity.EcDetailId}|{entity.EcNewMaterialCode}";
                 if (!importSeenKeys.Add(importKey))
                 {
                     throw new TaktBusinessException("与Excel中其他行重复（设变单号、机种编码、根物料编码、新物料编码）");
@@ -318,7 +316,6 @@ public class TaktEcBukanService : TaktServiceBase, ITaktEcBukanService
                 var isUnique_ix_takt_logistics_manufacturing_ec_bukan_unique = await _uniqueValidator.IsUniqueAsync(
                     _ecBukanRepository,
                     x => x.EcCode == entity.EcCode
-                        && x.EcModelCode == entity.EcModelCode
                         && x.EcDetailId == entity.EcDetailId
                         && x.EcNewMaterialCode == entity.EcNewMaterialCode);
                 if (!isUnique_ix_takt_logistics_manufacturing_ec_bukan_unique)

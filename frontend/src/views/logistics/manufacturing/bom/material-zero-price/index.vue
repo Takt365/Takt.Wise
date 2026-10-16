@@ -270,7 +270,7 @@ import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/useCompanyR
 import { useTenantStore } from '@/stores/identity/useTenantStore'
 import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import {
-  backfillBomCalculatePurchaseInfoRecord,
+  backfillBomCalculatePurchaseInfo,
   calculateBomCalculateAverage,
   recalculateBomCalculateCost,
   sumBomCalculateCost,
@@ -457,12 +457,12 @@ const toolbarLeftActions = computed<ToolBarAction[]>(() => [
   },
   {
     key: 'purchase-price-backfill',
-    label: t(`${localePrefix}.purchaseInfoRecordBackfill`),
+    label: t(`${localePrefix}.purchaseInfoBackfill`),
     icon: RiShoppingCart2Line,
     buttonClass: 'takt-button-sync',
     permission: calculateUpdatePermission,
     loading: purchaseBackfillPending.value,
-    onClick: () => handlePurchaseInfoRecordBackfill(),
+    onClick: () => handlePurchaseInfoBackfill(),
   },
   {
     key: 'moving-price-backfill-batch',
@@ -880,14 +880,14 @@ async function handleAverage(): Promise<void> {
 }
 
 /** 回填采购价 */
-async function handlePurchaseInfoRecordBackfill(): Promise<void> {
+async function handlePurchaseInfoBackfill(): Promise<void> {
   const query = buildCostQuery()
   if (!query) return
   purchaseBackfillPending.value = true
   try {
-    const result = await backfillBomCalculatePurchaseInfoRecord(query)
+    const result = await backfillBomCalculatePurchaseInfo(query)
     message.success(
-      t(`${localePrefix}.purchaseInfoRecordBackfillSuccess`, {
+      t(`${localePrefix}.purchaseInfoBackfillSuccess`, {
         month: result.processedMonth,
         scanned: result.scannedRowCount,
         updated: result.updatedRowCount,
@@ -897,7 +897,7 @@ async function handlePurchaseInfoRecordBackfill(): Promise<void> {
     )
   } catch (error: unknown) {
     const err = error as { message?: string }
-    message.error(err?.message || t(`${localePrefix}.purchaseInfoRecordBackfillFailed`))
+    message.error(err?.message || t(`${localePrefix}.purchaseInfoBackfillFailed`))
   } finally {
     purchaseBackfillPending.value = false
   }

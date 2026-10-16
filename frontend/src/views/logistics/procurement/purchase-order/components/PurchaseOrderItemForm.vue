@@ -106,12 +106,12 @@
             </a-col>
             <a-col :span="12">
               <a-form-item
-                :label="pi.label('purchaseInfoRecordCode')"
-                name="purchaseInfoRecordCode"
+                :label="pi.label('purchaseInfoCode')"
+                name="purchaseInfoCode"
               >
                 <a-input
-                  v-model:value="formState.purchaseInfoRecordCode"
-                  :placeholder="pi.ph('purchaseInfoRecordCode')"
+                  v-model:value="formState.purchaseInfoCode"
+                  :placeholder="pi.ph('purchaseInfoCode')"
                   show-count
                   :maxlength="20"
                   allow-clear
@@ -492,7 +492,7 @@ const formContentClass = computed(() => (formFields.length > 10 ? 'takt-form-con
 /** 当前激活的 Tab key */
 const activeTab = ref('tab-0')
 /** CreateDto 字段名列表（与 formState 键对齐） */
-const formFields = ["tenantCode","companyCode","cultureCode","plantCode","lineNumber","requestCode","requestLineNumber","materialCode","purchaseInfoRecordCode","supplierMaterialCode","purchaseUnit","orderQuantity","receivedQuantity","purchasePerUnit","purchaseUnitPrice","discountRate","discountAmount","taxIncludedAmount","untaxedAmount","taxAmount","purchaseAmount","pricingDate","grossWeight","netWeight","weightUnit","volume","volumeUnit","profitCenterCode","deliveryStatus","isObsolete"]
+const formFields = ["tenantCode","companyCode","cultureCode","plantCode","lineNumber","requestCode","requestLineNumber","materialCode","purchaseInfoCode","supplierMaterialCode","purchaseUnit","orderQuantity","receivedQuantity","purchasePerUnit","purchaseUnitPrice","discountRate","discountAmount","taxIncludedAmount","untaxedAmount","taxAmount","purchaseAmount","pricingDate","grossWeight","netWeight","weightUnit","volume","volumeUnit","profitCenterCode","deliveryStatus","isObsolete"]
 
 /** 父级传入的编辑 DTO；新增时为 undefined 或空对象 */
 interface Props {

@@ -29,7 +29,7 @@ public class TaktCustomerServiceRequest : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// 服务请求单号（组合唯一索引）
+    /// 服务请求单号（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 服务请求单号规则生成并展示，非手输；单据类型菜单：服务请求）
     /// </summary>
     [SugarColumn(ColumnName = "service_request_code", ColumnDescription = "服务请求单号", ColumnDataType = "nvarchar", Length = 50, IsNullable = false)]
     public string ServiceRequestCode { get; set; } = string.Empty;

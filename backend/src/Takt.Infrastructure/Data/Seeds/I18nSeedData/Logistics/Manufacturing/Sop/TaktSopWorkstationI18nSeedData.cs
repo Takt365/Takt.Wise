@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Sop
 // 文件名称：TaktSopWorkstationI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSopWorkstation 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktSopWorkstationI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.sopworkstation._self", "zh-HK", "SOP 工位主数据信息_hk", "实体名称"),
 
             // entity.sopworkstation.workstationcode
-            new TranslationSeedItem("entity.sopworkstation.workstationcode", "en-US", "工位编码_us", "工位编码（工厂内唯一）"),
+            new TranslationSeedItem("entity.sopworkstation.workstationcode", "en-US", "工位编码_us", "工位编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 工位编码规则生成并展示，非手输；单据类型菜单：工位管理）"),
             // entity.sopworkstation.workstationcode
-            new TranslationSeedItem("entity.sopworkstation.workstationcode", "ja-JP", "工位编码_jp", "工位编码（工厂内唯一）"),
+            new TranslationSeedItem("entity.sopworkstation.workstationcode", "ja-JP", "工位编码_jp", "工位编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 工位编码规则生成并展示，非手输；单据类型菜单：工位管理）"),
             // entity.sopworkstation.workstationcode
-            new TranslationSeedItem("entity.sopworkstation.workstationcode", "zh-CN", "工位编码", "工位编码（工厂内唯一）"),
+            new TranslationSeedItem("entity.sopworkstation.workstationcode", "zh-CN", "工位编码", "工位编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 工位编码规则生成并展示，非手输；单据类型菜单：工位管理）"),
             // entity.sopworkstation.workstationcode
-            new TranslationSeedItem("entity.sopworkstation.workstationcode", "zh-HK", "工位编码_hk", "工位编码（工厂内唯一）"),
+            new TranslationSeedItem("entity.sopworkstation.workstationcode", "zh-HK", "工位编码_hk", "工位编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 工位编码规则生成并展示，非手输；单据类型菜单：工位管理）"),
 
             // entity.sopworkstation.workstationname
             new TranslationSeedItem("entity.sopworkstation.workstationname", "en-US", "工位名称_us", "工位名称"),

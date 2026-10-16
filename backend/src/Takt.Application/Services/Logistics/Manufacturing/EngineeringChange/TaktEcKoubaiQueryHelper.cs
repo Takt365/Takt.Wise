@@ -4,7 +4,7 @@
 // 文件名称：TaktEcKoubaiQueryHelper.cs
 // 创建时间：2026-08-27
 // 创建人：Takt365(Cursor AI)
-// 功能描述：采购课主表/子表可见明细：任何范围按设变单号+新采购类型+新物料去重（保留最大 Id）
+// 功能描述：采购课主表/子表可见明细：采购类型 F 按设变去重（设变单号+新物料，保留最大 Id）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -47,7 +47,7 @@ internal static class TaktEcKoubaiQueryHelper
     }
 
     /// <summary>
-    /// 采购执行列表可见：任何范围按设变单号+新采购类型+新物料去重，保留最大 EcDetailId
+    /// 采购执行列表可见：采购类型 F，按设变单号+新物料去重，保留最大 Id
     /// </summary>
     /// <returns>执行表过滤表达式</returns>
     internal static Expression<Func<TaktEcKoubai, bool>> VisibleExecExpression()
@@ -61,10 +61,10 @@ internal static class TaktEcKoubaiQueryHelper
                     && s.CompanyCode == x.CompanyCode
                     && s.IsDeleted == 0
                     && s.IsObsolete == 0
+                    && s.EcNewPurchaseType == purchaseTypeF
                     && s.EcCode == x.EcCode
-                    && s.EcNewPurchaseType == x.EcNewPurchaseType
                     && s.EcNewMaterialCode == x.EcNewMaterialCode
-                    && s.EcDetailId > x.EcDetailId)
+                    && s.Id > x.Id)
                 .Any();
     }
 }

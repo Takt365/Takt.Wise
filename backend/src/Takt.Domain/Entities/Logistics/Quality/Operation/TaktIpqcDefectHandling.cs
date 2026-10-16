@@ -23,7 +23,7 @@ namespace Takt.Domain.Entities.Logistics.Quality.Operation;
 [SugarIndex("ix_takt_logistics_quality_ipqc_defect_handling_defect_type", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(DefectType), OrderByType.Asc, false)]
 public class TaktIpqcDefectHandling : TaktCompanyEntityBase
 {    /// <summary>
-    /// IPQC不良处理编码
+    /// IPQC不良处理编码（前端表单选择编码规则后自动通过 TaktNumbering IPQC不良处理编码规则生成并展示，非手输；单据类型菜单：制程检验）
     /// </summary>
     [SugarColumn(ColumnName = "ipqc_defect_handling_code", ColumnDescription = "IPQC不良处理编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string IpqcDefectHandlingCode { get; set; } = string.Empty;

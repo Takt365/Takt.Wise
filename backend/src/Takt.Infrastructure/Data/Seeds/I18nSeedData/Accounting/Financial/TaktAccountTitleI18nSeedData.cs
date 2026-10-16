@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Accounting.Financial
 // 文件名称：TaktAccountTitleI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktAccountTitle 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktAccountTitleI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.accounttitle._self", "zh-HK", "会计科目信息_hk", "实体名称"),
 
             // entity.accounttitle.code
-            new TranslationSeedItem("entity.accounttitle.code", "en-US", "科目编码_us", "科目编码"),
+            new TranslationSeedItem("entity.accounttitle.code", "en-US", "科目编码_us", "科目编码（前端表单选择编码规则后自动通过 TaktNumbering 科目编码规则生成并展示，非手输；单据类型菜单：会计科目）"),
             // entity.accounttitle.code
-            new TranslationSeedItem("entity.accounttitle.code", "ja-JP", "科目编码_jp", "科目编码"),
+            new TranslationSeedItem("entity.accounttitle.code", "ja-JP", "科目编码_jp", "科目编码（前端表单选择编码规则后自动通过 TaktNumbering 科目编码规则生成并展示，非手输；单据类型菜单：会计科目）"),
             // entity.accounttitle.code
-            new TranslationSeedItem("entity.accounttitle.code", "zh-CN", "科目编码", "科目编码"),
+            new TranslationSeedItem("entity.accounttitle.code", "zh-CN", "科目编码", "科目编码（前端表单选择编码规则后自动通过 TaktNumbering 科目编码规则生成并展示，非手输；单据类型菜单：会计科目）"),
             // entity.accounttitle.code
-            new TranslationSeedItem("entity.accounttitle.code", "zh-HK", "科目编码_hk", "科目编码"),
+            new TranslationSeedItem("entity.accounttitle.code", "zh-HK", "科目编码_hk", "科目编码（前端表单选择编码规则后自动通过 TaktNumbering 科目编码规则生成并展示，非手输；单据类型菜单：会计科目）"),
 
             // entity.accounttitle.name
             new TranslationSeedItem("entity.accounttitle.name", "en-US", "科目名称_us", "科目名称"),

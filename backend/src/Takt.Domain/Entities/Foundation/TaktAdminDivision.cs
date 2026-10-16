@@ -37,7 +37,7 @@ public class TaktAdminDivision : TaktTenantCoreEntityBase
     public string CountryCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 区划编码（唯一索引：租户内唯一；即标准代码，如 CN、CN-44、440100、440106）
+    /// 区划编码（唯一索引：租户内唯一；即标准代码，如 CN、CN-44、440100、440106；前端表单选择编码规则后自动通过 TaktNumbering 区划编码规则生成并展示，非手输；单据类型菜单：行政区划）
     /// </summary>
     [SugarColumn(ColumnName = "division_code", ColumnDescription = "区划编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string DivisionCode { get; set; } = string.Empty;

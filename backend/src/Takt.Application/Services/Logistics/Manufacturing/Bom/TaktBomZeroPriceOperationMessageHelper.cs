@@ -101,7 +101,7 @@ public static class TaktBomZeroPriceOperationMessageHelper
     /// </summary>
     /// <param name="result">结果</param>
     /// <returns>正文</returns>
-    public static string BuildPurchaseInfoRecordBackfillSuccess(TaktBomCalculatePurchaseInfoRecordBackfillResultDto result)
+    public static string BuildPurchaseInfoBackfillSuccess(TaktBomCalculatePurchaseInfoBackfillResultDto result)
     {
         ArgumentNullException.ThrowIfNull(result);
         return $"{result.ProcessedMonth} 回填采购价完成：扫描 {result.ScannedRowCount} 行，更新 {result.UpdatedRowCount}，无价格 {result.SkippedNoPriceCount}，未变化 {result.UnchangedRowCount}";

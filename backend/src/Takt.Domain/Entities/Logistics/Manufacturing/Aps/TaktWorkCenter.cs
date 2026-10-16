@@ -26,7 +26,7 @@ public class TaktWorkCenter : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// 工作中心编码
+    /// 工作中心编码（前端表单选择编码规则后自动通过 TaktNumbering 工作中心编码规则生成并展示，非手输；单据类型菜单：工作中心）
     /// </summary>
     [SugarColumn(ColumnName = "work_center_code", ColumnDescription = "工作中心编码", ColumnDataType = "nvarchar", Length = 10, IsNullable = false)]
     public string WorkCenterCode { get; set; } = string.Empty;

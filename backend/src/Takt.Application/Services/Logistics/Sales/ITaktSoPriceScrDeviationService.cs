@@ -16,7 +16,7 @@ using Takt.Shared.Options;
 namespace Takt.Application.Services.Logistics.Sales;
 
 /// <summary>
-/// SO 价偏离 SCR（销售条件记录）分析服务
+/// SO 价偏离 SCR（销售条件）分析服务
 /// </summary>
 public interface ITaktSoPriceScrDeviationService
 {

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Operation
 // 文件名称：TaktIqcOrderI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktIqcOrder 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -109,13 +109,13 @@ public class TaktIqcOrderI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.iqcorder.inspectiondate", "zh-HK", "检验日期_hk", "检验日期"),
 
             // entity.iqcorder.code
-            new TranslationSeedItem("entity.iqcorder.code", "en-US", "IQC检验单编码_us", "IQC检验单编码（唯一索引，根据来源单号自动生成）"),
+            new TranslationSeedItem("entity.iqcorder.code", "en-US", "IQC检验单编码_us", "IQC检验单编码（租户+公司+工厂内唯一，根据来源单号自动生成）"),
             // entity.iqcorder.code
-            new TranslationSeedItem("entity.iqcorder.code", "ja-JP", "IQC检验单编码_jp", "IQC检验单编码（唯一索引，根据来源单号自动生成）"),
+            new TranslationSeedItem("entity.iqcorder.code", "ja-JP", "IQC检验单编码_jp", "IQC检验单编码（租户+公司+工厂内唯一，根据来源单号自动生成）"),
             // entity.iqcorder.code
-            new TranslationSeedItem("entity.iqcorder.code", "zh-CN", "IQC检验单编码", "IQC检验单编码（唯一索引，根据来源单号自动生成）"),
+            new TranslationSeedItem("entity.iqcorder.code", "zh-CN", "IQC检验单编码", "IQC检验单编码（租户+公司+工厂内唯一，根据来源单号自动生成）"),
             // entity.iqcorder.code
-            new TranslationSeedItem("entity.iqcorder.code", "zh-HK", "IQC检验单编码_hk", "IQC检验单编码（唯一索引，根据来源单号自动生成）"),
+            new TranslationSeedItem("entity.iqcorder.code", "zh-HK", "IQC检验单编码_hk", "IQC检验单编码（租户+公司+工厂内唯一，根据来源单号自动生成）"),
 
             // entity.iqcorder.suppliercode
             new TranslationSeedItem("entity.iqcorder.suppliercode", "en-US", "供应商编码_us", "供应商编码（选项 TaktSuppliers/options；DictValue=SupplierCode）"),

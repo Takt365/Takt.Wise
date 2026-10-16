@@ -211,12 +211,12 @@ public class TaktCompanyDto : TaktTenantDtoBase
     public string ChartOfAccounts { get; set; } = string.Empty;
 
     /// <summary>
-    /// 进项税码（字典 accounting_financial_tax_code）
+    /// 进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string InputTaxCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 销项税码（字典 accounting_financial_tax_code）
+    /// 销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string OutputTaxCode { get; set; } = string.Empty;
 
@@ -468,12 +468,12 @@ public class TaktCompanyQueryDto : TaktPagedQuery
     public string? ChartOfAccounts { get; set; } = string.Empty;
 
     /// <summary>
-    /// 进项税码（字典 accounting_financial_tax_code）
+    /// 进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? InputTaxCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 销项税码（字典 accounting_financial_tax_code）
+    /// 销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? OutputTaxCode { get; set; } = string.Empty;
 
@@ -761,15 +761,15 @@ public class TaktCompanyCreateDto
     public string ChartOfAccounts { get; set; } = string.Empty;
 
     /// <summary>
-    /// 进项税码（字典 accounting_financial_tax_code）
+    /// 进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
-    [Required(ErrorMessage = "进项税码（字典 accounting_financial_tax_code）不能为空")]
+    [Required(ErrorMessage = "进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）不能为空")]
     public string InputTaxCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 销项税码（字典 accounting_financial_tax_code）
+    /// 销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
-    [Required(ErrorMessage = "销项税码（字典 accounting_financial_tax_code）不能为空")]
+    [Required(ErrorMessage = "销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）不能为空")]
     public string OutputTaxCode { get; set; } = string.Empty;
 
     /// <summary>
@@ -1097,12 +1097,12 @@ public class TaktCompanyTemplateDto
     public string? ChartOfAccounts { get; set; } = string.Empty;
 
     /// <summary>
-    /// 进项税码（字典 accounting_financial_tax_code）
+    /// 进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? InputTaxCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 销项税码（字典 accounting_financial_tax_code）
+    /// 销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? OutputTaxCode { get; set; } = string.Empty;
 
@@ -1354,12 +1354,12 @@ public class TaktCompanyImportDto
     public string? ChartOfAccounts { get; set; } = string.Empty;
 
     /// <summary>
-    /// 进项税码（字典 accounting_financial_tax_code）
+    /// 进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? InputTaxCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 销项税码（字典 accounting_financial_tax_code）
+    /// 销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? OutputTaxCode { get; set; } = string.Empty;
 
@@ -1617,12 +1617,12 @@ public class TaktCompanyExportDto
     public string ChartOfAccounts { get; set; } = string.Empty;
 
     /// <summary>
-    /// 进项税码（字典 accounting_financial_tax_code）
+    /// 进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string InputTaxCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 销项税码（字典 accounting_financial_tax_code）
+    /// 销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string OutputTaxCode { get; set; } = string.Empty;
 

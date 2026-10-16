@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.HumanResource.Talent
 // 文件名称：TaktTalentStaffingRequirementI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktTalentStaffingRequirement 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktTalentStaffingRequirementI18nSeedData : ITaktSeedDataCoordinato
             new TranslationSeedItem("entity.talentstaffingrequirement._self", "zh-HK", "用人需求信息_hk", "实体名称"),
 
             // entity.talentstaffingrequirement.reqcode
-            new TranslationSeedItem("entity.talentstaffingrequirement.reqcode", "en-US", "需求单号_us", "需求单号（租户+公司内唯一；自动生成，如 PR-2026-00123）"),
+            new TranslationSeedItem("entity.talentstaffingrequirement.reqcode", "en-US", "需求单号_us", "需求单号（租户+公司内唯一；自动生成，如 PR-2026-00123；前端表单选择编码规则后自动通过 TaktNumbering 需求单号规则生成并展示，非手输；单据类型菜单：用人需求）"),
             // entity.talentstaffingrequirement.reqcode
-            new TranslationSeedItem("entity.talentstaffingrequirement.reqcode", "ja-JP", "需求单号_jp", "需求单号（租户+公司内唯一；自动生成，如 PR-2026-00123）"),
+            new TranslationSeedItem("entity.talentstaffingrequirement.reqcode", "ja-JP", "需求单号_jp", "需求单号（租户+公司内唯一；自动生成，如 PR-2026-00123；前端表单选择编码规则后自动通过 TaktNumbering 需求单号规则生成并展示，非手输；单据类型菜单：用人需求）"),
             // entity.talentstaffingrequirement.reqcode
-            new TranslationSeedItem("entity.talentstaffingrequirement.reqcode", "zh-CN", "需求单号", "需求单号（租户+公司内唯一；自动生成，如 PR-2026-00123）"),
+            new TranslationSeedItem("entity.talentstaffingrequirement.reqcode", "zh-CN", "需求单号", "需求单号（租户+公司内唯一；自动生成，如 PR-2026-00123；前端表单选择编码规则后自动通过 TaktNumbering 需求单号规则生成并展示，非手输；单据类型菜单：用人需求）"),
             // entity.talentstaffingrequirement.reqcode
-            new TranslationSeedItem("entity.talentstaffingrequirement.reqcode", "zh-HK", "需求单号_hk", "需求单号（租户+公司内唯一；自动生成，如 PR-2026-00123）"),
+            new TranslationSeedItem("entity.talentstaffingrequirement.reqcode", "zh-HK", "需求单号_hk", "需求单号（租户+公司内唯一；自动生成，如 PR-2026-00123；前端表单选择编码规则后自动通过 TaktNumbering 需求单号规则生成并展示，非手输；单据类型菜单：用人需求）"),
 
             // entity.talentstaffingrequirement.deptid
             new TranslationSeedItem("entity.talentstaffingrequirement.deptid", "en-US", "申请部门ID_us", "申请部门（选项 TaktDepts/tree-options；DictValue=Id）"),

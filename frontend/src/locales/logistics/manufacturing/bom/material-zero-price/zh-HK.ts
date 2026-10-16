@@ -30,10 +30,10 @@ export default {
     costSum: '計算成本',
     costRecalculate: '重算成本',
     costAverage: '計算平均成本',
-    purchaseInfoRecordBackfill: '回填採購價',
-    purchaseInfoRecordBackfillSuccess:
+    purchaseInfoBackfill: '回填採購價',
+    purchaseInfoBackfillSuccess:
       '{month} 回填採購價完成：掃描 {scanned} 行，更新 {updated}，無價格 {skipped}，未變化 {unchanged}',
-    purchaseInfoRecordBackfillFailed: '回填採購價失敗',
+    purchaseInfoBackfillFailed: '回填採購價失敗',
     movingPriceBackfill: '回填移動價格',
     movingPriceBackfillBatch: '批量回填移動價格',
     movingPriceBackfillRow: '回填移動價格',

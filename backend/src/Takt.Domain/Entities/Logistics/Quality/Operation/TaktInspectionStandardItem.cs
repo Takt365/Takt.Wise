@@ -36,7 +36,7 @@ public class TaktInspectionStandardItem : TaktCompanyEntityBase
     public int LineNumber { get; set; } = 0;
 
     /// <summary>
-    /// 检验项目编码
+    /// 检验项目编码（前端表单选择编码规则后自动通过 TaktNumbering 检验项目编码规则生成并展示，非手输；单据类型菜单：检验标准）
     /// </summary>
     [SugarColumn(ColumnName = "item_code", ColumnDescription = "检验项目编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string ItemCode { get; set; } = string.Empty;

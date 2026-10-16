@@ -65,6 +65,11 @@ public class TaktEcDetailDto : TaktCompanyDtoBase
     public string EcModelCode { get; set; } = string.Empty;
 
     /// <summary>
+    /// 根物料类型（字典 logistics_materials_material_type；DictValue=FERT/HALB/ROH 等）
+    /// </summary>
+    public string EcRootMaterialType { get; set; } = string.Empty;
+
+    /// <summary>
     /// 根物料编码
     /// </summary>
     public string? EcRootMaterialCode { get; set; } = string.Empty;
@@ -264,6 +269,11 @@ public class TaktEcDetailQueryDto : TaktPagedQuery
     /// 机种
     /// </summary>
     public string? EcModelCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 根物料类型（字典 logistics_materials_material_type；DictValue=FERT/HALB/ROH 等）
+    /// </summary>
+    public string? EcRootMaterialType { get; set; } = string.Empty;
 
     /// <summary>
     /// 根物料编码
@@ -489,6 +499,11 @@ public class TaktEcDetailCreateDto
     /// </summary>
     [Required(ErrorMessage = "机种不能为空")]
     public string EcModelCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 根物料类型（字典 logistics_materials_material_type；DictValue=FERT/HALB/ROH 等）
+    /// </summary>
+    public string EcRootMaterialType { get; set; } = string.Empty;
 
     /// <summary>
     /// 根物料编码
@@ -744,6 +759,11 @@ public class TaktEcDetailTemplateDto
     public string? EcModelCode { get; set; } = string.Empty;
 
     /// <summary>
+    /// 根物料类型（字典 logistics_materials_material_type；DictValue=FERT/HALB/ROH 等）
+    /// </summary>
+    public string? EcRootMaterialType { get; set; } = string.Empty;
+
+    /// <summary>
     /// 根物料编码
     /// </summary>
     public string? EcRootMaterialCode { get; set; } = string.Empty;
@@ -948,6 +968,11 @@ public class TaktEcDetailImportDto
     /// 机种
     /// </summary>
     public string? EcModelCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 根物料类型（字典 logistics_materials_material_type；DictValue=FERT/HALB/ROH 等）
+    /// </summary>
+    public string? EcRootMaterialType { get; set; } = string.Empty;
 
     /// <summary>
     /// 根物料编码
@@ -1160,6 +1185,11 @@ public class TaktEcDetailExportDto
     /// 机种
     /// </summary>
     public string EcModelCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 根物料类型（字典 logistics_materials_material_type；DictValue=FERT/HALB/ROH 等）
+    /// </summary>
+    public string EcRootMaterialType { get; set; } = string.Empty;
 
     /// <summary>
     /// 根物料编码

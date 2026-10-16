@@ -94,7 +94,7 @@ export interface SalesQuotationItem extends CompanyDtoBase {
   discountAmount: number;
 
   /**
-   * 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -254,7 +254,7 @@ export interface SalesQuotationItemQuery extends TaktPagedQuery {
   discountAmount?: number;
 
   /**
-   * 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -433,7 +433,7 @@ export interface SalesQuotationItemCreate {
   discountAmount: number;
 
   /**
-   * 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -631,7 +631,7 @@ export interface SalesQuotationItemTemplate {
   discountAmount?: number;
 
   /**
-   * 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -795,7 +795,7 @@ export interface SalesQuotationItemImport {
   discountAmount?: number;
 
   /**
-   * 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -959,7 +959,7 @@ export interface SalesQuotationItemExport {
   discountAmount: number;
 
   /**
-   * 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 

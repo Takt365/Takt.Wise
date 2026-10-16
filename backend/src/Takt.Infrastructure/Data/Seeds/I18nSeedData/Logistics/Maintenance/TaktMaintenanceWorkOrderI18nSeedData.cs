@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Maintenance
 // 文件名称：TaktMaintenanceWorkOrderI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktMaintenanceWorkOrder 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktMaintenanceWorkOrderI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.maintenanceworkorder._self", "zh-HK", "维护工单信息_hk", "实体名称"),
 
             // entity.maintenanceworkorder.workordercode
-            new TranslationSeedItem("entity.maintenanceworkorder.workordercode", "en-US", "维护工单号_us", "维护工单号"),
+            new TranslationSeedItem("entity.maintenanceworkorder.workordercode", "en-US", "维护工单号_us", "维护工单号（前端表单选择编码规则后自动通过 TaktNumbering 维护工单号规则生成并展示，非手输；单据类型菜单：维护工单）"),
             // entity.maintenanceworkorder.workordercode
-            new TranslationSeedItem("entity.maintenanceworkorder.workordercode", "ja-JP", "维护工单号_jp", "维护工单号"),
+            new TranslationSeedItem("entity.maintenanceworkorder.workordercode", "ja-JP", "维护工单号_jp", "维护工单号（前端表单选择编码规则后自动通过 TaktNumbering 维护工单号规则生成并展示，非手输；单据类型菜单：维护工单）"),
             // entity.maintenanceworkorder.workordercode
-            new TranslationSeedItem("entity.maintenanceworkorder.workordercode", "zh-CN", "维护工单号", "维护工单号"),
+            new TranslationSeedItem("entity.maintenanceworkorder.workordercode", "zh-CN", "维护工单号", "维护工单号（前端表单选择编码规则后自动通过 TaktNumbering 维护工单号规则生成并展示，非手输；单据类型菜单：维护工单）"),
             // entity.maintenanceworkorder.workordercode
-            new TranslationSeedItem("entity.maintenanceworkorder.workordercode", "zh-HK", "维护工单号_hk", "维护工单号"),
+            new TranslationSeedItem("entity.maintenanceworkorder.workordercode", "zh-HK", "维护工单号_hk", "维护工单号（前端表单选择编码规则后自动通过 TaktNumbering 维护工单号规则生成并展示，非手输；单据类型菜单：维护工单）"),
 
             // entity.maintenanceworkorder.maintenancenotificationid
             new TranslationSeedItem("entity.maintenanceworkorder.maintenancenotificationid", "en-US", "来源维护通知单ID_us", "来源维护通知单ID（直接建单可为空，序列化为string以避免Javascript精度问题）"),

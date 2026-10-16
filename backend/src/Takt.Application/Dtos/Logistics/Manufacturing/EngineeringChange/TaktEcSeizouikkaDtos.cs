@@ -116,11 +116,7 @@ public class TaktEcSeizouikkaDto : TaktCompanyDtoBase
     public string? ImplementationBatch { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种（冗余：来自 TaktEcDetail.EcModelCode）
-    /// </summary>
-    public string EcModelCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
+    /// 机种编码组（单个或多个机种，分号分隔；ntext）
     /// </summary>
     public string EcModelCodeGroup { get; set; } = string.Empty;
     /// <summary>
@@ -244,11 +240,7 @@ public class TaktEcSeizouikkaQueryDto : TaktPagedQuery
     public string? ImplementationBatch { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种（冗余：来自 TaktEcDetail.EcModelCode）
-    /// </summary>
-    public string? EcModelCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
+    /// 机种编码组（单个或多个机种，分号分隔；ntext）
     /// </summary>
     public string? EcModelCodeGroup { get; set; } = string.Empty;
     /// <summary>
@@ -392,12 +384,7 @@ public class TaktEcSeizouikkaCreateDto
     public string? ImplementationBatch { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种（冗余：来自 TaktEcDetail.EcModelCode）
-    /// </summary>
-    [Required(ErrorMessage = "机种（冗余：来自 TaktEcDetail.EcModelCode）不能为空")]
-    public string EcModelCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
+    /// 机种编码组（单个或多个机种，分号分隔；ntext）
     /// </summary>
     public string EcModelCodeGroup { get; set; } = string.Empty;
     /// <summary>
@@ -591,11 +578,7 @@ public class TaktEcSeizouikkaTemplateDto
     public string? ImplementationBatch { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种（冗余：来自 TaktEcDetail.EcModelCode）
-    /// </summary>
-    public string? EcModelCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
+    /// 机种编码组（单个或多个机种，分号分隔；ntext）
     /// </summary>
     public string? EcModelCodeGroup { get; set; } = string.Empty;
     /// <summary>
@@ -714,11 +697,7 @@ public class TaktEcSeizouikkaImportDto
     public string? ImplementationBatch { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种（冗余：来自 TaktEcDetail.EcModelCode）
-    /// </summary>
-    public string? EcModelCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
+    /// 机种编码组（单个或多个机种，分号分隔；ntext）
     /// </summary>
     public string? EcModelCodeGroup { get; set; } = string.Empty;
     /// <summary>
@@ -853,11 +832,7 @@ public class TaktEcSeizouikkaExportDto
     public string? ImplementationBatch { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种（冗余：来自 TaktEcDetail.EcModelCode）
-    /// </summary>
-    public string EcModelCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
+    /// 机种编码组（单个或多个机种，分号分隔；ntext）
     /// </summary>
     public string EcModelCodeGroup { get; set; } = string.Empty;
     /// <summary>

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.HumanResource.Training
 // 文件名称：TaktTrainingPlanI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktTrainingPlan 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktTrainingPlanI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.trainingplan._self", "zh-HK", "培训计划信息_hk", "实体名称"),
 
             // entity.trainingplan.plancode
-            new TranslationSeedItem("entity.trainingplan.plancode", "en-US", "计划编码_us", "计划编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.trainingplan.plancode", "en-US", "计划编码_us", "计划编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 计划编码规则生成并展示，非手输；单据类型菜单：年度计划）"),
             // entity.trainingplan.plancode
-            new TranslationSeedItem("entity.trainingplan.plancode", "ja-JP", "计划编码_jp", "计划编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.trainingplan.plancode", "ja-JP", "计划编码_jp", "计划编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 计划编码规则生成并展示，非手输；单据类型菜单：年度计划）"),
             // entity.trainingplan.plancode
-            new TranslationSeedItem("entity.trainingplan.plancode", "zh-CN", "计划编码", "计划编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.trainingplan.plancode", "zh-CN", "计划编码", "计划编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 计划编码规则生成并展示，非手输；单据类型菜单：年度计划）"),
             // entity.trainingplan.plancode
-            new TranslationSeedItem("entity.trainingplan.plancode", "zh-HK", "计划编码_hk", "计划编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.trainingplan.plancode", "zh-HK", "计划编码_hk", "计划编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 计划编码规则生成并展示，非手输；单据类型菜单：年度计划）"),
 
             // entity.trainingplan.planname
             new TranslationSeedItem("entity.trainingplan.planname", "en-US", "计划名称_us", "计划名称"),

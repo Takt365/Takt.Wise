@@ -20,7 +20,7 @@ using Takt.Shared.Options;
 namespace Takt.WebApi.Controllers.Logistics.Sales;
 
 /// <summary>
-/// SO 价偏离 SCR 分析控制器（与销售订单/销售条件记录 CRUD 分离）
+/// SO 价偏离 SCR 分析控制器（与销售订单/销售条件 CRUD 分离）
 /// </summary>
 [ApiModule(4, "后勤管理")]
 [Route("api/[controller]", Name = "SO价偏离SCR")]

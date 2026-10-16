@@ -21,7 +21,7 @@ export default {
     selectPeriodRequired: '期間（年月）を選択してください',
     selectPriceTypeRequired: '条件タイプを選択してください',
     selectSupplierRequired: '仕入先を選択してください',
-    summary: '品目×仕入先行 {count} 件（有効開始日ごとに1行；隣接比較、右側は初件対最終件）',
+    summary: '価格記録 {count} 行（導出件数と同じ；選択工場のみ；同一品目で隣接比較）',
     summaryModel: '品目×仕入先行 {count} 件（機種/製品グループは BOM；列と漲跌ルールは左と同じ）',
     trendSummary: '{base} → {compare}：上昇 {up} · 下落 {down} · 横ばい {flat}',
     trendSummaryValidFrom: '各行は第1件と最終件で比較：上昇 {up} · 下落 {down} · 横ばい {flat}',

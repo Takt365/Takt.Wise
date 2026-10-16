@@ -41,7 +41,7 @@ public class TaktEmpBenefitPlan : TaktCompanyEntityBase
     [JsonConverter(typeof(ValueToStringConverter))]
     public long BenefitItemId { get; set; }
     /// <summary>
-    /// 方案编码
+    /// 方案编码（前端表单选择编码规则后自动通过 TaktNumbering 方案编码规则生成并展示，非手输；单据类型菜单：员工福利方案）
     /// </summary>
     [SugarColumn(ColumnName = "plan_code", ColumnDescription = "方案编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string PlanCode { get; set; } = string.Empty;

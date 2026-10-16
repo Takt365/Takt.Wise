@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Serial
 // 文件名称：TaktSerialUploadI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSerialUpload 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -100,22 +100,22 @@ public class TaktSerialUploadI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.serialupload.outbounddate", "zh-HK", "出库日期_hk", "出库日期"),
 
             // entity.serialupload.shippinginvoicecode
-            new TranslationSeedItem("entity.serialupload.shippinginvoicecode", "en-US", "发货单号_us", "发货单号（固定 9 位）"),
+            new TranslationSeedItem("entity.serialupload.shippinginvoicecode", "en-US", "发货单号_us", "发货单号（固定 9 位；前端表单选择编码规则后自动通过 TaktNumbering 发货单号规则生成并展示，非手输；单据类型菜单：序列号上传）"),
             // entity.serialupload.shippinginvoicecode
-            new TranslationSeedItem("entity.serialupload.shippinginvoicecode", "ja-JP", "发货单号_jp", "发货单号（固定 9 位）"),
+            new TranslationSeedItem("entity.serialupload.shippinginvoicecode", "ja-JP", "发货单号_jp", "发货单号（固定 9 位；前端表单选择编码规则后自动通过 TaktNumbering 发货单号规则生成并展示，非手输；单据类型菜单：序列号上传）"),
             // entity.serialupload.shippinginvoicecode
-            new TranslationSeedItem("entity.serialupload.shippinginvoicecode", "zh-CN", "发货单号", "发货单号（固定 9 位）"),
+            new TranslationSeedItem("entity.serialupload.shippinginvoicecode", "zh-CN", "发货单号", "发货单号（固定 9 位；前端表单选择编码规则后自动通过 TaktNumbering 发货单号规则生成并展示，非手输；单据类型菜单：序列号上传）"),
             // entity.serialupload.shippinginvoicecode
-            new TranslationSeedItem("entity.serialupload.shippinginvoicecode", "zh-HK", "发货单号_hk", "发货单号（固定 9 位）"),
+            new TranslationSeedItem("entity.serialupload.shippinginvoicecode", "zh-HK", "发货单号_hk", "发货单号（固定 9 位；前端表单选择编码规则后自动通过 TaktNumbering 发货单号规则生成并展示，非手输；单据类型菜单：序列号上传）"),
 
             // entity.serialupload.sequencecode
-            new TranslationSeedItem("entity.serialupload.sequencecode", "en-US", "序号_us", "序号（同一工厂+发货单号内唯一）"),
+            new TranslationSeedItem("entity.serialupload.sequencecode", "en-US", "序号_us", "序号（同一租户、公司、工厂+发货单号内唯一）"),
             // entity.serialupload.sequencecode
-            new TranslationSeedItem("entity.serialupload.sequencecode", "ja-JP", "序号_jp", "序号（同一工厂+发货单号内唯一）"),
+            new TranslationSeedItem("entity.serialupload.sequencecode", "ja-JP", "序号_jp", "序号（同一租户、公司、工厂+发货单号内唯一）"),
             // entity.serialupload.sequencecode
-            new TranslationSeedItem("entity.serialupload.sequencecode", "zh-CN", "序号", "序号（同一工厂+发货单号内唯一）"),
+            new TranslationSeedItem("entity.serialupload.sequencecode", "zh-CN", "序号", "序号（同一租户、公司、工厂+发货单号内唯一）"),
             // entity.serialupload.sequencecode
-            new TranslationSeedItem("entity.serialupload.sequencecode", "zh-HK", "序号_hk", "序号（同一工厂+发货单号内唯一）"),
+            new TranslationSeedItem("entity.serialupload.sequencecode", "zh-HK", "序号_hk", "序号（同一租户、公司、工厂+发货单号内唯一）"),
 
             // entity.serialupload.materialcode
             new TranslationSeedItem("entity.serialupload.materialcode", "en-US", "产品物料_us", "产品物料（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode；最长 20）"),

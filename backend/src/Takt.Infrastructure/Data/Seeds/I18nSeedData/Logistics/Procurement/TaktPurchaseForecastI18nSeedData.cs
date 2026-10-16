@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Procurement
 // 文件名称：TaktPurchaseForecastI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPurchaseForecast 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktPurchaseForecastI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.purchaseforecast._self", "zh-HK", "Takt采购预测信息_hk", "实体名称"),
 
             // entity.purchaseforecast.code
-            new TranslationSeedItem("entity.purchaseforecast.code", "en-US", "采购预测编码_us", "采购预测编码（租户+公司+工厂内与发出版本号组合业务唯一）"),
+            new TranslationSeedItem("entity.purchaseforecast.code", "en-US", "采购预测编码_us", "采购预测编码（租户+公司+工厂内与发出版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 采购预测编码规则生成并展示，非手输；单据类型菜单：采购预测）"),
             // entity.purchaseforecast.code
-            new TranslationSeedItem("entity.purchaseforecast.code", "ja-JP", "采购预测编码_jp", "采购预测编码（租户+公司+工厂内与发出版本号组合业务唯一）"),
+            new TranslationSeedItem("entity.purchaseforecast.code", "ja-JP", "采购预测编码_jp", "采购预测编码（租户+公司+工厂内与发出版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 采购预测编码规则生成并展示，非手输；单据类型菜单：采购预测）"),
             // entity.purchaseforecast.code
-            new TranslationSeedItem("entity.purchaseforecast.code", "zh-CN", "采购预测编码", "采购预测编码（租户+公司+工厂内与发出版本号组合业务唯一）"),
+            new TranslationSeedItem("entity.purchaseforecast.code", "zh-CN", "采购预测编码", "采购预测编码（租户+公司+工厂内与发出版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 采购预测编码规则生成并展示，非手输；单据类型菜单：采购预测）"),
             // entity.purchaseforecast.code
-            new TranslationSeedItem("entity.purchaseforecast.code", "zh-HK", "采购预测编码_hk", "采购预测编码（租户+公司+工厂内与发出版本号组合业务唯一）"),
+            new TranslationSeedItem("entity.purchaseforecast.code", "zh-HK", "采购预测编码_hk", "采购预测编码（租户+公司+工厂内与发出版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 采购预测编码规则生成并展示，非手输；单据类型菜单：采购预测）"),
 
             // entity.purchaseforecast.plandate
             new TranslationSeedItem("entity.purchaseforecast.plandate", "en-US", "计划编制日期_us", "计划编制日期（业务计划日；与发出日期分离）"),

@@ -183,7 +183,7 @@ const summaryText = computed(() => {
 const columns = computed<TableColumnsType>(() => {
   const cols: TableColumnsType = [
     {
-      title: t('entity.salesconditionrecord.materialcode'),
+      title: t('entity.salescondition.materialcode'),
       dataIndex: 'materialCode',
       key: 'materialCode',
       width: 140,
@@ -191,14 +191,14 @@ const columns = computed<TableColumnsType>(() => {
       fixed: 'left',
     },
     {
-      title: t('entity.salesconditionrecord.materialdescription'),
+      title: t('entity.salescondition.materialdescription'),
       dataIndex: 'materialDescription',
       key: 'materialDescription',
       width: 160,
       ellipsis: true,
     },
     {
-      title: t('entity.salesconditionrecord.customercode'),
+      title: t('entity.salescondition.customercode'),
       dataIndex: 'customerCode',
       key: 'customerCode',
       width: 120,
@@ -212,13 +212,13 @@ const columns = computed<TableColumnsType>(() => {
       ellipsis: true,
     },
     {
-      title: t('entity.salesconditionrecorditem.conditioncurrencycode'),
+      title: t('entity.salesconditionitem.conditioncurrencycode'),
       dataIndex: 'currencyCode',
       key: 'currencyCode',
       width: 80,
     },
     {
-      title: t('entity.salesconditionrecorditem.unitofmeasure'),
+      title: t('entity.salesconditionitem.unitofmeasure'),
       dataIndex: 'unit',
       key: 'unit',
       width: 80,

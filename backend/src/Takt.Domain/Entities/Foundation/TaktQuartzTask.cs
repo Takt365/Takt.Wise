@@ -25,7 +25,7 @@ namespace Takt.Domain.Entities.Foundation;
 public class TaktQuartzTask : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 任务编码（租户+公司内唯一）
+    /// 任务编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 任务编码规则生成并展示，非手输；单据类型菜单：定时任务）
     /// </summary>
     [SugarColumn(ColumnName = "task_code", ColumnDescription = "任务编码", ColumnDataType = "varchar", Length = 50, IsNullable = false)]
     public string TaskCode { get; set; } = string.Empty;

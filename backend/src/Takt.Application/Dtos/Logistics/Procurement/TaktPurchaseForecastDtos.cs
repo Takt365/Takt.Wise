@@ -388,10 +388,15 @@ public class TaktPurchaseForecastCreateDto
     public string PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购预测编码（租户+公司+工厂内与发出版本号组合业务唯一）
+    /// 采购预测编码（租户+公司+工厂内与发出版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 采购预测编码规则生成并展示，非手输；单据类型菜单：采购预测）
     /// </summary>
     [Required(ErrorMessage = "采购预测编码（租户+公司+工厂内与发出版本号组合业务唯一）不能为空")]
     public string PurchaseForecastCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 编码规则编码（新增时选择采购预测编码规则后取号；对应 TaktNumbering.RuleCode；不落库）
+    /// </summary>
+    public string? NumberingRuleCode { get; set; }
 
     /// <summary>
     /// 计划编制日期（业务计划日；与发出日期分离）

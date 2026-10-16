@@ -4,7 +4,7 @@
 // 文件名称：TaktEcUkeken.cs
 // 创建时间：2026-06-29
 // 创建人：Takt365(Cursor AI)
-// 功能描述：设变受检课部门执行表（任何范围按设变单号+新品检验+新物料编码唯一；机种与根物料为编码组）
+// 功能描述：设变受检课部门执行表（部门 D0810；新品检验为是且新物料有效才落行。任何范围按设变单号+新物料去重，机种与根物料写入编码组）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -17,7 +17,7 @@ using Takt.Domain.Interfaces;
 namespace Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange;
 
 /// <summary>
-/// 设变受检课（D0810）部门执行表（任何实施范围按设变单号 + 新品检验 + 新物料编码唯一）
+/// 设变受检课（部门 D0810）执行表。新品检验为是且新物料有效才落行。任何范围去重键为设变单号+新物料，机种与根物料写入编码组
 /// </summary>
 [SugarTable("takt_logistics_manufacturing_ec_ukeken", "设变受检执行表")]
 [SugarIndex("ix_ec_ukeken_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
@@ -32,7 +32,7 @@ public class TaktEcUkeken : TaktCompanyEntityBase, ITaktEcDeptExecEntity
     public int LineNumber { get; set; } = 0;
 
     /// <summary>
-    /// 停产状态（字典 logistics_materials_material_discontinued_status；DictValue=Z0/ZQ 等；冗余：来自 TaktEcDetail.DiscontinuedStatus）
+    /// 停产状态（字典 logistics_materials_material_discontinued_status；DictValue=Z0/ZQ 等）。同设变单号+新品检验+新物料下任意成品不是停产（空或 Z0）时为 Z0，全部停产时取保留明细状态。
     /// </summary>
     [SugarColumn(ColumnName = "discontinued_status", ColumnDescription = "停产状态", ColumnDataType = "nvarchar", Length = 4, IsNullable = false)]
     public string DiscontinuedStatus { get; set; } = string.Empty;
@@ -59,6 +59,12 @@ public class TaktEcUkeken : TaktCompanyEntityBase, ITaktEcDeptExecEntity
     /// </summary>
     [SugarColumn(ColumnName = "ec_root_material_code_group", ColumnDescription = "根物料编码组", ColumnDataType = "ntext", IsNullable = false)]
     public string EcRootMaterialCodeGroup { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）
+    /// </summary>
+    [SugarColumn(ColumnName = "ec_root_material_description", ColumnDescription = "根物料描述", Length = 40, ColumnDataType = "nvarchar", IsNullable = false)]
+    public string EcRootMaterialDescription { get; set; } = string.Empty;
 
     /// <summary>
     /// 新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）

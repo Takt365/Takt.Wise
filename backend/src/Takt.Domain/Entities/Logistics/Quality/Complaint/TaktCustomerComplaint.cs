@@ -28,7 +28,7 @@ namespace Takt.Domain.Entities.Logistics.Quality.Complaint;
 public class TaktCustomerComplaint : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 客诉单号（组合唯一索引）
+    /// 客诉单号（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 客诉单号规则生成并展示，非手输；单据类型菜单：客诉登记）
     /// </summary>
     [SugarColumn(ColumnName = "customer_complaint_code", ColumnDescription = "客诉单号", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string CustomerComplaintCode { get; set; } = string.Empty;

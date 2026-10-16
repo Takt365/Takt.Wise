@@ -24,7 +24,7 @@ namespace Takt.Domain.Entities.HumanResource.Compensation;
 public class TaktSalaryItem : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 项目编码（租户+公司内唯一）
+    /// 项目编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 项目编码规则生成并展示，非手输；单据类型菜单：薪资项目）
     /// </summary>
     [SugarColumn(ColumnName = "item_code", ColumnDescription = "项目编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string ItemCode { get; set; } = string.Empty;

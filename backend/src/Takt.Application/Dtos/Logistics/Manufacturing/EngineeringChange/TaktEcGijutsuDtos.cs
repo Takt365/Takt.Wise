@@ -67,6 +67,12 @@ public class TaktEcGijutsuDto : TaktCompanyDtoBase
     public string? PersistDeptExecSummary { get; set; }
 
     /// <summary>
+    /// 后台保存后的未作废明细行数（表 takt_logistics_manufacturing_ec_detail；非请求体 EcDetails 长度）
+    /// </summary>
+    [JsonIgnore]
+    public int PersistDetailCount { get; set; }
+
+    /// <summary>
     /// 设变担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
     public string EcLeader { get; set; } = string.Empty;
@@ -230,6 +236,11 @@ public class TaktEcGijutsuQueryDto : TaktPagedQuery
     /// 备注（模糊查询）
     /// </summary>
     public string? Remark { get; set; }
+
+    /// <summary>
+    /// 执行部门编码。传入时只返回该部门执行表中仍有未作废行的设变主表。
+    /// </summary>
+    public string? ExecDeptCode { get; set; }
 }
 
 // ========================================

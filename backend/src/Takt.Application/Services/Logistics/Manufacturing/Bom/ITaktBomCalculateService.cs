@@ -55,7 +55,7 @@ public interface ITaktBomCalculateService
     /// </summary>
     /// <param name="queryDto">工厂/物料类型/机种可选；须单个核算月</param>
     /// <returns>回填统计</returns>
-    Task<TaktBomCalculatePurchaseInfoRecordBackfillResultDto> BackfillBomCalculatePurchaseInfoRecordAsync(
+    Task<TaktBomCalculatePurchaseInfoBackfillResultDto> BackfillBomCalculatePurchaseInfoAsync(
         TaktBomCalculateQueryDto queryDto);
 
     /// <summary>

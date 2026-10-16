@@ -397,7 +397,7 @@ public class TaktEcSeizounikaService : TaktServiceBase, ITaktEcSeizounikaService
                 || (x.ProductionTeam != null && x.ProductionTeam.Contains(keywords))
                 || (x.ImplementationBatch != null && x.ImplementationBatch.Contains(keywords))
                 || (x.EcParentMaterialCode != null && x.EcParentMaterialCode.Contains(keywords))
-                || (x.EcModelCode != null && x.EcModelCode.Contains(keywords))
+                || SqlFunc.ToString(x.EcModelCodeGroup).Contains(keywords)
                 || (x.EcRootMaterialCodeGroup != null && x.EcRootMaterialCodeGroup.Contains(keywords))
                 || (x.CultureCode != null && x.CultureCode.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))

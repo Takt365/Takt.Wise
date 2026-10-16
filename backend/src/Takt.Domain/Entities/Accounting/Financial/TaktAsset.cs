@@ -25,7 +25,7 @@ namespace Takt.Domain.Entities.Accounting.Financial;
 public class TaktAsset : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 资产代码
+    /// 资产代码（前端表单选择编码规则后自动通过 TaktNumbering 资产代码规则生成并展示，非手输；单据类型菜单：固定资产）
     /// </summary>
     [SugarColumn(ColumnName = "asset_code", ColumnDescription = "资产代码", ColumnDataType = "varchar", Length = 50, IsNullable = false)]
     public string AssetCode { get; set; } = string.Empty;

@@ -47,7 +47,7 @@ public static class TaktEcDeptEntityHelper
         if (deptCode == TaktEcDeptCodes.Pcba)
         {
             // 看板「制二」桶：SMT(D0625) 与 制造2课(D0620/Seizounika) 按表类型择优，不依赖行上 DeptCode 字面量
-            var activeElectronic = deptList.OfType<TaktEcSmt>().FirstOrDefault(x => x.IsObsolete == 0);
+            var activeElectronic = deptList.OfType<TaktEcEmtl>().FirstOrDefault(x => x.IsObsolete == 0);
             if (activeElectronic != null)
             {
                 return activeElectronic;
@@ -57,13 +57,13 @@ public static class TaktEcDeptEntityHelper
             {
                 return activeSeizounika;
             }
-            return (object?)deptList.OfType<TaktEcSmt>().FirstOrDefault()
+            return (object?)deptList.OfType<TaktEcEmtl>().FirstOrDefault()
                 ?? deptList.OfType<TaktEcSeizounika>().FirstOrDefault();
         }
         if (deptCode == TaktEcDeptCodes.Smt)
         {
-            return deptList.OfType<TaktEcSmt>().FirstOrDefault(x => x.IsObsolete == 0)
-                ?? deptList.OfType<TaktEcSmt>().FirstOrDefault();
+            return deptList.OfType<TaktEcEmtl>().FirstOrDefault(x => x.IsObsolete == 0)
+                ?? deptList.OfType<TaktEcEmtl>().FirstOrDefault();
         }
         return deptList.FirstOrDefault(x => GetDeptCode(x) == deptCode);
     }
@@ -97,7 +97,7 @@ public static class TaktEcDeptEntityHelper
     }
 
     /// <summary>
-    /// 写入执行内容（仅当目标为空或强制覆盖时；短文案规范为「实施范围-…」）
+    /// 写入执行内容（仅当目标为空或强制覆盖时）
     /// </summary>
     /// <param name="exec">部门执行实体</param>
     /// <param name="content">执行内容</param>
@@ -109,10 +109,9 @@ public static class TaktEcDeptEntityHelper
             return;
         }
         var entity = AsExec(exec);
-        var normalized = TaktEcScopeConstants.NormalizeLegacyAutoExecContent(content);
         if (overwrite || string.IsNullOrWhiteSpace(entity.ExecContent))
         {
-            entity.ExecContent = normalized;
+            entity.ExecContent = content;
         }
     }
 
@@ -193,7 +192,7 @@ public static class TaktEcDeptEntityHelper
                 updatedAt = e.UpdatedAt;
                 createdAt = e.CreatedAt;
                 break;
-            case TaktEcSmt e:
+            case TaktEcEmtl e:
                 outboundDate = e.OutboundDate;
                 updatedAt = e.UpdatedAt;
                 createdAt = e.CreatedAt;

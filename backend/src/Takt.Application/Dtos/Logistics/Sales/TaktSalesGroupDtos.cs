@@ -208,10 +208,15 @@ public class TaktSalesGroupCreateDto
     public string PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 销售组编码（3）
+    /// 销售组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 销售组编码规则生成并展示，非手输；单据类型菜单：销售组）
     /// </summary>
     [Required(ErrorMessage = "销售组编码（3）不能为空")]
     public string SalesGroupCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 编码规则编码（新增时选择销售组编码规则后取号；对应 TaktNumbering.RuleCode；不落库）
+    /// </summary>
+    public string? NumberingRuleCode { get; set; }
 
     /// <summary>
     /// 销售组名称

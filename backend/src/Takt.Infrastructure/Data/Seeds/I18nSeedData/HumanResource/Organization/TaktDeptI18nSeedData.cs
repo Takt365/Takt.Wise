@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.HumanResource.Organization
 // 文件名称：TaktDeptI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktDept 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktDeptI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.dept._self", "zh-HK", "部门信息_hk", "实体名称"),
 
             // entity.dept.code
-            new TranslationSeedItem("entity.dept.code", "en-US", "部门编码_us", "部门编码（唯一索引：租户+公司内唯一，见 ix_dept_code_unique；与成本中心编码同长 6）"),
+            new TranslationSeedItem("entity.dept.code", "en-US", "部门编码_us", "部门编码（唯一索引：租户+公司内唯一，见 ix_dept_code_unique；与成本中心编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 部门编码规则生成并展示，非手输；单据类型菜单：部门管理）"),
             // entity.dept.code
-            new TranslationSeedItem("entity.dept.code", "ja-JP", "部门编码_jp", "部门编码（唯一索引：租户+公司内唯一，见 ix_dept_code_unique；与成本中心编码同长 6）"),
+            new TranslationSeedItem("entity.dept.code", "ja-JP", "部门编码_jp", "部门编码（唯一索引：租户+公司内唯一，见 ix_dept_code_unique；与成本中心编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 部门编码规则生成并展示，非手输；单据类型菜单：部门管理）"),
             // entity.dept.code
-            new TranslationSeedItem("entity.dept.code", "zh-CN", "部门编码", "部门编码（唯一索引：租户+公司内唯一，见 ix_dept_code_unique；与成本中心编码同长 6）"),
+            new TranslationSeedItem("entity.dept.code", "zh-CN", "部门编码", "部门编码（唯一索引：租户+公司内唯一，见 ix_dept_code_unique；与成本中心编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 部门编码规则生成并展示，非手输；单据类型菜单：部门管理）"),
             // entity.dept.code
-            new TranslationSeedItem("entity.dept.code", "zh-HK", "部门编码_hk", "部门编码（唯一索引：租户+公司内唯一，见 ix_dept_code_unique；与成本中心编码同长 6）"),
+            new TranslationSeedItem("entity.dept.code", "zh-HK", "部门编码_hk", "部门编码（唯一索引：租户+公司内唯一，见 ix_dept_code_unique；与成本中心编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 部门编码规则生成并展示，非手输；单据类型菜单：部门管理）"),
 
             // entity.dept.shortname
             new TranslationSeedItem("entity.dept.shortname", "en-US", "部门简称_us", "部门简称（与 ISO 编码一致，长度 6）"),

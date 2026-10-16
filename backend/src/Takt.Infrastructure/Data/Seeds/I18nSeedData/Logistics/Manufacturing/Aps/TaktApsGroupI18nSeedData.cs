@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Aps
 // 文件名称：TaktApsGroupI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktApsGroup 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktApsGroupI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.apsgroup._self", "zh-HK", "APS组主数据信息_hk", "实体名称"),
 
             // entity.apsgroup.code
-            new TranslationSeedItem("entity.apsgroup.code", "en-US", "APS组编码_us", "APS组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.apsgroup.code", "en-US", "APS组编码_us", "APS组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering APS组编码规则生成并展示，非手输；单据类型菜单：APS组）"),
             // entity.apsgroup.code
-            new TranslationSeedItem("entity.apsgroup.code", "ja-JP", "APS组编码_jp", "APS组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.apsgroup.code", "ja-JP", "APS组编码_jp", "APS组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering APS组编码规则生成并展示，非手输；单据类型菜单：APS组）"),
             // entity.apsgroup.code
-            new TranslationSeedItem("entity.apsgroup.code", "zh-CN", "APS组编码", "APS组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.apsgroup.code", "zh-CN", "APS组编码", "APS组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering APS组编码规则生成并展示，非手输；单据类型菜单：APS组）"),
             // entity.apsgroup.code
-            new TranslationSeedItem("entity.apsgroup.code", "zh-HK", "APS组编码_hk", "APS组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.apsgroup.code", "zh-HK", "APS组编码_hk", "APS组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering APS组编码规则生成并展示，非手输；单据类型菜单：APS组）"),
 
             // entity.apsgroup.name
             new TranslationSeedItem("entity.apsgroup.name", "en-US", "APS组名称_us", "APS组名称"),

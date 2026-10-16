@@ -26,7 +26,7 @@ namespace Takt.Domain.Entities.Logistics.Materials;
 public class TaktGeneralMaterial : TaktTenantCoreEntityBase
 {
     /// <summary>
-    /// 物料编码（租户内唯一）
+    /// 物料编码（租户内唯一；前端表单选择编码规则后自动通过 TaktNumbering 物料编码规则生成并展示，非手输；单据类型菜单：全局物料）
     /// </summary>
     [SugarColumn(ColumnName = "material_code", ColumnDescription = "物料编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string MaterialCode { get; set; } = string.Empty;

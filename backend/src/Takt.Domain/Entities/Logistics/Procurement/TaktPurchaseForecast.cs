@@ -32,7 +32,7 @@ public class TaktPurchaseForecast : TaktApprovalEntityBase
 {
 
     /// <summary>
-    /// 采购预测编码（租户+公司+工厂内与发出版本号组合业务唯一）
+    /// 采购预测编码（租户+公司+工厂内与发出版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 采购预测编码规则生成并展示，非手输；单据类型菜单：采购预测）
     /// </summary>
     [SugarColumn(ColumnName = "purchase_forecast_code", ColumnDescription = "采购预测编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string PurchaseForecastCode { get; set; } = string.Empty;

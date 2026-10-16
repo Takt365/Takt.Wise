@@ -88,7 +88,7 @@ public class TaktPurchaseInvoiceItem : TaktCompanyEntityBase
     public string? DebitCreditIndicator { get; set; }
 
     /// <summary>
-    /// 税码
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     [SugarColumn(ColumnName = "tax_code", ColumnDescription = "税码", ColumnDataType = "nvarchar", Length = 2, IsNullable = true)]
     public string? TaxCode { get; set; }

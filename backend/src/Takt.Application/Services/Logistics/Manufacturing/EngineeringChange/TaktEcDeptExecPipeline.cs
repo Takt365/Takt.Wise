@@ -116,7 +116,6 @@ internal sealed class TaktEcDeptExecPipeline<TEntity> : ITaktEcDeptExecPipeline
     public async Task<object> SaveAsync(object exec, bool isNew)
     {
         var entity = exec as TEntity ?? throw new ArgumentException("执行实体类型与部门链路不匹配", nameof(exec));
-        entity.ExecContent = TaktEcScopeConstants.NormalizeLegacyAutoExecContent(entity.ExecContent);
         if (isNew)
         {
             return await _repository.CreateAsync(entity);
@@ -150,7 +149,7 @@ internal sealed class TaktEcDeptExecPipelineHub
         ITaktCompanyRepository<TaktEcUkeken> iqcRepository,
         ITaktCompanyRepository<TaktEcBukan> mcRepository,
         ITaktCompanyRepository<TaktEcSeizounika> seizounikaRepository,
-        ITaktCompanyRepository<TaktEcSmt> smtRepository,
+        ITaktCompanyRepository<TaktEcEmtl> smtRepository,
         ITaktCompanyRepository<TaktEcSeizouikka> assyRepository,
         ITaktCompanyRepository<TaktEcHinkan> qaRepository,
         ITaktCompanyRepository<TaktEcSeizougijutsu> teRepository)
@@ -183,7 +182,7 @@ internal sealed class TaktEcDeptExecPipelineHub
     /// 全部部门链路（看板顺序）
     /// </summary>
     public IEnumerable<ITaktEcDeptExecPipeline> All =>
-        TaktEcDeptCodes.KanbanOrder.Select(Get);
+        TaktEcDeptCodes.KanbanOrder.Where(code => code != TaktEcDeptCodes.Smt).Select(Get);
 
     /// <summary>
     /// 取指定部门链路

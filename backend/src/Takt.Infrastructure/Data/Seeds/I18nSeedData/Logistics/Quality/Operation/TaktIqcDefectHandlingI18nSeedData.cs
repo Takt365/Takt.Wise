@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Operation
 // 文件名称：TaktIqcDefectHandlingI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktIqcDefectHandling 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktIqcDefectHandlingI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.iqcdefecthandling._self", "zh-HK", "IQC进货检验不良处理记录信息_hk", "实体名称"),
 
             // entity.iqcdefecthandling.code
-            new TranslationSeedItem("entity.iqcdefecthandling.code", "en-US", "IQC不良处理编码_us", "IQC不良处理编码"),
+            new TranslationSeedItem("entity.iqcdefecthandling.code", "en-US", "IQC不良处理编码_us", "IQC不良处理编码（前端表单选择编码规则后自动通过 TaktNumbering IQC不良处理编码规则生成并展示，非手输；单据类型菜单：进货检验）"),
             // entity.iqcdefecthandling.code
-            new TranslationSeedItem("entity.iqcdefecthandling.code", "ja-JP", "IQC不良处理编码_jp", "IQC不良处理编码"),
+            new TranslationSeedItem("entity.iqcdefecthandling.code", "ja-JP", "IQC不良处理编码_jp", "IQC不良处理编码（前端表单选择编码规则后自动通过 TaktNumbering IQC不良处理编码规则生成并展示，非手输；单据类型菜单：进货检验）"),
             // entity.iqcdefecthandling.code
-            new TranslationSeedItem("entity.iqcdefecthandling.code", "zh-CN", "IQC不良处理编码", "IQC不良处理编码"),
+            new TranslationSeedItem("entity.iqcdefecthandling.code", "zh-CN", "IQC不良处理编码", "IQC不良处理编码（前端表单选择编码规则后自动通过 TaktNumbering IQC不良处理编码规则生成并展示，非手输；单据类型菜单：进货检验）"),
             // entity.iqcdefecthandling.code
-            new TranslationSeedItem("entity.iqcdefecthandling.code", "zh-HK", "IQC不良处理编码_hk", "IQC不良处理编码"),
+            new TranslationSeedItem("entity.iqcdefecthandling.code", "zh-HK", "IQC不良处理编码_hk", "IQC不良处理编码（前端表单选择编码规则后自动通过 TaktNumbering IQC不良处理编码规则生成并展示，非手输；单据类型菜单：进货检验）"),
 
             // entity.iqcdefecthandling.iqcorderitemid
             new TranslationSeedItem("entity.iqcdefecthandling.iqcorderitemid", "en-US", "IQC检验单明细ID_us", "IQC检验单明细 ID（选项 TaktIqcOrderItems/options；DictValue=Id）"),

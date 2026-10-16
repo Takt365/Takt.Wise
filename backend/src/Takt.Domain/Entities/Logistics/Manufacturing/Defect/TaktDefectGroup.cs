@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Logistics.Manufacturing.Defect;
 public class TaktDefectGroup : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 不良组编码（与员工编码同长 6）
+    /// 不良组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 不良组编码规则生成并展示，非手输；单据类型菜单：不良组）
     /// </summary>
     [SugarColumn(ColumnName = "defect_group_code", ColumnDescription = "不良组编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string DefectGroupCode { get; set; } = string.Empty;

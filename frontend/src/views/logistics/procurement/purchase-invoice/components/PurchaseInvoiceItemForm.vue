@@ -171,11 +171,10 @@
                 :label="pi.label('taxCode')"
                 name="taxCode"
               >
-                <a-input
+                <TaktSelect
                   v-model:value="formState.taxCode"
+                  api-url="TaktTaxCodes/options"
                   :placeholder="pi.ph('taxCode')"
-                  show-count
-                  :maxlength="2"
                   allow-clear
                   :disabled="!!formData?.purchaseInvoiceItemId"
                 />

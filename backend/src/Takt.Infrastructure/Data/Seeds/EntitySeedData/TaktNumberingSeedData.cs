@@ -59,10 +59,10 @@ public class TaktNumberingSeedData : ITaktSeedDataCoordinator
     private const string MenuEquipment = "LOGISTICS_MAINTENANCE_EQUIPMENT";
     private const string MenuSalesInvoice = "LOGISTICS_SALES_INVOICE";
     private const string MenuSalesOrder = "LOGISTICS_SALES_ORDER";
-    private const string MenuSalesConditionRecord = "LOGISTICS_SALES_CONDITION_RECORD";
+    private const string MenuSalesCondition = "LOGISTICS_SALES_CONDITION";
     private const string MenuSalesQuotation = "LOGISTICS_SALES_QUOTATION";
     private const string MenuPurchaseOrder = "LOGISTICS_PROCUREMENT_PURCHASE_ORDER";
-    private const string MenuPurchaseInfoRecord = "LOGISTICS_PROCUREMENT_PURCHASE_INFO_RECORD";
+    private const string MenuPurchaseInfo = "LOGISTICS_PROCUREMENT_PURCHASE_INFO";
     private const string MenuPurchaseRequest = "LOGISTICS_PROCUREMENT_PURCHASE_REQUEST";
     private const string MenuSupplier = "LOGISTICS_PROCUREMENT_SUPPLIER";
     private const string MenuVendor = "LOGISTICS_PROCUREMENT_VENDOR";
@@ -639,13 +639,13 @@ public class TaktNumberingSeedData : ITaktSeedDataCoordinator
             new NumberingSeedTemplate(
                 "LG-SLS-PRC",
                 "销售价格编码",
-                MenuSalesConditionRecord,
+                MenuSalesCondition,
                 IsoS,
                 "SPRC",
                 "yyyy",
                 "Annually",
                 SegmentsCompanyLevel,
-                "内置：TaktSalesConditionRecord.SalesConditionRecordCode"),
+                "内置：TaktSalesCondition.SalesConditionCode"),
             new NumberingSeedTemplate(
                 "LG-SLS-QUO",
                 "销售报价编码",
@@ -669,13 +669,13 @@ public class TaktNumberingSeedData : ITaktSeedDataCoordinator
             new NumberingSeedTemplate(
                 "LG-PUR-PRC",
                 "采购价格编码",
-                MenuPurchaseInfoRecord,
+                MenuPurchaseInfo,
                 IsoC,
                 "PRC",
                 "yyyy",
                 "Annually",
                 SegmentsCompanyLevel,
-                "内置：TaktPurchaseInfoRecord.PurchaseInfoRecordCode"),
+                "内置：TaktPurchaseInfo.PurchaseInfoCode"),
             new NumberingSeedTemplate(
                 "LG-PUR-REQ",
                 "采购申请编码",

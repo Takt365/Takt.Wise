@@ -21,7 +21,7 @@ using Takt.Shared.Options;
 namespace Takt.Application.Services.Logistics.Sales;
 
 /// <summary>
-/// SO 价偏离 SCR 分析服务（读销售订单 + 销售条件记录及等级；与 CRUD 分离）
+/// SO 价偏离 SCR 分析服务（读销售订单 + 销售条件及等级；与 CRUD 分离）
 /// </summary>
 public class TaktSoPriceScrDeviationService : TaktServiceBase, ITaktSoPriceScrDeviationService
 {
@@ -47,18 +47,18 @@ public class TaktSoPriceScrDeviationService : TaktServiceBase, ITaktSoPriceScrDe
 
     private readonly ITaktCompanyRepository<TaktSalesOrder> _salesOrderRepository;
     private readonly ITaktCompanyRepository<TaktSalesOrderItem> _salesOrderItemRepository;
-    private readonly ITaktCompanyRepository<TaktSalesConditionRecord> _salesConditionRecordRepository;
-    private readonly ITaktCompanyRepository<TaktSalesConditionRecordItem> _salesConditionRecordItemRepository;
-    private readonly ITaktCompanyRepository<TaktSalesConditionRecordScaleQuantity> _scaleQuantityRepository;
-    private readonly ITaktCompanyRepository<TaktSalesConditionRecordScaleValue> _scaleValueRepository;
+    private readonly ITaktCompanyRepository<TaktSalesCondition> _salesConditionRepository;
+    private readonly ITaktCompanyRepository<TaktSalesConditionItem> _salesConditionItemRepository;
+    private readonly ITaktCompanyRepository<TaktSalesConditionScaleQuantity> _scaleQuantityRepository;
+    private readonly ITaktCompanyRepository<TaktSalesConditionScaleValue> _scaleValueRepository;
 
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="salesOrderRepository">销售订单仓储</param>
     /// <param name="salesOrderItemRepository">销售订单明细仓储</param>
-    /// <param name="salesConditionRecordRepository">销售条件记录仓储</param>
-    /// <param name="salesConditionRecordItemRepository">销售条件记录行仓储</param>
+    /// <param name="salesConditionRepository">销售条件仓储</param>
+    /// <param name="salesConditionItemRepository">销售条件行仓储</param>
     /// <param name="scaleQuantityRepository">数量等级仓储</param>
     /// <param name="scaleValueRepository">价值等级仓储</param>
     /// <param name="userContext">用户上下文</param>
@@ -66,18 +66,18 @@ public class TaktSoPriceScrDeviationService : TaktServiceBase, ITaktSoPriceScrDe
     public TaktSoPriceScrDeviationService(
         ITaktCompanyRepository<TaktSalesOrder> salesOrderRepository,
         ITaktCompanyRepository<TaktSalesOrderItem> salesOrderItemRepository,
-        ITaktCompanyRepository<TaktSalesConditionRecord> salesConditionRecordRepository,
-        ITaktCompanyRepository<TaktSalesConditionRecordItem> salesConditionRecordItemRepository,
-        ITaktCompanyRepository<TaktSalesConditionRecordScaleQuantity> scaleQuantityRepository,
-        ITaktCompanyRepository<TaktSalesConditionRecordScaleValue> scaleValueRepository,
+        ITaktCompanyRepository<TaktSalesCondition> salesConditionRepository,
+        ITaktCompanyRepository<TaktSalesConditionItem> salesConditionItemRepository,
+        ITaktCompanyRepository<TaktSalesConditionScaleQuantity> scaleQuantityRepository,
+        ITaktCompanyRepository<TaktSalesConditionScaleValue> scaleValueRepository,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
     {
         _salesOrderRepository = salesOrderRepository;
         _salesOrderItemRepository = salesOrderItemRepository;
-        _salesConditionRecordRepository = salesConditionRecordRepository;
-        _salesConditionRecordItemRepository = salesConditionRecordItemRepository;
+        _salesConditionRepository = salesConditionRepository;
+        _salesConditionItemRepository = salesConditionItemRepository;
         _scaleQuantityRepository = scaleQuantityRepository;
         _scaleValueRepository = scaleValueRepository;
     }
@@ -271,7 +271,7 @@ public class TaktSoPriceScrDeviationService : TaktServiceBase, ITaktSoPriceScrDe
             "plantCode", "salesOrderCode", "lineNumber", "orderDate", "pricingDate",
             "customerCode", "customerName", "materialCode", "materialDescription", "currencyCode",
             "orderQuantity", "soUnitPrice", "soPerUnit", "soNormalizedUnitPrice",
-            "matchReason", "scrSalesConditionRecordCodes",
+            "matchReason", "scrSalesConditionCodes",
             "scrValidFrom", "scrValidTo", "scrPriceCount", "scrPricesText",
             "closestScrNormalizedUnitPrice", "deviationAmount", "deviationTrend",
         };
@@ -306,7 +306,7 @@ public class TaktSoPriceScrDeviationService : TaktServiceBase, ITaktSoPriceScrDe
                 "price_absent" => "单价不在价目中",
                 _ => row.MatchReason,
             },
-            ["scrSalesConditionRecordCodes"] = row.ScrSalesConditionRecordCodes,
+            ["scrSalesConditionCodes"] = row.ScrSalesConditionCodes,
             ["scrValidFrom"] = row.ScrValidFrom?.Date,
             ["scrValidTo"] = row.ScrValidTo?.Date,
             ["scrPriceCount"] = row.ScrPriceCount,
@@ -388,7 +388,7 @@ public class TaktSoPriceScrDeviationService : TaktServiceBase, ITaktSoPriceScrDe
             return (new List<TaktSoPriceScrDeviationDto>(), 0, 0);
         }
 
-        var prices = await _salesConditionRecordRepository.GetListAsync(x => x.PlantCode == plant);
+        var prices = await _salesConditionRepository.GetListAsync(x => x.PlantCode == plant);
         if (!string.IsNullOrWhiteSpace(queryDto.PriceType))
         {
             var priceType = queryDto.PriceType.Trim();
@@ -399,27 +399,27 @@ public class TaktSoPriceScrDeviationService : TaktServiceBase, ITaktSoPriceScrDe
         var priceById = prices.ToDictionary(x => x.Id);
         var priceIds = priceById.Keys.ToList();
         var priceItems = priceIds.Count == 0
-            ? new List<TaktSalesConditionRecordItem>()
-            : await _salesConditionRecordItemRepository.GetListAsync(
-                x => priceIds.Contains(x.SalesConditionRecordId) && x.IsObsolete == 0);
+            ? new List<TaktSalesConditionItem>()
+            : await _salesConditionItemRepository.GetListAsync(
+                x => priceIds.Contains(x.SalesConditionId) && x.IsObsolete == 0);
         var priceItemIds = priceItems.Select(x => x.Id).ToList();
         var scaleQuantities = priceItemIds.Count == 0
-            ? new List<TaktSalesConditionRecordScaleQuantity>()
+            ? new List<TaktSalesConditionScaleQuantity>()
             : await _scaleQuantityRepository.GetListAsync(
-                x => priceItemIds.Contains(x.SalesConditionRecordItemId) && x.IsObsolete == 0);
+                x => priceItemIds.Contains(x.SalesConditionItemId) && x.IsObsolete == 0);
         var scaleValues = priceItemIds.Count == 0
-            ? new List<TaktSalesConditionRecordScaleValue>()
+            ? new List<TaktSalesConditionScaleValue>()
             : await _scaleValueRepository.GetListAsync(
-                x => priceItemIds.Contains(x.SalesConditionRecordItemId) && x.IsObsolete == 0);
+                x => priceItemIds.Contains(x.SalesConditionItemId) && x.IsObsolete == 0);
 
         var priceItemsByPriceId = priceItems
-            .GroupBy(x => x.SalesConditionRecordId)
-            .ToDictionary(g => g.Key, g => g.OrderBy(x => x.SalesConditionRecordSeq).ToList());
+            .GroupBy(x => x.SalesConditionId)
+            .ToDictionary(g => g.Key, g => g.OrderBy(x => x.SalesConditionSeq).ToList());
         var scaleQtyByItemId = scaleQuantities
-            .GroupBy(x => x.SalesConditionRecordItemId)
+            .GroupBy(x => x.SalesConditionItemId)
             .ToDictionary(g => g.Key, g => g.OrderBy(x => x.SalesScaleSeq).ToList());
         var scaleValByItemId = scaleValues
-            .GroupBy(x => x.SalesConditionRecordItemId)
+            .GroupBy(x => x.SalesConditionItemId)
             .ToDictionary(g => g.Key, g => g.OrderBy(x => x.SalesScaleSeq).ToList());
 
         var pricesByCustomerMaterial = prices
@@ -516,9 +516,9 @@ public class TaktSoPriceScrDeviationService : TaktServiceBase, ITaktSoPriceScrDe
                 ScrPriceCount = periodPrices.Count,
                 ScrPricesInPeriod = periodPrices,
                 ScrPricesText = FormatPeriodPricesText(periodPrices),
-                ScrSalesConditionRecordCodes = string.Join(
+                ScrSalesConditionCodes = string.Join(
                     ";",
-                    scrsInPeriod.Select(p => p.SalesConditionRecordCode).Distinct(StringComparer.OrdinalIgnoreCase)),
+                    scrsInPeriod.Select(p => p.SalesConditionCode).Distinct(StringComparer.OrdinalIgnoreCase)),
                 ScrValidFrom = scrsInPeriod.Count == 0
                     ? null
                     : scrsInPeriod.Min(p => p.ValidFrom.Date),
@@ -543,16 +543,16 @@ public class TaktSoPriceScrDeviationService : TaktServiceBase, ITaktSoPriceScrDe
     /// <summary>
     /// 解析价格日期落在 ValidFrom～ValidTo 内的全部 SCR 头
     /// </summary>
-    private static List<TaktSalesConditionRecord> ResolveScrsInPeriod(
+    private static List<TaktSalesCondition> ResolveScrsInPeriod(
         TaktSalesOrderItem item,
         TaktSalesOrder order,
         DateTime pricingDate,
-        IReadOnlyDictionary<string, List<TaktSalesConditionRecord>> pricesByCustomerMaterial)
+        IReadOnlyDictionary<string, List<TaktSalesCondition>> pricesByCustomerMaterial)
     {
         var key = $"{order.CustomerCode}\u001f{item.MaterialCode}";
         if (!pricesByCustomerMaterial.TryGetValue(key, out var byCm))
         {
-            return new List<TaktSalesConditionRecord>();
+            return new List<TaktSalesCondition>();
         }
         return byCm
             .Where(p => p.ValidFrom.Date <= pricingDate && p.ValidTo.Date >= pricingDate)
@@ -565,10 +565,10 @@ public class TaktSoPriceScrDeviationService : TaktServiceBase, ITaktSoPriceScrDe
     /// 收集同周期 SCR 的全部价目点（条件行 + 数量等级 + 价值等级）
     /// </summary>
     private static List<TaktSoPriceScrPeriodPriceDto> CollectPeriodPrices(
-        IReadOnlyList<TaktSalesConditionRecord> pirs,
-        IReadOnlyDictionary<long, List<TaktSalesConditionRecordItem>> priceItemsByPriceId,
-        IReadOnlyDictionary<long, List<TaktSalesConditionRecordScaleQuantity>> scaleQtyByItemId,
-        IReadOnlyDictionary<long, List<TaktSalesConditionRecordScaleValue>> scaleValByItemId)
+        IReadOnlyList<TaktSalesCondition> pirs,
+        IReadOnlyDictionary<long, List<TaktSalesConditionItem>> priceItemsByPriceId,
+        IReadOnlyDictionary<long, List<TaktSalesConditionScaleQuantity>> scaleQtyByItemId,
+        IReadOnlyDictionary<long, List<TaktSalesConditionScaleValue>> scaleValByItemId)
     {
         var result = new List<TaktSoPriceScrPeriodPriceDto>();
         foreach (var pir in pirs)
@@ -582,12 +582,12 @@ public class TaktSoPriceScrDeviationService : TaktServiceBase, ITaktSoPriceScrDe
                 var unit = pirItem.PriceUnit <= 0 ? 1 : pirItem.PriceUnit;
                 result.Add(new TaktSoPriceScrPeriodPriceDto
                 {
-                    SalesConditionRecordCode = pir.SalesConditionRecordCode,
+                    SalesConditionCode = pir.SalesConditionCode,
                     PriceType = pir.PriceType,
                     ValidFrom = pir.ValidFrom.Date,
                     ValidTo = pir.ValidTo.Date,
                     PriceSource = "item",
-                    SalesConditionRecordSeq = pirItem.SalesConditionRecordSeq,
+                    SalesConditionSeq = pirItem.SalesConditionSeq,
                     Price = pirItem.Price,
                     PriceUnit = unit,
                     NormalizedUnitPrice = TaktPriceTrendAnalysisHelper.NormalizeUnitPrice(pirItem.Price, unit),
@@ -598,12 +598,12 @@ public class TaktSoPriceScrDeviationService : TaktServiceBase, ITaktSoPriceScrDe
                     {
                         result.Add(new TaktSoPriceScrPeriodPriceDto
                         {
-                            SalesConditionRecordCode = pir.SalesConditionRecordCode,
+                            SalesConditionCode = pir.SalesConditionCode,
                             PriceType = pir.PriceType,
                             ValidFrom = pir.ValidFrom.Date,
                             ValidTo = pir.ValidTo.Date,
                             PriceSource = "scaleQuantity",
-                            SalesConditionRecordSeq = pirItem.SalesConditionRecordSeq,
+                            SalesConditionSeq = pirItem.SalesConditionSeq,
                             SalesScaleSeq = scale.SalesScaleSeq,
                             ScaleQuantity = scale.ScaleQuantity,
                             Price = scale.Price,
@@ -618,12 +618,12 @@ public class TaktSoPriceScrDeviationService : TaktServiceBase, ITaktSoPriceScrDe
                     {
                         result.Add(new TaktSoPriceScrPeriodPriceDto
                         {
-                            SalesConditionRecordCode = pir.SalesConditionRecordCode,
+                            SalesConditionCode = pir.SalesConditionCode,
                             PriceType = pir.PriceType,
                             ValidFrom = pir.ValidFrom.Date,
                             ValidTo = pir.ValidTo.Date,
                             PriceSource = "scaleValue",
-                            SalesConditionRecordSeq = pirItem.SalesConditionRecordSeq,
+                            SalesConditionSeq = pirItem.SalesConditionSeq,
                             SalesScaleSeq = scale.SalesScaleSeq,
                             ScaleValue = scale.ScaleValue,
                             Price = scale.Price,
@@ -662,7 +662,7 @@ public class TaktSoPriceScrDeviationService : TaktServiceBase, ITaktSoPriceScrDe
                 "scaleValue" => $"值≥{p.ScaleValue:0.####}",
                 _ => "条件行",
             };
-            builder.Append(CultureInfo.InvariantCulture, $"{p.SalesConditionRecordCode} {p.ValidFrom:yyyy-MM-dd}~{p.ValidTo:yyyy-MM-dd} {source} {p.NormalizedUnitPrice:0.00000}");
+            builder.Append(CultureInfo.InvariantCulture, $"{p.SalesConditionCode} {p.ValidFrom:yyyy-MM-dd}~{p.ValidTo:yyyy-MM-dd} {source} {p.NormalizedUnitPrice:0.00000}");
         }
         return builder.ToString();
     }

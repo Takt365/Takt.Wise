@@ -14,7 +14,7 @@ namespace Takt.Shared.Constants;
 
 /// <summary>
 /// 设变实施范围（字典 logistics_manufacturing_ec_scope_category）及部门执行生成判定常量。
-/// 执行内容：停产≠Z0→「实施范围-{范围}-EOL」；全仕向空白待填；内部自动「&lt;内部管理&gt;」；技术自动「&lt;技术管理&gt;」；部管时制一/制二/品管自动「&lt;部管管理&gt;」。
+/// 执行内容：全仕向空白待填；内部自动「实施范围-内部」；技术自动「实施范围-技术」；部管时制一/制二/品管自动「实施范围-部管」。根物料编码组全部停产写「全仕向:按机种:EOL」这类文案；整组都不是 FERT 时后缀改为工厂物料类型（如 HALB、ROH）。实施范围与部门实施取实际值，段间用英文冒号。
 /// 部门去重粒度见 TaktEcDeptScopeConstants（1=按成品，2=按机种，3=按设变）。
 /// </summary>
 public static class TaktEcScopeConstants
@@ -60,14 +60,9 @@ public static class TaktEcScopeConstants
     public const string EolMaterialStatus = "ZQ";
 
     /// <summary>
-    /// 执行内容标准前缀（统一口径；历史「管理区分-」读入时替换为此前缀）
+    /// 执行内容标准前缀
     /// </summary>
     public const string ExecContentPrefix = "实施范围-";
-
-    /// <summary>
-    /// 历史执行内容前缀（仅识别/规范用，不得再写入）
-    /// </summary>
-    public const string LegacyExecContentPrefix = "管理区分-";
 
     /// <summary>
     /// 按成品停产文案前缀（按成品须空白由各部门填写；仅用于 EOL 与识别旧值）
@@ -80,19 +75,19 @@ public static class TaktEcScopeConstants
     public const string ByModelExecContent = ExecContentPrefix + "按机种";
 
     /// <summary>
-    /// 实施范围=部管时，制一/制二/品管的自动执行内容
+    /// 实施范围=部管时，制一/制二/品管的自动执行内容。停产写「部管:按机种:EOL」
     /// </summary>
-    public const string MaterialControlExecContent = "<部管管理>";
+    public const string MaterialControlExecContent = ExecContentPrefix + "部管";
 
     /// <summary>
-    /// 实施范围=内部时各部门自动执行内容
+    /// 实施范围=内部时各部门自动执行内容。停产写「内部:按设变:EOL」
     /// </summary>
-    public const string InternalExecContent = "<内部管理>";
+    public const string InternalExecContent = ExecContentPrefix + "内部";
 
     /// <summary>
-    /// 实施范围=技术时各部门自动执行内容
+    /// 实施范围=技术时各部门自动执行内容。停产写「技术:按设变:EOL」
     /// </summary>
-    public const string TechnicalExecContent = "<技术管理>";
+    public const string TechnicalExecContent = ExecContentPrefix + "技术";
 
     /// <summary>
     /// 历史自动完成文案；再生成时替换为实施范围文案
@@ -100,45 +95,150 @@ public static class TaktEcScopeConstants
     public const string AutoCompletedExecContent = "系统自动完成";
 
     /// <summary>
-    /// 停产状态≠Z0 时执行内容后缀（完整文案为「实施范围-{范围}-EOL」）
+    /// 实施范围显示名（全仕向 / 部管 / 内部 / 技术）
+    /// </summary>
+    /// <param name="ecScope">设变实施范围</param>
+    /// <returns>显示名</returns>
+    public static string ResolveScopeLabel(int ecScope)
+    {
+        return ecScope switch
+        {
+            AllDestination => "全仕向",
+            MaterialControl => "部管",
+            Internal => "内部",
+            Technical => "技术",
+            _ => "技术",
+        };
+    }
+
+    /// <summary>
+    /// 执行内容：实施范围:部门实施:后缀。段间为英文冒号。后缀为 EOL 或物料类型（HALB、ROH）。
+    /// </summary>
+    /// <param name="ecScope">设变实施范围</param>
+    /// <param name="ecDeptScope">部门实施范围</param>
+    /// <param name="suffix">EOL 或物料类型</param>
+    /// <returns>执行内容</returns>
+    public static string FormatScopeDeptExecContent(int ecScope, int ecDeptScope, string suffix)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(suffix);
+        return $"{ResolveScopeLabel(ecScope)}:{TaktEcDeptScopeConstants.ResolveLabel(ecDeptScope)}:{suffix.Trim()}";
+    }
+
+    /// <summary>
+    /// 拆出「实施范围:部门实施:后缀」。
+    /// </summary>
+    /// <param name="content">执行内容</param>
+    /// <param name="suffix">EOL 或物料类型</param>
+    /// <returns>是否为该格式</returns>
+    public static bool TryReadScopeDeptSuffix(string? content, out string suffix)
+    {
+        suffix = string.Empty;
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            return false;
+        }
+        var value = content.Trim();
+        var parts = value.Split(':');
+        if (parts.Length != 3)
+        {
+            return false;
+        }
+        if (!IsScopeLabel(parts[0]) || !IsDeptScopeLabel(parts[1]))
+        {
+            return false;
+        }
+        suffix = parts[2].Trim();
+        return suffix.Length > 0;
+    }
+
+    /// <summary>
+    /// 是否为实施范围显示名
+    /// </summary>
+    /// <param name="label">显示名</param>
+    /// <returns>是否匹配</returns>
+    private static bool IsScopeLabel(string label)
+    {
+        return label is "全仕向" or "部管" or "内部" or "技术";
+    }
+
+    /// <summary>
+    /// 是否为部门实施显示名
+    /// </summary>
+    /// <param name="label">显示名</param>
+    /// <returns>是否匹配</returns>
+    private static bool IsDeptScopeLabel(string label)
+    {
+        return label is "按成品" or "按机种" or "按设变";
+    }
+
+    /// <summary>
+    /// 是否为按物料类型生成的执行内容，如「全仕向:按成品:HALB」。
+    /// </summary>
+    /// <param name="content">执行内容</param>
+    /// <returns>是否物料类型文案</returns>
+    public static bool IsDeptMaterialTypeExecContent(string? content)
+    {
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            return false;
+        }
+        var value = content.Trim();
+        if (!TryReadScopeDeptSuffix(value, out var materialType))
+        {
+            return false;
+        }
+        return materialType.Length > 0
+            && !string.Equals(materialType, EolExecContent, StringComparison.OrdinalIgnoreCase)
+            && IsMaterialTypeSuffix(materialType);
+    }
+
+    /// <summary>
+    /// 物料类型后缀：HALB、ROH，或 HALB/ROH
+    /// </summary>
+    /// <param name="suffix">第三段</param>
+    /// <returns>是否为物料类型</returns>
+    private static bool IsMaterialTypeSuffix(string suffix)
+    {
+        var parts = suffix.Split('/');
+        if (parts.Length == 0)
+        {
+            return false;
+        }
+        foreach (var part in parts)
+        {
+            if (part.Length is < 1 or > 4)
+            {
+                return false;
+            }
+            foreach (var ch in part)
+            {
+                if (!char.IsAsciiLetterOrDigit(ch))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// 停产后缀。完整文案为「全仕向:按机种:EOL」
     /// </summary>
     public const string EolExecContent = "EOL";
 
     /// <summary>
-    /// 按实施范围生成停产执行内容（实施范围-全仕向/部管/内部/技术-EOL）
-    /// </summary>
-    /// <param name="ecScope">设变实施范围</param>
-    /// <returns>带实施范围前缀的 EOL 文案</returns>
-    public static string ResolveEolExecContent(int ecScope)
-    {
-        var scopeLabel = ecScope switch
-        {
-            AllDestination => ExecContentPrefix + "全仕向",
-            MaterialControl => ExecContentPrefix + "部管",
-            Internal => ExecContentPrefix + "内部",
-            Technical => ExecContentPrefix + "技术",
-            _ => ExecContentPrefix + "技术"
-        };
-        return $"{scopeLabel}-{EolExecContent}";
-    }
-
-    /// <summary>
-    /// 是否为停产自动文案（含历史裸「EOL」、以及「实施范围-*-EOL」/历史「管理区分-*-EOL」）
+    /// 是否为停产自动文案（「全仕向:按机种:EOL」）
     /// </summary>
     /// <param name="content">执行内容</param>
-    /// <returns>是否 EOL 类文案</returns>
+    /// <returns>是否 EOL 文案</returns>
     public static bool IsEolExecContent(string? content)
     {
         if (string.IsNullOrWhiteSpace(content))
         {
             return false;
         }
-        var value = ReplaceLegacyExecContentPrefix(content.Trim());
-        if (string.Equals(value, EolExecContent, StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-        return value.EndsWith($"-{EolExecContent}", StringComparison.OrdinalIgnoreCase);
+        return TryReadScopeDeptSuffix(content.Trim(), out var suffix)
+            && string.Equals(suffix, EolExecContent, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -257,7 +357,7 @@ public static class TaktEcScopeConstants
     /// <param name="deptCode">部门编码</param>
     /// <param name="purchaseType">新采购类型（部管待填名单不使用）</param>
     /// <param name="newWarehouse">新品仓库（部管待填名单不使用）</param>
-    /// <returns>是否自动填写执行内容并标已实施</returns>
+    /// <returns>该部门在此实施范围下由系统填写执行内容；是否实施不由系统写成已实施</returns>
     public static bool ShouldAutoCompleteExec(
         int ecScope,
         string? deptCode,
@@ -280,7 +380,7 @@ public static class TaktEcScopeConstants
     }
 
     /// <summary>
-    /// 按实施范围解析自动执行内容：内部→「&lt;内部管理&gt;」；技术→「&lt;技术管理&gt;」；部管→「&lt;部管管理&gt;」（仅自动部门使用）；全仕向→空
+    /// 按实施范围解析自动执行内容：内部→「实施范围-内部」；技术→「实施范围-技术」；部管→「实施范围-部管」（仅自动部门使用）；全仕向→空
     /// </summary>
     /// <param name="ecScope">设变实施范围</param>
     /// <returns>自动填写文案；按成品/按机种返回空串</returns>
@@ -308,45 +408,7 @@ public static class TaktEcScopeConstants
     }
 
     /// <summary>
-    /// 将历史短文案与「管理区分-」前缀规范为当前口径（前缀→「实施范围-」；全仕向→空；内部/技术/部管→标准文案）
-    /// </summary>
-    /// <param name="content">执行内容</param>
-    /// <returns>规范后的执行内容</returns>
-    public static string? NormalizeLegacyAutoExecContent(string? content)
-    {
-        if (string.IsNullOrWhiteSpace(content))
-        {
-            return content;
-        }
-        var value = ReplaceLegacyExecContentPrefix(content.Trim());
-        return value switch
-        {
-            "全仕向" or "按成品" or ByFinishedProductExecContent or "实施范围-全仕向" => string.Empty,
-            "按机种" or ByModelExecContent => string.Empty,
-            "部管" or "部管为止" or "实施范围-部管" or MaterialControlExecContent => MaterialControlExecContent,
-            "内部" or "内部管理" or "实施范围-内部" or InternalExecContent => InternalExecContent,
-            "技术" or "技术为止" or "实施范围-技术" or TechnicalExecContent => TechnicalExecContent,
-            _ => value
-        };
-    }
-
-    /// <summary>
-    /// 历史前缀「管理区分-」统一替换为「实施范围-」（无此前缀则原样返回）
-    /// </summary>
-    /// <param name="content">已 Trim 的执行内容</param>
-    /// <returns>前缀规范后的文案</returns>
-    public static string ReplaceLegacyExecContentPrefix(string content)
-    {
-        ArgumentNullException.ThrowIfNull(content);
-        if (content.StartsWith(LegacyExecContentPrefix, StringComparison.Ordinal))
-        {
-            return ExecContentPrefix + content[LegacyExecContentPrefix.Length..];
-        }
-        return content;
-    }
-
-    /// <summary>
-    /// 实施范围=部管时，须人工填写执行内容的部门（生管/采购/受检/部管/SMT）；制一/制二/品管自动写「&lt;部管管理&gt;」
+    /// 实施范围=部管时，须人工填写执行内容的部门（生管/采购/受检/部管/SMT）；制一/制二/品管自动写「实施范围-部管」
     /// </summary>
     /// <param name="deptCode">部门编码</param>
     /// <param name="purchaseType">新采购类型（保留参数；部管待填名单不再按此过滤）</param>
@@ -375,8 +437,7 @@ public static class TaktEcScopeConstants
     }
 
     /// <summary>
-    /// 是否为系统按实施范围/历史规则写入的执行内容（可被再生成覆盖）。
-    /// 含历史「管理区分-」前缀（先规范为「实施范围-」再判定）。
+    /// 是否为系统按当前实施范围写入的执行内容（可被再生成覆盖）。
     /// </summary>
     /// <param name="content">执行内容</param>
     /// <returns>是否为自动生成文案</returns>
@@ -386,27 +447,18 @@ public static class TaktEcScopeConstants
         {
             return true;
         }
-        var value = ReplaceLegacyExecContentPrefix(content.Trim());
+        var value = content.Trim();
         return string.Equals(value, AutoCompletedExecContent, StringComparison.Ordinal)
             || string.Equals(value, ByFinishedProductExecContent, StringComparison.Ordinal)
             || string.Equals(value, ByModelExecContent, StringComparison.Ordinal)
-            || string.Equals(value, "实施范围-全仕向", StringComparison.Ordinal)
-            || string.Equals(value, "实施范围-部管", StringComparison.Ordinal)
-            || string.Equals(value, "实施范围-内部", StringComparison.Ordinal)
-            || string.Equals(value, "实施范围-技术", StringComparison.Ordinal)
+            || string.Equals(value, ExecContentPrefix + "全仕向", StringComparison.Ordinal)
             || string.Equals(value, MaterialControlExecContent, StringComparison.Ordinal)
             || string.Equals(value, InternalExecContent, StringComparison.Ordinal)
             || string.Equals(value, TechnicalExecContent, StringComparison.Ordinal)
-            || string.Equals(value, "全仕向", StringComparison.Ordinal)
-            || string.Equals(value, "部管", StringComparison.Ordinal)
-            || string.Equals(value, "内部", StringComparison.Ordinal)
-            || string.Equals(value, "技术", StringComparison.Ordinal)
-            || string.Equals(value, "部管为止", StringComparison.Ordinal)
-            || string.Equals(value, "内部管理", StringComparison.Ordinal)
-            || string.Equals(value, "技术为止", StringComparison.Ordinal)
             || string.Equals(value, TaktEcKoubaiConstants.NotPurchasingRelatedExecContent, StringComparison.Ordinal)
             || string.Equals(value, TaktEcUkekenConstants.NotRelatedToIqcExecContent, StringComparison.Ordinal)
             || string.Equals(value, TaktEcBukanConstants.NotRelatedToMaterialControlExecContent, StringComparison.Ordinal)
+            || IsDeptMaterialTypeExecContent(value)
             || IsEolExecContent(value);
     }
 }

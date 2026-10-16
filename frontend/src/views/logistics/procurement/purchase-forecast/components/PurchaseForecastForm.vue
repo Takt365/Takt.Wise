@@ -18,7 +18,32 @@
   >
     <div :class="formContentClass">
       <a-row :gutter="24">
-
+        <a-col :span="12">
+          <a-form-item
+            :label="t('common.page.form.numberingRule')"
+            name="numberingRuleCode"
+          >
+            <TaktSelect
+              v-model:value="formState.numberingRuleCode"
+              api-url="TaktNumberings/options"
+              :api-params="{ documentType: '采购预测' }"
+              :placeholder="t('common.page.form.placeholder.selectonly')"
+              :disabled="!!formData?.purchaseForecastId || loading"
+            />
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item
+            :label="pi.label('purchaseForecastCode')"
+            name="purchaseForecastCode"
+          >
+            <a-input
+              v-model:value="formState.purchaseForecastCode"
+              :placeholder="t('common.page.form.numberingCodePreview')"
+              disabled
+            />
+          </a-form-item>
+        </a-col>
       </a-row>
     </div>
     <!-- 下：子表 items -->
@@ -46,6 +71,7 @@
 import { useI18n } from 'vue-i18n'
 import type { Rule } from 'ant-design-vue/es/form'
 import { usePurchaseForecastI18n } from '../composables/usePurchaseForecastI18n'
+import { useTaktFormNumbering } from '@/composables/useTaktFormNumbering'
 
 /** 实体字段 i18n */
 const pi = usePurchaseForecastI18n()
@@ -148,9 +174,41 @@ watch(
   { immediate: true }
 )
 
+/** 是否编辑态 */
+const isEditMode = computed(() => !!props.formData?.purchaseForecastId)
+
+useTaktFormNumbering({
+  formState,
+  isEdit: isEditMode,
+  businessCodeField: 'purchaseForecastCode',
+})
+
 /** 表单校验规则（与 FluentValidation 必填对齐） */
 const rules = computed<Record<string, Rule[]>>(() => ({
-
+  numberingRuleCode: [{
+    validator: async (_rule, value) => {
+      if (isEditMode.value) {
+        return Promise.resolve()
+      }
+      if (!String(value ?? '').trim()) {
+        return Promise.reject(t('common.page.form.numberingRuleRequired'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change',
+  }],
+  purchaseForecastCode: [{
+    validator: async (_rule, value) => {
+      if (isEditMode.value) {
+        return Promise.resolve()
+      }
+      if (!String(value ?? '').trim()) {
+        return Promise.reject(t('common.page.form.numberingCodePreview'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change',
+  }],
 }))
 
 /** 校验表单（失败 throw，供父级 handleFormSubmit 捕获） */

@@ -26,7 +26,7 @@ namespace Takt.Domain.Entities.Identity;
 [SugarIndex("ix_role_code_unique", nameof(TenantCode), OrderByType.Asc, nameof(RoleCode), OrderByType.Asc, true)]
 public class TaktRole : TaktTenantCoreEntityBase
 {    /// <summary>
-    /// 角色编码（唯一索引：租户内唯一，见 ix_role_code_unique）
+    /// 角色编码（唯一索引：租户内唯一，见 ix_role_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 角色编码规则生成并展示，非手输；单据类型菜单：角色管理）
     /// </summary>
     [SugarColumn(ColumnName = "role_code", ColumnDescription = "角色编码", ColumnDataType = "varchar", Length = 50, IsNullable = false)]
     public string RoleCode { get; set; } = string.Empty;

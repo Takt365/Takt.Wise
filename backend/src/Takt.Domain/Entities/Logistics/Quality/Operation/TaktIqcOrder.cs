@@ -35,7 +35,7 @@ public class TaktIqcOrder : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "inspection_date", ColumnDescription = "检验日期", ColumnDataType = "date", IsNullable = true)]
     public DateTime? InspectionDate { get; set; }
     /// <summary>
-    /// IQC检验单编码（唯一索引，根据来源单号自动生成）
+    /// IQC检验单编码（租户+公司+工厂内唯一，根据来源单号自动生成）
     /// </summary>
     [SugarColumn(ColumnName = "iqc_order_code", ColumnDescription = "IQC检验单编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string IqcOrderCode { get; set; } = string.Empty;

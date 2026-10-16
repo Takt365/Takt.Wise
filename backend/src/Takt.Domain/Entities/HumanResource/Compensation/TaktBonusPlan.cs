@@ -24,7 +24,7 @@ namespace Takt.Domain.Entities.HumanResource.Compensation;
 public class TaktBonusPlan : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 方案编码（租户+公司内唯一）
+    /// 方案编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 方案编码规则生成并展示，非手输；单据类型菜单：奖金方案）
     /// </summary>
     [SugarColumn(ColumnName = "plan_code", ColumnDescription = "方案编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string PlanCode { get; set; } = string.Empty;

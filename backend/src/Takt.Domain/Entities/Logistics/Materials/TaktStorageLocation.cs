@@ -36,7 +36,7 @@ public class TaktStorageLocation : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "warehouse_code", ColumnDescription = "存货地点编码", ColumnDataType = "nvarchar", Length = 4, IsNullable = false)]
     public string WarehouseCode { get; set; } = string.Empty;
     /// <summary>
-    /// 库位编码（40，租户+公司+工厂+仓库内唯一；序列号入出库等业务表存此编码）
+    /// 库位编码（40，租户+公司+工厂+仓库内唯一；序列号入出库等业务表存此编码；前端表单选择编码规则后自动通过 TaktNumbering 库位编码规则生成并展示，非手输；单据类型菜单：库位）
     /// </summary>
     [SugarColumn(ColumnName = "location_code", ColumnDescription = "库位编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string LocationCode { get; set; } = string.Empty;

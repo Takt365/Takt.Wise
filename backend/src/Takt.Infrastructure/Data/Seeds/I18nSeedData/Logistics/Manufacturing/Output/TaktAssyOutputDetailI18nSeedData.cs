@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Output
 // 文件名称：TaktAssyOutputDetailI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktAssyOutputDetail 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktAssyOutputDetailI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.assyoutputdetail._self", "zh-HK", "组立日报明细信息_hk", "实体名称"),
 
             // entity.assyoutputdetail.assyoutputid
-            new TranslationSeedItem("entity.assyoutputdetail.assyoutputid", "en-US", "组立日报ID_us", "组立日报ID（主表主键；与 TimePeriod、LineNumber 组成唯一键；序列化为 string 以避免 Javascript 精度问题）"),
+            new TranslationSeedItem("entity.assyoutputdetail.assyoutputid", "en-US", "组立日报ID_us", "组立日报ID（主表主键；与租户、TimePeriod、LineNumber 组成唯一键；序列化为 string 以避免 Javascript 精度问题）"),
             // entity.assyoutputdetail.assyoutputid
-            new TranslationSeedItem("entity.assyoutputdetail.assyoutputid", "ja-JP", "组立日报ID_jp", "组立日报ID（主表主键；与 TimePeriod、LineNumber 组成唯一键；序列化为 string 以避免 Javascript 精度问题）"),
+            new TranslationSeedItem("entity.assyoutputdetail.assyoutputid", "ja-JP", "组立日报ID_jp", "组立日报ID（主表主键；与租户、TimePeriod、LineNumber 组成唯一键；序列化为 string 以避免 Javascript 精度问题）"),
             // entity.assyoutputdetail.assyoutputid
-            new TranslationSeedItem("entity.assyoutputdetail.assyoutputid", "zh-CN", "组立日报ID", "组立日报ID（主表主键；与 TimePeriod、LineNumber 组成唯一键；序列化为 string 以避免 Javascript 精度问题）"),
+            new TranslationSeedItem("entity.assyoutputdetail.assyoutputid", "zh-CN", "组立日报ID", "组立日报ID（主表主键；与租户、TimePeriod、LineNumber 组成唯一键；序列化为 string 以避免 Javascript 精度问题）"),
             // entity.assyoutputdetail.assyoutputid
-            new TranslationSeedItem("entity.assyoutputdetail.assyoutputid", "zh-HK", "组立日报ID_hk", "组立日报ID（主表主键；与 TimePeriod、LineNumber 组成唯一键；序列化为 string 以避免 Javascript 精度问题）"),
+            new TranslationSeedItem("entity.assyoutputdetail.assyoutputid", "zh-HK", "组立日报ID_hk", "组立日报ID（主表主键；与租户、TimePeriod、LineNumber 组成唯一键；序列化为 string 以避免 Javascript 精度问题）"),
 
             // entity.assyoutputdetail.prodordercode
             new TranslationSeedItem("entity.assyoutputdetail.prodordercode", "en-US", "工单号_us", "工单号（冗余字段,便于查询）"),
@@ -109,22 +109,22 @@ public class TaktAssyOutputDetailI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.assyoutputdetail.prodordercode", "zh-HK", "工单号_hk", "工单号（冗余字段,便于查询）"),
 
             // entity.assyoutputdetail.linenumber
-            new TranslationSeedItem("entity.assyoutputdetail.linenumber", "en-US", "行号_us", "行号（项号/序号，固定步长=10；与 AssyOutputId、TimePeriod 组成唯一键）"),
+            new TranslationSeedItem("entity.assyoutputdetail.linenumber", "en-US", "行号_us", "行号（项号/序号，固定步长=10；与租户、AssyOutputId、TimePeriod 组成唯一键）"),
             // entity.assyoutputdetail.linenumber
-            new TranslationSeedItem("entity.assyoutputdetail.linenumber", "ja-JP", "行号_jp", "行号（项号/序号，固定步长=10；与 AssyOutputId、TimePeriod 组成唯一键）"),
+            new TranslationSeedItem("entity.assyoutputdetail.linenumber", "ja-JP", "行号_jp", "行号（项号/序号，固定步长=10；与租户、AssyOutputId、TimePeriod 组成唯一键）"),
             // entity.assyoutputdetail.linenumber
-            new TranslationSeedItem("entity.assyoutputdetail.linenumber", "zh-CN", "行号", "行号（项号/序号，固定步长=10；与 AssyOutputId、TimePeriod 组成唯一键）"),
+            new TranslationSeedItem("entity.assyoutputdetail.linenumber", "zh-CN", "行号", "行号（项号/序号，固定步长=10；与租户、AssyOutputId、TimePeriod 组成唯一键）"),
             // entity.assyoutputdetail.linenumber
-            new TranslationSeedItem("entity.assyoutputdetail.linenumber", "zh-HK", "行号_hk", "行号（项号/序号，固定步长=10；与 AssyOutputId、TimePeriod 组成唯一键）"),
+            new TranslationSeedItem("entity.assyoutputdetail.linenumber", "zh-HK", "行号_hk", "行号（项号/序号，固定步长=10；与租户、AssyOutputId、TimePeriod 组成唯一键）"),
 
             // entity.assyoutputdetail.timeperiod
-            new TranslationSeedItem("entity.assyoutputdetail.timeperiod", "en-US", "生产时段_us", "生产时段（固定值；与 AssyOutputId、LineNumber 组成唯一键）"),
+            new TranslationSeedItem("entity.assyoutputdetail.timeperiod", "en-US", "生产时段_us", "生产时段（固定值；与租户、AssyOutputId、LineNumber 组成唯一键）"),
             // entity.assyoutputdetail.timeperiod
-            new TranslationSeedItem("entity.assyoutputdetail.timeperiod", "ja-JP", "生产时段_jp", "生产时段（固定值；与 AssyOutputId、LineNumber 组成唯一键）"),
+            new TranslationSeedItem("entity.assyoutputdetail.timeperiod", "ja-JP", "生产时段_jp", "生产时段（固定值；与租户、AssyOutputId、LineNumber 组成唯一键）"),
             // entity.assyoutputdetail.timeperiod
-            new TranslationSeedItem("entity.assyoutputdetail.timeperiod", "zh-CN", "生产时段", "生产时段（固定值；与 AssyOutputId、LineNumber 组成唯一键）"),
+            new TranslationSeedItem("entity.assyoutputdetail.timeperiod", "zh-CN", "生产时段", "生产时段（固定值；与租户、AssyOutputId、LineNumber 组成唯一键）"),
             // entity.assyoutputdetail.timeperiod
-            new TranslationSeedItem("entity.assyoutputdetail.timeperiod", "zh-HK", "生产时段_hk", "生产时段（固定值；与 AssyOutputId、LineNumber 组成唯一键）"),
+            new TranslationSeedItem("entity.assyoutputdetail.timeperiod", "zh-HK", "生产时段_hk", "生产时段（固定值；与租户、AssyOutputId、LineNumber 组成唯一键）"),
 
             // entity.assyoutputdetail.stdcapacity
             new TranslationSeedItem("entity.assyoutputdetail.stdcapacity", "en-US", "标准产能_us", "标准产能（冗余字段：默认快照主表 StdCapacity；有报工工时时按报工工时÷标准工时×稼动率重算该行）"),

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Cost
 // 文件名称：TaktCostGroupI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktCostGroup 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktCostGroupI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.costgroup._self", "zh-HK", "成本组主数据信息_hk", "实体名称"),
 
             // entity.costgroup.code
-            new TranslationSeedItem("entity.costgroup.code", "en-US", "成本组编码_us", "成本组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.costgroup.code", "en-US", "成本组编码_us", "成本组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 成本组编码规则生成并展示，非手输；单据类型菜单：品质成本）"),
             // entity.costgroup.code
-            new TranslationSeedItem("entity.costgroup.code", "ja-JP", "成本组编码_jp", "成本组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.costgroup.code", "ja-JP", "成本组编码_jp", "成本组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 成本组编码规则生成并展示，非手输；单据类型菜单：品质成本）"),
             // entity.costgroup.code
-            new TranslationSeedItem("entity.costgroup.code", "zh-CN", "成本组编码", "成本组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.costgroup.code", "zh-CN", "成本组编码", "成本组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 成本组编码规则生成并展示，非手输；单据类型菜单：品质成本）"),
             // entity.costgroup.code
-            new TranslationSeedItem("entity.costgroup.code", "zh-HK", "成本组编码_hk", "成本组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.costgroup.code", "zh-HK", "成本组编码_hk", "成本组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 成本组编码规则生成并展示，非手输；单据类型菜单：品质成本）"),
 
             // entity.costgroup.name
             new TranslationSeedItem("entity.costgroup.name", "en-US", "成本组名称_us", "成本组名称"),

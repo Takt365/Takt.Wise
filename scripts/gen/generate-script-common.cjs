@@ -363,11 +363,11 @@ function findDomainEntityFile(entityPascal, backendRoot = DEFAULT_BACKEND_ROOT) 
 }
 
 /**
- * 实体类头正则（租户四组合 Core/Culture/Plant/默认 + Company/Approval；含 Increment / Guid）
+ * 实体类头正则（租户四组合 Core/Culture/Plant/默认 + Company/Approval；含 Increment / Guid；基类后可接接口）
  * 组合：4 Core / 2 Culture / 3 Plant / 1 TenantEntity（默认）
  */
 const ENTITY_CLASS_HEADER_REGEX =
-  /public\s+(?:sealed\s+|abstract\s+)?class\s+(Takt\w+)\s*:\s*(Takt(?:Tenant(?:Core|Culture|Plant)?|Company|Approval)Entity(?:Increment|Guid)?Base)\s*\{/;
+  /public\s+(?:sealed\s+|abstract\s+)?class\s+(Takt\w+)\s*:\s*(Takt(?:Tenant(?:Core|Culture|Plant)?|Company|Approval)Entity(?:Increment|Guid)?Base)(?:\s*,\s*[A-Za-z_][\w.]*)*\s*\{/;
 
 /** EntityBase / EntityIncrementBase / EntityGuidBase → DTO 基类（对齐 TaktDtoBase 四组合） */
 const ENTITY_BASE_TO_DTO_BASE = {

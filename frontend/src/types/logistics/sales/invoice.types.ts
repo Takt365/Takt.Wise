@@ -503,9 +503,14 @@ export interface SalesInvoiceCreate {
   plantCode: string;
 
   /**
-   * 开票凭证
+   * 开票凭证（前端表单选择编码规则后自动通过 TaktNumbering 开票凭证规则生成并展示，非手输；单据类型菜单：销售发票）
    */
   billingDocumentCode: string;
+
+  /**
+   * 编码规则编码（新增时选择销售发票编码规则后取号；不落库）
+   */
+  numberingRuleCode?: string;
 
   /**
    * 开票类型

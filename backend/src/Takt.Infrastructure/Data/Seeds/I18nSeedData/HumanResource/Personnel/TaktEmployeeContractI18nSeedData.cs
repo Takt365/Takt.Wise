@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.HumanResource.Personnel
 // 文件名称：TaktEmployeeContractI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEmployeeContract 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -118,13 +118,13 @@ public class TaktEmployeeContractI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.employeecontract.employeename", "zh-HK", "员工姓名_hk", "员工姓名（冗余，与 TaktEmployee.EmployeeName 对齐）"),
 
             // entity.employeecontract.contractcode
-            new TranslationSeedItem("entity.employeecontract.contractcode", "en-US", "合同编码_us", "合同编码"),
+            new TranslationSeedItem("entity.employeecontract.contractcode", "en-US", "合同编码_us", "合同编码（前端表单选择编码规则后自动通过 TaktNumbering 合同编码规则生成并展示，非手输；单据类型菜单：员工合同）"),
             // entity.employeecontract.contractcode
-            new TranslationSeedItem("entity.employeecontract.contractcode", "ja-JP", "合同编码_jp", "合同编码"),
+            new TranslationSeedItem("entity.employeecontract.contractcode", "ja-JP", "合同编码_jp", "合同编码（前端表单选择编码规则后自动通过 TaktNumbering 合同编码规则生成并展示，非手输；单据类型菜单：员工合同）"),
             // entity.employeecontract.contractcode
-            new TranslationSeedItem("entity.employeecontract.contractcode", "zh-CN", "合同编码", "合同编码"),
+            new TranslationSeedItem("entity.employeecontract.contractcode", "zh-CN", "合同编码", "合同编码（前端表单选择编码规则后自动通过 TaktNumbering 合同编码规则生成并展示，非手输；单据类型菜单：员工合同）"),
             // entity.employeecontract.contractcode
-            new TranslationSeedItem("entity.employeecontract.contractcode", "zh-HK", "合同编码_hk", "合同编码"),
+            new TranslationSeedItem("entity.employeecontract.contractcode", "zh-HK", "合同编码_hk", "合同编码（前端表单选择编码规则后自动通过 TaktNumbering 合同编码规则生成并展示，非手输；单据类型菜单：员工合同）"),
 
             // entity.employeecontract.contracttype
             new TranslationSeedItem("entity.employeecontract.contracttype", "en-US", "合同类型_us", "合同类型（字典 humanresource_personnel_employee_contract_type；0=固定期限 1=无固定期限 2=以完成一定工作任务为期限 3=实习）"),

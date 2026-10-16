@@ -82,9 +82,9 @@ public class TaktPurchaseOrderItemDto : TaktCompanyDtoBase
     public string? MaterialSpecification { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购信息记录编码
+    /// 采购信息编码
     /// </summary>
-    public string? PurchaseInfoRecordCode { get; set; } = string.Empty;
+    public string? PurchaseInfoCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 供应商物料编码
@@ -127,7 +127,7 @@ public class TaktPurchaseOrderItemDto : TaktCompanyDtoBase
     public decimal DiscountAmount { get; set; }
 
     /// <summary>
-    /// 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -270,9 +270,9 @@ public class TaktPurchaseOrderItemQueryDto : TaktPagedQuery
     public string? MaterialSpecification { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购信息记录编码
+    /// 采购信息编码
     /// </summary>
-    public string? PurchaseInfoRecordCode { get; set; } = string.Empty;
+    public string? PurchaseInfoCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 供应商物料编码
@@ -315,7 +315,7 @@ public class TaktPurchaseOrderItemQueryDto : TaktPagedQuery
     public decimal? DiscountAmount { get; set; }
 
     /// <summary>
-    /// 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -482,9 +482,9 @@ public class TaktPurchaseOrderItemCreateDto
     public string? MaterialSpecification { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购信息记录编码
+    /// 采购信息编码
     /// </summary>
-    public string? PurchaseInfoRecordCode { get; set; } = string.Empty;
+    public string? PurchaseInfoCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 供应商物料编码
@@ -528,7 +528,7 @@ public class TaktPurchaseOrderItemCreateDto
     public decimal DiscountAmount { get; set; }
 
     /// <summary>
-    /// 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -747,9 +747,9 @@ public class TaktPurchaseOrderItemTemplateDto
     public string? MaterialSpecification { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购信息记录编码
+    /// 采购信息编码
     /// </summary>
-    public string? PurchaseInfoRecordCode { get; set; } = string.Empty;
+    public string? PurchaseInfoCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 供应商物料编码
@@ -792,7 +792,7 @@ public class TaktPurchaseOrderItemTemplateDto
     public decimal? DiscountAmount { get; set; }
 
     /// <summary>
-    /// 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -940,9 +940,9 @@ public class TaktPurchaseOrderItemImportDto
     public string? MaterialSpecification { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购信息记录编码
+    /// 采购信息编码
     /// </summary>
-    public string? PurchaseInfoRecordCode { get; set; } = string.Empty;
+    public string? PurchaseInfoCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 供应商物料编码
@@ -985,7 +985,7 @@ public class TaktPurchaseOrderItemImportDto
     public decimal? DiscountAmount { get; set; }
 
     /// <summary>
-    /// 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -1139,9 +1139,9 @@ public class TaktPurchaseOrderItemExportDto
     public string? MaterialSpecification { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购信息记录编码
+    /// 采购信息编码
     /// </summary>
-    public string? PurchaseInfoRecordCode { get; set; } = string.Empty;
+    public string? PurchaseInfoCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 供应商物料编码
@@ -1184,7 +1184,7 @@ public class TaktPurchaseOrderItemExportDto
     public decimal DiscountAmount { get; set; }
 
     /// <summary>
-    /// 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 

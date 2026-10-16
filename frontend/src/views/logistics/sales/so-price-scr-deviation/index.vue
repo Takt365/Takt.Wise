@@ -2,7 +2,7 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/sales/so-price-scr-deviation -->
 <!-- 文件名称：index.vue -->
-<!-- 功能描述：SO价偏离SCR（同生效周期订单折算单价与销售条件记录不一致） -->
+<!-- 功能描述：SO价偏离SCR（同生效周期订单折算单价与销售条件不一致） -->
 <!-- 版权信息：Copyright (c) 2026 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->

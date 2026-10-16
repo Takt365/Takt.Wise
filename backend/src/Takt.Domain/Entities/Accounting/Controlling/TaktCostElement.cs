@@ -25,7 +25,7 @@ namespace Takt.Domain.Entities.Accounting.Controlling;
 [SugarIndex("ix_cost_element_parent", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(ParentId), OrderByType.Asc, false)]
 public class TaktCostElement : TaktCompanyEntityBase
 {    /// <summary>
-    /// 成本要素编码（4位，租户+公司内唯一）
+    /// 成本要素编码（4位，租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 成本要素编码规则生成并展示，非手输；单据类型菜单：成本要素）
     /// </summary>
     [SugarColumn(ColumnName = "cost_element_code", ColumnDescription = "成本要素编码", ColumnDataType = "varchar", Length = 4, IsNullable = false)]
     public string CostElementCode { get; set; } = string.Empty;

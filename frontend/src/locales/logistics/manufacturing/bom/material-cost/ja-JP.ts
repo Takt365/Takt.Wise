@@ -26,7 +26,7 @@ export default {
     modalmasterhint: '左機種 → 中製品 → 右明細（エンティティ分割なし）。明細取込後に合計または再計算してください。',
     costSum: 'コスト合計',
     costRecalculate: '再計算コスト',
-    backfillPurchaseInfoRecord: '購買価格を反映',
+    backfillPurchaseInfo: '購買価格を反映',
     refreshModelFields: '機種価格を反映',
     costingMonth: '原価月',
     costingMonthPlaceholder: '原価月を選択',
@@ -40,9 +40,9 @@ export default {
     costRecalculateFailed: 'コスト処理に失敗しました',
     costRecalculateConfirmTitle: 'コストを再計算しますか？',
     costRecalculateConfirmContent: '当該原価月をいったんゼロにして明細から再集計し、完了後に集計を更新します。',
-    backfillPurchaseInfoRecordSuccess:
+    backfillPurchaseInfoSuccess:
       '{month} 反映完了：更新 {updated} 行、スキップ {skipped} 行（スキャン {scanned} 行）',
-    backfillPurchaseInfoRecordFailed: '購買価格の反映に失敗しました',
+    backfillPurchaseInfoFailed: '購買価格の反映に失敗しました',
     refreshModelFieldsSuccess:
       '{month} 機種価格反映完了：スキャン {scanned}、機種更新 {modelUpdated}、平均更新 {averageUpdated}（{groups} グループ）',
     refreshModelFieldsFailed: '機種価格の反映に失敗しました',

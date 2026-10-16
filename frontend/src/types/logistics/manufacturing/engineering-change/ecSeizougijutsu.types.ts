@@ -71,6 +71,8 @@ export interface EcSeizougijutsu extends CompanyDtoBase {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 
   /**
    * 部门编码（TaktDept.DeptCode，5 位，如 D0630）
@@ -101,6 +103,10 @@ export interface EcSeizougijutsu extends CompanyDtoBase {
    * SOP日期
    */
   sopDate?: string;
+  /** SOP担当（选项 TaktEcGroups/options，ecGroupCategory=2） */
+  sopLeader?: string;
+  /** 设变EC担当（选项 TaktEcGroups/options，ecGroupCategory=1） */
+  techLeader?: string;
 
   /**
    * 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
@@ -308,6 +314,8 @@ export interface EcSeizougijutsuCreate {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 
   /**
    * 部门编码（TaktDept.DeptCode，5 位，如 D0630）
@@ -338,6 +346,10 @@ export interface EcSeizougijutsuCreate {
    * SOP日期
    */
   sopDate?: string;
+  /** SOP担当（选项 TaktEcGroups/options，ecGroupCategory=2） */
+  sopLeader?: string;
+  /** 设变EC担当（选项 TaktEcGroups/options，ecGroupCategory=1） */
+  techLeader?: string;
 
   /**
    * 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
@@ -389,6 +401,8 @@ export interface EcSeizougijutsuDiscontinuedStatus {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 }
 
 /**
@@ -504,6 +518,10 @@ export interface EcSeizougijutsuTemplate {
    * SOP日期
    */
   sopDate?: string;
+  /** SOP担当（选项 TaktEcGroups/options，ecGroupCategory=2） */
+  sopLeader?: string;
+  /** 设变EC担当（选项 TaktEcGroups/options，ecGroupCategory=1） */
+  techLeader?: string;
 
   /**
    * 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
@@ -617,6 +635,10 @@ export interface EcSeizougijutsuImport {
    * SOP日期
    */
   sopDate?: string;
+  /** SOP担当（选项 TaktEcGroups/options，ecGroupCategory=2） */
+  sopLeader?: string;
+  /** 设变EC担当（选项 TaktEcGroups/options，ecGroupCategory=1） */
+  techLeader?: string;
 
   /**
    * 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
@@ -700,6 +722,8 @@ export interface EcSeizougijutsuExport {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 
   /**
    * 部门编码（TaktDept.DeptCode，5 位，如 D0630）
@@ -730,6 +754,10 @@ export interface EcSeizougijutsuExport {
    * SOP日期
    */
   sopDate?: string;
+  /** SOP担当（选项 TaktEcGroups/options，ecGroupCategory=2） */
+  sopLeader?: string;
+  /** 设变EC担当（选项 TaktEcGroups/options，ecGroupCategory=1） */
+  techLeader?: string;
 
   /**
    * 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）

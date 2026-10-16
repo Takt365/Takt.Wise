@@ -43,6 +43,38 @@ IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_sales_order', N'sales_grou
   EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_sales_order] ADD [sales_group] NVARCHAR(3) NULL');
 IF COL_LENGTH(N'dbo.takt_logistics_sales_order', N'sales_group') IS NULL
   ALTER TABLE [dbo].[takt_logistics_sales_order] ADD [sales_group] NVARCHAR(3) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_sales_order', N'sales_order_type') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_sales_order] ADD [sales_order_type] NVARCHAR(20) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_sales_order', N'sales_order_type') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_sales_order] ADD [sales_order_type] NVARCHAR(20) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_sales_order', N'order_reason') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_sales_order] ADD [order_reason] NVARCHAR(20) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_sales_order', N'order_reason') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_sales_order] ADD [order_reason] NVARCHAR(20) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_sales_order', N'sales_organization') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_sales_order] ADD [sales_organization] NVARCHAR(4) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_sales_order', N'sales_organization') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_sales_order] ADD [sales_organization] NVARCHAR(4) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_sales_order', N'pricing_procedure') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_sales_order] ADD [pricing_procedure] NVARCHAR(20) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_sales_order', N'pricing_procedure') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_sales_order] ADD [pricing_procedure] NVARCHAR(20) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_sales_order', N'pricing_condition_code') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_sales_order] ADD [pricing_condition_code] NVARCHAR(20) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_sales_order', N'pricing_condition_code') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_sales_order] ADD [pricing_condition_code] NVARCHAR(20) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_sales_order', N'invoice_type') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_sales_order] ADD [invoice_type] NVARCHAR(20) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_sales_order', N'invoice_type') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_sales_order] ADD [invoice_type] NVARCHAR(20) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_sales_order', N'purchase_order_code') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_sales_order] ADD [purchase_order_code] NVARCHAR(20) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_sales_order', N'purchase_order_code') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_sales_order] ADD [purchase_order_code] NVARCHAR(20) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_sales_order', N'purchase_order_date') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_sales_order] ADD [purchase_order_date] DATETIME NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_sales_order', N'purchase_order_date') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_sales_order] ADD [purchase_order_date] DATETIME NULL;
 IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_sales_order', N'sales_by') IS NOT NULL
 BEGIN
   EXEC(N'UPDATE S SET S.[sales_group] = LEFT(LTRIM(RTRIM(S.[sales_by])), 3)
@@ -64,6 +96,9 @@ CREATE TABLE #hdr (
   [customer_code] NVARCHAR(10), [customer_name1] NVARCHAR(140),
   [order_date] DATETIME, [required_delivery_date] DATETIME, [actual_delivery_date] DATETIME,
   [sales_group] NVARCHAR(3),
+  [sales_order_type] NVARCHAR(20), [order_reason] NVARCHAR(20), [sales_organization] NVARCHAR(4),
+  [pricing_procedure] NVARCHAR(20), [pricing_condition_code] NVARCHAR(20), [invoice_type] NVARCHAR(20),
+  [purchase_order_code] NVARCHAR(20), [purchase_order_date] DATETIME,
   [total_quantity] DECIMAL(18,4), [total_amount] DECIMAL(18,2), [discount_amount] DECIMAL(18,2),
   [currency_code] NVARCHAR(3), [exchange_rate] DECIMAL(18,5),
   [tax_code] NVARCHAR(4), [tax_rate] INT, [tax_amount] DECIMAL(18,2), [actual_amount] DECIMAL(18,2),
@@ -111,6 +146,9 @@ SELECT S.rn, @base_id + S.rn,
   S.[customer_code], S.[customer_name1],
   S.[order_date], S.[required_delivery_date], S.[actual_delivery_date],
   S.[sales_group],
+  S.[sales_order_type], S.[order_reason], S.[sales_organization],
+  S.[pricing_procedure], S.[pricing_condition_code], S.[invoice_type],
+  S.[purchase_order_code], S.[purchase_order_date],
   S.[total_quantity], S.[total_amount], S.[discount_amount],
   S.[currency_code], S.[exchange_rate],
   S.[tax_code], S.[tax_rate], S.[tax_amount], S.[actual_amount],
@@ -134,6 +172,14 @@ FROM (
       TRY_CAST(R.[required_delivery_date] AS DATETIME) AS [required_delivery_date],
       TRY_CAST(R.[actual_delivery_date] AS DATETIME) AS [actual_delivery_date],
       NULLIF(LEFT(LTRIM(RTRIM(R.[sales_group])), 3), N'') AS [sales_group],
+      NULLIF(LEFT(LTRIM(RTRIM(R.[sales_order_type])), 20), N'') AS [sales_order_type],
+      NULLIF(LEFT(LTRIM(RTRIM(R.[order_reason])), 20), N'') AS [order_reason],
+      NULLIF(LEFT(LTRIM(RTRIM(R.[sales_organization])), 4), N'') AS [sales_organization],
+      NULLIF(LEFT(LTRIM(RTRIM(R.[pricing_procedure])), 20), N'') AS [pricing_procedure],
+      NULLIF(LEFT(LTRIM(RTRIM(R.[pricing_condition_code])), 20), N'') AS [pricing_condition_code],
+      NULLIF(LEFT(LTRIM(RTRIM(R.[invoice_type])), 20), N'') AS [invoice_type],
+      NULLIF(LEFT(LTRIM(RTRIM(R.[purchase_order_code])), 20), N'') AS [purchase_order_code],
+      TRY_CAST(R.[purchase_order_date] AS DATETIME) AS [purchase_order_date],
       ROUND(COALESCE(TRY_CAST(R.[total_quantity] AS DECIMAL(18,8)), 0), 4) AS [total_quantity],
       ROUND(COALESCE(TRY_CAST(R.[total_amount] AS DECIMAL(18,8)), 0), 2) AS [total_amount],
       ROUND(COALESCE(TRY_CAST(R.[discount_amount] AS DECIMAL(18,8)), 0), 2) AS [discount_amount],
@@ -240,6 +286,14 @@ WHEN MATCHED AND (
   OR ISNULL(T.[required_delivery_date],CAST('1900-01-01' AS DATETIME))<>ISNULL(S.[required_delivery_date],CAST('1900-01-01' AS DATETIME))
   OR ISNULL(T.[actual_delivery_date],CAST('1900-01-01' AS DATETIME))<>ISNULL(S.[actual_delivery_date],CAST('1900-01-01' AS DATETIME))
   OR ISNULL(T.[sales_group],N'')<>ISNULL(S.[sales_group],N'')
+  OR ISNULL(T.[sales_order_type],N'')<>ISNULL(S.[sales_order_type],N'')
+  OR ISNULL(T.[order_reason],N'')<>ISNULL(S.[order_reason],N'')
+  OR ISNULL(T.[sales_organization],N'')<>ISNULL(S.[sales_organization],N'')
+  OR ISNULL(T.[pricing_procedure],N'')<>ISNULL(S.[pricing_procedure],N'')
+  OR ISNULL(T.[pricing_condition_code],N'')<>ISNULL(S.[pricing_condition_code],N'')
+  OR ISNULL(T.[invoice_type],N'')<>ISNULL(S.[invoice_type],N'')
+  OR ISNULL(T.[purchase_order_code],N'')<>ISNULL(S.[purchase_order_code],N'')
+  OR ISNULL(T.[purchase_order_date],CAST('1900-01-01' AS DATETIME))<>ISNULL(S.[purchase_order_date],CAST('1900-01-01' AS DATETIME))
   OR T.[total_quantity]<>S.[total_quantity] OR T.[total_amount]<>S.[total_amount] OR T.[discount_amount]<>S.[discount_amount]
   OR T.[currency_code]<>S.[currency_code] OR T.[exchange_rate]<>S.[exchange_rate]
   OR ISNULL(T.[tax_code],N'')<>ISNULL(S.[tax_code],N'') OR T.[tax_rate]<>S.[tax_rate]
@@ -265,6 +319,14 @@ WHEN MATCHED AND (
   T.[required_delivery_date]=S.[required_delivery_date],
   T.[actual_delivery_date]=S.[actual_delivery_date],
   T.[sales_group]=S.[sales_group],
+  T.[sales_order_type]=S.[sales_order_type],
+  T.[order_reason]=S.[order_reason],
+  T.[sales_organization]=S.[sales_organization],
+  T.[pricing_procedure]=S.[pricing_procedure],
+  T.[pricing_condition_code]=S.[pricing_condition_code],
+  T.[invoice_type]=S.[invoice_type],
+  T.[purchase_order_code]=S.[purchase_order_code],
+  T.[purchase_order_date]=S.[purchase_order_date],
   T.[total_quantity]=S.[total_quantity],
   T.[total_amount]=S.[total_amount],
   T.[discount_amount]=S.[discount_amount],
@@ -293,8 +355,8 @@ WHEN MATCHED AND (
   T.[deleted_by]=S.[deleted_by],
   T.[deleted_at]=S.[deleted_at]
 WHEN NOT MATCHED THEN
-  INSERT ([id],[plant_code],[sales_order_code],[customer_code],[customer_name1],[order_date],[required_delivery_date],[actual_delivery_date],[sales_group],[total_quantity],[total_amount],[discount_amount],[currency_code],[exchange_rate],[tax_code],[tax_rate],[tax_amount],[actual_amount],[shipped_quantity],[shipped_amount],[received_amount],[delivery_method],[payment_method],[delivery_address],[order_status],[delivery_status],[tenant_code],[company_code],[culture_code],[ext_field],[remark],[created_by],[created_at],[updated_by],[updated_at],[is_deleted],[deleted_by],[deleted_at])
-  VALUES (S.[id],S.[plant_code],S.[sales_order_code],S.[customer_code],S.[customer_name1],S.[order_date],S.[required_delivery_date],S.[actual_delivery_date],S.[sales_group],S.[total_quantity],S.[total_amount],S.[discount_amount],S.[currency_code],S.[exchange_rate],S.[tax_code],S.[tax_rate],S.[tax_amount],S.[actual_amount],S.[shipped_quantity],S.[shipped_amount],S.[received_amount],S.[delivery_method],S.[payment_method],S.[delivery_address],S.[order_status],S.[delivery_status],S.[tenant_code],S.[company_code],S.[culture_code],S.[ext_field],S.[remark],COALESCE(S.[created_by],@sync_user_id),COALESCE(S.[created_at],@now),S.[updated_by],S.[updated_at],S.[is_deleted],S.[deleted_by],S.[deleted_at])
+  INSERT ([id],[plant_code],[sales_order_code],[customer_code],[customer_name1],[order_date],[required_delivery_date],[actual_delivery_date],[sales_group],[sales_order_type],[order_reason],[sales_organization],[pricing_procedure],[pricing_condition_code],[invoice_type],[purchase_order_code],[purchase_order_date],[total_quantity],[total_amount],[discount_amount],[currency_code],[exchange_rate],[tax_code],[tax_rate],[tax_amount],[actual_amount],[shipped_quantity],[shipped_amount],[received_amount],[delivery_method],[payment_method],[delivery_address],[order_status],[delivery_status],[tenant_code],[company_code],[culture_code],[ext_field],[remark],[created_by],[created_at],[updated_by],[updated_at],[is_deleted],[deleted_by],[deleted_at])
+  VALUES (S.[id],S.[plant_code],S.[sales_order_code],S.[customer_code],S.[customer_name1],S.[order_date],S.[required_delivery_date],S.[actual_delivery_date],S.[sales_group],S.[sales_order_type],S.[order_reason],S.[sales_organization],S.[pricing_procedure],S.[pricing_condition_code],S.[invoice_type],S.[purchase_order_code],S.[purchase_order_date],S.[total_quantity],S.[total_amount],S.[discount_amount],S.[currency_code],S.[exchange_rate],S.[tax_code],S.[tax_rate],S.[tax_amount],S.[actual_amount],S.[shipped_quantity],S.[shipped_amount],S.[received_amount],S.[delivery_method],S.[payment_method],S.[delivery_address],S.[order_status],S.[delivery_status],S.[tenant_code],S.[company_code],S.[culture_code],S.[ext_field],S.[remark],COALESCE(S.[created_by],@sync_user_id),COALESCE(S.[created_at],@now),S.[updated_by],S.[updated_at],S.[is_deleted],S.[deleted_by],S.[deleted_at])
 OUTPUT S.rn, $action, INSERTED.[id], INSERTED.[plant_code], INSERTED.[sales_order_code]
 INTO #hdr_delta (rn, oper_type, id, [plant_code], [sales_order_code]);
   SET @dml_n = @@ROWCOUNT;

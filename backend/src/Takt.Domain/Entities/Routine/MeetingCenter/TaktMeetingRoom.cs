@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Routine.MeetingCenter;
 public class TaktMeetingRoom : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 会议室编码（租户+公司内唯一）
+    /// 会议室编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 会议室编码规则生成并展示，非手输；单据类型菜单：会议室）
     /// </summary>
     [SugarColumn(ColumnName = "room_code", ColumnDescription = "会议室编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string RoomCode { get; set; } = string.Empty;

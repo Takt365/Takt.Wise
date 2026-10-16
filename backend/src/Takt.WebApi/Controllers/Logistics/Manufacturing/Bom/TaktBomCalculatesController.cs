@@ -165,15 +165,15 @@ public class TaktBomCalculatesController : TaktControllerBase
     /// <returns>回填统计</returns>
     [TaktPermission("logistics:manufacturing:bom:material:zeroprice:update", "回填BOM采购价格")]
     [HttpPut("purchase-price")]
-    public async Task<IActionResult> BackfillBomCalculatePurchaseInfoRecordAsync(
+    public async Task<IActionResult> BackfillBomCalculatePurchaseInfoAsync(
         [FromBody] TaktBomCalculateQueryDto queryDto)
     {
         try
         {
-            var result = await _bomCalculateService.BackfillBomCalculatePurchaseInfoRecordAsync(queryDto);
+            var result = await _bomCalculateService.BackfillBomCalculatePurchaseInfoAsync(queryDto);
             await TaktBomZeroPriceOperationMessageHelper.TryNotifyAsync(
                 _messageService,
-                TaktBomZeroPriceOperationMessageHelper.BuildPurchaseInfoRecordBackfillSuccess(result));
+                TaktBomZeroPriceOperationMessageHelper.BuildPurchaseInfoBackfillSuccess(result));
             return Success(result, "回填采购价格完成");
         }
         catch (Exception ex)

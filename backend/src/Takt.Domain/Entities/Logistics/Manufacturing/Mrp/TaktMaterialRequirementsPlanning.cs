@@ -28,7 +28,7 @@ public class TaktMaterialRequirementsPlanning : TaktApprovalEntityBase
 {
 
     /// <summary>
-    /// MRP 编码（租户+公司+工厂内业务唯一）
+    /// MRP 编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering MRP编码规则生成并展示，非手输；单据类型菜单：MRP运算向导）
     /// </summary>
     [SugarColumn(ColumnName = "material_requirements_planning_code", ColumnDescription = "MRP编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string MaterialRequirementsPlanningCode { get; set; } = string.Empty;

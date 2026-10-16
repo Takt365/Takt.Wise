@@ -4,7 +4,7 @@
 // 文件名称：TaktEcGijutsu.cs
 // 创建时间：2025-02-02
 // 创建人：Takt365(Cursor AI)
-// 功能描述：设变技术课主表实体。技术阶段一①：主表→附件→明细→自动生成通知；通知到达各部门后各部门执行，技术看板/批次监控
+// 功能描述：设变技术课主表实体（部门 D0710）。技术阶段一①：主表→附件→明细→自动生成通知；通知到达各部门后各部门执行，技术看板/批次监控
 //
 // 版权信息：Copyright (c) 2025 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -31,7 +31,7 @@ public class TaktEcGijutsu : TaktCompanyEntityBase
 {
 
     /// <summary>
-  /// 设变单号（唯一）
+  /// 设变单号（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 设变单号规则生成并展示，非手输；单据类型菜单：技术部门）
   /// </summary>
   [SugarColumn(ColumnName = "ec_code", ColumnDescription = "设变单号", Length = 10, ColumnDataType = "nvarchar", IsNullable = false)]
     public string EcCode { get; set; } = string.Empty;
@@ -75,7 +75,7 @@ public class TaktEcGijutsu : TaktCompanyEntityBase
     /// <summary>
     /// 实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_scope", ColumnDescription = "实施范围", ColumnDataType = "int", IsNullable = false, DefaultValue = "1")]
+    [SugarColumn(ColumnName = "ec_scope", ColumnDescription = "实施策略", ColumnDataType = "int", IsNullable = false, DefaultValue = "1")]
     public int EcScope { get; set; } = 1;
 
     /// <summary>

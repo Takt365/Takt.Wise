@@ -198,9 +198,9 @@ const columns = computed<TableColumnsType>(() => {
       fixed: 'left',
     },
     {
-      title: t('entity.materialdescription.materialdescription'),
-      dataIndex: 'materialDescription',
-      key: 'materialDescription',
+      title: t('entity.materialplant.materialdescription'),
+      dataIndex: 'materialName',
+      key: 'materialName',
       width: 160,
       ellipsis: true,
     },

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Aps
 // 文件名称：TaktProductionDispatchI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktProductionDispatch 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktProductionDispatchI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.productiondispatch._self", "zh-HK", "生产派工单信息_hk", "实体名称"),
 
             // entity.productiondispatch.dispatchcode
-            new TranslationSeedItem("entity.productiondispatch.dispatchcode", "en-US", "派工单编码_us", "派工单编码"),
+            new TranslationSeedItem("entity.productiondispatch.dispatchcode", "en-US", "派工单编码_us", "派工单编码（前端表单选择编码规则后自动通过 TaktNumbering 派工单编码规则生成并展示，非手输；单据类型菜单：生产派工）"),
             // entity.productiondispatch.dispatchcode
-            new TranslationSeedItem("entity.productiondispatch.dispatchcode", "ja-JP", "派工单编码_jp", "派工单编码"),
+            new TranslationSeedItem("entity.productiondispatch.dispatchcode", "ja-JP", "派工单编码_jp", "派工单编码（前端表单选择编码规则后自动通过 TaktNumbering 派工单编码规则生成并展示，非手输；单据类型菜单：生产派工）"),
             // entity.productiondispatch.dispatchcode
-            new TranslationSeedItem("entity.productiondispatch.dispatchcode", "zh-CN", "派工单编码", "派工单编码"),
+            new TranslationSeedItem("entity.productiondispatch.dispatchcode", "zh-CN", "派工单编码", "派工单编码（前端表单选择编码规则后自动通过 TaktNumbering 派工单编码规则生成并展示，非手输；单据类型菜单：生产派工）"),
             // entity.productiondispatch.dispatchcode
-            new TranslationSeedItem("entity.productiondispatch.dispatchcode", "zh-HK", "派工单编码_hk", "派工单编码"),
+            new TranslationSeedItem("entity.productiondispatch.dispatchcode", "zh-HK", "派工单编码_hk", "派工单编码（前端表单选择编码规则后自动通过 TaktNumbering 派工单编码规则生成并展示，非手输；单据类型菜单：生产派工）"),
 
             // entity.productiondispatch.productionorderid
             new TranslationSeedItem("entity.productiondispatch.productionorderid", "en-US", "生产工单ID_us", "生产工单 ID（选项 TaktProductionOrders/options；DictValue=Id）"),

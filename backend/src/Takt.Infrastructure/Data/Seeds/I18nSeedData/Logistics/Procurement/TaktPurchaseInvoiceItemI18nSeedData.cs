@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Procurement
 // 文件名称：TaktPurchaseInvoiceItemI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPurchaseInvoiceItem 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -181,13 +181,13 @@ public class TaktPurchaseInvoiceItemI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.purchaseinvoiceitem.debitcreditindicator", "zh-HK", "借/贷标识_hk", "借/贷标识"),
 
             // entity.purchaseinvoiceitem.taxcode
-            new TranslationSeedItem("entity.purchaseinvoiceitem.taxcode", "en-US", "税码_us", "税码"),
+            new TranslationSeedItem("entity.purchaseinvoiceitem.taxcode", "en-US", "税码_us", "税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.purchaseinvoiceitem.taxcode
-            new TranslationSeedItem("entity.purchaseinvoiceitem.taxcode", "ja-JP", "税码_jp", "税码"),
+            new TranslationSeedItem("entity.purchaseinvoiceitem.taxcode", "ja-JP", "税码_jp", "税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.purchaseinvoiceitem.taxcode
-            new TranslationSeedItem("entity.purchaseinvoiceitem.taxcode", "zh-CN", "税码", "税码"),
+            new TranslationSeedItem("entity.purchaseinvoiceitem.taxcode", "zh-CN", "税码", "税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.purchaseinvoiceitem.taxcode
-            new TranslationSeedItem("entity.purchaseinvoiceitem.taxcode", "zh-HK", "税码_hk", "税码"),
+            new TranslationSeedItem("entity.purchaseinvoiceitem.taxcode", "zh-HK", "税码_hk", "税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
 
             // entity.purchaseinvoiceitem.quantity
             new TranslationSeedItem("entity.purchaseinvoiceitem.quantity", "en-US", "数量_us", "数量"),

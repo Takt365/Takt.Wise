@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Operation
 // 文件名称：TaktInspectionStandardI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktInspectionStandard 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktInspectionStandardI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.inspectionstandard._self", "zh-HK", "检验标准信息_hk", "实体名称"),
 
             // entity.inspectionstandard.standardcode
-            new TranslationSeedItem("entity.inspectionstandard.standardcode", "en-US", "检验标准编码_us", "检验标准编码（唯一索引）"),
+            new TranslationSeedItem("entity.inspectionstandard.standardcode", "en-US", "检验标准编码_us", "检验标准编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 检验标准编码规则生成并展示，非手输；单据类型菜单：检验标准）"),
             // entity.inspectionstandard.standardcode
-            new TranslationSeedItem("entity.inspectionstandard.standardcode", "ja-JP", "检验标准编码_jp", "检验标准编码（唯一索引）"),
+            new TranslationSeedItem("entity.inspectionstandard.standardcode", "ja-JP", "检验标准编码_jp", "检验标准编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 检验标准编码规则生成并展示，非手输；单据类型菜单：检验标准）"),
             // entity.inspectionstandard.standardcode
-            new TranslationSeedItem("entity.inspectionstandard.standardcode", "zh-CN", "检验标准编码", "检验标准编码（唯一索引）"),
+            new TranslationSeedItem("entity.inspectionstandard.standardcode", "zh-CN", "检验标准编码", "检验标准编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 检验标准编码规则生成并展示，非手输；单据类型菜单：检验标准）"),
             // entity.inspectionstandard.standardcode
-            new TranslationSeedItem("entity.inspectionstandard.standardcode", "zh-HK", "检验标准编码_hk", "检验标准编码（唯一索引）"),
+            new TranslationSeedItem("entity.inspectionstandard.standardcode", "zh-HK", "检验标准编码_hk", "检验标准编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 检验标准编码规则生成并展示，非手输；单据类型菜单：检验标准）"),
 
             // entity.inspectionstandard.standardname
             new TranslationSeedItem("entity.inspectionstandard.standardname", "en-US", "检验标准名称_us", "检验标准名称"),

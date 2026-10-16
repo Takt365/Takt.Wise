@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Aps
 // 文件名称：TaktProductionOrderI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktProductionOrder 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -100,13 +100,13 @@ public class TaktProductionOrderI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.productionorder.prodordertype", "zh-HK", "工单类别_hk", "工单类别（字典 logistics_manufacturing_prod_order_type；存 DictValue，如 ZDTA/ZDTB/ZDTC/ZDTD/ZDTE/ZDTF）"),
 
             // entity.productionorder.prodordercode
-            new TranslationSeedItem("entity.productionorder.prodordercode", "en-US", "工单号_us", "工单号"),
+            new TranslationSeedItem("entity.productionorder.prodordercode", "en-US", "工单号_us", "工单号（前端表单选择编码规则后自动通过 TaktNumbering 工单号规则生成并展示，非手输；单据类型菜单：生产工单）"),
             // entity.productionorder.prodordercode
-            new TranslationSeedItem("entity.productionorder.prodordercode", "ja-JP", "工单号_jp", "工单号"),
+            new TranslationSeedItem("entity.productionorder.prodordercode", "ja-JP", "工单号_jp", "工单号（前端表单选择编码规则后自动通过 TaktNumbering 工单号规则生成并展示，非手输；单据类型菜单：生产工单）"),
             // entity.productionorder.prodordercode
-            new TranslationSeedItem("entity.productionorder.prodordercode", "zh-CN", "工单号", "工单号"),
+            new TranslationSeedItem("entity.productionorder.prodordercode", "zh-CN", "工单号", "工单号（前端表单选择编码规则后自动通过 TaktNumbering 工单号规则生成并展示，非手输；单据类型菜单：生产工单）"),
             // entity.productionorder.prodordercode
-            new TranslationSeedItem("entity.productionorder.prodordercode", "zh-HK", "工单号_hk", "工单号"),
+            new TranslationSeedItem("entity.productionorder.prodordercode", "zh-HK", "工单号_hk", "工单号（前端表单选择编码规则后自动通过 TaktNumbering 工单号规则生成并展示，非手输；单据类型菜单：生产工单）"),
 
             // entity.productionorder.materialcode
             new TranslationSeedItem("entity.productionorder.materialcode", "en-US", "物料编码_us", "物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）"),

@@ -266,10 +266,10 @@ public class TaktDeptI18nSeedData : ITaktSeedDataCoordinator
             ("org.dept.d0624", "ja-JP", "手插", "三級部門"),
             ("org.dept.d0624", "zh-HK", "手插", "三級部門"),
             
-            ("org.dept.d0625", "zh-CN", "物料", "三级部门"),
+            ("org.dept.d0625", "zh-CN", "电子物料", "三级部门"),
             ("org.dept.d0625", "en-US", "Materials", "Level 3 Dept"),
-            ("org.dept.d0625", "ja-JP", "物料", "三級部門"),
-            ("org.dept.d0625", "zh-HK", "物料", "三級部門"),
+            ("org.dept.d0625", "ja-JP", "电子物料", "三級部門"),
+            ("org.dept.d0625", "zh-HK", "电子物料", "三級部門"),
             
             ("org.dept.d0626", "zh-CN", "制造2课-间接", "三级部门"),
             ("org.dept.d0626", "en-US", "Manufacturing Section 2 - Indirect", "Level 3 Dept"),

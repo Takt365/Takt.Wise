@@ -22,7 +22,6 @@ namespace Takt.Application.Services.Logistics.Manufacturing.EngineeringChange;
 public class TaktEcGijutsuStatusSynchronizer
 {
     private readonly ITaktCompanyRepository<TaktEcGijutsu> _ecGijutsuRepository;
-    private readonly ITaktCompanyRepository<TaktEcDetail> _ecDetailRepository;
     private readonly TaktEcExecDeptAccess _ecExecDeptAccess;
     private readonly TaktEcHandoffMailService _handoffMailService;
 
@@ -30,23 +29,20 @@ public class TaktEcGijutsuStatusSynchronizer
     /// 构造函数
     /// </summary>
     /// <param name="ecGijutsuRepository">设变技术课主仓储</param>
-    /// <param name="ecDetailRepository">设变明细仓储</param>
     /// <param name="ecExecDeptAccess">部门执行跨表访问</param>
     /// <param name="handoffMailService">实施顺序邮件</param>
     public TaktEcGijutsuStatusSynchronizer(
         ITaktCompanyRepository<TaktEcGijutsu> ecGijutsuRepository,
-        ITaktCompanyRepository<TaktEcDetail> ecDetailRepository,
         TaktEcExecDeptAccess ecExecDeptAccess,
         TaktEcHandoffMailService handoffMailService)
     {
         _ecGijutsuRepository = ecGijutsuRepository;
-        _ecDetailRepository = ecDetailRepository;
         _ecExecDeptAccess = ecExecDeptAccess;
         _handoffMailService = handoffMailService;
     }
 
     /// <summary>
-    /// 按设变单号重算并回写 EcStatus：无部门输入=发行；任一部门有输入=执行中；全部责任部门均填写=完成
+    /// 按设变单号重算并回写 EcStatus：全部执行部门都未人工填写=发行；任一执行部门有人工输入=执行中；全部未作废执行行都已填写=完成
     /// </summary>
     /// <param name="ecCode">设变单号</param>
     /// <returns>任务</returns>
@@ -62,27 +58,25 @@ public class TaktEcGijutsuStatusSynchronizer
         {
             return;
         }
-        // 新建/刚派生后通常无部门输入：EXISTS 快路径，避免超大 IN / 全量拉明细与执行行
-        if (!await _ecExecDeptAccess.ExistsAnyDeptInputByEcCodeAsync(normalized))
+        // 不拉全表明细：无人工输入=发行；任一执行部门有人工输入=执行中；全部未作废执行行都已填写=完成
+        var anyInput = await _ecExecDeptAccess.ExistsAnyDeptInputByEcCodeAsync(normalized);
+        var computed = TaktEcGijutsuStatusConstants.Issued;
+        if (anyInput)
         {
-            if (gijutsu.EcStatus == TaktEcGijutsuStatusConstants.Issued)
-            {
-                return;
-            }
-            gijutsu.EcStatus = TaktEcGijutsuStatusConstants.Issued;
-            await _ecGijutsuRepository.UpdateAsync(gijutsu);
-            return;
+            var anyUnfilled = await _ecExecDeptAccess.ExistsAnyUnfilledDeptByEcCodeAsync(normalized);
+            computed = anyUnfilled
+                ? TaktEcGijutsuStatusConstants.InProgress
+                : TaktEcGijutsuStatusConstants.Completed;
         }
-        var details = await _ecDetailRepository.GetListAsync(x =>
-            x.EcCode == normalized && x.IsObsolete == 0);
-        var execRows = await _ecExecDeptAccess.ListBaseByEcCodeAsync(normalized);
-        var computed = ComputeEcStatus(details, execRows);
         if (gijutsu.EcStatus != computed)
         {
             gijutsu.EcStatus = computed;
             await _ecGijutsuRepository.UpdateAsync(gijutsu);
         }
-        await _handoffMailService.TryDispatchAsync(gijutsu, details, execRows);
+        if (anyInput)
+        {
+            await _handoffMailService.TryDispatchAsync(gijutsu);
+        }
     }
 
     /// <summary>
@@ -103,55 +97,4 @@ public class TaktEcGijutsuStatusSynchronizer
         }
     }
 
-    /// <summary>
-    /// 根据明细与部门执行行计算 EcStatus
-    /// </summary>
-    private static int ComputeEcStatus(
-        IReadOnlyList<TaktEcDetail> details,
-        IReadOnlyList<TaktEcExecBaseRow> execRows)
-    {
-        if (details.Count == 0)
-        {
-            return TaktEcGijutsuStatusConstants.Issued;
-        }
-        var byDetail = execRows
-            .Where(x => x.IsObsolete == 0)
-            .GroupBy(x => x.EcDetailId)
-            .ToDictionary(g => g.Key, g => g.ToList());
-        var anyInput = false;
-        var allFilled = true;
-        foreach (var detail in details)
-        {
-            byDetail.TryGetValue(detail.Id, out var deptList);
-            deptList ??= [];
-            foreach (var deptCode in TaktEcDeptCodes.KanbanOrder)
-            {
-                var exec = deptList.FirstOrDefault(x => x.DeptCode == deptCode);
-                var filled = exec != null && HasDeptInput(exec);
-                if (filled)
-                {
-                    anyInput = true;
-                }
-                else
-                {
-                    allFilled = false;
-                }
-            }
-        }
-        if (allFilled)
-        {
-            return TaktEcGijutsuStatusConstants.Completed;
-        }
-        if (anyInput)
-        {
-            return TaktEcGijutsuStatusConstants.InProgress;
-        }
-        return TaktEcGijutsuStatusConstants.Issued;
-    }
-
-    /// <summary>
-    /// 部门执行行是否已有输入（实施=是，或执行内容非空）
-    /// </summary>
-    private static bool HasDeptInput(TaktEcExecBaseRow exec) =>
-        exec.IsImplemented == 1 || !string.IsNullOrWhiteSpace(exec.ExecContent);
 }

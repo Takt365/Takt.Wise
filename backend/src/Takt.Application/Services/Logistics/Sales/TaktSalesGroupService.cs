@@ -32,6 +32,7 @@ public class TaktSalesGroupService : TaktServiceBase, ITaktSalesGroupService
     private readonly ITaktCompanyRepository<TaktSalesGroup> _salesGroupRepository;
     private readonly ITaktSortOrderGenerator _sortOrderGenerator;
     private readonly ITaktUniqueValidator _uniqueValidator;
+    private readonly ITaktNumberingGenerator _numberingGenerator;
 
     /// <summary>
     /// 构造函数
@@ -39,12 +40,14 @@ public class TaktSalesGroupService : TaktServiceBase, ITaktSalesGroupService
     /// <param name="salesGroupRepository">销售组主数据仓储</param>
     /// <param name="sortOrderGenerator">排序号生成器</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
+    /// <param name="numberingGenerator">业务编码生成器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktSalesGroupService(
         ITaktCompanyRepository<TaktSalesGroup> salesGroupRepository,
         ITaktSortOrderGenerator sortOrderGenerator,
         ITaktUniqueValidator uniqueValidator,
+        ITaktNumberingGenerator numberingGenerator,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
@@ -52,6 +55,7 @@ public class TaktSalesGroupService : TaktServiceBase, ITaktSalesGroupService
         _salesGroupRepository = salesGroupRepository;
         _sortOrderGenerator = sortOrderGenerator;
         _uniqueValidator = uniqueValidator;
+        _numberingGenerator = numberingGenerator;
     }
 
     /// <summary>
@@ -126,6 +130,19 @@ public class TaktSalesGroupService : TaktServiceBase, ITaktSalesGroupService
     public async Task<TaktSalesGroupDto> CreateSalesGroupAsync(TaktSalesGroupCreateDto dto)
     {
         var entity = dto.Adapt<TaktSalesGroup>();
+        if (!string.IsNullOrWhiteSpace(dto.NumberingRuleCode))
+        {
+            var generated = await _numberingGenerator.GenerateNextAsync(dto.NumberingRuleCode.Trim());
+            if (string.IsNullOrWhiteSpace(generated.BusinessCode))
+            {
+                throw new TaktBusinessException("业务编码生成失败");
+            }
+            entity.SalesGroupCode = generated.BusinessCode;
+        }
+        else if (string.IsNullOrWhiteSpace(entity.SalesGroupCode))
+        {
+            throw new TaktBusinessException("销售组编码不能为空");
+        }
         entity.IsBuiltIn = 0;
         var isUnique_ix_takt_logistics_sales_sales_group_unique = await _uniqueValidator.IsUniqueAsync(
             _salesGroupRepository,

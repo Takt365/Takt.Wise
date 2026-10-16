@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Procurement
 // 文件名称：TaktManufacturerMaterialI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktManufacturerMaterial 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -172,13 +172,13 @@ public class TaktManufacturerMaterialI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.manufacturermaterial.materialdescription", "zh-HK", "物料描述_hk", "物料描述（冗余：按 MaterialCode 取 TaktMaterialPlant.MaterialDescription联动）"),
 
             // entity.manufacturermaterial.code
-            new TranslationSeedItem("entity.manufacturermaterial.code", "en-US", "制造商物料编码_us", "制造商物料编码（制造商内部的物料编码）"),
+            new TranslationSeedItem("entity.manufacturermaterial.code", "en-US", "制造商物料编码_us", "制造商物料编码（制造商内部的物料编码；前端表单选择编码规则后自动通过 TaktNumbering 制造商物料编码规则生成并展示，非手输；单据类型菜单：制造商物料）"),
             // entity.manufacturermaterial.code
-            new TranslationSeedItem("entity.manufacturermaterial.code", "ja-JP", "制造商物料编码_jp", "制造商物料编码（制造商内部的物料编码）"),
+            new TranslationSeedItem("entity.manufacturermaterial.code", "ja-JP", "制造商物料编码_jp", "制造商物料编码（制造商内部的物料编码；前端表单选择编码规则后自动通过 TaktNumbering 制造商物料编码规则生成并展示，非手输；单据类型菜单：制造商物料）"),
             // entity.manufacturermaterial.code
-            new TranslationSeedItem("entity.manufacturermaterial.code", "zh-CN", "制造商物料编码", "制造商物料编码（制造商内部的物料编码）"),
+            new TranslationSeedItem("entity.manufacturermaterial.code", "zh-CN", "制造商物料编码", "制造商物料编码（制造商内部的物料编码；前端表单选择编码规则后自动通过 TaktNumbering 制造商物料编码规则生成并展示，非手输；单据类型菜单：制造商物料）"),
             // entity.manufacturermaterial.code
-            new TranslationSeedItem("entity.manufacturermaterial.code", "zh-HK", "制造商物料编码_hk", "制造商物料编码（制造商内部的物料编码）"),
+            new TranslationSeedItem("entity.manufacturermaterial.code", "zh-HK", "制造商物料编码_hk", "制造商物料编码（制造商内部的物料编码；前端表单选择编码规则后自动通过 TaktNumbering 制造商物料编码规则生成并展示，非手输；单据类型菜单：制造商物料）"),
 
             // entity.manufacturermaterial.description
             new TranslationSeedItem("entity.manufacturermaterial.description", "en-US", "制造商物料描述_us", "制造商物料描述"),

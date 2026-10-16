@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Sop
 // 文件名称：TaktSopGroupI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSopGroup 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktSopGroupI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.sopgroup._self", "zh-HK", "SOP组主数据信息_hk", "实体名称"),
 
             // entity.sopgroup.code
-            new TranslationSeedItem("entity.sopgroup.code", "en-US", "SOP组编码_us", "SOP组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.sopgroup.code", "en-US", "SOP组编码_us", "SOP组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering SOP组编码规则生成并展示，非手输；单据类型菜单：SOP组）"),
             // entity.sopgroup.code
-            new TranslationSeedItem("entity.sopgroup.code", "ja-JP", "SOP组编码_jp", "SOP组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.sopgroup.code", "ja-JP", "SOP组编码_jp", "SOP组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering SOP组编码规则生成并展示，非手输；单据类型菜单：SOP组）"),
             // entity.sopgroup.code
-            new TranslationSeedItem("entity.sopgroup.code", "zh-CN", "SOP组编码", "SOP组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.sopgroup.code", "zh-CN", "SOP组编码", "SOP组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering SOP组编码规则生成并展示，非手输；单据类型菜单：SOP组）"),
             // entity.sopgroup.code
-            new TranslationSeedItem("entity.sopgroup.code", "zh-HK", "SOP组编码_hk", "SOP组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.sopgroup.code", "zh-HK", "SOP组编码_hk", "SOP组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering SOP组编码规则生成并展示，非手输；单据类型菜单：SOP组）"),
 
             // entity.sopgroup.name
             new TranslationSeedItem("entity.sopgroup.name", "en-US", "SOP组名称_us", "SOP组名称"),

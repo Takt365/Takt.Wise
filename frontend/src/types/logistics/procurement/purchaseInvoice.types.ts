@@ -119,7 +119,7 @@ export interface PurchaseInvoice extends CompanyDtoBase {
   reversalFiscalYear?: string;
 
   /**
-   * 税码
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -289,7 +289,7 @@ export interface PurchaseInvoiceQuery extends TaktPagedQuery {
   reversalFiscalYear?: string;
 
   /**
-   * 税码
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -383,9 +383,14 @@ export interface PurchaseInvoiceCreate {
   plantCode: string;
 
   /**
-   * 发票凭证编号
+   * 发票凭证编号（前端表单选择编码规则后自动通过 TaktNumbering 发票凭证编号规则生成并展示，非手输；单据类型菜单：采购发票）
    */
   purchaseInvoiceCode: string;
+
+  /**
+   * 编码规则编码（新增时选择采购发票编码规则后取号；不落库）
+   */
+  numberingRuleCode?: string;
 
   /**
    * 会计年度
@@ -473,7 +478,7 @@ export interface PurchaseInvoiceCreate {
   reversalFiscalYear?: string;
 
   /**
-   * 税码
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -662,7 +667,7 @@ export interface PurchaseInvoiceTemplate {
   reversalFiscalYear?: string;
 
   /**
-   * 税码
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -831,7 +836,7 @@ export interface PurchaseInvoiceImport {
   reversalFiscalYear?: string;
 
   /**
-   * 税码
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -1000,7 +1005,7 @@ export interface PurchaseInvoiceExport {
   reversalFiscalYear?: string;
 
   /**
-   * 税码
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 

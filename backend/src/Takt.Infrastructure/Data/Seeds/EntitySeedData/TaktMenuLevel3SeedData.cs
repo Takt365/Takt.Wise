@@ -371,6 +371,46 @@ public class TaktMenuLevel3SeedData
             });
             insertCount += insertAFBank;
             updateCount += updateAFBank;
+
+            var (insertAFTaxCode, updateAFTaxCode) = await CreateOrUpdateMenuAsync(menuRepository, seedContext, tenantCode, "ACCOUNTING_FINANCIAL_TAX_CODE", menu =>
+            {
+                menu.MenuName = "税收代码";
+                menu.MenuCode = "ACCOUNTING_FINANCIAL_TAX_CODE";
+                menu.I18nKey = "menu.accounting.financial.tax.code";
+                menu.Icon = "RiPercentLine";
+                menu.ParentId = accountingFinancialMenu.Id;
+                menu.MenuType = 1;
+                menu.Permission = "accounting:financial:tax:code:list";
+                menu.RoutePath = "/accounting/financial/tax-code";
+                menu.ComponentPath = "accounting/financial/tax-code/index";
+                menu.SortOrder = 13;
+                menu.MenuStatus = 1;
+                menu.IsVisible = 1;
+                menu.IsCached = 0;
+                menu.IsExternal = 0;
+            });
+            insertCount += insertAFTaxCode;
+            updateCount += updateAFTaxCode;
+
+            var (insertAFTaxCondition, updateAFTaxCondition) = await CreateOrUpdateMenuAsync(menuRepository, seedContext, tenantCode, "ACCOUNTING_FINANCIAL_TAX_CONDITION", menu =>
+            {
+                menu.MenuName = "税务条件";
+                menu.MenuCode = "ACCOUNTING_FINANCIAL_TAX_CONDITION";
+                menu.I18nKey = "menu.accounting.financial.tax.condition";
+                menu.Icon = "RiFileList3Line";
+                menu.ParentId = accountingFinancialMenu.Id;
+                menu.MenuType = 1;
+                menu.Permission = "accounting:financial:tax:condition:list";
+                menu.RoutePath = "/accounting/financial/tax-condition";
+                menu.ComponentPath = "accounting/financial/tax-condition/index";
+                menu.SortOrder = 14;
+                menu.MenuStatus = 1;
+                menu.IsVisible = 1;
+                menu.IsCached = 0;
+                menu.IsExternal = 0;
+            });
+            insertCount += insertAFTaxCondition;
+            updateCount += updateAFTaxCondition;
         }
 
         // ========== 控制会计下的三级菜单 (ACCOUNTING_CONTROLLING) ==========
@@ -836,17 +876,17 @@ public class TaktMenuLevel3SeedData
             insertCount += insert08;
             updateCount += update08;
 
-            var (insert08Price, update08Price) = await CreateOrUpdateMenuAsync(menuRepository, seedContext, tenantCode, "LOGISTICS_PROCUREMENT_PURCHASE_INFO_RECORD", menu =>
+            var (insert08Price, update08Price) = await CreateOrUpdateMenuAsync(menuRepository, seedContext, tenantCode, "LOGISTICS_PROCUREMENT_PURCHASE_INFO", menu =>
             {
-                menu.MenuName = "采购信息记录";
-                menu.MenuCode = "LOGISTICS_PROCUREMENT_PURCHASE_INFO_RECORD";
-                menu.I18nKey = "menu.logistics.procurement.purchase.info.record";
+                menu.MenuName = "采购信息";
+                menu.MenuCode = "LOGISTICS_PROCUREMENT_PURCHASE_INFO";
+                menu.I18nKey = "menu.logistics.procurement.purchase.info";
                 menu.Icon = "RiPriceTag3Line";
                 menu.ParentId = logisticsProcurementMenu.Id;
                 menu.MenuType = 1;
-                menu.Permission = "logistics:procurement:purchase:info:record:list";
-                menu.RoutePath = "/logistics/procurement/purchase-info-record";
-                menu.ComponentPath = "logistics/procurement/purchase-info-record/index";
+                menu.Permission = "logistics:procurement:purchase:info:list";
+                menu.RoutePath = "/logistics/procurement/purchase-info";
+                menu.ComponentPath = "logistics/procurement/purchase-info/index";
                 menu.SortOrder = 5;
                 menu.MenuStatus = 1;
                 menu.IsVisible = 1;
@@ -1548,17 +1588,17 @@ public class TaktMenuLevel3SeedData
             insertCount += insertLS5;
             updateCount += updateLS5;
 
-            var (insertLS4, updateLS4) = await CreateOrUpdateMenuAsync(menuRepository, seedContext, tenantCode, "LOGISTICS_SALES_CONDITION_RECORD", menu =>
+            var (insertLS4, updateLS4) = await CreateOrUpdateMenuAsync(menuRepository, seedContext, tenantCode, "LOGISTICS_SALES_CONDITION", menu =>
             {
-                menu.MenuName = "销售条件记录";
-                menu.MenuCode = "LOGISTICS_SALES_CONDITION_RECORD";
-                menu.I18nKey = "menu.logistics.sales.condition.record";
+                menu.MenuName = "销售条件";
+                menu.MenuCode = "LOGISTICS_SALES_CONDITION";
+                menu.I18nKey = "menu.logistics.sales.condition";
                 menu.Icon = "RiMoneyCnyCircleLine";
                 menu.ParentId = logisticsSalesMenu.Id;
                 menu.MenuType = 1;
-                menu.Permission = "logistics:sales:condition:record:list";
-                menu.RoutePath = "/logistics/sales/condition-record";
-                menu.ComponentPath = "logistics/sales/condition-record/index";
+                menu.Permission = "logistics:sales:condition:list";
+                menu.RoutePath = "/logistics/sales/condition";
+                menu.ComponentPath = "logistics/sales/condition/index";
                 menu.SortOrder = 3;
                 menu.MenuStatus = 1;
                 menu.IsVisible = 1;

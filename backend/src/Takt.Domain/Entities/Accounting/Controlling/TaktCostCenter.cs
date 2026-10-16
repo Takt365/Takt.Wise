@@ -25,7 +25,7 @@ namespace Takt.Domain.Entities.Accounting.Controlling;
 [SugarIndex("ix_cost_center_parent", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(ParentId), OrderByType.Asc, false)]
 public class TaktCostCenter : TaktCompanyEntityBase
 {    /// <summary>
-    /// 成本中心编码（6 位，与部门编码同长；租户+公司内唯一）
+    /// 成本中心编码（6 位，与部门编码同长；租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 成本中心编码规则生成并展示，非手输；单据类型菜单：成本中心）
     /// </summary>
     [SugarColumn(ColumnName = "cost_center_code", ColumnDescription = "成本中心编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string CostCenterCode { get; set; } = string.Empty;

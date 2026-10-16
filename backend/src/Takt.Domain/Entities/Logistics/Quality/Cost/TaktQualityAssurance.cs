@@ -28,7 +28,7 @@ public class TaktQualityAssurance : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// 品质业务编码(唯一,如:QO-2026-0001)
+    /// 品质业务编码(租户+公司+工厂内唯一，如:QO-2026-0001)（前端表单选择编码规则后自动通过 TaktNumbering 品质业务编码规则生成并展示，非手输；单据类型菜单：品质保证）
     /// </summary>
     [SugarColumn(ColumnName = "quality_assurance_code", ColumnDescription = "品质业务编码", Length = 20, ColumnDataType = "nvarchar", IsNullable = false)]
     public string QualityAssuranceCode { get; set; } = string.Empty;

@@ -133,6 +133,7 @@ public static class TaktSecurityCollectionExtensions
     {
         var securityOptions = app.Services.GetRequiredService<IOptions<TaktSecurityOptions>>().Value;
 
+        app.UseMiddleware<TaktFullWidthMiddleware>();
         if (securityOptions.RateLimit.Enabled)
         {
             app.UseRateLimiter();

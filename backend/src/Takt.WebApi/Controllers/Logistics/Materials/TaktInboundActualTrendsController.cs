@@ -144,7 +144,7 @@ public class TaktInboundActualTrendsController : TaktControllerBase
         {
             var (resultFileName, fileContent) = await _inboundActualTrendService.ExportInboundActualTrendAnalysisAsync(
                 query, sheetName, exportName);
-            return File(fileContent, TaktExcelHelper.ExcelContentType, resultFileName);
+            return File(fileContent, TaktExcelHelper.GetExportContentType(resultFileName), resultFileName);
         }
         catch (Exception ex)
         {

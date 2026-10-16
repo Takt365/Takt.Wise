@@ -66,7 +66,7 @@ public static class TaktEcDeptViewMapper
                 dto.OutboundBatch = mc.OutboundBatch;
                 dto.OutboundDate = mc.OutboundDate;
                 break;
-            case TaktEcSmt electronic:
+            case TaktEcEmtl electronic:
                 dto.EcExecId = electronic.Id;
                 dto.IsImplemented = electronic.IsImplemented;
                 dto.Content = electronic.ExecContent;
@@ -206,7 +206,7 @@ public static class TaktEcDeptViewMapper
                 dto.OutboundBatch = mc.OutboundBatch;
                 dto.OutboundDate = mc.OutboundDate;
                 break;
-            case TaktEcSmt electronic:
+            case TaktEcEmtl electronic:
                 dto.EcDetailId = electronic.EcDetailId;
                 dto.IsImplemented = electronic.IsImplemented;
                 dto.Content = electronic.ExecContent;

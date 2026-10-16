@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 /**
- * 销售发票金额：近三个自然月（TaktSalesInvoices/invoice-stat）
+ * 销售发票金额：近三个自然月（TaktSalesActualTrends/invoice-stat）
  */
 import { useI18n } from 'vue-i18n'
 import StatsMetricGrid from '../components/StatsMetricGrid.vue'

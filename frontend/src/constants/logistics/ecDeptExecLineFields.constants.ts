@@ -17,7 +17,7 @@ export const EC_DEPT_EXEC_ID_FIELD: Readonly<Record<string, string>> = {
   eckoubai: 'ecKoubaiId',
   ecukeken: 'ecUkekenId',
   ecbukan: 'ecBukanId',
-  ecsmt: 'ecSmtId',
+  ecemtl: 'ecEmtlId',
   ecseikan: 'ecSeikanId',
   ecseizouikka: 'ecSeizouikkaId',
   ecseizounika: 'ecSeizounikaId',
@@ -40,12 +40,13 @@ const EC_DEPT_EXEC_LINE_HEAD_DISC_MODEL = [
 ] as const
 
 /**
- * 部管/SMT：停产状态 → 机种 → 根物料编码组（无根物料描述）
+ * 部管/SMT：停产状态 → 机种编码组 → 根物料编码组 → 根物料描述
  */
 const EC_DEPT_EXEC_LINE_HEAD_DISC_MODEL_GROUP = [
   'discontinuedStatus',
-  'ecModelCode',
+  'ecModelCodeGroup',
   'ecRootMaterialCodeGroup',
+  'ecRootMaterialDescription',
 ] as const
 
 /**
@@ -61,7 +62,7 @@ const EC_DEPT_EXEC_LINE_SCHEDULED_REDUNDANT = ['scheduledDate', 'scheduledBatch'
 /** 含生管 scheduled 冗余展示字段的部门 slug（除采购/受检） */
 const EC_DEPT_EXEC_HAS_SCHEDULED_REDUNDANT = new Set([
   'ecbukan',
-  'ecsmt',
+  'ecemtl',
   'ecseizouikka',
   'ecseizounika',
   'echinkan',
@@ -78,6 +79,11 @@ const EC_DEPT_EXEC_LINE_EXEC_CONTENT = ['execContent'] as const
 const EC_DEPT_EXEC_LINE_ROOT_DESC = ['ecRootMaterialDescription'] as const
 
 /**
+ * 实施范围、部门实施范围（各部门执行表都有）
+ */
+const EC_DEPT_EXEC_LINE_SCOPE = ['ecScope', 'ecDeptScope'] as const
+
+/**
  * 尾段：部门编码、部门名称
  */
 const EC_DEPT_EXEC_LINE_TAIL_DEPT = ['deptCode', 'deptName'] as const
@@ -92,16 +98,16 @@ const EC_DEPT_EXEC_LINE_IMPL = {
   ecukeken: ['iqcOrderCode', 'inspectionDate'],
   /** TaktEcBukan：出库批次、出库日期 */
   ecbukan: ['outboundBatch', 'outboundDate'],
-  /** TaktEcSmt：出库批次、出库日期 */
-  ecsmt: ['outboundBatch', 'outboundDate'],
+  /** TaktEcEmtl：出库批次、出库日期 */
+  ecemtl: ['outboundBatch', 'outboundDate'],
   /** TaktEcSeizounika：生产班组、生产日期、实施批次 */
   ecseizounika: ['productionTeam', 'productionDate', 'implementationBatch'],
   /** TaktEcSeizouikka：生产班组、生产日期、实施批次 */
   ecseizouikka: ['productionTeam', 'productionDate', 'implementationBatch'],
   /** TaktEcHinkan：生产班组、检验日期、检验批次、抽样号码 */
   echinkan: ['productionTeam', 'inspectionDate', 'inspectionBatch', 'samplingCode'],
-  /** TaktEcSeizougijutsu：SOP日期、更新SOP */
-  ecseizougijutsu: ['sopDate', 'isSopUpdated'],
+  /** TaktEcSeizougijutsu：更新SOP、SOP日期（担当在列上单独展示，可空） */
+  ecseizougijutsu: ['isSopUpdated', 'sopDate'],
 } as const
 
 /**
@@ -134,6 +140,7 @@ const EC_DEPT_EXEC_LINE_MID_KOUBAI = [
   'discontinuedStatus',
   'ecModelCodeGroup',
   'ecRootMaterialCodeGroup',
+  'ecRootMaterialDescription',
   'ecNewMaterialCode',
   'ecNewMaterialDescription',
   'ecNewWarehouse',
@@ -147,6 +154,7 @@ const EC_DEPT_EXEC_LINE_MID_UKEKEN = [
   'discontinuedStatus',
   'ecModelCodeGroup',
   'ecRootMaterialCodeGroup',
+  'ecRootMaterialDescription',
   'ecNewMaterialCode',
   'ecNewMaterialDescription',
   'ecNewWarehouse',
@@ -176,21 +184,28 @@ const EC_DEPT_EXEC_LINE_MID_SMT = [
 ] as const
 
 /**
- * 制二：机种/新物料/上阶编码组与新物料描述（单码机种与根物料组已在头段）
+ * 制二：停产 + 机种编码组 + 根物料编码组 + 新物料/上阶（无机种单码）
  */
 const EC_DEPT_EXEC_LINE_MID_SEIZOUNIKA = [
+  'discontinuedStatus',
   'ecModelCodeGroup',
+  'ecRootMaterialCodeGroup',
+  'ecNewMaterialCode',
   'ecNewMaterialCodeGroup',
   'ecNewMaterialDescription',
-  'ecParentMaterialCodeGroup',
   'ecParentMaterialCode',
+  'ecParentMaterialCodeGroup',
   'ecParentMaterialDescription',
 ] as const
 
 /**
- * 制一/品管：按设变时的机种编码组（单码机种与根物料组已在头段）
+ * 品管/制一：停产 + 机种编码组 + 根物料编码组（无机种单码）
  */
-const EC_DEPT_EXEC_LINE_MID_MODEL_GROUP = ['ecModelCodeGroup'] as const
+const EC_DEPT_EXEC_LINE_MID_HINKAN = [
+  'discontinuedStatus',
+  'ecModelCodeGroup',
+  'ecRootMaterialCodeGroup',
+] as const
 
 /**
  * 生管/制技：头段之后无额外物料上下文
@@ -201,10 +216,10 @@ const EC_DEPT_EXEC_LINE_MID_BY_SLUG: Record<string, readonly string[]> = {
   eckoubai: EC_DEPT_EXEC_LINE_MID_KOUBAI,
   ecukeken: EC_DEPT_EXEC_LINE_MID_UKEKEN,
   ecbukan: EC_DEPT_EXEC_LINE_MID_BUKAN,
-  ecsmt: EC_DEPT_EXEC_LINE_MID_SMT,
+  ecemtl: EC_DEPT_EXEC_LINE_MID_SMT,
   ecseizounika: EC_DEPT_EXEC_LINE_MID_SEIZOUNIKA,
-  ecseizouikka: EC_DEPT_EXEC_LINE_MID_MODEL_GROUP,
-  echinkan: EC_DEPT_EXEC_LINE_MID_MODEL_GROUP,
+  ecseizouikka: EC_DEPT_EXEC_LINE_MID_HINKAN,
+  echinkan: EC_DEPT_EXEC_LINE_MID_HINKAN,
   ecseizougijutsu: EC_DEPT_EXEC_LINE_MID_EMPTY,
   ecseikan: EC_DEPT_EXEC_LINE_MID_EMPTY,
 }
@@ -212,14 +227,11 @@ const EC_DEPT_EXEC_LINE_MID_BY_SLUG: Record<string, readonly string[]> = {
 /** 含机种/根物料编码/停产头段的部门（采购/受检、部管/SMT 除外） */
 const EC_DEPT_EXEC_HAS_DISC_MODEL = new Set([
   'ecseikan',
-  'ecseizouikka',
-  'echinkan',
   'ecseizougijutsu',
-  'ecseizounika',
 ])
 
 /** 部管/SMT：机种 + 根物料编码组，无根物料描述 */
-const EC_DEPT_EXEC_HAS_ROOT_GROUP = new Set(['ecbukan', 'ecsmt'])
+const EC_DEPT_EXEC_HAS_ROOT_GROUP = new Set(['ecbukan', 'ecemtl'])
 
 /** 执行部门实体 slug */
 export type EcDeptExecSlug = keyof typeof EC_DEPT_EXEC_LINE_IMPL
@@ -250,8 +262,10 @@ export function getEcDeptExecLineFields(slug: string): readonly string[] {
     ...(slug === 'ecseikan' ? EC_DEPT_EXEC_LINE_SCHEDULED_REDUNDANT : []),
     ...EC_DEPT_EXEC_LINE_EXEC_CONTENT,
     ...impl,
+    ...(slug === 'ecseizougijutsu' ? (['sopLeader', 'techLeader'] as const) : []),
     ...(EC_DEPT_EXEC_HAS_OLD_PART_REDUNDANT.has(slug) ? EC_DEPT_EXEC_LINE_OLD_PART_REDUNDANT : []),
-    ...(hasDiscModel ? EC_DEPT_EXEC_LINE_ROOT_DESC : []),
+    ...(hasDiscModel || slug === 'echinkan' || slug === 'ecseizouikka' || slug === 'ecseizounika' ? EC_DEPT_EXEC_LINE_ROOT_DESC : []),
+    ...EC_DEPT_EXEC_LINE_SCOPE,
     ...EC_DEPT_EXEC_LINE_TAIL_DEPT,
   ]
 }

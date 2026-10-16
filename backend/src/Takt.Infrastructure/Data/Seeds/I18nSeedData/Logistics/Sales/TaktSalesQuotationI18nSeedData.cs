@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Sales
 // 文件名称：TaktSalesQuotationI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSalesQuotation 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktSalesQuotationI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.salesquotation._self", "zh-HK", "Takt销售报价信息_hk", "实体名称"),
 
             // entity.salesquotation.code
-            new TranslationSeedItem("entity.salesquotation.code", "en-US", "销售报价编码_us", "销售报价编码（唯一索引）"),
+            new TranslationSeedItem("entity.salesquotation.code", "en-US", "销售报价编码_us", "销售报价编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 销售报价编码规则生成并展示，非手输；单据类型菜单：销售报价）"),
             // entity.salesquotation.code
-            new TranslationSeedItem("entity.salesquotation.code", "ja-JP", "销售报价编码_jp", "销售报价编码（唯一索引）"),
+            new TranslationSeedItem("entity.salesquotation.code", "ja-JP", "销售报价编码_jp", "销售报价编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 销售报价编码规则生成并展示，非手输；单据类型菜单：销售报价）"),
             // entity.salesquotation.code
-            new TranslationSeedItem("entity.salesquotation.code", "zh-CN", "销售报价编码", "销售报价编码（唯一索引）"),
+            new TranslationSeedItem("entity.salesquotation.code", "zh-CN", "销售报价编码", "销售报价编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 销售报价编码规则生成并展示，非手输；单据类型菜单：销售报价）"),
             // entity.salesquotation.code
-            new TranslationSeedItem("entity.salesquotation.code", "zh-HK", "销售报价编码_hk", "销售报价编码（唯一索引）"),
+            new TranslationSeedItem("entity.salesquotation.code", "zh-HK", "销售报价编码_hk", "销售报价编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 销售报价编码规则生成并展示，非手输；单据类型菜单：销售报价）"),
 
             // entity.salesquotation.customercode
             new TranslationSeedItem("entity.salesquotation.customercode", "en-US", "客户编码_us", "客户编码（选项 TaktCustomers/options；DictValue=CustomerCode）"),
@@ -208,22 +208,22 @@ public class TaktSalesQuotationI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.salesquotation.currencycode", "zh-HK", "结算币种_hk", "结算币种（字典 accounting_financial_currency_code；DictValue=CNY/USD 等；一单一币种）"),
 
             // entity.salesquotation.taxcode
-            new TranslationSeedItem("entity.salesquotation.taxcode", "en-US", "税码_us", "税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）"),
+            new TranslationSeedItem("entity.salesquotation.taxcode", "en-US", "税码_us", "税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.salesquotation.taxcode
-            new TranslationSeedItem("entity.salesquotation.taxcode", "ja-JP", "税码_jp", "税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）"),
+            new TranslationSeedItem("entity.salesquotation.taxcode", "ja-JP", "税码_jp", "税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.salesquotation.taxcode
-            new TranslationSeedItem("entity.salesquotation.taxcode", "zh-CN", "税码", "税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）"),
+            new TranslationSeedItem("entity.salesquotation.taxcode", "zh-CN", "税码", "税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.salesquotation.taxcode
-            new TranslationSeedItem("entity.salesquotation.taxcode", "zh-HK", "税码_hk", "税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）"),
+            new TranslationSeedItem("entity.salesquotation.taxcode", "zh-HK", "税码_hk", "税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
 
             // entity.salesquotation.taxrate
-            new TranslationSeedItem("entity.salesquotation.taxrate", "en-US", "税率_us", "税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）"),
+            new TranslationSeedItem("entity.salesquotation.taxrate", "en-US", "税率_us", "税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）"),
             // entity.salesquotation.taxrate
-            new TranslationSeedItem("entity.salesquotation.taxrate", "ja-JP", "税率_jp", "税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）"),
+            new TranslationSeedItem("entity.salesquotation.taxrate", "ja-JP", "税率_jp", "税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）"),
             // entity.salesquotation.taxrate
-            new TranslationSeedItem("entity.salesquotation.taxrate", "zh-CN", "税率", "税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）"),
+            new TranslationSeedItem("entity.salesquotation.taxrate", "zh-CN", "税率", "税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）"),
             // entity.salesquotation.taxrate
-            new TranslationSeedItem("entity.salesquotation.taxrate", "zh-HK", "税率_hk", "税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）"),
+            new TranslationSeedItem("entity.salesquotation.taxrate", "zh-HK", "税率_hk", "税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）"),
 
             // entity.salesquotation.taxamount
             new TranslationSeedItem("entity.salesquotation.taxamount", "en-US", "税费_us", "税费"),

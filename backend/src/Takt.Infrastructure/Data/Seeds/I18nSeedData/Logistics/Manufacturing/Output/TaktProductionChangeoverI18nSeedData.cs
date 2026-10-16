@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Output
 // 文件名称：TaktProductionChangeoverI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktProductionChangeover 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,22 +91,22 @@ public class TaktProductionChangeoverI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.productionchangeover._self", "zh-HK", "生产切换记录信息_hk", "实体名称"),
 
             // entity.productionchangeover.prodcategory
-            new TranslationSeedItem("entity.productionchangeover.prodcategory", "en-US", "生产类别_us", "生产类别（字典 logistics_manufacturing_prod_category；存 DictValue：EPP/FPP/RWP/MDP/CPP；与 ChangeoverCategory、ProdDate、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.prodcategory", "en-US", "生产类别_us", "生产类别（字典 logistics_manufacturing_prod_category；存 DictValue：EPP/FPP/RWP/MDP/CPP；与租户、ChangeoverCategory、ProdDate、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
             // entity.productionchangeover.prodcategory
-            new TranslationSeedItem("entity.productionchangeover.prodcategory", "ja-JP", "生产类别_jp", "生产类别（字典 logistics_manufacturing_prod_category；存 DictValue：EPP/FPP/RWP/MDP/CPP；与 ChangeoverCategory、ProdDate、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.prodcategory", "ja-JP", "生产类别_jp", "生产类别（字典 logistics_manufacturing_prod_category；存 DictValue：EPP/FPP/RWP/MDP/CPP；与租户、ChangeoverCategory、ProdDate、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
             // entity.productionchangeover.prodcategory
-            new TranslationSeedItem("entity.productionchangeover.prodcategory", "zh-CN", "生产类别", "生产类别（字典 logistics_manufacturing_prod_category；存 DictValue：EPP/FPP/RWP/MDP/CPP；与 ChangeoverCategory、ProdDate、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.prodcategory", "zh-CN", "生产类别", "生产类别（字典 logistics_manufacturing_prod_category；存 DictValue：EPP/FPP/RWP/MDP/CPP；与租户、ChangeoverCategory、ProdDate、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
             // entity.productionchangeover.prodcategory
-            new TranslationSeedItem("entity.productionchangeover.prodcategory", "zh-HK", "生产类别_hk", "生产类别（字典 logistics_manufacturing_prod_category；存 DictValue：EPP/FPP/RWP/MDP/CPP；与 ChangeoverCategory、ProdDate、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.prodcategory", "zh-HK", "生产类别_hk", "生产类别（字典 logistics_manufacturing_prod_category；存 DictValue：EPP/FPP/RWP/MDP/CPP；与租户、ChangeoverCategory、ProdDate、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
 
             // entity.productionchangeover.changeovercategory
-            new TranslationSeedItem("entity.productionchangeover.changeovercategory", "en-US", "切换类别_us", "切换类别（字典 logistics_manufacturing_changeover_category；存 DictValue：ASSY/PCBA；与 ProdCategory、ProdDate、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.changeovercategory", "en-US", "切换类别_us", "切换类别（字典 logistics_manufacturing_changeover_category；存 DictValue：ASSY/PCBA；与租户、ProdCategory、ProdDate、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
             // entity.productionchangeover.changeovercategory
-            new TranslationSeedItem("entity.productionchangeover.changeovercategory", "ja-JP", "切换类别_jp", "切换类别（字典 logistics_manufacturing_changeover_category；存 DictValue：ASSY/PCBA；与 ProdCategory、ProdDate、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.changeovercategory", "ja-JP", "切换类别_jp", "切换类别（字典 logistics_manufacturing_changeover_category；存 DictValue：ASSY/PCBA；与租户、ProdCategory、ProdDate、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
             // entity.productionchangeover.changeovercategory
-            new TranslationSeedItem("entity.productionchangeover.changeovercategory", "zh-CN", "切换类别", "切换类别（字典 logistics_manufacturing_changeover_category；存 DictValue：ASSY/PCBA；与 ProdCategory、ProdDate、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.changeovercategory", "zh-CN", "切换类别", "切换类别（字典 logistics_manufacturing_changeover_category；存 DictValue：ASSY/PCBA；与租户、ProdCategory、ProdDate、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
             // entity.productionchangeover.changeovercategory
-            new TranslationSeedItem("entity.productionchangeover.changeovercategory", "zh-HK", "切换类别_hk", "切换类别（字典 logistics_manufacturing_changeover_category；存 DictValue：ASSY/PCBA；与 ProdCategory、ProdDate、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.changeovercategory", "zh-HK", "切换类别_hk", "切换类别（字典 logistics_manufacturing_changeover_category；存 DictValue：ASSY/PCBA；与租户、ProdCategory、ProdDate、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
 
             // entity.productionchangeover.proddate
             new TranslationSeedItem("entity.productionchangeover.proddate", "en-US", "生产日期_us", "生产日期（与 ProdCategory、ChangeoverCategory、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
@@ -118,22 +118,22 @@ public class TaktProductionChangeoverI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.productionchangeover.proddate", "zh-HK", "生产日期_hk", "生产日期（与 ProdCategory、ChangeoverCategory、TeamCode、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
 
             // entity.productionchangeover.teamcode
-            new TranslationSeedItem("entity.productionchangeover.teamcode", "en-US", "生产班组_us", "生产班组（选项 TaktProductionTeams/options，存 TeamCode，ExtValue=PlantCode 按工厂过滤；与 ProdCategory、ChangeoverCategory、ProdDate、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.teamcode", "en-US", "生产班组_us", "生产班组（选项 TaktProductionTeams/options，存 TeamCode，ExtValue=PlantCode 按工厂过滤；与租户、ProdCategory、ChangeoverCategory、ProdDate、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
             // entity.productionchangeover.teamcode
-            new TranslationSeedItem("entity.productionchangeover.teamcode", "ja-JP", "生产班组_jp", "生产班组（选项 TaktProductionTeams/options，存 TeamCode，ExtValue=PlantCode 按工厂过滤；与 ProdCategory、ChangeoverCategory、ProdDate、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.teamcode", "ja-JP", "生产班组_jp", "生产班组（选项 TaktProductionTeams/options，存 TeamCode，ExtValue=PlantCode 按工厂过滤；与租户、ProdCategory、ChangeoverCategory、ProdDate、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
             // entity.productionchangeover.teamcode
-            new TranslationSeedItem("entity.productionchangeover.teamcode", "zh-CN", "生产班组", "生产班组（选项 TaktProductionTeams/options，存 TeamCode，ExtValue=PlantCode 按工厂过滤；与 ProdCategory、ChangeoverCategory、ProdDate、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.teamcode", "zh-CN", "生产班组", "生产班组（选项 TaktProductionTeams/options，存 TeamCode，ExtValue=PlantCode 按工厂过滤；与租户、ProdCategory、ChangeoverCategory、ProdDate、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
             // entity.productionchangeover.teamcode
-            new TranslationSeedItem("entity.productionchangeover.teamcode", "zh-HK", "生产班组_hk", "生产班组（选项 TaktProductionTeams/options，存 TeamCode，ExtValue=PlantCode 按工厂过滤；与 ProdCategory、ChangeoverCategory、ProdDate、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.teamcode", "zh-HK", "生产班组_hk", "生产班组（选项 TaktProductionTeams/options，存 TeamCode，ExtValue=PlantCode 按工厂过滤；与租户、ProdCategory、ChangeoverCategory、ProdDate、CurrentProdOrderCode、ChangeoverProdOrderCode 组成唯一键）"),
 
             // entity.productionchangeover.currentprodordercode
-            new TranslationSeedItem("entity.productionchangeover.currentprodordercode", "en-US", "当前工单_us", "当前工单（切换前工单号，选项 TaktProductionOrders/options，按 PlantCode 过滤；与 ProdCategory、ChangeoverCategory、ProdDate、TeamCode、ChangeoverProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.currentprodordercode", "en-US", "当前工单_us", "当前工单（切换前工单号，选项 TaktProductionOrders/options，按 PlantCode 过滤；与租户、ProdCategory、ChangeoverCategory、ProdDate、TeamCode、ChangeoverProdOrderCode 组成唯一键）"),
             // entity.productionchangeover.currentprodordercode
-            new TranslationSeedItem("entity.productionchangeover.currentprodordercode", "ja-JP", "当前工单_jp", "当前工单（切换前工单号，选项 TaktProductionOrders/options，按 PlantCode 过滤；与 ProdCategory、ChangeoverCategory、ProdDate、TeamCode、ChangeoverProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.currentprodordercode", "ja-JP", "当前工单_jp", "当前工单（切换前工单号，选项 TaktProductionOrders/options，按 PlantCode 过滤；与租户、ProdCategory、ChangeoverCategory、ProdDate、TeamCode、ChangeoverProdOrderCode 组成唯一键）"),
             // entity.productionchangeover.currentprodordercode
-            new TranslationSeedItem("entity.productionchangeover.currentprodordercode", "zh-CN", "当前工单", "当前工单（切换前工单号，选项 TaktProductionOrders/options，按 PlantCode 过滤；与 ProdCategory、ChangeoverCategory、ProdDate、TeamCode、ChangeoverProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.currentprodordercode", "zh-CN", "当前工单", "当前工单（切换前工单号，选项 TaktProductionOrders/options，按 PlantCode 过滤；与租户、ProdCategory、ChangeoverCategory、ProdDate、TeamCode、ChangeoverProdOrderCode 组成唯一键）"),
             // entity.productionchangeover.currentprodordercode
-            new TranslationSeedItem("entity.productionchangeover.currentprodordercode", "zh-HK", "当前工单_hk", "当前工单（切换前工单号，选项 TaktProductionOrders/options，按 PlantCode 过滤；与 ProdCategory、ChangeoverCategory、ProdDate、TeamCode、ChangeoverProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.currentprodordercode", "zh-HK", "当前工单_hk", "当前工单（切换前工单号，选项 TaktProductionOrders/options，按 PlantCode 过滤；与租户、ProdCategory、ChangeoverCategory、ProdDate、TeamCode、ChangeoverProdOrderCode 组成唯一键）"),
 
             // entity.productionchangeover.currentmodelcode
             new TranslationSeedItem("entity.productionchangeover.currentmodelcode", "en-US", "当前机种_us", "当前机种（回填：随工单）"),
@@ -145,13 +145,13 @@ public class TaktProductionChangeoverI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.productionchangeover.currentmodelcode", "zh-HK", "当前机种_hk", "当前机种（回填：随工单）"),
 
             // entity.productionchangeover.changeoverprodordercode
-            new TranslationSeedItem("entity.productionchangeover.changeoverprodordercode", "en-US", "切换后工单_us", "切换后工单（切换目标工单号，选项 TaktProductionOrders/options，按 PlantCode 过滤；与 ProdCategory、ChangeoverCategory、ProdDate、TeamCode、CurrentProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.changeoverprodordercode", "en-US", "切换后工单_us", "切换后工单（切换目标工单号，选项 TaktProductionOrders/options，按 PlantCode 过滤；与租户、ProdCategory、ChangeoverCategory、ProdDate、TeamCode、CurrentProdOrderCode 组成唯一键）"),
             // entity.productionchangeover.changeoverprodordercode
-            new TranslationSeedItem("entity.productionchangeover.changeoverprodordercode", "ja-JP", "切换后工单_jp", "切换后工单（切换目标工单号，选项 TaktProductionOrders/options，按 PlantCode 过滤；与 ProdCategory、ChangeoverCategory、ProdDate、TeamCode、CurrentProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.changeoverprodordercode", "ja-JP", "切换后工单_jp", "切换后工单（切换目标工单号，选项 TaktProductionOrders/options，按 PlantCode 过滤；与租户、ProdCategory、ChangeoverCategory、ProdDate、TeamCode、CurrentProdOrderCode 组成唯一键）"),
             // entity.productionchangeover.changeoverprodordercode
-            new TranslationSeedItem("entity.productionchangeover.changeoverprodordercode", "zh-CN", "切换后工单", "切换后工单（切换目标工单号，选项 TaktProductionOrders/options，按 PlantCode 过滤；与 ProdCategory、ChangeoverCategory、ProdDate、TeamCode、CurrentProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.changeoverprodordercode", "zh-CN", "切换后工单", "切换后工单（切换目标工单号，选项 TaktProductionOrders/options，按 PlantCode 过滤；与租户、ProdCategory、ChangeoverCategory、ProdDate、TeamCode、CurrentProdOrderCode 组成唯一键）"),
             // entity.productionchangeover.changeoverprodordercode
-            new TranslationSeedItem("entity.productionchangeover.changeoverprodordercode", "zh-HK", "切换后工单_hk", "切换后工单（切换目标工单号，选项 TaktProductionOrders/options，按 PlantCode 过滤；与 ProdCategory、ChangeoverCategory、ProdDate、TeamCode、CurrentProdOrderCode 组成唯一键）"),
+            new TranslationSeedItem("entity.productionchangeover.changeoverprodordercode", "zh-HK", "切换后工单_hk", "切换后工单（切换目标工单号，选项 TaktProductionOrders/options，按 PlantCode 过滤；与租户、ProdCategory、ChangeoverCategory、ProdDate、TeamCode、CurrentProdOrderCode 组成唯一键）"),
 
             // entity.productionchangeover.changeovermodelcode
             new TranslationSeedItem("entity.productionchangeover.changeovermodelcode", "en-US", "切换后机种_us", "切换后机种（回填：随工单）"),

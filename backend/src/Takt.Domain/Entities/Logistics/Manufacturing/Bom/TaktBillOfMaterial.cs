@@ -4,7 +4,7 @@
 // 文件名称：TaktBillOfMaterial.cs
 // 创建时间：2025-01-20
 // 创建人：Takt365(Cursor AI)
-// 功能描述：Takt物料清单实体（BOM_Header：工厂+父件+用途+版本唯一；生效/失效日期仅在头表）
+// 功能描述：Takt物料清单实体（BOM_Header：租户+公司+工厂+父件+用途+版本唯一；生效/失效日期仅在头表）
 // 
 // 版权信息：Copyright (c) 2025 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。

@@ -30,7 +30,7 @@ public class TaktSopDoc : TaktApprovalEntityBase
 {
 
     /// <summary>
-    /// SOP 编码
+    /// SOP 编码（前端表单选择编码规则后自动通过 TaktNumbering SOP编码规则生成并展示，非手输；单据类型菜单：SOP文档）
     /// </summary>
     [SugarColumn(ColumnName = "sop_code", ColumnDescription = "SOP编码", ColumnDataType = "nvarchar", Length = 50, IsNullable = false)]
     public string SopCode { get; set; } = string.Empty;

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Code.Database
 // 文件名称：TaktDataCloneI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktDataClone 实体字段国际化种子（已对齐前端 locales：src/locales/code/database/data-clone）
 // 

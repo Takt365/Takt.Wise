@@ -32,7 +32,7 @@ public class TaktEcNotification : TaktApprovalEntityBase
 {
 
     /// <summary>
-    /// 通知单号（按通知方式经编码规则生成）
+    /// 通知单号（按通知方式经编码规则生成；前端表单选择编码规则后自动通过 TaktNumbering 通知单号规则生成并展示，非手输；单据类型菜单：设变通知）
     /// </summary>
     [SugarColumn(ColumnName = "ec_notification_code", ColumnDescription = "通知单号", Length = 30, ColumnDataType = "nvarchar", IsNullable = false)]
     public string EcNotificationCode { get; set; } = string.Empty;

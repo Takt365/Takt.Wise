@@ -215,11 +215,11 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('purchaseInfoRecordCode')">
-      <a-form-item :label="pi.queryLabel('purchaseInfoRecordCode')">
+      <div v-show="isFieldVisible('purchaseInfoCode')">
+      <a-form-item :label="pi.queryLabel('purchaseInfoCode')">
         <a-input
-          v-model:value="advancedQueryForm.purchaseInfoRecordCode"
-          :placeholder="pi.queryPh('purchaseInfoRecordCode', 'required')"
+          v-model:value="advancedQueryForm.purchaseInfoCode"
+          :placeholder="pi.queryPh('purchaseInfoCode', 'required')"
           show-count
           :maxlength="20"
           allow-clear
@@ -307,7 +307,7 @@
       <a-form-item :label="pi.queryLabel('taxCode')">
         <TaktSelect
           v-model:value="advancedQueryForm.taxCode"
-          dict-type="accounting_financial_tax_code"
+          api-url="TaktTaxCodes/options"
           :placeholder="pi.queryPh('taxCode', 'select')"
           allow-clear
         />
@@ -906,14 +906,14 @@ const columns = computed<TableColumnsType>(() => [
       String(getPurchaseOrderItemField(record, 'materialSpecification') ?? ''),
   },
   {
-    title: pi.label('purchaseInfoRecordCode'),
-    dataIndex: 'purchaseInfoRecordCode',
-    key: 'purchaseInfoRecordCode',
+    title: pi.label('purchaseInfoCode'),
+    dataIndex: 'purchaseInfoCode',
+    key: 'purchaseInfoCode',
     width: 120,
     resizable: true,
     ellipsis: true,
     customRender: ({ record }: { record: PurchaseOrderItem }) =>
-      String(getPurchaseOrderItemField(record, 'purchaseInfoRecordCode') ?? ''),
+      String(getPurchaseOrderItemField(record, 'purchaseInfoCode') ?? ''),
   },
   {
     title: pi.label('supplierMaterialCode'),

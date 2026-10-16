@@ -34,7 +34,7 @@ public class TaktAssyOutput : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// 生产类别（字典 logistics_manufacturing_prod_category；存 DictValue：EPP/FPP/RWP/MDP/CPP；与 TeamCode、ProdDate、ProdOrderCode 组成唯一键）
+    /// 生产类别（字典 logistics_manufacturing_prod_category；存 DictValue：EPP/FPP/RWP/MDP/CPP；与租户、TeamCode、ProdDate、ProdOrderCode 组成唯一键）
     /// </summary>
     [SugarColumn(ColumnName = "prod_category", ColumnDescription = "生产类别", Length = 4, ColumnDataType = "nvarchar", IsNullable = false)]
     public string ProdCategory { get; set; } = string.Empty;
@@ -46,7 +46,7 @@ public class TaktAssyOutput : TaktCompanyEntityBase
     public DateTime ProdDate { get; set; }
 
     /// <summary>
-    /// 生产班组（选项 TaktProductionTeams/options?teamCategory=A；DictValue=TeamCode，ExtValue=PlantCode；与 ProdCategory、ProdDate、ProdOrderCode 组成唯一键）
+    /// 生产班组（选项 TaktProductionTeams/options?teamCategory=A；DictValue=TeamCode，ExtValue=PlantCode；与租户、ProdCategory、ProdDate、ProdOrderCode 组成唯一键）
     /// </summary>
     [SugarColumn(ColumnName = "team_code", ColumnDescription = "生产班组", Length = 8, ColumnDataType = "nvarchar", IsNullable = false)]
     public string TeamCode { get; set; } = string.Empty;
@@ -76,7 +76,7 @@ public class TaktAssyOutput : TaktCompanyEntityBase
     public string? ProdOrderType { get; set; }
 
     /// <summary>
-    /// 工单号（选项 TaktProductionOrders/options；DictValue=ProdOrderCode，ExtValue=PlantCode；与 TeamCode、ProdCategory、ProdDate 组成唯一键）
+    /// 工单号（选项 TaktProductionOrders/options；DictValue=ProdOrderCode，ExtValue=PlantCode；与租户、TeamCode、ProdCategory、ProdDate 组成唯一键）
     /// </summary>
     [SugarColumn(ColumnName = "prod_order_code", ColumnDescription = "工单号", Length = 12, ColumnDataType = "nvarchar", IsNullable = false)]
     public string ProdOrderCode { get; set; } = string.Empty;

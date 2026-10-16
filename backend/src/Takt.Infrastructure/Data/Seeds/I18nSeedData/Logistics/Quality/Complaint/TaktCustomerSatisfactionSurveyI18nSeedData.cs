@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Complaint
 // 文件名称：TaktCustomerSatisfactionSurveyI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktCustomerSatisfactionSurvey 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktCustomerSatisfactionSurveyI18nSeedData : ITaktSeedDataCoordinat
             new TranslationSeedItem("entity.customersatisfactionsurvey._self", "zh-HK", "客户满意度调查表主表信息_hk", "实体名称"),
 
             // entity.customersatisfactionsurvey.code
-            new TranslationSeedItem("entity.customersatisfactionsurvey.code", "en-US", "调查表编码_us", "调查表编码（组合唯一索引）"),
+            new TranslationSeedItem("entity.customersatisfactionsurvey.code", "en-US", "调查表编码_us", "调查表编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 调查表编码规则生成并展示，非手输；单据类型菜单：客户满意度调查）"),
             // entity.customersatisfactionsurvey.code
-            new TranslationSeedItem("entity.customersatisfactionsurvey.code", "ja-JP", "调查表编码_jp", "调查表编码（组合唯一索引）"),
+            new TranslationSeedItem("entity.customersatisfactionsurvey.code", "ja-JP", "调查表编码_jp", "调查表编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 调查表编码规则生成并展示，非手输；单据类型菜单：客户满意度调查）"),
             // entity.customersatisfactionsurvey.code
-            new TranslationSeedItem("entity.customersatisfactionsurvey.code", "zh-CN", "调查表编码", "调查表编码（组合唯一索引）"),
+            new TranslationSeedItem("entity.customersatisfactionsurvey.code", "zh-CN", "调查表编码", "调查表编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 调查表编码规则生成并展示，非手输；单据类型菜单：客户满意度调查）"),
             // entity.customersatisfactionsurvey.code
-            new TranslationSeedItem("entity.customersatisfactionsurvey.code", "zh-HK", "调查表编码_hk", "调查表编码（组合唯一索引）"),
+            new TranslationSeedItem("entity.customersatisfactionsurvey.code", "zh-HK", "调查表编码_hk", "调查表编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 调查表编码规则生成并展示，非手输；单据类型菜单：客户满意度调查）"),
 
             // entity.customersatisfactionsurvey.customerid
             new TranslationSeedItem("entity.customersatisfactionsurvey.customerid", "en-US", "客户ID_us", "客户 ID（选项 TaktCustomers/options；DictValue=Id）"),

@@ -204,12 +204,12 @@ export interface Company extends TenantDtoBase {
   chartOfAccounts: string;
 
   /**
-   * 进项税码（字典 accounting_financial_tax_code）
+   * 进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   inputTaxCode: string;
 
   /**
-   * 销项税码（字典 accounting_financial_tax_code）
+   * 销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   outputTaxCode: string;
 
@@ -459,12 +459,12 @@ export interface CompanyQuery extends TaktPagedQuery {
   chartOfAccounts?: string;
 
   /**
-   * 进项税码（字典 accounting_financial_tax_code）
+   * 进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   inputTaxCode?: string;
 
   /**
-   * 销项税码（字典 accounting_financial_tax_code）
+   * 销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   outputTaxCode?: string;
 
@@ -723,12 +723,12 @@ export interface CompanyCreate {
   chartOfAccounts: string;
 
   /**
-   * 进项税码（字典 accounting_financial_tax_code）
+   * 进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   inputTaxCode: string;
 
   /**
-   * 销项税码（字典 accounting_financial_tax_code）
+   * 销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   outputTaxCode: string;
 
@@ -1035,12 +1035,12 @@ export interface CompanyTemplate {
   chartOfAccounts?: string;
 
   /**
-   * 进项税码（字典 accounting_financial_tax_code）
+   * 进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   inputTaxCode?: string;
 
   /**
-   * 销项税码（字典 accounting_financial_tax_code）
+   * 销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   outputTaxCode?: string;
 
@@ -1294,12 +1294,12 @@ export interface CompanyImport {
   chartOfAccounts?: string;
 
   /**
-   * 进项税码（字典 accounting_financial_tax_code）
+   * 进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   inputTaxCode?: string;
 
   /**
-   * 销项税码（字典 accounting_financial_tax_code）
+   * 销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   outputTaxCode?: string;
 
@@ -1553,12 +1553,12 @@ export interface CompanyExport {
   chartOfAccounts: string;
 
   /**
-   * 进项税码（字典 accounting_financial_tax_code）
+   * 进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   inputTaxCode: string;
 
   /**
-   * 销项税码（字典 accounting_financial_tax_code）
+   * 销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   outputTaxCode: string;
 

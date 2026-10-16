@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Logistics.Quality.Complaint;
 public class TaktComplaintGroup : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 客诉组编码（与员工编码同长 6）
+    /// 客诉组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 客诉组编码规则生成并展示，非手输；单据类型菜单：客诉组）
     /// </summary>
     [SugarColumn(ColumnName = "complaint_group_code", ColumnDescription = "客诉组编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string ComplaintGroupCode { get; set; } = string.Empty;

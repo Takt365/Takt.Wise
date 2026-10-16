@@ -102,7 +102,7 @@ public class TaktSalesQuotationItemDto : TaktCompanyDtoBase
     public decimal DiscountAmount { get; set; }
 
     /// <summary>
-    /// 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -266,7 +266,7 @@ public class TaktSalesQuotationItemQueryDto : TaktPagedQuery
     public decimal? DiscountAmount { get; set; }
 
     /// <summary>
-    /// 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -450,7 +450,7 @@ public class TaktSalesQuotationItemCreateDto
     public decimal DiscountAmount { get; set; }
 
     /// <summary>
-    /// 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -660,7 +660,7 @@ public class TaktSalesQuotationItemTemplateDto
     public decimal? DiscountAmount { get; set; }
 
     /// <summary>
-    /// 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -823,7 +823,7 @@ public class TaktSalesQuotationItemImportDto
     public decimal? DiscountAmount { get; set; }
 
     /// <summary>
-    /// 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -992,7 +992,7 @@ public class TaktSalesQuotationItemExportDto
     public decimal DiscountAmount { get; set; }
 
     /// <summary>
-    /// 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 

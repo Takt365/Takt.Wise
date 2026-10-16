@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Bom
 // 文件名称：TaktRoutingI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktRouting 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -100,13 +100,13 @@ public class TaktRoutingI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.routing.workcenter", "zh-HK", "工作中心_hk", "工作中心（选项 TaktWorkCenters/options；DictValue=WorkCenterCode，ExtValue=PlantCode）"),
 
             // entity.routing.code
-            new TranslationSeedItem("entity.routing.code", "en-US", "工艺路线编码_us", "工艺路线编码"),
+            new TranslationSeedItem("entity.routing.code", "en-US", "工艺路线编码_us", "工艺路线编码（前端表单选择编码规则后自动通过 TaktNumbering 工艺路线编码规则生成并展示，非手输；单据类型菜单：工艺路线）"),
             // entity.routing.code
-            new TranslationSeedItem("entity.routing.code", "ja-JP", "工艺路线编码_jp", "工艺路线编码"),
+            new TranslationSeedItem("entity.routing.code", "ja-JP", "工艺路线编码_jp", "工艺路线编码（前端表单选择编码规则后自动通过 TaktNumbering 工艺路线编码规则生成并展示，非手输；单据类型菜单：工艺路线）"),
             // entity.routing.code
-            new TranslationSeedItem("entity.routing.code", "zh-CN", "工艺路线编码", "工艺路线编码"),
+            new TranslationSeedItem("entity.routing.code", "zh-CN", "工艺路线编码", "工艺路线编码（前端表单选择编码规则后自动通过 TaktNumbering 工艺路线编码规则生成并展示，非手输；单据类型菜单：工艺路线）"),
             // entity.routing.code
-            new TranslationSeedItem("entity.routing.code", "zh-HK", "工艺路线编码_hk", "工艺路线编码"),
+            new TranslationSeedItem("entity.routing.code", "zh-HK", "工艺路线编码_hk", "工艺路线编码（前端表单选择编码规则后自动通过 TaktNumbering 工艺路线编码规则生成并展示，非手输；单据类型菜单：工艺路线）"),
 
             // entity.routing.name
             new TranslationSeedItem("entity.routing.name", "en-US", "工艺路线名称_us", "工艺路线名称"),

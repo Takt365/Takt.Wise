@@ -39,7 +39,7 @@
         />
       </div>
       <div class="flex items-center gap-1">
-        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('entity.salesconditionrecord.customercode') }}</span>
+        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('entity.salescondition.customercode') }}</span>
         <TaktSelect
           :key="customerSelectKey"
           v-model:value="customerCode"
@@ -53,7 +53,7 @@
         />
       </div>
       <div class="flex items-center gap-1">
-        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('entity.salesconditionrecord.materialcode') }}</span>
+        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('entity.salescondition.materialcode') }}</span>
         <TaktSelect
           :key="materialSelectKey"
           v-model:value="materialCode"

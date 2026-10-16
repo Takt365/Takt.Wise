@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Mds
 // 文件名称：TaktMasterDemandScheduleI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktMasterDemandSchedule 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktMasterDemandScheduleI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.masterdemandschedule._self", "zh-HK", "主需求计划 MDS 头表信息_hk", "实体名称"),
 
             // entity.masterdemandschedule.mdscode
-            new TranslationSeedItem("entity.masterdemandschedule.mdscode", "en-US", "MDS编码_us", "MDS 编码（租户+公司+工厂内业务唯一）"),
+            new TranslationSeedItem("entity.masterdemandschedule.mdscode", "en-US", "MDS编码_us", "MDS 编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering MDS编码规则生成并展示，非手输；单据类型菜单：主需求计划）"),
             // entity.masterdemandschedule.mdscode
-            new TranslationSeedItem("entity.masterdemandschedule.mdscode", "ja-JP", "MDS编码_jp", "MDS 编码（租户+公司+工厂内业务唯一）"),
+            new TranslationSeedItem("entity.masterdemandschedule.mdscode", "ja-JP", "MDS编码_jp", "MDS 编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering MDS编码规则生成并展示，非手输；单据类型菜单：主需求计划）"),
             // entity.masterdemandschedule.mdscode
-            new TranslationSeedItem("entity.masterdemandschedule.mdscode", "zh-CN", "MDS编码", "MDS 编码（租户+公司+工厂内业务唯一）"),
+            new TranslationSeedItem("entity.masterdemandschedule.mdscode", "zh-CN", "MDS编码", "MDS 编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering MDS编码规则生成并展示，非手输；单据类型菜单：主需求计划）"),
             // entity.masterdemandschedule.mdscode
-            new TranslationSeedItem("entity.masterdemandschedule.mdscode", "zh-HK", "MDS编码_hk", "MDS 编码（租户+公司+工厂内业务唯一）"),
+            new TranslationSeedItem("entity.masterdemandschedule.mdscode", "zh-HK", "MDS编码_hk", "MDS 编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering MDS编码规则生成并展示，非手输；单据类型菜单：主需求计划）"),
 
             // entity.masterdemandschedule.planperiodstart
             new TranslationSeedItem("entity.masterdemandschedule.planperiodstart", "en-US", "计划周期开始_us", "计划周期开始"),

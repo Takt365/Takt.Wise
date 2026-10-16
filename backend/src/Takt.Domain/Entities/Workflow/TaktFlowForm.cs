@@ -25,7 +25,7 @@ public class TaktFlowForm : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// 表单编码（公司内唯一；前端表单按表单分类选择编码规则后自动通过 TaktNumbering 表单编码规则生成并展示，非手输；单据类型菜单：表单管理）
+    /// 表单编码（租户+公司内唯一；前端表单按表单分类选择编码规则后自动通过 TaktNumbering 表单编码规则生成并展示，非手输；单据类型菜单：表单管理）
     /// </summary>
     [SugarColumn(ColumnName = "form_code", ColumnDescription = "表单编码", ColumnDataType = "varchar", Length = 64, IsNullable = false)]
     public string FormCode { get; set; } = string.Empty;

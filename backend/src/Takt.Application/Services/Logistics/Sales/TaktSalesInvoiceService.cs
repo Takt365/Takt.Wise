@@ -33,6 +33,7 @@ public class TaktSalesInvoiceService : TaktServiceBase, ITaktSalesInvoiceService
     private readonly ITaktCompanyRepository<TaktSalesInvoiceItem> _salesInvoiceItemRepository;
     private readonly ITaktLineNumberGenerator _lineNumberGenerator;
     private readonly ITaktUniqueValidator _uniqueValidator;
+    private readonly ITaktNumberingGenerator _numberingGenerator;
 
     /// <summary>
     /// 构造函数
@@ -41,6 +42,7 @@ public class TaktSalesInvoiceService : TaktServiceBase, ITaktSalesInvoiceService
     /// <param name="salesInvoiceItemRepository">SalesInvoiceItem仓储</param>
     /// <param name="lineNumberGenerator">明细行号生成器</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
+    /// <param name="numberingGenerator">业务编码生成器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktSalesInvoiceService(
@@ -48,6 +50,7 @@ public class TaktSalesInvoiceService : TaktServiceBase, ITaktSalesInvoiceService
         ITaktCompanyRepository<TaktSalesInvoiceItem> salesInvoiceItemRepository,
         ITaktLineNumberGenerator lineNumberGenerator,
         ITaktUniqueValidator uniqueValidator,
+        ITaktNumberingGenerator numberingGenerator,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
@@ -56,6 +59,7 @@ public class TaktSalesInvoiceService : TaktServiceBase, ITaktSalesInvoiceService
         _salesInvoiceItemRepository = salesInvoiceItemRepository;
         _lineNumberGenerator = lineNumberGenerator;
         _uniqueValidator = uniqueValidator;
+        _numberingGenerator = numberingGenerator;
     }
 
     /// <summary>
@@ -129,6 +133,19 @@ public class TaktSalesInvoiceService : TaktServiceBase, ITaktSalesInvoiceService
     public async Task<TaktSalesInvoiceDto> CreateSalesInvoiceAsync(TaktSalesInvoiceCreateDto dto)
     {
         var entity = dto.Adapt<TaktSalesInvoice>();
+        if (!string.IsNullOrWhiteSpace(dto.NumberingRuleCode))
+        {
+            var generated = await _numberingGenerator.GenerateNextAsync(dto.NumberingRuleCode.Trim());
+            if (string.IsNullOrWhiteSpace(generated.BusinessCode))
+            {
+                throw new TaktBusinessException("业务编码生成失败");
+            }
+            entity.BillingDocumentCode = generated.BusinessCode;
+        }
+        else if (string.IsNullOrWhiteSpace(entity.BillingDocumentCode))
+        {
+            throw new TaktBusinessException("开票凭证不能为空");
+        }
         var isUnique_ix_takt_logistics_sales_invoice_billing_doc_unique = await _uniqueValidator.IsUniqueAsync(
             _salesInvoiceRepository,
             x => x.BillingDocumentCode == entity.BillingDocumentCode);
@@ -314,65 +331,6 @@ public class TaktSalesInvoiceService : TaktServiceBase, ITaktSalesInvoiceService
             exportData,
             sheetName ?? "销售发票数据",
             fileName ?? "销售发票导出.xlsx");
-    }
-
-    // ========================================
-    // 扩展方法（保留）
-    // ========================================
-
-    /// <summary>
-    /// 获取销售发票统计（数据看板）
-    /// </summary>
-    /// <param name="queryDto">查询 DTO</param>
-    /// <returns>销售发票统计</returns>
-    public async Task<TaktSalesInvoiceStatDto> GetSalesInvoiceStatAsync(TaktSalesInvoiceStatQueryDto queryDto)
-    {
-        ArgumentNullException.ThrowIfNull(queryDto);
-        EnsureThreeLayerContext();
-        var (start, end, statMonth) = TaktStatMonthRangeHelper.ResolveMonthRange(
-            queryDto.PostingDateStart,
-            queryDto.PostingDateEnd);
-        var yearMonth = !string.IsNullOrWhiteSpace(queryDto.YearMonth)
-            ? queryDto.YearMonth
-            : start.ToString("yyyyMM");
-        var tenantCode = CurrentTenantCode;
-        var companyCode = CurrentCompanyCode;
-        Expression<Func<TaktSalesInvoice, bool>> predicate = x =>
-            x.TenantCode == tenantCode
-            && x.CompanyCode == companyCode
-            && x.BillingDate >= start
-            && x.BillingDate <= end;
-        var monthInvoiceCount = await _salesInvoiceRepository.CountAsync(predicate);
-        var monthSalesAmount = await _salesInvoiceRepository.SumAsync(x => x.NetAmount, predicate);
-        var compareStart = start.AddYears(-1);
-        var compareEnd = end.AddYears(-1);
-        if (!string.IsNullOrWhiteSpace(queryDto.CompareYearMonth)
-            && queryDto.CompareYearMonth.Length == 6
-            && int.TryParse(queryDto.CompareYearMonth[..4], out var compareYear)
-            && int.TryParse(queryDto.CompareYearMonth[4..], out var compareMonth)
-            && compareMonth is >= 1 and <= 12)
-        {
-            compareStart = new DateTime(compareYear, compareMonth, 1);
-            compareEnd = compareStart.AddMonths(1).AddTicks(-1);
-        }
-        Expression<Func<TaktSalesInvoice, bool>> comparePredicate = x =>
-            x.TenantCode == tenantCode
-            && x.CompanyCode == companyCode
-            && x.BillingDate >= compareStart
-            && x.BillingDate <= compareEnd;
-        var compareInvoiceCount = await _salesInvoiceRepository.CountAsync(comparePredicate);
-        var compareSalesAmount = await _salesInvoiceRepository.SumAsync(x => x.NetAmount, comparePredicate);
-        return new TaktSalesInvoiceStatDto
-        {
-            StatMonth = statMonth,
-            YearMonth = yearMonth,
-            MonthInvoiceCount = monthInvoiceCount,
-            MonthSalesAmount = monthSalesAmount,
-            CompareInvoiceCount = compareInvoiceCount,
-            CompareSalesAmount = compareSalesAmount,
-            InvoiceCountYoYPercent = TaktYoYStatHelper.CalculateYoYPercent(monthInvoiceCount, compareInvoiceCount),
-            SalesAmountYoYPercent = TaktYoYStatHelper.CalculateYoYPercent(monthSalesAmount, compareSalesAmount),
-        };
     }
 
     // ========================================

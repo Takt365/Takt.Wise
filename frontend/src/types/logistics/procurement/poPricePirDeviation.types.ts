@@ -39,7 +39,7 @@ export interface PoPricePirDeviationQuery extends TaktPagedQuery {
  */
 export interface PoPricePirPeriodPrice {
   /** 定价记录号 */
-  purchaseInfoRecordCode: string;
+  purchaseInfoCode: string;
   /** 条件类型 */
   priceType: string;
   /** 有效起始日 */
@@ -49,7 +49,7 @@ export interface PoPricePirPeriodPrice {
   /** item / scaleQuantity / scaleValue */
   priceSource: string;
   /** 定价序号 */
-  purchaseInfoRecordSeq: number;
+  purchaseInfoSeq: number;
   /** 等级序号 */
   purchaseScaleSeq?: number | null;
   /** 数量门槛 */
@@ -98,7 +98,7 @@ export interface PoPricePirDeviationRow {
   /** PO 折算单价 */
   poNormalizedUnitPrice: number;
   /** 信息记录编码 */
-  purchaseInfoRecordCode?: string | null;
+  purchaseInfoCode?: string | null;
   /** no_pir / price_absent */
   matchReason: string;
   /** 周期价目数 */
@@ -108,7 +108,7 @@ export interface PoPricePirDeviationRow {
   /** 周期价目文案 */
   pirPricesText: string;
   /** PIR 记录号（分号拼接） */
-  pirPurchaseInfoRecordCodes: string;
+  pirPurchaseInfoCodes: string;
   /** PIR 有效起 */
   pirValidFrom?: string | null;
   /** PIR 有效止 */

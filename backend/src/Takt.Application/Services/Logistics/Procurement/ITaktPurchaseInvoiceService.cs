@@ -97,15 +97,4 @@ public interface ITaktPurchaseInvoiceService
     /// <returns>Excel 文件</returns>
     Task<(string fileName, byte[] fileContent)> ExportPurchaseInvoiceAsync(TaktPurchaseInvoiceQueryDto? query = null, string? sheetName = null, string? fileName = null);
 
-    // ========================================
-    // 扩展方法（保留）
-    // ========================================
-
-    /// <summary>
-    /// 获取采购发票统计（数据看板采购金额；按过帐日期）
-    /// </summary>
-    /// <param name="queryDto">查询 DTO</param>
-    /// <returns>采购发票统计</returns>
-    Task<TaktPurchaseInvoiceStatDto> GetPurchaseInvoiceStatAsync(TaktProcurementStatQueryDto queryDto);
-
 }

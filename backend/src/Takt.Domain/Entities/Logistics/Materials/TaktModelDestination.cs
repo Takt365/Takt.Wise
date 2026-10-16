@@ -40,7 +40,7 @@ public class TaktModelDestination : TaktTenantCoreEntityBase
     public string MaterialDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种编码（40）
+    /// 机种编码（40；前端表单选择编码规则后自动通过 TaktNumbering 机种编码规则生成并展示，非手输；单据类型菜单：机种仕向）
     /// </summary>
     [SugarColumn(ColumnName = "model_code", ColumnDescription = "机种编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string ModelCode { get; set; } = string.Empty;
@@ -52,7 +52,7 @@ public class TaktModelDestination : TaktTenantCoreEntityBase
     public string ModelName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 仕向地编码（40）
+    /// 仕向地编码（40；前端表单选择编码规则后自动通过 TaktNumbering 仕向地编码规则生成并展示，非手输；单据类型菜单：机种仕向）
     /// </summary>
     [SugarColumn(ColumnName = "destination_code", ColumnDescription = "仕向地编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string DestinationCode { get; set; } = string.Empty;

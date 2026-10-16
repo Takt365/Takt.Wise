@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Logistics.Manufacturing.Bom;
 public class TaktBomGroup : TaktCompanyEntityBase
 {
     /// <summary>
-    /// BOM组编码（与员工编码同长 6）
+    /// BOM组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering BOM组编码规则生成并展示，非手输；单据类型菜单：BOM组）
     /// </summary>
     [SugarColumn(ColumnName = "bom_group_code", ColumnDescription = "BOM组编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string BomGroupCode { get; set; } = string.Empty;

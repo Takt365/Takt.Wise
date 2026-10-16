@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi.Controllers.Logistics.Sales
 // 文件名称：TaktClientsController.cs
-// 创建时间：2026-08-23
+// 创建时间：2026-10-14
 // 创建人：Takt365(Cursor AI)
 // 功能描述：客户端信息控制器
 // 
@@ -62,7 +62,7 @@ public class TaktClientsController : TaktControllerBase
     /// <param name="id">客户端信息ID</param>
     /// <returns>客户端信息DTO</returns>
     [TaktPermission("logistics:sales:client:query", "客户端信息详情")]
-    [HttpGet("{id}")]
+    [HttpGet("{id:long}")]
     public async Task<IActionResult> GetClientByIdAsync(long id)
     {
         try
@@ -83,6 +83,8 @@ public class TaktClientsController : TaktControllerBase
     /// <summary>
     /// 获取客户端信息选项列表
     /// </summary>
+    /// <param name="plantCode">工厂代码（可选，用于按工厂过滤）</param>
+    /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
     /// <returns>下拉选项</returns>
     [TaktPermission("logistics:sales:client:query", "客户端信息选项")]
     [HttpGet("options")]

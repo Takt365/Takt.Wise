@@ -31,7 +31,7 @@ public class TaktPurchasePlan : TaktApprovalEntityBase
 {
 
     /// <summary>
-    /// 采购计划编码（租户+公司+工厂内业务唯一）
+    /// 采购计划编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 采购计划编码规则生成并展示，非手输；单据类型菜单：采购计划）
     /// </summary>
     [SugarColumn(ColumnName = "purchase_plan_code", ColumnDescription = "采购计划编码", ColumnDataType = "nvarchar", Length = 10, IsNullable = false)]
     public string PurchasePlanCode { get; set; } = string.Empty;

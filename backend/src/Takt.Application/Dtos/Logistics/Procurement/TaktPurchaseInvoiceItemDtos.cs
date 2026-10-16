@@ -92,7 +92,7 @@ public class TaktPurchaseInvoiceItemDto : TaktCompanyDtoBase
     public string? DebitCreditIndicator { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税码
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -316,7 +316,7 @@ public class TaktPurchaseInvoiceItemQueryDto : TaktPagedQuery
     public string? DebitCreditIndicator { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税码
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -552,7 +552,7 @@ public class TaktPurchaseInvoiceItemCreateDto
     public string? DebitCreditIndicator { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税码
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -822,7 +822,7 @@ public class TaktPurchaseInvoiceItemTemplateDto
     public string? DebitCreditIndicator { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税码
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -1045,7 +1045,7 @@ public class TaktPurchaseInvoiceItemImportDto
     public string? DebitCreditIndicator { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税码
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -1274,7 +1274,7 @@ public class TaktPurchaseInvoiceItemExportDto
     public string? DebitCreditIndicator { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税码
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 

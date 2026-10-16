@@ -27,7 +27,7 @@ public class TaktApsOrder : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// APS 订单编码
+    /// APS 订单编码（前端表单选择编码规则后自动通过 TaktNumbering APS订单编码规则生成并展示，非手输；单据类型菜单：APS订单）
     /// </summary>
     [SugarColumn(ColumnName = "aps_order_code", ColumnDescription = "APS订单编码", ColumnDataType = "nvarchar", Length = 12, IsNullable = false)]
     public string ApsOrderCode { get; set; } = string.Empty;

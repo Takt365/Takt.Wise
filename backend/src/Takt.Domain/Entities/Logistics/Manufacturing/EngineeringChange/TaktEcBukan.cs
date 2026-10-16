@@ -4,7 +4,7 @@
 // 文件名称：TaktEcBukan.cs
 // 创建时间：2026-06-29
 // 创建人：Takt365(Cursor AI)
-// 功能描述：设变部管课部门执行表（按实施范围去重；按成品含根物料+新物料，按机种/部管为新物料+根物料编码组）
+// 功能描述：设变部管课部门执行表（部门 D0430；内部/技术每条未作废明细都落行，其余范围要采购类型 F、仓库非 C003 且新物料有效。去重键为设变单号+机种+新物料，行号不参与；根物料为该机种下成品编码组）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -17,11 +17,11 @@ using Takt.Domain.Interfaces;
 namespace Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange;
 
 /// <summary>
-/// 设变部管课（D0430）部门执行表（去重键随实施范围变化；同键根物料写入编码组）
+/// 设变部管课（部门 D0430）执行表。内部、技术不限采购类型，每条未作废明细都落行；其余范围要采购类型 F、仓库非 C003 且新物料有效。去重键为设变单号+机种+新物料，行号不参与，根物料为该机种下成品编码组
 /// </summary>
 [SugarTable("takt_logistics_manufacturing_ec_bukan", "设变部管执行表")]
 [SugarIndex("ix_ec_bukan_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
-[SugarIndex("ix_takt_logistics_manufacturing_ec_bukan_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcCode), OrderByType.Asc, nameof(EcModelCode), OrderByType.Asc, nameof(EcDetailId), OrderByType.Asc, nameof(EcNewMaterialCode), OrderByType.Asc, true)]
+[SugarIndex("ix_takt_logistics_manufacturing_ec_bukan_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcCode), OrderByType.Asc, nameof(EcDetailId), OrderByType.Asc, nameof(EcNewMaterialCode), OrderByType.Asc, true)]
 [SugarIndex("ix_takt_logistics_manufacturing_ec_bukan_plant_code", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(PlantCode), OrderByType.Asc, false)]
 public class TaktEcBukan : TaktCompanyEntityBase, ITaktEcDeptExecEntity
 {
@@ -41,15 +41,20 @@ public class TaktEcBukan : TaktCompanyEntityBase, ITaktEcDeptExecEntity
     [SugarColumn(ColumnName = "discontinued_status", ColumnDescription = "停产状态", ColumnDataType = "nvarchar", Length = 4, IsNullable = false)]
     public string DiscontinuedStatus { get; set; } = string.Empty;
     /// <summary>
-    /// 机种编码（冗余：来自 TaktEcDetail.EcModelCode）
+    /// 机种编码组（单个或多个机种，分号分隔；ntext）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_model_code", ColumnDescription = "机种编码", Length = 40, ColumnDataType = "nvarchar", IsNullable = false)]
-    public string EcModelCode { get; set; } = string.Empty;
+    [SugarColumn(ColumnName = "ec_model_code_group", ColumnDescription = "机种编码组", ColumnDataType = "ntext", IsNullable = false)]
+    public string EcModelCodeGroup { get; set; } = string.Empty;
     /// <summary>
     /// 根物料编码组（同去重键下可见明细的根物料编码，分号分隔；ntext，同机种根物料可能很多）
     /// </summary>
     [SugarColumn(ColumnName = "ec_root_material_code_group", ColumnDescription = "根物料编码组", ColumnDataType = "ntext", IsNullable = false)]
     public string EcRootMaterialCodeGroup { get; set; } = string.Empty;
+    /// <summary>
+    /// 根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）
+    /// </summary>
+    [SugarColumn(ColumnName = "ec_root_material_description", ColumnDescription = "根物料描述", Length = 40, ColumnDataType = "nvarchar", IsNullable = false)]
+    public string EcRootMaterialDescription { get; set; } = string.Empty;
     /// <summary>
     /// 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
     /// </summary>

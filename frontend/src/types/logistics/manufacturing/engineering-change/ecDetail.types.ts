@@ -57,6 +57,11 @@ export interface EcDetail extends CompanyDtoBase {
   ecModelCode: string;
 
   /**
+   * 根物料类型（字典 logistics_materials_material_type；DictValue=FERT/HALB/ROH 等）
+   */
+  ecRootMaterialType: string;
+
+  /**
    * 根物料编码
    */
   ecRootMaterialCode?: string;
@@ -249,6 +254,11 @@ export interface EcDetailQuery extends TaktPagedQuery {
    * 机种
    */
   ecModelCode?: string;
+
+  /**
+   * 根物料类型（字典 logistics_materials_material_type；DictValue=FERT/HALB/ROH 等）
+   */
+  ecRootMaterialType?: string;
 
   /**
    * 根物料编码
@@ -467,6 +477,11 @@ export interface EcDetailCreate {
    * 机种
    */
   ecModelCode: string;
+
+  /**
+   * 根物料类型（字典 logistics_materials_material_type；DictValue=FERT/HALB/ROH 等）
+   */
+  ecRootMaterialType: string;
 
   /**
    * 根物料编码
@@ -706,6 +721,11 @@ export interface EcDetailTemplate {
   ecModelCode?: string;
 
   /**
+   * 根物料类型（字典 logistics_materials_material_type；DictValue=FERT/HALB/ROH 等）
+   */
+  ecRootMaterialType?: string;
+
+  /**
    * 根物料编码
    */
   ecRootMaterialCode?: string;
@@ -909,6 +929,11 @@ export interface EcDetailImport {
   ecModelCode?: string;
 
   /**
+   * 根物料类型（字典 logistics_materials_material_type；DictValue=FERT/HALB/ROH 等）
+   */
+  ecRootMaterialType?: string;
+
+  /**
    * 根物料编码
    */
   ecRootMaterialCode?: string;
@@ -1110,6 +1135,11 @@ export interface EcDetailExport {
    * 机种
    */
   ecModelCode: string;
+
+  /**
+   * 根物料类型（字典 logistics_materials_material_type；DictValue=FERT/HALB/ROH 等）
+   */
+  ecRootMaterialType: string;
 
   /**
    * 根物料编码

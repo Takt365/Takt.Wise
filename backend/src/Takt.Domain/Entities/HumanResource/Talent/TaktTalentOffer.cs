@@ -31,7 +31,7 @@ public class TaktTalentOffer : TaktApprovalEntityBase
     [SugarColumn(ColumnName = "job_posting_id", ColumnDescription = "职位发布ID", ColumnDataType = "bigint", IsNullable = false)]
     public long JobPostingId { get; set; }
     /// <summary>
-    /// 录用编码（租户+公司内业务编码）
+    /// 录用编码（租户+公司内业务编码；前端表单选择编码规则后自动通过 TaktNumbering 录用编码规则生成并展示，非手输；单据类型菜单：录用）
     /// </summary>
     [SugarColumn(ColumnName = "offer_code", ColumnDescription = "录用编码", ColumnDataType = "varchar", Length = 20, IsNullable = false)]
     public string OfferCode { get; set; } = string.Empty;

@@ -16,8 +16,7 @@ namespace Takt.Shared.Helpers;
 /// 规则命名与前端 regex.ts 对齐，便于前后端一致。
 /// </summary>
 /// <remarks>
-/// 正则校验失败统一使用 <c>common.validation.format.invalid</c>（{field}）；格式说明放 <c>common.tip.*</c>；字段名配合 <c>entity.*</c>。
-/// 仅含编译期不可变 <c>static readonly Regex</c> 常量，无运行时可变状态。
+/// 仅含编译期不可变的正则常量，无运行时可变状态。
 /// </remarks>
 public static class TaktRegexHelper
 {
@@ -75,11 +74,6 @@ public static class TaktRegexHelper
     /// 日本手机号位数。
     /// </summary>
     public const int PhoneJpLength = 11;
-
-    /// <summary>
-    /// 格式不正确校验 I18n 键（common.validation.format.invalid）。
-    /// </summary>
-    public const string InvalidFormatI18nKey = "common.validation.format.invalid";
 
     /// <summary>
     /// 公司默认文化 zh-CN → 手机号格式说明 I18n 键（common.tip.phone.*，表单提示用）。
@@ -439,6 +433,20 @@ public static class TaktRegexHelper
     /// 非空白字符（至少包含一个非空白字符）。
     /// </summary>
     public static readonly Regex NonWhiteSpace = new(@"\S", Opt);
+    /// <summary>
+    /// 全角字符：全角空格、全角英数字、全角标点、全角货币符。保存时命中即拒绝。
+    /// </summary>
+    public static readonly Regex FullWidth = new(@"[\u3000\uFF01-\uFF60\uFFE0-\uFFE6]", Opt);
+
+    /// <summary>
+    /// 保存文本是否含全角字符。空值视为不含。
+    /// </summary>
+    /// <param name="value">待保存文本</param>
+    /// <returns>含全角字符时为 true</returns>
+    public static bool ContainsFullWidth(string? value)
+    {
+        return !string.IsNullOrEmpty(value) && FullWidth.IsMatch(value);
+    }
 
     /// <summary>
     /// 通用匹配入口：空值返回 false，其他值按指定正则进行 Trim 后匹配。

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Accounting.Financial
 // 文件名称：TaktCompanyI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktCompany 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -415,22 +415,22 @@ public class TaktCompanyI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.company.chartofaccounts", "zh-HK", "帐目表_hk", "帐目表（字典 accounting_financial_chart_of_accounts；如 INT/TEAC）"),
 
             // entity.company.inputtaxcode
-            new TranslationSeedItem("entity.company.inputtaxcode", "en-US", "进项税码_us", "进项税码（字典 accounting_financial_tax_code）"),
+            new TranslationSeedItem("entity.company.inputtaxcode", "en-US", "进项税码_us", "进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.company.inputtaxcode
-            new TranslationSeedItem("entity.company.inputtaxcode", "ja-JP", "进项税码_jp", "进项税码（字典 accounting_financial_tax_code）"),
+            new TranslationSeedItem("entity.company.inputtaxcode", "ja-JP", "进项税码_jp", "进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.company.inputtaxcode
-            new TranslationSeedItem("entity.company.inputtaxcode", "zh-CN", "进项税码", "进项税码（字典 accounting_financial_tax_code）"),
+            new TranslationSeedItem("entity.company.inputtaxcode", "zh-CN", "进项税码", "进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.company.inputtaxcode
-            new TranslationSeedItem("entity.company.inputtaxcode", "zh-HK", "进项税码_hk", "进项税码（字典 accounting_financial_tax_code）"),
+            new TranslationSeedItem("entity.company.inputtaxcode", "zh-HK", "进项税码_hk", "进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
 
             // entity.company.outputtaxcode
-            new TranslationSeedItem("entity.company.outputtaxcode", "en-US", "销项税码_us", "销项税码（字典 accounting_financial_tax_code）"),
+            new TranslationSeedItem("entity.company.outputtaxcode", "en-US", "销项税码_us", "销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.company.outputtaxcode
-            new TranslationSeedItem("entity.company.outputtaxcode", "ja-JP", "销项税码_jp", "销项税码（字典 accounting_financial_tax_code）"),
+            new TranslationSeedItem("entity.company.outputtaxcode", "ja-JP", "销项税码_jp", "销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.company.outputtaxcode
-            new TranslationSeedItem("entity.company.outputtaxcode", "zh-CN", "销项税码", "销项税码（字典 accounting_financial_tax_code）"),
+            new TranslationSeedItem("entity.company.outputtaxcode", "zh-CN", "销项税码", "销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.company.outputtaxcode
-            new TranslationSeedItem("entity.company.outputtaxcode", "zh-HK", "销项税码_hk", "销项税码（字典 accounting_financial_tax_code）"),
+            new TranslationSeedItem("entity.company.outputtaxcode", "zh-HK", "销项税码_hk", "销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
 
             // entity.company.businessplace
             new TranslationSeedItem("entity.company.businessplace", "en-US", "营业税主体_us", "营业税主体（营业场所）"),

@@ -84,12 +84,12 @@ export interface PurchaseInquiry extends CompanyDtoBase {
   currencyCode: string;
 
   /**
-   * 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
   /**
-   * 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+   * 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
    */
   taxRate: number;
 
@@ -244,12 +244,12 @@ export interface PurchaseInquiryQuery extends TaktPagedQuery {
   currencyCode?: string;
 
   /**
-   * 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
   /**
-   * 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+   * 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
    */
   taxRate?: number;
 
@@ -353,9 +353,14 @@ export interface PurchaseInquiryCreate {
   plantCode: string;
 
   /**
-   * 采购询价编码（租户+公司+工厂内业务唯一）
+   * 采购询价编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 采购询价编码规则生成并展示，非手输；单据类型菜单：采购询价）
    */
   purchaseInquiryCode: string;
+
+  /**
+   * 编码规则编码（新增时选择采购询价编码规则后取号；不落库）
+   */
+  numberingRuleCode?: string;
 
   /**
    * 询价日期
@@ -408,12 +413,12 @@ export interface PurchaseInquiryCreate {
   currencyCode: string;
 
   /**
-   * 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
   /**
-   * 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+   * 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
    */
   taxRate: number;
 
@@ -606,12 +611,12 @@ export interface PurchaseInquiryTemplate {
   currencyCode?: string;
 
   /**
-   * 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
   /**
-   * 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+   * 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
    */
   taxRate?: number;
 
@@ -765,12 +770,12 @@ export interface PurchaseInquiryImport {
   currencyCode?: string;
 
   /**
-   * 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
   /**
-   * 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+   * 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
    */
   taxRate?: number;
 
@@ -924,12 +929,12 @@ export interface PurchaseInquiryExport {
   currencyCode: string;
 
   /**
-   * 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
   /**
-   * 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+   * 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
    */
   taxRate: number;
 

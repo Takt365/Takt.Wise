@@ -16,8 +16,8 @@ export default {
       title: "节拍智控",
       name: "节拍智控·TaktWise",
       productcode: "TP-MES-PRO",
-      slogan: "节拍驱动智造",
-      tagline: "实用 · 简洁 · 灵活",
+      slogan: "让产线，踩准客户的节拍。",//"节拍驱动智造",
+      tagline: "算节拍 · 看平衡 · 调产线",//"实用 · 简洁 · 灵活",
     },
     api: {
       connect: {

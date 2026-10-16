@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Aps
 // 文件名称：TaktApsOrderI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktApsOrder 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktApsOrderI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.apsorder._self", "zh-HK", "APS 排程订单信息_hk", "实体名称"),
 
             // entity.apsorder.code
-            new TranslationSeedItem("entity.apsorder.code", "en-US", "APS订单编码_us", "APS 订单编码"),
+            new TranslationSeedItem("entity.apsorder.code", "en-US", "APS订单编码_us", "APS 订单编码（前端表单选择编码规则后自动通过 TaktNumbering APS订单编码规则生成并展示，非手输；单据类型菜单：APS订单）"),
             // entity.apsorder.code
-            new TranslationSeedItem("entity.apsorder.code", "ja-JP", "APS订单编码_jp", "APS 订单编码"),
+            new TranslationSeedItem("entity.apsorder.code", "ja-JP", "APS订单编码_jp", "APS 订单编码（前端表单选择编码规则后自动通过 TaktNumbering APS订单编码规则生成并展示，非手输；单据类型菜单：APS订单）"),
             // entity.apsorder.code
-            new TranslationSeedItem("entity.apsorder.code", "zh-CN", "APS订单编码", "APS 订单编码"),
+            new TranslationSeedItem("entity.apsorder.code", "zh-CN", "APS订单编码", "APS 订单编码（前端表单选择编码规则后自动通过 TaktNumbering APS订单编码规则生成并展示，非手输；单据类型菜单：APS订单）"),
             // entity.apsorder.code
-            new TranslationSeedItem("entity.apsorder.code", "zh-HK", "APS订单编码_hk", "APS 订单编码"),
+            new TranslationSeedItem("entity.apsorder.code", "zh-HK", "APS订单编码_hk", "APS 订单编码（前端表单选择编码规则后自动通过 TaktNumbering APS订单编码规则生成并展示，非手输；单据类型菜单：APS订单）"),
 
             // entity.apsorder.plannedorderid
             new TranslationSeedItem("entity.apsorder.plannedorderid", "en-US", "来源计划订单ID_us", "来源计划订单 ID"),

@@ -104,7 +104,7 @@ export interface PurchaseRequestItem extends CompanyDtoBase {
   purchaseRequestUnitPrice: number;
 
   /**
-   * 税码（冗余：按 PurchaseRequestId 取 TaktPurchaseRequest.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 PurchaseRequestId 取 TaktPurchaseRequest.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -264,7 +264,7 @@ export interface PurchaseRequestItemQuery extends TaktPagedQuery {
   purchaseRequestUnitPrice?: number;
 
   /**
-   * 税码（冗余：按 PurchaseRequestId 取 TaktPurchaseRequest.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 PurchaseRequestId 取 TaktPurchaseRequest.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -448,7 +448,7 @@ export interface PurchaseRequestItemCreate {
   purchaseRequestUnitPrice: number;
 
   /**
-   * 税码（冗余：按 PurchaseRequestId 取 TaktPurchaseRequest.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 PurchaseRequestId 取 TaktPurchaseRequest.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -651,7 +651,7 @@ export interface PurchaseRequestItemTemplate {
   purchaseRequestUnitPrice?: number;
 
   /**
-   * 税码（冗余：按 PurchaseRequestId 取 TaktPurchaseRequest.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 PurchaseRequestId 取 TaktPurchaseRequest.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -820,7 +820,7 @@ export interface PurchaseRequestItemImport {
   purchaseRequestUnitPrice?: number;
 
   /**
-   * 税码（冗余：按 PurchaseRequestId 取 TaktPurchaseRequest.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 PurchaseRequestId 取 TaktPurchaseRequest.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -989,7 +989,7 @@ export interface PurchaseRequestItemExport {
   purchaseRequestUnitPrice: number;
 
   /**
-   * 税码（冗余：按 PurchaseRequestId 取 TaktPurchaseRequest.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 PurchaseRequestId 取 TaktPurchaseRequest.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 

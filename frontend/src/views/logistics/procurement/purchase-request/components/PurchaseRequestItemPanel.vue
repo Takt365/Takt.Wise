@@ -267,7 +267,7 @@
       <a-form-item :label="pi.queryLabel('taxCode')">
         <TaktSelect
           v-model:value="advancedQueryForm.taxCode"
-          dict-type="accounting_financial_tax_code"
+          api-url="TaktTaxCodes/options"
           :placeholder="pi.queryPh('taxCode', 'select')"
           allow-clear
         />

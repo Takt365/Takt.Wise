@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.HumanResource.Compensation
 // 文件名称：TaktSalaryItemI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSalaryItem 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktSalaryItemI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.salaryitem._self", "zh-HK", "薪资项目信息_hk", "实体名称"),
 
             // entity.salaryitem.itemcode
-            new TranslationSeedItem("entity.salaryitem.itemcode", "en-US", "项目编码_us", "项目编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.salaryitem.itemcode", "en-US", "项目编码_us", "项目编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 项目编码规则生成并展示，非手输；单据类型菜单：薪资项目）"),
             // entity.salaryitem.itemcode
-            new TranslationSeedItem("entity.salaryitem.itemcode", "ja-JP", "项目编码_jp", "项目编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.salaryitem.itemcode", "ja-JP", "项目编码_jp", "项目编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 项目编码规则生成并展示，非手输；单据类型菜单：薪资项目）"),
             // entity.salaryitem.itemcode
-            new TranslationSeedItem("entity.salaryitem.itemcode", "zh-CN", "项目编码", "项目编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.salaryitem.itemcode", "zh-CN", "项目编码", "项目编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 项目编码规则生成并展示，非手输；单据类型菜单：薪资项目）"),
             // entity.salaryitem.itemcode
-            new TranslationSeedItem("entity.salaryitem.itemcode", "zh-HK", "项目编码_hk", "项目编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.salaryitem.itemcode", "zh-HK", "项目编码_hk", "项目编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 项目编码规则生成并展示，非手输；单据类型菜单：薪资项目）"),
 
             // entity.salaryitem.itemname
             new TranslationSeedItem("entity.salaryitem.itemname", "en-US", "项目名称_us", "项目名称"),

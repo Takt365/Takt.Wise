@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Operation
 // 文件名称：TaktFqcDefectHandlingI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktFqcDefectHandling 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktFqcDefectHandlingI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.fqcdefecthandling._self", "zh-HK", "FQC出货检验不良处理记录信息_hk", "实体名称"),
 
             // entity.fqcdefecthandling.code
-            new TranslationSeedItem("entity.fqcdefecthandling.code", "en-US", "FQC不良处理编码_us", "FQC不良处理编码"),
+            new TranslationSeedItem("entity.fqcdefecthandling.code", "en-US", "FQC不良处理编码_us", "FQC不良处理编码（前端表单选择编码规则后自动通过 TaktNumbering FQC不良处理编码规则生成并展示，非手输；单据类型菜单：入库检验）"),
             // entity.fqcdefecthandling.code
-            new TranslationSeedItem("entity.fqcdefecthandling.code", "ja-JP", "FQC不良处理编码_jp", "FQC不良处理编码"),
+            new TranslationSeedItem("entity.fqcdefecthandling.code", "ja-JP", "FQC不良处理编码_jp", "FQC不良处理编码（前端表单选择编码规则后自动通过 TaktNumbering FQC不良处理编码规则生成并展示，非手输；单据类型菜单：入库检验）"),
             // entity.fqcdefecthandling.code
-            new TranslationSeedItem("entity.fqcdefecthandling.code", "zh-CN", "FQC不良处理编码", "FQC不良处理编码"),
+            new TranslationSeedItem("entity.fqcdefecthandling.code", "zh-CN", "FQC不良处理编码", "FQC不良处理编码（前端表单选择编码规则后自动通过 TaktNumbering FQC不良处理编码规则生成并展示，非手输；单据类型菜单：入库检验）"),
             // entity.fqcdefecthandling.code
-            new TranslationSeedItem("entity.fqcdefecthandling.code", "zh-HK", "FQC不良处理编码_hk", "FQC不良处理编码"),
+            new TranslationSeedItem("entity.fqcdefecthandling.code", "zh-HK", "FQC不良处理编码_hk", "FQC不良处理编码（前端表单选择编码规则后自动通过 TaktNumbering FQC不良处理编码规则生成并展示，非手输；单据类型菜单：入库检验）"),
 
             // entity.fqcdefecthandling.fqcorderitemid
             new TranslationSeedItem("entity.fqcdefecthandling.fqcorderitemid", "en-US", "FQC检验单明细ID_us", "FQC检验单明细 ID（选项 TaktFqcOrderItems/options；DictValue=Id）"),

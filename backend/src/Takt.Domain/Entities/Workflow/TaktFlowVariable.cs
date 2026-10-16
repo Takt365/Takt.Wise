@@ -19,7 +19,7 @@ namespace Takt.Domain.Entities.Workflow;
 /// </summary>
 [SugarTable("takt_workflow_variable", "流程变量表")]
 [SugarIndex("ix_flow_variable_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
-[SugarIndex("ix_flow_variable_instance_name", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(InstanceId), OrderByType.Asc, nameof(VariableName), OrderByType.Asc, true)]
+[SugarIndex("ix_flow_variable_instance_name_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(InstanceId), OrderByType.Asc, nameof(VariableName), OrderByType.Asc, true)]
 [SugarIndex("ix_flow_variable_plant_code", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(PlantCode), OrderByType.Asc, false)]
 public class TaktFlowVariable : TaktCompanyEntityBase
 {

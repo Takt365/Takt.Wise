@@ -240,8 +240,21 @@ const SOURCE_EC_INPUT_COLUMN_WIDTH: Partial<Record<SourceEcInputListField, numbe
   sourceTitle: 180,
   sourceStatus: 120,
   sourceIssueDate: 120,
-  sourceTcjOwner: 120,
   detailCount: 90,
+}
+
+/**
+ * 表格日期统一为 yyyy-MM-dd
+ * @param value 单元格原值
+ * @returns {string} 日期文本
+ */
+function formatSourceEcTableDate(value: unknown): string {
+  if (value == null || value === '') {
+    return ''
+  }
+  const text = String(value).trim()
+  const matched = /^(\d{4}-\d{2}-\d{2})/.exec(text)
+  return matched?.[1] ?? text
 }
 
 /**
@@ -257,8 +270,13 @@ function buildSourceEcInputSourceColumn(field: SourceEcInputSourceField) {
     width,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: EcGijutsuSourceEcInputItem }) =>
-      getSourceEcInputField(record, field) ?? '',
+    customRender: ({ record }: { record: EcGijutsuSourceEcInputItem }) => {
+      const value = getSourceEcInputField(record, field)
+      if (field.endsWith('Date')) {
+        return formatSourceEcTableDate(value)
+      }
+      return value ?? ''
+    },
   }
   if (field === 'sourceEcCode') {
     return {

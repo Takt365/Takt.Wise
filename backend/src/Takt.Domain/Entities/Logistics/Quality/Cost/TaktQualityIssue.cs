@@ -28,7 +28,7 @@ public class TaktQualityIssue : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// 品质问题编码（唯一，如：QF-2026-0001）
+    /// 品质问题编码（租户+公司+工厂内唯一，如：QF-2026-0001；前端表单选择编码规则后自动通过 TaktNumbering 品质问题编码规则生成并展示，非手输；单据类型菜单：品质问题）
     /// </summary>
     [SugarColumn(ColumnName = "quality_issue_code", ColumnDescription = "品质问题编码", Length = 20, ColumnDataType = "nvarchar", IsNullable = false)]
     public string QualityIssueCode { get; set; } = string.Empty;

@@ -33,7 +33,7 @@
       </a-col>
       <a-col :span="12"><a-form-item :label="pi.label('ecModelCode')"><a-input v-model:value="formState.ecModelCode" disabled /></a-form-item></a-col>
       <a-col :span="24"><a-form-item :label="pi.label('ecRootMaterialCodeGroup')"><a-textarea v-model:value="formState.ecRootMaterialCodeGroup" :rows="2" disabled /></a-form-item></a-col>
-      <a-col :span="12"><a-form-item :label="pi.label('ecRootMaterialDescription')"><a-input v-model:value="formState.ecRootMaterialDescription" disabled /></a-form-item></a-col>
+      <a-col v-if="showRootMaterialDescription" :span="12"><a-form-item :label="pi.label('ecRootMaterialDescription')"><a-input v-model:value="formState.ecRootMaterialDescription" disabled /></a-form-item></a-col>
       <a-col :span="12"><a-form-item name="isImplemented" :label="pi.label('isImplemented')"><TaktSelect v-model:value="formState.isImplemented" dict-type="sys_yes_no" /></a-form-item></a-col>
       <a-col :span="12"><a-form-item name="scheduledDate" :label="pi.label('scheduledDate')"><a-date-picker v-model:value="formState.scheduledDate" value-format="YYYY-MM-DD" class="w-full" /></a-form-item></a-col>
       <a-col :span="12"><a-form-item name="scheduledBatch" :label="pi.label('scheduledBatch')"><a-input v-model:value="formState.scheduledBatch" /></a-form-item></a-col>
@@ -70,6 +70,11 @@
           <TaktSelect v-model:value="formState.ecScope" dict-type="logistics_manufacturing_ec_scope_category" disabled />
         </a-form-item>
       </a-col>
+      <a-col :span="12">
+        <a-form-item :label="pi.label('ecDeptScope')">
+          <TaktSelect v-model:value="formState.ecDeptScope" dict-type="logistics_manufacturing_ec_dept_scope_category" disabled />
+        </a-form-item>
+      </a-col>
       <a-col :span="12"><a-form-item :label="pi.label('ecDetailId')"><a-input v-model:value="formState.ecDetailId" disabled /></a-form-item></a-col>
       <a-col :span="12">
         <a-form-item :label="pi.label('isObsolete')">
@@ -84,6 +89,7 @@
 
 <script setup lang="ts">
 import type { EcSeikan, EcSeikanUpdate } from '@/types/logistics/manufacturing/engineering-change/ecSeikan.types'
+import { taktShowEcRootMaterialDescription } from '@/constants/logistics/ecScope.constants'
 import { useEcDeptViewI18n } from '../../composables/useEcDeptViewI18n'
 import { useEcDeptViewFormRules } from '../../composables/useEcDeptViewFormRules'
 
@@ -118,6 +124,7 @@ const formState = reactive<{
   deptCode?: string;
   deptName?: string;
   ecScope?: number;
+  ecDeptScope?: number;
   isObsolete: number;
   remark?: string;
 }>({
@@ -126,6 +133,9 @@ const formState = reactive<{
   discontinuedStatus: 'Z0',
   isObsolete: 0,
 });
+
+/** 仅全仕向且按成品显示根物料描述 */
+const showRootMaterialDescription = computed(() => taktShowEcRootMaterialDescription(formState.ecScope, formState.ecDeptScope))
 
 watch(() => props.formData, (val) => {
   if (!val) {
@@ -157,6 +167,7 @@ watch(() => props.formData, (val) => {
     deptCode: val.deptCode,
     deptName: val.deptName,
     ecScope: val.ecScope,
+    ecDeptScope: val.ecDeptScope,
     isObsolete: val.isObsolete ?? 0,
     remark: val.remark,
   });
@@ -201,6 +212,7 @@ function resetFields() {
     deptCode: '',
     deptName: '',
     ecScope: undefined,
+    ecDeptScope: undefined,
     isObsolete: 0,
     remark: undefined,
   });

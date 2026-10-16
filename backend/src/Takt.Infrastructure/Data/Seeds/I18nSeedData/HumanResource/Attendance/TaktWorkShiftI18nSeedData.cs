@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.HumanResource.Attendance
 // 文件名称：TaktWorkShiftI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktWorkShift 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktWorkShiftI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.workshift._self", "zh-HK", "班次定义信息_hk", "实体名称"),
 
             // entity.workshift.shiftcode
-            new TranslationSeedItem("entity.workshift.shiftcode", "en-US", "班次编码_us", "班次编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.workshift.shiftcode", "en-US", "班次编码_us", "班次编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 班次编码规则生成并展示，非手输；单据类型菜单：班次管理）"),
             // entity.workshift.shiftcode
-            new TranslationSeedItem("entity.workshift.shiftcode", "ja-JP", "班次编码_jp", "班次编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.workshift.shiftcode", "ja-JP", "班次编码_jp", "班次编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 班次编码规则生成并展示，非手输；单据类型菜单：班次管理）"),
             // entity.workshift.shiftcode
-            new TranslationSeedItem("entity.workshift.shiftcode", "zh-CN", "班次编码", "班次编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.workshift.shiftcode", "zh-CN", "班次编码", "班次编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 班次编码规则生成并展示，非手输；单据类型菜单：班次管理）"),
             // entity.workshift.shiftcode
-            new TranslationSeedItem("entity.workshift.shiftcode", "zh-HK", "班次编码_hk", "班次编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.workshift.shiftcode", "zh-HK", "班次编码_hk", "班次编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 班次编码规则生成并展示，非手输；单据类型菜单：班次管理）"),
 
             // entity.workshift.shiftname
             new TranslationSeedItem("entity.workshift.shiftname", "en-US", "班次名称_us", "班次名称"),

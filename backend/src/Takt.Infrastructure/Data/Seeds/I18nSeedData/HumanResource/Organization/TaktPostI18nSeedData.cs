@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.HumanResource.Organization
 // 文件名称：TaktPostI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPost 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktPostI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.post._self", "zh-HK", "岗位信息_hk", "实体名称"),
 
             // entity.post.code
-            new TranslationSeedItem("entity.post.code", "en-US", "岗位编码_us", "岗位编码（唯一索引：租户+公司内唯一，见 ix_post_code_unique）"),
+            new TranslationSeedItem("entity.post.code", "en-US", "岗位编码_us", "岗位编码（唯一索引：租户+公司内唯一，见 ix_post_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 岗位编码规则生成并展示，非手输；单据类型菜单：岗位管理）"),
             // entity.post.code
-            new TranslationSeedItem("entity.post.code", "ja-JP", "岗位编码_jp", "岗位编码（唯一索引：租户+公司内唯一，见 ix_post_code_unique）"),
+            new TranslationSeedItem("entity.post.code", "ja-JP", "岗位编码_jp", "岗位编码（唯一索引：租户+公司内唯一，见 ix_post_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 岗位编码规则生成并展示，非手输；单据类型菜单：岗位管理）"),
             // entity.post.code
-            new TranslationSeedItem("entity.post.code", "zh-CN", "岗位编码", "岗位编码（唯一索引：租户+公司内唯一，见 ix_post_code_unique）"),
+            new TranslationSeedItem("entity.post.code", "zh-CN", "岗位编码", "岗位编码（唯一索引：租户+公司内唯一，见 ix_post_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 岗位编码规则生成并展示，非手输；单据类型菜单：岗位管理）"),
             // entity.post.code
-            new TranslationSeedItem("entity.post.code", "zh-HK", "岗位编码_hk", "岗位编码（唯一索引：租户+公司内唯一，见 ix_post_code_unique）"),
+            new TranslationSeedItem("entity.post.code", "zh-HK", "岗位编码_hk", "岗位编码（唯一索引：租户+公司内唯一，见 ix_post_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 岗位编码规则生成并展示，非手输；单据类型菜单：岗位管理）"),
 
             // entity.post.name
             new TranslationSeedItem("entity.post.name", "en-US", "岗位名称_us", "岗位名称"),

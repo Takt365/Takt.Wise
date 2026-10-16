@@ -160,20 +160,22 @@
                 :label="ai.label('accessUrl')"
                 name="accessUrl"
               >
-                <TaktUploadFile
-                  tabs-type="files"
-                  :files-auto-upload="true"
-                  :files-multiple="false"
-                  :files-max-count="1"
-                  :files-disabled="loading || fileUploading"
-                  :files-max-size="taktFileMaxSizeMb"
-                  :files-accept="taktFileAccept"
-                  :files-hint="t(`${ATTACHMENT_UPLOAD_I18N}.hint`, { max: taktFileMaxSizeMb })"
-                  :files-before-upload="handleFilesBeforeUpload"
-                  :files-custom-request="handleFilesCustomRequest"
-                  v-model:files-file-list="filesFileList"
-                  @files:remove="handleFileRemove"
-                />
+                <a-form-item-rest>
+                  <TaktUploadFile
+                    tabs-type="files"
+                    :files-auto-upload="true"
+                    :files-multiple="false"
+                    :files-max-count="1"
+                    :files-disabled="loading || fileUploading"
+                    :files-max-size="taktFileMaxSizeMb"
+                    :files-accept="taktFileAccept"
+                    :files-hint="t(`${ATTACHMENT_UPLOAD_I18N}.hint`, { max: taktFileMaxSizeMb })"
+                    :files-before-upload="handleFilesBeforeUpload"
+                    :files-custom-request="handleFilesCustomRequest"
+                    v-model:files-file-list="filesFileList"
+                    @files:remove="handleFileRemove"
+                  />
+                </a-form-item-rest>
                 <a-input
                   v-if="formState.accessUrl"
                   v-model:value="formState.accessUrl"

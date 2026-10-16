@@ -17,19 +17,25 @@ export interface EcKakunin extends CompanyDtoBase {
   lineNumber: number;
   ecModelCode: string;
   ecOldMaterialCode?: string;
+  ecOldMaterialDescription?: string;
+  ecOldPurchaseType?: string;
   ecNewMaterialCode?: string;
-  ecOldPurchaseType: number;
+  ecNewMaterialDescription?: string;
+  ecNewPurchaseType?: string;
   ecOldRequiresInspection: number;
-  ecNewPurchaseType: number;
   ecNewRequiresInspection: number;
 }
 
 export interface EcKakuninQuery extends TaktPagedQuery {
   ecCode?: string;
+  cultureCode?: string;
   ecModelCode?: string;
+  ecOldMaterialCode?: string;
+  ecNewMaterialCode?: string;
+  ecOldPurchaseType?: string;
+  ecNewPurchaseType?: string;
   ecOldRequiresInspection?: number;
   ecNewRequiresInspection?: number;
-  ecNewMaterialCode?: string;
 }
 
 export interface EcKakuninUpdate {

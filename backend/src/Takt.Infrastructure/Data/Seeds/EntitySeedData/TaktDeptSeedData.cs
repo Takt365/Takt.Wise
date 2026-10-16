@@ -342,7 +342,7 @@ public class TaktDeptSeedData : ITaktSeedDataCoordinator
         Acc((await Seed("D0622", "自插", "AI", 2, d0620.Id, 2)).IsInserted);
         Acc((await Seed("D0623", "修正", "REW", 2, d0620.Id, 3)).IsInserted);
         Acc((await Seed("D0624", "手插", "MI", 2, d0620.Id, 4)).IsInserted);
-        Acc((await Seed("D0625", "物料", "MTL", 1, d0620.Id, 5)).IsInserted);
+        Acc((await Seed("D0625", "电子物料", "MTL", 1, d0620.Id, 5)).IsInserted);
         Acc((await Seed("D0626", "制造2课-间接", "MFG2I", 2, d0620.Id, 6)).IsInserted);
         Acc((await Seed("D0710", "技术课", "TEC", 2, d0700.Id, 1)).IsInserted);
         Acc((await Seed("D0810", "受检课", "IQC", 2, d0800.Id, 1)).IsInserted);

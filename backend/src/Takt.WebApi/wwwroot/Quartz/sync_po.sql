@@ -46,6 +46,23 @@ IF OBJECT_ID('tempdb..#item_delta') IS NOT NULL DROP TABLE #item_delta;
 IF OBJECT_ID('tempdb..#hdr_soft') IS NOT NULL DROP TABLE #hdr_soft;
 IF OBJECT_ID('tempdb..#item_soft') IS NOT NULL DROP TABLE #item_soft;
 
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_purchase_order', N'purchase_order_type') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_order] ADD [purchase_order_type] NVARCHAR(20) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_purchase_order', N'purchase_order_type') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_purchase_order] ADD [purchase_order_type] NVARCHAR(20) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_purchase_order', N'payment_terms') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_order] ADD [payment_terms] NVARCHAR(40) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_purchase_order', N'payment_terms') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_purchase_order] ADD [payment_terms] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_purchase_order', N'pricing_procedure') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_order] ADD [pricing_procedure] NVARCHAR(20) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_purchase_order', N'pricing_procedure') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_purchase_order] ADD [pricing_procedure] NVARCHAR(20) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_purchase_order', N'pricing_condition_code') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_order] ADD [pricing_condition_code] NVARCHAR(20) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_purchase_order', N'pricing_condition_code') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_purchase_order] ADD [pricing_condition_code] NVARCHAR(20) NULL;
+
 CREATE TABLE #hdr (
   [rn] INT, [id] BIGINT,
   [company_code] NVARCHAR(4), [plant_code] NVARCHAR(4), [tenant_code] NVARCHAR(3), [culture_code] NVARCHAR(5),
@@ -54,6 +71,8 @@ CREATE TABLE #hdr (
   [supplier_code] NVARCHAR(10), [supplier_name1] NVARCHAR(140),
   [order_date] DATETIME, [required_arrival_date] DATETIME, [actual_arrival_date] DATETIME,
   [purchase_group] NVARCHAR(3),
+  [purchase_order_type] NVARCHAR(20), [payment_terms] NVARCHAR(40),
+  [pricing_procedure] NVARCHAR(20), [pricing_condition_code] NVARCHAR(20),
   [total_quantity] DECIMAL(18,4), [total_amount] DECIMAL(18,2), [discount_amount] DECIMAL(18,2),
   [currency_code] NVARCHAR(3), [exchange_rate] DECIMAL(18,5),
   [tax_code] NVARCHAR(4), [tax_rate] INT, [tax_amount] DECIMAL(18,2), [actual_amount] DECIMAL(18,2),
@@ -103,6 +122,7 @@ SELECT S.rn, @base_id + S.rn,
   S.[supplier_code], S.[supplier_name1],
   S.[order_date], S.[required_arrival_date], S.[actual_arrival_date],
   S.[purchase_group],
+  S.[purchase_order_type], S.[payment_terms], S.[pricing_procedure], S.[pricing_condition_code],
   S.[total_quantity], S.[total_amount], S.[discount_amount],
   S.[currency_code], S.[exchange_rate],
   S.[tax_code], S.[tax_rate], S.[tax_amount], S.[actual_amount],
@@ -130,6 +150,10 @@ FROM (
       TRY_CAST(R.[required_arrival_date] AS DATETIME) AS [required_arrival_date],
       TRY_CAST(R.[actual_arrival_date] AS DATETIME) AS [actual_arrival_date],
       NULLIF(LEFT(LTRIM(RTRIM(R.[purchase_group])), 3), N'') AS [purchase_group],
+      NULLIF(LEFT(LTRIM(RTRIM(R.[purchase_order_type])), 20), N'') AS [purchase_order_type],
+      NULLIF(LEFT(LTRIM(RTRIM(R.[payment_terms])), 40), N'') AS [payment_terms],
+      NULLIF(LEFT(LTRIM(RTRIM(R.[pricing_procedure])), 20), N'') AS [pricing_procedure],
+      NULLIF(LEFT(LTRIM(RTRIM(R.[pricing_condition_code])), 20), N'') AS [pricing_condition_code],
       ROUND(COALESCE(TRY_CAST(R.[total_quantity] AS DECIMAL(18,8)), 0), 4) AS [total_quantity],
       ROUND(COALESCE(TRY_CAST(R.[total_amount] AS DECIMAL(18,8)), 0), 2) AS [total_amount],
       ROUND(COALESCE(TRY_CAST(R.[discount_amount] AS DECIMAL(18,8)), 0), 2) AS [discount_amount],
@@ -248,6 +272,10 @@ WHEN MATCHED AND (
   OR ISNULL(T.[required_arrival_date],CAST('1900-01-01' AS DATETIME))<>ISNULL(S.[required_arrival_date],CAST('1900-01-01' AS DATETIME))
   OR ISNULL(T.[actual_arrival_date],CAST('1900-01-01' AS DATETIME))<>ISNULL(S.[actual_arrival_date],CAST('1900-01-01' AS DATETIME))
   OR ISNULL(T.[purchase_group],N'')<>ISNULL(S.[purchase_group],N'')
+  OR ISNULL(T.[purchase_order_type],N'')<>ISNULL(S.[purchase_order_type],N'')
+  OR ISNULL(T.[payment_terms],N'')<>ISNULL(S.[payment_terms],N'')
+  OR ISNULL(T.[pricing_procedure],N'')<>ISNULL(S.[pricing_procedure],N'')
+  OR ISNULL(T.[pricing_condition_code],N'')<>ISNULL(S.[pricing_condition_code],N'')
   OR T.[total_quantity]<>S.[total_quantity] OR T.[total_amount]<>S.[total_amount] OR T.[discount_amount]<>S.[discount_amount]
   OR T.[currency_code]<>S.[currency_code] OR T.[exchange_rate]<>S.[exchange_rate]
   OR ISNULL(T.[tax_code],N'')<>ISNULL(S.[tax_code],N'') OR T.[tax_rate]<>S.[tax_rate]
@@ -273,6 +301,10 @@ WHEN MATCHED AND (
   T.[required_arrival_date]=S.[required_arrival_date],
   T.[actual_arrival_date]=S.[actual_arrival_date],
   T.[purchase_group]=S.[purchase_group],
+  T.[purchase_order_type]=S.[purchase_order_type],
+  T.[payment_terms]=S.[payment_terms],
+  T.[pricing_procedure]=S.[pricing_procedure],
+  T.[pricing_condition_code]=S.[pricing_condition_code],
   T.[total_quantity]=S.[total_quantity],
   T.[total_amount]=S.[total_amount],
   T.[discount_amount]=S.[discount_amount],
@@ -301,8 +333,8 @@ WHEN MATCHED AND (
   T.[deleted_by]=S.[deleted_by],
   T.[deleted_at]=S.[deleted_at]
 WHEN NOT MATCHED THEN
-  INSERT ([id],[plant_code],[purchase_order_code],[purchase_request_id],[purchase_request_code],[supplier_code],[supplier_name1],[order_date],[required_arrival_date],[actual_arrival_date],[purchase_group],[total_quantity],[total_amount],[discount_amount],[currency_code],[exchange_rate],[tax_code],[tax_rate],[tax_amount],[actual_amount],[received_quantity],[received_amount],[paid_amount],[payment_method],[delivery_method],[delivery_address],[order_status],[delivery_status],[tenant_code],[company_code],[culture_code],[ext_field],[remark],[created_by],[created_at],[updated_by],[updated_at],[is_deleted],[deleted_by],[deleted_at])
-  VALUES (S.[id],S.[plant_code],S.[purchase_order_code],S.[purchase_request_id],S.[purchase_request_code],S.[supplier_code],S.[supplier_name1],S.[order_date],S.[required_arrival_date],S.[actual_arrival_date],S.[purchase_group],S.[total_quantity],S.[total_amount],S.[discount_amount],S.[currency_code],S.[exchange_rate],S.[tax_code],S.[tax_rate],S.[tax_amount],S.[actual_amount],S.[received_quantity],S.[received_amount],S.[paid_amount],S.[payment_method],S.[delivery_method],S.[delivery_address],S.[order_status],S.[delivery_status],S.[tenant_code],S.[company_code],S.[culture_code],S.[ext_field],S.[remark],COALESCE(S.[created_by],@sync_user_id),COALESCE(S.[created_at],@now),S.[updated_by],S.[updated_at],S.[is_deleted],S.[deleted_by],S.[deleted_at])
+  INSERT ([id],[plant_code],[purchase_order_code],[purchase_request_id],[purchase_request_code],[supplier_code],[supplier_name1],[order_date],[required_arrival_date],[actual_arrival_date],[purchase_group],[purchase_order_type],[payment_terms],[pricing_procedure],[pricing_condition_code],[total_quantity],[total_amount],[discount_amount],[currency_code],[exchange_rate],[tax_code],[tax_rate],[tax_amount],[actual_amount],[received_quantity],[received_amount],[paid_amount],[payment_method],[delivery_method],[delivery_address],[order_status],[delivery_status],[tenant_code],[company_code],[culture_code],[ext_field],[remark],[created_by],[created_at],[updated_by],[updated_at],[is_deleted],[deleted_by],[deleted_at])
+  VALUES (S.[id],S.[plant_code],S.[purchase_order_code],S.[purchase_request_id],S.[purchase_request_code],S.[supplier_code],S.[supplier_name1],S.[order_date],S.[required_arrival_date],S.[actual_arrival_date],S.[purchase_group],S.[purchase_order_type],S.[payment_terms],S.[pricing_procedure],S.[pricing_condition_code],S.[total_quantity],S.[total_amount],S.[discount_amount],S.[currency_code],S.[exchange_rate],S.[tax_code],S.[tax_rate],S.[tax_amount],S.[actual_amount],S.[received_quantity],S.[received_amount],S.[paid_amount],S.[payment_method],S.[delivery_method],S.[delivery_address],S.[order_status],S.[delivery_status],S.[tenant_code],S.[company_code],S.[culture_code],S.[ext_field],S.[remark],COALESCE(S.[created_by],@sync_user_id),COALESCE(S.[created_at],@now),S.[updated_by],S.[updated_at],S.[is_deleted],S.[deleted_by],S.[deleted_at])
 OUTPUT S.rn, $action, INSERTED.[id], INSERTED.[plant_code], INSERTED.[purchase_order_code], INSERTED.[supplier_code]
 INTO #hdr_delta (rn, oper_type, id, [plant_code], [purchase_order_code], [supplier_code]);
   SET @dml_n = @@ROWCOUNT;

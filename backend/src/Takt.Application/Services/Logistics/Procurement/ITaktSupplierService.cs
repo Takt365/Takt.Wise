@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Procurement
 // 文件名称：ITaktSupplierService.cs
-// 创建时间：2026-08-23
+// 创建时间：2026-10-14
 // 创建人：Takt365(Cursor AI)
 // 功能描述：供货商信息应用服务接口
 // 

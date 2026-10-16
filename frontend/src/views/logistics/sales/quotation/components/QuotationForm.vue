@@ -57,16 +57,27 @@
             </a-col>
             <a-col :span="12">
               <a-form-item
+                :label="t('common.page.form.numberingRule')"
+                name="numberingRuleCode"
+              >
+                <TaktSelect
+                  v-model:value="formState.numberingRuleCode"
+                  api-url="TaktNumberings/options"
+                  :api-params="{ documentType: '销售报价' }"
+                  :placeholder="t('common.page.form.placeholder.selectonly')"
+                  :disabled="!!formData?.salesQuotationId || loading"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
                 :label="pi.label('salesQuotationCode')"
                 name="salesQuotationCode"
               >
                 <a-input
                   v-model:value="formState.salesQuotationCode"
-                  :placeholder="pi.ph('salesQuotationCode')"
-                  show-count
-                  :maxlength="20"
-                  allow-clear
-                  :disabled="!!formData?.salesQuotationId"
+                  :placeholder="t('common.page.form.numberingCodePreview')"
+                  disabled
                 />
               </a-form-item>
             </a-col>
@@ -240,7 +251,7 @@
               >
                 <TaktSelect
                   v-model:value="formState.taxCode"
-                  dict-type="accounting_financial_tax_code"
+                  api-url="TaktTaxCodes/options"
                   :placeholder="pi.ph('taxCode')"
                   :disabled="!!formData?.salesQuotationId"
                 />
@@ -251,10 +262,10 @@
                 :label="pi.label('taxRate')"
                 name="taxRate"
               >
-                <TaktSelect
+                <a-input-number
                   v-model:value="formState.taxRate"
-                  dict-type="accounting_financial_tax_code"
                   :placeholder="pi.ph('taxRate')"
+                  style="width: 100%"
                 />
               </a-form-item>
             </a-col>
@@ -521,6 +532,7 @@
 import { useI18n } from 'vue-i18n'
 import type { Rule } from 'ant-design-vue/es/form'
 import { useSalesQuotationI18n } from '../composables/useQuotationI18n'
+import { useTaktFormNumbering } from '@/composables/useTaktFormNumbering'
 
 /** 实体字段 i18n */
 const pi = useSalesQuotationI18n()
@@ -919,15 +931,41 @@ watch(
   },
 )
 
+/** 是否编辑态 */
+const isEditMode = computed(() => !!props.formData?.salesQuotationId)
+
+useTaktFormNumbering({
+  formState,
+  isEdit: isEditMode,
+  businessCodeField: 'salesQuotationCode',
+})
+
 /** 表单校验规则（与 FluentValidation 必填对齐） */
 const rules = computed<Record<string, Rule[]>>(() => ({
-  salesQuotationCode: [
-    {
-      required: true,
-      message: pi.ph('salesQuotationCode'),
-      trigger: 'blur'
-    }
-  ],
+  numberingRuleCode: [{
+    validator: async (_rule, value) => {
+      if (isEditMode.value) {
+        return Promise.resolve()
+      }
+      if (!String(value ?? '').trim()) {
+        return Promise.reject(t('common.page.form.numberingRuleRequired'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change',
+  }],
+  salesQuotationCode: [{
+    validator: async (_rule, value) => {
+      if (isEditMode.value) {
+        return Promise.resolve()
+      }
+      if (!String(value ?? '').trim()) {
+        return Promise.reject(t('common.page.form.numberingCodePreview'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change',
+  }],
   customerCode: [
     {
       required: true,

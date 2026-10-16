@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Logistics.Materials;
 public class TaktMaterialDocument : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 物料凭证
+    /// 物料凭证（前端表单选择编码规则后自动通过 TaktNumbering 物料凭证规则生成并展示，非手输；单据类型菜单：物料凭证）
     /// </summary>
     [SugarColumn(ColumnName = "material_document_code", ColumnDescription = "物料凭证", ColumnDataType = "nvarchar", Length = 10, IsNullable = false)]
     public string MaterialDocumentCode { get; set; } = string.Empty;

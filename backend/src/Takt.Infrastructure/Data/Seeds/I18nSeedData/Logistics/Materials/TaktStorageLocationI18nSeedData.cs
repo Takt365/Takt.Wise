@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Materials
 // 文件名称：TaktStorageLocationI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktStorageLocation 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -109,13 +109,13 @@ public class TaktStorageLocationI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.storagelocation.warehousecode", "zh-HK", "存货地点编码_hk", "仓库编码（冗余；关联 TaktWarehouse.WarehouseCode，选项 TaktWarehouses/options，DictValue=WarehouseCode）"),
 
             // entity.storagelocation.locationcode
-            new TranslationSeedItem("entity.storagelocation.locationcode", "en-US", "库位编码_us", "库位编码（40，租户+公司+工厂+仓库内唯一；序列号入出库等业务表存此编码）"),
+            new TranslationSeedItem("entity.storagelocation.locationcode", "en-US", "库位编码_us", "库位编码（40，租户+公司+工厂+仓库内唯一；序列号入出库等业务表存此编码；前端表单选择编码规则后自动通过 TaktNumbering 库位编码规则生成并展示，非手输；单据类型菜单：库位）"),
             // entity.storagelocation.locationcode
-            new TranslationSeedItem("entity.storagelocation.locationcode", "ja-JP", "库位编码_jp", "库位编码（40，租户+公司+工厂+仓库内唯一；序列号入出库等业务表存此编码）"),
+            new TranslationSeedItem("entity.storagelocation.locationcode", "ja-JP", "库位编码_jp", "库位编码（40，租户+公司+工厂+仓库内唯一；序列号入出库等业务表存此编码；前端表单选择编码规则后自动通过 TaktNumbering 库位编码规则生成并展示，非手输；单据类型菜单：库位）"),
             // entity.storagelocation.locationcode
-            new TranslationSeedItem("entity.storagelocation.locationcode", "zh-CN", "库位编码", "库位编码（40，租户+公司+工厂+仓库内唯一；序列号入出库等业务表存此编码）"),
+            new TranslationSeedItem("entity.storagelocation.locationcode", "zh-CN", "库位编码", "库位编码（40，租户+公司+工厂+仓库内唯一；序列号入出库等业务表存此编码；前端表单选择编码规则后自动通过 TaktNumbering 库位编码规则生成并展示，非手输；单据类型菜单：库位）"),
             // entity.storagelocation.locationcode
-            new TranslationSeedItem("entity.storagelocation.locationcode", "zh-HK", "库位编码_hk", "库位编码（40，租户+公司+工厂+仓库内唯一；序列号入出库等业务表存此编码）"),
+            new TranslationSeedItem("entity.storagelocation.locationcode", "zh-HK", "库位编码_hk", "库位编码（40，租户+公司+工厂+仓库内唯一；序列号入出库等业务表存此编码；前端表单选择编码规则后自动通过 TaktNumbering 库位编码规则生成并展示，非手输；单据类型菜单：库位）"),
 
             // entity.storagelocation.locationname
             new TranslationSeedItem("entity.storagelocation.locationname", "en-US", "库位名称_us", "库位名称"),

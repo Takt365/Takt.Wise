@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Procurement
 // 文件名称：TaktPurchaseInvoiceI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPurchaseInvoice 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktPurchaseInvoiceI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.purchaseinvoice._self", "zh-HK", "Takt采购发票主表信息_hk", "实体名称"),
 
             // entity.purchaseinvoice.code
-            new TranslationSeedItem("entity.purchaseinvoice.code", "en-US", "发票凭证编号_us", "发票凭证编号"),
+            new TranslationSeedItem("entity.purchaseinvoice.code", "en-US", "发票凭证编号_us", "发票凭证编号（前端表单选择编码规则后自动通过 TaktNumbering 发票凭证编号规则生成并展示，非手输；单据类型菜单：采购发票）"),
             // entity.purchaseinvoice.code
-            new TranslationSeedItem("entity.purchaseinvoice.code", "ja-JP", "发票凭证编号_jp", "发票凭证编号"),
+            new TranslationSeedItem("entity.purchaseinvoice.code", "ja-JP", "发票凭证编号_jp", "发票凭证编号（前端表单选择编码规则后自动通过 TaktNumbering 发票凭证编号规则生成并展示，非手输；单据类型菜单：采购发票）"),
             // entity.purchaseinvoice.code
-            new TranslationSeedItem("entity.purchaseinvoice.code", "zh-CN", "发票凭证编号", "发票凭证编号"),
+            new TranslationSeedItem("entity.purchaseinvoice.code", "zh-CN", "发票凭证编号", "发票凭证编号（前端表单选择编码规则后自动通过 TaktNumbering 发票凭证编号规则生成并展示，非手输；单据类型菜单：采购发票）"),
             // entity.purchaseinvoice.code
-            new TranslationSeedItem("entity.purchaseinvoice.code", "zh-HK", "发票凭证编号_hk", "发票凭证编号"),
+            new TranslationSeedItem("entity.purchaseinvoice.code", "zh-HK", "发票凭证编号_hk", "发票凭证编号（前端表单选择编码规则后自动通过 TaktNumbering 发票凭证编号规则生成并展示，非手输；单据类型菜单：采购发票）"),
 
             // entity.purchaseinvoice.fiscalyear
             new TranslationSeedItem("entity.purchaseinvoice.fiscalyear", "en-US", "会计年度_us", "会计年度"),
@@ -253,13 +253,13 @@ public class TaktPurchaseInvoiceI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.purchaseinvoice.reversalfiscalyear", "zh-HK", "年_hk", "年（冲销会计年度）"),
 
             // entity.purchaseinvoice.taxcode
-            new TranslationSeedItem("entity.purchaseinvoice.taxcode", "en-US", "税码_us", "税码"),
+            new TranslationSeedItem("entity.purchaseinvoice.taxcode", "en-US", "税码_us", "税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.purchaseinvoice.taxcode
-            new TranslationSeedItem("entity.purchaseinvoice.taxcode", "ja-JP", "税码_jp", "税码"),
+            new TranslationSeedItem("entity.purchaseinvoice.taxcode", "ja-JP", "税码_jp", "税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.purchaseinvoice.taxcode
-            new TranslationSeedItem("entity.purchaseinvoice.taxcode", "zh-CN", "税码", "税码"),
+            new TranslationSeedItem("entity.purchaseinvoice.taxcode", "zh-CN", "税码", "税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.purchaseinvoice.taxcode
-            new TranslationSeedItem("entity.purchaseinvoice.taxcode", "zh-HK", "税码_hk", "税码"),
+            new TranslationSeedItem("entity.purchaseinvoice.taxcode", "zh-HK", "税码_hk", "税码（选项 TaktTaxCodes/options；DictValue=TaxCode）"),
 
             // entity.purchaseinvoice.supplyingcountry
             new TranslationSeedItem("entity.purchaseinvoice.supplyingcountry", "en-US", "供货国家_us", "供货国家（字典 sys_country_code；DictValue=ISO alpha-2）"),

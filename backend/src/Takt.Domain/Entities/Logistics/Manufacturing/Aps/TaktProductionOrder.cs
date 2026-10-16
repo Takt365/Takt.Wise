@@ -34,7 +34,7 @@ public class TaktProductionOrder : TaktCompanyEntityBase
     public string ProdOrderType { get; set; } = "ZDTA";
 
     /// <summary>
-    /// 工单号
+    /// 工单号（前端表单选择编码规则后自动通过 TaktNumbering 工单号规则生成并展示，非手输；单据类型菜单：生产工单）
     /// </summary>
     [SugarColumn(ColumnName = "prod_order_code", ColumnDescription = "工单号", ColumnDataType = "nvarchar", Length = 12, IsNullable = false)]
     public string ProdOrderCode { get; set; } = string.Empty;

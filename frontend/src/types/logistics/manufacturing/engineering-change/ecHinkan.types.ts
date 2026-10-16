@@ -49,11 +49,6 @@ export interface EcHinkan extends CompanyDtoBase {
   lineNumber: number;
 
   /**
-   * 机种（冗余：来自 TaktEcDetail.EcModelCode）
-   */
-  ecModelCode: string;
-
-  /**
    * 机种编码组（按设变时同设变单号下的机种编码，分号分隔）
    */
   ecModelCodeGroup?: string;
@@ -76,6 +71,8 @@ export interface EcHinkan extends CompanyDtoBase {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 
   /**
    * 部门编码（TaktDept.DeptCode，5 位，如 D0820）
@@ -133,7 +130,7 @@ export interface EcHinkan extends CompanyDtoBase {
   isObsolete: number;
 
   /**
-   * 设变明细列表（视图主从：执行表为主；一对多；业务键 EcCode + EcModelCode + EcRootMaterialCode）
+   * 设变明细列表（视图主从：执行表为主；一对多；机种以编码组为准）
    */
   ecDetails?: EcDetail[];
 
@@ -181,11 +178,6 @@ export interface EcHinkanQuery extends TaktPagedQuery {
    * 行号（项号/序号，固定步长=10）
    */
   lineNumber?: number;
-
-  /**
-   * 机种（冗余：来自 TaktEcDetail.EcModelCode）
-   */
-  ecModelCode?: string;
 
   /**
    * 根物料编码组（同去重键下的根物料编码，分号分隔）
@@ -316,11 +308,6 @@ export interface EcHinkanCreate {
   lineNumber: number;
 
   /**
-   * 机种（冗余：来自 TaktEcDetail.EcModelCode）
-   */
-  ecModelCode: string;
-
-  /**
    * 机种编码组（按设变时同设变单号下的机种编码，分号分隔）
    */
   ecModelCodeGroup?: string;
@@ -343,6 +330,8 @@ export interface EcHinkanCreate {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 
   /**
    * 部门编码（TaktDept.DeptCode，5 位，如 D0820）
@@ -429,6 +418,8 @@ export interface EcHinkanDiscontinuedStatus {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 }
 
 /**
@@ -490,11 +481,6 @@ export interface EcHinkanTemplate {
    * 行号（项号/序号，固定步长=10）
    */
   lineNumber?: number;
-
-  /**
-   * 机种（冗余：来自 TaktEcDetail.EcModelCode）
-   */
-  ecModelCode?: string;
 
   /**
    * 根物料编码组（同去重键下的根物料编码，分号分隔）
@@ -610,11 +596,6 @@ export interface EcHinkanImport {
   lineNumber?: number;
 
   /**
-   * 机种（冗余：来自 TaktEcDetail.EcModelCode）
-   */
-  ecModelCode?: string;
-
-  /**
    * 根物料编码组（同去重键下的根物料编码，分号分隔）
    */
   ecRootMaterialCodeGroup?: string;
@@ -728,11 +709,6 @@ export interface EcHinkanExport {
   lineNumber: number;
 
   /**
-   * 机种（冗余：来自 TaktEcDetail.EcModelCode）
-   */
-  ecModelCode: string;
-
-  /**
    * 机种编码组（按设变时同设变单号下的机种编码，分号分隔）
    */
   ecModelCodeGroup?: string;
@@ -755,6 +731,8 @@ export interface EcHinkanExport {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 
   /**
    * 部门编码（TaktDept.DeptCode，5 位，如 D0820）

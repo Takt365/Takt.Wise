@@ -22,7 +22,7 @@ namespace Takt.Application.Services.Logistics.Manufacturing.Bom;
 public static class TaktBomMaterialZeroPriceMovingBackfillHelper
 {
     /// <summary>
-    /// ExtField 回填根键（与 TaktBomCalculatePurchaseInfoRecordHelper 一致）
+    /// ExtField 回填根键（与 TaktBomCalculatePurchaseInfoHelper 一致）
     /// </summary>
     public const string ExtFieldBackfillRootKey = "_bk";
 

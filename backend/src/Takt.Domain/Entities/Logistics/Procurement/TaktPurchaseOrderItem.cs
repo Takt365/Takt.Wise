@@ -75,10 +75,10 @@ public class TaktPurchaseOrderItem : TaktCompanyEntityBase
     public string? MaterialSpecification { get; set; }
 
     /// <summary>
-    /// 采购信息记录编码
+    /// 采购信息编码
     /// </summary>
-    [SugarColumn(ColumnName = "purchase_info_record_code", ColumnDescription = "采购信息记录编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = true)]
-    public string? PurchaseInfoRecordCode { get; set; }
+    [SugarColumn(ColumnName = "purchase_info_code", ColumnDescription = "采购信息编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = true)]
+    public string? PurchaseInfoCode { get; set; }
 
     /// <summary>
     /// 供应商物料编码
@@ -129,7 +129,7 @@ public class TaktPurchaseOrderItem : TaktCompanyEntityBase
     public decimal DiscountAmount { get; set; } = 0;
 
     /// <summary>
-    /// 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     [SugarColumn(ColumnName = "tax_code", ColumnDescription = "税码", ColumnDataType = "nvarchar", Length = 4, IsNullable = true)]
     public string? TaxCode { get; set; }

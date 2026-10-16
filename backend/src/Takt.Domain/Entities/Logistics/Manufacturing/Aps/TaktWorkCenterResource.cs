@@ -40,7 +40,7 @@ public class TaktWorkCenterResource : TaktCompanyEntityBase
     public string WorkCenterCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 资源编码
+    /// 资源编码（前端表单选择编码规则后自动通过 TaktNumbering 资源编码规则生成并展示，非手输；单据类型菜单：工作中心）
     /// </summary>
     [SugarColumn(ColumnName = "resource_code", ColumnDescription = "资源编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string ResourceCode { get; set; } = string.Empty;

@@ -34,15 +34,34 @@ public static class TaktEcDeptScopeConstants
     public const int ByEngineeringChange = 3;
 
     /// <summary>
-    /// 主表制二/制一/品管实施范围：全仕向保留按成品/按机种/按设变，否则强制按设变
+    /// 部门实施范围显示名（按成品 / 按机种 / 按设变）
+    /// </summary>
+    /// <param name="ecDeptScope">部门实施范围</param>
+    /// <returns>显示名</returns>
+    public static string ResolveLabel(int ecDeptScope)
+    {
+        return ecDeptScope switch
+        {
+            ByFinishedProduct => "按成品",
+            ByModel => "按机种",
+            ByEngineeringChange => "按设变",
+            _ => "按机种",
+        };
+    }
+
+    /// <summary>
+    /// 主表部门实施范围：全仕向保留按成品/按机种/按设变；部管固定按机种；内部/技术固定按设变
     /// </summary>
     /// <param name="ecScope">实施范围</param>
-    /// <param name="ecDeptScope">表单提交的制二/制一/品管实施范围</param>
-    /// <returns>主表制二/制一/品管实施范围</returns>
+    /// <param name="ecDeptScope">表单提交的部门实施范围</param>
+    /// <returns>主表部门实施范围</returns>
     public static int Normalize(int ecScope, int ecDeptScope)
     {
-        if (ecScope == TaktEcScopeConstants.MaterialControl
-            || ecScope == TaktEcScopeConstants.Internal
+        if (ecScope == TaktEcScopeConstants.MaterialControl)
+        {
+            return ByModel;
+        }
+        if (ecScope == TaktEcScopeConstants.Internal
             || ecScope == TaktEcScopeConstants.Technical)
         {
             return ByEngineeringChange;
@@ -55,7 +74,7 @@ public static class TaktEcDeptScopeConstants
     }
 
     /// <summary>
-    /// 执行部门去重粒度。主表值只给制二/制一/品管，全仕向时生管与这三课相同。采购/受检/部管/SMT 固定按设变，制技固定按机种；部管/内部/技术的自动填写部门按设变
+    /// 执行部门去重粒度。全仕向时生管与制二/制一/品管跟随主表。部管时生管按机种。采购/受检/部管/SMT 固定按设变，制技固定按机种。内部/技术按设变
     /// </summary>
     /// <param name="deptCode">部门编码</param>
     /// <param name="ecScope">实施范围</param>
@@ -64,6 +83,10 @@ public static class TaktEcDeptScopeConstants
     public static int ResolveForDept(string deptCode, int ecScope, int masterDeptScope)
     {
         if (deptCode == TaktEcDeptCodes.Te)
+        {
+            return ByModel;
+        }
+        if (ecScope == TaktEcScopeConstants.MaterialControl && deptCode == TaktEcDeptCodes.Pmc)
         {
             return ByModel;
         }

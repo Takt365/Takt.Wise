@@ -124,6 +124,19 @@
             </a-col>
             <a-col :span="12">
               <a-form-item
+                :label="pi.label('ecRootMaterialType')"
+                name="ecRootMaterialType"
+              >
+                <TaktSelect
+                  v-model:value="formState.ecRootMaterialType"
+                  dict-type="logistics_materials_material_type"
+                  disabled
+                  :placeholder="t('common.page.form.placeholder.select', { field: pi.label('ecRootMaterialType') })"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
                 :label="pi.label('ecRootMaterialCode')"
                 name="ecRootMaterialCode"
               >
@@ -453,7 +466,7 @@ const formContentClass = computed(() => (formFields.length > 10 ? 'takt-form-con
 /** 当前激活的 Tab key */
 const activeTab = ref('tab-0')
 /** CreateDto 字段名列表（与 formState 键对齐） */
-const formFields = ["tenantCode","companyCode","cultureCode","plantCode","lineNumber","ecCode","ecModelCode","ecRootMaterialCode","ecRootMaterialDescription","discontinuedStatus","ecParentMaterialCode","ecParentMaterialDescription","ecOldMaterialCode","ecOldMaterialDescription","ecOldUsageQuantity","ecOldItemPosition","ecOldStock","ecOldWarehouse","ecOldPurchaseType","ecOldRequiresInspection","ecNewMaterialCode","ecNewMaterialDescription","ecNewUsageQuantity","ecNewItemPosition","ecNewStock","ecNewWarehouse","ecNewPurchaseType","ecNewRequiresInspection","ecBomDate"]
+const formFields = ["tenantCode","companyCode","cultureCode","plantCode","lineNumber","ecCode","ecModelCode","ecRootMaterialType","ecRootMaterialCode","ecRootMaterialDescription","discontinuedStatus","ecParentMaterialCode","ecParentMaterialDescription","ecOldMaterialCode","ecOldMaterialDescription","ecOldUsageQuantity","ecOldItemPosition","ecOldStock","ecOldWarehouse","ecOldPurchaseType","ecOldRequiresInspection","ecNewMaterialCode","ecNewMaterialDescription","ecNewUsageQuantity","ecNewItemPosition","ecNewStock","ecNewWarehouse","ecNewPurchaseType","ecNewRequiresInspection","ecBomDate"]
 
 
 /** 父级传入的编辑 DTO；新增时为 undefined 或空对象 */

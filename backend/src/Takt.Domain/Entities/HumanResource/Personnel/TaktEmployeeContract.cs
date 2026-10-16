@@ -20,7 +20,7 @@ namespace Takt.Domain.Entities.HumanResource.Personnel;
 [SugarTable("takt_human_resource_personnel_employee_contract", "员工劳动合同表")]
 [SugarIndex("ix_employee_contract_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
 [SugarIndex("ix_employee_contract_employee", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EmployeeId), OrderByType.Asc, false)]
-[SugarIndex("ix_employee_contract_code", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(ContractCode), OrderByType.Asc, true)]
+[SugarIndex("ix_employee_contract_code_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(ContractCode), OrderByType.Asc, true)]
 public class TaktEmployeeContract : TaktCompanyEntityBase
 {
     /// <summary>
@@ -39,7 +39,7 @@ public class TaktEmployeeContract : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "employee_name", ColumnDescription = "员工姓名", ColumnDataType = "nvarchar", Length = 80, IsNullable = false)]
     public string EmployeeName { get; set; } = string.Empty;
     /// <summary>
-    /// 合同编码
+    /// 合同编码（前端表单选择编码规则后自动通过 TaktNumbering 合同编码规则生成并展示，非手输；单据类型菜单：员工合同）
     /// </summary>
     [SugarColumn(ColumnName = "contract_code", ColumnDescription = "合同编码", ColumnDataType = "varchar", Length = 50, IsNullable = false)]
     public string ContractCode { get; set; } = string.Empty;

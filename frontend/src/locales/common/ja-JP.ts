@@ -16,8 +16,8 @@ export default {
       title: "TaktWise",
       name: "TaktWise",
       productcode: "TP-MES-PRO",
-      slogan: "タクト駆動のスマート製造",
-      tagline: "実用 · シンプル · 柔軟",
+      slogan: "お客様のテンポに、ラインを合わせる。",//"タクト駆動のスマート製造",
+      tagline: "タクトを計算 · バランスを見る · ラインを調整",//"実用 · シンプル · 柔軟",
     },
     api: {
       connect: {

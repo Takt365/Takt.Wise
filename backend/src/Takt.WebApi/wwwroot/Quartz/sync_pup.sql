@@ -31,9 +31,9 @@ DECLARE @dml_n INT;
 DECLARE @now DATETIME = GETDATE();
 DECLARE @base_id BIGINT = DATEDIFF_BIG(MICROSECOND, '1970-01-01', @now) * 1000;
 
--- 源表 / 目标表：同名 + 列与实体一致（TaktPurchaseInfoRecord / Item / ScaleQuantity / ScaleValue）
--- {{SourceDatabase}}.dbo.takt_logistics_procurement_purchase_info_record* → 当前租户库同名表
--- 业务唯一键：CompanyCode + PlantCode + PurchaseInfoRecordCode（与租户库唯一索引对齐）
+-- 源表 / 目标表：同名 + 列与实体一致（TaktPurchaseInfo / Item / ScaleQuantity / ScaleValue）
+-- {{SourceDatabase}}.dbo.takt_logistics_procurement_purchase_info* → 当前租户库同名表
+-- 业务唯一键：CompanyCode + PlantCode + PurchaseInfoCode（与租户库唯一索引对齐）
 -- company_code / plant_code 取自源表（主表/明细/数量等级/价值等级各自表均有 plant_code；源=目标列一致）；tenant/company/plant/culture 取自源表本列；空值丢弃，不回退任务参数
 -- 源/目标币种列与实体一致：scale_currency_code / condition_currency_code
 
@@ -50,7 +50,7 @@ CREATE TABLE #hdr (
   [rn] INT, [id] BIGINT,
   [company_code] NVARCHAR(4),
   [tenant_code] NVARCHAR(3), [culture_code] NVARCHAR(5),
-  [plant_code] NVARCHAR(4), [purchase_info_record_code] NVARCHAR(20), [price_type] NVARCHAR(4),
+  [plant_code] NVARCHAR(4), [purchase_info_code] NVARCHAR(20), [price_type] NVARCHAR(4),
   [supplier_code] NVARCHAR(40), [material_code] NVARCHAR(40), [material_description] NVARCHAR(40),
   [purchase_group] NVARCHAR(3), [tax_code] NVARCHAR(4),
   [gr_based_invoice_inspection] INT, [pricing_date_control] INT,
@@ -62,9 +62,9 @@ CREATE TABLE #hdr (
 );
 
 CREATE TABLE #item (
-  [rn] INT, [id] BIGINT, [purchase_info_record_id] BIGINT,
+  [rn] INT, [id] BIGINT, [purchase_info_id] BIGINT,
   [company_code] NVARCHAR(4), [plant_code] NVARCHAR(4), [tenant_code] NVARCHAR(3), [culture_code] NVARCHAR(5),
-  [purchase_info_record_code] NVARCHAR(20), [purchase_info_record_seq] INT, [price_type] NVARCHAR(4),
+  [purchase_info_code] NVARCHAR(20), [purchase_info_seq] INT, [price_type] NVARCHAR(4),
   [scale_type] NVARCHAR(1), [scale_basis] NVARCHAR(1),
   [scale_quantity] DECIMAL(18,4), [scale_unit] NVARCHAR(5),
   [scale_value] DECIMAL(18,5), [scale_currency_code] NVARCHAR(3),
@@ -78,9 +78,9 @@ CREATE TABLE #item (
 );
 
 CREATE TABLE #sq (
-  [rn] INT, [id] BIGINT, [purchase_info_record_item_id] BIGINT,
+  [rn] INT, [id] BIGINT, [purchase_info_item_id] BIGINT,
   [company_code] NVARCHAR(4), [plant_code] NVARCHAR(4), [tenant_code] NVARCHAR(3), [culture_code] NVARCHAR(5),
-  [purchase_info_record_code] NVARCHAR(20), [purchase_info_record_seq] INT, [purchase_scale_seq] INT,
+  [purchase_info_code] NVARCHAR(20), [purchase_info_seq] INT, [purchase_scale_seq] INT,
   [scale_quantity] DECIMAL(18,4), [price] DECIMAL(18,5),
   [untaxed_price] DECIMAL(18,5), [tax_included_price] DECIMAL(18,5), [tax_amount] DECIMAL(18,5), [is_obsolete] INT,
   [ext_field] NVARCHAR(MAX), [remark] NVARCHAR(MAX),
@@ -89,9 +89,9 @@ CREATE TABLE #sq (
 );
 
 CREATE TABLE #sv (
-  [rn] INT, [id] BIGINT, [purchase_info_record_item_id] BIGINT,
+  [rn] INT, [id] BIGINT, [purchase_info_item_id] BIGINT,
   [company_code] NVARCHAR(4), [plant_code] NVARCHAR(4), [tenant_code] NVARCHAR(3), [culture_code] NVARCHAR(5),
-  [purchase_info_record_code] NVARCHAR(20), [purchase_info_record_seq] INT, [purchase_scale_seq] INT,
+  [purchase_info_code] NVARCHAR(20), [purchase_info_seq] INT, [purchase_scale_seq] INT,
   [scale_value] DECIMAL(18,5), [price] DECIMAL(18,5),
   [untaxed_price] DECIMAL(18,5), [tax_included_price] DECIMAL(18,5), [tax_amount] DECIMAL(18,5), [is_obsolete] INT,
   [ext_field] NVARCHAR(MAX), [remark] NVARCHAR(MAX),
@@ -108,7 +108,7 @@ INSERT INTO #hdr
 SELECT S.rn, @base_id + S.rn,
   S.[company_code],
   S.[tenant_code], S.[culture_code],
-  S.[plant_code], S.[purchase_info_record_code], S.[price_type], S.[supplier_code], S.[material_code], S.[material_description],
+  S.[plant_code], S.[purchase_info_code], S.[price_type], S.[supplier_code], S.[material_code], S.[material_description],
   S.[purchase_group], S.[tax_code],
   S.[gr_based_invoice_inspection], S.[pricing_date_control],
   S.[valid_from], S.[valid_to], S.[purchase_inquiry_id], S.[purchase_inquiry_code], S.[variable_key], S.[ext_field], S.[remark],
@@ -116,14 +116,14 @@ SELECT S.rn, @base_id + S.rn,
 FROM (
   SELECT
     N.*,
-    ROW_NUMBER() OVER (ORDER BY N.[company_code], N.[plant_code], N.[purchase_info_record_code]) AS rn
+    ROW_NUMBER() OVER (ORDER BY N.[company_code], N.[plant_code], N.[purchase_info_code]) AS rn
   FROM (
     SELECT
       LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4) AS [company_code],
       LTRIM(RTRIM(R.[plant_code])) AS [plant_code],
       LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3) AS [tenant_code],
       LTRIM(RTRIM(ISNULL(R.[culture_code], N''))) AS [culture_code],
-      LTRIM(RTRIM(R.[purchase_info_record_code])) AS [purchase_info_record_code],
+      LTRIM(RTRIM(R.[purchase_info_code])) AS [purchase_info_code],
       ISNULL(NULLIF(LTRIM(RTRIM(R.[price_type])), N''), N'') AS [price_type],
       ISNULL(NULLIF(LTRIM(RTRIM(R.[supplier_code])), N''), N'') AS [supplier_code],
       CASE
@@ -155,11 +155,11 @@ FROM (
         PARTITION BY
           LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4),
           LTRIM(RTRIM(R.[plant_code])),
-          LTRIM(RTRIM(R.[purchase_info_record_code]))
+          LTRIM(RTRIM(R.[purchase_info_code]))
         ORDER BY LEN(ISNULL(LTRIM(RTRIM(R.[material_code])), N'')) DESC
       ) AS dup_rn
-    FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_info_record] R
-    WHERE LTRIM(RTRIM(ISNULL(R.[purchase_info_record_code], N''))) <> N''
+    FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_info] R
+    WHERE LTRIM(RTRIM(ISNULL(R.[purchase_info_code], N''))) <> N''
       AND LTRIM(RTRIM(ISNULL(R.[plant_code], N''))) <> N''
       AND LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))) <> N''
       AND LTRIM(RTRIM(ISNULL(R.[company_code], N''))) <> N''
@@ -171,8 +171,8 @@ WHERE @batch_size = 0 OR S.rn <= @batch_size;
 
 
 CREATE CLUSTERED INDEX ix_hdr_rn ON #hdr ([rn]);
-CREATE UNIQUE INDEX ix_hdr_company_plant_code ON #hdr ([company_code], [plant_code], [purchase_info_record_code]);
-CREATE INDEX ix_hdr_company_code ON #hdr ([company_code], [purchase_info_record_code]);
+CREATE UNIQUE INDEX ix_hdr_company_plant_code ON #hdr ([company_code], [plant_code], [purchase_info_code]);
+CREATE INDEX ix_hdr_company_code ON #hdr ([company_code], [purchase_info_code]);
 
 DECLARE @hdr_source INT = (SELECT COUNT(*) FROM #hdr);
 SELECT
@@ -192,8 +192,8 @@ SET @progress_msg = CONCAT(
   N'');
 RAISERROR(@progress_msg, 10, 1) WITH NOWAIT;
 DECLARE @hdr_sap_raw INT = (
-  SELECT COUNT(*) FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_info_record] R
-  WHERE LTRIM(RTRIM(ISNULL(R.[purchase_info_record_code], N''))) <> N''
+  SELECT COUNT(*) FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_info] R
+  WHERE LTRIM(RTRIM(ISNULL(R.[purchase_info_code], N''))) <> N''
     AND LTRIM(RTRIM(ISNULL(R.[plant_code], N''))) <> N''
 );
 IF @hdr_source <> @hdr_sap_raw
@@ -201,18 +201,18 @@ BEGIN
   DECLARE @hdr_src_msg NVARCHAR(200) = CONCAT(N'主表装入不一致: sap=', @hdr_sap_raw, N', loaded=', @hdr_source);
   THROW 50003, @hdr_src_msg, 1;
 END;
-IF EXISTS (SELECT 1 FROM #hdr GROUP BY [company_code], [plant_code], [purchase_info_record_code] HAVING COUNT(*) > 1)
+IF EXISTS (SELECT 1 FROM #hdr GROUP BY [company_code], [plant_code], [purchase_info_code] HAVING COUNT(*) > 1)
 BEGIN
   DECLARE @hdr_dup NVARCHAR(400);
-  SELECT TOP 1 @hdr_dup = CONCAT([company_code], N' / ', [plant_code], N' / ', [purchase_info_record_code], N' x', COUNT(*))
-  FROM #hdr GROUP BY [company_code], [plant_code], [purchase_info_record_code] HAVING COUNT(*) > 1;
+  SELECT TOP 1 @hdr_dup = CONCAT([company_code], N' / ', [plant_code], N' / ', [purchase_info_code], N' x', COUNT(*))
+  FROM #hdr GROUP BY [company_code], [plant_code], [purchase_info_code] HAVING COUNT(*) > 1;
   THROW 50001, @hdr_dup, 1;
 END;
 
 INSERT INTO #item
 SELECT S.rn, @base_id + 1000000000 + S.rn, 0,
   S.[company_code], S.[plant_code], S.[tenant_code], S.[culture_code],
-  S.[purchase_info_record_code], S.[purchase_info_record_seq], S.[price_type],
+  S.[purchase_info_code], S.[purchase_info_seq], S.[price_type],
   S.[scale_type], S.[scale_basis], S.[scale_quantity], S.[scale_unit],
   S.[scale_value], S.[scale_currency_code], S.[calculation_type], S.[price],
   S.[untaxed_price], S.[tax_included_price], S.[tax_amount], S.[condition_currency_code], S.[price_unit], S.[unit_of_measure],
@@ -224,8 +224,8 @@ FROM (
     LTRIM(RTRIM(R.[plant_code])) AS [plant_code],
       LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3) AS [tenant_code],
       LTRIM(RTRIM(ISNULL(R.[culture_code], N''))) AS [culture_code],
-    LTRIM(RTRIM(R.[purchase_info_record_code])) AS [purchase_info_record_code],
-    COALESCE(TRY_CAST(R.[purchase_info_record_seq] AS INT), 10) AS [purchase_info_record_seq],
+    LTRIM(RTRIM(R.[purchase_info_code])) AS [purchase_info_code],
+    COALESCE(TRY_CAST(R.[purchase_info_seq] AS INT), 10) AS [purchase_info_seq],
     ISNULL(NULLIF(LTRIM(RTRIM(R.[price_type])), N''), N'') AS [price_type],
     NULLIF(LTRIM(RTRIM(R.[scale_type])), N'') AS [scale_type],
     NULLIF(LTRIM(RTRIM(R.[scale_basis])), N'') AS [scale_basis],
@@ -258,15 +258,15 @@ FROM (
       ORDER BY
         LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4),
         LTRIM(RTRIM(R.[plant_code])),
-        LTRIM(RTRIM(R.[purchase_info_record_code])),
-        COALESCE(TRY_CAST(R.[purchase_info_record_seq] AS INT), 10)
+        LTRIM(RTRIM(R.[purchase_info_code])),
+        COALESCE(TRY_CAST(R.[purchase_info_seq] AS INT), 10)
     ) AS rn
-  FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_info_record_item] R
-  WHERE LTRIM(RTRIM(ISNULL(R.[purchase_info_record_code], N''))) <> N''
+  FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_info_item] R
+  WHERE LTRIM(RTRIM(ISNULL(R.[purchase_info_code], N''))) <> N''
     AND LTRIM(RTRIM(ISNULL(R.[plant_code], N''))) <> N''
     AND EXISTS (
       SELECT 1 FROM #hdr H
-      WHERE H.[purchase_info_record_code] = LTRIM(RTRIM(R.[purchase_info_record_code]))
+      WHERE H.[purchase_info_code] = LTRIM(RTRIM(R.[purchase_info_code]))
         AND H.[plant_code] = LTRIM(RTRIM(R.[plant_code]))
         AND H.[company_code] = LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4)
     )
@@ -290,12 +290,12 @@ SET @progress_msg = CONCAT(
   N'');
 RAISERROR(@progress_msg, 10, 1) WITH NOWAIT;
 DECLARE @item_sap_raw INT = (
-  SELECT COUNT(*) FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_info_record_item] R
-  WHERE LTRIM(RTRIM(ISNULL(R.[purchase_info_record_code], N''))) <> N''
+  SELECT COUNT(*) FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_info_item] R
+  WHERE LTRIM(RTRIM(ISNULL(R.[purchase_info_code], N''))) <> N''
     AND LTRIM(RTRIM(ISNULL(R.[plant_code], N''))) <> N''
     AND EXISTS (
       SELECT 1 FROM #hdr H
-      WHERE H.[purchase_info_record_code] = LTRIM(RTRIM(R.[purchase_info_record_code]))
+      WHERE H.[purchase_info_code] = LTRIM(RTRIM(R.[purchase_info_code]))
         AND H.[plant_code] = LTRIM(RTRIM(R.[plant_code]))
         AND H.[company_code] = LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4)
     )
@@ -305,18 +305,18 @@ BEGIN
   DECLARE @item_src_msg NVARCHAR(200) = CONCAT(N'明细装入不一致: sap=', @item_sap_raw, N', loaded=', @item_source);
   THROW 50003, @item_src_msg, 1;
 END;
-IF EXISTS (SELECT 1 FROM #item GROUP BY [company_code], [plant_code], [purchase_info_record_code], [purchase_info_record_seq] HAVING COUNT(*) > 1)
+IF EXISTS (SELECT 1 FROM #item GROUP BY [company_code], [plant_code], [purchase_info_code], [purchase_info_seq] HAVING COUNT(*) > 1)
 BEGIN
   DECLARE @item_dup NVARCHAR(400);
-  SELECT TOP 1 @item_dup = CONCAT([company_code], N' / ', [plant_code], N' / ', [purchase_info_record_code], N' / ', [purchase_info_record_seq], N' x', COUNT(*))
-  FROM #item GROUP BY [company_code], [plant_code], [purchase_info_record_code], [purchase_info_record_seq] HAVING COUNT(*) > 1;
+  SELECT TOP 1 @item_dup = CONCAT([company_code], N' / ', [plant_code], N' / ', [purchase_info_code], N' / ', [purchase_info_seq], N' x', COUNT(*))
+  FROM #item GROUP BY [company_code], [plant_code], [purchase_info_code], [purchase_info_seq] HAVING COUNT(*) > 1;
   THROW 50001, @item_dup, 1;
 END;
 
 INSERT INTO #sq
 SELECT S.rn, @base_id + 2000000000 + S.rn, 0,
   S.[company_code], S.[plant_code], S.[tenant_code], S.[culture_code],
-  S.[purchase_info_record_code], S.[purchase_info_record_seq], S.[purchase_scale_seq],
+  S.[purchase_info_code], S.[purchase_info_seq], S.[purchase_scale_seq],
   S.[scale_quantity], S.[price], S.[untaxed_price], S.[tax_included_price], S.[tax_amount], S.[is_obsolete], S.[ext_field], S.[remark],
   S.[created_by], S.[created_at], S.[updated_by], S.[updated_at], S.[deleted_by], S.[deleted_at], S.[is_deleted]
 FROM (
@@ -325,8 +325,8 @@ FROM (
     LTRIM(RTRIM(R.[plant_code])) AS [plant_code],
       LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3) AS [tenant_code],
       LTRIM(RTRIM(ISNULL(R.[culture_code], N''))) AS [culture_code],
-    LTRIM(RTRIM(R.[purchase_info_record_code])) AS [purchase_info_record_code],
-    COALESCE(TRY_CAST(R.[purchase_info_record_seq] AS INT), 10) AS [purchase_info_record_seq],
+    LTRIM(RTRIM(R.[purchase_info_code])) AS [purchase_info_code],
+    COALESCE(TRY_CAST(R.[purchase_info_seq] AS INT), 10) AS [purchase_info_seq],
     COALESCE(TRY_CAST(R.[purchase_scale_seq] AS INT), 10) AS [purchase_scale_seq],
     ROUND(COALESCE(TRY_CAST(R.[scale_quantity] AS DECIMAL(18,8)), 0), 4) AS [scale_quantity],
     ROUND(COALESCE(TRY_CAST(R.[price] AS DECIMAL(18,8)), 0), 5) AS [price],
@@ -347,18 +347,18 @@ FROM (
       ORDER BY
         LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4),
         LTRIM(RTRIM(R.[plant_code])),
-        LTRIM(RTRIM(R.[purchase_info_record_code])),
-        COALESCE(TRY_CAST(R.[purchase_info_record_seq] AS INT), 10),
+        LTRIM(RTRIM(R.[purchase_info_code])),
+        COALESCE(TRY_CAST(R.[purchase_info_seq] AS INT), 10),
         COALESCE(TRY_CAST(R.[purchase_scale_seq] AS INT), 10),
         COALESCE(TRY_CAST(R.[scale_quantity] AS DECIMAL(18,8)), 0)
     ) AS rn
-  FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_info_record_scale_quantity] R
+  FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_info_scale_quantity] R
   INNER JOIN #item I
-    ON I.[purchase_info_record_code] = LTRIM(RTRIM(R.[purchase_info_record_code]))
+    ON I.[purchase_info_code] = LTRIM(RTRIM(R.[purchase_info_code]))
    AND I.[plant_code] = LTRIM(RTRIM(R.[plant_code]))
-   AND I.[purchase_info_record_seq] = COALESCE(TRY_CAST(R.[purchase_info_record_seq] AS INT), 10)
+   AND I.[purchase_info_seq] = COALESCE(TRY_CAST(R.[purchase_info_seq] AS INT), 10)
    AND I.[company_code] = LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4)
-  WHERE LTRIM(RTRIM(ISNULL(R.[purchase_info_record_code], N''))) <> N''
+  WHERE LTRIM(RTRIM(ISNULL(R.[purchase_info_code], N''))) <> N''
     AND LTRIM(RTRIM(ISNULL(R.[plant_code], N''))) <> N''
 ) S;
 
@@ -380,14 +380,14 @@ SET @progress_msg = CONCAT(
   N'');
 RAISERROR(@progress_msg, 10, 1) WITH NOWAIT;
 DECLARE @sq_sap_raw INT = (
-  SELECT COUNT(*) FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_info_record_scale_quantity] R
-  WHERE LTRIM(RTRIM(ISNULL(R.[purchase_info_record_code], N''))) <> N''
+  SELECT COUNT(*) FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_info_scale_quantity] R
+  WHERE LTRIM(RTRIM(ISNULL(R.[purchase_info_code], N''))) <> N''
     AND LTRIM(RTRIM(ISNULL(R.[plant_code], N''))) <> N''
     AND EXISTS (
       SELECT 1 FROM #item I
-      WHERE I.[purchase_info_record_code] = LTRIM(RTRIM(R.[purchase_info_record_code]))
+      WHERE I.[purchase_info_code] = LTRIM(RTRIM(R.[purchase_info_code]))
         AND I.[plant_code] = LTRIM(RTRIM(R.[plant_code]))
-        AND I.[purchase_info_record_seq] = COALESCE(TRY_CAST(R.[purchase_info_record_seq] AS INT), 10)
+        AND I.[purchase_info_seq] = COALESCE(TRY_CAST(R.[purchase_info_seq] AS INT), 10)
         AND I.[company_code] = LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4)
     )
 );
@@ -400,7 +400,7 @@ END;
 INSERT INTO #sv
 SELECT S.rn, @base_id + 3000000000 + S.rn, 0,
   S.[company_code], S.[plant_code], S.[tenant_code], S.[culture_code],
-  S.[purchase_info_record_code], S.[purchase_info_record_seq], S.[purchase_scale_seq],
+  S.[purchase_info_code], S.[purchase_info_seq], S.[purchase_scale_seq],
   S.[scale_value], S.[price], S.[untaxed_price], S.[tax_included_price], S.[tax_amount], S.[is_obsolete], S.[ext_field], S.[remark],
   S.[created_by], S.[created_at], S.[updated_by], S.[updated_at], S.[deleted_by], S.[deleted_at], S.[is_deleted]
 FROM (
@@ -409,8 +409,8 @@ FROM (
     LTRIM(RTRIM(R.[plant_code])) AS [plant_code],
       LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3) AS [tenant_code],
       LTRIM(RTRIM(ISNULL(R.[culture_code], N''))) AS [culture_code],
-    LTRIM(RTRIM(R.[purchase_info_record_code])) AS [purchase_info_record_code],
-    COALESCE(TRY_CAST(R.[purchase_info_record_seq] AS INT), 10) AS [purchase_info_record_seq],
+    LTRIM(RTRIM(R.[purchase_info_code])) AS [purchase_info_code],
+    COALESCE(TRY_CAST(R.[purchase_info_seq] AS INT), 10) AS [purchase_info_seq],
     COALESCE(TRY_CAST(R.[purchase_scale_seq] AS INT), 10) AS [purchase_scale_seq],
     ROUND(COALESCE(TRY_CAST(R.[scale_value] AS DECIMAL(18,8)), 0), 5) AS [scale_value],
     ROUND(COALESCE(TRY_CAST(R.[price] AS DECIMAL(18,8)), 0), 5) AS [price],
@@ -431,18 +431,18 @@ FROM (
       ORDER BY
         LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4),
         LTRIM(RTRIM(R.[plant_code])),
-        LTRIM(RTRIM(R.[purchase_info_record_code])),
-        COALESCE(TRY_CAST(R.[purchase_info_record_seq] AS INT), 10),
+        LTRIM(RTRIM(R.[purchase_info_code])),
+        COALESCE(TRY_CAST(R.[purchase_info_seq] AS INT), 10),
         COALESCE(TRY_CAST(R.[purchase_scale_seq] AS INT), 10),
         COALESCE(TRY_CAST(R.[scale_value] AS DECIMAL(18,8)), 0)
     ) AS rn
-  FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_info_record_scale_value] R
+  FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_info_scale_value] R
   INNER JOIN #item I
-    ON I.[purchase_info_record_code] = LTRIM(RTRIM(R.[purchase_info_record_code]))
+    ON I.[purchase_info_code] = LTRIM(RTRIM(R.[purchase_info_code]))
    AND I.[plant_code] = LTRIM(RTRIM(R.[plant_code]))
-   AND I.[purchase_info_record_seq] = COALESCE(TRY_CAST(R.[purchase_info_record_seq] AS INT), 10)
+   AND I.[purchase_info_seq] = COALESCE(TRY_CAST(R.[purchase_info_seq] AS INT), 10)
    AND I.[company_code] = LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4)
-  WHERE LTRIM(RTRIM(ISNULL(R.[purchase_info_record_code], N''))) <> N''
+  WHERE LTRIM(RTRIM(ISNULL(R.[purchase_info_code], N''))) <> N''
     AND LTRIM(RTRIM(ISNULL(R.[plant_code], N''))) <> N''
 ) S;
 
@@ -464,14 +464,14 @@ SET @progress_msg = CONCAT(
   N'');
 RAISERROR(@progress_msg, 10, 1) WITH NOWAIT;
 DECLARE @sv_sap_raw INT = (
-  SELECT COUNT(*) FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_info_record_scale_value] R
-  WHERE LTRIM(RTRIM(ISNULL(R.[purchase_info_record_code], N''))) <> N''
+  SELECT COUNT(*) FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_info_scale_value] R
+  WHERE LTRIM(RTRIM(ISNULL(R.[purchase_info_code], N''))) <> N''
     AND LTRIM(RTRIM(ISNULL(R.[plant_code], N''))) <> N''
     AND EXISTS (
       SELECT 1 FROM #item I
-      WHERE I.[purchase_info_record_code] = LTRIM(RTRIM(R.[purchase_info_record_code]))
+      WHERE I.[purchase_info_code] = LTRIM(RTRIM(R.[purchase_info_code]))
         AND I.[plant_code] = LTRIM(RTRIM(R.[plant_code]))
-        AND I.[purchase_info_record_seq] = COALESCE(TRY_CAST(R.[purchase_info_record_seq] AS INT), 10)
+        AND I.[purchase_info_seq] = COALESCE(TRY_CAST(R.[purchase_info_seq] AS INT), 10)
         AND I.[company_code] = LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4)
     )
 );
@@ -482,44 +482,44 @@ BEGIN
 END;
 
 DECLARE @hdr_before INT = (
-  SELECT COUNT(*) FROM [takt_logistics_procurement_purchase_info_record] T
+  SELECT COUNT(*) FROM [takt_logistics_procurement_purchase_info] T
   WHERE T.[tenant_code]=@tenant_code AND T.[is_deleted]=0
     AND EXISTS (SELECT 1 FROM #hdr H WHERE H.[company_code] = T.[company_code])
 );
 DECLARE @item_before INT = (
-  SELECT COUNT(*) FROM [takt_logistics_procurement_purchase_info_record_item] I
+  SELECT COUNT(*) FROM [takt_logistics_procurement_purchase_info_item] I
   WHERE I.[tenant_code]=@tenant_code AND I.[is_deleted]=0
     AND EXISTS (SELECT 1 FROM #hdr H WHERE H.[company_code] = I.[company_code])
 );
 DECLARE @sq_before INT = (
-  SELECT COUNT(*) FROM [takt_logistics_procurement_purchase_info_record_scale_quantity] Q
+  SELECT COUNT(*) FROM [takt_logistics_procurement_purchase_info_scale_quantity] Q
   WHERE Q.[tenant_code]=@tenant_code AND Q.[is_deleted]=0
     AND EXISTS (SELECT 1 FROM #hdr H WHERE H.[company_code] = Q.[company_code])
 );
 DECLARE @sv_before INT = (
-  SELECT COUNT(*) FROM [takt_logistics_procurement_purchase_info_record_scale_value] V
+  SELECT COUNT(*) FROM [takt_logistics_procurement_purchase_info_scale_value] V
   WHERE V.[tenant_code]=@tenant_code AND V.[is_deleted]=0
     AND EXISTS (SELECT 1 FROM #hdr H WHERE H.[company_code] = V.[company_code])
 );
 
 UPDATE S SET S.[id] = COALESCE(T.[id], S.[id])
 FROM #hdr S
-LEFT JOIN [takt_logistics_procurement_purchase_info_record] T
+LEFT JOIN [takt_logistics_procurement_purchase_info] T
   ON T.[tenant_code]=S.[tenant_code]
  AND T.[company_code]=S.[company_code]
  AND LTRIM(RTRIM(T.[plant_code])) = S.[plant_code]
- AND LTRIM(RTRIM(T.[purchase_info_record_code])) = S.[purchase_info_record_code];
+ AND LTRIM(RTRIM(T.[purchase_info_code])) = S.[purchase_info_code];
 
 SET @merge_from_rn = 1;
 SET @merge_max_rn = ISNULL((SELECT MAX([rn]) FROM #hdr), 0);
 WHILE @merge_from_rn <= @merge_max_rn
 BEGIN
   SET @merge_to_rn = @merge_from_rn + @apply_chunk - 1;
-MERGE INTO [takt_logistics_procurement_purchase_info_record] AS T
+MERGE INTO [takt_logistics_procurement_purchase_info] AS T
 USING (SELECT * FROM #hdr WHERE [rn] >= @merge_from_rn AND [rn] <= @merge_to_rn) AS S
 ON T.[tenant_code]=S.[tenant_code] AND T.[company_code]=S.[company_code]
  AND LTRIM(RTRIM(T.[plant_code]))=S.[plant_code]
- AND LTRIM(RTRIM(T.[purchase_info_record_code]))=S.[purchase_info_record_code]
+ AND LTRIM(RTRIM(T.[purchase_info_code]))=S.[purchase_info_code]
 WHEN MATCHED AND (
   ISNULL(T.[is_deleted],0)<>S.[is_deleted]
   OR LTRIM(RTRIM(ISNULL(T.[price_type],N'')))<>S.[price_type]
@@ -567,17 +567,17 @@ WHEN MATCHED AND (
   T.[deleted_by]=S.[deleted_by],
   T.[deleted_at]=S.[deleted_at]
 WHEN NOT MATCHED THEN INSERT (
-  [id],[plant_code],[purchase_info_record_code],[price_type],[supplier_code],[material_code],[material_description],
+  [id],[plant_code],[purchase_info_code],[price_type],[supplier_code],[material_code],[material_description],
   [purchase_group],[tax_code],[gr_based_invoice_inspection],[pricing_date_control],
   [valid_from],[valid_to],[purchase_inquiry_id],[purchase_inquiry_code],[variable_key],[tenant_code],[company_code],[culture_code],[ext_field],[remark],
   [created_by],[created_at],[updated_by],[updated_at],[is_deleted],[deleted_by],[deleted_at]
 ) VALUES (
-  S.[id],S.[plant_code],S.[purchase_info_record_code],S.[price_type],S.[supplier_code],S.[material_code],S.[material_description],
+  S.[id],S.[plant_code],S.[purchase_info_code],S.[price_type],S.[supplier_code],S.[material_code],S.[material_description],
   S.[purchase_group],S.[tax_code],S.[gr_based_invoice_inspection],S.[pricing_date_control],
   S.[valid_from],S.[valid_to],S.[purchase_inquiry_id],S.[purchase_inquiry_code],S.[variable_key],S.[tenant_code],S.[company_code],S.[culture_code],S.[ext_field],S.[remark],
   COALESCE(S.[created_by],@sync_user_id),COALESCE(S.[created_at],@now),S.[updated_by],S.[updated_at],S.[is_deleted],S.[deleted_by],S.[deleted_at]
 )
-OUTPUT S.rn, $action, INSERTED.[id], INSERTED.[plant_code], INSERTED.[purchase_info_record_code]
+OUTPUT S.rn, $action, INSERTED.[id], INSERTED.[plant_code], INSERTED.[purchase_info_code]
 INTO #hdr_delta(rn, oper_type, id, plant_code, price_code);
   SET @dml_n = @@ROWCOUNT;
   SELECT
@@ -601,43 +601,43 @@ END
 
 UPDATE S SET S.[id]=T.[id]
 FROM #hdr S
-INNER JOIN [takt_logistics_procurement_purchase_info_record] T
+INNER JOIN [takt_logistics_procurement_purchase_info] T
   ON T.[tenant_code]=S.[tenant_code] AND T.[company_code]=S.[company_code] AND T.[is_deleted]=0
- AND LTRIM(RTRIM(T.[plant_code]))=S.[plant_code] AND LTRIM(RTRIM(T.[purchase_info_record_code]))=S.[purchase_info_record_code];
+ AND LTRIM(RTRIM(T.[plant_code]))=S.[plant_code] AND LTRIM(RTRIM(T.[purchase_info_code]))=S.[purchase_info_code];
 
 UPDATE T SET T.[is_deleted]=1, T.[deleted_by]=@sync_user_id, T.[deleted_at]=@now, T.[updated_by]=@sync_user_id, T.[updated_at]=@now
-FROM [takt_logistics_procurement_purchase_info_record] T
+FROM [takt_logistics_procurement_purchase_info] T
 WHERE T.[tenant_code]=@tenant_code AND T.[is_deleted]=0
   AND EXISTS (SELECT 1 FROM #hdr S0 WHERE S0.[company_code] = T.[company_code])
   AND NOT EXISTS (
     SELECT 1 FROM #hdr S
     WHERE S.[company_code] = T.[company_code]
       AND S.[plant_code] = LTRIM(RTRIM(T.[plant_code]))
-      AND S.[purchase_info_record_code] = LTRIM(RTRIM(T.[purchase_info_record_code]))
+      AND S.[purchase_info_code] = LTRIM(RTRIM(T.[purchase_info_code]))
   );
 DECLARE @hdr_del INT = @@ROWCOUNT;
 
-UPDATE I SET I.[purchase_info_record_id]=H.[id]
+UPDATE I SET I.[purchase_info_id]=H.[id]
 FROM #item I
 INNER JOIN #hdr H
   ON H.[company_code]=I.[company_code]
  AND H.[plant_code]=I.[plant_code]
- AND H.[purchase_info_record_code]=I.[purchase_info_record_code];
-DELETE FROM #item WHERE [purchase_info_record_id]=0 OR [purchase_info_record_id] IS NULL;
+ AND H.[purchase_info_code]=I.[purchase_info_code];
+DELETE FROM #item WHERE [purchase_info_id]=0 OR [purchase_info_id] IS NULL;
 
 SET @merge_from_rn = 1;
 SET @merge_max_rn = ISNULL((SELECT MAX([rn]) FROM #item), 0);
 WHILE @merge_from_rn <= @merge_max_rn
 BEGIN
   SET @merge_to_rn = @merge_from_rn + @apply_chunk - 1;
-MERGE INTO [takt_logistics_procurement_purchase_info_record_item] AS T
+MERGE INTO [takt_logistics_procurement_purchase_info_item] AS T
 USING (SELECT * FROM #item WHERE [rn] >= @merge_from_rn AND [rn] <= @merge_to_rn) AS S
 ON T.[tenant_code]=S.[tenant_code] AND T.[company_code]=S.[company_code]
- AND T.[purchase_info_record_id]=S.[purchase_info_record_id] AND T.[purchase_info_record_seq]=S.[purchase_info_record_seq]
+ AND T.[purchase_info_id]=S.[purchase_info_id] AND T.[purchase_info_seq]=S.[purchase_info_seq]
 WHEN MATCHED AND (
   ISNULL(T.[is_deleted],0)<>S.[is_deleted]
   OR LTRIM(RTRIM(ISNULL(T.[plant_code],N'')))<>S.[plant_code]
-  OR LTRIM(RTRIM(ISNULL(T.[purchase_info_record_code],N'')))<>S.[purchase_info_record_code]
+  OR LTRIM(RTRIM(ISNULL(T.[purchase_info_code],N'')))<>S.[purchase_info_code]
   OR LTRIM(RTRIM(ISNULL(T.[price_type],N'')))<>S.[price_type]
   OR LTRIM(RTRIM(ISNULL(T.[scale_type],N'')))<>LTRIM(RTRIM(ISNULL(S.[scale_type],N'')))
   OR LTRIM(RTRIM(ISNULL(T.[scale_basis],N'')))<>LTRIM(RTRIM(ISNULL(S.[scale_basis],N'')))
@@ -667,7 +667,7 @@ WHEN MATCHED AND (
   OR ISNULL(T.[deleted_at], CAST('1900-01-01' AS DATETIME)) <> ISNULL(S.[deleted_at], CAST('1900-01-01' AS DATETIME))
 ) THEN UPDATE SET
   T.[plant_code]=S.[plant_code],
-  T.[purchase_info_record_code]=S.[purchase_info_record_code],
+  T.[purchase_info_code]=S.[purchase_info_code],
   T.[price_type]=S.[price_type],
   T.[scale_type]=S.[scale_type],
   T.[scale_basis]=S.[scale_basis],
@@ -698,21 +698,21 @@ WHEN MATCHED AND (
   T.[deleted_by]=S.[deleted_by],
   T.[deleted_at]=S.[deleted_at]
 WHEN NOT MATCHED THEN INSERT (
-  [id],[purchase_info_record_id],[plant_code],[purchase_info_record_code],[purchase_info_record_seq],[price_type],
+  [id],[purchase_info_id],[plant_code],[purchase_info_code],[purchase_info_seq],[price_type],
   [scale_type],[scale_basis],[scale_quantity],[scale_unit],[scale_value],[scale_currency_code],
   [calculation_type],[price],[untaxed_price],[tax_included_price],[tax_amount],
   [condition_currency_code],[price_unit],[unit_of_measure],
   [min_order_quantity],[rounding_value],[planned_delivery_time_days],[is_obsolete],[tenant_code],[company_code],[culture_code],[ext_field],[remark],
   [created_by],[created_at],[updated_by],[updated_at],[is_deleted],[deleted_by],[deleted_at]
 ) VALUES (
-  S.[id],S.[purchase_info_record_id],S.[plant_code],S.[purchase_info_record_code],S.[purchase_info_record_seq],S.[price_type],
+  S.[id],S.[purchase_info_id],S.[plant_code],S.[purchase_info_code],S.[purchase_info_seq],S.[price_type],
   S.[scale_type],S.[scale_basis],S.[scale_quantity],S.[scale_unit],S.[scale_value],S.[scale_currency_code],
   S.[calculation_type],S.[price],S.[untaxed_price],S.[tax_included_price],S.[tax_amount],
   S.[condition_currency_code],S.[price_unit],S.[unit_of_measure],
   S.[min_order_quantity],S.[rounding_value],S.[planned_delivery_time_days],S.[is_obsolete],S.[tenant_code],S.[company_code],S.[culture_code],S.[ext_field],S.[remark],
   COALESCE(S.[created_by],@sync_user_id),COALESCE(S.[created_at],@now),S.[updated_by],S.[updated_at],S.[is_deleted],S.[deleted_by],S.[deleted_at]
 )
-OUTPUT S.rn, $action, INSERTED.[id], INSERTED.[purchase_info_record_code], INSERTED.[purchase_info_record_seq]
+OUTPUT S.rn, $action, INSERTED.[id], INSERTED.[purchase_info_code], INSERTED.[purchase_info_seq]
 INTO #item_delta(rn, oper_type, id, price_code, price_seq);
   SET @dml_n = @@ROWCOUNT;
   SELECT
@@ -736,54 +736,54 @@ END
 
 UPDATE S SET S.[id]=T.[id]
 FROM #item S
-INNER JOIN [takt_logistics_procurement_purchase_info_record_item] T
+INNER JOIN [takt_logistics_procurement_purchase_info_item] T
   ON T.[tenant_code]=S.[tenant_code] AND T.[company_code]=S.[company_code] AND T.[is_deleted]=0
- AND T.[purchase_info_record_id]=S.[purchase_info_record_id] AND T.[purchase_info_record_seq]=S.[purchase_info_record_seq];
+ AND T.[purchase_info_id]=S.[purchase_info_id] AND T.[purchase_info_seq]=S.[purchase_info_seq];
 
 UPDATE T SET T.[is_deleted]=1, T.[deleted_by]=@sync_user_id, T.[deleted_at]=@now, T.[updated_by]=@sync_user_id, T.[updated_at]=@now
-FROM [takt_logistics_procurement_purchase_info_record_item] T
+FROM [takt_logistics_procurement_purchase_info_item] T
 WHERE T.[tenant_code]=@tenant_code AND T.[is_deleted]=0
   AND EXISTS (SELECT 1 FROM #hdr S0 WHERE S0.[company_code] = T.[company_code])
   AND EXISTS (
-    SELECT 1 FROM [takt_logistics_procurement_purchase_info_record] H
-    WHERE H.[id]=T.[purchase_info_record_id] AND H.[tenant_code]=@tenant_code
+    SELECT 1 FROM [takt_logistics_procurement_purchase_info] H
+    WHERE H.[id]=T.[purchase_info_id] AND H.[tenant_code]=@tenant_code
       AND H.[company_code]=T.[company_code]
   )
-  AND NOT EXISTS (SELECT 1 FROM #item S WHERE S.[purchase_info_record_id]=T.[purchase_info_record_id] AND S.[purchase_info_record_seq]=T.[purchase_info_record_seq]);
+  AND NOT EXISTS (SELECT 1 FROM #item S WHERE S.[purchase_info_id]=T.[purchase_info_id] AND S.[purchase_info_seq]=T.[purchase_info_seq]);
 DECLARE @item_del INT = @@ROWCOUNT;
 
-UPDATE Q SET Q.[purchase_info_record_item_id]=I.[id]
+UPDATE Q SET Q.[purchase_info_item_id]=I.[id]
 FROM #sq Q
 INNER JOIN #item I
   ON I.[company_code]=Q.[company_code]
  AND I.[plant_code]=Q.[plant_code]
- AND I.[purchase_info_record_code]=Q.[purchase_info_record_code]
- AND I.[purchase_info_record_seq]=Q.[purchase_info_record_seq];
-DELETE FROM #sq WHERE [purchase_info_record_item_id]=0 OR [purchase_info_record_item_id] IS NULL;
+ AND I.[purchase_info_code]=Q.[purchase_info_code]
+ AND I.[purchase_info_seq]=Q.[purchase_info_seq];
+DELETE FROM #sq WHERE [purchase_info_item_id]=0 OR [purchase_info_item_id] IS NULL;
 
-UPDATE V SET V.[purchase_info_record_item_id]=I.[id]
+UPDATE V SET V.[purchase_info_item_id]=I.[id]
 FROM #sv V
 INNER JOIN #item I
   ON I.[company_code]=V.[company_code]
  AND I.[plant_code]=V.[plant_code]
- AND I.[purchase_info_record_code]=V.[purchase_info_record_code]
- AND I.[purchase_info_record_seq]=V.[purchase_info_record_seq];
-DELETE FROM #sv WHERE [purchase_info_record_item_id]=0 OR [purchase_info_record_item_id] IS NULL;
+ AND I.[purchase_info_code]=V.[purchase_info_code]
+ AND I.[purchase_info_seq]=V.[purchase_info_seq];
+DELETE FROM #sv WHERE [purchase_info_item_id]=0 OR [purchase_info_item_id] IS NULL;
 
 SET @merge_from_rn = 1;
 SET @merge_max_rn = ISNULL((SELECT MAX([rn]) FROM #sq), 0);
 WHILE @merge_from_rn <= @merge_max_rn
 BEGIN
   SET @merge_to_rn = @merge_from_rn + @apply_chunk - 1;
-MERGE INTO [takt_logistics_procurement_purchase_info_record_scale_quantity] AS T
+MERGE INTO [takt_logistics_procurement_purchase_info_scale_quantity] AS T
 USING (SELECT * FROM #sq WHERE [rn] >= @merge_from_rn AND [rn] <= @merge_to_rn) AS S
 ON T.[tenant_code]=S.[tenant_code] AND T.[company_code]=S.[company_code]
- AND T.[purchase_info_record_item_id]=S.[purchase_info_record_item_id] AND T.[purchase_info_record_seq]=S.[purchase_info_record_seq]
+ AND T.[purchase_info_item_id]=S.[purchase_info_item_id] AND T.[purchase_info_seq]=S.[purchase_info_seq]
  AND T.[purchase_scale_seq]=S.[purchase_scale_seq] AND ROUND(T.[scale_quantity],4)=ROUND(S.[scale_quantity],4)
 WHEN MATCHED AND (
   ISNULL(T.[is_deleted],0)<>S.[is_deleted]
   OR LTRIM(RTRIM(ISNULL(T.[plant_code],N'')))<>S.[plant_code]
-  OR LTRIM(RTRIM(ISNULL(T.[purchase_info_record_code],N'')))<>S.[purchase_info_record_code]
+  OR LTRIM(RTRIM(ISNULL(T.[purchase_info_code],N'')))<>S.[purchase_info_code]
   OR ROUND(T.[price],5)<>ROUND(S.[price],5) OR ROUND(T.[untaxed_price],5)<>ROUND(S.[untaxed_price],5)
   OR ROUND(T.[tax_included_price],5)<>ROUND(S.[tax_included_price],5) OR ROUND(T.[tax_amount],5)<>ROUND(S.[tax_amount],5)
   OR T.[is_obsolete]<>S.[is_obsolete]
@@ -797,7 +797,7 @@ WHEN MATCHED AND (
   OR ISNULL(T.[deleted_at], CAST('1900-01-01' AS DATETIME)) <> ISNULL(S.[deleted_at], CAST('1900-01-01' AS DATETIME))
 ) THEN UPDATE SET
   T.[plant_code]=S.[plant_code],
-  T.[purchase_info_record_code]=S.[purchase_info_record_code],
+  T.[purchase_info_code]=S.[purchase_info_code],
   T.[price]=S.[price],
   T.[untaxed_price]=S.[untaxed_price],
   T.[tax_included_price]=S.[tax_included_price],
@@ -814,15 +814,15 @@ WHEN MATCHED AND (
   T.[deleted_by]=S.[deleted_by],
   T.[deleted_at]=S.[deleted_at]
 WHEN NOT MATCHED THEN INSERT (
-  [id],[purchase_info_record_item_id],[plant_code],[purchase_info_record_code],[purchase_info_record_seq],[purchase_scale_seq],
+  [id],[purchase_info_item_id],[plant_code],[purchase_info_code],[purchase_info_seq],[purchase_scale_seq],
   [scale_quantity],[price],[untaxed_price],[tax_included_price],[tax_amount],[is_obsolete],[tenant_code],[company_code],[culture_code],[ext_field],[remark],
   [created_by],[created_at],[updated_by],[updated_at],[is_deleted],[deleted_by],[deleted_at]
 ) VALUES (
-  S.[id],S.[purchase_info_record_item_id],S.[plant_code],S.[purchase_info_record_code],S.[purchase_info_record_seq],S.[purchase_scale_seq],
+  S.[id],S.[purchase_info_item_id],S.[plant_code],S.[purchase_info_code],S.[purchase_info_seq],S.[purchase_scale_seq],
   S.[scale_quantity],S.[price],S.[untaxed_price],S.[tax_included_price],S.[tax_amount],S.[is_obsolete],S.[tenant_code],S.[company_code],S.[culture_code],S.[ext_field],S.[remark],
   COALESCE(S.[created_by],@sync_user_id),COALESCE(S.[created_at],@now),S.[updated_by],S.[updated_at],S.[is_deleted],S.[deleted_by],S.[deleted_at]
 )
-OUTPUT S.rn, $action, INSERTED.[id], INSERTED.[purchase_info_record_code], INSERTED.[purchase_info_record_seq], INSERTED.[purchase_scale_seq]
+OUTPUT S.rn, $action, INSERTED.[id], INSERTED.[purchase_info_code], INSERTED.[purchase_info_seq], INSERTED.[purchase_scale_seq]
 INTO #sq_delta(rn, oper_type, id, price_code, price_seq, scale_seq);
   SET @dml_n = @@ROWCOUNT;
   SELECT
@@ -845,19 +845,19 @@ INTO #sq_delta(rn, oper_type, id, price_code, price_seq, scale_seq);
 END
 
 UPDATE T SET T.[is_deleted]=1, T.[deleted_by]=@sync_user_id, T.[deleted_at]=@now, T.[updated_by]=@sync_user_id, T.[updated_at]=@now
-FROM [takt_logistics_procurement_purchase_info_record_scale_quantity] T
+FROM [takt_logistics_procurement_purchase_info_scale_quantity] T
 WHERE T.[tenant_code]=@tenant_code AND T.[is_deleted]=0
   AND EXISTS (SELECT 1 FROM #hdr S0 WHERE S0.[company_code] = T.[company_code])
   AND EXISTS (
-    SELECT 1 FROM [takt_logistics_procurement_purchase_info_record_item] I
-    INNER JOIN [takt_logistics_procurement_purchase_info_record] H ON H.[id]=I.[purchase_info_record_id]
-    WHERE I.[id]=T.[purchase_info_record_item_id] AND I.[tenant_code]=@tenant_code
+    SELECT 1 FROM [takt_logistics_procurement_purchase_info_item] I
+    INNER JOIN [takt_logistics_procurement_purchase_info] H ON H.[id]=I.[purchase_info_id]
+    WHERE I.[id]=T.[purchase_info_item_id] AND I.[tenant_code]=@tenant_code
       AND I.[company_code]=T.[company_code] AND H.[tenant_code]=@tenant_code
       AND H.[company_code]=I.[company_code]
   )
   AND NOT EXISTS (
     SELECT 1 FROM #sq S
-    WHERE S.[purchase_info_record_item_id]=T.[purchase_info_record_item_id] AND S.[purchase_info_record_seq]=T.[purchase_info_record_seq]
+    WHERE S.[purchase_info_item_id]=T.[purchase_info_item_id] AND S.[purchase_info_seq]=T.[purchase_info_seq]
       AND S.[purchase_scale_seq]=T.[purchase_scale_seq] AND ROUND(S.[scale_quantity],4)=ROUND(T.[scale_quantity],4)
   );
 DECLARE @sq_del INT = @@ROWCOUNT;
@@ -867,15 +867,15 @@ SET @merge_max_rn = ISNULL((SELECT MAX([rn]) FROM #sv), 0);
 WHILE @merge_from_rn <= @merge_max_rn
 BEGIN
   SET @merge_to_rn = @merge_from_rn + @apply_chunk - 1;
-MERGE INTO [takt_logistics_procurement_purchase_info_record_scale_value] AS T
+MERGE INTO [takt_logistics_procurement_purchase_info_scale_value] AS T
 USING (SELECT * FROM #sv WHERE [rn] >= @merge_from_rn AND [rn] <= @merge_to_rn) AS S
 ON T.[tenant_code]=S.[tenant_code] AND T.[company_code]=S.[company_code]
- AND T.[purchase_info_record_item_id]=S.[purchase_info_record_item_id] AND T.[purchase_info_record_seq]=S.[purchase_info_record_seq]
+ AND T.[purchase_info_item_id]=S.[purchase_info_item_id] AND T.[purchase_info_seq]=S.[purchase_info_seq]
  AND T.[purchase_scale_seq]=S.[purchase_scale_seq] AND ROUND(T.[scale_value],5)=ROUND(S.[scale_value],5)
 WHEN MATCHED AND (
   ISNULL(T.[is_deleted],0)<>S.[is_deleted]
   OR LTRIM(RTRIM(ISNULL(T.[plant_code],N'')))<>S.[plant_code]
-  OR LTRIM(RTRIM(ISNULL(T.[purchase_info_record_code],N'')))<>S.[purchase_info_record_code]
+  OR LTRIM(RTRIM(ISNULL(T.[purchase_info_code],N'')))<>S.[purchase_info_code]
   OR ROUND(T.[price],5)<>ROUND(S.[price],5) OR ROUND(T.[untaxed_price],5)<>ROUND(S.[untaxed_price],5)
   OR ROUND(T.[tax_included_price],5)<>ROUND(S.[tax_included_price],5) OR ROUND(T.[tax_amount],5)<>ROUND(S.[tax_amount],5)
   OR T.[is_obsolete]<>S.[is_obsolete]
@@ -889,7 +889,7 @@ WHEN MATCHED AND (
   OR ISNULL(T.[deleted_at], CAST('1900-01-01' AS DATETIME)) <> ISNULL(S.[deleted_at], CAST('1900-01-01' AS DATETIME))
 ) THEN UPDATE SET
   T.[plant_code]=S.[plant_code],
-  T.[purchase_info_record_code]=S.[purchase_info_record_code],
+  T.[purchase_info_code]=S.[purchase_info_code],
   T.[price]=S.[price],
   T.[untaxed_price]=S.[untaxed_price],
   T.[tax_included_price]=S.[tax_included_price],
@@ -906,15 +906,15 @@ WHEN MATCHED AND (
   T.[deleted_by]=S.[deleted_by],
   T.[deleted_at]=S.[deleted_at]
 WHEN NOT MATCHED THEN INSERT (
-  [id],[purchase_info_record_item_id],[plant_code],[purchase_info_record_code],[purchase_info_record_seq],[purchase_scale_seq],
+  [id],[purchase_info_item_id],[plant_code],[purchase_info_code],[purchase_info_seq],[purchase_scale_seq],
   [scale_value],[price],[untaxed_price],[tax_included_price],[tax_amount],[is_obsolete],[tenant_code],[company_code],[culture_code],[ext_field],[remark],
   [created_by],[created_at],[updated_by],[updated_at],[is_deleted],[deleted_by],[deleted_at]
 ) VALUES (
-  S.[id],S.[purchase_info_record_item_id],S.[plant_code],S.[purchase_info_record_code],S.[purchase_info_record_seq],S.[purchase_scale_seq],
+  S.[id],S.[purchase_info_item_id],S.[plant_code],S.[purchase_info_code],S.[purchase_info_seq],S.[purchase_scale_seq],
   S.[scale_value],S.[price],S.[untaxed_price],S.[tax_included_price],S.[tax_amount],S.[is_obsolete],S.[tenant_code],S.[company_code],S.[culture_code],S.[ext_field],S.[remark],
   COALESCE(S.[created_by],@sync_user_id),COALESCE(S.[created_at],@now),S.[updated_by],S.[updated_at],S.[is_deleted],S.[deleted_by],S.[deleted_at]
 )
-OUTPUT S.rn, $action, INSERTED.[id], INSERTED.[purchase_info_record_code], INSERTED.[purchase_info_record_seq], INSERTED.[purchase_scale_seq]
+OUTPUT S.rn, $action, INSERTED.[id], INSERTED.[purchase_info_code], INSERTED.[purchase_info_seq], INSERTED.[purchase_scale_seq]
 INTO #sv_delta(rn, oper_type, id, price_code, price_seq, scale_seq);
   SET @dml_n = @@ROWCOUNT;
   SELECT
@@ -937,40 +937,40 @@ INTO #sv_delta(rn, oper_type, id, price_code, price_seq, scale_seq);
 END
 
 UPDATE T SET T.[is_deleted]=1, T.[deleted_by]=@sync_user_id, T.[deleted_at]=@now, T.[updated_by]=@sync_user_id, T.[updated_at]=@now
-FROM [takt_logistics_procurement_purchase_info_record_scale_value] T
+FROM [takt_logistics_procurement_purchase_info_scale_value] T
 WHERE T.[tenant_code]=@tenant_code AND T.[is_deleted]=0
   AND EXISTS (SELECT 1 FROM #hdr S0 WHERE S0.[company_code] = T.[company_code])
   AND EXISTS (
-    SELECT 1 FROM [takt_logistics_procurement_purchase_info_record_item] I
-    INNER JOIN [takt_logistics_procurement_purchase_info_record] H ON H.[id]=I.[purchase_info_record_id]
-    WHERE I.[id]=T.[purchase_info_record_item_id] AND I.[tenant_code]=@tenant_code
+    SELECT 1 FROM [takt_logistics_procurement_purchase_info_item] I
+    INNER JOIN [takt_logistics_procurement_purchase_info] H ON H.[id]=I.[purchase_info_id]
+    WHERE I.[id]=T.[purchase_info_item_id] AND I.[tenant_code]=@tenant_code
       AND I.[company_code]=T.[company_code] AND H.[tenant_code]=@tenant_code
       AND H.[company_code]=I.[company_code]
   )
   AND NOT EXISTS (
     SELECT 1 FROM #sv S
-    WHERE S.[purchase_info_record_item_id]=T.[purchase_info_record_item_id] AND S.[purchase_info_record_seq]=T.[purchase_info_record_seq]
+    WHERE S.[purchase_info_item_id]=T.[purchase_info_item_id] AND S.[purchase_info_seq]=T.[purchase_info_seq]
       AND S.[purchase_scale_seq]=T.[purchase_scale_seq] AND ROUND(S.[scale_value],5)=ROUND(T.[scale_value],5)
   );
 DECLARE @sv_del INT = @@ROWCOUNT;
 
 DECLARE @hdr_after INT = (
-  SELECT COUNT(*) FROM [takt_logistics_procurement_purchase_info_record] T
+  SELECT COUNT(*) FROM [takt_logistics_procurement_purchase_info] T
   WHERE T.[tenant_code]=@tenant_code AND T.[is_deleted]=0
     AND EXISTS (SELECT 1 FROM #hdr H WHERE H.[company_code] = T.[company_code])
 );
 DECLARE @item_after INT = (
-  SELECT COUNT(*) FROM [takt_logistics_procurement_purchase_info_record_item] I
+  SELECT COUNT(*) FROM [takt_logistics_procurement_purchase_info_item] I
   WHERE I.[tenant_code]=@tenant_code AND I.[is_deleted]=0
     AND EXISTS (SELECT 1 FROM #hdr H WHERE H.[company_code] = I.[company_code])
 );
 DECLARE @sq_after INT = (
-  SELECT COUNT(*) FROM [takt_logistics_procurement_purchase_info_record_scale_quantity] Q
+  SELECT COUNT(*) FROM [takt_logistics_procurement_purchase_info_scale_quantity] Q
   WHERE Q.[tenant_code]=@tenant_code AND Q.[is_deleted]=0
     AND EXISTS (SELECT 1 FROM #hdr H WHERE H.[company_code] = Q.[company_code])
 );
 DECLARE @sv_after INT = (
-  SELECT COUNT(*) FROM [takt_logistics_procurement_purchase_info_record_scale_value] V
+  SELECT COUNT(*) FROM [takt_logistics_procurement_purchase_info_scale_value] V
   WHERE V.[tenant_code]=@tenant_code AND V.[is_deleted]=0
     AND EXISTS (SELECT 1 FROM #hdr H WHERE H.[company_code] = V.[company_code])
 );
@@ -1031,8 +1031,8 @@ INSERT INTO [takt_statistics_logging_oper_log] (
 )
 SELECT
   @base_id + 2000000000 + ROW_NUMBER() OVER (ORDER BY P.[company_code], P.[plant_code], P.[culture_code]),
-  N'SYSTEM_SYNC', N'SYNC', N'采购信息记录',
-  N'exec_sql_merge', 'SQL', N'/sync/purchase-info-record', CONCAT('batch_size=', @batch_size),
+  N'SYSTEM_SYNC', N'SYNC', N'采购信息',
+  N'exec_sql_merge', 'SQL', N'/sync/purchase-info', CONCAT('batch_size=', @batch_size),
   @json_result, '127.0.0.1','Server','SQLCMD','Server','Windows','Server',
   @now, DATEDIFF(MILLISECOND,@now,GETDATE()), 1, '',
   @tenant_code, P.[company_code], P.[plant_code], P.[culture_code], @sync_user_id, @now

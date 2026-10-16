@@ -310,7 +310,7 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
                 TaktEcDeptCodes.Iqc => exp.And(x => SqlFunc.Subqueryable<TaktEcUkeken>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
                 TaktEcDeptCodes.Mc => exp.And(x => SqlFunc.Subqueryable<TaktEcBukan>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
                 TaktEcDeptCodes.Pcba => exp.And(x =>
-                    SqlFunc.Subqueryable<TaktEcSmt>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()
+                    SqlFunc.Subqueryable<TaktEcEmtl>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()
                     || SqlFunc.Subqueryable<TaktEcSeizounika>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
                 TaktEcDeptCodes.Assy => exp.And(x => SqlFunc.Subqueryable<TaktEcSeizouikka>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
                 TaktEcDeptCodes.Qa => exp.And(x => SqlFunc.Subqueryable<TaktEcHinkan>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
@@ -332,7 +332,7 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
     // ========================================
 
     /// <summary>
-    /// 获取设变批次转置列表（分页；行=设变明细，列=各阶段日期+批次）
+    /// 获取设变批次转置列表（分页）。先取生管/部管/SMT/制二/制一/品管执行记录指向的明细，再反查明细表展示
     /// </summary>
     /// <param name="queryDto">查询 DTO</param>
     /// <returns>批次转置分页结果</returns>
@@ -402,7 +402,7 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
         attachments ??= [];
         var pmc = TaktEcDeptEntityHelper.FindByDeptCode(deptList, TaktEcDeptCodes.Pmc) as TaktEcSeikan;
         var mc = TaktEcDeptEntityHelper.FindByDeptCode(deptList, TaktEcDeptCodes.Mc) as TaktEcBukan;
-        var smt = deptList.OfType<TaktEcSmt>().FirstOrDefault();
+        var smt = deptList.OfType<TaktEcEmtl>().FirstOrDefault();
         var pcbaSeizounika = deptList.OfType<TaktEcSeizounika>().FirstOrDefault();
         var assy = TaktEcDeptEntityHelper.FindByDeptCode(deptList, TaktEcDeptCodes.Assy) as TaktEcSeizouikka;
         var qa = TaktEcDeptEntityHelper.FindByDeptCode(deptList, TaktEcDeptCodes.Qa);
@@ -490,6 +490,13 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
     private static Expression<Func<TaktEcDetail, bool>> BatchTransposedQueryExpression(TaktEcExecBatchTransposedQueryDto queryDto)
     {
         var exp = Expressionable.Create<TaktEcDetail>();
+        exp = exp.And(x =>
+            SqlFunc.Subqueryable<TaktEcSeikan>().Where(d => d.EcDetailId == x.Id && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
+            || SqlFunc.Subqueryable<TaktEcBukan>().Where(d => d.EcDetailId == x.Id && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
+            || SqlFunc.Subqueryable<TaktEcEmtl>().Where(d => d.EcDetailId == x.Id && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
+            || SqlFunc.Subqueryable<TaktEcSeizounika>().Where(d => d.EcDetailId == x.Id && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
+            || SqlFunc.Subqueryable<TaktEcSeizouikka>().Where(d => d.EcDetailId == x.Id && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
+            || SqlFunc.Subqueryable<TaktEcHinkan>().Where(d => d.EcDetailId == x.Id && d.IsDeleted == 0 && d.IsObsolete == 0).Any());
         if (!string.IsNullOrEmpty(queryDto.KeyWords))
         {
             var keywords = queryDto.KeyWords;
@@ -535,7 +542,7 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
                 || SqlFunc.Subqueryable<TaktEcBukan>()
                     .Where(d => d.EcDetailId == x.Id && d.OutboundBatch != null && d.OutboundBatch.Contains(batchCode))
                     .Any()
-                || SqlFunc.Subqueryable<TaktEcSmt>()
+                || SqlFunc.Subqueryable<TaktEcEmtl>()
                     .Where(d => d.EcDetailId == x.Id && d.OutboundBatch != null && d.OutboundBatch.Contains(batchCode))
                     .Any()
                 || SqlFunc.Subqueryable<TaktEcSeizounika>()

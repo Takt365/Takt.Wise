@@ -22,26 +22,32 @@
       :show-delete="false"
       :show-import="false"
       :show-export="true"
-      :show-refresh="false"
+      :show-advanced-query="true"
+      :show-column-setting="true"
+      :show-fullscreen="true"
+      :show-refresh="true"
       export-permission="logistics:manufacturing:engineering:change:batch:export"
       :export-loading="loading"
+      :refresh-loading="loading"
       @export="handleExport"
+      @advanced-query="handleAdvancedQuery"
+      @column-setting="handleColumnSetting"
+      @refresh="loadData"
     />
-    <div class="overflow-x-auto">
-      <TaktSingleTable
-        entity-scope="company"
-        :columns="columns"
-        :visible-column-keys="visibleColumnKeys"
-        :id-column-key="'ecDetailId'"
-        table-mode="single"
-        :data-source="tableRows"
-        :loading="loading"
-        :stripe="true"
-        :row-key="getEcDetailId"
-        :scroll="tableScroll"
-        @change="handleTableChange"
-        @resize-column="handleResizeColumn"
-      >
+    <TaktSingleTable
+      entity-scope="company"
+      :columns="columns"
+      :visible-column-keys="visibleColumnKeys"
+      :id-column-key="'ecDetailId'"
+      table-mode="single"
+      :data-source="tableRows"
+      :loading="loading"
+      :stripe="true"
+      :virtual="false"
+      :row-key="getEcDetailId"
+      @change="handleTableChange"
+      @resize-column="handleResizeColumn"
+    >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'ecCode'">
             <a-typography-link @click.stop="handleDetail(record as EcExecBatchTransposed)">
@@ -54,9 +60,8 @@
           <template v-else-if="String(column.key ?? '').startsWith('stageBatch_')">
             <span>{{ formatStageBatch(record, String(column.key)) }}</span>
           </template>
-        </template>
-      </TaktSingleTable>
-    </div>
+      </template>
+    </TaktSingleTable>
     <TaktPagination
       v-model:current="currentPage"
       v-model:page-size="pageSize"
@@ -81,6 +86,59 @@
         </a-descriptions>
       </a-spin>
     </TaktModal>
+    <TaktQueryDrawer
+      v-model:open="advancedQueryVisible"
+      v-model:visible-field-keys="visibleQueryFieldKeys"
+      :fields="queryFieldsMeta"
+      storage-key="takt-query-fields-logistics-manufacturing-engineering-change-batch"
+      :form-model="advancedQueryForm"
+      @submit="handleAdvancedQuerySubmit"
+      @reset="handleAdvancedQueryReset"
+    >
+      <template #default="{ isFieldVisible }">
+        <div v-show="isFieldVisible('ecCode')">
+          <a-form-item :label="gi.label('ecCode')">
+            <a-input v-model:value="advancedQueryForm.ecCode" allow-clear :maxlength="10" />
+          </a-form-item>
+        </div>
+        <div v-show="isFieldVisible('ecModelCode')">
+          <a-form-item :label="pi.label('ecModelCode')">
+            <a-input v-model:value="advancedQueryForm.ecModelCode" allow-clear :maxlength="40" />
+          </a-form-item>
+        </div>
+        <div v-show="isFieldVisible('ecNewMaterialCode')">
+          <a-form-item :label="pi.label('ecNewMaterialCode')">
+            <a-input v-model:value="advancedQueryForm.ecNewMaterialCode" allow-clear :maxlength="20" />
+          </a-form-item>
+        </div>
+        <div v-show="isFieldVisible('ecIssueDateStart')">
+          <a-form-item :label="gi.queryLabel('ecIssueDateStart')">
+            <a-date-picker v-model:value="advancedQueryForm.ecIssueDateStart" value-format="YYYY-MM-DD" class="w-full" />
+          </a-form-item>
+        </div>
+        <div v-show="isFieldVisible('ecIssueDateEnd')">
+          <a-form-item :label="gi.queryLabel('ecIssueDateEnd')">
+            <a-date-picker v-model:value="advancedQueryForm.ecIssueDateEnd" value-format="YYYY-MM-DD" class="w-full" />
+          </a-form-item>
+        </div>
+        <div v-show="isFieldVisible('batchCode')">
+          <a-form-item :label="seikan.label('scheduledBatch')">
+            <a-input v-model:value="advancedQueryForm.batchCode" allow-clear :maxlength="40" />
+          </a-form-item>
+        </div>
+      </template>
+    </TaktQueryDrawer>
+    <TaktColumnDrawer
+      v-model:open="columnSettingVisible"
+      :columns="columns"
+      :checked-keys="visibleColumnKeys"
+      id-column-key="ecDetailId"
+      action-column-key="action"
+      entity-scope="company"
+      table-mode="single"
+      @update:checked-keys="handleColumnKeysChange"
+      @reset="handleColumnSettingReset"
+    />
   </div>
 </template>
 
@@ -101,6 +159,7 @@ import { TaktEcDeptCodes } from '@/constants/logistics/ecDeptCodes.constants';
 import type { EcDetail } from '@/types/logistics/manufacturing/engineering-change/ecDetail.types';
 import type {
   EcExecBatchTransposed,
+  EcExecBatchTransposedQuery,
   EcExecBatchTransposedResult,
 } from '@/types/logistics/manufacturing/engineering-change/ecExecTransposed.types';
 import { taktOrgDeptI18nKey } from '@/utils/naming';
@@ -138,8 +197,47 @@ const detailVisible = ref(false);
 const detailLoading = ref(false);
 /** 详情数据 */
 const detailData = ref<EcDetail | null>(null);
-/** 表格横向滚动 */
-const tableScroll = { x: 'max-content' } as const;
+/** 列设置抽屉 */
+const columnSettingVisible = ref(false);
+/** 用户勾选的列；空表示跟随当前全部列 */
+const userVisibleColumnKeys = ref<string[] | null>(null);
+/** 高级查询抽屉 */
+const advancedQueryVisible = ref(false);
+/** 高级查询字段 */
+const BATCH_QUERY_FIELDS = [
+  'ecCode',
+  'ecModelCode',
+  'ecNewMaterialCode',
+  'ecIssueDateStart',
+  'ecIssueDateEnd',
+  'batchCode',
+] as const;
+/** 高级查询可见字段 */
+const visibleQueryFieldKeys = ref<string[]>([]);
+/**
+ * 空的高级查询表单
+ */
+function createEmptyAdvancedQueryForm() {
+  return {
+    ecCode: '',
+    ecModelCode: '',
+    ecNewMaterialCode: '',
+    ecIssueDateStart: '',
+    ecIssueDateEnd: '',
+    batchCode: '',
+  };
+}
+/** 高级查询表单 */
+const advancedQueryForm = ref(createEmptyAdvancedQueryForm());
+/** 高级查询字段标题 */
+const queryFieldsMeta = computed(() => BATCH_QUERY_FIELDS.map((key) => ({
+  key,
+  label: key === 'ecCode' || key === 'ecIssueDateStart' || key === 'ecIssueDateEnd'
+    ? gi.queryLabel(key)
+    : key === 'batchCode'
+      ? seikan.label('scheduledBatch')
+      : pi.label(key),
+})));
 
 /**
  * 部门显示名（org.dept.{编码}）
@@ -250,7 +348,16 @@ const columns = computed(() => {
 });
 
 /** 可见列 keys */
-const visibleColumnKeys = computed(() => columns.value.map((c) => String(c.key)));
+const visibleColumnKeys = computed(() => {
+  const all = columns.value.map((column) => String(column.key ?? '')).filter((key) => key.length > 0);
+  if (userVisibleColumnKeys.value == null) {
+    return all;
+  }
+  const allowed = new Set(all);
+  const kept = userVisibleColumnKeys.value.filter((key) => allowed.has(key));
+  const known = new Set(userVisibleColumnKeys.value);
+  return [...kept, ...all.filter((key) => !known.has(key))];
+});
 
 /** 表格行（扁平化阶段列） */
 const tableRows = computed(() => transposedResult.value?.paged?.data ?? []);
@@ -294,12 +401,67 @@ function formatStageBatch(record: Record<string, unknown>, columnKey: string): s
  * 构建查询参数
  * @returns 查询 DTO
  */
-function buildQueryParams() {
-  return {
+function buildQueryParams(): EcExecBatchTransposedQuery {
+  const form = advancedQueryForm.value;
+  const query: EcExecBatchTransposedQuery = {
     pageIndex: currentPage.value,
     pageSize: pageSize.value,
-    keyWords: queryKeyword.value || undefined,
   };
+  const keyword = queryKeyword.value.trim();
+  if (keyword) {
+    query.keyWords = keyword;
+  }
+  const textKeys = ['ecCode', 'ecModelCode', 'ecNewMaterialCode', 'batchCode'] as const;
+  for (const key of textKeys) {
+    const value = form[key].trim();
+    if (value) {
+      query[key] = value;
+    }
+  }
+  if (form.ecIssueDateStart) {
+    query.ecIssueDateStart = form.ecIssueDateStart;
+  }
+  if (form.ecIssueDateEnd) {
+    query.ecIssueDateEnd = form.ecIssueDateEnd;
+  }
+  return query;
+}
+
+/** 打开高级查询 */
+function handleAdvancedQuery() {
+  advancedQueryVisible.value = true;
+}
+
+/** 提交高级查询 */
+function handleAdvancedQuerySubmit() {
+  advancedQueryVisible.value = false;
+  currentPage.value = 1;
+  loadData();
+}
+
+/** 重置高级查询 */
+function handleAdvancedQueryReset() {
+  advancedQueryForm.value = createEmptyAdvancedQueryForm();
+  currentPage.value = 1;
+  loadData();
+}
+
+/** 打开列设置 */
+function handleColumnSetting() {
+  columnSettingVisible.value = true;
+}
+
+/**
+ * 列设置勾选变更
+ * @param keys 可见列
+ */
+function handleColumnKeysChange(keys: string[]) {
+  userVisibleColumnKeys.value = keys;
+}
+
+/** 列设置恢复默认 */
+function handleColumnSettingReset() {
+  userVisibleColumnKeys.value = null;
 }
 
 /** 加载转置列表 */
@@ -323,6 +485,7 @@ function handleSearch() {
 /** 重置 */
 function handleReset() {
   queryKeyword.value = '';
+  advancedQueryForm.value = createEmptyAdvancedQueryForm();
   currentPage.value = 1;
   loadData();
 }

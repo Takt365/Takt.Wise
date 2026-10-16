@@ -84,7 +84,7 @@ export interface PurchaseInvoiceItem extends CompanyDtoBase {
   debitCreditIndicator?: string;
 
   /**
-   * 税码
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -304,7 +304,7 @@ export interface PurchaseInvoiceItemQuery extends TaktPagedQuery {
   debitCreditIndicator?: string;
 
   /**
-   * 税码
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -538,7 +538,7 @@ export interface PurchaseInvoiceItemCreate {
   debitCreditIndicator?: string;
 
   /**
-   * 税码
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -796,7 +796,7 @@ export interface PurchaseInvoiceItemTemplate {
   debitCreditIndicator?: string;
 
   /**
-   * 税码
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -1020,7 +1020,7 @@ export interface PurchaseInvoiceItemImport {
   debitCreditIndicator?: string;
 
   /**
-   * 税码
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -1244,7 +1244,7 @@ export interface PurchaseInvoiceItemExport {
   debitCreditIndicator?: string;
 
   /**
-   * 税码
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 

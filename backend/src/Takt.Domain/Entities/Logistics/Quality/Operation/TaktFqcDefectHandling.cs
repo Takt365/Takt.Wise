@@ -24,7 +24,7 @@ namespace Takt.Domain.Entities.Logistics.Quality.Operation;
 public class TaktFqcDefectHandling : TaktCompanyEntityBase
 {
     /// <summary>
-    /// FQC不良处理编码
+    /// FQC不良处理编码（前端表单选择编码规则后自动通过 TaktNumbering FQC不良处理编码规则生成并展示，非手输；单据类型菜单：入库检验）
     /// </summary>
     [SugarColumn(ColumnName = "fqc_defect_handling_code", ColumnDescription = "FQC不良处理编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string FqcDefectHandlingCode { get; set; } = string.Empty;

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.HumanResource.Compensation
 // 文件名称：TaktPayScaleI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPayScale 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktPayScaleI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.payscale._self", "zh-HK", "薪级薪等信息_hk", "实体名称"),
 
             // entity.payscale.scalecode
-            new TranslationSeedItem("entity.payscale.scalecode", "en-US", "薪级编码_us", "薪级编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.payscale.scalecode", "en-US", "薪级编码_us", "薪级编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 薪级编码规则生成并展示，非手输；单据类型菜单：薪级）"),
             // entity.payscale.scalecode
-            new TranslationSeedItem("entity.payscale.scalecode", "ja-JP", "薪级编码_jp", "薪级编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.payscale.scalecode", "ja-JP", "薪级编码_jp", "薪级编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 薪级编码规则生成并展示，非手输；单据类型菜单：薪级）"),
             // entity.payscale.scalecode
-            new TranslationSeedItem("entity.payscale.scalecode", "zh-CN", "薪级编码", "薪级编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.payscale.scalecode", "zh-CN", "薪级编码", "薪级编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 薪级编码规则生成并展示，非手输；单据类型菜单：薪级）"),
             // entity.payscale.scalecode
-            new TranslationSeedItem("entity.payscale.scalecode", "zh-HK", "薪级编码_hk", "薪级编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.payscale.scalecode", "zh-HK", "薪级编码_hk", "薪级编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 薪级编码规则生成并展示，非手输；单据类型菜单：薪级）"),
 
             // entity.payscale.scalename
             new TranslationSeedItem("entity.payscale.scalename", "en-US", "薪级名称_us", "薪级名称"),

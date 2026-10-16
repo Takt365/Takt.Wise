@@ -20,7 +20,7 @@ using Takt.Shared.Options;
 namespace Takt.WebApi.Controllers.Logistics.Sales;
 
 /// <summary>
-/// 销售价格月推移转置分析控制器（与 TaktSalesConditionRecords CRUD 分离）
+/// 销售价格月推移转置分析控制器（与 TaktSalesConditions CRUD 分离）
 /// </summary>
 [ApiModule(4, "后勤管理")]
 [Route("api/[controller]", Name = "销售价格推移")]

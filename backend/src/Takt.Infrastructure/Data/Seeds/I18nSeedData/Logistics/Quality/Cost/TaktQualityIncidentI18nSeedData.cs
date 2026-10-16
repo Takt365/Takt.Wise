@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Cost
 // 文件名称：TaktQualityIncidentI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktQualityIncident 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktQualityIncidentI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.qualityincident._self", "zh-HK", "品质事故主表信息_hk", "实体名称"),
 
             // entity.qualityincident.code
-            new TranslationSeedItem("entity.qualityincident.code", "en-US", "品质事故编码_us", "品质事故编码(唯一,如:QI-2026-0001)"),
+            new TranslationSeedItem("entity.qualityincident.code", "en-US", "品质事故编码_us", "品质事故编码(租户+公司+工厂内唯一，如:QI-2026-0001)（前端表单选择编码规则后自动通过 TaktNumbering 品质事故编码规则生成并展示，非手输；单据类型菜单：品质事故）"),
             // entity.qualityincident.code
-            new TranslationSeedItem("entity.qualityincident.code", "ja-JP", "品质事故编码_jp", "品质事故编码(唯一,如:QI-2026-0001)"),
+            new TranslationSeedItem("entity.qualityincident.code", "ja-JP", "品质事故编码_jp", "品质事故编码(租户+公司+工厂内唯一，如:QI-2026-0001)（前端表单选择编码规则后自动通过 TaktNumbering 品质事故编码规则生成并展示，非手输；单据类型菜单：品质事故）"),
             // entity.qualityincident.code
-            new TranslationSeedItem("entity.qualityincident.code", "zh-CN", "品质事故编码", "品质事故编码(唯一,如:QI-2026-0001)"),
+            new TranslationSeedItem("entity.qualityincident.code", "zh-CN", "品质事故编码", "品质事故编码(租户+公司+工厂内唯一，如:QI-2026-0001)（前端表单选择编码规则后自动通过 TaktNumbering 品质事故编码规则生成并展示，非手输；单据类型菜单：品质事故）"),
             // entity.qualityincident.code
-            new TranslationSeedItem("entity.qualityincident.code", "zh-HK", "品质事故编码_hk", "品质事故编码(唯一,如:QI-2026-0001)"),
+            new TranslationSeedItem("entity.qualityincident.code", "zh-HK", "品质事故编码_hk", "品质事故编码(租户+公司+工厂内唯一，如:QI-2026-0001)（前端表单选择编码规则后自动通过 TaktNumbering 品质事故编码规则生成并展示，非手输；单据类型菜单：品质事故）"),
 
             // entity.qualityincident.incidentdate
             new TranslationSeedItem("entity.qualityincident.incidentdate", "en-US", "事故日期_us", "事故日期"),

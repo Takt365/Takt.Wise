@@ -28,7 +28,7 @@ namespace Takt.Domain.Entities.Logistics.Materials;
 public class TaktPlant : TaktTenantCultureEntityBase
 {
     /// <summary>
-    /// 工厂代码（唯一索引：租户内唯一，见 ix_plant_code_unique）
+    /// 工厂代码（唯一索引：租户内唯一，见 ix_plant_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 工厂代码规则生成并展示，非手输；单据类型菜单：工厂信息）
     /// </summary>
     [SugarColumn(ColumnName = "plant_code", ColumnDescription = "工厂代码", ColumnDataType = "varchar", Length = 4, IsNullable = false)]
     public string PlantCode { get; set; } = string.Empty;

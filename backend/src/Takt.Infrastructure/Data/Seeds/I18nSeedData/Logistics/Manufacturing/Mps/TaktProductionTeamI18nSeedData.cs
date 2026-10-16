@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Mps
 // 文件名称：TaktProductionTeamI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktProductionTeam 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktProductionTeamI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.productionteam._self", "zh-HK", "生产班组信息_hk", "实体名称"),
 
             // entity.productionteam.teamcode
-            new TranslationSeedItem("entity.productionteam.teamcode", "en-US", "班组编码_us", "班组编码（唯一标识，例如：1、1SMT1、1SMT2、2自插A 等）"),
+            new TranslationSeedItem("entity.productionteam.teamcode", "en-US", "班组编码_us", "班组编码（唯一标识，例如：1、1SMT1、1SMT2、2自插A 等；前端表单选择编码规则后自动通过 TaktNumbering 班组编码规则生成并展示，非手输；单据类型菜单：生产班组）"),
             // entity.productionteam.teamcode
-            new TranslationSeedItem("entity.productionteam.teamcode", "ja-JP", "班组编码_jp", "班组编码（唯一标识，例如：1、1SMT1、1SMT2、2自插A 等）"),
+            new TranslationSeedItem("entity.productionteam.teamcode", "ja-JP", "班组编码_jp", "班组编码（唯一标识，例如：1、1SMT1、1SMT2、2自插A 等；前端表单选择编码规则后自动通过 TaktNumbering 班组编码规则生成并展示，非手输；单据类型菜单：生产班组）"),
             // entity.productionteam.teamcode
-            new TranslationSeedItem("entity.productionteam.teamcode", "zh-CN", "班组编码", "班组编码（唯一标识，例如：1、1SMT1、1SMT2、2自插A 等）"),
+            new TranslationSeedItem("entity.productionteam.teamcode", "zh-CN", "班组编码", "班组编码（唯一标识，例如：1、1SMT1、1SMT2、2自插A 等；前端表单选择编码规则后自动通过 TaktNumbering 班组编码规则生成并展示，非手输；单据类型菜单：生产班组）"),
             // entity.productionteam.teamcode
-            new TranslationSeedItem("entity.productionteam.teamcode", "zh-HK", "班组编码_hk", "班组编码（唯一标识，例如：1、1SMT1、1SMT2、2自插A 等）"),
+            new TranslationSeedItem("entity.productionteam.teamcode", "zh-HK", "班组编码_hk", "班组编码（唯一标识，例如：1、1SMT1、1SMT2、2自插A 等；前端表单选择编码规则后自动通过 TaktNumbering 班组编码规则生成并展示，非手输；单据类型菜单：生产班组）"),
 
             // entity.productionteam.teamname
             new TranslationSeedItem("entity.productionteam.teamname", "en-US", "班组名称_us", "班组名称（显示名称，如：SMT一班、手插二班等）"),

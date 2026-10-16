@@ -24,7 +24,7 @@ namespace Takt.Domain.Entities.HumanResource.Attendance;
 public class TaktWorkShift : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 班次编码（租户+公司内唯一）
+    /// 班次编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 班次编码规则生成并展示，非手输；单据类型菜单：班次管理）
     /// </summary>
     [SugarColumn(ColumnName = "shift_code", ColumnDescription = "班次编码", ColumnDataType = "nvarchar", Length = 64, IsNullable = false)]
     public string ShiftCode { get; set; } = string.Empty;

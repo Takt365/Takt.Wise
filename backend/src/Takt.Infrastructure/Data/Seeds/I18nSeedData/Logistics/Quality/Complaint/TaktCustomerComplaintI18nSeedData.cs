@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Complaint
 // 文件名称：TaktCustomerComplaintI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktCustomerComplaint 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktCustomerComplaintI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.customercomplaint._self", "zh-HK", "客诉主表信息_hk", "实体名称"),
 
             // entity.customercomplaint.code
-            new TranslationSeedItem("entity.customercomplaint.code", "en-US", "客诉单号_us", "客诉单号（组合唯一索引）"),
+            new TranslationSeedItem("entity.customercomplaint.code", "en-US", "客诉单号_us", "客诉单号（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 客诉单号规则生成并展示，非手输；单据类型菜单：客诉登记）"),
             // entity.customercomplaint.code
-            new TranslationSeedItem("entity.customercomplaint.code", "ja-JP", "客诉单号_jp", "客诉单号（组合唯一索引）"),
+            new TranslationSeedItem("entity.customercomplaint.code", "ja-JP", "客诉单号_jp", "客诉单号（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 客诉单号规则生成并展示，非手输；单据类型菜单：客诉登记）"),
             // entity.customercomplaint.code
-            new TranslationSeedItem("entity.customercomplaint.code", "zh-CN", "客诉单号", "客诉单号（组合唯一索引）"),
+            new TranslationSeedItem("entity.customercomplaint.code", "zh-CN", "客诉单号", "客诉单号（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 客诉单号规则生成并展示，非手输；单据类型菜单：客诉登记）"),
             // entity.customercomplaint.code
-            new TranslationSeedItem("entity.customercomplaint.code", "zh-HK", "客诉单号_hk", "客诉单号（组合唯一索引）"),
+            new TranslationSeedItem("entity.customercomplaint.code", "zh-HK", "客诉单号_hk", "客诉单号（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 客诉单号规则生成并展示，非手输；单据类型菜单：客诉登记）"),
 
             // entity.customercomplaint.customerid
             new TranslationSeedItem("entity.customercomplaint.customerid", "en-US", "客户ID_us", "客户 ID（选项 TaktCustomers/options；DictValue=Id）"),

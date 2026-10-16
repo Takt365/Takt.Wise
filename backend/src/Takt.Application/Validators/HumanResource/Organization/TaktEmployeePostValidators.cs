@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Validators.HumanResource.Organization
 // 文件名称：TaktEmployeePostValidators.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：EmployeePost 关联 DTO FluentValidation 验证器（由 generate-validators-from-entity.cjs 根据 TaktEmployeePost 生成，请按需审阅）
 // 

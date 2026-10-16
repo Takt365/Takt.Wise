@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Operation
 // 文件名称：TaktInspectionStandardItemI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktInspectionStandardItem 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -109,13 +109,13 @@ public class TaktInspectionStandardItemI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.inspectionstandarditem.linenumber", "zh-HK", "行号_hk", "行号（项号/序号，固定步长=10）"),
 
             // entity.inspectionstandarditem.itemcode
-            new TranslationSeedItem("entity.inspectionstandarditem.itemcode", "en-US", "检验项目编码_us", "检验项目编码"),
+            new TranslationSeedItem("entity.inspectionstandarditem.itemcode", "en-US", "检验项目编码_us", "检验项目编码（前端表单选择编码规则后自动通过 TaktNumbering 检验项目编码规则生成并展示，非手输；单据类型菜单：检验标准）"),
             // entity.inspectionstandarditem.itemcode
-            new TranslationSeedItem("entity.inspectionstandarditem.itemcode", "ja-JP", "检验项目编码_jp", "检验项目编码"),
+            new TranslationSeedItem("entity.inspectionstandarditem.itemcode", "ja-JP", "检验项目编码_jp", "检验项目编码（前端表单选择编码规则后自动通过 TaktNumbering 检验项目编码规则生成并展示，非手输；单据类型菜单：检验标准）"),
             // entity.inspectionstandarditem.itemcode
-            new TranslationSeedItem("entity.inspectionstandarditem.itemcode", "zh-CN", "检验项目编码", "检验项目编码"),
+            new TranslationSeedItem("entity.inspectionstandarditem.itemcode", "zh-CN", "检验项目编码", "检验项目编码（前端表单选择编码规则后自动通过 TaktNumbering 检验项目编码规则生成并展示，非手输；单据类型菜单：检验标准）"),
             // entity.inspectionstandarditem.itemcode
-            new TranslationSeedItem("entity.inspectionstandarditem.itemcode", "zh-HK", "检验项目编码_hk", "检验项目编码"),
+            new TranslationSeedItem("entity.inspectionstandarditem.itemcode", "zh-HK", "检验项目编码_hk", "检验项目编码（前端表单选择编码规则后自动通过 TaktNumbering 检验项目编码规则生成并展示，非手输；单据类型菜单：检验标准）"),
 
             // entity.inspectionstandarditem.itemname
             new TranslationSeedItem("entity.inspectionstandarditem.itemname", "en-US", "检验项目名称_us", "检验项目名称"),

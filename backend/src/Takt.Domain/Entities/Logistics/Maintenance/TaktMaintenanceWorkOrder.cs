@@ -30,7 +30,7 @@ public class TaktMaintenanceWorkOrder : TaktApprovalEntityBase
 {
 
     /// <summary>
-    /// 维护工单号
+    /// 维护工单号（前端表单选择编码规则后自动通过 TaktNumbering 维护工单号规则生成并展示，非手输；单据类型菜单：维护工单）
     /// </summary>
     [SugarColumn(ColumnName = "work_order_code", ColumnDescription = "维护工单号", ColumnDataType = "nvarchar", Length = 50, IsNullable = false)]
     public string WorkOrderCode { get; set; } = string.Empty;

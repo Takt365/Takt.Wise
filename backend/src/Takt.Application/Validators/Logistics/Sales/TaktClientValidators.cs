@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Validators.Logistics.Sales
 // 文件名称：TaktClientValidators.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：Client 模块 FluentValidation 验证器（由 generate-validators-from-entity.cjs 根据 TaktClient 生成，请按需审阅）
 // 
@@ -43,19 +43,10 @@ public class TaktClientCreateValidator : AbstractValidator<TaktClientCreateDto>
             .MaximumLength(4).WithMessage("工厂代码长度不能超过4个字符");
         RuleFor(x => x.ClientCode)
             .NotEmpty().WithMessage("客户端编码不能为空")
-            .MaximumLength(20).WithMessage("客户端编码长度不能超过20个字符");
-        RuleFor(x => x.ClientName1)
-            .NotEmpty().WithMessage("客户端名称1不能为空")
-            .MaximumLength(140).WithMessage("客户端名称1长度不能超过140个字符");
-        RuleFor(x => x.EnterpriseNature)
-            .NotEmpty().WithMessage("企业性质不能为空")
-            .MaximumLength(4).WithMessage("企业性质长度不能超过4个字符");
-        RuleFor(x => x.IndustryAttribute)
-            .NotEmpty().WithMessage("行业属性不能为空")
-            .MaximumLength(4).WithMessage("行业属性长度不能超过4个字符");
-        RuleFor(x => x.CurrencyCode)
-            .NotEmpty().WithMessage("结算币种代码不能为空")
-            .MaximumLength(3).WithMessage("结算币种代码长度不能超过3个字符");
+            .MaximumLength(10).WithMessage("客户端编码长度不能超过10个字符");
+        RuleFor(x => x.AccountGroup)
+            .NotEmpty().WithMessage("科目组不能为空")
+            .MaximumLength(4).WithMessage("科目组长度不能超过4个字符");
         RuleFor(x => x.SalesOrganization)
             .NotEmpty().WithMessage("销售组织不能为空")
             .MaximumLength(4).WithMessage("销售组织长度不能超过4个字符");
@@ -65,45 +56,48 @@ public class TaktClientCreateValidator : AbstractValidator<TaktClientCreateDto>
         RuleFor(x => x.ProductGroup)
             .NotEmpty().WithMessage("产品组不能为空")
             .MaximumLength(2).WithMessage("产品组长度不能超过2个字符");
-        RuleFor(x => x.CustomerGroup)
-            .NotEmpty().WithMessage("客户组不能为空")
-            .MaximumLength(2).WithMessage("客户组长度不能超过2个字符");
-        RuleFor(x => x.TradingPartner)
-            .NotEmpty().WithMessage("贸易伙伴不能为空")
-            .MaximumLength(4).WithMessage("贸易伙伴长度不能超过4个字符");
-        RuleFor(x => x.AccountAssignmentGroup)
-            .NotEmpty().WithMessage("帐户分配组不能为空")
-            .MaximumLength(2).WithMessage("帐户分配组长度不能超过2个字符");
+        RuleFor(x => x.ClientName1)
+            .NotEmpty().WithMessage("名称1不能为空")
+            .MaximumLength(140).WithMessage("名称1长度不能超过140个字符");
         RuleFor(x => x.SupplierCode)
             .NotEmpty().WithMessage("供应商不能为空")
             .MaximumLength(10).WithMessage("供应商长度不能超过10个字符");
-        RuleFor(x => x.NielsenIndicator)
-            .NotEmpty().WithMessage("尼尔森标识不能为空")
-            .MaximumLength(2).WithMessage("尼尔森标识长度不能超过2个字符");
+        RuleFor(x => x.TradingPartner)
+            .NotEmpty().WithMessage("贸易伙伴不能为空")
+            .MaximumLength(4).WithMessage("贸易伙伴长度不能超过4个字符");
+        RuleFor(x => x.EnterpriseNature)
+            .NotEmpty().WithMessage("企业性质不能为空")
+            .MaximumLength(4).WithMessage("企业性质长度不能超过4个字符");
+        RuleFor(x => x.IndustryAttribute)
+            .NotEmpty().WithMessage("行业属性不能为空")
+            .MaximumLength(4).WithMessage("行业属性长度不能超过4个字符");
         RuleFor(x => x.ReconciliationAccount)
             .NotEmpty().WithMessage("统驭科目不能为空")
             .MaximumLength(40).WithMessage("统驭科目长度不能超过40个字符");
-        RuleFor(x => x.Headquarters)
-            .NotEmpty().WithMessage("总部不能为空")
-            .MaximumLength(20).WithMessage("总部长度不能超过20个字符");
         RuleFor(x => x.PaymentTerms)
             .NotEmpty().WithMessage("付款条件不能为空")
             .MaximumLength(40).WithMessage("付款条件长度不能超过40个字符");
+        RuleFor(x => x.CurrencyCode)
+            .NotEmpty().WithMessage("货币不能为空")
+            .MaximumLength(3).WithMessage("货币长度不能超过3个字符");
+        RuleFor(x => x.CustomerPricingProcedure)
+            .NotEmpty().WithMessage("客户定价过程不能为空")
+            .MaximumLength(2).WithMessage("客户定价过程长度不能超过2个字符");
+        RuleFor(x => x.ShippingConditions)
+            .NotEmpty().WithMessage("装运条件不能为空")
+            .MaximumLength(2).WithMessage("装运条件长度不能超过2个字符");
         RuleFor(x => x.DeliveringPlant)
             .NotEmpty().WithMessage("交货工厂不能为空")
             .MaximumLength(4).WithMessage("交货工厂长度不能超过4个字符");
         RuleFor(x => x.Incoterms1)
-            .NotEmpty().WithMessage("国际贸易条件1不能为空")
-            .MaximumLength(3).WithMessage("国际贸易条件1长度不能超过3个字符");
+            .NotEmpty().WithMessage("国际贸易条款1不能为空")
+            .MaximumLength(3).WithMessage("国际贸易条款1长度不能超过3个字符");
         RuleFor(x => x.Incoterms2)
-            .NotEmpty().WithMessage("国际贸易条件2不能为空")
-            .MaximumLength(40).WithMessage("国际贸易条件2长度不能超过40个字符");
-        RuleFor(x => x.ShippingConditions)
-            .NotEmpty().WithMessage("装运条件不能为空")
-            .MaximumLength(2).WithMessage("装运条件长度不能超过2个字符");
-        RuleFor(x => x.CustomerPricingProcedure)
-            .NotEmpty().WithMessage("客户定价过程不能为空")
-            .MaximumLength(2).WithMessage("客户定价过程长度不能超过2个字符");
+            .NotEmpty().WithMessage("国际贸易条款2不能为空")
+            .MaximumLength(40).WithMessage("国际贸易条款2长度不能超过40个字符");
+        RuleFor(x => x.AccountAssignmentGroup)
+            .NotEmpty().WithMessage("帐户分配组不能为空")
+            .MaximumLength(2).WithMessage("帐户分配组长度不能超过2个字符");
         RuleFor(x => x.ExtField)
             .MaximumLength(4000).WithMessage("扩展字段JSON长度不能超过4000个字符");
         RuleFor(x => x.Remark)
@@ -141,19 +135,10 @@ public class TaktClientUpdateValidator : AbstractValidator<TaktClientUpdateDto>
             .MaximumLength(4).WithMessage("工厂代码长度不能超过4个字符");
         RuleFor(x => x.ClientCode)
             .NotEmpty().WithMessage("客户端编码不能为空")
-            .MaximumLength(20).WithMessage("客户端编码长度不能超过20个字符");
-        RuleFor(x => x.ClientName1)
-            .NotEmpty().WithMessage("客户端名称1不能为空")
-            .MaximumLength(140).WithMessage("客户端名称1长度不能超过140个字符");
-        RuleFor(x => x.EnterpriseNature)
-            .NotEmpty().WithMessage("企业性质不能为空")
-            .MaximumLength(4).WithMessage("企业性质长度不能超过4个字符");
-        RuleFor(x => x.IndustryAttribute)
-            .NotEmpty().WithMessage("行业属性不能为空")
-            .MaximumLength(4).WithMessage("行业属性长度不能超过4个字符");
-        RuleFor(x => x.CurrencyCode)
-            .NotEmpty().WithMessage("结算币种代码不能为空")
-            .MaximumLength(3).WithMessage("结算币种代码长度不能超过3个字符");
+            .MaximumLength(10).WithMessage("客户端编码长度不能超过10个字符");
+        RuleFor(x => x.AccountGroup)
+            .NotEmpty().WithMessage("科目组不能为空")
+            .MaximumLength(4).WithMessage("科目组长度不能超过4个字符");
         RuleFor(x => x.SalesOrganization)
             .NotEmpty().WithMessage("销售组织不能为空")
             .MaximumLength(4).WithMessage("销售组织长度不能超过4个字符");
@@ -163,45 +148,48 @@ public class TaktClientUpdateValidator : AbstractValidator<TaktClientUpdateDto>
         RuleFor(x => x.ProductGroup)
             .NotEmpty().WithMessage("产品组不能为空")
             .MaximumLength(2).WithMessage("产品组长度不能超过2个字符");
-        RuleFor(x => x.CustomerGroup)
-            .NotEmpty().WithMessage("客户组不能为空")
-            .MaximumLength(2).WithMessage("客户组长度不能超过2个字符");
-        RuleFor(x => x.TradingPartner)
-            .NotEmpty().WithMessage("贸易伙伴不能为空")
-            .MaximumLength(4).WithMessage("贸易伙伴长度不能超过4个字符");
-        RuleFor(x => x.AccountAssignmentGroup)
-            .NotEmpty().WithMessage("帐户分配组不能为空")
-            .MaximumLength(2).WithMessage("帐户分配组长度不能超过2个字符");
+        RuleFor(x => x.ClientName1)
+            .NotEmpty().WithMessage("名称1不能为空")
+            .MaximumLength(140).WithMessage("名称1长度不能超过140个字符");
         RuleFor(x => x.SupplierCode)
             .NotEmpty().WithMessage("供应商不能为空")
             .MaximumLength(10).WithMessage("供应商长度不能超过10个字符");
-        RuleFor(x => x.NielsenIndicator)
-            .NotEmpty().WithMessage("尼尔森标识不能为空")
-            .MaximumLength(2).WithMessage("尼尔森标识长度不能超过2个字符");
+        RuleFor(x => x.TradingPartner)
+            .NotEmpty().WithMessage("贸易伙伴不能为空")
+            .MaximumLength(4).WithMessage("贸易伙伴长度不能超过4个字符");
+        RuleFor(x => x.EnterpriseNature)
+            .NotEmpty().WithMessage("企业性质不能为空")
+            .MaximumLength(4).WithMessage("企业性质长度不能超过4个字符");
+        RuleFor(x => x.IndustryAttribute)
+            .NotEmpty().WithMessage("行业属性不能为空")
+            .MaximumLength(4).WithMessage("行业属性长度不能超过4个字符");
         RuleFor(x => x.ReconciliationAccount)
             .NotEmpty().WithMessage("统驭科目不能为空")
             .MaximumLength(40).WithMessage("统驭科目长度不能超过40个字符");
-        RuleFor(x => x.Headquarters)
-            .NotEmpty().WithMessage("总部不能为空")
-            .MaximumLength(20).WithMessage("总部长度不能超过20个字符");
         RuleFor(x => x.PaymentTerms)
             .NotEmpty().WithMessage("付款条件不能为空")
             .MaximumLength(40).WithMessage("付款条件长度不能超过40个字符");
+        RuleFor(x => x.CurrencyCode)
+            .NotEmpty().WithMessage("货币不能为空")
+            .MaximumLength(3).WithMessage("货币长度不能超过3个字符");
+        RuleFor(x => x.CustomerPricingProcedure)
+            .NotEmpty().WithMessage("客户定价过程不能为空")
+            .MaximumLength(2).WithMessage("客户定价过程长度不能超过2个字符");
+        RuleFor(x => x.ShippingConditions)
+            .NotEmpty().WithMessage("装运条件不能为空")
+            .MaximumLength(2).WithMessage("装运条件长度不能超过2个字符");
         RuleFor(x => x.DeliveringPlant)
             .NotEmpty().WithMessage("交货工厂不能为空")
             .MaximumLength(4).WithMessage("交货工厂长度不能超过4个字符");
         RuleFor(x => x.Incoterms1)
-            .NotEmpty().WithMessage("国际贸易条件1不能为空")
-            .MaximumLength(3).WithMessage("国际贸易条件1长度不能超过3个字符");
+            .NotEmpty().WithMessage("国际贸易条款1不能为空")
+            .MaximumLength(3).WithMessage("国际贸易条款1长度不能超过3个字符");
         RuleFor(x => x.Incoterms2)
-            .NotEmpty().WithMessage("国际贸易条件2不能为空")
-            .MaximumLength(40).WithMessage("国际贸易条件2长度不能超过40个字符");
-        RuleFor(x => x.ShippingConditions)
-            .NotEmpty().WithMessage("装运条件不能为空")
-            .MaximumLength(2).WithMessage("装运条件长度不能超过2个字符");
-        RuleFor(x => x.CustomerPricingProcedure)
-            .NotEmpty().WithMessage("客户定价过程不能为空")
-            .MaximumLength(2).WithMessage("客户定价过程长度不能超过2个字符");
+            .NotEmpty().WithMessage("国际贸易条款2不能为空")
+            .MaximumLength(40).WithMessage("国际贸易条款2长度不能超过40个字符");
+        RuleFor(x => x.AccountAssignmentGroup)
+            .NotEmpty().WithMessage("帐户分配组不能为空")
+            .MaximumLength(2).WithMessage("帐户分配组长度不能超过2个字符");
         RuleFor(x => x.ExtField)
             .MaximumLength(4000).WithMessage("扩展字段JSON长度不能超过4000个字符");
         RuleFor(x => x.Remark)
@@ -233,19 +221,10 @@ public class TaktClientImportValidator : AbstractValidator<TaktClientImportDto>
             .MaximumLength(4).WithMessage("工厂代码长度不能超过4个字符").When(x => !string.IsNullOrWhiteSpace(x.PlantCode));
         RuleFor(x => x.ClientCode)
             .NotEmpty().WithMessage("客户端编码不能为空")
-            .MaximumLength(20).WithMessage("客户端编码长度不能超过20个字符");
-        RuleFor(x => x.ClientName1)
-            .NotEmpty().WithMessage("客户端名称1不能为空")
-            .MaximumLength(140).WithMessage("客户端名称1长度不能超过140个字符");
-        RuleFor(x => x.EnterpriseNature)
-            .NotEmpty().WithMessage("企业性质不能为空")
-            .MaximumLength(4).WithMessage("企业性质长度不能超过4个字符");
-        RuleFor(x => x.IndustryAttribute)
-            .NotEmpty().WithMessage("行业属性不能为空")
-            .MaximumLength(4).WithMessage("行业属性长度不能超过4个字符");
-        RuleFor(x => x.CurrencyCode)
-            .NotEmpty().WithMessage("结算币种代码不能为空")
-            .MaximumLength(3).WithMessage("结算币种代码长度不能超过3个字符");
+            .MaximumLength(10).WithMessage("客户端编码长度不能超过10个字符");
+        RuleFor(x => x.AccountGroup)
+            .NotEmpty().WithMessage("科目组不能为空")
+            .MaximumLength(4).WithMessage("科目组长度不能超过4个字符");
         RuleFor(x => x.SalesOrganization)
             .NotEmpty().WithMessage("销售组织不能为空")
             .MaximumLength(4).WithMessage("销售组织长度不能超过4个字符");
@@ -255,45 +234,48 @@ public class TaktClientImportValidator : AbstractValidator<TaktClientImportDto>
         RuleFor(x => x.ProductGroup)
             .NotEmpty().WithMessage("产品组不能为空")
             .MaximumLength(2).WithMessage("产品组长度不能超过2个字符");
-        RuleFor(x => x.CustomerGroup)
-            .NotEmpty().WithMessage("客户组不能为空")
-            .MaximumLength(2).WithMessage("客户组长度不能超过2个字符");
-        RuleFor(x => x.TradingPartner)
-            .NotEmpty().WithMessage("贸易伙伴不能为空")
-            .MaximumLength(4).WithMessage("贸易伙伴长度不能超过4个字符");
-        RuleFor(x => x.AccountAssignmentGroup)
-            .NotEmpty().WithMessage("帐户分配组不能为空")
-            .MaximumLength(2).WithMessage("帐户分配组长度不能超过2个字符");
+        RuleFor(x => x.ClientName1)
+            .NotEmpty().WithMessage("名称1不能为空")
+            .MaximumLength(140).WithMessage("名称1长度不能超过140个字符");
         RuleFor(x => x.SupplierCode)
             .NotEmpty().WithMessage("供应商不能为空")
             .MaximumLength(10).WithMessage("供应商长度不能超过10个字符");
-        RuleFor(x => x.NielsenIndicator)
-            .NotEmpty().WithMessage("尼尔森标识不能为空")
-            .MaximumLength(2).WithMessage("尼尔森标识长度不能超过2个字符");
+        RuleFor(x => x.TradingPartner)
+            .NotEmpty().WithMessage("贸易伙伴不能为空")
+            .MaximumLength(4).WithMessage("贸易伙伴长度不能超过4个字符");
+        RuleFor(x => x.EnterpriseNature)
+            .NotEmpty().WithMessage("企业性质不能为空")
+            .MaximumLength(4).WithMessage("企业性质长度不能超过4个字符");
+        RuleFor(x => x.IndustryAttribute)
+            .NotEmpty().WithMessage("行业属性不能为空")
+            .MaximumLength(4).WithMessage("行业属性长度不能超过4个字符");
         RuleFor(x => x.ReconciliationAccount)
             .NotEmpty().WithMessage("统驭科目不能为空")
             .MaximumLength(40).WithMessage("统驭科目长度不能超过40个字符");
-        RuleFor(x => x.Headquarters)
-            .NotEmpty().WithMessage("总部不能为空")
-            .MaximumLength(20).WithMessage("总部长度不能超过20个字符");
         RuleFor(x => x.PaymentTerms)
             .NotEmpty().WithMessage("付款条件不能为空")
             .MaximumLength(40).WithMessage("付款条件长度不能超过40个字符");
+        RuleFor(x => x.CurrencyCode)
+            .NotEmpty().WithMessage("货币不能为空")
+            .MaximumLength(3).WithMessage("货币长度不能超过3个字符");
+        RuleFor(x => x.CustomerPricingProcedure)
+            .NotEmpty().WithMessage("客户定价过程不能为空")
+            .MaximumLength(2).WithMessage("客户定价过程长度不能超过2个字符");
+        RuleFor(x => x.ShippingConditions)
+            .NotEmpty().WithMessage("装运条件不能为空")
+            .MaximumLength(2).WithMessage("装运条件长度不能超过2个字符");
         RuleFor(x => x.DeliveringPlant)
             .NotEmpty().WithMessage("交货工厂不能为空")
             .MaximumLength(4).WithMessage("交货工厂长度不能超过4个字符");
         RuleFor(x => x.Incoterms1)
-            .NotEmpty().WithMessage("国际贸易条件1不能为空")
-            .MaximumLength(3).WithMessage("国际贸易条件1长度不能超过3个字符");
+            .NotEmpty().WithMessage("国际贸易条款1不能为空")
+            .MaximumLength(3).WithMessage("国际贸易条款1长度不能超过3个字符");
         RuleFor(x => x.Incoterms2)
-            .NotEmpty().WithMessage("国际贸易条件2不能为空")
-            .MaximumLength(40).WithMessage("国际贸易条件2长度不能超过40个字符");
-        RuleFor(x => x.ShippingConditions)
-            .NotEmpty().WithMessage("装运条件不能为空")
-            .MaximumLength(2).WithMessage("装运条件长度不能超过2个字符");
-        RuleFor(x => x.CustomerPricingProcedure)
-            .NotEmpty().WithMessage("客户定价过程不能为空")
-            .MaximumLength(2).WithMessage("客户定价过程长度不能超过2个字符");
+            .NotEmpty().WithMessage("国际贸易条款2不能为空")
+            .MaximumLength(40).WithMessage("国际贸易条款2长度不能超过40个字符");
+        RuleFor(x => x.AccountAssignmentGroup)
+            .NotEmpty().WithMessage("帐户分配组不能为空")
+            .MaximumLength(2).WithMessage("帐户分配组长度不能超过2个字符");
         RuleFor(x => x.ExtField)
             .MaximumLength(4000).WithMessage("扩展字段JSON长度不能超过4000个字符").When(x => !string.IsNullOrWhiteSpace(x.ExtField));
         RuleFor(x => x.Remark)

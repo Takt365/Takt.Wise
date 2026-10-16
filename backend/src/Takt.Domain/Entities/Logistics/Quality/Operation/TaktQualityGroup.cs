@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Logistics.Quality.Operation;
 public class TaktQualityGroup : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 质量组编码（与员工编码同长 6）
+    /// 质量组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 质量组编码规则生成并展示，非手输；单据类型菜单：质量组）
     /// </summary>
     [SugarColumn(ColumnName = "quality_group_code", ColumnDescription = "质量组编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string QualityGroupCode { get; set; } = string.Empty;

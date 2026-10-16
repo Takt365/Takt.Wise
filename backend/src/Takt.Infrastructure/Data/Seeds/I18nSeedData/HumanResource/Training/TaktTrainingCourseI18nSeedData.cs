@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.HumanResource.Training
 // 文件名称：TaktTrainingCourseI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktTrainingCourse 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktTrainingCourseI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.trainingcourse._self", "zh-HK", "培训课程定义信息_hk", "实体名称"),
 
             // entity.trainingcourse.coursecode
-            new TranslationSeedItem("entity.trainingcourse.coursecode", "en-US", "课程编码_us", "课程编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.trainingcourse.coursecode", "en-US", "课程编码_us", "课程编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 课程编码规则生成并展示，非手输；单据类型菜单：培训课程）"),
             // entity.trainingcourse.coursecode
-            new TranslationSeedItem("entity.trainingcourse.coursecode", "ja-JP", "课程编码_jp", "课程编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.trainingcourse.coursecode", "ja-JP", "课程编码_jp", "课程编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 课程编码规则生成并展示，非手输；单据类型菜单：培训课程）"),
             // entity.trainingcourse.coursecode
-            new TranslationSeedItem("entity.trainingcourse.coursecode", "zh-CN", "课程编码", "课程编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.trainingcourse.coursecode", "zh-CN", "课程编码", "课程编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 课程编码规则生成并展示，非手输；单据类型菜单：培训课程）"),
             // entity.trainingcourse.coursecode
-            new TranslationSeedItem("entity.trainingcourse.coursecode", "zh-HK", "课程编码_hk", "课程编码（租户+公司内唯一）"),
+            new TranslationSeedItem("entity.trainingcourse.coursecode", "zh-HK", "课程编码_hk", "课程编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 课程编码规则生成并展示，非手输；单据类型菜单：培训课程）"),
 
             // entity.trainingcourse.coursename
             new TranslationSeedItem("entity.trainingcourse.coursename", "en-US", "课程名称_us", "课程名称"),

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcGijutsuI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEcGijutsu 实体字段国际化种子（已对齐前端 locales：src/locales/logistics/manufacturing/engineering-change/ec-gijutsu）
 // 
@@ -91,13 +91,13 @@ public class TaktEcGijutsuI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecgijutsu._self", "zh-HK", "设变技术课主表信息_hk", "实体名称"),
 
             // entity.ecgijutsu.eccode
-            new TranslationSeedItem("entity.ecgijutsu.eccode", "en-US", "设变单号_us", "设变单号（唯一）"),
+            new TranslationSeedItem("entity.ecgijutsu.eccode", "en-US", "设变单号_us", "设变单号（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 设变单号规则生成并展示，非手输；单据类型菜单：技术部门）"),
             // entity.ecgijutsu.eccode
-            new TranslationSeedItem("entity.ecgijutsu.eccode", "ja-JP", "设变单号_jp", "设变单号（唯一）"),
+            new TranslationSeedItem("entity.ecgijutsu.eccode", "ja-JP", "设变单号_jp", "设变单号（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 设变单号规则生成并展示，非手输；单据类型菜单：技术部门）"),
             // entity.ecgijutsu.eccode
-            new TranslationSeedItem("entity.ecgijutsu.eccode", "zh-CN", "设变单号", "设变单号（唯一）"),
+            new TranslationSeedItem("entity.ecgijutsu.eccode", "zh-CN", "设变单号", "设变单号（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 设变单号规则生成并展示，非手输；单据类型菜单：技术部门）"),
             // entity.ecgijutsu.eccode
-            new TranslationSeedItem("entity.ecgijutsu.eccode", "zh-HK", "设变单号_hk", "设变单号（唯一）"),
+            new TranslationSeedItem("entity.ecgijutsu.eccode", "zh-HK", "设变单号_hk", "设变单号（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 设变单号规则生成并展示，非手输；单据类型菜单：技术部门）"),
 
             // entity.ecgijutsu.ecissuedate
             new TranslationSeedItem("entity.ecgijutsu.ecissuedate", "en-US", "发行日期_us", "发行日期"),
@@ -158,7 +158,7 @@ public class TaktEcGijutsuI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecgijutsu.ecscope
             new TranslationSeedItem("entity.ecgijutsu.ecscope", "ja-JP", "实施范围_jp", "实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）"),
             // entity.ecgijutsu.ecscope
-            new TranslationSeedItem("entity.ecgijutsu.ecscope", "zh-CN", "实施范围", "实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）"),
+            new TranslationSeedItem("entity.ecgijutsu.ecscope", "zh-CN", "实施策略", "实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）"),
             // entity.ecgijutsu.ecscope
             new TranslationSeedItem("entity.ecgijutsu.ecscope", "zh-HK", "实施范围_hk", "实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）"),
 

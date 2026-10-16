@@ -33,6 +33,7 @@ public class TaktPurchaseInvoiceService : TaktServiceBase, ITaktPurchaseInvoiceS
     private readonly ITaktCompanyRepository<TaktPurchaseInvoiceItem> _purchaseInvoiceItemRepository;
     private readonly ITaktLineNumberGenerator _lineNumberGenerator;
     private readonly ITaktUniqueValidator _uniqueValidator;
+    private readonly ITaktNumberingGenerator _numberingGenerator;
 
     /// <summary>
     /// 构造函数
@@ -41,6 +42,7 @@ public class TaktPurchaseInvoiceService : TaktServiceBase, ITaktPurchaseInvoiceS
     /// <param name="purchaseInvoiceItemRepository">PurchaseInvoiceItem仓储</param>
     /// <param name="lineNumberGenerator">明细行号生成器</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
+    /// <param name="numberingGenerator">业务编码生成器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktPurchaseInvoiceService(
@@ -48,6 +50,7 @@ public class TaktPurchaseInvoiceService : TaktServiceBase, ITaktPurchaseInvoiceS
         ITaktCompanyRepository<TaktPurchaseInvoiceItem> purchaseInvoiceItemRepository,
         ITaktLineNumberGenerator lineNumberGenerator,
         ITaktUniqueValidator uniqueValidator,
+        ITaktNumberingGenerator numberingGenerator,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
@@ -56,6 +59,7 @@ public class TaktPurchaseInvoiceService : TaktServiceBase, ITaktPurchaseInvoiceS
         _purchaseInvoiceItemRepository = purchaseInvoiceItemRepository;
         _lineNumberGenerator = lineNumberGenerator;
         _uniqueValidator = uniqueValidator;
+        _numberingGenerator = numberingGenerator;
     }
 
     /// <summary>
@@ -129,6 +133,19 @@ public class TaktPurchaseInvoiceService : TaktServiceBase, ITaktPurchaseInvoiceS
     public async Task<TaktPurchaseInvoiceDto> CreatePurchaseInvoiceAsync(TaktPurchaseInvoiceCreateDto dto)
     {
         var entity = dto.Adapt<TaktPurchaseInvoice>();
+        if (!string.IsNullOrWhiteSpace(dto.NumberingRuleCode))
+        {
+            var generated = await _numberingGenerator.GenerateNextAsync(dto.NumberingRuleCode.Trim());
+            if (string.IsNullOrWhiteSpace(generated.BusinessCode))
+            {
+                throw new TaktBusinessException("业务编码生成失败");
+            }
+            entity.PurchaseInvoiceCode = generated.BusinessCode;
+        }
+        else if (string.IsNullOrWhiteSpace(entity.PurchaseInvoiceCode))
+        {
+            throw new TaktBusinessException("发票凭证编号不能为空");
+        }
         var isUnique_ix_takt_logistics_procurement_purchase_invoice_code_unique = await _uniqueValidator.IsUniqueAsync(
             _purchaseInvoiceRepository,
             x => x.FiscalYear == entity.FiscalYear
@@ -300,59 +317,6 @@ public class TaktPurchaseInvoiceService : TaktServiceBase, ITaktPurchaseInvoiceS
             exportData,
             sheetName ?? "采购发票数据",
             fileName ?? "采购发票导出.xlsx");
-    }
-
-    // ========================================
-    // 扩展方法（保留）
-    // ========================================
-
-    /// <summary>
-    /// 获取采购发票统计（数据看板采购金额）
-    /// </summary>
-    /// <param name="queryDto">查询 DTO</param>
-    /// <returns>采购发票统计</returns>
-    public async Task<TaktPurchaseInvoiceStatDto> GetPurchaseInvoiceStatAsync(TaktProcurementStatQueryDto queryDto)
-    {
-        ArgumentNullException.ThrowIfNull(queryDto);
-        EnsureThreeLayerContext();
-        var (start, end, statMonth) = TaktStatMonthRangeHelper.ResolveMonthRange(
-            queryDto.PostingDateStart ?? queryDto.OrderDateStart,
-            queryDto.PostingDateEnd ?? queryDto.OrderDateEnd);
-        var tenantCode = CurrentTenantCode;
-        var companyCode = CurrentCompanyCode;
-        Expression<Func<TaktPurchaseInvoice, bool>> invoicePredicate = x =>
-            x.TenantCode == tenantCode
-            && x.CompanyCode == companyCode
-            && x.PostingDate >= start
-            && x.PostingDate <= end;
-        var monthInvoiceCount = await _purchaseInvoiceRepository.CountAsync(invoicePredicate);
-        // 采购金额取明细 amount（未作废行）；主表 gross_amount 作回退
-        Expression<Func<TaktPurchaseInvoiceItem, bool>> itemPredicate = x =>
-            x.TenantCode == tenantCode
-            && x.CompanyCode == companyCode
-            && x.IsObsolete == 0
-            && SqlFunc.Subqueryable<TaktPurchaseInvoice>()
-                .Where(h =>
-                    h.Id == x.PurchaseInvoiceId
-                    && h.TenantCode == tenantCode
-                    && h.CompanyCode == companyCode
-                    && h.PostingDate >= start
-                    && h.PostingDate <= end
-                    && h.IsDeleted == 0)
-                .Any();
-        var monthTotalAmount = await _purchaseInvoiceItemRepository.SumAsync(
-            x => x.Amount ?? 0m,
-            itemPredicate);
-        if (monthTotalAmount == 0 && monthInvoiceCount > 0)
-        {
-            monthTotalAmount = await _purchaseInvoiceRepository.SumAsync(x => x.GrossAmount, invoicePredicate);
-        }
-        return new TaktPurchaseInvoiceStatDto
-        {
-            StatMonth = statMonth,
-            MonthInvoiceCount = monthInvoiceCount,
-            MonthTotalAmount = monthTotalAmount,
-        };
     }
 
     // ========================================

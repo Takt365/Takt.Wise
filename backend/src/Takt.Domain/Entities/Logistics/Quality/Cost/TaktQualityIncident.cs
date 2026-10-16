@@ -28,7 +28,7 @@ public class TaktQualityIncident : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// 品质事故编码(唯一,如:QI-2026-0001)
+    /// 品质事故编码(租户+公司+工厂内唯一，如:QI-2026-0001)（前端表单选择编码规则后自动通过 TaktNumbering 品质事故编码规则生成并展示，非手输；单据类型菜单：品质事故）
     /// </summary>
     [SugarColumn(ColumnName = "quality_incident_code", ColumnDescription = "品质事故编码", Length = 20, ColumnDataType = "nvarchar", IsNullable = false)]
     public string QualityIncidentCode { get; set; } = string.Empty;

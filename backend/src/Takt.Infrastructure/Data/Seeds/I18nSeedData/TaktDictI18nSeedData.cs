@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData
 // 文件名称：TaktDictI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Cursor AI)
 // 功能描述：字典项国际化翻译种子（dict.* 键，与 TaktDictDataSeedData I18nKey 对齐）
 // 
@@ -7283,6 +7283,5640 @@ public class TaktDictI18nSeedData : ITaktSeedDataCoordinator
             // dict.accounting.financial.tax.category.4
             ("dict.accounting.financial.tax.category.4", "zh-HK", "增值税普票_hk", "税别.增值税普票"),
 
+            // dict.accounting.financial.tax.class.a
+            ("dict.accounting.financial.tax.class.a", "en-US", "销项税_us", "税类别.销项税"),
+            // dict.accounting.financial.tax.class.a
+            ("dict.accounting.financial.tax.class.a", "ja-JP", "销项税_jp", "税类别.销项税"),
+            // dict.accounting.financial.tax.class.a
+            ("dict.accounting.financial.tax.class.a", "zh-CN", "销项税", "税类别.销项税"),
+            // dict.accounting.financial.tax.class.a
+            ("dict.accounting.financial.tax.class.a", "zh-HK", "销项税_hk", "税类别.销项税"),
+
+            // dict.accounting.financial.tax.class.v
+            ("dict.accounting.financial.tax.class.v", "en-US", "进项税_us", "税类别.进项税"),
+            // dict.accounting.financial.tax.class.v
+            ("dict.accounting.financial.tax.class.v", "ja-JP", "进项税_jp", "税类别.进项税"),
+            // dict.accounting.financial.tax.class.v
+            ("dict.accounting.financial.tax.class.v", "zh-CN", "进项税", "税类别.进项税"),
+            // dict.accounting.financial.tax.class.v
+            ("dict.accounting.financial.tax.class.v", "zh-HK", "进项税_hk", "税类别.进项税"),
+
+            // dict.accounting.financial.tax.procedure.taxd
+            ("dict.accounting.financial.tax.procedure.taxd", "en-US", "销售税 - 德国_us", "计税过程.TAXD"),
+            // dict.accounting.financial.tax.procedure.taxd
+            ("dict.accounting.financial.tax.procedure.taxd", "ja-JP", "销售税 - 德国_jp", "计税过程.TAXD"),
+            // dict.accounting.financial.tax.procedure.taxd
+            ("dict.accounting.financial.tax.procedure.taxd", "zh-CN", "销售税 - 德国", "计税过程.TAXD"),
+            // dict.accounting.financial.tax.procedure.taxd
+            ("dict.accounting.financial.tax.procedure.taxd", "zh-HK", "销售税 - 德国_hk", "计税过程.TAXD"),
+
+            // dict.accounting.financial.tax.procedure.taxdk
+            ("dict.accounting.financial.tax.procedure.taxdk", "en-US", "销售税 - 丹麦_us", "计税过程.TAXDK"),
+            // dict.accounting.financial.tax.procedure.taxdk
+            ("dict.accounting.financial.tax.procedure.taxdk", "ja-JP", "销售税 - 丹麦_jp", "计税过程.TAXDK"),
+            // dict.accounting.financial.tax.procedure.taxdk
+            ("dict.accounting.financial.tax.procedure.taxdk", "zh-CN", "销售税 - 丹麦", "计税过程.TAXDK"),
+            // dict.accounting.financial.tax.procedure.taxdk
+            ("dict.accounting.financial.tax.procedure.taxdk", "zh-HK", "销售税 - 丹麦_hk", "计税过程.TAXDK"),
+
+            // dict.accounting.financial.tax.procedure.taxes
+            ("dict.accounting.financial.tax.procedure.taxes", "en-US", "销售税 - 西班牙_us", "计税过程.TAXES"),
+            // dict.accounting.financial.tax.procedure.taxes
+            ("dict.accounting.financial.tax.procedure.taxes", "ja-JP", "销售税 - 西班牙_jp", "计税过程.TAXES"),
+            // dict.accounting.financial.tax.procedure.taxes
+            ("dict.accounting.financial.tax.procedure.taxes", "zh-CN", "销售税 - 西班牙", "计税过程.TAXES"),
+            // dict.accounting.financial.tax.procedure.taxes
+            ("dict.accounting.financial.tax.procedure.taxes", "zh-HK", "销售税 - 西班牙_hk", "计税过程.TAXES"),
+
+            // dict.accounting.financial.tax.procedure.taxeur
+            ("dict.accounting.financial.tax.procedure.taxeur", "en-US", "欧洲税的收集过程_us", "计税过程.TAXEUR"),
+            // dict.accounting.financial.tax.procedure.taxeur
+            ("dict.accounting.financial.tax.procedure.taxeur", "ja-JP", "欧洲税的收集过程_jp", "计税过程.TAXEUR"),
+            // dict.accounting.financial.tax.procedure.taxeur
+            ("dict.accounting.financial.tax.procedure.taxeur", "zh-CN", "欧洲税的收集过程", "计税过程.TAXEUR"),
+            // dict.accounting.financial.tax.procedure.taxeur
+            ("dict.accounting.financial.tax.procedure.taxeur", "zh-HK", "欧洲税的收集过程_hk", "计税过程.TAXEUR"),
+
+            // dict.accounting.financial.tax.procedure.taxf
+            ("dict.accounting.financial.tax.procedure.taxf", "en-US", "销售税 - 法国_us", "计税过程.TAXF"),
+            // dict.accounting.financial.tax.procedure.taxf
+            ("dict.accounting.financial.tax.procedure.taxf", "ja-JP", "销售税 - 法国_jp", "计税过程.TAXF"),
+            // dict.accounting.financial.tax.procedure.taxf
+            ("dict.accounting.financial.tax.procedure.taxf", "zh-CN", "销售税 - 法国", "计税过程.TAXF"),
+            // dict.accounting.financial.tax.procedure.taxf
+            ("dict.accounting.financial.tax.procedure.taxf", "zh-HK", "销售税 - 法国_hk", "计税过程.TAXF"),
+
+            // dict.accounting.financial.tax.procedure.taxfi
+            ("dict.accounting.financial.tax.procedure.taxfi", "en-US", "销售税－芬兰_us", "计税过程.TAXFI"),
+            // dict.accounting.financial.tax.procedure.taxfi
+            ("dict.accounting.financial.tax.procedure.taxfi", "ja-JP", "销售税－芬兰_jp", "计税过程.TAXFI"),
+            // dict.accounting.financial.tax.procedure.taxfi
+            ("dict.accounting.financial.tax.procedure.taxfi", "zh-CN", "销售税－芬兰", "计税过程.TAXFI"),
+            // dict.accounting.financial.tax.procedure.taxfi
+            ("dict.accounting.financial.tax.procedure.taxfi", "zh-HK", "销售税－芬兰_hk", "计税过程.TAXFI"),
+
+            // dict.accounting.financial.tax.procedure.taxgb
+            ("dict.accounting.financial.tax.procedure.taxgb", "en-US", "销售税 - 英国_us", "计税过程.TAXGB"),
+            // dict.accounting.financial.tax.procedure.taxgb
+            ("dict.accounting.financial.tax.procedure.taxgb", "ja-JP", "销售税 - 英国_jp", "计税过程.TAXGB"),
+            // dict.accounting.financial.tax.procedure.taxgb
+            ("dict.accounting.financial.tax.procedure.taxgb", "zh-CN", "销售税 - 英国", "计税过程.TAXGB"),
+            // dict.accounting.financial.tax.procedure.taxgb
+            ("dict.accounting.financial.tax.procedure.taxgb", "zh-HK", "销售税 - 英国_hk", "计税过程.TAXGB"),
+
+            // dict.accounting.financial.tax.procedure.taxhk
+            ("dict.accounting.financial.tax.procedure.taxhk", "en-US", "销售税－香港_us", "计税过程.TAXHK"),
+            // dict.accounting.financial.tax.procedure.taxhk
+            ("dict.accounting.financial.tax.procedure.taxhk", "ja-JP", "销售税－香港_jp", "计税过程.TAXHK"),
+            // dict.accounting.financial.tax.procedure.taxhk
+            ("dict.accounting.financial.tax.procedure.taxhk", "zh-CN", "销售税－香港", "计税过程.TAXHK"),
+            // dict.accounting.financial.tax.procedure.taxhk
+            ("dict.accounting.financial.tax.procedure.taxhk", "zh-HK", "销售税－香港_hk", "计税过程.TAXHK"),
+
+            // dict.accounting.financial.tax.procedure.taxhu
+            ("dict.accounting.financial.tax.procedure.taxhu", "en-US", "销售税 - 匈牙利_us", "计税过程.TAXHU"),
+            // dict.accounting.financial.tax.procedure.taxhu
+            ("dict.accounting.financial.tax.procedure.taxhu", "ja-JP", "销售税 - 匈牙利_jp", "计税过程.TAXHU"),
+            // dict.accounting.financial.tax.procedure.taxhu
+            ("dict.accounting.financial.tax.procedure.taxhu", "zh-CN", "销售税 - 匈牙利", "计税过程.TAXHU"),
+            // dict.accounting.financial.tax.procedure.taxhu
+            ("dict.accounting.financial.tax.procedure.taxhu", "zh-HK", "销售税 - 匈牙利_hk", "计税过程.TAXHU"),
+
+            // dict.accounting.financial.tax.procedure.taxie
+            ("dict.accounting.financial.tax.procedure.taxie", "en-US", "销售税 - 爱尔兰_us", "计税过程.TAXIE"),
+            // dict.accounting.financial.tax.procedure.taxie
+            ("dict.accounting.financial.tax.procedure.taxie", "ja-JP", "销售税 - 爱尔兰_jp", "计税过程.TAXIE"),
+            // dict.accounting.financial.tax.procedure.taxie
+            ("dict.accounting.financial.tax.procedure.taxie", "zh-CN", "销售税 - 爱尔兰", "计税过程.TAXIE"),
+            // dict.accounting.financial.tax.procedure.taxie
+            ("dict.accounting.financial.tax.procedure.taxie", "zh-HK", "销售税 - 爱尔兰_hk", "计税过程.TAXIE"),
+
+            // dict.accounting.financial.tax.procedure.taxit
+            ("dict.accounting.financial.tax.procedure.taxit", "en-US", "销售税 - 意大利_us", "计税过程.TAXIT"),
+            // dict.accounting.financial.tax.procedure.taxit
+            ("dict.accounting.financial.tax.procedure.taxit", "ja-JP", "销售税 - 意大利_jp", "计税过程.TAXIT"),
+            // dict.accounting.financial.tax.procedure.taxit
+            ("dict.accounting.financial.tax.procedure.taxit", "zh-CN", "销售税 - 意大利", "计税过程.TAXIT"),
+            // dict.accounting.financial.tax.procedure.taxit
+            ("dict.accounting.financial.tax.procedure.taxit", "zh-HK", "销售税 - 意大利_hk", "计税过程.TAXIT"),
+
+            // dict.accounting.financial.tax.procedure.taxjp
+            ("dict.accounting.financial.tax.procedure.taxjp", "en-US", "销售税 - 日本_us", "计税过程.TAXJP"),
+            // dict.accounting.financial.tax.procedure.taxjp
+            ("dict.accounting.financial.tax.procedure.taxjp", "ja-JP", "销售税 - 日本_jp", "计税过程.TAXJP"),
+            // dict.accounting.financial.tax.procedure.taxjp
+            ("dict.accounting.financial.tax.procedure.taxjp", "zh-CN", "销售税 - 日本", "计税过程.TAXJP"),
+            // dict.accounting.financial.tax.procedure.taxjp
+            ("dict.accounting.financial.tax.procedure.taxjp", "zh-HK", "销售税 - 日本_hk", "计税过程.TAXJP"),
+
+            // dict.accounting.financial.tax.procedure.taxkr
+            ("dict.accounting.financial.tax.procedure.taxkr", "en-US", "销售税 - 韩国_us", "计税过程.TAXKR"),
+            // dict.accounting.financial.tax.procedure.taxkr
+            ("dict.accounting.financial.tax.procedure.taxkr", "ja-JP", "销售税 - 韩国_jp", "计税过程.TAXKR"),
+            // dict.accounting.financial.tax.procedure.taxkr
+            ("dict.accounting.financial.tax.procedure.taxkr", "zh-CN", "销售税 - 韩国", "计税过程.TAXKR"),
+            // dict.accounting.financial.tax.procedure.taxkr
+            ("dict.accounting.financial.tax.procedure.taxkr", "zh-HK", "销售税 - 韩国_hk", "计税过程.TAXKR"),
+
+            // dict.accounting.financial.tax.procedure.taxlu
+            ("dict.accounting.financial.tax.procedure.taxlu", "en-US", "销售税 - 卢森堡_us", "计税过程.TAXLU"),
+            // dict.accounting.financial.tax.procedure.taxlu
+            ("dict.accounting.financial.tax.procedure.taxlu", "ja-JP", "销售税 - 卢森堡_jp", "计税过程.TAXLU"),
+            // dict.accounting.financial.tax.procedure.taxlu
+            ("dict.accounting.financial.tax.procedure.taxlu", "zh-CN", "销售税 - 卢森堡", "计税过程.TAXLU"),
+            // dict.accounting.financial.tax.procedure.taxlu
+            ("dict.accounting.financial.tax.procedure.taxlu", "zh-HK", "销售税 - 卢森堡_hk", "计税过程.TAXLU"),
+
+            // dict.accounting.financial.tax.procedure.taxmx
+            ("dict.accounting.financial.tax.procedure.taxmx", "en-US", "销售税 - 墨西哥_us", "计税过程.TAXMX"),
+            // dict.accounting.financial.tax.procedure.taxmx
+            ("dict.accounting.financial.tax.procedure.taxmx", "ja-JP", "销售税 - 墨西哥_jp", "计税过程.TAXMX"),
+            // dict.accounting.financial.tax.procedure.taxmx
+            ("dict.accounting.financial.tax.procedure.taxmx", "zh-CN", "销售税 - 墨西哥", "计税过程.TAXMX"),
+            // dict.accounting.financial.tax.procedure.taxmx
+            ("dict.accounting.financial.tax.procedure.taxmx", "zh-HK", "销售税 - 墨西哥_hk", "计税过程.TAXMX"),
+
+            // dict.accounting.financial.tax.procedure.taxmy
+            ("dict.accounting.financial.tax.procedure.taxmy", "en-US", "税务过程 -马来西亚_us", "计税过程.TAXMY"),
+            // dict.accounting.financial.tax.procedure.taxmy
+            ("dict.accounting.financial.tax.procedure.taxmy", "ja-JP", "税务过程 -马来西亚_jp", "计税过程.TAXMY"),
+            // dict.accounting.financial.tax.procedure.taxmy
+            ("dict.accounting.financial.tax.procedure.taxmy", "zh-CN", "税务过程 -马来西亚", "计税过程.TAXMY"),
+            // dict.accounting.financial.tax.procedure.taxmy
+            ("dict.accounting.financial.tax.procedure.taxmy", "zh-HK", "税务过程 -马来西亚_hk", "计税过程.TAXMY"),
+
+            // dict.accounting.financial.tax.procedure.taxnl
+            ("dict.accounting.financial.tax.procedure.taxnl", "en-US", "销售税 - 荷兰_us", "计税过程.TAXNL"),
+            // dict.accounting.financial.tax.procedure.taxnl
+            ("dict.accounting.financial.tax.procedure.taxnl", "ja-JP", "销售税 - 荷兰_jp", "计税过程.TAXNL"),
+            // dict.accounting.financial.tax.procedure.taxnl
+            ("dict.accounting.financial.tax.procedure.taxnl", "zh-CN", "销售税 - 荷兰", "计税过程.TAXNL"),
+            // dict.accounting.financial.tax.procedure.taxnl
+            ("dict.accounting.financial.tax.procedure.taxnl", "zh-HK", "销售税 - 荷兰_hk", "计税过程.TAXNL"),
+
+            // dict.accounting.financial.tax.procedure.taxno
+            ("dict.accounting.financial.tax.procedure.taxno", "en-US", "销售税－挪威_us", "计税过程.TAXNO"),
+            // dict.accounting.financial.tax.procedure.taxno
+            ("dict.accounting.financial.tax.procedure.taxno", "ja-JP", "销售税－挪威_jp", "计税过程.TAXNO"),
+            // dict.accounting.financial.tax.procedure.taxno
+            ("dict.accounting.financial.tax.procedure.taxno", "zh-CN", "销售税－挪威", "计税过程.TAXNO"),
+            // dict.accounting.financial.tax.procedure.taxno
+            ("dict.accounting.financial.tax.procedure.taxno", "zh-HK", "销售税－挪威_hk", "计税过程.TAXNO"),
+
+            // dict.accounting.financial.tax.procedure.taxnz
+            ("dict.accounting.financial.tax.procedure.taxnz", "en-US", "营业税－新西兰_us", "计税过程.TAXNZ"),
+            // dict.accounting.financial.tax.procedure.taxnz
+            ("dict.accounting.financial.tax.procedure.taxnz", "ja-JP", "营业税－新西兰_jp", "计税过程.TAXNZ"),
+            // dict.accounting.financial.tax.procedure.taxnz
+            ("dict.accounting.financial.tax.procedure.taxnz", "zh-CN", "营业税－新西兰", "计税过程.TAXNZ"),
+            // dict.accounting.financial.tax.procedure.taxnz
+            ("dict.accounting.financial.tax.procedure.taxnz", "zh-HK", "营业税－新西兰_hk", "计税过程.TAXNZ"),
+
+            // dict.accounting.financial.tax.procedure.taxpe
+            ("dict.accounting.financial.tax.procedure.taxpe", "en-US", "销售税 - Peru_us", "计税过程.TAXPE"),
+            // dict.accounting.financial.tax.procedure.taxpe
+            ("dict.accounting.financial.tax.procedure.taxpe", "ja-JP", "销售税 - Peru_jp", "计税过程.TAXPE"),
+            // dict.accounting.financial.tax.procedure.taxpe
+            ("dict.accounting.financial.tax.procedure.taxpe", "zh-CN", "销售税 - Peru", "计税过程.TAXPE"),
+            // dict.accounting.financial.tax.procedure.taxpe
+            ("dict.accounting.financial.tax.procedure.taxpe", "zh-HK", "销售税 - Peru_hk", "计税过程.TAXPE"),
+
+            // dict.accounting.financial.tax.procedure.taxph
+            ("dict.accounting.financial.tax.procedure.taxph", "en-US", "消项税 - 菲律宾_us", "计税过程.TAXPH"),
+            // dict.accounting.financial.tax.procedure.taxph
+            ("dict.accounting.financial.tax.procedure.taxph", "ja-JP", "消项税 - 菲律宾_jp", "计税过程.TAXPH"),
+            // dict.accounting.financial.tax.procedure.taxph
+            ("dict.accounting.financial.tax.procedure.taxph", "zh-CN", "消项税 - 菲律宾", "计税过程.TAXPH"),
+            // dict.accounting.financial.tax.procedure.taxph
+            ("dict.accounting.financial.tax.procedure.taxph", "zh-HK", "消项税 - 菲律宾_hk", "计税过程.TAXPH"),
+
+            // dict.accounting.financial.tax.procedure.taxpl
+            ("dict.accounting.financial.tax.procedure.taxpl", "en-US", "销售税 - 波兰_us", "计税过程.TAXPL"),
+            // dict.accounting.financial.tax.procedure.taxpl
+            ("dict.accounting.financial.tax.procedure.taxpl", "ja-JP", "销售税 - 波兰_jp", "计税过程.TAXPL"),
+            // dict.accounting.financial.tax.procedure.taxpl
+            ("dict.accounting.financial.tax.procedure.taxpl", "zh-CN", "销售税 - 波兰", "计税过程.TAXPL"),
+            // dict.accounting.financial.tax.procedure.taxpl
+            ("dict.accounting.financial.tax.procedure.taxpl", "zh-HK", "销售税 - 波兰_hk", "计税过程.TAXPL"),
+
+            // dict.accounting.financial.application.ba
+            ("dict.accounting.financial.application.ba", "en-US", "IS 银行_us", "应用程序.BA"),
+            // dict.accounting.financial.application.ba
+            ("dict.accounting.financial.application.ba", "ja-JP", "IS 银行_jp", "应用程序.BA"),
+            // dict.accounting.financial.application.ba
+            ("dict.accounting.financial.application.ba", "zh-CN", "IS 银行", "应用程序.BA"),
+            // dict.accounting.financial.application.ba
+            ("dict.accounting.financial.application.ba", "zh-HK", "IS 银行_hk", "应用程序.BA"),
+
+            // dict.accounting.financial.application.cf
+            ("dict.accounting.financial.application.cf", "en-US", "错误控制_us", "应用程序.CF"),
+            // dict.accounting.financial.application.cf
+            ("dict.accounting.financial.application.cf", "ja-JP", "错误控制_jp", "应用程序.CF"),
+            // dict.accounting.financial.application.cf
+            ("dict.accounting.financial.application.cf", "zh-CN", "错误控制", "应用程序.CF"),
+            // dict.accounting.financial.application.cf
+            ("dict.accounting.financial.application.cf", "zh-HK", "错误控制_hk", "应用程序.CF"),
+
+            // dict.accounting.financial.application.cm
+            ("dict.accounting.financial.application.cm", "en-US", "校园管理_us", "应用程序.CM"),
+            // dict.accounting.financial.application.cm
+            ("dict.accounting.financial.application.cm", "ja-JP", "校园管理_jp", "应用程序.CM"),
+            // dict.accounting.financial.application.cm
+            ("dict.accounting.financial.application.cm", "zh-CN", "校园管理", "应用程序.CM"),
+            // dict.accounting.financial.application.cm
+            ("dict.accounting.financial.application.cm", "zh-HK", "校园管理_hk", "应用程序.CM"),
+
+            // dict.accounting.financial.application.co
+            ("dict.accounting.financial.application.co", "en-US", "生产订单_us", "应用程序.CO"),
+            // dict.accounting.financial.application.co
+            ("dict.accounting.financial.application.co", "ja-JP", "生产订单_jp", "应用程序.CO"),
+            // dict.accounting.financial.application.co
+            ("dict.accounting.financial.application.co", "zh-CN", "生产订单", "应用程序.CO"),
+            // dict.accounting.financial.application.co
+            ("dict.accounting.financial.application.co", "zh-HK", "生产订单_hk", "应用程序.CO"),
+
+            // dict.accounting.financial.application.cq
+            ("dict.accounting.financial.application.cq", "en-US", "资源价格_us", "应用程序.CQ"),
+            // dict.accounting.financial.application.cq
+            ("dict.accounting.financial.application.cq", "ja-JP", "资源价格_jp", "应用程序.CQ"),
+            // dict.accounting.financial.application.cq
+            ("dict.accounting.financial.application.cq", "zh-CN", "资源价格", "应用程序.CQ"),
+            // dict.accounting.financial.application.cq
+            ("dict.accounting.financial.application.cq", "zh-HK", "资源价格_hk", "应用程序.CQ"),
+
+            // dict.accounting.financial.application.cr
+            ("dict.accounting.financial.application.cr", "en-US", "CRP 计算_us", "应用程序.CR"),
+            // dict.accounting.financial.application.cr
+            ("dict.accounting.financial.application.cr", "ja-JP", "CRP 计算_jp", "应用程序.CR"),
+            // dict.accounting.financial.application.cr
+            ("dict.accounting.financial.application.cr", "zh-CN", "CRP 计算", "应用程序.CR"),
+            // dict.accounting.financial.application.cr
+            ("dict.accounting.financial.application.cr", "zh-HK", "CRP 计算_hk", "应用程序.CR"),
+
+            // dict.accounting.financial.application.cs
+            ("dict.accounting.financial.application.cs", "en-US", "成本中心_us", "应用程序.CS"),
+            // dict.accounting.financial.application.cs
+            ("dict.accounting.financial.application.cs", "ja-JP", "成本中心_jp", "应用程序.CS"),
+            // dict.accounting.financial.application.cs
+            ("dict.accounting.financial.application.cs", "zh-CN", "成本中心", "应用程序.CS"),
+            // dict.accounting.financial.application.cs
+            ("dict.accounting.financial.application.cs", "zh-HK", "成本中心_hk", "应用程序.CS"),
+
+            // dict.accounting.financial.application.cv
+            ("dict.accounting.financial.application.cv", "en-US", "文档管理_us", "应用程序.CV"),
+            // dict.accounting.financial.application.cv
+            ("dict.accounting.financial.application.cv", "ja-JP", "文档管理_jp", "应用程序.CV"),
+            // dict.accounting.financial.application.cv
+            ("dict.accounting.financial.application.cv", "zh-CN", "文档管理", "应用程序.CV"),
+            // dict.accounting.financial.application.cv
+            ("dict.accounting.financial.application.cv", "zh-HK", "文档管理_hk", "应用程序.CV"),
+
+            // dict.accounting.financial.application.db
+            ("dict.accounting.financial.application.db", "en-US", "客户_us", "应用程序.DB"),
+            // dict.accounting.financial.application.db
+            ("dict.accounting.financial.application.db", "ja-JP", "客户_jp", "应用程序.DB"),
+            // dict.accounting.financial.application.db
+            ("dict.accounting.financial.application.db", "zh-CN", "客户", "应用程序.DB"),
+            // dict.accounting.financial.application.db
+            ("dict.accounting.financial.application.db", "zh-HK", "客户_hk", "应用程序.DB"),
+
+            // dict.accounting.financial.application.dr
+            ("dict.accounting.financial.application.dr", "en-US", "送达方_us", "应用程序.DR"),
+            // dict.accounting.financial.application.dr
+            ("dict.accounting.financial.application.dr", "ja-JP", "送达方_jp", "应用程序.DR"),
+            // dict.accounting.financial.application.dr
+            ("dict.accounting.financial.application.dr", "zh-CN", "送达方", "应用程序.DR"),
+            // dict.accounting.financial.application.dr
+            ("dict.accounting.financial.application.dr", "zh-HK", "送达方_hk", "应用程序.DR"),
+
+            // dict.accounting.financial.application.ds
+            ("dict.accounting.financial.application.ds", "en-US", "发送方_us", "应用程序.DS"),
+            // dict.accounting.financial.application.ds
+            ("dict.accounting.financial.application.ds", "ja-JP", "发送方_jp", "应用程序.DS"),
+            // dict.accounting.financial.application.ds
+            ("dict.accounting.financial.application.ds", "zh-CN", "发送方", "应用程序.DS"),
+            // dict.accounting.financial.application.ds
+            ("dict.accounting.financial.application.ds", "zh-HK", "发送方_hk", "应用程序.DS"),
+
+            // dict.accounting.financial.application.e1
+            ("dict.accounting.financial.application.e1", "en-US", "内向交货_us", "应用程序.E1"),
+            // dict.accounting.financial.application.e1
+            ("dict.accounting.financial.application.e1", "ja-JP", "内向交货_jp", "应用程序.E1"),
+            // dict.accounting.financial.application.e1
+            ("dict.accounting.financial.application.e1", "zh-CN", "内向交货", "应用程序.E1"),
+            // dict.accounting.financial.application.e1
+            ("dict.accounting.financial.application.e1", "zh-HK", "内向交货_hk", "应用程序.E1"),
+
+            // dict.accounting.financial.application.ea
+            ("dict.accounting.financial.application.ea", "en-US", "采购的报价请求_us", "应用程序.EA"),
+            // dict.accounting.financial.application.ea
+            ("dict.accounting.financial.application.ea", "ja-JP", "采购的报价请求_jp", "应用程序.EA"),
+            // dict.accounting.financial.application.ea
+            ("dict.accounting.financial.application.ea", "zh-CN", "采购的报价请求", "应用程序.EA"),
+            // dict.accounting.financial.application.ea
+            ("dict.accounting.financial.application.ea", "zh-HK", "采购的报价请求_hk", "应用程序.EA"),
+
+            // dict.accounting.financial.application.ef
+            ("dict.accounting.financial.application.ef", "en-US", "采购订单_us", "应用程序.EF"),
+            // dict.accounting.financial.application.ef
+            ("dict.accounting.financial.application.ef", "ja-JP", "采购订单_jp", "应用程序.EF"),
+            // dict.accounting.financial.application.ef
+            ("dict.accounting.financial.application.ef", "zh-CN", "采购订单", "应用程序.EF"),
+            // dict.accounting.financial.application.ef
+            ("dict.accounting.financial.application.ef", "zh-HK", "采购订单_hk", "应用程序.EF"),
+
+            // dict.accounting.financial.application.eh
+            ("dict.accounting.financial.application.eh", "en-US", "变式匹配_us", "应用程序.EH"),
+            // dict.accounting.financial.application.eh
+            ("dict.accounting.financial.application.eh", "ja-JP", "变式匹配_jp", "应用程序.EH"),
+            // dict.accounting.financial.application.eh
+            ("dict.accounting.financial.application.eh", "zh-CN", "变式匹配", "应用程序.EH"),
+            // dict.accounting.financial.application.eh
+            ("dict.accounting.financial.application.eh", "zh-HK", "变式匹配_hk", "应用程序.EH"),
+
+            // dict.accounting.financial.application.el
+            ("dict.accounting.financial.application.el", "en-US", "采购计划协议批准_us", "应用程序.EL"),
+            // dict.accounting.financial.application.el
+            ("dict.accounting.financial.application.el", "ja-JP", "采购计划协议批准_jp", "应用程序.EL"),
+            // dict.accounting.financial.application.el
+            ("dict.accounting.financial.application.el", "zh-CN", "采购计划协议批准", "应用程序.EL"),
+            // dict.accounting.financial.application.el
+            ("dict.accounting.financial.application.el", "zh-HK", "采购计划协议批准_hk", "应用程序.EL"),
+
+            // dict.accounting.financial.application.es
+            ("dict.accounting.financial.application.es", "en-US", "条目表_us", "应用程序.ES"),
+            // dict.accounting.financial.application.es
+            ("dict.accounting.financial.application.es", "ja-JP", "条目表_jp", "应用程序.ES"),
+            // dict.accounting.financial.application.es
+            ("dict.accounting.financial.application.es", "zh-CN", "条目表", "应用程序.ES"),
+            // dict.accounting.financial.application.es
+            ("dict.accounting.financial.application.es", "zh-HK", "条目表_hk", "应用程序.ES"),
+
+            // dict.accounting.financial.application.ev
+            ("dict.accounting.financial.application.ev", "en-US", "采购框架协议_us", "应用程序.EV"),
+            // dict.accounting.financial.application.ev
+            ("dict.accounting.financial.application.ev", "ja-JP", "采购框架协议_jp", "应用程序.EV"),
+            // dict.accounting.financial.application.ev
+            ("dict.accounting.financial.application.ev", "zh-CN", "采购框架协议", "应用程序.EV"),
+            // dict.accounting.financial.application.ev
+            ("dict.accounting.financial.application.ev", "zh-HK", "采购框架协议_hk", "应用程序.EV"),
+
+            // dict.accounting.financial.application.f
+            ("dict.accounting.financial.application.f", "en-US", "装运成本_us", "应用程序.F"),
+            // dict.accounting.financial.application.f
+            ("dict.accounting.financial.application.f", "ja-JP", "装运成本_jp", "应用程序.F"),
+            // dict.accounting.financial.application.f
+            ("dict.accounting.financial.application.f", "zh-CN", "装运成本", "应用程序.F"),
+            // dict.accounting.financial.application.f
+            ("dict.accounting.financial.application.f", "zh-HK", "装运成本_hk", "应用程序.F"),
+
+            // dict.accounting.financial.application.fp
+            ("dict.accounting.financial.application.fp", "en-US", "运费_us", "应用程序.FP"),
+            // dict.accounting.financial.application.fp
+            ("dict.accounting.financial.application.fp", "ja-JP", "运费_jp", "应用程序.FP"),
+            // dict.accounting.financial.application.fp
+            ("dict.accounting.financial.application.fp", "zh-CN", "运费", "应用程序.FP"),
+            // dict.accounting.financial.application.fp
+            ("dict.accounting.financial.application.fp", "zh-HK", "运费_hk", "应用程序.FP"),
+
+            // dict.accounting.financial.application.gj
+            ("dict.accounting.financial.application.gj", "en-US", "JV 开票_us", "应用程序.GJ"),
+            // dict.accounting.financial.application.gj
+            ("dict.accounting.financial.application.gj", "ja-JP", "JV 开票_jp", "应用程序.GJ"),
+            // dict.accounting.financial.application.gj
+            ("dict.accounting.financial.application.gj", "zh-CN", "JV 开票", "应用程序.GJ"),
+            // dict.accounting.financial.application.gj
+            ("dict.accounting.financial.application.gj", "zh-HK", "JV 开票_hk", "应用程序.GJ"),
+
+            // dict.accounting.financial.application.j0
+            ("dict.accounting.financial.application.j0", "en-US", "IS-P SD for Publish_us", "应用程序.J0"),
+            // dict.accounting.financial.application.j0
+            ("dict.accounting.financial.application.j0", "ja-JP", "IS-P SD for Publish_jp", "应用程序.J0"),
+            // dict.accounting.financial.application.j0
+            ("dict.accounting.financial.application.j0", "zh-CN", "IS-P SD for Publish", "应用程序.J0"),
+            // dict.accounting.financial.application.j0
+            ("dict.accounting.financial.application.j0", "zh-HK", "IS-P SD for Publish_hk", "应用程序.J0"),
+
+            // dict.accounting.financial.application.j1
+            ("dict.accounting.financial.application.j1", "en-US", "IS-PSD_us", "应用程序.J1"),
+            // dict.accounting.financial.application.j1
+            ("dict.accounting.financial.application.j1", "ja-JP", "IS-PSD_jp", "应用程序.J1"),
+            // dict.accounting.financial.application.j1
+            ("dict.accounting.financial.application.j1", "zh-CN", "IS-PSD", "应用程序.J1"),
+            // dict.accounting.financial.application.j1
+            ("dict.accounting.financial.application.j1", "zh-HK", "IS-PSD_hk", "应用程序.J1"),
+
+            // dict.accounting.financial.application.j2
+            ("dict.accounting.financial.application.j2", "en-US", "IS-PSD_us", "应用程序.J2"),
+            // dict.accounting.financial.application.j2
+            ("dict.accounting.financial.application.j2", "ja-JP", "IS-PSD_jp", "应用程序.J2"),
+            // dict.accounting.financial.application.j2
+            ("dict.accounting.financial.application.j2", "zh-CN", "IS-PSD", "应用程序.J2"),
+            // dict.accounting.financial.application.j2
+            ("dict.accounting.financial.application.j2", "zh-HK", "IS-PSD_hk", "应用程序.J2"),
+
+            // dict.accounting.financial.application.j3
+            ("dict.accounting.financial.application.j3", "en-US", "IS-PSD_us", "应用程序.J3"),
+            // dict.accounting.financial.application.j3
+            ("dict.accounting.financial.application.j3", "ja-JP", "IS-PSD_jp", "应用程序.J3"),
+            // dict.accounting.financial.application.j3
+            ("dict.accounting.financial.application.j3", "zh-CN", "IS-PSD", "应用程序.J3"),
+            // dict.accounting.financial.application.j3
+            ("dict.accounting.financial.application.j3", "zh-HK", "IS-PSD_hk", "应用程序.J3"),
+
+            // dict.accounting.financial.application.j4
+            ("dict.accounting.financial.application.j4", "en-US", "IS-PSD_us", "应用程序.J4"),
+            // dict.accounting.financial.application.j4
+            ("dict.accounting.financial.application.j4", "ja-JP", "IS-PSD_jp", "应用程序.J4"),
+            // dict.accounting.financial.application.j4
+            ("dict.accounting.financial.application.j4", "zh-CN", "IS-PSD", "应用程序.J4"),
+            // dict.accounting.financial.application.j4
+            ("dict.accounting.financial.application.j4", "zh-HK", "IS-PSD_hk", "应用程序.J4"),
+
+            // dict.accounting.financial.application.j5
+            ("dict.accounting.financial.application.j5", "en-US", "IS-PSD_us", "应用程序.J5"),
+            // dict.accounting.financial.application.j5
+            ("dict.accounting.financial.application.j5", "ja-JP", "IS-PSD_jp", "应用程序.J5"),
+            // dict.accounting.financial.application.j5
+            ("dict.accounting.financial.application.j5", "zh-CN", "IS-PSD", "应用程序.J5"),
+            // dict.accounting.financial.application.j5
+            ("dict.accounting.financial.application.j5", "zh-HK", "IS-PSD_hk", "应用程序.J5"),
+
+            // dict.accounting.financial.application.j6
+            ("dict.accounting.financial.application.j6", "en-US", "IS-PSD_us", "应用程序.J6"),
+            // dict.accounting.financial.application.j6
+            ("dict.accounting.financial.application.j6", "ja-JP", "IS-PSD_jp", "应用程序.J6"),
+            // dict.accounting.financial.application.j6
+            ("dict.accounting.financial.application.j6", "zh-CN", "IS-PSD", "应用程序.J6"),
+            // dict.accounting.financial.application.j6
+            ("dict.accounting.financial.application.j6", "zh-HK", "IS-PSD_hk", "应用程序.J6"),
+
+            // dict.accounting.financial.application.j7
+            ("dict.accounting.financial.application.j7", "en-US", "IS-PSD_us", "应用程序.J7"),
+            // dict.accounting.financial.application.j7
+            ("dict.accounting.financial.application.j7", "ja-JP", "IS-PSD_jp", "应用程序.J7"),
+            // dict.accounting.financial.application.j7
+            ("dict.accounting.financial.application.j7", "zh-CN", "IS-PSD", "应用程序.J7"),
+            // dict.accounting.financial.application.j7
+            ("dict.accounting.financial.application.j7", "zh-HK", "IS-PSD_hk", "应用程序.J7"),
+
+            // dict.accounting.financial.application.j8
+            ("dict.accounting.financial.application.j8", "en-US", "IS-PSD_us", "应用程序.J8"),
+            // dict.accounting.financial.application.j8
+            ("dict.accounting.financial.application.j8", "ja-JP", "IS-PSD_jp", "应用程序.J8"),
+            // dict.accounting.financial.application.j8
+            ("dict.accounting.financial.application.j8", "zh-CN", "IS-PSD", "应用程序.J8"),
+            // dict.accounting.financial.application.j8
+            ("dict.accounting.financial.application.j8", "zh-HK", "IS-PSD_hk", "应用程序.J8"),
+
+            // dict.accounting.financial.application.j9
+            ("dict.accounting.financial.application.j9", "en-US", "IS-PSD_us", "应用程序.J9"),
+            // dict.accounting.financial.application.j9
+            ("dict.accounting.financial.application.j9", "ja-JP", "IS-PSD_jp", "应用程序.J9"),
+            // dict.accounting.financial.application.j9
+            ("dict.accounting.financial.application.j9", "zh-CN", "IS-PSD", "应用程序.J9"),
+            // dict.accounting.financial.application.j9
+            ("dict.accounting.financial.application.j9", "zh-HK", "IS-PSD_hk", "应用程序.J9"),
+
+            // dict.accounting.financial.application.ja
+            ("dict.accounting.financial.application.ja", "en-US", "IS-PAM:订单_us", "应用程序.JA"),
+            // dict.accounting.financial.application.ja
+            ("dict.accounting.financial.application.ja", "ja-JP", "IS-PAM:订单_jp", "应用程序.JA"),
+            // dict.accounting.financial.application.ja
+            ("dict.accounting.financial.application.ja", "zh-CN", "IS-PAM:订单", "应用程序.JA"),
+            // dict.accounting.financial.application.ja
+            ("dict.accounting.financial.application.ja", "zh-HK", "IS-PAM:订单_hk", "应用程序.JA"),
+
+            // dict.accounting.financial.application.jb
+            ("dict.accounting.financial.application.jb", "en-US", "IS-PAM:_us", "应用程序.JB"),
+            // dict.accounting.financial.application.jb
+            ("dict.accounting.financial.application.jb", "ja-JP", "IS-PAM:_jp", "应用程序.JB"),
+            // dict.accounting.financial.application.jb
+            ("dict.accounting.financial.application.jb", "zh-CN", "IS-PAM:", "应用程序.JB"),
+            // dict.accounting.financial.application.jb
+            ("dict.accounting.financial.application.jb", "zh-HK", "IS-PAM:_hk", "应用程序.JB"),
+
+            // dict.accounting.financial.application.jc
+            ("dict.accounting.financial.application.jc", "en-US", "IS-PAM: 通用比率确定_us", "应用程序.JC"),
+            // dict.accounting.financial.application.jc
+            ("dict.accounting.financial.application.jc", "ja-JP", "IS-PAM: 通用比率确定_jp", "应用程序.JC"),
+            // dict.accounting.financial.application.jc
+            ("dict.accounting.financial.application.jc", "zh-CN", "IS-PAM: 通用比率确定", "应用程序.JC"),
+            // dict.accounting.financial.application.jc
+            ("dict.accounting.financial.application.jc", "zh-HK", "IS-PAM: 通用比率确定_hk", "应用程序.JC"),
+
+            // dict.accounting.financial.application.jd
+            ("dict.accounting.financial.application.jd", "en-US", "IS-PAM:最终折扣_us", "应用程序.JD"),
+            // dict.accounting.financial.application.jd
+            ("dict.accounting.financial.application.jd", "ja-JP", "IS-PAM:最终折扣_jp", "应用程序.JD"),
+            // dict.accounting.financial.application.jd
+            ("dict.accounting.financial.application.jd", "zh-CN", "IS-PAM:最终折扣", "应用程序.JD"),
+            // dict.accounting.financial.application.jd
+            ("dict.accounting.financial.application.jd", "zh-HK", "IS-PAM:最终折扣_hk", "应用程序.JD"),
+
+            // dict.accounting.financial.application.je
+            ("dict.accounting.financial.application.je", "en-US", "IS-PAM: Rev. 买回_us", "应用程序.JE"),
+            // dict.accounting.financial.application.je
+            ("dict.accounting.financial.application.je", "ja-JP", "IS-PAM: Rev. 买回_jp", "应用程序.JE"),
+            // dict.accounting.financial.application.je
+            ("dict.accounting.financial.application.je", "zh-CN", "IS-PAM: Rev. 买回", "应用程序.JE"),
+            // dict.accounting.financial.application.je
+            ("dict.accounting.financial.application.je", "zh-HK", "IS-PAM: Rev. 买回_hk", "应用程序.JE"),
+
+            // dict.accounting.financial.application.jf
+            ("dict.accounting.financial.application.jf", "en-US", "IS-PAM:出具发票单据_us", "应用程序.JF"),
+            // dict.accounting.financial.application.jf
+            ("dict.accounting.financial.application.jf", "ja-JP", "IS-PAM:出具发票单据_jp", "应用程序.JF"),
+            // dict.accounting.financial.application.jf
+            ("dict.accounting.financial.application.jf", "zh-CN", "IS-PAM:出具发票单据", "应用程序.JF"),
+            // dict.accounting.financial.application.jf
+            ("dict.accounting.financial.application.jf", "zh-HK", "IS-PAM:出具发票单据_hk", "应用程序.JF"),
+
+            // dict.accounting.financial.application.jg
+            ("dict.accounting.financial.application.jg", "en-US", "IS-PAM:主数据_us", "应用程序.JG"),
+            // dict.accounting.financial.application.jg
+            ("dict.accounting.financial.application.jg", "ja-JP", "IS-PAM:主数据_jp", "应用程序.JG"),
+            // dict.accounting.financial.application.jg
+            ("dict.accounting.financial.application.jg", "zh-CN", "IS-PAM:主数据", "应用程序.JG"),
+            // dict.accounting.financial.application.jg
+            ("dict.accounting.financial.application.jg", "zh-HK", "IS-PAM:主数据_hk", "应用程序.JG"),
+
+            // dict.accounting.financial.application.jh
+            ("dict.accounting.financial.application.jh", "en-US", "IS-PAM_us", "应用程序.JH"),
+            // dict.accounting.financial.application.jh
+            ("dict.accounting.financial.application.jh", "ja-JP", "IS-PAM_jp", "应用程序.JH"),
+            // dict.accounting.financial.application.jh
+            ("dict.accounting.financial.application.jh", "zh-CN", "IS-PAM", "应用程序.JH"),
+            // dict.accounting.financial.application.jh
+            ("dict.accounting.financial.application.jh", "zh-HK", "IS-PAM_hk", "应用程序.JH"),
+
+            // dict.accounting.financial.application.ji
+            ("dict.accounting.financial.application.ji", "en-US", "IS-PAM_us", "应用程序.JI"),
+            // dict.accounting.financial.application.ji
+            ("dict.accounting.financial.application.ji", "ja-JP", "IS-PAM_jp", "应用程序.JI"),
+            // dict.accounting.financial.application.ji
+            ("dict.accounting.financial.application.ji", "zh-CN", "IS-PAM", "应用程序.JI"),
+            // dict.accounting.financial.application.ji
+            ("dict.accounting.financial.application.ji", "zh-HK", "IS-PAM_hk", "应用程序.JI"),
+
+            // dict.accounting.financial.application.jj
+            ("dict.accounting.financial.application.jj", "en-US", "IS-PAM_us", "应用程序.JJ"),
+            // dict.accounting.financial.application.jj
+            ("dict.accounting.financial.application.jj", "ja-JP", "IS-PAM_jp", "应用程序.JJ"),
+            // dict.accounting.financial.application.jj
+            ("dict.accounting.financial.application.jj", "zh-CN", "IS-PAM", "应用程序.JJ"),
+            // dict.accounting.financial.application.jj
+            ("dict.accounting.financial.application.jj", "zh-HK", "IS-PAM_hk", "应用程序.JJ"),
+
+            // dict.accounting.financial.application.jk
+            ("dict.accounting.financial.application.jk", "en-US", "IS-PAM: 关闭_us", "应用程序.JK"),
+            // dict.accounting.financial.application.jk
+            ("dict.accounting.financial.application.jk", "ja-JP", "IS-PAM: 关闭_jp", "应用程序.JK"),
+            // dict.accounting.financial.application.jk
+            ("dict.accounting.financial.application.jk", "zh-CN", "IS-PAM: 关闭", "应用程序.JK"),
+            // dict.accounting.financial.application.jk
+            ("dict.accounting.financial.application.jk", "zh-HK", "IS-PAM: 关闭_hk", "应用程序.JK"),
+
+            // dict.accounting.financial.application.k1
+            ("dict.accounting.financial.application.k1", "en-US", "销售活动_us", "应用程序.K1"),
+            // dict.accounting.financial.application.k1
+            ("dict.accounting.financial.application.k1", "ja-JP", "销售活动_jp", "应用程序.K1"),
+            // dict.accounting.financial.application.k1
+            ("dict.accounting.financial.application.k1", "zh-CN", "销售活动", "应用程序.K1"),
+            // dict.accounting.financial.application.k1
+            ("dict.accounting.financial.application.k1", "zh-HK", "销售活动_hk", "应用程序.K1"),
+
+            // dict.accounting.financial.application.ka
+            ("dict.accounting.financial.application.ka", "en-US", "订单_us", "应用程序.KA"),
+            // dict.accounting.financial.application.ka
+            ("dict.accounting.financial.application.ka", "ja-JP", "订单_jp", "应用程序.KA"),
+            // dict.accounting.financial.application.ka
+            ("dict.accounting.financial.application.ka", "zh-CN", "订单", "应用程序.KA"),
+            // dict.accounting.financial.application.ka
+            ("dict.accounting.financial.application.ka", "zh-HK", "订单_hk", "应用程序.KA"),
+
+            // dict.accounting.financial.application.ke
+            ("dict.accounting.financial.application.ke", "en-US", "获利能力分析_us", "应用程序.KE"),
+            // dict.accounting.financial.application.ke
+            ("dict.accounting.financial.application.ke", "ja-JP", "获利能力分析_jp", "应用程序.KE"),
+            // dict.accounting.financial.application.ke
+            ("dict.accounting.financial.application.ke", "zh-CN", "获利能力分析", "应用程序.KE"),
+            // dict.accounting.financial.application.ke
+            ("dict.accounting.financial.application.ke", "zh-HK", "获利能力分析_hk", "应用程序.KE"),
+
+            // dict.accounting.financial.application.m
+            ("dict.accounting.financial.application.m", "en-US", "采购_us", "应用程序.M"),
+            // dict.accounting.financial.application.m
+            ("dict.accounting.financial.application.m", "ja-JP", "采购_jp", "应用程序.M"),
+            // dict.accounting.financial.application.m
+            ("dict.accounting.financial.application.m", "zh-CN", "采购", "应用程序.M"),
+            // dict.accounting.financial.application.m
+            ("dict.accounting.financial.application.m", "zh-HK", "采购_hk", "应用程序.M"),
+
+            // dict.accounting.financial.application.m1
+            ("dict.accounting.financial.application.m1", "en-US", "粗收货_us", "应用程序.M1"),
+            // dict.accounting.financial.application.m1
+            ("dict.accounting.financial.application.m1", "ja-JP", "粗收货_jp", "应用程序.M1"),
+            // dict.accounting.financial.application.m1
+            ("dict.accounting.financial.application.m1", "zh-CN", "粗收货", "应用程序.M1"),
+            // dict.accounting.financial.application.m1
+            ("dict.accounting.financial.application.m1", "zh-HK", "粗收货_hk", "应用程序.M1"),
+
+            // dict.accounting.financial.application.md
+            ("dict.accounting.financial.application.md", "en-US", "直接采购_us", "应用程序.MD"),
+            // dict.accounting.financial.application.md
+            ("dict.accounting.financial.application.md", "ja-JP", "直接采购_jp", "应用程序.MD"),
+            // dict.accounting.financial.application.md
+            ("dict.accounting.financial.application.md", "zh-CN", "直接采购", "应用程序.MD"),
+            // dict.accounting.financial.application.md
+            ("dict.accounting.financial.application.md", "zh-HK", "直接采购_hk", "应用程序.MD"),
+
+            // dict.accounting.financial.application.me
+            ("dict.accounting.financial.application.me", "en-US", "库存管理_us", "应用程序.ME"),
+            // dict.accounting.financial.application.me
+            ("dict.accounting.financial.application.me", "ja-JP", "库存管理_jp", "应用程序.ME"),
+            // dict.accounting.financial.application.me
+            ("dict.accounting.financial.application.me", "zh-CN", "库存管理", "应用程序.ME"),
+            // dict.accounting.financial.application.me
+            ("dict.accounting.financial.application.me", "zh-HK", "库存管理_hk", "应用程序.ME"),
+
+            // dict.accounting.financial.application.mr
+            ("dict.accounting.financial.application.mr", "en-US", "发票校验_us", "应用程序.MR"),
+            // dict.accounting.financial.application.mr
+            ("dict.accounting.financial.application.mr", "ja-JP", "发票校验_jp", "应用程序.MR"),
+            // dict.accounting.financial.application.mr
+            ("dict.accounting.financial.application.mr", "zh-CN", "发票校验", "应用程序.MR"),
+            // dict.accounting.financial.application.mr
+            ("dict.accounting.financial.application.mr", "zh-HK", "发票校验_hk", "应用程序.MR"),
+
+            // dict.accounting.financial.application.ms
+            ("dict.accounting.financial.application.ms", "en-US", "扩展服务管理_us", "应用程序.MS"),
+            // dict.accounting.financial.application.ms
+            ("dict.accounting.financial.application.ms", "ja-JP", "扩展服务管理_jp", "应用程序.MS"),
+            // dict.accounting.financial.application.ms
+            ("dict.accounting.financial.application.ms", "zh-CN", "扩展服务管理", "应用程序.MS"),
+            // dict.accounting.financial.application.ms
+            ("dict.accounting.financial.application.ms", "zh-HK", "扩展服务管理_hk", "应用程序.MS"),
+
+            // dict.accounting.financial.application.nf
+            ("dict.accounting.financial.application.nf", "en-US", "Nota财政_us", "应用程序.NF"),
+            // dict.accounting.financial.application.nf
+            ("dict.accounting.financial.application.nf", "ja-JP", "Nota财政_jp", "应用程序.NF"),
+            // dict.accounting.financial.application.nf
+            ("dict.accounting.financial.application.nf", "zh-CN", "Nota财政", "应用程序.NF"),
+            // dict.accounting.financial.application.nf
+            ("dict.accounting.financial.application.nf", "zh-HK", "Nota财政_hk", "应用程序.NF"),
+
+            // dict.accounting.financial.application.oe
+            ("dict.accounting.financial.application.oe", "en-US", "E&P 定价_us", "应用程序.OE"),
+            // dict.accounting.financial.application.oe
+            ("dict.accounting.financial.application.oe", "ja-JP", "E&P 定价_jp", "应用程序.OE"),
+            // dict.accounting.financial.application.oe
+            ("dict.accounting.financial.application.oe", "zh-CN", "E&P 定价", "应用程序.OE"),
+            // dict.accounting.financial.application.oe
+            ("dict.accounting.financial.application.oe", "zh-HK", "E&P 定价_hk", "应用程序.OE"),
+
+            // dict.accounting.financial.application.oi
+            ("dict.accounting.financial.application.oi", "en-US", "散装运输计划_us", "应用程序.OI"),
+            // dict.accounting.financial.application.oi
+            ("dict.accounting.financial.application.oi", "ja-JP", "散装运输计划_jp", "应用程序.OI"),
+            // dict.accounting.financial.application.oi
+            ("dict.accounting.financial.application.oi", "zh-CN", "散装运输计划", "应用程序.OI"),
+            // dict.accounting.financial.application.oi
+            ("dict.accounting.financial.application.oi", "zh-HK", "散装运输计划_hk", "应用程序.OI"),
+
+            // dict.accounting.financial.application.oj
+            ("dict.accounting.financial.application.oj", "en-US", "散装运输装运_us", "应用程序.OJ"),
+            // dict.accounting.financial.application.oj
+            ("dict.accounting.financial.application.oj", "ja-JP", "散装运输装运_jp", "应用程序.OJ"),
+            // dict.accounting.financial.application.oj
+            ("dict.accounting.financial.application.oj", "zh-CN", "散装运输装运", "应用程序.OJ"),
+            // dict.accounting.financial.application.oj
+            ("dict.accounting.financial.application.oj", "zh-HK", "散装运输装运_hk", "应用程序.OJ"),
+
+            // dict.accounting.financial.application.ok
+            ("dict.accounting.financial.application.ok", "en-US", "散装运输交货确认_us", "应用程序.OK"),
+            // dict.accounting.financial.application.ok
+            ("dict.accounting.financial.application.ok", "ja-JP", "散装运输交货确认_jp", "应用程序.OK"),
+            // dict.accounting.financial.application.ok
+            ("dict.accounting.financial.application.ok", "zh-CN", "散装运输交货确认", "应用程序.OK"),
+            // dict.accounting.financial.application.ok
+            ("dict.accounting.financial.application.ok", "zh-HK", "散装运输交货确认_hk", "应用程序.OK"),
+
+            // dict.accounting.financial.application.on
+            ("dict.accounting.financial.application.on", "en-US", "TSW 提名_us", "应用程序.ON"),
+            // dict.accounting.financial.application.on
+            ("dict.accounting.financial.application.on", "ja-JP", "TSW 提名_jp", "应用程序.ON"),
+            // dict.accounting.financial.application.on
+            ("dict.accounting.financial.application.on", "zh-CN", "TSW 提名", "应用程序.ON"),
+            // dict.accounting.financial.application.on
+            ("dict.accounting.financial.application.on", "zh-HK", "TSW 提名_hk", "应用程序.ON"),
+
+            // dict.accounting.financial.application.p
+            ("dict.accounting.financial.application.p", "en-US", "ICM:付款_us", "应用程序.P"),
+            // dict.accounting.financial.application.p
+            ("dict.accounting.financial.application.p", "ja-JP", "ICM:付款_jp", "应用程序.P"),
+            // dict.accounting.financial.application.p
+            ("dict.accounting.financial.application.p", "zh-CN", "ICM:付款", "应用程序.P"),
+            // dict.accounting.financial.application.p
+            ("dict.accounting.financial.application.p", "zh-HK", "ICM:付款_hk", "应用程序.P"),
+
+            // dict.accounting.financial.application.p1
+            ("dict.accounting.financial.application.p1", "en-US", "直接生产_us", "应用程序.P1"),
+            // dict.accounting.financial.application.p1
+            ("dict.accounting.financial.application.p1", "ja-JP", "直接生产_jp", "应用程序.P1"),
+            // dict.accounting.financial.application.p1
+            ("dict.accounting.financial.application.p1", "zh-CN", "直接生产", "应用程序.P1"),
+            // dict.accounting.financial.application.p1
+            ("dict.accounting.financial.application.p1", "zh-HK", "直接生产_hk", "应用程序.P1"),
+
+            // dict.accounting.financial.application.pa
+            ("dict.accounting.financial.application.pa", "en-US", "JIT调用_us", "应用程序.PA"),
+            // dict.accounting.financial.application.pa
+            ("dict.accounting.financial.application.pa", "ja-JP", "JIT调用_jp", "应用程序.PA"),
+            // dict.accounting.financial.application.pa
+            ("dict.accounting.financial.application.pa", "zh-CN", "JIT调用", "应用程序.PA"),
+            // dict.accounting.financial.application.pa
+            ("dict.accounting.financial.application.pa", "zh-HK", "JIT调用_hk", "应用程序.PA"),
+
+            // dict.accounting.financial.application.pb
+            ("dict.accounting.financial.application.pb", "en-US", "ICM:评估_us", "应用程序.PB"),
+            // dict.accounting.financial.application.pb
+            ("dict.accounting.financial.application.pb", "ja-JP", "ICM:评估_jp", "应用程序.PB"),
+            // dict.accounting.financial.application.pb
+            ("dict.accounting.financial.application.pb", "zh-CN", "ICM:评估", "应用程序.PB"),
+            // dict.accounting.financial.application.pb
+            ("dict.accounting.financial.application.pb", "zh-HK", "ICM:评估_hk", "应用程序.PB"),
+
+            // dict.accounting.financial.application.pc
+            ("dict.accounting.financial.application.pc", "en-US", "ICM:负债_us", "应用程序.PC"),
+            // dict.accounting.financial.application.pc
+            ("dict.accounting.financial.application.pc", "ja-JP", "ICM:负债_jp", "应用程序.PC"),
+            // dict.accounting.financial.application.pc
+            ("dict.accounting.financial.application.pc", "zh-CN", "ICM:负债", "应用程序.PC"),
+            // dict.accounting.financial.application.pc
+            ("dict.accounting.financial.application.pc", "zh-HK", "ICM:负债_hk", "应用程序.PC"),
+
+            // dict.accounting.financial.application.pm
+            ("dict.accounting.financial.application.pm", "en-US", "工厂维护_us", "应用程序.PM"),
+            // dict.accounting.financial.application.pm
+            ("dict.accounting.financial.application.pm", "ja-JP", "工厂维护_jp", "应用程序.PM"),
+            // dict.accounting.financial.application.pm
+            ("dict.accounting.financial.application.pm", "zh-CN", "工厂维护", "应用程序.PM"),
+            // dict.accounting.financial.application.pm
+            ("dict.accounting.financial.application.pm", "zh-HK", "工厂维护_hk", "应用程序.PM"),
+
+            // dict.accounting.financial.application.po
+            ("dict.accounting.financial.application.po", "en-US", "包装对象_us", "应用程序.PO"),
+            // dict.accounting.financial.application.po
+            ("dict.accounting.financial.application.po", "ja-JP", "包装对象_jp", "应用程序.PO"),
+            // dict.accounting.financial.application.po
+            ("dict.accounting.financial.application.po", "zh-CN", "包装对象", "应用程序.PO"),
+            // dict.accounting.financial.application.po
+            ("dict.accounting.financial.application.po", "zh-HK", "包装对象_hk", "应用程序.PO"),
+
+            // dict.accounting.financial.application.ps
+            ("dict.accounting.financial.application.ps", "en-US", "项目系统_us", "应用程序.PS"),
+            // dict.accounting.financial.application.ps
+            ("dict.accounting.financial.application.ps", "ja-JP", "项目系统_jp", "应用程序.PS"),
+            // dict.accounting.financial.application.ps
+            ("dict.accounting.financial.application.ps", "zh-CN", "项目系统", "应用程序.PS"),
+            // dict.accounting.financial.application.ps
+            ("dict.accounting.financial.application.ps", "zh-HK", "项目系统_hk", "应用程序.PS"),
+
+            // dict.accounting.financial.application.qc
+            ("dict.accounting.financial.application.qc", "en-US", "证书_us", "应用程序.QC"),
+            // dict.accounting.financial.application.qc
+            ("dict.accounting.financial.application.qc", "ja-JP", "证书_jp", "应用程序.QC"),
+            // dict.accounting.financial.application.qc
+            ("dict.accounting.financial.application.qc", "zh-CN", "证书", "应用程序.QC"),
+            // dict.accounting.financial.application.qc
+            ("dict.accounting.financial.application.qc", "zh-HK", "证书_hk", "应用程序.QC"),
+
+            // dict.accounting.financial.application.rd
+            ("dict.accounting.financial.application.rd", "en-US", "DBM 汽车_us", "应用程序.RD"),
+            // dict.accounting.financial.application.rd
+            ("dict.accounting.financial.application.rd", "ja-JP", "DBM 汽车_jp", "应用程序.RD"),
+            // dict.accounting.financial.application.rd
+            ("dict.accounting.financial.application.rd", "zh-CN", "DBM 汽车", "应用程序.RD"),
+            // dict.accounting.financial.application.rd
+            ("dict.accounting.financial.application.rd", "zh-HK", "DBM 汽车_hk", "应用程序.RD"),
+
+            // dict.accounting.financial.application.re
+            ("dict.accounting.financial.application.re", "en-US", "DBM 入库管理者_us", "应用程序.RE"),
+            // dict.accounting.financial.application.re
+            ("dict.accounting.financial.application.re", "ja-JP", "DBM 入库管理者_jp", "应用程序.RE"),
+            // dict.accounting.financial.application.re
+            ("dict.accounting.financial.application.re", "zh-CN", "DBM 入库管理者", "应用程序.RE"),
+            // dict.accounting.financial.application.re
+            ("dict.accounting.financial.application.re", "zh-HK", "DBM 入库管理者_hk", "应用程序.RE"),
+
+            // dict.accounting.financial.application.rg
+            ("dict.accounting.financial.application.rg", "en-US", "路线管理者_us", "应用程序.RG"),
+            // dict.accounting.financial.application.rg
+            ("dict.accounting.financial.application.rg", "ja-JP", "路线管理者_jp", "应用程序.RG"),
+            // dict.accounting.financial.application.rg
+            ("dict.accounting.financial.application.rg", "zh-CN", "路线管理者", "应用程序.RG"),
+            // dict.accounting.financial.application.rg
+            ("dict.accounting.financial.application.rg", "zh-HK", "路线管理者_hk", "应用程序.RG"),
+
+            // dict.accounting.financial.application.rs
+            ("dict.accounting.financial.application.rs", "en-US", "自动化_us", "应用程序.RS"),
+            // dict.accounting.financial.application.rs
+            ("dict.accounting.financial.application.rs", "ja-JP", "自动化_jp", "应用程序.RS"),
+            // dict.accounting.financial.application.rs
+            ("dict.accounting.financial.application.rs", "zh-CN", "自动化", "应用程序.RS"),
+            // dict.accounting.financial.application.rs
+            ("dict.accounting.financial.application.rs", "zh-HK", "自动化_hk", "应用程序.RS"),
+
+            // dict.accounting.financial.application.rw
+            ("dict.accounting.financial.application.rw", "en-US", "DI - 担保_us", "应用程序.RW"),
+            // dict.accounting.financial.application.rw
+            ("dict.accounting.financial.application.rw", "ja-JP", "DI - 担保_jp", "应用程序.RW"),
+            // dict.accounting.financial.application.rw
+            ("dict.accounting.financial.application.rw", "zh-CN", "DI - 担保", "应用程序.RW"),
+            // dict.accounting.financial.application.rw
+            ("dict.accounting.financial.application.rw", "zh-HK", "DI - 担保_hk", "应用程序.RW"),
+
+            // dict.accounting.financial.application.tp
+            ("dict.accounting.financial.application.tp", "en-US", "利润中心_us", "应用程序.TP"),
+            // dict.accounting.financial.application.tp
+            ("dict.accounting.financial.application.tp", "ja-JP", "利润中心_jp", "应用程序.TP"),
+            // dict.accounting.financial.application.tp
+            ("dict.accounting.financial.application.tp", "zh-CN", "利润中心", "应用程序.TP"),
+            // dict.accounting.financial.application.tp
+            ("dict.accounting.financial.application.tp", "zh-HK", "利润中心_hk", "应用程序.TP"),
+
+            // dict.accounting.financial.application.tx
+            ("dict.accounting.financial.application.tx", "en-US", "税_us", "应用程序.TX"),
+            // dict.accounting.financial.application.tx
+            ("dict.accounting.financial.application.tx", "ja-JP", "税_jp", "应用程序.TX"),
+            // dict.accounting.financial.application.tx
+            ("dict.accounting.financial.application.tx", "zh-CN", "税", "应用程序.TX"),
+            // dict.accounting.financial.application.tx
+            ("dict.accounting.financial.application.tx", "zh-HK", "税_hk", "应用程序.TX"),
+
+            // dict.accounting.financial.application.v
+            ("dict.accounting.financial.application.v", "en-US", "销售/分销_us", "应用程序.V"),
+            // dict.accounting.financial.application.v
+            ("dict.accounting.financial.application.v", "ja-JP", "销售/分销_jp", "应用程序.V"),
+            // dict.accounting.financial.application.v
+            ("dict.accounting.financial.application.v", "zh-CN", "销售/分销", "应用程序.V"),
+            // dict.accounting.financial.application.v
+            ("dict.accounting.financial.application.v", "zh-HK", "销售/分销_hk", "应用程序.V"),
+
+            // dict.accounting.financial.application.v1
+            ("dict.accounting.financial.application.v1", "en-US", "销售_us", "应用程序.V1"),
+            // dict.accounting.financial.application.v1
+            ("dict.accounting.financial.application.v1", "ja-JP", "销售_jp", "应用程序.V1"),
+            // dict.accounting.financial.application.v1
+            ("dict.accounting.financial.application.v1", "zh-CN", "销售", "应用程序.V1"),
+            // dict.accounting.financial.application.v1
+            ("dict.accounting.financial.application.v1", "zh-HK", "销售_hk", "应用程序.V1"),
+
+            // dict.accounting.financial.application.v2
+            ("dict.accounting.financial.application.v2", "en-US", "装运_us", "应用程序.V2"),
+            // dict.accounting.financial.application.v2
+            ("dict.accounting.financial.application.v2", "ja-JP", "装运_jp", "应用程序.V2"),
+            // dict.accounting.financial.application.v2
+            ("dict.accounting.financial.application.v2", "zh-CN", "装运", "应用程序.V2"),
+            // dict.accounting.financial.application.v2
+            ("dict.accounting.financial.application.v2", "zh-HK", "装运_hk", "应用程序.V2"),
+
+            // dict.accounting.financial.application.v3
+            ("dict.accounting.financial.application.v3", "en-US", "出具发票_us", "应用程序.V3"),
+            // dict.accounting.financial.application.v3
+            ("dict.accounting.financial.application.v3", "ja-JP", "出具发票_jp", "应用程序.V3"),
+            // dict.accounting.financial.application.v3
+            ("dict.accounting.financial.application.v3", "zh-CN", "出具发票", "应用程序.V3"),
+            // dict.accounting.financial.application.v3
+            ("dict.accounting.financial.application.v3", "zh-HK", "出具发票_hk", "应用程序.V3"),
+
+            // dict.accounting.financial.application.v4
+            ("dict.accounting.financial.application.v4", "en-US", "装运( 特例 )_us", "应用程序.V4"),
+            // dict.accounting.financial.application.v4
+            ("dict.accounting.financial.application.v4", "ja-JP", "装运( 特例 )_jp", "应用程序.V4"),
+            // dict.accounting.financial.application.v4
+            ("dict.accounting.financial.application.v4", "zh-CN", "装运( 特例 )", "应用程序.V4"),
+            // dict.accounting.financial.application.v4
+            ("dict.accounting.financial.application.v4", "zh-HK", "装运( 特例 )_hk", "应用程序.V4"),
+
+            // dict.accounting.financial.application.v5
+            ("dict.accounting.financial.application.v5", "en-US", "集团_us", "应用程序.V5"),
+            // dict.accounting.financial.application.v5
+            ("dict.accounting.financial.application.v5", "ja-JP", "集团_jp", "应用程序.V5"),
+            // dict.accounting.financial.application.v5
+            ("dict.accounting.financial.application.v5", "zh-CN", "集团", "应用程序.V5"),
+            // dict.accounting.financial.application.v5
+            ("dict.accounting.financial.application.v5", "zh-HK", "集团_hk", "应用程序.V5"),
+
+            // dict.accounting.financial.application.v6
+            ("dict.accounting.financial.application.v6", "en-US", "处理单位_us", "应用程序.V6"),
+            // dict.accounting.financial.application.v6
+            ("dict.accounting.financial.application.v6", "ja-JP", "处理单位_jp", "应用程序.V6"),
+            // dict.accounting.financial.application.v6
+            ("dict.accounting.financial.application.v6", "zh-CN", "处理单位", "应用程序.V6"),
+            // dict.accounting.financial.application.v6
+            ("dict.accounting.financial.application.v6", "zh-HK", "处理单位_hk", "应用程序.V6"),
+
+            // dict.accounting.financial.application.v7
+            ("dict.accounting.financial.application.v7", "en-US", "运输_us", "应用程序.V7"),
+            // dict.accounting.financial.application.v7
+            ("dict.accounting.financial.application.v7", "ja-JP", "运输_jp", "应用程序.V7"),
+            // dict.accounting.financial.application.v7
+            ("dict.accounting.financial.application.v7", "zh-CN", "运输", "应用程序.V7"),
+            // dict.accounting.financial.application.v7
+            ("dict.accounting.financial.application.v7", "zh-HK", "运输_hk", "应用程序.V7"),
+
+            // dict.accounting.financial.application.va
+            ("dict.accounting.financial.application.va", "en-US", "CO-PA_us", "应用程序.VA"),
+            // dict.accounting.financial.application.va
+            ("dict.accounting.financial.application.va", "ja-JP", "CO-PA_jp", "应用程序.VA"),
+            // dict.accounting.financial.application.va
+            ("dict.accounting.financial.application.va", "zh-CN", "CO-PA", "应用程序.VA"),
+            // dict.accounting.financial.application.va
+            ("dict.accounting.financial.application.va", "zh-HK", "CO-PA_hk", "应用程序.VA"),
+
+            // dict.accounting.financial.application.vb
+            ("dict.accounting.financial.application.vb", "en-US", "统驭科目_us", "应用程序.VB"),
+            // dict.accounting.financial.application.vb
+            ("dict.accounting.financial.application.vb", "ja-JP", "统驭科目_jp", "应用程序.VB"),
+            // dict.accounting.financial.application.vb
+            ("dict.accounting.financial.application.vb", "zh-CN", "统驭科目", "应用程序.VB"),
+            // dict.accounting.financial.application.vb
+            ("dict.accounting.financial.application.vb", "zh-HK", "统驭科目_hk", "应用程序.VB"),
+
+            // dict.accounting.financial.application.vc
+            ("dict.accounting.financial.application.vc", "en-US", "现金结算_us", "应用程序.VC"),
+            // dict.accounting.financial.application.vc
+            ("dict.accounting.financial.application.vc", "ja-JP", "现金结算_jp", "应用程序.VC"),
+            // dict.accounting.financial.application.vc
+            ("dict.accounting.financial.application.vc", "zh-CN", "现金结算", "应用程序.VC"),
+            // dict.accounting.financial.application.vc
+            ("dict.accounting.financial.application.vc", "zh-HK", "现金结算_hk", "应用程序.VC"),
+
+            // dict.accounting.financial.application.vd
+            ("dict.accounting.financial.application.vd", "en-US", "支付卡_us", "应用程序.VD"),
+            // dict.accounting.financial.application.vd
+            ("dict.accounting.financial.application.vd", "ja-JP", "支付卡_jp", "应用程序.VD"),
+            // dict.accounting.financial.application.vd
+            ("dict.accounting.financial.application.vd", "zh-CN", "支付卡", "应用程序.VD"),
+            // dict.accounting.financial.application.vd
+            ("dict.accounting.financial.application.vd", "zh-HK", "支付卡_hk", "应用程序.VD"),
+
+            // dict.accounting.financial.application.ve
+            ("dict.accounting.financial.application.ve", "en-US", "SD 服务_us", "应用程序.VE"),
+            // dict.accounting.financial.application.ve
+            ("dict.accounting.financial.application.ve", "ja-JP", "SD 服务_jp", "应用程序.VE"),
+            // dict.accounting.financial.application.ve
+            ("dict.accounting.financial.application.ve", "zh-CN", "SD 服务", "应用程序.VE"),
+            // dict.accounting.financial.application.ve
+            ("dict.accounting.financial.application.ve", "zh-HK", "SD 服务_hk", "应用程序.VE"),
+
+            // dict.accounting.financial.application.vg
+            ("dict.accounting.financial.application.vg", "en-US", "GTIN  映射_us", "应用程序.VG"),
+            // dict.accounting.financial.application.vg
+            ("dict.accounting.financial.application.vg", "ja-JP", "GTIN  映射_jp", "应用程序.VG"),
+            // dict.accounting.financial.application.vg
+            ("dict.accounting.financial.application.vg", "zh-CN", "GTIN  映射", "应用程序.VG"),
+            // dict.accounting.financial.application.vg
+            ("dict.accounting.financial.application.vg", "zh-HK", "GTIN  映射_hk", "应用程序.VG"),
+
+            // dict.accounting.financial.application.vl
+            ("dict.accounting.financial.application.vl", "en-US", "访问清单_us", "应用程序.VL"),
+            // dict.accounting.financial.application.vl
+            ("dict.accounting.financial.application.vl", "ja-JP", "访问清单_jp", "应用程序.VL"),
+            // dict.accounting.financial.application.vl
+            ("dict.accounting.financial.application.vl", "zh-CN", "访问清单", "应用程序.VL"),
+            // dict.accounting.financial.application.vl
+            ("dict.accounting.financial.application.vl", "zh-HK", "访问清单_hk", "应用程序.VL"),
+
+            // dict.accounting.financial.application.vp
+            ("dict.accounting.financial.application.vp", "en-US", "购买红利_us", "应用程序.VP"),
+            // dict.accounting.financial.application.vp
+            ("dict.accounting.financial.application.vp", "ja-JP", "购买红利_jp", "应用程序.VP"),
+            // dict.accounting.financial.application.vp
+            ("dict.accounting.financial.application.vp", "zh-CN", "购买红利", "应用程序.VP"),
+            // dict.accounting.financial.application.vp
+            ("dict.accounting.financial.application.vp", "zh-HK", "购买红利_hk", "应用程序.VP"),
+
+            // dict.accounting.financial.application.vs
+            ("dict.accounting.financial.application.vs", "en-US", "交叉销售_us", "应用程序.VS"),
+            // dict.accounting.financial.application.vs
+            ("dict.accounting.financial.application.vs", "ja-JP", "交叉销售_jp", "应用程序.VS"),
+            // dict.accounting.financial.application.vs
+            ("dict.accounting.financial.application.vs", "zh-CN", "交叉销售", "应用程序.VS"),
+            // dict.accounting.financial.application.vs
+            ("dict.accounting.financial.application.vs", "zh-HK", "交叉销售_hk", "应用程序.VS"),
+
+            // dict.accounting.financial.application.w
+            ("dict.accounting.financial.application.w", "en-US", "商品管理_us", "应用程序.W"),
+            // dict.accounting.financial.application.w
+            ("dict.accounting.financial.application.w", "ja-JP", "商品管理_jp", "应用程序.W"),
+            // dict.accounting.financial.application.w
+            ("dict.accounting.financial.application.w", "zh-CN", "商品管理", "应用程序.W"),
+            // dict.accounting.financial.application.w
+            ("dict.accounting.financial.application.w", "zh-HK", "商品管理_hk", "应用程序.W"),
+
+            // dict.accounting.financial.application.w0
+            ("dict.accounting.financial.application.w0", "en-US", "分配表        组_us", "应用程序.W0"),
+            // dict.accounting.financial.application.w0
+            ("dict.accounting.financial.application.w0", "ja-JP", "分配表        组_jp", "应用程序.W0"),
+            // dict.accounting.financial.application.w0
+            ("dict.accounting.financial.application.w0", "zh-CN", "分配表        组", "应用程序.W0"),
+            // dict.accounting.financial.application.w0
+            ("dict.accounting.financial.application.w0", "zh-HK", "分配表        组_hk", "应用程序.W0"),
+
+            // dict.accounting.financial.application.w1
+            ("dict.accounting.financial.application.w1", "en-US", "销售促销组_us", "应用程序.W1"),
+            // dict.accounting.financial.application.w1
+            ("dict.accounting.financial.application.w1", "ja-JP", "销售促销组_jp", "应用程序.W1"),
+            // dict.accounting.financial.application.w1
+            ("dict.accounting.financial.application.w1", "zh-CN", "销售促销组", "应用程序.W1"),
+            // dict.accounting.financial.application.w1
+            ("dict.accounting.financial.application.w1", "zh-HK", "销售促销组_hk", "应用程序.W1"),
+
+            // dict.accounting.financial.application.wa
+            ("dict.accounting.financial.application.wa", "en-US", "分配表_us", "应用程序.WA"),
+            // dict.accounting.financial.application.wa
+            ("dict.accounting.financial.application.wa", "ja-JP", "分配表_jp", "应用程序.WA"),
+            // dict.accounting.financial.application.wa
+            ("dict.accounting.financial.application.wa", "zh-CN", "分配表", "应用程序.WA"),
+            // dict.accounting.financial.application.wa
+            ("dict.accounting.financial.application.wa", "zh-HK", "分配表_hk", "应用程序.WA"),
+
+            // dict.accounting.financial.application.wb
+            ("dict.accounting.financial.application.wb", "en-US", "零售促销_us", "应用程序.WB"),
+            // dict.accounting.financial.application.wb
+            ("dict.accounting.financial.application.wb", "ja-JP", "零售促销_jp", "应用程序.WB"),
+            // dict.accounting.financial.application.wb
+            ("dict.accounting.financial.application.wb", "zh-CN", "零售促销", "应用程序.WB"),
+            // dict.accounting.financial.application.wb
+            ("dict.accounting.financial.application.wb", "zh-HK", "零售促销_hk", "应用程序.WB"),
+
+            // dict.accounting.financial.application.we
+            ("dict.accounting.financial.application.we", "en-US", "贴标签_us", "应用程序.WE"),
+            // dict.accounting.financial.application.we
+            ("dict.accounting.financial.application.we", "ja-JP", "贴标签_jp", "应用程序.WE"),
+            // dict.accounting.financial.application.we
+            ("dict.accounting.financial.application.we", "zh-CN", "贴标签", "应用程序.WE"),
+            // dict.accounting.financial.application.we
+            ("dict.accounting.financial.application.we", "zh-HK", "贴标签_hk", "应用程序.WE"),
+
+            // dict.accounting.financial.application.wm
+            ("dict.accounting.financial.application.wm", "en-US", "仓库管理_us", "应用程序.WM"),
+            // dict.accounting.financial.application.wm
+            ("dict.accounting.financial.application.wm", "ja-JP", "仓库管理_jp", "应用程序.WM"),
+            // dict.accounting.financial.application.wm
+            ("dict.accounting.financial.application.wm", "zh-CN", "仓库管理", "应用程序.WM"),
+            // dict.accounting.financial.application.wm
+            ("dict.accounting.financial.application.wm", "zh-HK", "仓库管理_hk", "应用程序.WM"),
+
+            // dict.accounting.financial.application.wn
+            ("dict.accounting.financial.application.wn", "en-US", "免费结算批准交货_us", "应用程序.WN"),
+            // dict.accounting.financial.application.wn
+            ("dict.accounting.financial.application.wn", "ja-JP", "免费结算批准交货_jp", "应用程序.WN"),
+            // dict.accounting.financial.application.wn
+            ("dict.accounting.financial.application.wn", "zh-CN", "免费结算批准交货", "应用程序.WN"),
+            // dict.accounting.financial.application.wn
+            ("dict.accounting.financial.application.wn", "zh-HK", "免费结算批准交货_hk", "应用程序.WN"),
+
+            // dict.accounting.financial.application.wr
+            ("dict.accounting.financial.application.wr", "en-US", "代理业务_us", "应用程序.WR"),
+            // dict.accounting.financial.application.wr
+            ("dict.accounting.financial.application.wr", "ja-JP", "代理业务_jp", "应用程序.WR"),
+            // dict.accounting.financial.application.wr
+            ("dict.accounting.financial.application.wr", "zh-CN", "代理业务", "应用程序.WR"),
+            // dict.accounting.financial.application.wr
+            ("dict.accounting.financial.application.wr", "zh-HK", "代理业务_hk", "应用程序.WR"),
+
+            // dict.accounting.financial.application.ws
+            ("dict.accounting.financial.application.ws", "en-US", "免费结算协议_us", "应用程序.WS"),
+            // dict.accounting.financial.application.ws
+            ("dict.accounting.financial.application.ws", "ja-JP", "免费结算协议_jp", "应用程序.WS"),
+            // dict.accounting.financial.application.ws
+            ("dict.accounting.financial.application.ws", "zh-CN", "免费结算协议", "应用程序.WS"),
+            // dict.accounting.financial.application.ws
+            ("dict.accounting.financial.application.ws", "zh-HK", "免费结算协议_hk", "应用程序.WS"),
+
+            // dict.accounting.financial.application.wt
+            ("dict.accounting.financial.application.wt", "en-US", "贸易合同_us", "应用程序.WT"),
+            // dict.accounting.financial.application.wt
+            ("dict.accounting.financial.application.wt", "ja-JP", "贸易合同_jp", "应用程序.WT"),
+            // dict.accounting.financial.application.wt
+            ("dict.accounting.financial.application.wt", "zh-CN", "贸易合同", "应用程序.WT"),
+            // dict.accounting.financial.application.wt
+            ("dict.accounting.financial.application.wt", "zh-HK", "贸易合同_hk", "应用程序.WT"),
+
+            // dict.accounting.financial.application.st
+            ("dict.accounting.financial.application.st", "en-US", "统计_us", "应用程序.ST"),
+            // dict.accounting.financial.application.st
+            ("dict.accounting.financial.application.st", "ja-JP", "统计_jp", "应用程序.ST"),
+            // dict.accounting.financial.application.st
+            ("dict.accounting.financial.application.st", "zh-CN", "统计", "应用程序.ST"),
+            // dict.accounting.financial.application.st
+            ("dict.accounting.financial.application.st", "zh-HK", "统计_hk", "应用程序.ST"),
+
+            // dict.accounting.financial.condition.type.cq.cq01
+            ("dict.accounting.financial.condition.type.cq.cq01", "en-US", "资源价格_us", "条件类型.CQ.CQ01"),
+            // dict.accounting.financial.condition.type.cq.cq01
+            ("dict.accounting.financial.condition.type.cq.cq01", "ja-JP", "资源价格_jp", "条件类型.CQ.CQ01"),
+            // dict.accounting.financial.condition.type.cq.cq01
+            ("dict.accounting.financial.condition.type.cq.cq01", "zh-CN", "资源价格", "条件类型.CQ.CQ01"),
+            // dict.accounting.financial.condition.type.cq.cq01
+            ("dict.accounting.financial.condition.type.cq.cq01", "zh-HK", "资源价格_hk", "条件类型.CQ.CQ01"),
+
+            // dict.accounting.financial.condition.type.cs.ab1
+            ("dict.accounting.financial.condition.type.cs.ab1", "en-US", "工资_us", "条件类型.CS.A-B1"),
+            // dict.accounting.financial.condition.type.cs.ab1
+            ("dict.accounting.financial.condition.type.cs.ab1", "ja-JP", "工资_jp", "条件类型.CS.A-B1"),
+            // dict.accounting.financial.condition.type.cs.ab1
+            ("dict.accounting.financial.condition.type.cs.ab1", "zh-CN", "工资", "条件类型.CS.A-B1"),
+            // dict.accounting.financial.condition.type.cs.ab1
+            ("dict.accounting.financial.condition.type.cs.ab1", "zh-HK", "工资_hk", "条件类型.CS.A-B1"),
+
+            // dict.accounting.financial.condition.type.cs.ab2
+            ("dict.accounting.financial.condition.type.cs.ab2", "en-US", "工资_us", "条件类型.CS.A-B2"),
+            // dict.accounting.financial.condition.type.cs.ab2
+            ("dict.accounting.financial.condition.type.cs.ab2", "ja-JP", "工资_jp", "条件类型.CS.A-B2"),
+            // dict.accounting.financial.condition.type.cs.ab2
+            ("dict.accounting.financial.condition.type.cs.ab2", "zh-CN", "工资", "条件类型.CS.A-B2"),
+            // dict.accounting.financial.condition.type.cs.ab2
+            ("dict.accounting.financial.condition.type.cs.ab2", "zh-HK", "工资_hk", "条件类型.CS.A-B2"),
+
+            // dict.accounting.financial.condition.type.cs.az1
+            ("dict.accounting.financial.condition.type.cs.az1", "en-US", "支付度假津贴_us", "条件类型.CS.A-Z1"),
+            // dict.accounting.financial.condition.type.cs.az1
+            ("dict.accounting.financial.condition.type.cs.az1", "ja-JP", "支付度假津贴_jp", "条件类型.CS.A-Z1"),
+            // dict.accounting.financial.condition.type.cs.az1
+            ("dict.accounting.financial.condition.type.cs.az1", "zh-CN", "支付度假津贴", "条件类型.CS.A-Z1"),
+            // dict.accounting.financial.condition.type.cs.az1
+            ("dict.accounting.financial.condition.type.cs.az1", "zh-HK", "支付度假津贴_hk", "条件类型.CS.A-Z1"),
+
+            // dict.accounting.financial.condition.type.cs.az2
+            ("dict.accounting.financial.condition.type.cs.az2", "en-US", "年度奖金_us", "条件类型.CS.A-Z2"),
+            // dict.accounting.financial.condition.type.cs.az2
+            ("dict.accounting.financial.condition.type.cs.az2", "ja-JP", "年度奖金_jp", "条件类型.CS.A-Z2"),
+            // dict.accounting.financial.condition.type.cs.az2
+            ("dict.accounting.financial.condition.type.cs.az2", "zh-CN", "年度奖金", "条件类型.CS.A-Z2"),
+            // dict.accounting.financial.condition.type.cs.az2
+            ("dict.accounting.financial.condition.type.cs.az2", "zh-HK", "年度奖金_hk", "条件类型.CS.A-Z2"),
+
+            // dict.accounting.financial.condition.type.cs.az3
+            ("dict.accounting.financial.condition.type.cs.az3", "en-US", "杂项人工成本_us", "条件类型.CS.A-Z3"),
+            // dict.accounting.financial.condition.type.cs.az3
+            ("dict.accounting.financial.condition.type.cs.az3", "ja-JP", "杂项人工成本_jp", "条件类型.CS.A-Z3"),
+            // dict.accounting.financial.condition.type.cs.az3
+            ("dict.accounting.financial.condition.type.cs.az3", "zh-CN", "杂项人工成本", "条件类型.CS.A-Z3"),
+            // dict.accounting.financial.condition.type.cs.az3
+            ("dict.accounting.financial.condition.type.cs.az3", "zh-HK", "杂项人工成本_hk", "条件类型.CS.A-Z3"),
+
+            // dict.accounting.financial.condition.type.cs.sapb
+            ("dict.accounting.financial.condition.type.cs.sapb", "en-US", "参考：基础_us", "条件类型.CS.SAPB"),
+            // dict.accounting.financial.condition.type.cs.sapb
+            ("dict.accounting.financial.condition.type.cs.sapb", "ja-JP", "参考：基础_jp", "条件类型.CS.SAPB"),
+            // dict.accounting.financial.condition.type.cs.sapb
+            ("dict.accounting.financial.condition.type.cs.sapb", "zh-CN", "参考：基础", "条件类型.CS.SAPB"),
+            // dict.accounting.financial.condition.type.cs.sapb
+            ("dict.accounting.financial.condition.type.cs.sapb", "zh-HK", "参考：基础_hk", "条件类型.CS.SAPB"),
+
+            // dict.accounting.financial.condition.type.cs.sapz
+            ("dict.accounting.financial.condition.type.cs.sapz", "en-US", "参考：间接费用_us", "条件类型.CS.SAPZ"),
+            // dict.accounting.financial.condition.type.cs.sapz
+            ("dict.accounting.financial.condition.type.cs.sapz", "ja-JP", "参考：间接费用_jp", "条件类型.CS.SAPZ"),
+            // dict.accounting.financial.condition.type.cs.sapz
+            ("dict.accounting.financial.condition.type.cs.sapz", "zh-CN", "参考：间接费用", "条件类型.CS.SAPZ"),
+            // dict.accounting.financial.condition.type.cs.sapz
+            ("dict.accounting.financial.condition.type.cs.sapz", "zh-HK", "参考：间接费用_hk", "条件类型.CS.SAPZ"),
+
+            // dict.accounting.financial.condition.type.f.fb00
+            ("dict.accounting.financial.condition.type.f.fb00", "en-US", "运费分类/重量_us", "条件类型.F.FB00"),
+            // dict.accounting.financial.condition.type.f.fb00
+            ("dict.accounting.financial.condition.type.f.fb00", "ja-JP", "运费分类/重量_jp", "条件类型.F.FB00"),
+            // dict.accounting.financial.condition.type.f.fb00
+            ("dict.accounting.financial.condition.type.f.fb00", "zh-CN", "运费分类/重量", "条件类型.F.FB00"),
+            // dict.accounting.financial.condition.type.f.fb00
+            ("dict.accounting.financial.condition.type.f.fb00", "zh-HK", "运费分类/重量_hk", "条件类型.F.FB00"),
+
+            // dict.accounting.financial.condition.type.f.fb10
+            ("dict.accounting.financial.condition.type.f.fb10", "en-US", "每天补助/统一费率_us", "条件类型.F.FB10"),
+            // dict.accounting.financial.condition.type.f.fb10
+            ("dict.accounting.financial.condition.type.f.fb10", "ja-JP", "每天补助/统一费率_jp", "条件类型.F.FB10"),
+            // dict.accounting.financial.condition.type.f.fb10
+            ("dict.accounting.financial.condition.type.f.fb10", "zh-CN", "每天补助/统一费率", "条件类型.F.FB10"),
+            // dict.accounting.financial.condition.type.f.fb10
+            ("dict.accounting.financial.condition.type.f.fb10", "zh-HK", "每天补助/统一费率_hk", "条件类型.F.FB10"),
+
+            // dict.accounting.financial.condition.type.f.fd00
+            ("dict.accounting.financial.condition.type.f.fd00", "en-US", "差额_us", "条件类型.F.FD00"),
+            // dict.accounting.financial.condition.type.f.fd00
+            ("dict.accounting.financial.condition.type.f.fd00", "ja-JP", "差额_jp", "条件类型.F.FD00"),
+            // dict.accounting.financial.condition.type.f.fd00
+            ("dict.accounting.financial.condition.type.f.fd00", "zh-CN", "差额", "条件类型.F.FD00"),
+            // dict.accounting.financial.condition.type.f.fd00
+            ("dict.accounting.financial.condition.type.f.fd00", "zh-HK", "差额_hk", "条件类型.F.FD00"),
+
+            // dict.accounting.financial.condition.type.f.fd10
+            ("dict.accounting.financial.condition.type.f.fd10", "en-US", "完全的毛利_us", "条件类型.F.FD10"),
+            // dict.accounting.financial.condition.type.f.fd10
+            ("dict.accounting.financial.condition.type.f.fd10", "ja-JP", "完全的毛利_jp", "条件类型.F.FD10"),
+            // dict.accounting.financial.condition.type.f.fd10
+            ("dict.accounting.financial.condition.type.f.fd10", "zh-CN", "完全的毛利", "条件类型.F.FD10"),
+            // dict.accounting.financial.condition.type.f.fd10
+            ("dict.accounting.financial.condition.type.f.fd10", "zh-HK", "完全的毛利_hk", "条件类型.F.FD10"),
+
+            // dict.accounting.financial.condition.type.f.fs00
+            ("dict.accounting.financial.condition.type.f.fs00", "en-US", "集装箱_us", "条件类型.F.FS00"),
+            // dict.accounting.financial.condition.type.f.fs00
+            ("dict.accounting.financial.condition.type.f.fs00", "ja-JP", "集装箱_jp", "条件类型.F.FS00"),
+            // dict.accounting.financial.condition.type.f.fs00
+            ("dict.accounting.financial.condition.type.f.fs00", "zh-CN", "集装箱", "条件类型.F.FS00"),
+            // dict.accounting.financial.condition.type.f.fs00
+            ("dict.accounting.financial.condition.type.f.fs00", "zh-HK", "集装箱_hk", "条件类型.F.FS00"),
+
+            // dict.accounting.financial.condition.type.f.fs01
+            ("dict.accounting.financial.condition.type.f.fs01", "en-US", "容器/重量/距离_us", "条件类型.F.FS01"),
+            // dict.accounting.financial.condition.type.f.fs01
+            ("dict.accounting.financial.condition.type.f.fs01", "ja-JP", "容器/重量/距离_jp", "条件类型.F.FS01"),
+            // dict.accounting.financial.condition.type.f.fs01
+            ("dict.accounting.financial.condition.type.f.fs01", "zh-CN", "容器/重量/距离", "条件类型.F.FS01"),
+            // dict.accounting.financial.condition.type.f.fs01
+            ("dict.accounting.financial.condition.type.f.fs01", "zh-HK", "容器/重量/距离_hk", "条件类型.F.FS01"),
+
+            // dict.accounting.financial.condition.type.f.ft00
+            ("dict.accounting.financial.condition.type.f.ft00", "en-US", "进项税_us", "条件类型.F.FT00"),
+            // dict.accounting.financial.condition.type.f.ft00
+            ("dict.accounting.financial.condition.type.f.ft00", "ja-JP", "进项税_jp", "条件类型.F.FT00"),
+            // dict.accounting.financial.condition.type.f.ft00
+            ("dict.accounting.financial.condition.type.f.ft00", "zh-CN", "进项税", "条件类型.F.FT00"),
+            // dict.accounting.financial.condition.type.f.ft00
+            ("dict.accounting.financial.condition.type.f.ft00", "zh-HK", "进项税_hk", "条件类型.F.FT00"),
+
+            // dict.accounting.financial.condition.type.f.mb00
+            ("dict.accounting.financial.condition.type.f.mb00", "en-US", "重量/拆卸_us", "条件类型.F.MB00"),
+            // dict.accounting.financial.condition.type.f.mb00
+            ("dict.accounting.financial.condition.type.f.mb00", "ja-JP", "重量/拆卸_jp", "条件类型.F.MB00"),
+            // dict.accounting.financial.condition.type.f.mb00
+            ("dict.accounting.financial.condition.type.f.mb00", "zh-CN", "重量/拆卸", "条件类型.F.MB00"),
+            // dict.accounting.financial.condition.type.f.mb00
+            ("dict.accounting.financial.condition.type.f.mb00", "zh-HK", "重量/拆卸_hk", "条件类型.F.MB00"),
+
+            // dict.accounting.financial.condition.type.f.mb01
+            ("dict.accounting.financial.condition.type.f.mb01", "en-US", "重量/拆卸 BW_us", "条件类型.F.MB01"),
+            // dict.accounting.financial.condition.type.f.mb01
+            ("dict.accounting.financial.condition.type.f.mb01", "ja-JP", "重量/拆卸 BW_jp", "条件类型.F.MB01"),
+            // dict.accounting.financial.condition.type.f.mb01
+            ("dict.accounting.financial.condition.type.f.mb01", "zh-CN", "重量/拆卸 BW", "条件类型.F.MB01"),
+            // dict.accounting.financial.condition.type.f.mb01
+            ("dict.accounting.financial.condition.type.f.mb01", "zh-HK", "重量/拆卸 BW_hk", "条件类型.F.MB01"),
+
+            // dict.accounting.financial.condition.type.f.sp00
+            ("dict.accounting.financial.condition.type.f.sp00", "en-US", "大量组确定_us", "条件类型.F.SP00"),
+            // dict.accounting.financial.condition.type.f.sp00
+            ("dict.accounting.financial.condition.type.f.sp00", "ja-JP", "大量组确定_jp", "条件类型.F.SP00"),
+            // dict.accounting.financial.condition.type.f.sp00
+            ("dict.accounting.financial.condition.type.f.sp00", "zh-CN", "大量组确定", "条件类型.F.SP00"),
+            // dict.accounting.financial.condition.type.f.sp00
+            ("dict.accounting.financial.condition.type.f.sp00", "zh-HK", "大量组确定_hk", "条件类型.F.SP00"),
+
+            // dict.accounting.financial.condition.type.ka.b000
+            ("dict.accounting.financial.condition.type.ka.b000", "en-US", "物料_us", "条件类型.KA.B000"),
+            // dict.accounting.financial.condition.type.ka.b000
+            ("dict.accounting.financial.condition.type.ka.b000", "ja-JP", "物料_jp", "条件类型.KA.B000"),
+            // dict.accounting.financial.condition.type.ka.b000
+            ("dict.accounting.financial.condition.type.ka.b000", "zh-CN", "物料", "条件类型.KA.B000"),
+            // dict.accounting.financial.condition.type.ka.b000
+            ("dict.accounting.financial.condition.type.ka.b000", "zh-HK", "物料_hk", "条件类型.KA.B000"),
+
+            // dict.accounting.financial.condition.type.ka.b001
+            ("dict.accounting.financial.condition.type.ka.b001", "en-US", "工资_us", "条件类型.KA.B001"),
+            // dict.accounting.financial.condition.type.ka.b001
+            ("dict.accounting.financial.condition.type.ka.b001", "ja-JP", "工资_jp", "条件类型.KA.B001"),
+            // dict.accounting.financial.condition.type.ka.b001
+            ("dict.accounting.financial.condition.type.ka.b001", "zh-CN", "工资", "条件类型.KA.B001"),
+            // dict.accounting.financial.condition.type.ka.b001
+            ("dict.accounting.financial.condition.type.ka.b001", "zh-HK", "工资_hk", "条件类型.KA.B001"),
+
+            // dict.accounting.financial.condition.type.ka.b002
+            ("dict.accounting.financial.condition.type.ka.b002", "en-US", "工资_us", "条件类型.KA.B002"),
+            // dict.accounting.financial.condition.type.ka.b002
+            ("dict.accounting.financial.condition.type.ka.b002", "ja-JP", "工资_jp", "条件类型.KA.B002"),
+            // dict.accounting.financial.condition.type.ka.b002
+            ("dict.accounting.financial.condition.type.ka.b002", "zh-CN", "工资", "条件类型.KA.B002"),
+            // dict.accounting.financial.condition.type.ka.b002
+            ("dict.accounting.financial.condition.type.ka.b002", "zh-HK", "工资_hk", "条件类型.KA.B002"),
+
+            // dict.accounting.financial.condition.type.ka.b010
+            ("dict.accounting.financial.condition.type.ka.b010", "en-US", "生产_us", "条件类型.KA.B010"),
+            // dict.accounting.financial.condition.type.ka.b010
+            ("dict.accounting.financial.condition.type.ka.b010", "ja-JP", "生产_jp", "条件类型.KA.B010"),
+            // dict.accounting.financial.condition.type.ka.b010
+            ("dict.accounting.financial.condition.type.ka.b010", "zh-CN", "生产", "条件类型.KA.B010"),
+            // dict.accounting.financial.condition.type.ka.b010
+            ("dict.accounting.financial.condition.type.ka.b010", "zh-HK", "生产_hk", "条件类型.KA.B010"),
+
+            // dict.accounting.financial.condition.type.ka.c000
+            ("dict.accounting.financial.condition.type.ka.c000", "en-US", "物料间接费用_us", "条件类型.KA.C000"),
+            // dict.accounting.financial.condition.type.ka.c000
+            ("dict.accounting.financial.condition.type.ka.c000", "ja-JP", "物料间接费用_jp", "条件类型.KA.C000"),
+            // dict.accounting.financial.condition.type.ka.c000
+            ("dict.accounting.financial.condition.type.ka.c000", "zh-CN", "物料间接费用", "条件类型.KA.C000"),
+            // dict.accounting.financial.condition.type.ka.c000
+            ("dict.accounting.financial.condition.type.ka.c000", "zh-HK", "物料间接费用_hk", "条件类型.KA.C000"),
+
+            // dict.accounting.financial.condition.type.ka.c001
+            ("dict.accounting.financial.condition.type.ka.c001", "en-US", "制造间接费用_us", "条件类型.KA.C001"),
+            // dict.accounting.financial.condition.type.ka.c001
+            ("dict.accounting.financial.condition.type.ka.c001", "ja-JP", "制造间接费用_jp", "条件类型.KA.C001"),
+            // dict.accounting.financial.condition.type.ka.c001
+            ("dict.accounting.financial.condition.type.ka.c001", "zh-CN", "制造间接费用", "条件类型.KA.C001"),
+            // dict.accounting.financial.condition.type.ka.c001
+            ("dict.accounting.financial.condition.type.ka.c001", "zh-HK", "制造间接费用_hk", "条件类型.KA.C001"),
+
+            // dict.accounting.financial.condition.type.ka.c002
+            ("dict.accounting.financial.condition.type.ka.c002", "en-US", "管理间接费用_us", "条件类型.KA.C002"),
+            // dict.accounting.financial.condition.type.ka.c002
+            ("dict.accounting.financial.condition.type.ka.c002", "ja-JP", "管理间接费用_jp", "条件类型.KA.C002"),
+            // dict.accounting.financial.condition.type.ka.c002
+            ("dict.accounting.financial.condition.type.ka.c002", "zh-CN", "管理间接费用", "条件类型.KA.C002"),
+            // dict.accounting.financial.condition.type.ka.c002
+            ("dict.accounting.financial.condition.type.ka.c002", "zh-HK", "管理间接费用_hk", "条件类型.KA.C002"),
+
+            // dict.accounting.financial.condition.type.ka.c003
+            ("dict.accounting.financial.condition.type.ka.c003", "en-US", "销售间接费用_us", "条件类型.KA.C003"),
+            // dict.accounting.financial.condition.type.ka.c003
+            ("dict.accounting.financial.condition.type.ka.c003", "ja-JP", "销售间接费用_jp", "条件类型.KA.C003"),
+            // dict.accounting.financial.condition.type.ka.c003
+            ("dict.accounting.financial.condition.type.ka.c003", "zh-CN", "销售间接费用", "条件类型.KA.C003"),
+            // dict.accounting.financial.condition.type.ka.c003
+            ("dict.accounting.financial.condition.type.ka.c003", "zh-HK", "销售间接费用_hk", "条件类型.KA.C003"),
+
+            // dict.accounting.financial.condition.type.ka.c010
+            ("dict.accounting.financial.condition.type.ka.c010", "en-US", "物料间接费用/附加费_us", "条件类型.KA.C010"),
+            // dict.accounting.financial.condition.type.ka.c010
+            ("dict.accounting.financial.condition.type.ka.c010", "ja-JP", "物料间接费用/附加费_jp", "条件类型.KA.C010"),
+            // dict.accounting.financial.condition.type.ka.c010
+            ("dict.accounting.financial.condition.type.ka.c010", "zh-CN", "物料间接费用/附加费", "条件类型.KA.C010"),
+            // dict.accounting.financial.condition.type.ka.c010
+            ("dict.accounting.financial.condition.type.ka.c010", "zh-HK", "物料间接费用/附加费_hk", "条件类型.KA.C010"),
+
+            // dict.accounting.financial.condition.type.ka.c011
+            ("dict.accounting.financial.condition.type.ka.c011", "en-US", "制造 OH/OH 附加费_us", "条件类型.KA.C011"),
+            // dict.accounting.financial.condition.type.ka.c011
+            ("dict.accounting.financial.condition.type.ka.c011", "ja-JP", "制造 OH/OH 附加费_jp", "条件类型.KA.C011"),
+            // dict.accounting.financial.condition.type.ka.c011
+            ("dict.accounting.financial.condition.type.ka.c011", "zh-CN", "制造 OH/OH 附加费", "条件类型.KA.C011"),
+            // dict.accounting.financial.condition.type.ka.c011
+            ("dict.accounting.financial.condition.type.ka.c011", "zh-HK", "制造 OH/OH 附加费_hk", "条件类型.KA.C011"),
+
+            // dict.accounting.financial.condition.type.ka.c012
+            ("dict.accounting.financial.condition.type.ka.c012", "en-US", "制造 OH/OH 附加费_us", "条件类型.KA.C012"),
+            // dict.accounting.financial.condition.type.ka.c012
+            ("dict.accounting.financial.condition.type.ka.c012", "ja-JP", "制造 OH/OH 附加费_jp", "条件类型.KA.C012"),
+            // dict.accounting.financial.condition.type.ka.c012
+            ("dict.accounting.financial.condition.type.ka.c012", "zh-CN", "制造 OH/OH 附加费", "条件类型.KA.C012"),
+            // dict.accounting.financial.condition.type.ka.c012
+            ("dict.accounting.financial.condition.type.ka.c012", "zh-HK", "制造 OH/OH 附加费_hk", "条件类型.KA.C012"),
+
+            // dict.accounting.financial.condition.type.ka.c013
+            ("dict.accounting.financial.condition.type.ka.c013", "en-US", "销售 OH/OH 附加费_us", "条件类型.KA.C013"),
+            // dict.accounting.financial.condition.type.ka.c013
+            ("dict.accounting.financial.condition.type.ka.c013", "ja-JP", "销售 OH/OH 附加费_jp", "条件类型.KA.C013"),
+            // dict.accounting.financial.condition.type.ka.c013
+            ("dict.accounting.financial.condition.type.ka.c013", "zh-CN", "销售 OH/OH 附加费", "条件类型.KA.C013"),
+            // dict.accounting.financial.condition.type.ka.c013
+            ("dict.accounting.financial.condition.type.ka.c013", "zh-HK", "销售 OH/OH 附加费_hk", "条件类型.KA.C013"),
+
+            // dict.accounting.financial.condition.type.ka.c020
+            ("dict.accounting.financial.condition.type.ka.c020", "en-US", "物料间接费用/工厂_us", "条件类型.KA.C020"),
+            // dict.accounting.financial.condition.type.ka.c020
+            ("dict.accounting.financial.condition.type.ka.c020", "ja-JP", "物料间接费用/工厂_jp", "条件类型.KA.C020"),
+            // dict.accounting.financial.condition.type.ka.c020
+            ("dict.accounting.financial.condition.type.ka.c020", "zh-CN", "物料间接费用/工厂", "条件类型.KA.C020"),
+            // dict.accounting.financial.condition.type.ka.c020
+            ("dict.accounting.financial.condition.type.ka.c020", "zh-HK", "物料间接费用/工厂_hk", "条件类型.KA.C020"),
+
+            // dict.accounting.financial.condition.type.ka.c021
+            ("dict.accounting.financial.condition.type.ka.c021", "en-US", "制造间接费用/工厂_us", "条件类型.KA.C021"),
+            // dict.accounting.financial.condition.type.ka.c021
+            ("dict.accounting.financial.condition.type.ka.c021", "ja-JP", "制造间接费用/工厂_jp", "条件类型.KA.C021"),
+            // dict.accounting.financial.condition.type.ka.c021
+            ("dict.accounting.financial.condition.type.ka.c021", "zh-CN", "制造间接费用/工厂", "条件类型.KA.C021"),
+            // dict.accounting.financial.condition.type.ka.c021
+            ("dict.accounting.financial.condition.type.ka.c021", "zh-HK", "制造间接费用/工厂_hk", "条件类型.KA.C021"),
+
+            // dict.accounting.financial.condition.type.ka.c022
+            ("dict.accounting.financial.condition.type.ka.c022", "en-US", "管理间接费用/工厂_us", "条件类型.KA.C022"),
+            // dict.accounting.financial.condition.type.ka.c022
+            ("dict.accounting.financial.condition.type.ka.c022", "ja-JP", "管理间接费用/工厂_jp", "条件类型.KA.C022"),
+            // dict.accounting.financial.condition.type.ka.c022
+            ("dict.accounting.financial.condition.type.ka.c022", "zh-CN", "管理间接费用/工厂", "条件类型.KA.C022"),
+            // dict.accounting.financial.condition.type.ka.c022
+            ("dict.accounting.financial.condition.type.ka.c022", "zh-HK", "管理间接费用/工厂_hk", "条件类型.KA.C022"),
+
+            // dict.accounting.financial.condition.type.ka.c023
+            ("dict.accounting.financial.condition.type.ka.c023", "en-US", "销售间接费用/工厂_us", "条件类型.KA.C023"),
+            // dict.accounting.financial.condition.type.ka.c023
+            ("dict.accounting.financial.condition.type.ka.c023", "ja-JP", "销售间接费用/工厂_jp", "条件类型.KA.C023"),
+            // dict.accounting.financial.condition.type.ka.c023
+            ("dict.accounting.financial.condition.type.ka.c023", "zh-CN", "销售间接费用/工厂", "条件类型.KA.C023"),
+            // dict.accounting.financial.condition.type.ka.c023
+            ("dict.accounting.financial.condition.type.ka.c023", "zh-HK", "销售间接费用/工厂_hk", "条件类型.KA.C023"),
+
+            // dict.accounting.financial.condition.type.ka.c030
+            ("dict.accounting.financial.condition.type.ka.c030", "en-US", "物料间接费用/公司码_us", "条件类型.KA.C030"),
+            // dict.accounting.financial.condition.type.ka.c030
+            ("dict.accounting.financial.condition.type.ka.c030", "ja-JP", "物料间接费用/公司码_jp", "条件类型.KA.C030"),
+            // dict.accounting.financial.condition.type.ka.c030
+            ("dict.accounting.financial.condition.type.ka.c030", "zh-CN", "物料间接费用/公司码", "条件类型.KA.C030"),
+            // dict.accounting.financial.condition.type.ka.c030
+            ("dict.accounting.financial.condition.type.ka.c030", "zh-HK", "物料间接费用/公司码_hk", "条件类型.KA.C030"),
+
+            // dict.accounting.financial.condition.type.ka.c031
+            ("dict.accounting.financial.condition.type.ka.c031", "en-US", "制造间接费用/公司码_us", "条件类型.KA.C031"),
+            // dict.accounting.financial.condition.type.ka.c031
+            ("dict.accounting.financial.condition.type.ka.c031", "ja-JP", "制造间接费用/公司码_jp", "条件类型.KA.C031"),
+            // dict.accounting.financial.condition.type.ka.c031
+            ("dict.accounting.financial.condition.type.ka.c031", "zh-CN", "制造间接费用/公司码", "条件类型.KA.C031"),
+            // dict.accounting.financial.condition.type.ka.c031
+            ("dict.accounting.financial.condition.type.ka.c031", "zh-HK", "制造间接费用/公司码_hk", "条件类型.KA.C031"),
+
+            // dict.accounting.financial.condition.type.ka.c032
+            ("dict.accounting.financial.condition.type.ka.c032", "en-US", "管理间接费用/公司码_us", "条件类型.KA.C032"),
+            // dict.accounting.financial.condition.type.ka.c032
+            ("dict.accounting.financial.condition.type.ka.c032", "ja-JP", "管理间接费用/公司码_jp", "条件类型.KA.C032"),
+            // dict.accounting.financial.condition.type.ka.c032
+            ("dict.accounting.financial.condition.type.ka.c032", "zh-CN", "管理间接费用/公司码", "条件类型.KA.C032"),
+            // dict.accounting.financial.condition.type.ka.c032
+            ("dict.accounting.financial.condition.type.ka.c032", "zh-HK", "管理间接费用/公司码_hk", "条件类型.KA.C032"),
+
+            // dict.accounting.financial.condition.type.ka.c033
+            ("dict.accounting.financial.condition.type.ka.c033", "en-US", "销售间接费用/公司码_us", "条件类型.KA.C033"),
+            // dict.accounting.financial.condition.type.ka.c033
+            ("dict.accounting.financial.condition.type.ka.c033", "ja-JP", "销售间接费用/公司码_jp", "条件类型.KA.C033"),
+            // dict.accounting.financial.condition.type.ka.c033
+            ("dict.accounting.financial.condition.type.ka.c033", "zh-CN", "销售间接费用/公司码", "条件类型.KA.C033"),
+            // dict.accounting.financial.condition.type.ka.c033
+            ("dict.accounting.financial.condition.type.ka.c033", "zh-HK", "销售间接费用/公司码_hk", "条件类型.KA.C033"),
+
+            // dict.accounting.financial.condition.type.ka.c040
+            ("dict.accounting.financial.condition.type.ka.c040", "en-US", "物料间接费/业务范围_us", "条件类型.KA.C040"),
+            // dict.accounting.financial.condition.type.ka.c040
+            ("dict.accounting.financial.condition.type.ka.c040", "ja-JP", "物料间接费/业务范围_jp", "条件类型.KA.C040"),
+            // dict.accounting.financial.condition.type.ka.c040
+            ("dict.accounting.financial.condition.type.ka.c040", "zh-CN", "物料间接费/业务范围", "条件类型.KA.C040"),
+            // dict.accounting.financial.condition.type.ka.c040
+            ("dict.accounting.financial.condition.type.ka.c040", "zh-HK", "物料间接费/业务范围_hk", "条件类型.KA.C040"),
+
+            // dict.accounting.financial.condition.type.ka.c041
+            ("dict.accounting.financial.condition.type.ka.c041", "en-US", "制造间接费/业务范围_us", "条件类型.KA.C041"),
+            // dict.accounting.financial.condition.type.ka.c041
+            ("dict.accounting.financial.condition.type.ka.c041", "ja-JP", "制造间接费/业务范围_jp", "条件类型.KA.C041"),
+            // dict.accounting.financial.condition.type.ka.c041
+            ("dict.accounting.financial.condition.type.ka.c041", "zh-CN", "制造间接费/业务范围", "条件类型.KA.C041"),
+            // dict.accounting.financial.condition.type.ka.c041
+            ("dict.accounting.financial.condition.type.ka.c041", "zh-HK", "制造间接费/业务范围_hk", "条件类型.KA.C041"),
+
+            // dict.accounting.financial.condition.type.ka.c042
+            ("dict.accounting.financial.condition.type.ka.c042", "en-US", "管理间接费/业务范围_us", "条件类型.KA.C042"),
+            // dict.accounting.financial.condition.type.ka.c042
+            ("dict.accounting.financial.condition.type.ka.c042", "ja-JP", "管理间接费/业务范围_jp", "条件类型.KA.C042"),
+            // dict.accounting.financial.condition.type.ka.c042
+            ("dict.accounting.financial.condition.type.ka.c042", "zh-CN", "管理间接费/业务范围", "条件类型.KA.C042"),
+            // dict.accounting.financial.condition.type.ka.c042
+            ("dict.accounting.financial.condition.type.ka.c042", "zh-HK", "管理间接费/业务范围_hk", "条件类型.KA.C042"),
+
+            // dict.accounting.financial.condition.type.ka.c043
+            ("dict.accounting.financial.condition.type.ka.c043", "en-US", "销售间接费/业务范围_us", "条件类型.KA.C043"),
+            // dict.accounting.financial.condition.type.ka.c043
+            ("dict.accounting.financial.condition.type.ka.c043", "ja-JP", "销售间接费/业务范围_jp", "条件类型.KA.C043"),
+            // dict.accounting.financial.condition.type.ka.c043
+            ("dict.accounting.financial.condition.type.ka.c043", "zh-CN", "销售间接费/业务范围", "条件类型.KA.C043"),
+            // dict.accounting.financial.condition.type.ka.c043
+            ("dict.accounting.financial.condition.type.ka.c043", "zh-HK", "销售间接费/业务范围_hk", "条件类型.KA.C043"),
+
+            // dict.accounting.financial.condition.type.ka.c050
+            ("dict.accounting.financial.condition.type.ka.c050", "en-US", "物料间接费/订单类型_us", "条件类型.KA.C050"),
+            // dict.accounting.financial.condition.type.ka.c050
+            ("dict.accounting.financial.condition.type.ka.c050", "ja-JP", "物料间接费/订单类型_jp", "条件类型.KA.C050"),
+            // dict.accounting.financial.condition.type.ka.c050
+            ("dict.accounting.financial.condition.type.ka.c050", "zh-CN", "物料间接费/订单类型", "条件类型.KA.C050"),
+            // dict.accounting.financial.condition.type.ka.c050
+            ("dict.accounting.financial.condition.type.ka.c050", "zh-HK", "物料间接费/订单类型_hk", "条件类型.KA.C050"),
+
+            // dict.accounting.financial.condition.type.ka.c051
+            ("dict.accounting.financial.condition.type.ka.c051", "en-US", "制造间接费/订单类型_us", "条件类型.KA.C051"),
+            // dict.accounting.financial.condition.type.ka.c051
+            ("dict.accounting.financial.condition.type.ka.c051", "ja-JP", "制造间接费/订单类型_jp", "条件类型.KA.C051"),
+            // dict.accounting.financial.condition.type.ka.c051
+            ("dict.accounting.financial.condition.type.ka.c051", "zh-CN", "制造间接费/订单类型", "条件类型.KA.C051"),
+            // dict.accounting.financial.condition.type.ka.c051
+            ("dict.accounting.financial.condition.type.ka.c051", "zh-HK", "制造间接费/订单类型_hk", "条件类型.KA.C051"),
+
+            // dict.accounting.financial.condition.type.ka.c052
+            ("dict.accounting.financial.condition.type.ka.c052", "en-US", "管理间接费/订单类型_us", "条件类型.KA.C052"),
+            // dict.accounting.financial.condition.type.ka.c052
+            ("dict.accounting.financial.condition.type.ka.c052", "ja-JP", "管理间接费/订单类型_jp", "条件类型.KA.C052"),
+            // dict.accounting.financial.condition.type.ka.c052
+            ("dict.accounting.financial.condition.type.ka.c052", "zh-CN", "管理间接费/订单类型", "条件类型.KA.C052"),
+            // dict.accounting.financial.condition.type.ka.c052
+            ("dict.accounting.financial.condition.type.ka.c052", "zh-HK", "管理间接费/订单类型_hk", "条件类型.KA.C052"),
+
+            // dict.accounting.financial.condition.type.ka.c053
+            ("dict.accounting.financial.condition.type.ka.c053", "en-US", "销售间接费/订单类型_us", "条件类型.KA.C053"),
+            // dict.accounting.financial.condition.type.ka.c053
+            ("dict.accounting.financial.condition.type.ka.c053", "ja-JP", "销售间接费/订单类型_jp", "条件类型.KA.C053"),
+            // dict.accounting.financial.condition.type.ka.c053
+            ("dict.accounting.financial.condition.type.ka.c053", "zh-CN", "销售间接费/订单类型", "条件类型.KA.C053"),
+            // dict.accounting.financial.condition.type.ka.c053
+            ("dict.accounting.financial.condition.type.ka.c053", "zh-HK", "销售间接费/订单类型_hk", "条件类型.KA.C053"),
+
+            // dict.accounting.financial.condition.type.ka.c060
+            ("dict.accounting.financial.condition.type.ka.c060", "en-US", "物料间接费/订单类型_us", "条件类型.KA.C060"),
+            // dict.accounting.financial.condition.type.ka.c060
+            ("dict.accounting.financial.condition.type.ka.c060", "ja-JP", "物料间接费/订单类型_jp", "条件类型.KA.C060"),
+            // dict.accounting.financial.condition.type.ka.c060
+            ("dict.accounting.financial.condition.type.ka.c060", "zh-CN", "物料间接费/订单类型", "条件类型.KA.C060"),
+            // dict.accounting.financial.condition.type.ka.c060
+            ("dict.accounting.financial.condition.type.ka.c060", "zh-HK", "物料间接费/订单类型_hk", "条件类型.KA.C060"),
+
+            // dict.accounting.financial.condition.type.ka.c061
+            ("dict.accounting.financial.condition.type.ka.c061", "en-US", "制造间接费/订单类型_us", "条件类型.KA.C061"),
+            // dict.accounting.financial.condition.type.ka.c061
+            ("dict.accounting.financial.condition.type.ka.c061", "ja-JP", "制造间接费/订单类型_jp", "条件类型.KA.C061"),
+            // dict.accounting.financial.condition.type.ka.c061
+            ("dict.accounting.financial.condition.type.ka.c061", "zh-CN", "制造间接费/订单类型", "条件类型.KA.C061"),
+            // dict.accounting.financial.condition.type.ka.c061
+            ("dict.accounting.financial.condition.type.ka.c061", "zh-HK", "制造间接费/订单类型_hk", "条件类型.KA.C061"),
+
+            // dict.accounting.financial.condition.type.ka.c062
+            ("dict.accounting.financial.condition.type.ka.c062", "en-US", "管理间接费/订单类型_us", "条件类型.KA.C062"),
+            // dict.accounting.financial.condition.type.ka.c062
+            ("dict.accounting.financial.condition.type.ka.c062", "ja-JP", "管理间接费/订单类型_jp", "条件类型.KA.C062"),
+            // dict.accounting.financial.condition.type.ka.c062
+            ("dict.accounting.financial.condition.type.ka.c062", "zh-CN", "管理间接费/订单类型", "条件类型.KA.C062"),
+            // dict.accounting.financial.condition.type.ka.c062
+            ("dict.accounting.financial.condition.type.ka.c062", "zh-HK", "管理间接费/订单类型_hk", "条件类型.KA.C062"),
+
+            // dict.accounting.financial.condition.type.ka.c063
+            ("dict.accounting.financial.condition.type.ka.c063", "en-US", "销售间接费/订单类型_us", "条件类型.KA.C063"),
+            // dict.accounting.financial.condition.type.ka.c063
+            ("dict.accounting.financial.condition.type.ka.c063", "ja-JP", "销售间接费/订单类型_jp", "条件类型.KA.C063"),
+            // dict.accounting.financial.condition.type.ka.c063
+            ("dict.accounting.financial.condition.type.ka.c063", "zh-CN", "销售间接费/订单类型", "条件类型.KA.C063"),
+            // dict.accounting.financial.condition.type.ka.c063
+            ("dict.accounting.financial.condition.type.ka.c063", "zh-HK", "销售间接费/订单类型_hk", "条件类型.KA.C063"),
+
+            // dict.accounting.financial.condition.type.ka.c070
+            ("dict.accounting.financial.condition.type.ka.c070", "en-US", "物料费用/版本_us", "条件类型.KA.C070"),
+            // dict.accounting.financial.condition.type.ka.c070
+            ("dict.accounting.financial.condition.type.ka.c070", "ja-JP", "物料费用/版本_jp", "条件类型.KA.C070"),
+            // dict.accounting.financial.condition.type.ka.c070
+            ("dict.accounting.financial.condition.type.ka.c070", "zh-CN", "物料费用/版本", "条件类型.KA.C070"),
+            // dict.accounting.financial.condition.type.ka.c070
+            ("dict.accounting.financial.condition.type.ka.c070", "zh-HK", "物料费用/版本_hk", "条件类型.KA.C070"),
+
+            // dict.accounting.financial.condition.type.ka.c080
+            ("dict.accounting.financial.condition.type.ka.c080", "en-US", "材料间接费/利润中心_us", "条件类型.KA.C080"),
+            // dict.accounting.financial.condition.type.ka.c080
+            ("dict.accounting.financial.condition.type.ka.c080", "ja-JP", "材料间接费/利润中心_jp", "条件类型.KA.C080"),
+            // dict.accounting.financial.condition.type.ka.c080
+            ("dict.accounting.financial.condition.type.ka.c080", "zh-CN", "材料间接费/利润中心", "条件类型.KA.C080"),
+            // dict.accounting.financial.condition.type.ka.c080
+            ("dict.accounting.financial.condition.type.ka.c080", "zh-HK", "材料间接费/利润中心_hk", "条件类型.KA.C080"),
+
+            // dict.accounting.financial.condition.type.ka.c100
+            ("dict.accounting.financial.condition.type.ka.c100", "en-US", "物料间接费用_us", "条件类型.KA.C100"),
+            // dict.accounting.financial.condition.type.ka.c100
+            ("dict.accounting.financial.condition.type.ka.c100", "ja-JP", "物料间接费用_jp", "条件类型.KA.C100"),
+            // dict.accounting.financial.condition.type.ka.c100
+            ("dict.accounting.financial.condition.type.ka.c100", "zh-CN", "物料间接费用", "条件类型.KA.C100"),
+            // dict.accounting.financial.condition.type.ka.c100
+            ("dict.accounting.financial.condition.type.ka.c100", "zh-HK", "物料间接费用_hk", "条件类型.KA.C100"),
+
+            // dict.accounting.financial.condition.type.ka.c110
+            ("dict.accounting.financial.condition.type.ka.c110", "en-US", "物料间接费用/附加费_us", "条件类型.KA.C110"),
+            // dict.accounting.financial.condition.type.ka.c110
+            ("dict.accounting.financial.condition.type.ka.c110", "ja-JP", "物料间接费用/附加费_jp", "条件类型.KA.C110"),
+            // dict.accounting.financial.condition.type.ka.c110
+            ("dict.accounting.financial.condition.type.ka.c110", "zh-CN", "物料间接费用/附加费", "条件类型.KA.C110"),
+            // dict.accounting.financial.condition.type.ka.c110
+            ("dict.accounting.financial.condition.type.ka.c110", "zh-HK", "物料间接费用/附加费_hk", "条件类型.KA.C110"),
+
+            // dict.accounting.financial.condition.type.ka.c120
+            ("dict.accounting.financial.condition.type.ka.c120", "en-US", "物料间接费成本/工厂_us", "条件类型.KA.C120"),
+            // dict.accounting.financial.condition.type.ka.c120
+            ("dict.accounting.financial.condition.type.ka.c120", "ja-JP", "物料间接费成本/工厂_jp", "条件类型.KA.C120"),
+            // dict.accounting.financial.condition.type.ka.c120
+            ("dict.accounting.financial.condition.type.ka.c120", "zh-CN", "物料间接费成本/工厂", "条件类型.KA.C120"),
+            // dict.accounting.financial.condition.type.ka.c120
+            ("dict.accounting.financial.condition.type.ka.c120", "zh-HK", "物料间接费成本/工厂_hk", "条件类型.KA.C120"),
+
+            // dict.accounting.financial.condition.type.ka.c130
+            ("dict.accounting.financial.condition.type.ka.c130", "en-US", "物料间接费用/公司码_us", "条件类型.KA.C130"),
+            // dict.accounting.financial.condition.type.ka.c130
+            ("dict.accounting.financial.condition.type.ka.c130", "ja-JP", "物料间接费用/公司码_jp", "条件类型.KA.C130"),
+            // dict.accounting.financial.condition.type.ka.c130
+            ("dict.accounting.financial.condition.type.ka.c130", "zh-CN", "物料间接费用/公司码", "条件类型.KA.C130"),
+            // dict.accounting.financial.condition.type.ka.c130
+            ("dict.accounting.financial.condition.type.ka.c130", "zh-HK", "物料间接费用/公司码_hk", "条件类型.KA.C130"),
+
+            // dict.accounting.financial.condition.type.ka.c140
+            ("dict.accounting.financial.condition.type.ka.c140", "en-US", "物料间接费/业务范围_us", "条件类型.KA.C140"),
+            // dict.accounting.financial.condition.type.ka.c140
+            ("dict.accounting.financial.condition.type.ka.c140", "ja-JP", "物料间接费/业务范围_jp", "条件类型.KA.C140"),
+            // dict.accounting.financial.condition.type.ka.c140
+            ("dict.accounting.financial.condition.type.ka.c140", "zh-CN", "物料间接费/业务范围", "条件类型.KA.C140"),
+            // dict.accounting.financial.condition.type.ka.c140
+            ("dict.accounting.financial.condition.type.ka.c140", "zh-HK", "物料间接费/业务范围_hk", "条件类型.KA.C140"),
+
+            // dict.accounting.financial.condition.type.ka.c150
+            ("dict.accounting.financial.condition.type.ka.c150", "en-US", "物料间接费/订单类型_us", "条件类型.KA.C150"),
+            // dict.accounting.financial.condition.type.ka.c150
+            ("dict.accounting.financial.condition.type.ka.c150", "ja-JP", "物料间接费/订单类型_jp", "条件类型.KA.C150"),
+            // dict.accounting.financial.condition.type.ka.c150
+            ("dict.accounting.financial.condition.type.ka.c150", "zh-CN", "物料间接费/订单类型", "条件类型.KA.C150"),
+            // dict.accounting.financial.condition.type.ka.c150
+            ("dict.accounting.financial.condition.type.ka.c150", "zh-HK", "物料间接费/订单类型_hk", "条件类型.KA.C150"),
+
+            // dict.accounting.financial.condition.type.ka.c160
+            ("dict.accounting.financial.condition.type.ka.c160", "en-US", "物料间接费/订单类型_us", "条件类型.KA.C160"),
+            // dict.accounting.financial.condition.type.ka.c160
+            ("dict.accounting.financial.condition.type.ka.c160", "ja-JP", "物料间接费/订单类型_jp", "条件类型.KA.C160"),
+            // dict.accounting.financial.condition.type.ka.c160
+            ("dict.accounting.financial.condition.type.ka.c160", "zh-CN", "物料间接费/订单类型", "条件类型.KA.C160"),
+            // dict.accounting.financial.condition.type.ka.c160
+            ("dict.accounting.financial.condition.type.ka.c160", "zh-HK", "物料间接费/订单类型_hk", "条件类型.KA.C160"),
+
+            // dict.accounting.financial.condition.type.ka.c170
+            ("dict.accounting.financial.condition.type.ka.c170", "en-US", "物料费用/版本_us", "条件类型.KA.C170"),
+            // dict.accounting.financial.condition.type.ka.c170
+            ("dict.accounting.financial.condition.type.ka.c170", "ja-JP", "物料费用/版本_jp", "条件类型.KA.C170"),
+            // dict.accounting.financial.condition.type.ka.c170
+            ("dict.accounting.financial.condition.type.ka.c170", "zh-CN", "物料费用/版本", "条件类型.KA.C170"),
+            // dict.accounting.financial.condition.type.ka.c170
+            ("dict.accounting.financial.condition.type.ka.c170", "zh-HK", "物料费用/版本_hk", "条件类型.KA.C170"),
+
+            // dict.accounting.financial.condition.type.ka.c180
+            ("dict.accounting.financial.condition.type.ka.c180", "en-US", "材料间接费/利润中心_us", "条件类型.KA.C180"),
+            // dict.accounting.financial.condition.type.ka.c180
+            ("dict.accounting.financial.condition.type.ka.c180", "ja-JP", "材料间接费/利润中心_jp", "条件类型.KA.C180"),
+            // dict.accounting.financial.condition.type.ka.c180
+            ("dict.accounting.financial.condition.type.ka.c180", "zh-CN", "材料间接费/利润中心", "条件类型.KA.C180"),
+            // dict.accounting.financial.condition.type.ka.c180
+            ("dict.accounting.financial.condition.type.ka.c180", "zh-HK", "材料间接费/利润中心_hk", "条件类型.KA.C180"),
+
+            // dict.accounting.financial.condition.type.m.a001
+            ("dict.accounting.financial.condition.type.m.a001", "en-US", "折扣_us", "条件类型.M.A001"),
+            // dict.accounting.financial.condition.type.m.a001
+            ("dict.accounting.financial.condition.type.m.a001", "ja-JP", "折扣_jp", "条件类型.M.A001"),
+            // dict.accounting.financial.condition.type.m.a001
+            ("dict.accounting.financial.condition.type.m.a001", "zh-CN", "折扣", "条件类型.M.A001"),
+            // dict.accounting.financial.condition.type.m.a001
+            ("dict.accounting.financial.condition.type.m.a001", "zh-HK", "折扣_hk", "条件类型.M.A001"),
+
+            // dict.accounting.financial.condition.type.m.a002
+            ("dict.accounting.financial.condition.type.m.a002", "en-US", "物料回扣_us", "条件类型.M.A002"),
+            // dict.accounting.financial.condition.type.m.a002
+            ("dict.accounting.financial.condition.type.m.a002", "ja-JP", "物料回扣_jp", "条件类型.M.A002"),
+            // dict.accounting.financial.condition.type.m.a002
+            ("dict.accounting.financial.condition.type.m.a002", "zh-CN", "物料回扣", "条件类型.M.A002"),
+            // dict.accounting.financial.condition.type.m.a002
+            ("dict.accounting.financial.condition.type.m.a002", "zh-HK", "物料回扣_hk", "条件类型.M.A002"),
+
+            // dict.accounting.financial.condition.type.m.a003
+            ("dict.accounting.financial.condition.type.m.a003", "en-US", "层次回扣_us", "条件类型.M.A003"),
+            // dict.accounting.financial.condition.type.m.a003
+            ("dict.accounting.financial.condition.type.m.a003", "ja-JP", "层次回扣_jp", "条件类型.M.A003"),
+            // dict.accounting.financial.condition.type.m.a003
+            ("dict.accounting.financial.condition.type.m.a003", "zh-CN", "层次回扣", "条件类型.M.A003"),
+            // dict.accounting.financial.condition.type.m.a003
+            ("dict.accounting.financial.condition.type.m.a003", "zh-HK", "层次回扣_hk", "条件类型.M.A003"),
+
+            // dict.accounting.financial.condition.type.m.a004
+            ("dict.accounting.financial.condition.type.m.a004", "en-US", "层次回扣/物料_us", "条件类型.M.A004"),
+            // dict.accounting.financial.condition.type.m.a004
+            ("dict.accounting.financial.condition.type.m.a004", "ja-JP", "层次回扣/物料_jp", "条件类型.M.A004"),
+            // dict.accounting.financial.condition.type.m.a004
+            ("dict.accounting.financial.condition.type.m.a004", "zh-CN", "层次回扣/物料", "条件类型.M.A004"),
+            // dict.accounting.financial.condition.type.m.a004
+            ("dict.accounting.financial.condition.type.m.a004", "zh-HK", "层次回扣/物料_hk", "条件类型.M.A004"),
+
+            // dict.accounting.financial.condition.type.m.ak01
+            ("dict.accounting.financial.condition.type.m.ak01", "en-US", "客户回扣_us", "条件类型.M.AK01"),
+            // dict.accounting.financial.condition.type.m.ak01
+            ("dict.accounting.financial.condition.type.m.ak01", "ja-JP", "客户回扣_jp", "条件类型.M.AK01"),
+            // dict.accounting.financial.condition.type.m.ak01
+            ("dict.accounting.financial.condition.type.m.ak01", "zh-CN", "客户回扣", "条件类型.M.AK01"),
+            // dict.accounting.financial.condition.type.m.ak01
+            ("dict.accounting.financial.condition.type.m.ak01", "zh-HK", "客户回扣_hk", "条件类型.M.AK01"),
+
+            // dict.accounting.financial.condition.type.m.amo1
+            ("dict.accounting.financial.condition.type.m.amo1", "en-US", "内部分摊比例 %_us", "条件类型.M.AMO1"),
+            // dict.accounting.financial.condition.type.m.amo1
+            ("dict.accounting.financial.condition.type.m.amo1", "ja-JP", "内部分摊比例 %_jp", "条件类型.M.AMO1"),
+            // dict.accounting.financial.condition.type.m.amo1
+            ("dict.accounting.financial.condition.type.m.amo1", "zh-CN", "内部分摊比例 %", "条件类型.M.AMO1"),
+            // dict.accounting.financial.condition.type.m.amo1
+            ("dict.accounting.financial.condition.type.m.amo1", "zh-HK", "内部分摊比例 %_hk", "条件类型.M.AMO1"),
+
+            // dict.accounting.financial.condition.type.m.amo2
+            ("dict.accounting.financial.condition.type.m.amo2", "en-US", "内部分摊/数量_us", "条件类型.M.AMO2"),
+            // dict.accounting.financial.condition.type.m.amo2
+            ("dict.accounting.financial.condition.type.m.amo2", "ja-JP", "内部分摊/数量_jp", "条件类型.M.AMO2"),
+            // dict.accounting.financial.condition.type.m.amo2
+            ("dict.accounting.financial.condition.type.m.amo2", "zh-CN", "内部分摊/数量", "条件类型.M.AMO2"),
+            // dict.accounting.financial.condition.type.m.amo2
+            ("dict.accounting.financial.condition.type.m.amo2", "zh-HK", "内部分摊/数量_hk", "条件类型.M.AMO2"),
+
+            // dict.accounting.financial.condition.type.m.cu00
+            ("dict.accounting.financial.condition.type.m.cu00", "en-US", "总价格 cust.sim_us", "条件类型.M.CU00"),
+            // dict.accounting.financial.condition.type.m.cu00
+            ("dict.accounting.financial.condition.type.m.cu00", "ja-JP", "总价格 cust.sim_jp", "条件类型.M.CU00"),
+            // dict.accounting.financial.condition.type.m.cu00
+            ("dict.accounting.financial.condition.type.m.cu00", "zh-CN", "总价格 cust.sim", "条件类型.M.CU00"),
+            // dict.accounting.financial.condition.type.m.cu00
+            ("dict.accounting.financial.condition.type.m.cu00", "zh-HK", "总价格 cust.sim_hk", "条件类型.M.CU00"),
+
+            // dict.accounting.financial.condition.type.m.cuad
+            ("dict.accounting.financial.condition.type.m.cuad", "en-US", "反倾销关税 %_us", "条件类型.M.CUAD"),
+            // dict.accounting.financial.condition.type.m.cuad
+            ("dict.accounting.financial.condition.type.m.cuad", "ja-JP", "反倾销关税 %_jp", "条件类型.M.CUAD"),
+            // dict.accounting.financial.condition.type.m.cuad
+            ("dict.accounting.financial.condition.type.m.cuad", "zh-CN", "反倾销关税 %", "条件类型.M.CUAD"),
+            // dict.accounting.financial.condition.type.m.cuad
+            ("dict.accounting.financial.condition.type.m.cuad", "zh-HK", "反倾销关税 %_hk", "条件类型.M.CUAD"),
+
+            // dict.accounting.financial.condition.type.m.cuas
+            ("dict.accounting.financial.condition.type.m.cuas", "en-US", "海关免税 %_us", "条件类型.M.CUAS"),
+            // dict.accounting.financial.condition.type.m.cuas
+            ("dict.accounting.financial.condition.type.m.cuas", "ja-JP", "海关免税 %_jp", "条件类型.M.CUAS"),
+            // dict.accounting.financial.condition.type.m.cuas
+            ("dict.accounting.financial.condition.type.m.cuas", "zh-CN", "海关免税 %", "条件类型.M.CUAS"),
+            // dict.accounting.financial.condition.type.m.cuas
+            ("dict.accounting.financial.condition.type.m.cuas", "zh-HK", "海关免税 %_hk", "条件类型.M.CUAS"),
+
+            // dict.accounting.financial.condition.type.m.cudl
+            ("dict.accounting.financial.condition.type.m.cudl", "en-US", "第三国家关税%_us", "条件类型.M.CUDL"),
+            // dict.accounting.financial.condition.type.m.cudl
+            ("dict.accounting.financial.condition.type.m.cudl", "ja-JP", "第三国家关税%_jp", "条件类型.M.CUDL"),
+            // dict.accounting.financial.condition.type.m.cudl
+            ("dict.accounting.financial.condition.type.m.cudl", "zh-CN", "第三国家关税%", "条件类型.M.CUDL"),
+            // dict.accounting.financial.condition.type.m.cudl
+            ("dict.accounting.financial.condition.type.m.cudl", "zh-HK", "第三国家关税%_hk", "条件类型.M.CUDL"),
+
+            // dict.accounting.financial.condition.type.m.cufr
+            ("dict.accounting.financial.condition.type.m.cufr", "en-US", "运费数量关税_us", "条件类型.M.CUFR"),
+            // dict.accounting.financial.condition.type.m.cufr
+            ("dict.accounting.financial.condition.type.m.cufr", "ja-JP", "运费数量关税_jp", "条件类型.M.CUFR"),
+            // dict.accounting.financial.condition.type.m.cufr
+            ("dict.accounting.financial.condition.type.m.cufr", "zh-CN", "运费数量关税", "条件类型.M.CUFR"),
+            // dict.accounting.financial.condition.type.m.cufr
+            ("dict.accounting.financial.condition.type.m.cufr", "zh-HK", "运费数量关税_hk", "条件类型.M.CUFR"),
+
+            // dict.accounting.financial.condition.type.m.cuin
+            ("dict.accounting.financial.condition.type.m.cuin", "en-US", "保险关税_us", "条件类型.M.CUIN"),
+            // dict.accounting.financial.condition.type.m.cuin
+            ("dict.accounting.financial.condition.type.m.cuin", "ja-JP", "保险关税_jp", "条件类型.M.CUIN"),
+            // dict.accounting.financial.condition.type.m.cuin
+            ("dict.accounting.financial.condition.type.m.cuin", "zh-CN", "保险关税", "条件类型.M.CUIN"),
+            // dict.accounting.financial.condition.type.m.cuin
+            ("dict.accounting.financial.condition.type.m.cuin", "zh-HK", "保险关税_hk", "条件类型.M.CUIN"),
+
+            // dict.accounting.financial.condition.type.m.cupe
+            ("dict.accounting.financial.condition.type.m.cupe", "en-US", "海关药用产品 %_us", "条件类型.M.CUPE"),
+            // dict.accounting.financial.condition.type.m.cupe
+            ("dict.accounting.financial.condition.type.m.cupe", "ja-JP", "海关药用产品 %_jp", "条件类型.M.CUPE"),
+            // dict.accounting.financial.condition.type.m.cupe
+            ("dict.accounting.financial.condition.type.m.cupe", "zh-CN", "海关药用产品 %", "条件类型.M.CUPE"),
+            // dict.accounting.financial.condition.type.m.cupe
+            ("dict.accounting.financial.condition.type.m.cupe", "zh-HK", "海关药用产品 %_hk", "条件类型.M.CUPE"),
+
+            // dict.accounting.financial.condition.type.m.cupz
+            ("dict.accounting.financial.condition.type.m.cupz", "en-US", "关税优惠%_us", "条件类型.M.CUPZ"),
+            // dict.accounting.financial.condition.type.m.cupz
+            ("dict.accounting.financial.condition.type.m.cupz", "ja-JP", "关税优惠%_jp", "条件类型.M.CUPZ"),
+            // dict.accounting.financial.condition.type.m.cupz
+            ("dict.accounting.financial.condition.type.m.cupz", "zh-CN", "关税优惠%", "条件类型.M.CUPZ"),
+            // dict.accounting.financial.condition.type.m.cupz
+            ("dict.accounting.financial.condition.type.m.cupz", "zh-HK", "关税优惠%_hk", "条件类型.M.CUPZ"),
+
+            // dict.accounting.financial.condition.type.m.curb
+            ("dict.accounting.financial.condition.type.m.curb", "en-US", "绝对折扣关税_us", "条件类型.M.CURB"),
+            // dict.accounting.financial.condition.type.m.curb
+            ("dict.accounting.financial.condition.type.m.curb", "ja-JP", "绝对折扣关税_jp", "条件类型.M.CURB"),
+            // dict.accounting.financial.condition.type.m.curb
+            ("dict.accounting.financial.condition.type.m.curb", "zh-CN", "绝对折扣关税", "条件类型.M.CURB"),
+            // dict.accounting.financial.condition.type.m.curb
+            ("dict.accounting.financial.condition.type.m.curb", "zh-HK", "绝对折扣关税_hk", "条件类型.M.CURB"),
+
+            // dict.accounting.financial.condition.type.m.cuzk
+            ("dict.accounting.financial.condition.type.m.cuzk", "en-US", "关税分配 &_us", "条件类型.M.CUZK"),
+            // dict.accounting.financial.condition.type.m.cuzk
+            ("dict.accounting.financial.condition.type.m.cuzk", "ja-JP", "关税分配 &_jp", "条件类型.M.CUZK"),
+            // dict.accounting.financial.condition.type.m.cuzk
+            ("dict.accounting.financial.condition.type.m.cuzk", "zh-CN", "关税分配 &", "条件类型.M.CUZK"),
+            // dict.accounting.financial.condition.type.m.cuzk
+            ("dict.accounting.financial.condition.type.m.cuzk", "zh-HK", "关税分配 &_hk", "条件类型.M.CUZK"),
+
+            // dict.accounting.financial.condition.type.m.edi1
+            ("dict.accounting.financial.condition.type.m.edi1", "en-US", "已确认的价格_us", "条件类型.M.EDI1"),
+            // dict.accounting.financial.condition.type.m.edi1
+            ("dict.accounting.financial.condition.type.m.edi1", "ja-JP", "已确认的价格_jp", "条件类型.M.EDI1"),
+            // dict.accounting.financial.condition.type.m.edi1
+            ("dict.accounting.financial.condition.type.m.edi1", "zh-CN", "已确认的价格", "条件类型.M.EDI1"),
+            // dict.accounting.financial.condition.type.m.edi1
+            ("dict.accounting.financial.condition.type.m.edi1", "zh-HK", "已确认的价格_hk", "条件类型.M.EDI1"),
+
+            // dict.accounting.financial.condition.type.m.edi2
+            ("dict.accounting.financial.condition.type.m.edi2", "en-US", "价值差异_us", "条件类型.M.EDI2"),
+            // dict.accounting.financial.condition.type.m.edi2
+            ("dict.accounting.financial.condition.type.m.edi2", "ja-JP", "价值差异_jp", "条件类型.M.EDI2"),
+            // dict.accounting.financial.condition.type.m.edi2
+            ("dict.accounting.financial.condition.type.m.edi2", "zh-CN", "价值差异", "条件类型.M.EDI2"),
+            // dict.accounting.financial.condition.type.m.edi2
+            ("dict.accounting.financial.condition.type.m.edi2", "zh-HK", "价值差异_hk", "条件类型.M.EDI2"),
+
+            // dict.accounting.financial.condition.type.m.fra1
+            ("dict.accounting.financial.condition.type.m.fra1", "en-US", "运费 %_us", "条件类型.M.FRA1"),
+            // dict.accounting.financial.condition.type.m.fra1
+            ("dict.accounting.financial.condition.type.m.fra1", "ja-JP", "运费 %_jp", "条件类型.M.FRA1"),
+            // dict.accounting.financial.condition.type.m.fra1
+            ("dict.accounting.financial.condition.type.m.fra1", "zh-CN", "运费 %", "条件类型.M.FRA1"),
+            // dict.accounting.financial.condition.type.m.fra1
+            ("dict.accounting.financial.condition.type.m.fra1", "zh-HK", "运费 %_hk", "条件类型.M.FRA1"),
+
+            // dict.accounting.financial.condition.type.m.fra2
+            ("dict.accounting.financial.condition.type.m.fra2", "en-US", "运费 %_us", "条件类型.M.FRA2"),
+            // dict.accounting.financial.condition.type.m.fra2
+            ("dict.accounting.financial.condition.type.m.fra2", "ja-JP", "运费 %_jp", "条件类型.M.FRA2"),
+            // dict.accounting.financial.condition.type.m.fra2
+            ("dict.accounting.financial.condition.type.m.fra2", "zh-CN", "运费 %", "条件类型.M.FRA2"),
+            // dict.accounting.financial.condition.type.m.fra2
+            ("dict.accounting.financial.condition.type.m.fra2", "zh-HK", "运费 %_hk", "条件类型.M.FRA2"),
+
+            // dict.accounting.financial.condition.type.m.frb1
+            ("dict.accounting.financial.condition.type.m.frb1", "en-US", "运费(值)_us", "条件类型.M.FRB1"),
+            // dict.accounting.financial.condition.type.m.frb1
+            ("dict.accounting.financial.condition.type.m.frb1", "ja-JP", "运费(值)_jp", "条件类型.M.FRB1"),
+            // dict.accounting.financial.condition.type.m.frb1
+            ("dict.accounting.financial.condition.type.m.frb1", "zh-CN", "运费(值)", "条件类型.M.FRB1"),
+            // dict.accounting.financial.condition.type.m.frb1
+            ("dict.accounting.financial.condition.type.m.frb1", "zh-HK", "运费(值)_hk", "条件类型.M.FRB1"),
+
+            // dict.accounting.financial.condition.type.m.frb2
+            ("dict.accounting.financial.condition.type.m.frb2", "en-US", "运费(值)_us", "条件类型.M.FRB2"),
+            // dict.accounting.financial.condition.type.m.frb2
+            ("dict.accounting.financial.condition.type.m.frb2", "ja-JP", "运费(值)_jp", "条件类型.M.FRB2"),
+            // dict.accounting.financial.condition.type.m.frb2
+            ("dict.accounting.financial.condition.type.m.frb2", "zh-CN", "运费(值)", "条件类型.M.FRB2"),
+            // dict.accounting.financial.condition.type.m.frb2
+            ("dict.accounting.financial.condition.type.m.frb2", "zh-HK", "运费(值)_hk", "条件类型.M.FRB2"),
+
+            // dict.accounting.financial.condition.type.m.frc1
+            ("dict.accounting.financial.condition.type.m.frc1", "en-US", "运费/数量_us", "条件类型.M.FRC1"),
+            // dict.accounting.financial.condition.type.m.frc1
+            ("dict.accounting.financial.condition.type.m.frc1", "ja-JP", "运费/数量_jp", "条件类型.M.FRC1"),
+            // dict.accounting.financial.condition.type.m.frc1
+            ("dict.accounting.financial.condition.type.m.frc1", "zh-CN", "运费/数量", "条件类型.M.FRC1"),
+            // dict.accounting.financial.condition.type.m.frc1
+            ("dict.accounting.financial.condition.type.m.frc1", "zh-HK", "运费/数量_hk", "条件类型.M.FRC1"),
+
+            // dict.accounting.financial.condition.type.m.frc2
+            ("dict.accounting.financial.condition.type.m.frc2", "en-US", "运费/数量_us", "条件类型.M.FRC2"),
+            // dict.accounting.financial.condition.type.m.frc2
+            ("dict.accounting.financial.condition.type.m.frc2", "ja-JP", "运费/数量_jp", "条件类型.M.FRC2"),
+            // dict.accounting.financial.condition.type.m.frc2
+            ("dict.accounting.financial.condition.type.m.frc2", "zh-CN", "运费/数量", "条件类型.M.FRC2"),
+            // dict.accounting.financial.condition.type.m.frc2
+            ("dict.accounting.financial.condition.type.m.frc2", "zh-HK", "运费/数量_hk", "条件类型.M.FRC2"),
+
+            // dict.accounting.financial.condition.type.m.gau1
+            ("dict.accounting.financial.condition.type.m.gau1", "en-US", "黄金原始价_us", "条件类型.M.GAU1"),
+            // dict.accounting.financial.condition.type.m.gau1
+            ("dict.accounting.financial.condition.type.m.gau1", "ja-JP", "黄金原始价_jp", "条件类型.M.GAU1"),
+            // dict.accounting.financial.condition.type.m.gau1
+            ("dict.accounting.financial.condition.type.m.gau1", "zh-CN", "黄金原始价", "条件类型.M.GAU1"),
+            // dict.accounting.financial.condition.type.m.gau1
+            ("dict.accounting.financial.condition.type.m.gau1", "zh-HK", "黄金原始价_hk", "条件类型.M.GAU1"),
+
+            // dict.accounting.financial.condition.type.m.gau2
+            ("dict.accounting.financial.condition.type.m.gau2", "en-US", "黄金实际价_us", "条件类型.M.GAU2"),
+            // dict.accounting.financial.condition.type.m.gau2
+            ("dict.accounting.financial.condition.type.m.gau2", "ja-JP", "黄金实际价_jp", "条件类型.M.GAU2"),
+            // dict.accounting.financial.condition.type.m.gau2
+            ("dict.accounting.financial.condition.type.m.gau2", "zh-CN", "黄金实际价", "条件类型.M.GAU2"),
+            // dict.accounting.financial.condition.type.m.gau2
+            ("dict.accounting.financial.condition.type.m.gau2", "zh-HK", "黄金实际价_hk", "条件类型.M.GAU2"),
+
+            // dict.accounting.financial.condition.type.m.grwr
+            ("dict.accounting.financial.condition.type.m.grwr", "en-US", "统计值_us", "条件类型.M.GRWR"),
+            // dict.accounting.financial.condition.type.m.grwr
+            ("dict.accounting.financial.condition.type.m.grwr", "ja-JP", "统计值_jp", "条件类型.M.GRWR"),
+            // dict.accounting.financial.condition.type.m.grwr
+            ("dict.accounting.financial.condition.type.m.grwr", "zh-CN", "统计值", "条件类型.M.GRWR"),
+            // dict.accounting.financial.condition.type.m.grwr
+            ("dict.accounting.financial.condition.type.m.grwr", "zh-HK", "统计值_hk", "条件类型.M.GRWR"),
+
+            // dict.accounting.financial.condition.type.m.gwlb
+            ("dict.accounting.financial.condition.type.m.gwlb", "en-US", "统计值 LB-Comp._us", "条件类型.M.GWLB"),
+            // dict.accounting.financial.condition.type.m.gwlb
+            ("dict.accounting.financial.condition.type.m.gwlb", "ja-JP", "统计值 LB-Comp._jp", "条件类型.M.GWLB"),
+            // dict.accounting.financial.condition.type.m.gwlb
+            ("dict.accounting.financial.condition.type.m.gwlb", "zh-CN", "统计值 LB-Comp.", "条件类型.M.GWLB"),
+            // dict.accounting.financial.condition.type.m.gwlb
+            ("dict.accounting.financial.condition.type.m.gwlb", "zh-HK", "统计值 LB-Comp._hk", "条件类型.M.GWLB"),
+
+            // dict.accounting.financial.condition.type.m.hb00
+            ("dict.accounting.financial.condition.type.m.hb00", "en-US", "抬头附加费(值)_us", "条件类型.M.HB00"),
+            // dict.accounting.financial.condition.type.m.hb00
+            ("dict.accounting.financial.condition.type.m.hb00", "ja-JP", "抬头附加费(值)_jp", "条件类型.M.HB00"),
+            // dict.accounting.financial.condition.type.m.hb00
+            ("dict.accounting.financial.condition.type.m.hb00", "zh-CN", "抬头附加费(值)", "条件类型.M.HB00"),
+            // dict.accounting.financial.condition.type.m.hb00
+            ("dict.accounting.financial.condition.type.m.hb00", "zh-HK", "抬头附加费(值)_hk", "条件类型.M.HB00"),
+
+            // dict.accounting.financial.condition.type.m.hb01
+            ("dict.accounting.financial.condition.type.m.hb01", "en-US", "抬头折扣(值)_us", "条件类型.M.HB01"),
+            // dict.accounting.financial.condition.type.m.hb01
+            ("dict.accounting.financial.condition.type.m.hb01", "ja-JP", "抬头折扣(值)_jp", "条件类型.M.HB01"),
+            // dict.accounting.financial.condition.type.m.hb01
+            ("dict.accounting.financial.condition.type.m.hb01", "zh-CN", "抬头折扣(值)", "条件类型.M.HB01"),
+            // dict.accounting.financial.condition.type.m.hb01
+            ("dict.accounting.financial.condition.type.m.hb01", "zh-HK", "抬头折扣(值)_hk", "条件类型.M.HB01"),
+
+            // dict.accounting.financial.condition.type.m.k000
+            ("dict.accounting.financial.condition.type.m.k000", "en-US", "合同抬头折扣%_us", "条件类型.M.K000"),
+            // dict.accounting.financial.condition.type.m.k000
+            ("dict.accounting.financial.condition.type.m.k000", "ja-JP", "合同抬头折扣%_jp", "条件类型.M.K000"),
+            // dict.accounting.financial.condition.type.m.k000
+            ("dict.accounting.financial.condition.type.m.k000", "zh-CN", "合同抬头折扣%", "条件类型.M.K000"),
+            // dict.accounting.financial.condition.type.m.k000
+            ("dict.accounting.financial.condition.type.m.k000", "zh-HK", "合同抬头折扣%_hk", "条件类型.M.K000"),
+
+            // dict.accounting.financial.condition.type.m.kad0
+            ("dict.accounting.financial.condition.type.m.kad0", "en-US", "物料成本(VKHM)_us", "条件类型.M.KAD0"),
+            // dict.accounting.financial.condition.type.m.kad0
+            ("dict.accounting.financial.condition.type.m.kad0", "ja-JP", "物料成本(VKHM)_jp", "条件类型.M.KAD0"),
+            // dict.accounting.financial.condition.type.m.kad0
+            ("dict.accounting.financial.condition.type.m.kad0", "zh-CN", "物料成本(VKHM)", "条件类型.M.KAD0"),
+            // dict.accounting.financial.condition.type.m.kad0
+            ("dict.accounting.financial.condition.type.m.kad0", "zh-HK", "物料成本(VKHM)_hk", "条件类型.M.KAD0"),
+
+            // dict.accounting.financial.condition.type.m.kad1
+            ("dict.accounting.financial.condition.type.m.kad1", "en-US", "处理成本(VKHM)_us", "条件类型.M.KAD1"),
+            // dict.accounting.financial.condition.type.m.kad1
+            ("dict.accounting.financial.condition.type.m.kad1", "ja-JP", "处理成本(VKHM)_jp", "条件类型.M.KAD1"),
+            // dict.accounting.financial.condition.type.m.kad1
+            ("dict.accounting.financial.condition.type.m.kad1", "zh-CN", "处理成本(VKHM)", "条件类型.M.KAD1"),
+            // dict.accounting.financial.condition.type.m.kad1
+            ("dict.accounting.financial.condition.type.m.kad1", "zh-HK", "处理成本(VKHM)_hk", "条件类型.M.KAD1"),
+
+            // dict.accounting.financial.condition.type.m.kr00
+            ("dict.accounting.financial.condition.type.m.kr00", "en-US", "抬头折扣(值)_us", "条件类型.M.KR00"),
+            // dict.accounting.financial.condition.type.m.kr00
+            ("dict.accounting.financial.condition.type.m.kr00", "ja-JP", "抬头折扣(值)_jp", "条件类型.M.KR00"),
+            // dict.accounting.financial.condition.type.m.kr00
+            ("dict.accounting.financial.condition.type.m.kr00", "zh-CN", "抬头折扣(值)", "条件类型.M.KR00"),
+            // dict.accounting.financial.condition.type.m.kr00
+            ("dict.accounting.financial.condition.type.m.kr00", "zh-HK", "抬头折扣(值)_hk", "条件类型.M.KR00"),
+
+            // dict.accounting.financial.condition.type.m.lh01
+            ("dict.accounting.financial.condition.type.m.lh01", "en-US", "交货层次_us", "条件类型.M.LH01"),
+            // dict.accounting.financial.condition.type.m.lh01
+            ("dict.accounting.financial.condition.type.m.lh01", "ja-JP", "交货层次_jp", "条件类型.M.LH01"),
+            // dict.accounting.financial.condition.type.m.lh01
+            ("dict.accounting.financial.condition.type.m.lh01", "zh-CN", "交货层次", "条件类型.M.LH01"),
+            // dict.accounting.financial.condition.type.m.lh01
+            ("dict.accounting.financial.condition.type.m.lh01", "zh-HK", "交货层次_hk", "条件类型.M.LH01"),
+
+            // dict.accounting.financial.condition.type.m.lh02
+            ("dict.accounting.financial.condition.type.m.lh02", "en-US", "交货层次/物料_us", "条件类型.M.LH02"),
+            // dict.accounting.financial.condition.type.m.lh02
+            ("dict.accounting.financial.condition.type.m.lh02", "ja-JP", "交货层次/物料_jp", "条件类型.M.LH02"),
+            // dict.accounting.financial.condition.type.m.lh02
+            ("dict.accounting.financial.condition.type.m.lh02", "zh-CN", "交货层次/物料", "条件类型.M.LH02"),
+            // dict.accounting.financial.condition.type.m.lh02
+            ("dict.accounting.financial.condition.type.m.lh02", "zh-HK", "交货层次/物料_hk", "条件类型.M.LH02"),
+
+            // dict.accounting.financial.condition.type.m.lp00
+            ("dict.accounting.financial.condition.type.m.lp00", "en-US", "托盘折扣_us", "条件类型.M.LP00"),
+            // dict.accounting.financial.condition.type.m.lp00
+            ("dict.accounting.financial.condition.type.m.lp00", "ja-JP", "托盘折扣_jp", "条件类型.M.LP00"),
+            // dict.accounting.financial.condition.type.m.lp00
+            ("dict.accounting.financial.condition.type.m.lp00", "zh-CN", "托盘折扣", "条件类型.M.LP00"),
+            // dict.accounting.financial.condition.type.m.lp00
+            ("dict.accounting.financial.condition.type.m.lp00", "zh-HK", "托盘折扣_hk", "条件类型.M.LP00"),
+
+            // dict.accounting.financial.condition.type.m.lp01
+            ("dict.accounting.financial.condition.type.m.lp01", "en-US", "不完整托盘附加费_us", "条件类型.M.LP01"),
+            // dict.accounting.financial.condition.type.m.lp01
+            ("dict.accounting.financial.condition.type.m.lp01", "ja-JP", "不完整托盘附加费_jp", "条件类型.M.LP01"),
+            // dict.accounting.financial.condition.type.m.lp01
+            ("dict.accounting.financial.condition.type.m.lp01", "zh-CN", "不完整托盘附加费", "条件类型.M.LP01"),
+            // dict.accounting.financial.condition.type.m.lp01
+            ("dict.accounting.financial.condition.type.m.lp01", "zh-HK", "不完整托盘附加费_hk", "条件类型.M.LP01"),
+
+            // dict.accounting.financial.condition.type.m.lp02
+            ("dict.accounting.financial.condition.type.m.lp02", "en-US", "混合托盆回扣_us", "条件类型.M.LP02"),
+            // dict.accounting.financial.condition.type.m.lp02
+            ("dict.accounting.financial.condition.type.m.lp02", "ja-JP", "混合托盆回扣_jp", "条件类型.M.LP02"),
+            // dict.accounting.financial.condition.type.m.lp02
+            ("dict.accounting.financial.condition.type.m.lp02", "zh-CN", "混合托盆回扣", "条件类型.M.LP02"),
+            // dict.accounting.financial.condition.type.m.lp02
+            ("dict.accounting.financial.condition.type.m.lp02", "zh-HK", "混合托盆回扣_hk", "条件类型.M.LP02"),
+
+            // dict.accounting.financial.condition.type.m.lp03
+            ("dict.accounting.financial.condition.type.m.lp03", "en-US", "混合托盘附加费_us", "条件类型.M.LP03"),
+            // dict.accounting.financial.condition.type.m.lp03
+            ("dict.accounting.financial.condition.type.m.lp03", "ja-JP", "混合托盘附加费_jp", "条件类型.M.LP03"),
+            // dict.accounting.financial.condition.type.m.lp03
+            ("dict.accounting.financial.condition.type.m.lp03", "zh-CN", "混合托盘附加费", "条件类型.M.LP03"),
+            // dict.accounting.financial.condition.type.m.lp03
+            ("dict.accounting.financial.condition.type.m.lp03", "zh-HK", "混合托盘附加费_hk", "条件类型.M.LP03"),
+
+            // dict.accounting.financial.condition.type.m.mar1
+            ("dict.accounting.financial.condition.type.m.mar1", "en-US", "中性 % 应计项目_us", "条件类型.M.MAR1"),
+            // dict.accounting.financial.condition.type.m.mar1
+            ("dict.accounting.financial.condition.type.m.mar1", "ja-JP", "中性 % 应计项目_jp", "条件类型.M.MAR1"),
+            // dict.accounting.financial.condition.type.m.mar1
+            ("dict.accounting.financial.condition.type.m.mar1", "zh-CN", "中性 % 应计项目", "条件类型.M.MAR1"),
+            // dict.accounting.financial.condition.type.m.mar1
+            ("dict.accounting.financial.condition.type.m.mar1", "zh-HK", "中性 % 应计项目_hk", "条件类型.M.MAR1"),
+
+            // dict.accounting.financial.condition.type.m.mm00
+            ("dict.accounting.financial.condition.type.m.mm00", "en-US", "最小数量( 金额 )_us", "条件类型.M.MM00"),
+            // dict.accounting.financial.condition.type.m.mm00
+            ("dict.accounting.financial.condition.type.m.mm00", "ja-JP", "最小数量( 金额 )_jp", "条件类型.M.MM00"),
+            // dict.accounting.financial.condition.type.m.mm00
+            ("dict.accounting.financial.condition.type.m.mm00", "zh-CN", "最小数量( 金额 )", "条件类型.M.MM00"),
+            // dict.accounting.financial.condition.type.m.mm00
+            ("dict.accounting.financial.condition.type.m.mm00", "zh-HK", "最小数量( 金额 )_hk", "条件类型.M.MM00"),
+
+            // dict.accounting.financial.condition.type.m.mm01
+            ("dict.accounting.financial.condition.type.m.mm01", "en-US", "最小数量 (%)_us", "条件类型.M.MM01"),
+            // dict.accounting.financial.condition.type.m.mm01
+            ("dict.accounting.financial.condition.type.m.mm01", "ja-JP", "最小数量 (%)_jp", "条件类型.M.MM01"),
+            // dict.accounting.financial.condition.type.m.mm01
+            ("dict.accounting.financial.condition.type.m.mm01", "zh-CN", "最小数量 (%)", "条件类型.M.MM01"),
+            // dict.accounting.financial.condition.type.m.mm01
+            ("dict.accounting.financial.condition.type.m.mm01", "zh-HK", "最小数量 (%)_hk", "条件类型.M.MM01"),
+
+            // dict.accounting.financial.condition.type.m.mp01
+            ("dict.accounting.financial.condition.type.m.mp01", "en-US", "市场价格_us", "条件类型.M.MP01"),
+            // dict.accounting.financial.condition.type.m.mp01
+            ("dict.accounting.financial.condition.type.m.mp01", "ja-JP", "市场价格_jp", "条件类型.M.MP01"),
+            // dict.accounting.financial.condition.type.m.mp01
+            ("dict.accounting.financial.condition.type.m.mp01", "zh-CN", "市场价格", "条件类型.M.MP01"),
+            // dict.accounting.financial.condition.type.m.mp01
+            ("dict.accounting.financial.condition.type.m.mp01", "zh-HK", "市场价格_hk", "条件类型.M.MP01"),
+
+            // dict.accounting.financial.condition.type.m.mvk0
+            ("dict.accounting.financial.condition.type.m.mvk0", "en-US", "包含税的销售价格_us", "条件类型.M.MVK0"),
+            // dict.accounting.financial.condition.type.m.mvk0
+            ("dict.accounting.financial.condition.type.m.mvk0", "ja-JP", "包含税的销售价格_jp", "条件类型.M.MVK0"),
+            // dict.accounting.financial.condition.type.m.mvk0
+            ("dict.accounting.financial.condition.type.m.mvk0", "zh-CN", "包含税的销售价格", "条件类型.M.MVK0"),
+            // dict.accounting.financial.condition.type.m.mvk0
+            ("dict.accounting.financial.condition.type.m.mvk0", "zh-HK", "包含税的销售价格_hk", "条件类型.M.MVK0"),
+
+            // dict.accounting.financial.condition.type.m.mvk1
+            ("dict.accounting.financial.condition.type.m.mvk1", "en-US", "除税外的销售价格_us", "条件类型.M.MVK1"),
+            // dict.accounting.financial.condition.type.m.mvk1
+            ("dict.accounting.financial.condition.type.m.mvk1", "ja-JP", "除税外的销售价格_jp", "条件类型.M.MVK1"),
+            // dict.accounting.financial.condition.type.m.mvk1
+            ("dict.accounting.financial.condition.type.m.mvk1", "zh-CN", "除税外的销售价格", "条件类型.M.MVK1"),
+            // dict.accounting.financial.condition.type.m.mvk1
+            ("dict.accounting.financial.condition.type.m.mvk1", "zh-HK", "除税外的销售价格_hk", "条件类型.M.MVK1"),
+
+            // dict.accounting.financial.condition.type.m.mvk2
+            ("dict.accounting.financial.condition.type.m.mvk2", "en-US", "除税外的销售价格_us", "条件类型.M.MVK2"),
+            // dict.accounting.financial.condition.type.m.mvk2
+            ("dict.accounting.financial.condition.type.m.mvk2", "ja-JP", "除税外的销售价格_jp", "条件类型.M.MVK2"),
+            // dict.accounting.financial.condition.type.m.mvk2
+            ("dict.accounting.financial.condition.type.m.mvk2", "zh-CN", "除税外的销售价格", "条件类型.M.MVK2"),
+            // dict.accounting.financial.condition.type.m.mvk2
+            ("dict.accounting.financial.condition.type.m.mvk2", "zh-HK", "除税外的销售价格_hk", "条件类型.M.MVK2"),
+
+            // dict.accounting.financial.condition.type.m.mwas
+            ("dict.accounting.financial.condition.type.m.mwas", "en-US", "手工输出税_us", "条件类型.M.MWAS"),
+            // dict.accounting.financial.condition.type.m.mwas
+            ("dict.accounting.financial.condition.type.m.mwas", "ja-JP", "手工输出税_jp", "条件类型.M.MWAS"),
+            // dict.accounting.financial.condition.type.m.mwas
+            ("dict.accounting.financial.condition.type.m.mwas", "zh-CN", "手工输出税", "条件类型.M.MWAS"),
+            // dict.accounting.financial.condition.type.m.mwas
+            ("dict.accounting.financial.condition.type.m.mwas", "zh-HK", "手工输出税_hk", "条件类型.M.MWAS"),
+
+            // dict.accounting.financial.condition.type.m.mwst
+            ("dict.accounting.financial.condition.type.m.mwst", "en-US", "进项税_us", "条件类型.M.MWST"),
+            // dict.accounting.financial.condition.type.m.mwst
+            ("dict.accounting.financial.condition.type.m.mwst", "ja-JP", "进项税_jp", "条件类型.M.MWST"),
+            // dict.accounting.financial.condition.type.m.mwst
+            ("dict.accounting.financial.condition.type.m.mwst", "zh-CN", "进项税", "条件类型.M.MWST"),
+            // dict.accounting.financial.condition.type.m.mwst
+            ("dict.accounting.financial.condition.type.m.mwst", "zh-HK", "进项税_hk", "条件类型.M.MWST"),
+
+            // dict.accounting.financial.condition.type.m.mwvs
+            ("dict.accounting.financial.condition.type.m.mwvs", "en-US", "手工输入税_us", "条件类型.M.MWVS"),
+            // dict.accounting.financial.condition.type.m.mwvs
+            ("dict.accounting.financial.condition.type.m.mwvs", "ja-JP", "手工输入税_jp", "条件类型.M.MWVS"),
+            // dict.accounting.financial.condition.type.m.mwvs
+            ("dict.accounting.financial.condition.type.m.mwvs", "zh-CN", "手工输入税", "条件类型.M.MWVS"),
+            // dict.accounting.financial.condition.type.m.mwvs
+            ("dict.accounting.financial.condition.type.m.mwvs", "zh-HK", "手工输入税_hk", "条件类型.M.MWVS"),
+
+            // dict.accounting.financial.condition.type.m.navm
+            ("dict.accounting.financial.condition.type.m.navm", "en-US", "不可抵扣的税金_us", "条件类型.M.NAVM"),
+            // dict.accounting.financial.condition.type.m.navm
+            ("dict.accounting.financial.condition.type.m.navm", "ja-JP", "不可抵扣的税金_jp", "条件类型.M.NAVM"),
+            // dict.accounting.financial.condition.type.m.navm
+            ("dict.accounting.financial.condition.type.m.navm", "zh-CN", "不可抵扣的税金", "条件类型.M.NAVM"),
+            // dict.accounting.financial.condition.type.m.navm
+            ("dict.accounting.financial.condition.type.m.navm", "zh-HK", "不可抵扣的税金_hk", "条件类型.M.NAVM"),
+
+            // dict.accounting.financial.condition.type.m.navs
+            ("dict.accounting.financial.condition.type.m.navs", "en-US", "不可抵扣的税金_us", "条件类型.M.NAVS"),
+            // dict.accounting.financial.condition.type.m.navs
+            ("dict.accounting.financial.condition.type.m.navs", "ja-JP", "不可抵扣的税金_jp", "条件类型.M.NAVS"),
+            // dict.accounting.financial.condition.type.m.navs
+            ("dict.accounting.financial.condition.type.m.navs", "zh-CN", "不可抵扣的税金", "条件类型.M.NAVS"),
+            // dict.accounting.financial.condition.type.m.navs
+            ("dict.accounting.financial.condition.type.m.navs", "zh-HK", "不可抵扣的税金_hk", "条件类型.M.NAVS"),
+
+            // dict.accounting.financial.condition.type.m.netp
+            ("dict.accounting.financial.condition.type.m.netp", "en-US", "净价拣选_us", "条件类型.M.NETP"),
+            // dict.accounting.financial.condition.type.m.netp
+            ("dict.accounting.financial.condition.type.m.netp", "ja-JP", "净价拣选_jp", "条件类型.M.NETP"),
+            // dict.accounting.financial.condition.type.m.netp
+            ("dict.accounting.financial.condition.type.m.netp", "zh-CN", "净价拣选", "条件类型.M.NETP"),
+            // dict.accounting.financial.condition.type.m.netp
+            ("dict.accounting.financial.condition.type.m.netp", "zh-HK", "净价拣选_hk", "条件类型.M.NETP"),
+
+            // dict.accounting.financial.condition.type.m.ntrg
+            ("dict.accounting.financial.condition.type.m.ntrg", "en-US", "净值付款人凭证_us", "条件类型.M.NTRG"),
+            // dict.accounting.financial.condition.type.m.ntrg
+            ("dict.accounting.financial.condition.type.m.ntrg", "ja-JP", "净值付款人凭证_jp", "条件类型.M.NTRG"),
+            // dict.accounting.financial.condition.type.m.ntrg
+            ("dict.accounting.financial.condition.type.m.ntrg", "zh-CN", "净值付款人凭证", "条件类型.M.NTRG"),
+            // dict.accounting.financial.condition.type.m.ntrg
+            ("dict.accounting.financial.condition.type.m.ntrg", "zh-HK", "净值付款人凭证_hk", "条件类型.M.NTRG"),
+
+            // dict.accounting.financial.condition.type.m.p000
+            ("dict.accounting.financial.condition.type.m.p000", "en-US", "总价格_us", "条件类型.M.P000"),
+            // dict.accounting.financial.condition.type.m.p000
+            ("dict.accounting.financial.condition.type.m.p000", "ja-JP", "总价格_jp", "条件类型.M.P000"),
+            // dict.accounting.financial.condition.type.m.p000
+            ("dict.accounting.financial.condition.type.m.p000", "zh-CN", "总价格", "条件类型.M.P000"),
+            // dict.accounting.financial.condition.type.m.p000
+            ("dict.accounting.financial.condition.type.m.p000", "zh-HK", "总价格_hk", "条件类型.M.P000"),
+
+            // dict.accounting.financial.condition.type.m.p001
+            ("dict.accounting.financial.condition.type.m.p001", "en-US", "总价格_us", "条件类型.M.P001"),
+            // dict.accounting.financial.condition.type.m.p001
+            ("dict.accounting.financial.condition.type.m.p001", "ja-JP", "总价格_jp", "条件类型.M.P001"),
+            // dict.accounting.financial.condition.type.m.p001
+            ("dict.accounting.financial.condition.type.m.p001", "zh-CN", "总价格", "条件类型.M.P001"),
+            // dict.accounting.financial.condition.type.m.p001
+            ("dict.accounting.financial.condition.type.m.p001", "zh-HK", "总价格_hk", "条件类型.M.P001"),
+
+            // dict.accounting.financial.condition.type.m.p100
+            ("dict.accounting.financial.condition.type.m.p100", "en-US", "转移价格供货工厂_us", "条件类型.M.P100"),
+            // dict.accounting.financial.condition.type.m.p100
+            ("dict.accounting.financial.condition.type.m.p100", "ja-JP", "转移价格供货工厂_jp", "条件类型.M.P100"),
+            // dict.accounting.financial.condition.type.m.p100
+            ("dict.accounting.financial.condition.type.m.p100", "zh-CN", "转移价格供货工厂", "条件类型.M.P100"),
+            // dict.accounting.financial.condition.type.m.p100
+            ("dict.accounting.financial.condition.type.m.p100", "zh-HK", "转移价格供货工厂_hk", "条件类型.M.P100"),
+
+            // dict.accounting.financial.condition.type.m.p101
+            ("dict.accounting.financial.condition.type.m.p101", "en-US", "估价价格供货工厂_us", "条件类型.M.P101"),
+            // dict.accounting.financial.condition.type.m.p101
+            ("dict.accounting.financial.condition.type.m.p101", "ja-JP", "估价价格供货工厂_jp", "条件类型.M.P101"),
+            // dict.accounting.financial.condition.type.m.p101
+            ("dict.accounting.financial.condition.type.m.p101", "zh-CN", "估价价格供货工厂", "条件类型.M.P101"),
+            // dict.accounting.financial.condition.type.m.p101
+            ("dict.accounting.financial.condition.type.m.p101", "zh-HK", "估价价格供货工厂_hk", "条件类型.M.P101"),
+
+            // dict.accounting.financial.condition.type.m.pa00
+            ("dict.accounting.financial.condition.type.m.pa00", "en-US", "促销价格_us", "条件类型.M.PA00"),
+            // dict.accounting.financial.condition.type.m.pa00
+            ("dict.accounting.financial.condition.type.m.pa00", "ja-JP", "促销价格_jp", "条件类型.M.PA00"),
+            // dict.accounting.financial.condition.type.m.pa00
+            ("dict.accounting.financial.condition.type.m.pa00", "zh-CN", "促销价格", "条件类型.M.PA00"),
+            // dict.accounting.financial.condition.type.m.pa00
+            ("dict.accounting.financial.condition.type.m.pa00", "zh-HK", "促销价格_hk", "条件类型.M.PA00"),
+
+            // dict.accounting.financial.condition.type.m.pa01
+            ("dict.accounting.financial.condition.type.m.pa01", "en-US", "促销价格 2_us", "条件类型.M.PA01"),
+            // dict.accounting.financial.condition.type.m.pa01
+            ("dict.accounting.financial.condition.type.m.pa01", "ja-JP", "促销价格 2_jp", "条件类型.M.PA01"),
+            // dict.accounting.financial.condition.type.m.pa01
+            ("dict.accounting.financial.condition.type.m.pa01", "zh-CN", "促销价格 2", "条件类型.M.PA01"),
+            // dict.accounting.financial.condition.type.m.pa01
+            ("dict.accounting.financial.condition.type.m.pa01", "zh-HK", "促销价格 2_hk", "条件类型.M.PA01"),
+
+            // dict.accounting.financial.condition.type.m.pb00
+            ("dict.accounting.financial.condition.type.m.pb00", "en-US", "总价格_us", "条件类型.M.PB00"),
+            // dict.accounting.financial.condition.type.m.pb00
+            ("dict.accounting.financial.condition.type.m.pb00", "ja-JP", "总价格_jp", "条件类型.M.PB00"),
+            // dict.accounting.financial.condition.type.m.pb00
+            ("dict.accounting.financial.condition.type.m.pb00", "zh-CN", "总价格", "条件类型.M.PB00"),
+            // dict.accounting.financial.condition.type.m.pb00
+            ("dict.accounting.financial.condition.type.m.pb00", "zh-HK", "总价格_hk", "条件类型.M.PB00"),
+
+            // dict.accounting.financial.condition.type.m.pbxx
+            ("dict.accounting.financial.condition.type.m.pbxx", "en-US", "总价格_us", "条件类型.M.PBXX"),
+            // dict.accounting.financial.condition.type.m.pbxx
+            ("dict.accounting.financial.condition.type.m.pbxx", "ja-JP", "总价格_jp", "条件类型.M.PBXX"),
+            // dict.accounting.financial.condition.type.m.pbxx
+            ("dict.accounting.financial.condition.type.m.pbxx", "zh-CN", "总价格", "条件类型.M.PBXX"),
+            // dict.accounting.financial.condition.type.m.pbxx
+            ("dict.accounting.financial.condition.type.m.pbxx", "zh-HK", "总价格_hk", "条件类型.M.PBXX"),
+
+            // dict.accounting.financial.condition.type.m.pnn0
+            ("dict.accounting.financial.condition.type.m.pnn0", "en-US", "采购净/净值_us", "条件类型.M.PNN0"),
+            // dict.accounting.financial.condition.type.m.pnn0
+            ("dict.accounting.financial.condition.type.m.pnn0", "ja-JP", "采购净/净值_jp", "条件类型.M.PNN0"),
+            // dict.accounting.financial.condition.type.m.pnn0
+            ("dict.accounting.financial.condition.type.m.pnn0", "zh-CN", "采购净/净值", "条件类型.M.PNN0"),
+            // dict.accounting.financial.condition.type.m.pnn0
+            ("dict.accounting.financial.condition.type.m.pnn0", "zh-HK", "采购净/净值_hk", "条件类型.M.PNN0"),
+
+            // dict.accounting.financial.condition.type.m.r000
+            ("dict.accounting.financial.condition.type.m.r000", "en-US", "总价折扣 %_us", "条件类型.M.R000"),
+            // dict.accounting.financial.condition.type.m.r000
+            ("dict.accounting.financial.condition.type.m.r000", "ja-JP", "总价折扣 %_jp", "条件类型.M.R000"),
+            // dict.accounting.financial.condition.type.m.r000
+            ("dict.accounting.financial.condition.type.m.r000", "zh-CN", "总价折扣 %", "条件类型.M.R000"),
+            // dict.accounting.financial.condition.type.m.r000
+            ("dict.accounting.financial.condition.type.m.r000", "zh-HK", "总价折扣 %_hk", "条件类型.M.R000"),
+
+            // dict.accounting.financial.condition.type.m.r001
+            ("dict.accounting.financial.condition.type.m.r001", "en-US", "折扣/数量_us", "条件类型.M.R001"),
+            // dict.accounting.financial.condition.type.m.r001
+            ("dict.accounting.financial.condition.type.m.r001", "ja-JP", "折扣/数量_jp", "条件类型.M.R001"),
+            // dict.accounting.financial.condition.type.m.r001
+            ("dict.accounting.financial.condition.type.m.r001", "zh-CN", "折扣/数量", "条件类型.M.R001"),
+            // dict.accounting.financial.condition.type.m.r001
+            ("dict.accounting.financial.condition.type.m.r001", "zh-HK", "折扣/数量_hk", "条件类型.M.R001"),
+
+            // dict.accounting.financial.condition.type.m.r002
+            ("dict.accounting.financial.condition.type.m.r002", "en-US", "绝对折扣_us", "条件类型.M.R002"),
+            // dict.accounting.financial.condition.type.m.r002
+            ("dict.accounting.financial.condition.type.m.r002", "ja-JP", "绝对折扣_jp", "条件类型.M.R002"),
+            // dict.accounting.financial.condition.type.m.r002
+            ("dict.accounting.financial.condition.type.m.r002", "zh-CN", "绝对折扣", "条件类型.M.R002"),
+            // dict.accounting.financial.condition.type.m.r002
+            ("dict.accounting.financial.condition.type.m.r002", "zh-HK", "绝对折扣_hk", "条件类型.M.R002"),
+
+            // dict.accounting.financial.condition.type.m.r003
+            ("dict.accounting.financial.condition.type.m.r003", "en-US", "净价折扣 %_us", "条件类型.M.R003"),
+            // dict.accounting.financial.condition.type.m.r003
+            ("dict.accounting.financial.condition.type.m.r003", "ja-JP", "净价折扣 %_jp", "条件类型.M.R003"),
+            // dict.accounting.financial.condition.type.m.r003
+            ("dict.accounting.financial.condition.type.m.r003", "zh-CN", "净价折扣 %", "条件类型.M.R003"),
+            // dict.accounting.financial.condition.type.m.r003
+            ("dict.accounting.financial.condition.type.m.r003", "zh-HK", "净价折扣 %_hk", "条件类型.M.R003"),
+
+            // dict.accounting.financial.condition.type.m.ra00
+            ("dict.accounting.financial.condition.type.m.ra00", "en-US", "净价折扣 %_us", "条件类型.M.RA00"),
+            // dict.accounting.financial.condition.type.m.ra00
+            ("dict.accounting.financial.condition.type.m.ra00", "ja-JP", "净价折扣 %_jp", "条件类型.M.RA00"),
+            // dict.accounting.financial.condition.type.m.ra00
+            ("dict.accounting.financial.condition.type.m.ra00", "zh-CN", "净价折扣 %", "条件类型.M.RA00"),
+            // dict.accounting.financial.condition.type.m.ra00
+            ("dict.accounting.financial.condition.type.m.ra00", "zh-HK", "净价折扣 %_hk", "条件类型.M.RA00"),
+
+            // dict.accounting.financial.condition.type.m.ra01
+            ("dict.accounting.financial.condition.type.m.ra01", "en-US", "总价折扣 %_us", "条件类型.M.RA01"),
+            // dict.accounting.financial.condition.type.m.ra01
+            ("dict.accounting.financial.condition.type.m.ra01", "ja-JP", "总价折扣 %_jp", "条件类型.M.RA01"),
+            // dict.accounting.financial.condition.type.m.ra01
+            ("dict.accounting.financial.condition.type.m.ra01", "zh-CN", "总价折扣 %", "条件类型.M.RA01"),
+            // dict.accounting.financial.condition.type.m.ra01
+            ("dict.accounting.financial.condition.type.m.ra01", "zh-HK", "总价折扣 %_hk", "条件类型.M.RA01"),
+
+            // dict.accounting.financial.condition.type.m.ra02
+            ("dict.accounting.financial.condition.type.m.ra02", "en-US", "促销折扣 % 1_us", "条件类型.M.RA02"),
+            // dict.accounting.financial.condition.type.m.ra02
+            ("dict.accounting.financial.condition.type.m.ra02", "ja-JP", "促销折扣 % 1_jp", "条件类型.M.RA02"),
+            // dict.accounting.financial.condition.type.m.ra02
+            ("dict.accounting.financial.condition.type.m.ra02", "zh-CN", "促销折扣 % 1", "条件类型.M.RA02"),
+            // dict.accounting.financial.condition.type.m.ra02
+            ("dict.accounting.financial.condition.type.m.ra02", "zh-HK", "促销折扣 % 1_hk", "条件类型.M.RA02"),
+
+            // dict.accounting.financial.condition.type.m.ra03
+            ("dict.accounting.financial.condition.type.m.ra03", "en-US", "促销折扣 % 2_us", "条件类型.M.RA03"),
+            // dict.accounting.financial.condition.type.m.ra03
+            ("dict.accounting.financial.condition.type.m.ra03", "ja-JP", "促销折扣 % 2_jp", "条件类型.M.RA03"),
+            // dict.accounting.financial.condition.type.m.ra03
+            ("dict.accounting.financial.condition.type.m.ra03", "zh-CN", "促销折扣 % 2", "条件类型.M.RA03"),
+            // dict.accounting.financial.condition.type.m.ra03
+            ("dict.accounting.financial.condition.type.m.ra03", "zh-HK", "促销折扣 % 2_hk", "条件类型.M.RA03"),
+
+            // dict.accounting.financial.condition.type.m.ra04
+            ("dict.accounting.financial.condition.type.m.ra04", "en-US", "促销折扣扣除_us", "条件类型.M.RA04"),
+            // dict.accounting.financial.condition.type.m.ra04
+            ("dict.accounting.financial.condition.type.m.ra04", "ja-JP", "促销折扣扣除_jp", "条件类型.M.RA04"),
+            // dict.accounting.financial.condition.type.m.ra04
+            ("dict.accounting.financial.condition.type.m.ra04", "zh-CN", "促销折扣扣除", "条件类型.M.RA04"),
+            // dict.accounting.financial.condition.type.m.ra04
+            ("dict.accounting.financial.condition.type.m.ra04", "zh-HK", "促销折扣扣除_hk", "条件类型.M.RA04"),
+
+            // dict.accounting.financial.condition.type.m.ra05
+            ("dict.accounting.financial.condition.type.m.ra05", "en-US", "促销折扣扣除_us", "条件类型.M.RA05"),
+            // dict.accounting.financial.condition.type.m.ra05
+            ("dict.accounting.financial.condition.type.m.ra05", "ja-JP", "促销折扣扣除_jp", "条件类型.M.RA05"),
+            // dict.accounting.financial.condition.type.m.ra05
+            ("dict.accounting.financial.condition.type.m.ra05", "zh-CN", "促销折扣扣除", "条件类型.M.RA05"),
+            // dict.accounting.financial.condition.type.m.ra05
+            ("dict.accounting.financial.condition.type.m.ra05", "zh-HK", "促销折扣扣除_hk", "条件类型.M.RA05"),
+
+            // dict.accounting.financial.condition.type.m.rb00
+            ("dict.accounting.financial.condition.type.m.rb00", "en-US", "绝对折扣_us", "条件类型.M.RB00"),
+            // dict.accounting.financial.condition.type.m.rb00
+            ("dict.accounting.financial.condition.type.m.rb00", "ja-JP", "绝对折扣_jp", "条件类型.M.RB00"),
+            // dict.accounting.financial.condition.type.m.rb00
+            ("dict.accounting.financial.condition.type.m.rb00", "zh-CN", "绝对折扣", "条件类型.M.RB00"),
+            // dict.accounting.financial.condition.type.m.rb00
+            ("dict.accounting.financial.condition.type.m.rb00", "zh-HK", "绝对折扣_hk", "条件类型.M.RB00"),
+
+            // dict.accounting.financial.condition.type.m.rc00
+            ("dict.accounting.financial.condition.type.m.rc00", "en-US", "折扣/数量_us", "条件类型.M.RC00"),
+            // dict.accounting.financial.condition.type.m.rc00
+            ("dict.accounting.financial.condition.type.m.rc00", "ja-JP", "折扣/数量_jp", "条件类型.M.RC00"),
+            // dict.accounting.financial.condition.type.m.rc00
+            ("dict.accounting.financial.condition.type.m.rc00", "zh-CN", "折扣/数量", "条件类型.M.RC00"),
+            // dict.accounting.financial.condition.type.m.rc00
+            ("dict.accounting.financial.condition.type.m.rc00", "zh-HK", "折扣/数量_hk", "条件类型.M.RC00"),
+
+            // dict.accounting.financial.condition.type.m.rest
+            ("dict.accounting.financial.condition.type.m.rest", "en-US", "帐户折扣%_us", "条件类型.M.REST"),
+            // dict.accounting.financial.condition.type.m.rest
+            ("dict.accounting.financial.condition.type.m.rest", "ja-JP", "帐户折扣%_jp", "条件类型.M.REST"),
+            // dict.accounting.financial.condition.type.m.rest
+            ("dict.accounting.financial.condition.type.m.rest", "zh-CN", "帐户折扣%", "条件类型.M.REST"),
+            // dict.accounting.financial.condition.type.m.rest
+            ("dict.accounting.financial.condition.type.m.rest", "zh-HK", "帐户折扣%_hk", "条件类型.M.REST"),
+
+            // dict.accounting.financial.condition.type.m.rl00
+            ("dict.accounting.financial.condition.type.m.rl00", "en-US", "代理折扣_us", "条件类型.M.RL00"),
+            // dict.accounting.financial.condition.type.m.rl00
+            ("dict.accounting.financial.condition.type.m.rl00", "ja-JP", "代理折扣_jp", "条件类型.M.RL00"),
+            // dict.accounting.financial.condition.type.m.rl00
+            ("dict.accounting.financial.condition.type.m.rl00", "zh-CN", "代理折扣", "条件类型.M.RL00"),
+            // dict.accounting.financial.condition.type.m.rl00
+            ("dict.accounting.financial.condition.type.m.rl00", "zh-HK", "代理折扣_hk", "条件类型.M.RL00"),
+
+            // dict.accounting.financial.condition.type.m.rl01
+            ("dict.accounting.financial.condition.type.m.rl01", "en-US", "供应商折扣 %_us", "条件类型.M.RL01"),
+            // dict.accounting.financial.condition.type.m.rl01
+            ("dict.accounting.financial.condition.type.m.rl01", "ja-JP", "供应商折扣 %_jp", "条件类型.M.RL01"),
+            // dict.accounting.financial.condition.type.m.rl01
+            ("dict.accounting.financial.condition.type.m.rl01", "zh-CN", "供应商折扣 %", "条件类型.M.RL01"),
+            // dict.accounting.financial.condition.type.m.rl01
+            ("dict.accounting.financial.condition.type.m.rl01", "zh-HK", "供应商折扣 %_hk", "条件类型.M.RL01"),
+
+            // dict.accounting.financial.condition.type.m.rl02
+            ("dict.accounting.financial.condition.type.m.rl02", "en-US", "采购代理业务客户_us", "条件类型.M.RL02"),
+            // dict.accounting.financial.condition.type.m.rl02
+            ("dict.accounting.financial.condition.type.m.rl02", "ja-JP", "采购代理业务客户_jp", "条件类型.M.RL02"),
+            // dict.accounting.financial.condition.type.m.rl02
+            ("dict.accounting.financial.condition.type.m.rl02", "zh-CN", "采购代理业务客户", "条件类型.M.RL02"),
+            // dict.accounting.financial.condition.type.m.rl02
+            ("dict.accounting.financial.condition.type.m.rl02", "zh-HK", "采购代理业务客户_hk", "条件类型.M.RL02"),
+
+            // dict.accounting.financial.condition.type.m.rl03
+            ("dict.accounting.financial.condition.type.m.rl03", "en-US", "采购代理业务供销商_us", "条件类型.M.RL03"),
+            // dict.accounting.financial.condition.type.m.rl03
+            ("dict.accounting.financial.condition.type.m.rl03", "ja-JP", "采购代理业务供销商_jp", "条件类型.M.RL03"),
+            // dict.accounting.financial.condition.type.m.rl03
+            ("dict.accounting.financial.condition.type.m.rl03", "zh-CN", "采购代理业务供销商", "条件类型.M.RL03"),
+            // dict.accounting.financial.condition.type.m.rl03
+            ("dict.accounting.financial.condition.type.m.rl03", "zh-HK", "采购代理业务供销商_hk", "条件类型.M.RL03"),
+
+            // dict.accounting.financial.condition.type.m.rub1
+            ("dict.accounting.financial.condition.type.m.rub1", "en-US", "中性应计 (值)_us", "条件类型.M.RUB1"),
+            // dict.accounting.financial.condition.type.m.rub1
+            ("dict.accounting.financial.condition.type.m.rub1", "ja-JP", "中性应计 (值)_jp", "条件类型.M.RUB1"),
+            // dict.accounting.financial.condition.type.m.rub1
+            ("dict.accounting.financial.condition.type.m.rub1", "zh-CN", "中性应计 (值)", "条件类型.M.RUB1"),
+            // dict.accounting.financial.condition.type.m.rub1
+            ("dict.accounting.financial.condition.type.m.rub1", "zh-HK", "中性应计 (值)_hk", "条件类型.M.RUB1"),
+
+            // dict.accounting.financial.condition.type.m.ruc1
+            ("dict.accounting.financial.condition.type.m.ruc1", "en-US", "中性应计项目/数量_us", "条件类型.M.RUC1"),
+            // dict.accounting.financial.condition.type.m.ruc1
+            ("dict.accounting.financial.condition.type.m.ruc1", "ja-JP", "中性应计项目/数量_jp", "条件类型.M.RUC1"),
+            // dict.accounting.financial.condition.type.m.ruc1
+            ("dict.accounting.financial.condition.type.m.ruc1", "zh-CN", "中性应计项目/数量", "条件类型.M.RUC1"),
+            // dict.accounting.financial.condition.type.m.ruc1
+            ("dict.accounting.financial.condition.type.m.ruc1", "zh-HK", "中性应计项目/数量_hk", "条件类型.M.RUC1"),
+
+            // dict.accounting.financial.condition.type.m.rue1
+            ("dict.accounting.financial.condition.type.m.rue1", "en-US", "中性 % 应计项目_us", "条件类型.M.RUE1"),
+            // dict.accounting.financial.condition.type.m.rue1
+            ("dict.accounting.financial.condition.type.m.rue1", "ja-JP", "中性 % 应计项目_jp", "条件类型.M.RUE1"),
+            // dict.accounting.financial.condition.type.m.rue1
+            ("dict.accounting.financial.condition.type.m.rue1", "zh-CN", "中性 % 应计项目", "条件类型.M.RUE1"),
+            // dict.accounting.financial.condition.type.m.rue1
+            ("dict.accounting.financial.condition.type.m.rue1", "zh-HK", "中性 % 应计项目_hk", "条件类型.M.RUE1"),
+
+            // dict.accounting.financial.condition.type.m.s000
+            ("dict.accounting.financial.condition.type.m.s000", "en-US", "已计算收入_us", "条件类型.M.S000"),
+            // dict.accounting.financial.condition.type.m.s000
+            ("dict.accounting.financial.condition.type.m.s000", "ja-JP", "已计算收入_jp", "条件类型.M.S000"),
+            // dict.accounting.financial.condition.type.m.s000
+            ("dict.accounting.financial.condition.type.m.s000", "zh-CN", "已计算收入", "条件类型.M.S000"),
+            // dict.accounting.financial.condition.type.m.s000
+            ("dict.accounting.financial.condition.type.m.s000", "zh-HK", "已计算收入_hk", "条件类型.M.S000"),
+
+            // dict.accounting.financial.condition.type.m.sbcb
+            ("dict.accounting.financial.condition.type.m.sbcb", "en-US", "基值_us", "条件类型.M.SBCB"),
+            // dict.accounting.financial.condition.type.m.sbcb
+            ("dict.accounting.financial.condition.type.m.sbcb", "ja-JP", "基值_jp", "条件类型.M.SBCB"),
+            // dict.accounting.financial.condition.type.m.sbcb
+            ("dict.accounting.financial.condition.type.m.sbcb", "zh-CN", "基值", "条件类型.M.SBCB"),
+            // dict.accounting.financial.condition.type.m.sbcb
+            ("dict.accounting.financial.condition.type.m.sbcb", "zh-HK", "基值_hk", "条件类型.M.SBCB"),
+
+            // dict.accounting.financial.condition.type.m.skto
+            ("dict.accounting.financial.condition.type.m.skto", "en-US", "现金折扣_us", "条件类型.M.SKTO"),
+            // dict.accounting.financial.condition.type.m.skto
+            ("dict.accounting.financial.condition.type.m.skto", "ja-JP", "现金折扣_jp", "条件类型.M.SKTO"),
+            // dict.accounting.financial.condition.type.m.skto
+            ("dict.accounting.financial.condition.type.m.skto", "zh-CN", "现金折扣", "条件类型.M.SKTO"),
+            // dict.accounting.financial.condition.type.m.skto
+            ("dict.accounting.financial.condition.type.m.skto", "zh-HK", "现金折扣_hk", "条件类型.M.SKTO"),
+
+            // dict.accounting.financial.condition.type.m.trig
+            ("dict.accounting.financial.condition.type.m.trig", "en-US", "事件触发_us", "条件类型.M.TRIG"),
+            // dict.accounting.financial.condition.type.m.trig
+            ("dict.accounting.financial.condition.type.m.trig", "ja-JP", "事件触发_jp", "条件类型.M.TRIG"),
+            // dict.accounting.financial.condition.type.m.trig
+            ("dict.accounting.financial.condition.type.m.trig", "zh-CN", "事件触发", "条件类型.M.TRIG"),
+            // dict.accounting.financial.condition.type.m.trig
+            ("dict.accounting.financial.condition.type.m.trig", "zh-HK", "事件触发_hk", "条件类型.M.TRIG"),
+
+            // dict.accounting.financial.condition.type.m.va00
+            ("dict.accounting.financial.condition.type.m.va00", "en-US", "变体/数量_us", "条件类型.M.VA00"),
+            // dict.accounting.financial.condition.type.m.va00
+            ("dict.accounting.financial.condition.type.m.va00", "ja-JP", "变体/数量_jp", "条件类型.M.VA00"),
+            // dict.accounting.financial.condition.type.m.va00
+            ("dict.accounting.financial.condition.type.m.va00", "zh-CN", "变体/数量", "条件类型.M.VA00"),
+            // dict.accounting.financial.condition.type.m.va00
+            ("dict.accounting.financial.condition.type.m.va00", "zh-HK", "变体/数量_hk", "条件类型.M.VA00"),
+
+            // dict.accounting.financial.condition.type.m.va01
+            ("dict.accounting.financial.condition.type.m.va01", "en-US", "变体 %_us", "条件类型.M.VA01"),
+            // dict.accounting.financial.condition.type.m.va01
+            ("dict.accounting.financial.condition.type.m.va01", "ja-JP", "变体 %_jp", "条件类型.M.VA01"),
+            // dict.accounting.financial.condition.type.m.va01
+            ("dict.accounting.financial.condition.type.m.va01", "zh-CN", "变体 %", "条件类型.M.VA01"),
+            // dict.accounting.financial.condition.type.m.va01
+            ("dict.accounting.financial.condition.type.m.va01", "zh-HK", "变体 %_hk", "条件类型.M.VA01"),
+
+            // dict.accounting.financial.condition.type.m.vkp0
+            ("dict.accounting.financial.condition.type.m.vkp0", "en-US", "包含税的销售价格_us", "条件类型.M.VKP0"),
+            // dict.accounting.financial.condition.type.m.vkp0
+            ("dict.accounting.financial.condition.type.m.vkp0", "ja-JP", "包含税的销售价格_jp", "条件类型.M.VKP0"),
+            // dict.accounting.financial.condition.type.m.vkp0
+            ("dict.accounting.financial.condition.type.m.vkp0", "zh-CN", "包含税的销售价格", "条件类型.M.VKP0"),
+            // dict.accounting.financial.condition.type.m.vkp0
+            ("dict.accounting.financial.condition.type.m.vkp0", "zh-HK", "包含税的销售价格_hk", "条件类型.M.VKP0"),
+
+            // dict.accounting.financial.condition.type.m.vkp1
+            ("dict.accounting.financial.condition.type.m.vkp1", "en-US", "除税外的销售价格_us", "条件类型.M.VKP1"),
+            // dict.accounting.financial.condition.type.m.vkp1
+            ("dict.accounting.financial.condition.type.m.vkp1", "ja-JP", "除税外的销售价格_jp", "条件类型.M.VKP1"),
+            // dict.accounting.financial.condition.type.m.vkp1
+            ("dict.accounting.financial.condition.type.m.vkp1", "zh-CN", "除税外的销售价格", "条件类型.M.VKP1"),
+            // dict.accounting.financial.condition.type.m.vkp1
+            ("dict.accounting.financial.condition.type.m.vkp1", "zh-HK", "除税外的销售价格_hk", "条件类型.M.VKP1"),
+
+            // dict.accounting.financial.condition.type.m.vs00
+            ("dict.accounting.financial.condition.type.m.vs00", "en-US", "税触发_us", "条件类型.M.VS00"),
+            // dict.accounting.financial.condition.type.m.vs00
+            ("dict.accounting.financial.condition.type.m.vs00", "ja-JP", "税触发_jp", "条件类型.M.VS00"),
+            // dict.accounting.financial.condition.type.m.vs00
+            ("dict.accounting.financial.condition.type.m.vs00", "zh-CN", "税触发", "条件类型.M.VS00"),
+            // dict.accounting.financial.condition.type.m.vs00
+            ("dict.accounting.financial.condition.type.m.vs00", "zh-HK", "税触发_hk", "条件类型.M.VS00"),
+
+            // dict.accounting.financial.condition.type.m.vs01
+            ("dict.accounting.financial.condition.type.m.vs01", "en-US", "代理税_us", "条件类型.M.VS01"),
+            // dict.accounting.financial.condition.type.m.vs01
+            ("dict.accounting.financial.condition.type.m.vs01", "ja-JP", "代理税_jp", "条件类型.M.VS01"),
+            // dict.accounting.financial.condition.type.m.vs01
+            ("dict.accounting.financial.condition.type.m.vs01", "zh-CN", "代理税", "条件类型.M.VS01"),
+            // dict.accounting.financial.condition.type.m.vs01
+            ("dict.accounting.financial.condition.type.m.vs01", "zh-HK", "代理税_hk", "条件类型.M.VS01"),
+
+            // dict.accounting.financial.condition.type.m.vs15
+            ("dict.accounting.financial.condition.type.m.vs15", "en-US", "代理折扣税_us", "条件类型.M.VS15"),
+            // dict.accounting.financial.condition.type.m.vs15
+            ("dict.accounting.financial.condition.type.m.vs15", "ja-JP", "代理折扣税_jp", "条件类型.M.VS15"),
+            // dict.accounting.financial.condition.type.m.vs15
+            ("dict.accounting.financial.condition.type.m.vs15", "zh-CN", "代理折扣税", "条件类型.M.VS15"),
+            // dict.accounting.financial.condition.type.m.vs15
+            ("dict.accounting.financial.condition.type.m.vs15", "zh-HK", "代理折扣税_hk", "条件类型.M.VS15"),
+
+            // dict.accounting.financial.condition.type.m.vsrg
+            ("dict.accounting.financial.condition.type.m.vsrg", "en-US", "税金额付款人_us", "条件类型.M.VSRG"),
+            // dict.accounting.financial.condition.type.m.vsrg
+            ("dict.accounting.financial.condition.type.m.vsrg", "ja-JP", "税金额付款人_jp", "条件类型.M.VSRG"),
+            // dict.accounting.financial.condition.type.m.vsrg
+            ("dict.accounting.financial.condition.type.m.vsrg", "zh-CN", "税金额付款人", "条件类型.M.VSRG"),
+            // dict.accounting.financial.condition.type.m.vsrg
+            ("dict.accounting.financial.condition.type.m.vsrg", "zh-HK", "税金额付款人_hk", "条件类型.M.VSRG"),
+
+            // dict.accounting.financial.condition.type.m.za00
+            ("dict.accounting.financial.condition.type.m.za00", "en-US", "净价附加费 %_us", "条件类型.M.ZA00"),
+            // dict.accounting.financial.condition.type.m.za00
+            ("dict.accounting.financial.condition.type.m.za00", "ja-JP", "净价附加费 %_jp", "条件类型.M.ZA00"),
+            // dict.accounting.financial.condition.type.m.za00
+            ("dict.accounting.financial.condition.type.m.za00", "zh-CN", "净价附加费 %", "条件类型.M.ZA00"),
+            // dict.accounting.financial.condition.type.m.za00
+            ("dict.accounting.financial.condition.type.m.za00", "zh-HK", "净价附加费 %_hk", "条件类型.M.ZA00"),
+
+            // dict.accounting.financial.condition.type.m.za01
+            ("dict.accounting.financial.condition.type.m.za01", "en-US", "总价附加费 %_us", "条件类型.M.ZA01"),
+            // dict.accounting.financial.condition.type.m.za01
+            ("dict.accounting.financial.condition.type.m.za01", "ja-JP", "总价附加费 %_jp", "条件类型.M.ZA01"),
+            // dict.accounting.financial.condition.type.m.za01
+            ("dict.accounting.financial.condition.type.m.za01", "zh-CN", "总价附加费 %", "条件类型.M.ZA01"),
+            // dict.accounting.financial.condition.type.m.za01
+            ("dict.accounting.financial.condition.type.m.za01", "zh-HK", "总价附加费 %_hk", "条件类型.M.ZA01"),
+
+            // dict.accounting.financial.condition.type.m.zb00
+            ("dict.accounting.financial.condition.type.m.zb00", "en-US", "附加费 (值)_us", "条件类型.M.ZB00"),
+            // dict.accounting.financial.condition.type.m.zb00
+            ("dict.accounting.financial.condition.type.m.zb00", "ja-JP", "附加费 (值)_jp", "条件类型.M.ZB00"),
+            // dict.accounting.financial.condition.type.m.zb00
+            ("dict.accounting.financial.condition.type.m.zb00", "zh-CN", "附加费 (值)", "条件类型.M.ZB00"),
+            // dict.accounting.financial.condition.type.m.zb00
+            ("dict.accounting.financial.condition.type.m.zb00", "zh-HK", "附加费 (值)_hk", "条件类型.M.ZB00"),
+
+            // dict.accounting.financial.condition.type.m.zc00
+            ("dict.accounting.financial.condition.type.m.zc00", "en-US", "附加费/数量_us", "条件类型.M.ZC00"),
+            // dict.accounting.financial.condition.type.m.zc00
+            ("dict.accounting.financial.condition.type.m.zc00", "ja-JP", "附加费/数量_jp", "条件类型.M.ZC00"),
+            // dict.accounting.financial.condition.type.m.zc00
+            ("dict.accounting.financial.condition.type.m.zc00", "zh-CN", "附加费/数量", "条件类型.M.ZC00"),
+            // dict.accounting.financial.condition.type.m.zc00
+            ("dict.accounting.financial.condition.type.m.zc00", "zh-HK", "附加费/数量_hk", "条件类型.M.ZC00"),
+
+            // dict.accounting.financial.condition.type.m.zg01
+            ("dict.accounting.financial.condition.type.m.zg01", "en-US", "毛利交货工厂_us", "条件类型.M.ZG01"),
+            // dict.accounting.financial.condition.type.m.zg01
+            ("dict.accounting.financial.condition.type.m.zg01", "ja-JP", "毛利交货工厂_jp", "条件类型.M.ZG01"),
+            // dict.accounting.financial.condition.type.m.zg01
+            ("dict.accounting.financial.condition.type.m.zg01", "zh-CN", "毛利交货工厂", "条件类型.M.ZG01"),
+            // dict.accounting.financial.condition.type.m.zg01
+            ("dict.accounting.financial.condition.type.m.zg01", "zh-HK", "毛利交货工厂_hk", "条件类型.M.ZG01"),
+
+            // dict.accounting.financial.condition.type.m.zoa1
+            ("dict.accounting.financial.condition.type.m.zoa1", "en-US", "关税 %_us", "条件类型.M.ZOA1"),
+            // dict.accounting.financial.condition.type.m.zoa1
+            ("dict.accounting.financial.condition.type.m.zoa1", "ja-JP", "关税 %_jp", "条件类型.M.ZOA1"),
+            // dict.accounting.financial.condition.type.m.zoa1
+            ("dict.accounting.financial.condition.type.m.zoa1", "zh-CN", "关税 %", "条件类型.M.ZOA1"),
+            // dict.accounting.financial.condition.type.m.zoa1
+            ("dict.accounting.financial.condition.type.m.zoa1", "zh-HK", "关税 %_hk", "条件类型.M.ZOA1"),
+
+            // dict.accounting.financial.condition.type.m.zob1
+            ("dict.accounting.financial.condition.type.m.zob1", "en-US", "关税(值)_us", "条件类型.M.ZOB1"),
+            // dict.accounting.financial.condition.type.m.zob1
+            ("dict.accounting.financial.condition.type.m.zob1", "ja-JP", "关税(值)_jp", "条件类型.M.ZOB1"),
+            // dict.accounting.financial.condition.type.m.zob1
+            ("dict.accounting.financial.condition.type.m.zob1", "zh-CN", "关税(值)", "条件类型.M.ZOB1"),
+            // dict.accounting.financial.condition.type.m.zob1
+            ("dict.accounting.financial.condition.type.m.zob1", "zh-HK", "关税(值)_hk", "条件类型.M.ZOB1"),
+
+            // dict.accounting.financial.condition.type.m.zoc1
+            ("dict.accounting.financial.condition.type.m.zoc1", "en-US", "客户/数量_us", "条件类型.M.ZOC1"),
+            // dict.accounting.financial.condition.type.m.zoc1
+            ("dict.accounting.financial.condition.type.m.zoc1", "ja-JP", "客户/数量_jp", "条件类型.M.ZOC1"),
+            // dict.accounting.financial.condition.type.m.zoc1
+            ("dict.accounting.financial.condition.type.m.zoc1", "zh-CN", "客户/数量", "条件类型.M.ZOC1"),
+            // dict.accounting.financial.condition.type.m.zoc1
+            ("dict.accounting.financial.condition.type.m.zoc1", "zh-HK", "客户/数量_hk", "条件类型.M.ZOC1"),
+
+            // dict.accounting.financial.condition.type.ms.gpro
+            ("dict.accounting.financial.condition.type.ms.gpro", "en-US", "限制的百分比_us", "条件类型.MS.GPRO"),
+            // dict.accounting.financial.condition.type.ms.gpro
+            ("dict.accounting.financial.condition.type.ms.gpro", "ja-JP", "限制的百分比_jp", "条件类型.MS.GPRO"),
+            // dict.accounting.financial.condition.type.ms.gpro
+            ("dict.accounting.financial.condition.type.ms.gpro", "zh-CN", "限制的百分比", "条件类型.MS.GPRO"),
+            // dict.accounting.financial.condition.type.ms.gpro
+            ("dict.accounting.financial.condition.type.ms.gpro", "zh-HK", "限制的百分比_hk", "条件类型.MS.GPRO"),
+
+            // dict.accounting.financial.condition.type.ms.kr01
+            ("dict.accounting.financial.condition.type.ms.kr01", "en-US", "抬头折扣_us", "条件类型.MS.KR01"),
+            // dict.accounting.financial.condition.type.ms.kr01
+            ("dict.accounting.financial.condition.type.ms.kr01", "ja-JP", "抬头折扣_jp", "条件类型.MS.KR01"),
+            // dict.accounting.financial.condition.type.ms.kr01
+            ("dict.accounting.financial.condition.type.ms.kr01", "zh-CN", "抬头折扣", "条件类型.MS.KR01"),
+            // dict.accounting.financial.condition.type.ms.kr01
+            ("dict.accounting.financial.condition.type.ms.kr01", "zh-HK", "抬头折扣_hk", "条件类型.MS.KR01"),
+
+            // dict.accounting.financial.condition.type.ms.krb1
+            ("dict.accounting.financial.condition.type.ms.krb1", "en-US", "抬头折扣凭证_us", "条件类型.MS.KRB1"),
+            // dict.accounting.financial.condition.type.ms.krb1
+            ("dict.accounting.financial.condition.type.ms.krb1", "ja-JP", "抬头折扣凭证_jp", "条件类型.MS.KRB1"),
+            // dict.accounting.financial.condition.type.ms.krb1
+            ("dict.accounting.financial.condition.type.ms.krb1", "zh-CN", "抬头折扣凭证", "条件类型.MS.KRB1"),
+            // dict.accounting.financial.condition.type.ms.krb1
+            ("dict.accounting.financial.condition.type.ms.krb1", "zh-HK", "抬头折扣凭证_hk", "条件类型.MS.KRB1"),
+
+            // dict.accounting.financial.condition.type.ms.kz01
+            ("dict.accounting.financial.condition.type.ms.kz01", "en-US", "抬头附加费用_us", "条件类型.MS.KZ01"),
+            // dict.accounting.financial.condition.type.ms.kz01
+            ("dict.accounting.financial.condition.type.ms.kz01", "ja-JP", "抬头附加费用_jp", "条件类型.MS.KZ01"),
+            // dict.accounting.financial.condition.type.ms.kz01
+            ("dict.accounting.financial.condition.type.ms.kz01", "zh-CN", "抬头附加费用", "条件类型.MS.KZ01"),
+            // dict.accounting.financial.condition.type.ms.kz01
+            ("dict.accounting.financial.condition.type.ms.kz01", "zh-HK", "抬头附加费用_hk", "条件类型.MS.KZ01"),
+
+            // dict.accounting.financial.condition.type.ms.kzb1
+            ("dict.accounting.financial.condition.type.ms.kzb1", "en-US", "抬头附加费用凭证_us", "条件类型.MS.KZB1"),
+            // dict.accounting.financial.condition.type.ms.kzb1
+            ("dict.accounting.financial.condition.type.ms.kzb1", "ja-JP", "抬头附加费用凭证_jp", "条件类型.MS.KZB1"),
+            // dict.accounting.financial.condition.type.ms.kzb1
+            ("dict.accounting.financial.condition.type.ms.kzb1", "zh-CN", "抬头附加费用凭证", "条件类型.MS.KZB1"),
+            // dict.accounting.financial.condition.type.ms.kzb1
+            ("dict.accounting.financial.condition.type.ms.kzb1", "zh-HK", "抬头附加费用凭证_hk", "条件类型.MS.KZB1"),
+
+            // dict.accounting.financial.condition.type.ms.navm
+            ("dict.accounting.financial.condition.type.ms.navm", "en-US", "不可抵扣的税金_us", "条件类型.MS.NAVM"),
+            // dict.accounting.financial.condition.type.ms.navm
+            ("dict.accounting.financial.condition.type.ms.navm", "ja-JP", "不可抵扣的税金_jp", "条件类型.MS.NAVM"),
+            // dict.accounting.financial.condition.type.ms.navm
+            ("dict.accounting.financial.condition.type.ms.navm", "zh-CN", "不可抵扣的税金", "条件类型.MS.NAVM"),
+            // dict.accounting.financial.condition.type.ms.navm
+            ("dict.accounting.financial.condition.type.ms.navm", "zh-HK", "不可抵扣的税金_hk", "条件类型.MS.NAVM"),
+
+            // dict.accounting.financial.condition.type.ms.navs
+            ("dict.accounting.financial.condition.type.ms.navs", "en-US", "不可抵扣的税金_us", "条件类型.MS.NAVS"),
+            // dict.accounting.financial.condition.type.ms.navs
+            ("dict.accounting.financial.condition.type.ms.navs", "ja-JP", "不可抵扣的税金_jp", "条件类型.MS.NAVS"),
+            // dict.accounting.financial.condition.type.ms.navs
+            ("dict.accounting.financial.condition.type.ms.navs", "zh-CN", "不可抵扣的税金", "条件类型.MS.NAVS"),
+            // dict.accounting.financial.condition.type.ms.navs
+            ("dict.accounting.financial.condition.type.ms.navs", "zh-HK", "不可抵扣的税金_hk", "条件类型.MS.NAVS"),
+
+            // dict.accounting.financial.condition.type.ms.prs
+            ("dict.accounting.financial.condition.type.ms.prs", "en-US", "总计价格_us", "条件类型.MS.PRS"),
+            // dict.accounting.financial.condition.type.ms.prs
+            ("dict.accounting.financial.condition.type.ms.prs", "ja-JP", "总计价格_jp", "条件类型.MS.PRS"),
+            // dict.accounting.financial.condition.type.ms.prs
+            ("dict.accounting.financial.condition.type.ms.prs", "zh-CN", "总计价格", "条件类型.MS.PRS"),
+            // dict.accounting.financial.condition.type.ms.prs
+            ("dict.accounting.financial.condition.type.ms.prs", "zh-HK", "总计价格_hk", "条件类型.MS.PRS"),
+
+            // dict.accounting.financial.condition.type.ms.prs0
+            ("dict.accounting.financial.condition.type.ms.prs0", "en-US", "价格组件 - 劳动_us", "条件类型.MS.PRS0"),
+            // dict.accounting.financial.condition.type.ms.prs0
+            ("dict.accounting.financial.condition.type.ms.prs0", "ja-JP", "价格组件 - 劳动_jp", "条件类型.MS.PRS0"),
+            // dict.accounting.financial.condition.type.ms.prs0
+            ("dict.accounting.financial.condition.type.ms.prs0", "zh-CN", "价格组件 - 劳动", "条件类型.MS.PRS0"),
+            // dict.accounting.financial.condition.type.ms.prs0
+            ("dict.accounting.financial.condition.type.ms.prs0", "zh-HK", "价格组件 - 劳动_hk", "条件类型.MS.PRS0"),
+
+            // dict.accounting.financial.condition.type.ms.prs1
+            ("dict.accounting.financial.condition.type.ms.prs1", "en-US", "价格组件 - 物料_us", "条件类型.MS.PRS1"),
+            // dict.accounting.financial.condition.type.ms.prs1
+            ("dict.accounting.financial.condition.type.ms.prs1", "ja-JP", "价格组件 - 物料_jp", "条件类型.MS.PRS1"),
+            // dict.accounting.financial.condition.type.ms.prs1
+            ("dict.accounting.financial.condition.type.ms.prs1", "zh-CN", "价格组件 - 物料", "条件类型.MS.PRS1"),
+            // dict.accounting.financial.condition.type.ms.prs1
+            ("dict.accounting.financial.condition.type.ms.prs1", "zh-HK", "价格组件 - 物料_hk", "条件类型.MS.PRS1"),
+
+            // dict.accounting.financial.condition.type.ms.prs2
+            ("dict.accounting.financial.condition.type.ms.prs2", "en-US", "定价组件 - 间接费用_us", "条件类型.MS.PRS2"),
+            // dict.accounting.financial.condition.type.ms.prs2
+            ("dict.accounting.financial.condition.type.ms.prs2", "ja-JP", "定价组件 - 间接费用_jp", "条件类型.MS.PRS2"),
+            // dict.accounting.financial.condition.type.ms.prs2
+            ("dict.accounting.financial.condition.type.ms.prs2", "zh-CN", "定价组件 - 间接费用", "条件类型.MS.PRS2"),
+            // dict.accounting.financial.condition.type.ms.prs2
+            ("dict.accounting.financial.condition.type.ms.prs2", "zh-HK", "定价组件 - 间接费用_hk", "条件类型.MS.PRS2"),
+
+            // dict.accounting.financial.condition.type.ms.prs3
+            ("dict.accounting.financial.condition.type.ms.prs3", "en-US", "价格组件 - 杂项_us", "条件类型.MS.PRS3"),
+            // dict.accounting.financial.condition.type.ms.prs3
+            ("dict.accounting.financial.condition.type.ms.prs3", "ja-JP", "价格组件 - 杂项_jp", "条件类型.MS.PRS3"),
+            // dict.accounting.financial.condition.type.ms.prs3
+            ("dict.accounting.financial.condition.type.ms.prs3", "zh-CN", "价格组件 - 杂项", "条件类型.MS.PRS3"),
+            // dict.accounting.financial.condition.type.ms.prs3
+            ("dict.accounting.financial.condition.type.ms.prs3", "zh-HK", "价格组件 - 杂项_hk", "条件类型.MS.PRS3"),
+
+            // dict.accounting.financial.condition.type.ms.prs4
+            ("dict.accounting.financial.condition.type.ms.prs4", "en-US", "相关价值_us", "条件类型.MS.PRS4"),
+            // dict.accounting.financial.condition.type.ms.prs4
+            ("dict.accounting.financial.condition.type.ms.prs4", "ja-JP", "相关价值_jp", "条件类型.MS.PRS4"),
+            // dict.accounting.financial.condition.type.ms.prs4
+            ("dict.accounting.financial.condition.type.ms.prs4", "zh-CN", "相关价值", "条件类型.MS.PRS4"),
+            // dict.accounting.financial.condition.type.ms.prs4
+            ("dict.accounting.financial.condition.type.ms.prs4", "zh-HK", "相关价值_hk", "条件类型.MS.PRS4"),
+
+            // dict.accounting.financial.condition.type.ms.prsx
+            ("dict.accounting.financial.condition.type.ms.prsx", "en-US", "总计价格_us", "条件类型.MS.PRSX"),
+            // dict.accounting.financial.condition.type.ms.prsx
+            ("dict.accounting.financial.condition.type.ms.prsx", "ja-JP", "总计价格_jp", "条件类型.MS.PRSX"),
+            // dict.accounting.financial.condition.type.ms.prsx
+            ("dict.accounting.financial.condition.type.ms.prsx", "zh-CN", "总计价格", "条件类型.MS.PRSX"),
+            // dict.accounting.financial.condition.type.ms.prsx
+            ("dict.accounting.financial.condition.type.ms.prsx", "zh-HK", "总计价格_hk", "条件类型.MS.PRSX"),
+
+            // dict.accounting.financial.condition.type.ms.za00
+            ("dict.accounting.financial.condition.type.ms.za00", "en-US", "净价附加费 %_us", "条件类型.MS.ZA00"),
+            // dict.accounting.financial.condition.type.ms.za00
+            ("dict.accounting.financial.condition.type.ms.za00", "ja-JP", "净价附加费 %_jp", "条件类型.MS.ZA00"),
+            // dict.accounting.financial.condition.type.ms.za00
+            ("dict.accounting.financial.condition.type.ms.za00", "zh-CN", "净价附加费 %", "条件类型.MS.ZA00"),
+            // dict.accounting.financial.condition.type.ms.za00
+            ("dict.accounting.financial.condition.type.ms.za00", "zh-HK", "净价附加费 %_hk", "条件类型.MS.ZA00"),
+
+            // dict.accounting.financial.condition.type.st.bswr
+            ("dict.accounting.financial.condition.type.st.bswr", "en-US", "基值_us", "条件类型.ST.BSWR"),
+            // dict.accounting.financial.condition.type.st.bswr
+            ("dict.accounting.financial.condition.type.st.bswr", "ja-JP", "基值_jp", "条件类型.ST.BSWR"),
+            // dict.accounting.financial.condition.type.st.bswr
+            ("dict.accounting.financial.condition.type.st.bswr", "zh-CN", "基值", "条件类型.ST.BSWR"),
+            // dict.accounting.financial.condition.type.st.bswr
+            ("dict.accounting.financial.condition.type.st.bswr", "zh-HK", "基值_hk", "条件类型.ST.BSWR"),
+
+            // dict.accounting.financial.condition.type.st.mwas
+            ("dict.accounting.financial.condition.type.st.mwas", "en-US", "销项税_us", "条件类型.ST.MWAS"),
+            // dict.accounting.financial.condition.type.st.mwas
+            ("dict.accounting.financial.condition.type.st.mwas", "ja-JP", "销项税_jp", "条件类型.ST.MWAS"),
+            // dict.accounting.financial.condition.type.st.mwas
+            ("dict.accounting.financial.condition.type.st.mwas", "zh-CN", "销项税", "条件类型.ST.MWAS"),
+            // dict.accounting.financial.condition.type.st.mwas
+            ("dict.accounting.financial.condition.type.st.mwas", "zh-HK", "销项税_hk", "条件类型.ST.MWAS"),
+
+            // dict.accounting.financial.condition.type.tp.tp01
+            ("dict.accounting.financial.condition.type.tp.tp01", "en-US", "输送价格(固定)_us", "条件类型.TP.TP01"),
+            // dict.accounting.financial.condition.type.tp.tp01
+            ("dict.accounting.financial.condition.type.tp.tp01", "ja-JP", "输送价格(固定)_jp", "条件类型.TP.TP01"),
+            // dict.accounting.financial.condition.type.tp.tp01
+            ("dict.accounting.financial.condition.type.tp.tp01", "zh-CN", "输送价格(固定)", "条件类型.TP.TP01"),
+            // dict.accounting.financial.condition.type.tp.tp01
+            ("dict.accounting.financial.condition.type.tp.tp01", "zh-HK", "输送价格(固定)_hk", "条件类型.TP.TP01"),
+
+            // dict.accounting.financial.condition.type.tp.tp02
+            ("dict.accounting.financial.condition.type.tp.tp02", "en-US", "涨价幅度（百分比）_us", "条件类型.TP.TP02"),
+            // dict.accounting.financial.condition.type.tp.tp02
+            ("dict.accounting.financial.condition.type.tp.tp02", "ja-JP", "涨价幅度（百分比）_jp", "条件类型.TP.TP02"),
+            // dict.accounting.financial.condition.type.tp.tp02
+            ("dict.accounting.financial.condition.type.tp.tp02", "zh-CN", "涨价幅度（百分比）", "条件类型.TP.TP02"),
+            // dict.accounting.financial.condition.type.tp.tp02
+            ("dict.accounting.financial.condition.type.tp.tp02", "zh-HK", "涨价幅度（百分比）_hk", "条件类型.TP.TP02"),
+
+            // dict.accounting.financial.condition.type.tp.tpb1
+            ("dict.accounting.financial.condition.type.tp.tpb1", "en-US", "物料价格(ML)_us", "条件类型.TP.TPB1"),
+            // dict.accounting.financial.condition.type.tp.tpb1
+            ("dict.accounting.financial.condition.type.tp.tpb1", "ja-JP", "物料价格(ML)_jp", "条件类型.TP.TPB1"),
+            // dict.accounting.financial.condition.type.tp.tpb1
+            ("dict.accounting.financial.condition.type.tp.tpb1", "zh-CN", "物料价格(ML)", "条件类型.TP.TPB1"),
+            // dict.accounting.financial.condition.type.tp.tpb1
+            ("dict.accounting.financial.condition.type.tp.tpb1", "zh-HK", "物料价格(ML)_hk", "条件类型.TP.TPB1"),
+
+            // dict.accounting.financial.condition.type.tp.tpb2
+            ("dict.accounting.financial.condition.type.tp.tpb2", "en-US", "成本基础_us", "条件类型.TP.TPB2"),
+            // dict.accounting.financial.condition.type.tp.tpb2
+            ("dict.accounting.financial.condition.type.tp.tpb2", "ja-JP", "成本基础_jp", "条件类型.TP.TPB2"),
+            // dict.accounting.financial.condition.type.tp.tpb2
+            ("dict.accounting.financial.condition.type.tp.tpb2", "zh-CN", "成本基础", "条件类型.TP.TPB2"),
+            // dict.accounting.financial.condition.type.tp.tpb2
+            ("dict.accounting.financial.condition.type.tp.tpb2", "zh-HK", "成本基础_hk", "条件类型.TP.TPB2"),
+
+            // dict.accounting.financial.condition.type.tx.ap1e
+            ("dict.accounting.financial.condition.type.tx.ap1e", "en-US", "A/P 销售税 1 费用_us", "条件类型.TX.AP1E"),
+            // dict.accounting.financial.condition.type.tx.ap1e
+            ("dict.accounting.financial.condition.type.tx.ap1e", "ja-JP", "A/P 销售税 1 费用_jp", "条件类型.TX.AP1E"),
+            // dict.accounting.financial.condition.type.tx.ap1e
+            ("dict.accounting.financial.condition.type.tx.ap1e", "zh-CN", "A/P 销售税 1 费用", "条件类型.TX.AP1E"),
+            // dict.accounting.financial.condition.type.tx.ap1e
+            ("dict.accounting.financial.condition.type.tx.ap1e", "zh-HK", "A/P 销售税 1 费用_hk", "条件类型.TX.AP1E"),
+
+            // dict.accounting.financial.condition.type.tx.ap1i
+            ("dict.accounting.financial.condition.type.tx.ap1i", "en-US", "A/P 销售税 1 发票_us", "条件类型.TX.AP1I"),
+            // dict.accounting.financial.condition.type.tx.ap1i
+            ("dict.accounting.financial.condition.type.tx.ap1i", "ja-JP", "A/P 销售税 1 发票_jp", "条件类型.TX.AP1I"),
+            // dict.accounting.financial.condition.type.tx.ap1i
+            ("dict.accounting.financial.condition.type.tx.ap1i", "zh-CN", "A/P 销售税 1 发票", "条件类型.TX.AP1I"),
+            // dict.accounting.financial.condition.type.tx.ap1i
+            ("dict.accounting.financial.condition.type.tx.ap1i", "zh-HK", "A/P 销售税 1 发票_hk", "条件类型.TX.AP1I"),
+
+            // dict.accounting.financial.condition.type.tx.ap1u
+            ("dict.accounting.financial.condition.type.tx.ap1u", "en-US", "A/P 销售税 1 使用_us", "条件类型.TX.AP1U"),
+            // dict.accounting.financial.condition.type.tx.ap1u
+            ("dict.accounting.financial.condition.type.tx.ap1u", "ja-JP", "A/P 销售税 1 使用_jp", "条件类型.TX.AP1U"),
+            // dict.accounting.financial.condition.type.tx.ap1u
+            ("dict.accounting.financial.condition.type.tx.ap1u", "zh-CN", "A/P 销售税 1 使用", "条件类型.TX.AP1U"),
+            // dict.accounting.financial.condition.type.tx.ap1u
+            ("dict.accounting.financial.condition.type.tx.ap1u", "zh-HK", "A/P 销售税 1 使用_hk", "条件类型.TX.AP1U"),
+
+            // dict.accounting.financial.condition.type.tx.ap2e
+            ("dict.accounting.financial.condition.type.tx.ap2e", "en-US", "A/P 销售税 2 费用_us", "条件类型.TX.AP2E"),
+            // dict.accounting.financial.condition.type.tx.ap2e
+            ("dict.accounting.financial.condition.type.tx.ap2e", "ja-JP", "A/P 销售税 2 费用_jp", "条件类型.TX.AP2E"),
+            // dict.accounting.financial.condition.type.tx.ap2e
+            ("dict.accounting.financial.condition.type.tx.ap2e", "zh-CN", "A/P 销售税 2 费用", "条件类型.TX.AP2E"),
+            // dict.accounting.financial.condition.type.tx.ap2e
+            ("dict.accounting.financial.condition.type.tx.ap2e", "zh-HK", "A/P 销售税 2 费用_hk", "条件类型.TX.AP2E"),
+
+            // dict.accounting.financial.condition.type.tx.ap2i
+            ("dict.accounting.financial.condition.type.tx.ap2i", "en-US", "A/P 销售税 2 发票_us", "条件类型.TX.AP2I"),
+            // dict.accounting.financial.condition.type.tx.ap2i
+            ("dict.accounting.financial.condition.type.tx.ap2i", "ja-JP", "A/P 销售税 2 发票_jp", "条件类型.TX.AP2I"),
+            // dict.accounting.financial.condition.type.tx.ap2i
+            ("dict.accounting.financial.condition.type.tx.ap2i", "zh-CN", "A/P 销售税 2 发票", "条件类型.TX.AP2I"),
+            // dict.accounting.financial.condition.type.tx.ap2i
+            ("dict.accounting.financial.condition.type.tx.ap2i", "zh-HK", "A/P 销售税 2 发票_hk", "条件类型.TX.AP2I"),
+
+            // dict.accounting.financial.condition.type.tx.ap2u
+            ("dict.accounting.financial.condition.type.tx.ap2u", "en-US", "A/P 销售税 2 使用_us", "条件类型.TX.AP2U"),
+            // dict.accounting.financial.condition.type.tx.ap2u
+            ("dict.accounting.financial.condition.type.tx.ap2u", "ja-JP", "A/P 销售税 2 使用_jp", "条件类型.TX.AP2U"),
+            // dict.accounting.financial.condition.type.tx.ap2u
+            ("dict.accounting.financial.condition.type.tx.ap2u", "zh-CN", "A/P 销售税 2 使用", "条件类型.TX.AP2U"),
+            // dict.accounting.financial.condition.type.tx.ap2u
+            ("dict.accounting.financial.condition.type.tx.ap2u", "zh-HK", "A/P 销售税 2 使用_hk", "条件类型.TX.AP2U"),
+
+            // dict.accounting.financial.condition.type.tx.ap3e
+            ("dict.accounting.financial.condition.type.tx.ap3e", "en-US", "A/P 销售税 3 费用_us", "条件类型.TX.AP3E"),
+            // dict.accounting.financial.condition.type.tx.ap3e
+            ("dict.accounting.financial.condition.type.tx.ap3e", "ja-JP", "A/P 销售税 3 费用_jp", "条件类型.TX.AP3E"),
+            // dict.accounting.financial.condition.type.tx.ap3e
+            ("dict.accounting.financial.condition.type.tx.ap3e", "zh-CN", "A/P 销售税 3 费用", "条件类型.TX.AP3E"),
+            // dict.accounting.financial.condition.type.tx.ap3e
+            ("dict.accounting.financial.condition.type.tx.ap3e", "zh-HK", "A/P 销售税 3 费用_hk", "条件类型.TX.AP3E"),
+
+            // dict.accounting.financial.condition.type.tx.ap3i
+            ("dict.accounting.financial.condition.type.tx.ap3i", "en-US", "A/P 销售税 3 发票_us", "条件类型.TX.AP3I"),
+            // dict.accounting.financial.condition.type.tx.ap3i
+            ("dict.accounting.financial.condition.type.tx.ap3i", "ja-JP", "A/P 销售税 3 发票_jp", "条件类型.TX.AP3I"),
+            // dict.accounting.financial.condition.type.tx.ap3i
+            ("dict.accounting.financial.condition.type.tx.ap3i", "zh-CN", "A/P 销售税 3 发票", "条件类型.TX.AP3I"),
+            // dict.accounting.financial.condition.type.tx.ap3i
+            ("dict.accounting.financial.condition.type.tx.ap3i", "zh-HK", "A/P 销售税 3 发票_hk", "条件类型.TX.AP3I"),
+
+            // dict.accounting.financial.condition.type.tx.ap3u
+            ("dict.accounting.financial.condition.type.tx.ap3u", "en-US", "A/P 销售税 3 使用_us", "条件类型.TX.AP3U"),
+            // dict.accounting.financial.condition.type.tx.ap3u
+            ("dict.accounting.financial.condition.type.tx.ap3u", "ja-JP", "A/P 销售税 3 使用_jp", "条件类型.TX.AP3U"),
+            // dict.accounting.financial.condition.type.tx.ap3u
+            ("dict.accounting.financial.condition.type.tx.ap3u", "zh-CN", "A/P 销售税 3 使用", "条件类型.TX.AP3U"),
+            // dict.accounting.financial.condition.type.tx.ap3u
+            ("dict.accounting.financial.condition.type.tx.ap3u", "zh-HK", "A/P 销售税 3 使用_hk", "条件类型.TX.AP3U"),
+
+            // dict.accounting.financial.condition.type.tx.ap4e
+            ("dict.accounting.financial.condition.type.tx.ap4e", "en-US", "A/P 销售税 4 费用_us", "条件类型.TX.AP4E"),
+            // dict.accounting.financial.condition.type.tx.ap4e
+            ("dict.accounting.financial.condition.type.tx.ap4e", "ja-JP", "A/P 销售税 4 费用_jp", "条件类型.TX.AP4E"),
+            // dict.accounting.financial.condition.type.tx.ap4e
+            ("dict.accounting.financial.condition.type.tx.ap4e", "zh-CN", "A/P 销售税 4 费用", "条件类型.TX.AP4E"),
+            // dict.accounting.financial.condition.type.tx.ap4e
+            ("dict.accounting.financial.condition.type.tx.ap4e", "zh-HK", "A/P 销售税 4 费用_hk", "条件类型.TX.AP4E"),
+
+            // dict.accounting.financial.condition.type.tx.ap4i
+            ("dict.accounting.financial.condition.type.tx.ap4i", "en-US", "A/P 销售税 4 发票_us", "条件类型.TX.AP4I"),
+            // dict.accounting.financial.condition.type.tx.ap4i
+            ("dict.accounting.financial.condition.type.tx.ap4i", "ja-JP", "A/P 销售税 4 发票_jp", "条件类型.TX.AP4I"),
+            // dict.accounting.financial.condition.type.tx.ap4i
+            ("dict.accounting.financial.condition.type.tx.ap4i", "zh-CN", "A/P 销售税 4 发票", "条件类型.TX.AP4I"),
+            // dict.accounting.financial.condition.type.tx.ap4i
+            ("dict.accounting.financial.condition.type.tx.ap4i", "zh-HK", "A/P 销售税 4 发票_hk", "条件类型.TX.AP4I"),
+
+            // dict.accounting.financial.condition.type.tx.ap4u
+            ("dict.accounting.financial.condition.type.tx.ap4u", "en-US", "A/P 销售税 4 使用_us", "条件类型.TX.AP4U"),
+            // dict.accounting.financial.condition.type.tx.ap4u
+            ("dict.accounting.financial.condition.type.tx.ap4u", "ja-JP", "A/P 销售税 4 使用_jp", "条件类型.TX.AP4U"),
+            // dict.accounting.financial.condition.type.tx.ap4u
+            ("dict.accounting.financial.condition.type.tx.ap4u", "zh-CN", "A/P 销售税 4 使用", "条件类型.TX.AP4U"),
+            // dict.accounting.financial.condition.type.tx.ap4u
+            ("dict.accounting.financial.condition.type.tx.ap4u", "zh-HK", "A/P 销售税 4 使用_hk", "条件类型.TX.AP4U"),
+
+            // dict.accounting.financial.condition.type.tx.ar1
+            ("dict.accounting.financial.condition.type.tx.ar1", "en-US", "A/R 销售税 1_us", "条件类型.TX.AR1"),
+            // dict.accounting.financial.condition.type.tx.ar1
+            ("dict.accounting.financial.condition.type.tx.ar1", "ja-JP", "A/R 销售税 1_jp", "条件类型.TX.AR1"),
+            // dict.accounting.financial.condition.type.tx.ar1
+            ("dict.accounting.financial.condition.type.tx.ar1", "zh-CN", "A/R 销售税 1", "条件类型.TX.AR1"),
+            // dict.accounting.financial.condition.type.tx.ar1
+            ("dict.accounting.financial.condition.type.tx.ar1", "zh-HK", "A/R 销售税 1_hk", "条件类型.TX.AR1"),
+
+            // dict.accounting.financial.condition.type.tx.ar2
+            ("dict.accounting.financial.condition.type.tx.ar2", "en-US", "A/R 销售税 2_us", "条件类型.TX.AR2"),
+            // dict.accounting.financial.condition.type.tx.ar2
+            ("dict.accounting.financial.condition.type.tx.ar2", "ja-JP", "A/R 销售税 2_jp", "条件类型.TX.AR2"),
+            // dict.accounting.financial.condition.type.tx.ar2
+            ("dict.accounting.financial.condition.type.tx.ar2", "zh-CN", "A/R 销售税 2", "条件类型.TX.AR2"),
+            // dict.accounting.financial.condition.type.tx.ar2
+            ("dict.accounting.financial.condition.type.tx.ar2", "zh-HK", "A/R 销售税 2_hk", "条件类型.TX.AR2"),
+
+            // dict.accounting.financial.condition.type.tx.ar3
+            ("dict.accounting.financial.condition.type.tx.ar3", "en-US", "A/R 销售税 3_us", "条件类型.TX.AR3"),
+            // dict.accounting.financial.condition.type.tx.ar3
+            ("dict.accounting.financial.condition.type.tx.ar3", "ja-JP", "A/R 销售税 3_jp", "条件类型.TX.AR3"),
+            // dict.accounting.financial.condition.type.tx.ar3
+            ("dict.accounting.financial.condition.type.tx.ar3", "zh-CN", "A/R 销售税 3", "条件类型.TX.AR3"),
+            // dict.accounting.financial.condition.type.tx.ar3
+            ("dict.accounting.financial.condition.type.tx.ar3", "zh-HK", "A/R 销售税 3_hk", "条件类型.TX.AR3"),
+
+            // dict.accounting.financial.condition.type.tx.ar4
+            ("dict.accounting.financial.condition.type.tx.ar4", "en-US", "A/R 销售税 4_us", "条件类型.TX.AR4"),
+            // dict.accounting.financial.condition.type.tx.ar4
+            ("dict.accounting.financial.condition.type.tx.ar4", "ja-JP", "A/R 销售税 4_jp", "条件类型.TX.AR4"),
+            // dict.accounting.financial.condition.type.tx.ar4
+            ("dict.accounting.financial.condition.type.tx.ar4", "zh-CN", "A/R 销售税 4", "条件类型.TX.AR4"),
+            // dict.accounting.financial.condition.type.tx.ar4
+            ("dict.accounting.financial.condition.type.tx.ar4", "zh-HK", "A/R 销售税 4_hk", "条件类型.TX.AR4"),
+
+            // dict.accounting.financial.condition.type.tx.arsd
+            ("dict.accounting.financial.condition.type.tx.arsd", "en-US", "销售税 SD 界面_us", "条件类型.TX.ARSD"),
+            // dict.accounting.financial.condition.type.tx.arsd
+            ("dict.accounting.financial.condition.type.tx.arsd", "ja-JP", "销售税 SD 界面_jp", "条件类型.TX.ARSD"),
+            // dict.accounting.financial.condition.type.tx.arsd
+            ("dict.accounting.financial.condition.type.tx.arsd", "zh-CN", "销售税 SD 界面", "条件类型.TX.ARSD"),
+            // dict.accounting.financial.condition.type.tx.arsd
+            ("dict.accounting.financial.condition.type.tx.arsd", "zh-HK", "销售税 SD 界面_hk", "条件类型.TX.ARSD"),
+
+            // dict.accounting.financial.condition.type.tx.basb
+            ("dict.accounting.financial.condition.type.tx.basb", "en-US", "基本金额_us", "条件类型.TX.BASB"),
+            // dict.accounting.financial.condition.type.tx.basb
+            ("dict.accounting.financial.condition.type.tx.basb", "ja-JP", "基本金额_jp", "条件类型.TX.BASB"),
+            // dict.accounting.financial.condition.type.tx.basb
+            ("dict.accounting.financial.condition.type.tx.basb", "zh-CN", "基本金额", "条件类型.TX.BASB"),
+            // dict.accounting.financial.condition.type.tx.basb
+            ("dict.accounting.financial.condition.type.tx.basb", "zh-HK", "基本金额_hk", "条件类型.TX.BASB"),
+
+            // dict.accounting.financial.condition.type.tx.basi
+            ("dict.accounting.financial.condition.type.tx.basi", "en-US", "基本金额_us", "条件类型.TX.BASI"),
+            // dict.accounting.financial.condition.type.tx.basi
+            ("dict.accounting.financial.condition.type.tx.basi", "ja-JP", "基本金额_jp", "条件类型.TX.BASI"),
+            // dict.accounting.financial.condition.type.tx.basi
+            ("dict.accounting.financial.condition.type.tx.basi", "zh-CN", "基本金额", "条件类型.TX.BASI"),
+            // dict.accounting.financial.condition.type.tx.basi
+            ("dict.accounting.financial.condition.type.tx.basi", "zh-HK", "基本金额_hk", "条件类型.TX.BASI"),
+
+            // dict.accounting.financial.condition.type.tx.cnsc
+            ("dict.accounting.financial.condition.type.tx.cnsc", "en-US", "服务税 借方 中国_us", "条件类型.TX.CNSC"),
+            // dict.accounting.financial.condition.type.tx.cnsc
+            ("dict.accounting.financial.condition.type.tx.cnsc", "ja-JP", "服务税 借方 中国_jp", "条件类型.TX.CNSC"),
+            // dict.accounting.financial.condition.type.tx.cnsc
+            ("dict.accounting.financial.condition.type.tx.cnsc", "zh-CN", "服务税 借方 中国", "条件类型.TX.CNSC"),
+            // dict.accounting.financial.condition.type.tx.cnsc
+            ("dict.accounting.financial.condition.type.tx.cnsc", "zh-HK", "服务税 借方 中国_hk", "条件类型.TX.CNSC"),
+
+            // dict.accounting.financial.condition.type.tx.cnsd
+            ("dict.accounting.financial.condition.type.tx.cnsd", "en-US", "服务税 贷方 中国_us", "条件类型.TX.CNSD"),
+            // dict.accounting.financial.condition.type.tx.cnsd
+            ("dict.accounting.financial.condition.type.tx.cnsd", "ja-JP", "服务税 贷方 中国_jp", "条件类型.TX.CNSD"),
+            // dict.accounting.financial.condition.type.tx.cnsd
+            ("dict.accounting.financial.condition.type.tx.cnsd", "zh-CN", "服务税 贷方 中国", "条件类型.TX.CNSD"),
+            // dict.accounting.financial.condition.type.tx.cnsd
+            ("dict.accounting.financial.condition.type.tx.cnsd", "zh-HK", "服务税 贷方 中国_hk", "条件类型.TX.CNSD"),
+
+            // dict.accounting.financial.condition.type.tx.conc
+            ("dict.accounting.financial.condition.type.tx.conc", "en-US", "消费税贷方_us", "条件类型.TX.CONC"),
+            // dict.accounting.financial.condition.type.tx.conc
+            ("dict.accounting.financial.condition.type.tx.conc", "ja-JP", "消费税贷方_jp", "条件类型.TX.CONC"),
+            // dict.accounting.financial.condition.type.tx.conc
+            ("dict.accounting.financial.condition.type.tx.conc", "zh-CN", "消费税贷方", "条件类型.TX.CONC"),
+            // dict.accounting.financial.condition.type.tx.conc
+            ("dict.accounting.financial.condition.type.tx.conc", "zh-HK", "消费税贷方_hk", "条件类型.TX.CONC"),
+
+            // dict.accounting.financial.condition.type.tx.cond
+            ("dict.accounting.financial.condition.type.tx.cond", "en-US", "消费税借方_us", "条件类型.TX.COND"),
+            // dict.accounting.financial.condition.type.tx.cond
+            ("dict.accounting.financial.condition.type.tx.cond", "ja-JP", "消费税借方_jp", "条件类型.TX.COND"),
+            // dict.accounting.financial.condition.type.tx.cond
+            ("dict.accounting.financial.condition.type.tx.cond", "zh-CN", "消费税借方", "条件类型.TX.COND"),
+            // dict.accounting.financial.condition.type.tx.cond
+            ("dict.accounting.financial.condition.type.tx.cond", "zh-HK", "消费税借方_hk", "条件类型.TX.COND"),
+
+            // dict.accounting.financial.condition.type.tx.gst
+            ("dict.accounting.financial.condition.type.tx.gst", "en-US", "A/P GST_us", "条件类型.TX.GST"),
+            // dict.accounting.financial.condition.type.tx.gst
+            ("dict.accounting.financial.condition.type.tx.gst", "ja-JP", "A/P GST_jp", "条件类型.TX.GST"),
+            // dict.accounting.financial.condition.type.tx.gst
+            ("dict.accounting.financial.condition.type.tx.gst", "zh-CN", "A/P GST", "条件类型.TX.GST"),
+            // dict.accounting.financial.condition.type.tx.gst
+            ("dict.accounting.financial.condition.type.tx.gst", "zh-HK", "A/P GST_hk", "条件类型.TX.GST"),
+
+            // dict.accounting.financial.condition.type.tx.gst1
+            ("dict.accounting.financial.condition.type.tx.gst1", "en-US", "A/R GST_us", "条件类型.TX.GST1"),
+            // dict.accounting.financial.condition.type.tx.gst1
+            ("dict.accounting.financial.condition.type.tx.gst1", "ja-JP", "A/R GST_jp", "条件类型.TX.GST1"),
+            // dict.accounting.financial.condition.type.tx.gst1
+            ("dict.accounting.financial.condition.type.tx.gst1", "zh-CN", "A/R GST", "条件类型.TX.GST1"),
+            // dict.accounting.financial.condition.type.tx.gst1
+            ("dict.accounting.financial.condition.type.tx.gst1", "zh-HK", "A/R GST_hk", "条件类型.TX.GST1"),
+
+            // dict.accounting.financial.condition.type.tx.gsts
+            ("dict.accounting.financial.condition.type.tx.gsts", "en-US", "A/P GST-self 资产_us", "条件类型.TX.GSTS"),
+            // dict.accounting.financial.condition.type.tx.gsts
+            ("dict.accounting.financial.condition.type.tx.gsts", "ja-JP", "A/P GST-self 资产_jp", "条件类型.TX.GSTS"),
+            // dict.accounting.financial.condition.type.tx.gsts
+            ("dict.accounting.financial.condition.type.tx.gsts", "zh-CN", "A/P GST-self 资产", "条件类型.TX.GSTS"),
+            // dict.accounting.financial.condition.type.tx.gsts
+            ("dict.accounting.financial.condition.type.tx.gsts", "zh-HK", "A/P GST-self 资产_hk", "条件类型.TX.GSTS"),
+
+            // dict.accounting.financial.condition.type.tx.gti1
+            ("dict.accounting.financial.condition.type.tx.gti1", "en-US", "A/P GST_us", "条件类型.TX.GTI1"),
+            // dict.accounting.financial.condition.type.tx.gti1
+            ("dict.accounting.financial.condition.type.tx.gti1", "ja-JP", "A/P GST_jp", "条件类型.TX.GTI1"),
+            // dict.accounting.financial.condition.type.tx.gti1
+            ("dict.accounting.financial.condition.type.tx.gti1", "zh-CN", "A/P GST", "条件类型.TX.GTI1"),
+            // dict.accounting.financial.condition.type.tx.gti1
+            ("dict.accounting.financial.condition.type.tx.gti1", "zh-HK", "A/P GST_hk", "条件类型.TX.GTI1"),
+
+            // dict.accounting.financial.condition.type.tx.gti2
+            ("dict.accounting.financial.condition.type.tx.gti2", "en-US", "A/P GST_us", "条件类型.TX.GTI2"),
+            // dict.accounting.financial.condition.type.tx.gti2
+            ("dict.accounting.financial.condition.type.tx.gti2", "ja-JP", "A/P GST_jp", "条件类型.TX.GTI2"),
+            // dict.accounting.financial.condition.type.tx.gti2
+            ("dict.accounting.financial.condition.type.tx.gti2", "zh-CN", "A/P GST", "条件类型.TX.GTI2"),
+            // dict.accounting.financial.condition.type.tx.gti2
+            ("dict.accounting.financial.condition.type.tx.gti2", "zh-HK", "A/P GST_hk", "条件类型.TX.GTI2"),
+
+            // dict.accounting.financial.condition.type.tx.gto0
+            ("dict.accounting.financial.condition.type.tx.gto0", "en-US", "A/R GST_us", "条件类型.TX.GTO0"),
+            // dict.accounting.financial.condition.type.tx.gto0
+            ("dict.accounting.financial.condition.type.tx.gto0", "ja-JP", "A/R GST_jp", "条件类型.TX.GTO0"),
+            // dict.accounting.financial.condition.type.tx.gto0
+            ("dict.accounting.financial.condition.type.tx.gto0", "zh-CN", "A/R GST", "条件类型.TX.GTO0"),
+            // dict.accounting.financial.condition.type.tx.gto0
+            ("dict.accounting.financial.condition.type.tx.gto0", "zh-HK", "A/R GST_hk", "条件类型.TX.GTO0"),
+
+            // dict.accounting.financial.condition.type.tx.gto1
+            ("dict.accounting.financial.condition.type.tx.gto1", "en-US", "A/R GST_us", "条件类型.TX.GTO1"),
+            // dict.accounting.financial.condition.type.tx.gto1
+            ("dict.accounting.financial.condition.type.tx.gto1", "ja-JP", "A/R GST_jp", "条件类型.TX.GTO1"),
+            // dict.accounting.financial.condition.type.tx.gto1
+            ("dict.accounting.financial.condition.type.tx.gto1", "zh-CN", "A/R GST", "条件类型.TX.GTO1"),
+            // dict.accounting.financial.condition.type.tx.gto1
+            ("dict.accounting.financial.condition.type.tx.gto1", "zh-HK", "A/R GST_hk", "条件类型.TX.GTO1"),
+
+            // dict.accounting.financial.condition.type.tx.gto2
+            ("dict.accounting.financial.condition.type.tx.gto2", "en-US", "A/R GST_us", "条件类型.TX.GTO2"),
+            // dict.accounting.financial.condition.type.tx.gto2
+            ("dict.accounting.financial.condition.type.tx.gto2", "ja-JP", "A/R GST_jp", "条件类型.TX.GTO2"),
+            // dict.accounting.financial.condition.type.tx.gto2
+            ("dict.accounting.financial.condition.type.tx.gto2", "zh-CN", "A/R GST", "条件类型.TX.GTO2"),
+            // dict.accounting.financial.condition.type.tx.gto2
+            ("dict.accounting.financial.condition.type.tx.gto2", "zh-HK", "A/R GST_hk", "条件类型.TX.GTO2"),
+
+            // dict.accounting.financial.condition.type.tx.ic1c
+            ("dict.accounting.financial.condition.type.tx.ic1c", "en-US", "ICMS Ind.结算_us", "条件类型.TX.IC1C"),
+            // dict.accounting.financial.condition.type.tx.ic1c
+            ("dict.accounting.financial.condition.type.tx.ic1c", "ja-JP", "ICMS Ind.结算_jp", "条件类型.TX.IC1C"),
+            // dict.accounting.financial.condition.type.tx.ic1c
+            ("dict.accounting.financial.condition.type.tx.ic1c", "zh-CN", "ICMS Ind.结算", "条件类型.TX.IC1C"),
+            // dict.accounting.financial.condition.type.tx.ic1c
+            ("dict.accounting.financial.condition.type.tx.ic1c", "zh-HK", "ICMS Ind.结算_hk", "条件类型.TX.IC1C"),
+
+            // dict.accounting.financial.condition.type.tx.ic1o
+            ("dict.accounting.financial.condition.type.tx.ic1o", "en-US", "ICMS 行业清理偏置_us", "条件类型.TX.IC1O"),
+            // dict.accounting.financial.condition.type.tx.ic1o
+            ("dict.accounting.financial.condition.type.tx.ic1o", "ja-JP", "ICMS 行业清理偏置_jp", "条件类型.TX.IC1O"),
+            // dict.accounting.financial.condition.type.tx.ic1o
+            ("dict.accounting.financial.condition.type.tx.ic1o", "zh-CN", "ICMS 行业清理偏置", "条件类型.TX.IC1O"),
+            // dict.accounting.financial.condition.type.tx.ic1o
+            ("dict.accounting.financial.condition.type.tx.ic1o", "zh-HK", "ICMS 行业清理偏置_hk", "条件类型.TX.IC1O"),
+
+            // dict.accounting.financial.condition.type.tx.icm1
+            ("dict.accounting.financial.condition.type.tx.icm1", "en-US", "ICMS Industr.    在_us", "条件类型.TX.ICM1"),
+            // dict.accounting.financial.condition.type.tx.icm1
+            ("dict.accounting.financial.condition.type.tx.icm1", "ja-JP", "ICMS Industr.    在_jp", "条件类型.TX.ICM1"),
+            // dict.accounting.financial.condition.type.tx.icm1
+            ("dict.accounting.financial.condition.type.tx.icm1", "zh-CN", "ICMS Industr.    在", "条件类型.TX.ICM1"),
+            // dict.accounting.financial.condition.type.tx.icm1
+            ("dict.accounting.financial.condition.type.tx.icm1", "zh-HK", "ICMS Industr.    在_hk", "条件类型.TX.ICM1"),
+
+            // dict.accounting.financial.condition.type.tx.icm2
+            ("dict.accounting.financial.condition.type.tx.icm2", "en-US", "ICMS 消耗在_us", "条件类型.TX.ICM2"),
+            // dict.accounting.financial.condition.type.tx.icm2
+            ("dict.accounting.financial.condition.type.tx.icm2", "ja-JP", "ICMS 消耗在_jp", "条件类型.TX.ICM2"),
+            // dict.accounting.financial.condition.type.tx.icm2
+            ("dict.accounting.financial.condition.type.tx.icm2", "zh-CN", "ICMS 消耗在", "条件类型.TX.ICM2"),
+            // dict.accounting.financial.condition.type.tx.icm2
+            ("dict.accounting.financial.condition.type.tx.icm2", "zh-HK", "ICMS 消耗在_hk", "条件类型.TX.ICM2"),
+
+            // dict.accounting.financial.condition.type.tx.icm3
+            ("dict.accounting.financial.condition.type.tx.icm3", "en-US", "来自SD的ICMS    出自_us", "条件类型.TX.ICM3"),
+            // dict.accounting.financial.condition.type.tx.icm3
+            ("dict.accounting.financial.condition.type.tx.icm3", "ja-JP", "来自SD的ICMS    出自_jp", "条件类型.TX.ICM3"),
+            // dict.accounting.financial.condition.type.tx.icm3
+            ("dict.accounting.financial.condition.type.tx.icm3", "zh-CN", "来自SD的ICMS    出自", "条件类型.TX.ICM3"),
+            // dict.accounting.financial.condition.type.tx.icm3
+            ("dict.accounting.financial.condition.type.tx.icm3", "zh-HK", "来自SD的ICMS    出自_hk", "条件类型.TX.ICM3"),
+
+            // dict.accounting.financial.condition.type.tx.icmf
+            ("dict.accounting.financial.condition.type.tx.icmf", "en-US", "ICMS S.T. fr.偏置_us", "条件类型.TX.ICMF"),
+            // dict.accounting.financial.condition.type.tx.icmf
+            ("dict.accounting.financial.condition.type.tx.icmf", "ja-JP", "ICMS S.T. fr.偏置_jp", "条件类型.TX.ICMF"),
+            // dict.accounting.financial.condition.type.tx.icmf
+            ("dict.accounting.financial.condition.type.tx.icmf", "zh-CN", "ICMS S.T. fr.偏置", "条件类型.TX.ICMF"),
+            // dict.accounting.financial.condition.type.tx.icmf
+            ("dict.accounting.financial.condition.type.tx.icmf", "zh-HK", "ICMS S.T. fr.偏置_hk", "条件类型.TX.ICMF"),
+
+            // dict.accounting.financial.condition.type.tx.icop
+            ("dict.accounting.financial.condition.type.tx.icop", "en-US", "ICMS 补充_us", "条件类型.TX.ICOP"),
+            // dict.accounting.financial.condition.type.tx.icop
+            ("dict.accounting.financial.condition.type.tx.icop", "ja-JP", "ICMS 补充_jp", "条件类型.TX.ICOP"),
+            // dict.accounting.financial.condition.type.tx.icop
+            ("dict.accounting.financial.condition.type.tx.icop", "zh-CN", "ICMS 补充", "条件类型.TX.ICOP"),
+            // dict.accounting.financial.condition.type.tx.icop
+            ("dict.accounting.financial.condition.type.tx.icop", "zh-HK", "ICMS 补充_hk", "条件类型.TX.ICOP"),
+
+            // dict.accounting.financial.condition.type.tx.icox
+            ("dict.accounting.financial.condition.type.tx.icox", "en-US", "ICMS 补足 100_us", "条件类型.TX.ICOX"),
+            // dict.accounting.financial.condition.type.tx.icox
+            ("dict.accounting.financial.condition.type.tx.icox", "ja-JP", "ICMS 补足 100_jp", "条件类型.TX.ICOX"),
+            // dict.accounting.financial.condition.type.tx.icox
+            ("dict.accounting.financial.condition.type.tx.icox", "zh-CN", "ICMS 补足 100", "条件类型.TX.ICOX"),
+            // dict.accounting.financial.condition.type.tx.icox
+            ("dict.accounting.financial.condition.type.tx.icox", "zh-HK", "ICMS 补足 100_hk", "条件类型.TX.ICOX"),
+
+            // dict.accounting.financial.condition.type.tx.ics1
+            ("dict.accounting.financial.condition.type.tx.ics1", "en-US", "Sub.Tributaria   在_us", "条件类型.TX.ICS1"),
+            // dict.accounting.financial.condition.type.tx.ics1
+            ("dict.accounting.financial.condition.type.tx.ics1", "ja-JP", "Sub.Tributaria   在_jp", "条件类型.TX.ICS1"),
+            // dict.accounting.financial.condition.type.tx.ics1
+            ("dict.accounting.financial.condition.type.tx.ics1", "zh-CN", "Sub.Tributaria   在", "条件类型.TX.ICS1"),
+            // dict.accounting.financial.condition.type.tx.ics1
+            ("dict.accounting.financial.condition.type.tx.ics1", "zh-HK", "Sub.Tributaria   在_hk", "条件类型.TX.ICS1"),
+
+            // dict.accounting.financial.condition.type.tx.ics2
+            ("dict.accounting.financial.condition.type.tx.ics2", "en-US", "S.T. 消耗在_us", "条件类型.TX.ICS2"),
+            // dict.accounting.financial.condition.type.tx.ics2
+            ("dict.accounting.financial.condition.type.tx.ics2", "ja-JP", "S.T. 消耗在_jp", "条件类型.TX.ICS2"),
+            // dict.accounting.financial.condition.type.tx.ics2
+            ("dict.accounting.financial.condition.type.tx.ics2", "zh-CN", "S.T. 消耗在", "条件类型.TX.ICS2"),
+            // dict.accounting.financial.condition.type.tx.ics2
+            ("dict.accounting.financial.condition.type.tx.ics2", "zh-HK", "S.T. 消耗在_hk", "条件类型.TX.ICS2"),
+
+            // dict.accounting.financial.condition.type.tx.ics3
+            ("dict.accounting.financial.condition.type.tx.ics3", "en-US", "Sub.Tributaria  出自_us", "条件类型.TX.ICS3"),
+            // dict.accounting.financial.condition.type.tx.ics3
+            ("dict.accounting.financial.condition.type.tx.ics3", "ja-JP", "Sub.Tributaria  出自_jp", "条件类型.TX.ICS3"),
+            // dict.accounting.financial.condition.type.tx.ics3
+            ("dict.accounting.financial.condition.type.tx.ics3", "zh-CN", "Sub.Tributaria  出自", "条件类型.TX.ICS3"),
+            // dict.accounting.financial.condition.type.tx.ics3
+            ("dict.accounting.financial.condition.type.tx.ics3", "zh-HK", "Sub.Tributaria  出自_hk", "条件类型.TX.ICS3"),
+
+            // dict.accounting.financial.condition.type.tx.iczf
+            ("dict.accounting.financial.condition.type.tx.iczf", "en-US", "ICMS 冲销    (Z.F.)_us", "条件类型.TX.ICZF"),
+            // dict.accounting.financial.condition.type.tx.iczf
+            ("dict.accounting.financial.condition.type.tx.iczf", "ja-JP", "ICMS 冲销    (Z.F.)_jp", "条件类型.TX.ICZF"),
+            // dict.accounting.financial.condition.type.tx.iczf
+            ("dict.accounting.financial.condition.type.tx.iczf", "zh-CN", "ICMS 冲销    (Z.F.)", "条件类型.TX.ICZF"),
+            // dict.accounting.financial.condition.type.tx.iczf
+            ("dict.accounting.financial.condition.type.tx.iczf", "zh-HK", "ICMS 冲销    (Z.F.)_hk", "条件类型.TX.ICZF"),
+
+            // dict.accounting.financial.condition.type.tx.ifr1
+            ("dict.accounting.financial.condition.type.tx.ifr1", "en-US", "在入运费中ICMS_us", "条件类型.TX.IFR1"),
+            // dict.accounting.financial.condition.type.tx.ifr1
+            ("dict.accounting.financial.condition.type.tx.ifr1", "ja-JP", "在入运费中ICMS_jp", "条件类型.TX.IFR1"),
+            // dict.accounting.financial.condition.type.tx.ifr1
+            ("dict.accounting.financial.condition.type.tx.ifr1", "zh-CN", "在入运费中ICMS", "条件类型.TX.IFR1"),
+            // dict.accounting.financial.condition.type.tx.ifr1
+            ("dict.accounting.financial.condition.type.tx.ifr1", "zh-HK", "在入运费中ICMS_hk", "条件类型.TX.IFR1"),
+
+            // dict.accounting.financial.condition.type.tx.ifr3
+            ("dict.accounting.financial.condition.type.tx.ifr3", "en-US", "在出运费中ICMS_us", "条件类型.TX.IFR3"),
+            // dict.accounting.financial.condition.type.tx.ifr3
+            ("dict.accounting.financial.condition.type.tx.ifr3", "ja-JP", "在出运费中ICMS_jp", "条件类型.TX.IFR3"),
+            // dict.accounting.financial.condition.type.tx.ifr3
+            ("dict.accounting.financial.condition.type.tx.ifr3", "zh-CN", "在出运费中ICMS", "条件类型.TX.IFR3"),
+            // dict.accounting.financial.condition.type.tx.ifr3
+            ("dict.accounting.financial.condition.type.tx.ifr3", "zh-HK", "在出运费中ICMS_hk", "条件类型.TX.IFR3"),
+
+            // dict.accounting.financial.condition.type.tx.ifs1
+            ("dict.accounting.financial.condition.type.tx.ifs1", "en-US", "入ICMS ST运费_us", "条件类型.TX.IFS1"),
+            // dict.accounting.financial.condition.type.tx.ifs1
+            ("dict.accounting.financial.condition.type.tx.ifs1", "ja-JP", "入ICMS ST运费_jp", "条件类型.TX.IFS1"),
+            // dict.accounting.financial.condition.type.tx.ifs1
+            ("dict.accounting.financial.condition.type.tx.ifs1", "zh-CN", "入ICMS ST运费", "条件类型.TX.IFS1"),
+            // dict.accounting.financial.condition.type.tx.ifs1
+            ("dict.accounting.financial.condition.type.tx.ifs1", "zh-HK", "入ICMS ST运费_hk", "条件类型.TX.IFS1"),
+
+            // dict.accounting.financial.condition.type.tx.ifs3
+            ("dict.accounting.financial.condition.type.tx.ifs3", "en-US", "出ICMS ST运费_us", "条件类型.TX.IFS3"),
+            // dict.accounting.financial.condition.type.tx.ifs3
+            ("dict.accounting.financial.condition.type.tx.ifs3", "ja-JP", "出ICMS ST运费_jp", "条件类型.TX.IFS3"),
+            // dict.accounting.financial.condition.type.tx.ifs3
+            ("dict.accounting.financial.condition.type.tx.ifs3", "zh-CN", "出ICMS ST运费", "条件类型.TX.IFS3"),
+            // dict.accounting.financial.condition.type.tx.ifs3
+            ("dict.accounting.financial.condition.type.tx.ifs3", "zh-HK", "出ICMS ST运费_hk", "条件类型.TX.IFS3"),
+
+            // dict.accounting.financial.condition.type.tx.inss
+            ("dict.accounting.financial.condition.type.tx.inss", "en-US", "INSS 收入_us", "条件类型.TX.INSS"),
+            // dict.accounting.financial.condition.type.tx.inss
+            ("dict.accounting.financial.condition.type.tx.inss", "ja-JP", "INSS 收入_jp", "条件类型.TX.INSS"),
+            // dict.accounting.financial.condition.type.tx.inss
+            ("dict.accounting.financial.condition.type.tx.inss", "zh-CN", "INSS 收入", "条件类型.TX.INSS"),
+            // dict.accounting.financial.condition.type.tx.inss
+            ("dict.accounting.financial.condition.type.tx.inss", "zh-HK", "INSS 收入_hk", "条件类型.TX.INSS"),
+
+            // dict.accounting.financial.condition.type.tx.insx
+            ("dict.accounting.financial.condition.type.tx.insx", "en-US", "INSS 偏置 (100-)_us", "条件类型.TX.INSX"),
+            // dict.accounting.financial.condition.type.tx.insx
+            ("dict.accounting.financial.condition.type.tx.insx", "ja-JP", "INSS 偏置 (100-)_jp", "条件类型.TX.INSX"),
+            // dict.accounting.financial.condition.type.tx.insx
+            ("dict.accounting.financial.condition.type.tx.insx", "zh-CN", "INSS 偏置 (100-)", "条件类型.TX.INSX"),
+            // dict.accounting.financial.condition.type.tx.insx
+            ("dict.accounting.financial.condition.type.tx.insx", "zh-HK", "INSS 偏置 (100-)_hk", "条件类型.TX.INSX"),
+
+            // dict.accounting.financial.condition.type.tx.ip1c
+            ("dict.accounting.financial.condition.type.tx.ip1c", "en-US", "IPI  行业结算_us", "条件类型.TX.IP1C"),
+            // dict.accounting.financial.condition.type.tx.ip1c
+            ("dict.accounting.financial.condition.type.tx.ip1c", "ja-JP", "IPI  行业结算_jp", "条件类型.TX.IP1C"),
+            // dict.accounting.financial.condition.type.tx.ip1c
+            ("dict.accounting.financial.condition.type.tx.ip1c", "zh-CN", "IPI  行业结算", "条件类型.TX.IP1C"),
+            // dict.accounting.financial.condition.type.tx.ip1c
+            ("dict.accounting.financial.condition.type.tx.ip1c", "zh-HK", "IPI  行业结算_hk", "条件类型.TX.IP1C"),
+
+            // dict.accounting.financial.condition.type.tx.ip1o
+            ("dict.accounting.financial.condition.type.tx.ip1o", "en-US", "IPI  行业结算偏置_us", "条件类型.TX.IP1O"),
+            // dict.accounting.financial.condition.type.tx.ip1o
+            ("dict.accounting.financial.condition.type.tx.ip1o", "ja-JP", "IPI  行业结算偏置_jp", "条件类型.TX.IP1O"),
+            // dict.accounting.financial.condition.type.tx.ip1o
+            ("dict.accounting.financial.condition.type.tx.ip1o", "zh-CN", "IPI  行业结算偏置", "条件类型.TX.IP1O"),
+            // dict.accounting.financial.condition.type.tx.ip1o
+            ("dict.accounting.financial.condition.type.tx.ip1o", "zh-HK", "IPI  行业结算偏置_hk", "条件类型.TX.IP1O"),
+
+            // dict.accounting.financial.condition.type.tx.ipi1
+            ("dict.accounting.financial.condition.type.tx.ipi1", "en-US", "IPI  行业    在_us", "条件类型.TX.IPI1"),
+            // dict.accounting.financial.condition.type.tx.ipi1
+            ("dict.accounting.financial.condition.type.tx.ipi1", "ja-JP", "IPI  行业    在_jp", "条件类型.TX.IPI1"),
+            // dict.accounting.financial.condition.type.tx.ipi1
+            ("dict.accounting.financial.condition.type.tx.ipi1", "zh-CN", "IPI  行业    在", "条件类型.TX.IPI1"),
+            // dict.accounting.financial.condition.type.tx.ipi1
+            ("dict.accounting.financial.condition.type.tx.ipi1", "zh-HK", "IPI  行业    在_hk", "条件类型.TX.IPI1"),
+
+            // dict.accounting.financial.condition.type.tx.ipi2
+            ("dict.accounting.financial.condition.type.tx.ipi2", "en-US", "IPI  消耗在_us", "条件类型.TX.IPI2"),
+            // dict.accounting.financial.condition.type.tx.ipi2
+            ("dict.accounting.financial.condition.type.tx.ipi2", "ja-JP", "IPI  消耗在_jp", "条件类型.TX.IPI2"),
+            // dict.accounting.financial.condition.type.tx.ipi2
+            ("dict.accounting.financial.condition.type.tx.ipi2", "zh-CN", "IPI  消耗在", "条件类型.TX.IPI2"),
+            // dict.accounting.financial.condition.type.tx.ipi2
+            ("dict.accounting.financial.condition.type.tx.ipi2", "zh-HK", "IPI  消耗在_hk", "条件类型.TX.IPI2"),
+
+            // dict.accounting.financial.condition.type.tx.ipi3
+            ("dict.accounting.financial.condition.type.tx.ipi3", "en-US", "来自SD的IPI    出自_us", "条件类型.TX.IPI3"),
+            // dict.accounting.financial.condition.type.tx.ipi3
+            ("dict.accounting.financial.condition.type.tx.ipi3", "ja-JP", "来自SD的IPI    出自_jp", "条件类型.TX.IPI3"),
+            // dict.accounting.financial.condition.type.tx.ipi3
+            ("dict.accounting.financial.condition.type.tx.ipi3", "zh-CN", "来自SD的IPI    出自", "条件类型.TX.IPI3"),
+            // dict.accounting.financial.condition.type.tx.ipi3
+            ("dict.accounting.financial.condition.type.tx.ipi3", "zh-HK", "来自SD的IPI    出自_hk", "条件类型.TX.IPI3"),
+
+            // dict.accounting.financial.condition.type.tx.iss3
+            ("dict.accounting.financial.condition.type.tx.iss3", "en-US", "来自SD的ISS     出自_us", "条件类型.TX.ISS3"),
+            // dict.accounting.financial.condition.type.tx.iss3
+            ("dict.accounting.financial.condition.type.tx.iss3", "ja-JP", "来自SD的ISS     出自_jp", "条件类型.TX.ISS3"),
+            // dict.accounting.financial.condition.type.tx.iss3
+            ("dict.accounting.financial.condition.type.tx.iss3", "zh-CN", "来自SD的ISS     出自", "条件类型.TX.ISS3"),
+            // dict.accounting.financial.condition.type.tx.iss3
+            ("dict.accounting.financial.condition.type.tx.iss3", "zh-HK", "来自SD的ISS     出自_hk", "条件类型.TX.ISS3"),
+
+            // dict.accounting.financial.condition.type.tx.j1a1
+            ("dict.accounting.financial.condition.type.tx.j1a1", "en-US", "GI附加费区域1_us", "条件类型.TX.J1A1"),
+            // dict.accounting.financial.condition.type.tx.j1a1
+            ("dict.accounting.financial.condition.type.tx.j1a1", "ja-JP", "GI附加费区域1_jp", "条件类型.TX.J1A1"),
+            // dict.accounting.financial.condition.type.tx.j1a1
+            ("dict.accounting.financial.condition.type.tx.j1a1", "zh-CN", "GI附加费区域1", "条件类型.TX.J1A1"),
+            // dict.accounting.financial.condition.type.tx.j1a1
+            ("dict.accounting.financial.condition.type.tx.j1a1", "zh-HK", "GI附加费区域1_hk", "条件类型.TX.J1A1"),
+
+            // dict.accounting.financial.condition.type.tx.j1a2
+            ("dict.accounting.financial.condition.type.tx.j1a2", "en-US", "GI附加费区域2_us", "条件类型.TX.J1A2"),
+            // dict.accounting.financial.condition.type.tx.j1a2
+            ("dict.accounting.financial.condition.type.tx.j1a2", "ja-JP", "GI附加费区域2_jp", "条件类型.TX.J1A2"),
+            // dict.accounting.financial.condition.type.tx.j1a2
+            ("dict.accounting.financial.condition.type.tx.j1a2", "zh-CN", "GI附加费区域2", "条件类型.TX.J1A2"),
+            // dict.accounting.financial.condition.type.tx.j1a2
+            ("dict.accounting.financial.condition.type.tx.j1a2", "zh-HK", "GI附加费区域2_hk", "条件类型.TX.J1A2"),
+
+            // dict.accounting.financial.condition.type.tx.j1a3
+            ("dict.accounting.financial.condition.type.tx.j1a3", "en-US", "GI附加费区域3_us", "条件类型.TX.J1A3"),
+            // dict.accounting.financial.condition.type.tx.j1a3
+            ("dict.accounting.financial.condition.type.tx.j1a3", "ja-JP", "GI附加费区域3_jp", "条件类型.TX.J1A3"),
+            // dict.accounting.financial.condition.type.tx.j1a3
+            ("dict.accounting.financial.condition.type.tx.j1a3", "zh-CN", "GI附加费区域3", "条件类型.TX.J1A3"),
+            // dict.accounting.financial.condition.type.tx.j1a3
+            ("dict.accounting.financial.condition.type.tx.j1a3", "zh-HK", "GI附加费区域3_hk", "条件类型.TX.J1A3"),
+
+            // dict.accounting.financial.condition.type.tx.j1aa
+            ("dict.accounting.financial.condition.type.tx.j1aa", "en-US", "增值税折扣关税_us", "条件类型.TX.J1AA"),
+            // dict.accounting.financial.condition.type.tx.j1aa
+            ("dict.accounting.financial.condition.type.tx.j1aa", "ja-JP", "增值税折扣关税_jp", "条件类型.TX.J1AA"),
+            // dict.accounting.financial.condition.type.tx.j1aa
+            ("dict.accounting.financial.condition.type.tx.j1aa", "zh-CN", "增值税折扣关税", "条件类型.TX.J1AA"),
+            // dict.accounting.financial.condition.type.tx.j1aa
+            ("dict.accounting.financial.condition.type.tx.j1aa", "zh-HK", "增值税折扣关税_hk", "条件类型.TX.J1AA"),
+
+            // dict.accounting.financial.condition.type.tx.j1ag
+            ("dict.accounting.financial.condition.type.tx.j1ag", "en-US", "ET 折扣关税_us", "条件类型.TX.J1AG"),
+            // dict.accounting.financial.condition.type.tx.j1ag
+            ("dict.accounting.financial.condition.type.tx.j1ag", "ja-JP", "ET 折扣关税_jp", "条件类型.TX.J1AG"),
+            // dict.accounting.financial.condition.type.tx.j1ag
+            ("dict.accounting.financial.condition.type.tx.j1ag", "zh-CN", "ET 折扣关税", "条件类型.TX.J1AG"),
+            // dict.accounting.financial.condition.type.tx.j1ag
+            ("dict.accounting.financial.condition.type.tx.j1ag", "zh-HK", "ET 折扣关税_hk", "条件类型.TX.J1AG"),
+
+            // dict.accounting.financial.condition.type.tx.j1ai
+            ("dict.accounting.financial.condition.type.tx.j1ai", "en-US", "内部采购税_us", "条件类型.TX.J1AI"),
+            // dict.accounting.financial.condition.type.tx.j1ai
+            ("dict.accounting.financial.condition.type.tx.j1ai", "ja-JP", "内部采购税_jp", "条件类型.TX.J1AI"),
+            // dict.accounting.financial.condition.type.tx.j1ai
+            ("dict.accounting.financial.condition.type.tx.j1ai", "zh-CN", "内部采购税", "条件类型.TX.J1AI"),
+            // dict.accounting.financial.condition.type.tx.j1ai
+            ("dict.accounting.financial.condition.type.tx.j1ai", "zh-HK", "内部采购税_hk", "条件类型.TX.J1AI"),
+
+            // dict.accounting.financial.condition.type.tx.j1al
+            ("dict.accounting.financial.condition.type.tx.j1al", "en-US", "有贷方的免税_us", "条件类型.TX.J1AL"),
+            // dict.accounting.financial.condition.type.tx.j1al
+            ("dict.accounting.financial.condition.type.tx.j1al", "ja-JP", "有贷方的免税_jp", "条件类型.TX.J1AL"),
+            // dict.accounting.financial.condition.type.tx.j1al
+            ("dict.accounting.financial.condition.type.tx.j1al", "zh-CN", "有贷方的免税", "条件类型.TX.J1AL"),
+            // dict.accounting.financial.condition.type.tx.j1al
+            ("dict.accounting.financial.condition.type.tx.j1al", "zh-HK", "有贷方的免税_hk", "条件类型.TX.J1AL"),
+
+            // dict.accounting.financial.condition.type.tx.j1an
+            ("dict.accounting.financial.condition.type.tx.j1an", "en-US", "无贷方的免税_us", "条件类型.TX.J1AN"),
+            // dict.accounting.financial.condition.type.tx.j1an
+            ("dict.accounting.financial.condition.type.tx.j1an", "ja-JP", "无贷方的免税_jp", "条件类型.TX.J1AN"),
+            // dict.accounting.financial.condition.type.tx.j1an
+            ("dict.accounting.financial.condition.type.tx.j1an", "zh-CN", "无贷方的免税", "条件类型.TX.J1AN"),
+            // dict.accounting.financial.condition.type.tx.j1an
+            ("dict.accounting.financial.condition.type.tx.j1an", "zh-HK", "无贷方的免税_hk", "条件类型.TX.J1AN"),
+
+            // dict.accounting.financial.condition.type.tx.j1ap
+            ("dict.accounting.financial.condition.type.tx.j1ap", "en-US", "VAT 折扣_us", "条件类型.TX.J1AP"),
+            // dict.accounting.financial.condition.type.tx.j1ap
+            ("dict.accounting.financial.condition.type.tx.j1ap", "ja-JP", "VAT 折扣_jp", "条件类型.TX.J1AP"),
+            // dict.accounting.financial.condition.type.tx.j1ap
+            ("dict.accounting.financial.condition.type.tx.j1ap", "zh-CN", "VAT 折扣", "条件类型.TX.J1AP"),
+            // dict.accounting.financial.condition.type.tx.j1ap
+            ("dict.accounting.financial.condition.type.tx.j1ap", "zh-HK", "VAT 折扣_hk", "条件类型.TX.J1AP"),
+
+            // dict.accounting.financial.condition.type.tx.j1ar
+            ("dict.accounting.financial.condition.type.tx.j1ar", "en-US", "VAT附加费RNI_us", "条件类型.TX.J1AR"),
+            // dict.accounting.financial.condition.type.tx.j1ar
+            ("dict.accounting.financial.condition.type.tx.j1ar", "ja-JP", "VAT附加费RNI_jp", "条件类型.TX.J1AR"),
+            // dict.accounting.financial.condition.type.tx.j1ar
+            ("dict.accounting.financial.condition.type.tx.j1ar", "zh-CN", "VAT附加费RNI", "条件类型.TX.J1AR"),
+            // dict.accounting.financial.condition.type.tx.j1ar
+            ("dict.accounting.financial.condition.type.tx.j1ar", "zh-HK", "VAT附加费RNI_hk", "条件类型.TX.J1AR"),
+
+            // dict.accounting.financial.condition.type.tx.j1as
+            ("dict.accounting.financial.condition.type.tx.j1as", "en-US", "附加费编号类别_us", "条件类型.TX.J1AS"),
+            // dict.accounting.financial.condition.type.tx.j1as
+            ("dict.accounting.financial.condition.type.tx.j1as", "ja-JP", "附加费编号类别_jp", "条件类型.TX.J1AS"),
+            // dict.accounting.financial.condition.type.tx.j1as
+            ("dict.accounting.financial.condition.type.tx.j1as", "zh-CN", "附加费编号类别", "条件类型.TX.J1AS"),
+            // dict.accounting.financial.condition.type.tx.j1as
+            ("dict.accounting.financial.condition.type.tx.j1as", "zh-HK", "附加费编号类别_hk", "条件类型.TX.J1AS"),
+
+            // dict.accounting.financial.condition.type.tx.j1av
+            ("dict.accounting.financial.condition.type.tx.j1av", "en-US", "内部采购税_us", "条件类型.TX.J1AV"),
+            // dict.accounting.financial.condition.type.tx.j1av
+            ("dict.accounting.financial.condition.type.tx.j1av", "ja-JP", "内部采购税_jp", "条件类型.TX.J1AV"),
+            // dict.accounting.financial.condition.type.tx.j1av
+            ("dict.accounting.financial.condition.type.tx.j1av", "zh-CN", "内部采购税", "条件类型.TX.J1AV"),
+            // dict.accounting.financial.condition.type.tx.j1av
+            ("dict.accounting.financial.condition.type.tx.j1av", "zh-HK", "内部采购税_hk", "条件类型.TX.J1AV"),
+
+            // dict.accounting.financial.condition.type.tx.j1ay
+            ("dict.accounting.financial.condition.type.tx.j1ay", "en-US", "未征税_us", "条件类型.TX.J1AY"),
+            // dict.accounting.financial.condition.type.tx.j1ay
+            ("dict.accounting.financial.condition.type.tx.j1ay", "ja-JP", "未征税_jp", "条件类型.TX.J1AY"),
+            // dict.accounting.financial.condition.type.tx.j1ay
+            ("dict.accounting.financial.condition.type.tx.j1ay", "zh-CN", "未征税", "条件类型.TX.J1AY"),
+            // dict.accounting.financial.condition.type.tx.j1ay
+            ("dict.accounting.financial.condition.type.tx.j1ay", "zh-HK", "未征税_hk", "条件类型.TX.J1AY"),
+
+            // dict.accounting.financial.condition.type.tx.j2a1
+            ("dict.accounting.financial.condition.type.tx.j2a1", "en-US", "ISC Perú_us", "条件类型.TX.J2A1"),
+            // dict.accounting.financial.condition.type.tx.j2a1
+            ("dict.accounting.financial.condition.type.tx.j2a1", "ja-JP", "ISC Perú_jp", "条件类型.TX.J2A1"),
+            // dict.accounting.financial.condition.type.tx.j2a1
+            ("dict.accounting.financial.condition.type.tx.j2a1", "zh-CN", "ISC Perú", "条件类型.TX.J2A1"),
+            // dict.accounting.financial.condition.type.tx.j2a1
+            ("dict.accounting.financial.condition.type.tx.j2a1", "zh-HK", "ISC Perú_hk", "条件类型.TX.J2A1"),
+
+            // dict.accounting.financial.condition.type.tx.j2a2
+            ("dict.accounting.financial.condition.type.tx.j2a2", "en-US", "IGV Perú - Adq.002_us", "条件类型.TX.J2A2"),
+            // dict.accounting.financial.condition.type.tx.j2a2
+            ("dict.accounting.financial.condition.type.tx.j2a2", "ja-JP", "IGV Perú - Adq.002_jp", "条件类型.TX.J2A2"),
+            // dict.accounting.financial.condition.type.tx.j2a2
+            ("dict.accounting.financial.condition.type.tx.j2a2", "zh-CN", "IGV Perú - Adq.002", "条件类型.TX.J2A2"),
+            // dict.accounting.financial.condition.type.tx.j2a2
+            ("dict.accounting.financial.condition.type.tx.j2a2", "zh-HK", "IGV Perú - Adq.002_hk", "条件类型.TX.J2A2"),
+
+            // dict.accounting.financial.condition.type.tx.j2a3
+            ("dict.accounting.financial.condition.type.tx.j2a3", "en-US", "IGV Per# - Adq.003_us", "条件类型.TX.J2A3"),
+            // dict.accounting.financial.condition.type.tx.j2a3
+            ("dict.accounting.financial.condition.type.tx.j2a3", "ja-JP", "IGV Per# - Adq.003_jp", "条件类型.TX.J2A3"),
+            // dict.accounting.financial.condition.type.tx.j2a3
+            ("dict.accounting.financial.condition.type.tx.j2a3", "zh-CN", "IGV Per# - Adq.003", "条件类型.TX.J2A3"),
+            // dict.accounting.financial.condition.type.tx.j2a3
+            ("dict.accounting.financial.condition.type.tx.j2a3", "zh-HK", "IGV Per# - Adq.003_hk", "条件类型.TX.J2A3"),
+
+            // dict.accounting.financial.condition.type.tx.j2a4
+            ("dict.accounting.financial.condition.type.tx.j2a4", "en-US", "Advalorem (Perú)_us", "条件类型.TX.J2A4"),
+            // dict.accounting.financial.condition.type.tx.j2a4
+            ("dict.accounting.financial.condition.type.tx.j2a4", "ja-JP", "Advalorem (Perú)_jp", "条件类型.TX.J2A4"),
+            // dict.accounting.financial.condition.type.tx.j2a4
+            ("dict.accounting.financial.condition.type.tx.j2a4", "zh-CN", "Advalorem (Perú)", "条件类型.TX.J2A4"),
+            // dict.accounting.financial.condition.type.tx.j2a4
+            ("dict.accounting.financial.condition.type.tx.j2a4", "zh-HK", "Advalorem (Perú)_hk", "条件类型.TX.J2A4"),
+
+            // dict.accounting.financial.condition.type.tx.j2a5
+            ("dict.accounting.financial.condition.type.tx.j2a5", "en-US", "IPM 税  秘鲁_us", "条件类型.TX.J2A5"),
+            // dict.accounting.financial.condition.type.tx.j2a5
+            ("dict.accounting.financial.condition.type.tx.j2a5", "ja-JP", "IPM 税  秘鲁_jp", "条件类型.TX.J2A5"),
+            // dict.accounting.financial.condition.type.tx.j2a5
+            ("dict.accounting.financial.condition.type.tx.j2a5", "zh-CN", "IPM 税  秘鲁", "条件类型.TX.J2A5"),
+            // dict.accounting.financial.condition.type.tx.j2a5
+            ("dict.accounting.financial.condition.type.tx.j2a5", "zh-HK", "IPM 税  秘鲁_hk", "条件类型.TX.J2A5"),
+
+            // dict.accounting.financial.condition.type.tx.j3a1
+            ("dict.accounting.financial.condition.type.tx.j3a1", "en-US", "燃料税（专用）_us", "条件类型.TX.J3A1"),
+            // dict.accounting.financial.condition.type.tx.j3a1
+            ("dict.accounting.financial.condition.type.tx.j3a1", "ja-JP", "燃料税（专用）_jp", "条件类型.TX.J3A1"),
+            // dict.accounting.financial.condition.type.tx.j3a1
+            ("dict.accounting.financial.condition.type.tx.j3a1", "zh-CN", "燃料税（专用）", "条件类型.TX.J3A1"),
+            // dict.accounting.financial.condition.type.tx.j3a1
+            ("dict.accounting.financial.condition.type.tx.j3a1", "zh-HK", "燃料税（专用）_hk", "条件类型.TX.J3A1"),
+
+            // dict.accounting.financial.condition.type.tx.j3a2
+            ("dict.accounting.financial.condition.type.tx.j3a2", "en-US", "燃料税（非专用）_us", "条件类型.TX.J3A2"),
+            // dict.accounting.financial.condition.type.tx.j3a2
+            ("dict.accounting.financial.condition.type.tx.j3a2", "ja-JP", "燃料税（非专用）_jp", "条件类型.TX.J3A2"),
+            // dict.accounting.financial.condition.type.tx.j3a2
+            ("dict.accounting.financial.condition.type.tx.j3a2", "zh-CN", "燃料税（非专用）", "条件类型.TX.J3A2"),
+            // dict.accounting.financial.condition.type.tx.j3a2
+            ("dict.accounting.financial.condition.type.tx.j3a2", "zh-HK", "燃料税（非专用）_hk", "条件类型.TX.J3A2"),
+
+            // dict.accounting.financial.condition.type.tx.jc1e
+            ("dict.accounting.financial.condition.type.tx.jc1e", "en-US", "A/P GST 可恢复的_us", "条件类型.TX.JC1E"),
+            // dict.accounting.financial.condition.type.tx.jc1e
+            ("dict.accounting.financial.condition.type.tx.jc1e", "ja-JP", "A/P GST 可恢复的_jp", "条件类型.TX.JC1E"),
+            // dict.accounting.financial.condition.type.tx.jc1e
+            ("dict.accounting.financial.condition.type.tx.jc1e", "zh-CN", "A/P GST 可恢复的", "条件类型.TX.JC1E"),
+            // dict.accounting.financial.condition.type.tx.jc1e
+            ("dict.accounting.financial.condition.type.tx.jc1e", "zh-HK", "A/P GST 可恢复的_hk", "条件类型.TX.JC1E"),
+
+            // dict.accounting.financial.condition.type.tx.jc1i
+            ("dict.accounting.financial.condition.type.tx.jc1i", "en-US", "A/P PST 分配_us", "条件类型.TX.JC1I"),
+            // dict.accounting.financial.condition.type.tx.jc1i
+            ("dict.accounting.financial.condition.type.tx.jc1i", "ja-JP", "A/P PST 分配_jp", "条件类型.TX.JC1I"),
+            // dict.accounting.financial.condition.type.tx.jc1i
+            ("dict.accounting.financial.condition.type.tx.jc1i", "zh-CN", "A/P PST 分配", "条件类型.TX.JC1I"),
+            // dict.accounting.financial.condition.type.tx.jc1i
+            ("dict.accounting.financial.condition.type.tx.jc1i", "zh-HK", "A/P PST 分配_hk", "条件类型.TX.JC1I"),
+
+            // dict.accounting.financial.condition.type.tx.jc1s
+            ("dict.accounting.financial.condition.type.tx.jc1s", "en-US", "A/P 恢复_us", "条件类型.TX.JC1S"),
+            // dict.accounting.financial.condition.type.tx.jc1s
+            ("dict.accounting.financial.condition.type.tx.jc1s", "ja-JP", "A/P 恢复_jp", "条件类型.TX.JC1S"),
+            // dict.accounting.financial.condition.type.tx.jc1s
+            ("dict.accounting.financial.condition.type.tx.jc1s", "zh-CN", "A/P 恢复", "条件类型.TX.JC1S"),
+            // dict.accounting.financial.condition.type.tx.jc1s
+            ("dict.accounting.financial.condition.type.tx.jc1s", "zh-HK", "A/P 恢复_hk", "条件类型.TX.JC1S"),
+
+            // dict.accounting.financial.condition.type.tx.jc1t
+            ("dict.accounting.financial.condition.type.tx.jc1t", "en-US", "A/P PST 自估_us", "条件类型.TX.JC1T"),
+            // dict.accounting.financial.condition.type.tx.jc1t
+            ("dict.accounting.financial.condition.type.tx.jc1t", "ja-JP", "A/P PST 自估_jp", "条件类型.TX.JC1T"),
+            // dict.accounting.financial.condition.type.tx.jc1t
+            ("dict.accounting.financial.condition.type.tx.jc1t", "zh-CN", "A/P PST 自估", "条件类型.TX.JC1T"),
+            // dict.accounting.financial.condition.type.tx.jc1t
+            ("dict.accounting.financial.condition.type.tx.jc1t", "zh-HK", "A/P PST 自估_hk", "条件类型.TX.JC1T"),
+
+            // dict.accounting.financial.condition.type.tx.jc1u
+            ("dict.accounting.financial.condition.type.tx.jc1u", "en-US", "A/P PST 自估_us", "条件类型.TX.JC1U"),
+            // dict.accounting.financial.condition.type.tx.jc1u
+            ("dict.accounting.financial.condition.type.tx.jc1u", "ja-JP", "A/P PST 自估_jp", "条件类型.TX.JC1U"),
+            // dict.accounting.financial.condition.type.tx.jc1u
+            ("dict.accounting.financial.condition.type.tx.jc1u", "zh-CN", "A/P PST 自估", "条件类型.TX.JC1U"),
+            // dict.accounting.financial.condition.type.tx.jc1u
+            ("dict.accounting.financial.condition.type.tx.jc1u", "zh-HK", "A/P PST 自估_hk", "条件类型.TX.JC1U"),
+
+            // dict.accounting.financial.condition.type.tx.jc2e
+            ("dict.accounting.financial.condition.type.tx.jc2e", "en-US", "A/P GST 已分配_us", "条件类型.TX.JC2E"),
+            // dict.accounting.financial.condition.type.tx.jc2e
+            ("dict.accounting.financial.condition.type.tx.jc2e", "ja-JP", "A/P GST 已分配_jp", "条件类型.TX.JC2E"),
+            // dict.accounting.financial.condition.type.tx.jc2e
+            ("dict.accounting.financial.condition.type.tx.jc2e", "zh-CN", "A/P GST 已分配", "条件类型.TX.JC2E"),
+            // dict.accounting.financial.condition.type.tx.jc2e
+            ("dict.accounting.financial.condition.type.tx.jc2e", "zh-HK", "A/P GST 已分配_hk", "条件类型.TX.JC2E"),
+
+            // dict.accounting.financial.condition.type.tx.jc2i
+            ("dict.accounting.financial.condition.type.tx.jc2i", "en-US", "A/P 提供 (B+GST)_us", "条件类型.TX.JC2I"),
+            // dict.accounting.financial.condition.type.tx.jc2i
+            ("dict.accounting.financial.condition.type.tx.jc2i", "ja-JP", "A/P 提供 (B+GST)_jp", "条件类型.TX.JC2I"),
+            // dict.accounting.financial.condition.type.tx.jc2i
+            ("dict.accounting.financial.condition.type.tx.jc2i", "zh-CN", "A/P 提供 (B+GST)", "条件类型.TX.JC2I"),
+            // dict.accounting.financial.condition.type.tx.jc2i
+            ("dict.accounting.financial.condition.type.tx.jc2i", "zh-HK", "A/P 提供 (B+GST)_hk", "条件类型.TX.JC2I"),
+
+            // dict.accounting.financial.condition.type.tx.jc2s
+            ("dict.accounting.financial.condition.type.tx.jc2s", "en-US", "A/P 可恢复的 B + GST_us", "条件类型.TX.JC2S"),
+            // dict.accounting.financial.condition.type.tx.jc2s
+            ("dict.accounting.financial.condition.type.tx.jc2s", "ja-JP", "A/P 可恢复的 B + GST_jp", "条件类型.TX.JC2S"),
+            // dict.accounting.financial.condition.type.tx.jc2s
+            ("dict.accounting.financial.condition.type.tx.jc2s", "zh-CN", "A/P 可恢复的 B + GST", "条件类型.TX.JC2S"),
+            // dict.accounting.financial.condition.type.tx.jc2s
+            ("dict.accounting.financial.condition.type.tx.jc2s", "zh-HK", "A/P 可恢复的 B + GST_hk", "条件类型.TX.JC2S"),
+
+            // dict.accounting.financial.condition.type.tx.jc2t
+            ("dict.accounting.financial.condition.type.tx.jc2t", "en-US", "A/P PST 自估_us", "条件类型.TX.JC2T"),
+            // dict.accounting.financial.condition.type.tx.jc2t
+            ("dict.accounting.financial.condition.type.tx.jc2t", "ja-JP", "A/P PST 自估_jp", "条件类型.TX.JC2T"),
+            // dict.accounting.financial.condition.type.tx.jc2t
+            ("dict.accounting.financial.condition.type.tx.jc2t", "zh-CN", "A/P PST 自估", "条件类型.TX.JC2T"),
+            // dict.accounting.financial.condition.type.tx.jc2t
+            ("dict.accounting.financial.condition.type.tx.jc2t", "zh-HK", "A/P PST 自估_hk", "条件类型.TX.JC2T"),
+
+            // dict.accounting.financial.condition.type.tx.jc2u
+            ("dict.accounting.financial.condition.type.tx.jc2u", "en-US", "A/P 评估 B + GST_us", "条件类型.TX.JC2U"),
+            // dict.accounting.financial.condition.type.tx.jc2u
+            ("dict.accounting.financial.condition.type.tx.jc2u", "ja-JP", "A/P 评估 B + GST_jp", "条件类型.TX.JC2U"),
+            // dict.accounting.financial.condition.type.tx.jc2u
+            ("dict.accounting.financial.condition.type.tx.jc2u", "zh-CN", "A/P 评估 B + GST", "条件类型.TX.JC2U"),
+            // dict.accounting.financial.condition.type.tx.jc2u
+            ("dict.accounting.financial.condition.type.tx.jc2u", "zh-HK", "A/P 评估 B + GST_hk", "条件类型.TX.JC2U"),
+
+            // dict.accounting.financial.condition.type.tx.jc3i
+            ("dict.accounting.financial.condition.type.tx.jc3i", "en-US", "A/P 提供 (B+GST)_us", "条件类型.TX.JC3I"),
+            // dict.accounting.financial.condition.type.tx.jc3i
+            ("dict.accounting.financial.condition.type.tx.jc3i", "ja-JP", "A/P 提供 (B+GST)_jp", "条件类型.TX.JC3I"),
+            // dict.accounting.financial.condition.type.tx.jc3i
+            ("dict.accounting.financial.condition.type.tx.jc3i", "zh-CN", "A/P 提供 (B+GST)", "条件类型.TX.JC3I"),
+            // dict.accounting.financial.condition.type.tx.jc3i
+            ("dict.accounting.financial.condition.type.tx.jc3i", "zh-HK", "A/P 提供 (B+GST)_hk", "条件类型.TX.JC3I"),
+
+            // dict.accounting.financial.condition.type.tx.jc3s
+            ("dict.accounting.financial.condition.type.tx.jc3s", "en-US", "A/P 可恢复的 B + GST_us", "条件类型.TX.JC3S"),
+            // dict.accounting.financial.condition.type.tx.jc3s
+            ("dict.accounting.financial.condition.type.tx.jc3s", "ja-JP", "A/P 可恢复的 B + GST_jp", "条件类型.TX.JC3S"),
+            // dict.accounting.financial.condition.type.tx.jc3s
+            ("dict.accounting.financial.condition.type.tx.jc3s", "zh-CN", "A/P 可恢复的 B + GST", "条件类型.TX.JC3S"),
+            // dict.accounting.financial.condition.type.tx.jc3s
+            ("dict.accounting.financial.condition.type.tx.jc3s", "zh-HK", "A/P 可恢复的 B + GST_hk", "条件类型.TX.JC3S"),
+
+            // dict.accounting.financial.condition.type.tx.jc3t
+            ("dict.accounting.financial.condition.type.tx.jc3t", "en-US", "A/P PST 自估_us", "条件类型.TX.JC3T"),
+            // dict.accounting.financial.condition.type.tx.jc3t
+            ("dict.accounting.financial.condition.type.tx.jc3t", "ja-JP", "A/P PST 自估_jp", "条件类型.TX.JC3T"),
+            // dict.accounting.financial.condition.type.tx.jc3t
+            ("dict.accounting.financial.condition.type.tx.jc3t", "zh-CN", "A/P PST 自估", "条件类型.TX.JC3T"),
+            // dict.accounting.financial.condition.type.tx.jc3t
+            ("dict.accounting.financial.condition.type.tx.jc3t", "zh-HK", "A/P PST 自估_hk", "条件类型.TX.JC3T"),
+
+            // dict.accounting.financial.condition.type.tx.jc3u
+            ("dict.accounting.financial.condition.type.tx.jc3u", "en-US", "A/P 评估 B + GST_us", "条件类型.TX.JC3U"),
+            // dict.accounting.financial.condition.type.tx.jc3u
+            ("dict.accounting.financial.condition.type.tx.jc3u", "ja-JP", "A/P 评估 B + GST_jp", "条件类型.TX.JC3U"),
+            // dict.accounting.financial.condition.type.tx.jc3u
+            ("dict.accounting.financial.condition.type.tx.jc3u", "zh-CN", "A/P 评估 B + GST", "条件类型.TX.JC3U"),
+            // dict.accounting.financial.condition.type.tx.jc3u
+            ("dict.accounting.financial.condition.type.tx.jc3u", "zh-HK", "A/P 评估 B + GST_hk", "条件类型.TX.JC3U"),
+
+            // dict.accounting.financial.condition.type.tx.jc4i
+            ("dict.accounting.financial.condition.type.tx.jc4i", "en-US", "A/P 提供 (B+GST)_us", "条件类型.TX.JC4I"),
+            // dict.accounting.financial.condition.type.tx.jc4i
+            ("dict.accounting.financial.condition.type.tx.jc4i", "ja-JP", "A/P 提供 (B+GST)_jp", "条件类型.TX.JC4I"),
+            // dict.accounting.financial.condition.type.tx.jc4i
+            ("dict.accounting.financial.condition.type.tx.jc4i", "zh-CN", "A/P 提供 (B+GST)", "条件类型.TX.JC4I"),
+            // dict.accounting.financial.condition.type.tx.jc4i
+            ("dict.accounting.financial.condition.type.tx.jc4i", "zh-HK", "A/P 提供 (B+GST)_hk", "条件类型.TX.JC4I"),
+
+            // dict.accounting.financial.condition.type.tx.jc4s
+            ("dict.accounting.financial.condition.type.tx.jc4s", "en-US", "A/P 可恢复的 B + GST_us", "条件类型.TX.JC4S"),
+            // dict.accounting.financial.condition.type.tx.jc4s
+            ("dict.accounting.financial.condition.type.tx.jc4s", "ja-JP", "A/P 可恢复的 B + GST_jp", "条件类型.TX.JC4S"),
+            // dict.accounting.financial.condition.type.tx.jc4s
+            ("dict.accounting.financial.condition.type.tx.jc4s", "zh-CN", "A/P 可恢复的 B + GST", "条件类型.TX.JC4S"),
+            // dict.accounting.financial.condition.type.tx.jc4s
+            ("dict.accounting.financial.condition.type.tx.jc4s", "zh-HK", "A/P 可恢复的 B + GST_hk", "条件类型.TX.JC4S"),
+
+            // dict.accounting.financial.condition.type.tx.jc4u
+            ("dict.accounting.financial.condition.type.tx.jc4u", "en-US", "A/P 评估 B + GST_us", "条件类型.TX.JC4U"),
+            // dict.accounting.financial.condition.type.tx.jc4u
+            ("dict.accounting.financial.condition.type.tx.jc4u", "ja-JP", "A/P 评估 B + GST_jp", "条件类型.TX.JC4U"),
+            // dict.accounting.financial.condition.type.tx.jc4u
+            ("dict.accounting.financial.condition.type.tx.jc4u", "zh-CN", "A/P 评估 B + GST", "条件类型.TX.JC4U"),
+            // dict.accounting.financial.condition.type.tx.jc4u
+            ("dict.accounting.financial.condition.type.tx.jc4u", "zh-HK", "A/P 评估 B + GST_hk", "条件类型.TX.JC4U"),
+
+            // dict.accounting.financial.condition.type.tx.jc5s
+            ("dict.accounting.financial.condition.type.tx.jc5s", "en-US", "A/P 可恢复的 B + GST_us", "条件类型.TX.JC5S"),
+            // dict.accounting.financial.condition.type.tx.jc5s
+            ("dict.accounting.financial.condition.type.tx.jc5s", "ja-JP", "A/P 可恢复的 B + GST_jp", "条件类型.TX.JC5S"),
+            // dict.accounting.financial.condition.type.tx.jc5s
+            ("dict.accounting.financial.condition.type.tx.jc5s", "zh-CN", "A/P 可恢复的 B + GST", "条件类型.TX.JC5S"),
+            // dict.accounting.financial.condition.type.tx.jc5s
+            ("dict.accounting.financial.condition.type.tx.jc5s", "zh-HK", "A/P 可恢复的 B + GST_hk", "条件类型.TX.JC5S"),
+
+            // dict.accounting.financial.condition.type.tx.jc5u
+            ("dict.accounting.financial.condition.type.tx.jc5u", "en-US", "A/P 评估 B + GST_us", "条件类型.TX.JC5U"),
+            // dict.accounting.financial.condition.type.tx.jc5u
+            ("dict.accounting.financial.condition.type.tx.jc5u", "ja-JP", "A/P 评估 B + GST_jp", "条件类型.TX.JC5U"),
+            // dict.accounting.financial.condition.type.tx.jc5u
+            ("dict.accounting.financial.condition.type.tx.jc5u", "zh-CN", "A/P 评估 B + GST", "条件类型.TX.JC5U"),
+            // dict.accounting.financial.condition.type.tx.jc5u
+            ("dict.accounting.financial.condition.type.tx.jc5u", "zh-HK", "A/P 评估 B + GST_hk", "条件类型.TX.JC5U"),
+
+            // dict.accounting.financial.condition.type.tx.jgst
+            ("dict.accounting.financial.condition.type.tx.jgst", "en-US", "A/P GST_us", "条件类型.TX.JGST"),
+            // dict.accounting.financial.condition.type.tx.jgst
+            ("dict.accounting.financial.condition.type.tx.jgst", "ja-JP", "A/P GST_jp", "条件类型.TX.JGST"),
+            // dict.accounting.financial.condition.type.tx.jgst
+            ("dict.accounting.financial.condition.type.tx.jgst", "zh-CN", "A/P GST", "条件类型.TX.JGST"),
+            // dict.accounting.financial.condition.type.tx.jgst
+            ("dict.accounting.financial.condition.type.tx.jgst", "zh-HK", "A/P GST_hk", "条件类型.TX.JGST"),
+
+            // dict.accounting.financial.condition.type.tx.jp1e
+            ("dict.accounting.financial.condition.type.tx.jp1e", "en-US", "A/P 销售税 1 费用_us", "条件类型.TX.JP1E"),
+            // dict.accounting.financial.condition.type.tx.jp1e
+            ("dict.accounting.financial.condition.type.tx.jp1e", "ja-JP", "A/P 销售税 1 费用_jp", "条件类型.TX.JP1E"),
+            // dict.accounting.financial.condition.type.tx.jp1e
+            ("dict.accounting.financial.condition.type.tx.jp1e", "zh-CN", "A/P 销售税 1 费用", "条件类型.TX.JP1E"),
+            // dict.accounting.financial.condition.type.tx.jp1e
+            ("dict.accounting.financial.condition.type.tx.jp1e", "zh-HK", "A/P 销售税 1 费用_hk", "条件类型.TX.JP1E"),
+
+            // dict.accounting.financial.condition.type.tx.jp1i
+            ("dict.accounting.financial.condition.type.tx.jp1i", "en-US", "A/P 销售税 1 发票_us", "条件类型.TX.JP1I"),
+            // dict.accounting.financial.condition.type.tx.jp1i
+            ("dict.accounting.financial.condition.type.tx.jp1i", "ja-JP", "A/P 销售税 1 发票_jp", "条件类型.TX.JP1I"),
+            // dict.accounting.financial.condition.type.tx.jp1i
+            ("dict.accounting.financial.condition.type.tx.jp1i", "zh-CN", "A/P 销售税 1 发票", "条件类型.TX.JP1I"),
+            // dict.accounting.financial.condition.type.tx.jp1i
+            ("dict.accounting.financial.condition.type.tx.jp1i", "zh-HK", "A/P 销售税 1 发票_hk", "条件类型.TX.JP1I"),
+
+            // dict.accounting.financial.condition.type.tx.jp1u
+            ("dict.accounting.financial.condition.type.tx.jp1u", "en-US", "A/P 销售税 1 使用_us", "条件类型.TX.JP1U"),
+            // dict.accounting.financial.condition.type.tx.jp1u
+            ("dict.accounting.financial.condition.type.tx.jp1u", "ja-JP", "A/P 销售税 1 使用_jp", "条件类型.TX.JP1U"),
+            // dict.accounting.financial.condition.type.tx.jp1u
+            ("dict.accounting.financial.condition.type.tx.jp1u", "zh-CN", "A/P 销售税 1 使用", "条件类型.TX.JP1U"),
+            // dict.accounting.financial.condition.type.tx.jp1u
+            ("dict.accounting.financial.condition.type.tx.jp1u", "zh-HK", "A/P 销售税 1 使用_hk", "条件类型.TX.JP1U"),
+
+            // dict.accounting.financial.condition.type.tx.jp2e
+            ("dict.accounting.financial.condition.type.tx.jp2e", "en-US", "A/P 销售税 2 费用_us", "条件类型.TX.JP2E"),
+            // dict.accounting.financial.condition.type.tx.jp2e
+            ("dict.accounting.financial.condition.type.tx.jp2e", "ja-JP", "A/P 销售税 2 费用_jp", "条件类型.TX.JP2E"),
+            // dict.accounting.financial.condition.type.tx.jp2e
+            ("dict.accounting.financial.condition.type.tx.jp2e", "zh-CN", "A/P 销售税 2 费用", "条件类型.TX.JP2E"),
+            // dict.accounting.financial.condition.type.tx.jp2e
+            ("dict.accounting.financial.condition.type.tx.jp2e", "zh-HK", "A/P 销售税 2 费用_hk", "条件类型.TX.JP2E"),
+
+            // dict.accounting.financial.condition.type.tx.jp2i
+            ("dict.accounting.financial.condition.type.tx.jp2i", "en-US", "A/P 销售税 2 发票_us", "条件类型.TX.JP2I"),
+            // dict.accounting.financial.condition.type.tx.jp2i
+            ("dict.accounting.financial.condition.type.tx.jp2i", "ja-JP", "A/P 销售税 2 发票_jp", "条件类型.TX.JP2I"),
+            // dict.accounting.financial.condition.type.tx.jp2i
+            ("dict.accounting.financial.condition.type.tx.jp2i", "zh-CN", "A/P 销售税 2 发票", "条件类型.TX.JP2I"),
+            // dict.accounting.financial.condition.type.tx.jp2i
+            ("dict.accounting.financial.condition.type.tx.jp2i", "zh-HK", "A/P 销售税 2 发票_hk", "条件类型.TX.JP2I"),
+
+            // dict.accounting.financial.condition.type.tx.jp2u
+            ("dict.accounting.financial.condition.type.tx.jp2u", "en-US", "A/P 销售税 2 使用_us", "条件类型.TX.JP2U"),
+            // dict.accounting.financial.condition.type.tx.jp2u
+            ("dict.accounting.financial.condition.type.tx.jp2u", "ja-JP", "A/P 销售税 2 使用_jp", "条件类型.TX.JP2U"),
+            // dict.accounting.financial.condition.type.tx.jp2u
+            ("dict.accounting.financial.condition.type.tx.jp2u", "zh-CN", "A/P 销售税 2 使用", "条件类型.TX.JP2U"),
+            // dict.accounting.financial.condition.type.tx.jp2u
+            ("dict.accounting.financial.condition.type.tx.jp2u", "zh-HK", "A/P 销售税 2 使用_hk", "条件类型.TX.JP2U"),
+
+            // dict.accounting.financial.condition.type.tx.jp3e
+            ("dict.accounting.financial.condition.type.tx.jp3e", "en-US", "A/P 销售税 3 费用_us", "条件类型.TX.JP3E"),
+            // dict.accounting.financial.condition.type.tx.jp3e
+            ("dict.accounting.financial.condition.type.tx.jp3e", "ja-JP", "A/P 销售税 3 费用_jp", "条件类型.TX.JP3E"),
+            // dict.accounting.financial.condition.type.tx.jp3e
+            ("dict.accounting.financial.condition.type.tx.jp3e", "zh-CN", "A/P 销售税 3 费用", "条件类型.TX.JP3E"),
+            // dict.accounting.financial.condition.type.tx.jp3e
+            ("dict.accounting.financial.condition.type.tx.jp3e", "zh-HK", "A/P 销售税 3 费用_hk", "条件类型.TX.JP3E"),
+
+            // dict.accounting.financial.condition.type.tx.jp3i
+            ("dict.accounting.financial.condition.type.tx.jp3i", "en-US", "A/P 销售税 3 发票_us", "条件类型.TX.JP3I"),
+            // dict.accounting.financial.condition.type.tx.jp3i
+            ("dict.accounting.financial.condition.type.tx.jp3i", "ja-JP", "A/P 销售税 3 发票_jp", "条件类型.TX.JP3I"),
+            // dict.accounting.financial.condition.type.tx.jp3i
+            ("dict.accounting.financial.condition.type.tx.jp3i", "zh-CN", "A/P 销售税 3 发票", "条件类型.TX.JP3I"),
+            // dict.accounting.financial.condition.type.tx.jp3i
+            ("dict.accounting.financial.condition.type.tx.jp3i", "zh-HK", "A/P 销售税 3 发票_hk", "条件类型.TX.JP3I"),
+
+            // dict.accounting.financial.condition.type.tx.jp3u
+            ("dict.accounting.financial.condition.type.tx.jp3u", "en-US", "A/P 销售税 3 使用_us", "条件类型.TX.JP3U"),
+            // dict.accounting.financial.condition.type.tx.jp3u
+            ("dict.accounting.financial.condition.type.tx.jp3u", "ja-JP", "A/P 销售税 3 使用_jp", "条件类型.TX.JP3U"),
+            // dict.accounting.financial.condition.type.tx.jp3u
+            ("dict.accounting.financial.condition.type.tx.jp3u", "zh-CN", "A/P 销售税 3 使用", "条件类型.TX.JP3U"),
+            // dict.accounting.financial.condition.type.tx.jp3u
+            ("dict.accounting.financial.condition.type.tx.jp3u", "zh-HK", "A/P 销售税 3 使用_hk", "条件类型.TX.JP3U"),
+
+            // dict.accounting.financial.condition.type.tx.jp4e
+            ("dict.accounting.financial.condition.type.tx.jp4e", "en-US", "A/P 销售税 4 费用_us", "条件类型.TX.JP4E"),
+            // dict.accounting.financial.condition.type.tx.jp4e
+            ("dict.accounting.financial.condition.type.tx.jp4e", "ja-JP", "A/P 销售税 4 费用_jp", "条件类型.TX.JP4E"),
+            // dict.accounting.financial.condition.type.tx.jp4e
+            ("dict.accounting.financial.condition.type.tx.jp4e", "zh-CN", "A/P 销售税 4 费用", "条件类型.TX.JP4E"),
+            // dict.accounting.financial.condition.type.tx.jp4e
+            ("dict.accounting.financial.condition.type.tx.jp4e", "zh-HK", "A/P 销售税 4 费用_hk", "条件类型.TX.JP4E"),
+
+            // dict.accounting.financial.condition.type.tx.jp4i
+            ("dict.accounting.financial.condition.type.tx.jp4i", "en-US", "A/P 销售税 4 发票_us", "条件类型.TX.JP4I"),
+            // dict.accounting.financial.condition.type.tx.jp4i
+            ("dict.accounting.financial.condition.type.tx.jp4i", "ja-JP", "A/P 销售税 4 发票_jp", "条件类型.TX.JP4I"),
+            // dict.accounting.financial.condition.type.tx.jp4i
+            ("dict.accounting.financial.condition.type.tx.jp4i", "zh-CN", "A/P 销售税 4 发票", "条件类型.TX.JP4I"),
+            // dict.accounting.financial.condition.type.tx.jp4i
+            ("dict.accounting.financial.condition.type.tx.jp4i", "zh-HK", "A/P 销售税 4 发票_hk", "条件类型.TX.JP4I"),
+
+            // dict.accounting.financial.condition.type.tx.jp4u
+            ("dict.accounting.financial.condition.type.tx.jp4u", "en-US", "A/P 销售税 4 使用_us", "条件类型.TX.JP4U"),
+            // dict.accounting.financial.condition.type.tx.jp4u
+            ("dict.accounting.financial.condition.type.tx.jp4u", "ja-JP", "A/P 销售税 4 使用_jp", "条件类型.TX.JP4U"),
+            // dict.accounting.financial.condition.type.tx.jp4u
+            ("dict.accounting.financial.condition.type.tx.jp4u", "zh-CN", "A/P 销售税 4 使用", "条件类型.TX.JP4U"),
+            // dict.accounting.financial.condition.type.tx.jp4u
+            ("dict.accounting.financial.condition.type.tx.jp4u", "zh-HK", "A/P 销售税 4 使用_hk", "条件类型.TX.JP4U"),
+
+            // dict.accounting.financial.condition.type.tx.jr1
+            ("dict.accounting.financial.condition.type.tx.jr1", "en-US", "A/R 销售税 1_us", "条件类型.TX.JR1"),
+            // dict.accounting.financial.condition.type.tx.jr1
+            ("dict.accounting.financial.condition.type.tx.jr1", "ja-JP", "A/R 销售税 1_jp", "条件类型.TX.JR1"),
+            // dict.accounting.financial.condition.type.tx.jr1
+            ("dict.accounting.financial.condition.type.tx.jr1", "zh-CN", "A/R 销售税 1", "条件类型.TX.JR1"),
+            // dict.accounting.financial.condition.type.tx.jr1
+            ("dict.accounting.financial.condition.type.tx.jr1", "zh-HK", "A/R 销售税 1_hk", "条件类型.TX.JR1"),
+
+            // dict.accounting.financial.condition.type.tx.jr2
+            ("dict.accounting.financial.condition.type.tx.jr2", "en-US", "A/R 销售税 2_us", "条件类型.TX.JR2"),
+            // dict.accounting.financial.condition.type.tx.jr2
+            ("dict.accounting.financial.condition.type.tx.jr2", "ja-JP", "A/R 销售税 2_jp", "条件类型.TX.JR2"),
+            // dict.accounting.financial.condition.type.tx.jr2
+            ("dict.accounting.financial.condition.type.tx.jr2", "zh-CN", "A/R 销售税 2", "条件类型.TX.JR2"),
+            // dict.accounting.financial.condition.type.tx.jr2
+            ("dict.accounting.financial.condition.type.tx.jr2", "zh-HK", "A/R 销售税 2_hk", "条件类型.TX.JR2"),
+
+            // dict.accounting.financial.condition.type.tx.jr3
+            ("dict.accounting.financial.condition.type.tx.jr3", "en-US", "A/R 销售税 3_us", "条件类型.TX.JR3"),
+            // dict.accounting.financial.condition.type.tx.jr3
+            ("dict.accounting.financial.condition.type.tx.jr3", "ja-JP", "A/R 销售税 3_jp", "条件类型.TX.JR3"),
+            // dict.accounting.financial.condition.type.tx.jr3
+            ("dict.accounting.financial.condition.type.tx.jr3", "zh-CN", "A/R 销售税 3", "条件类型.TX.JR3"),
+            // dict.accounting.financial.condition.type.tx.jr3
+            ("dict.accounting.financial.condition.type.tx.jr3", "zh-HK", "A/R 销售税 3_hk", "条件类型.TX.JR3"),
+
+            // dict.accounting.financial.condition.type.tx.jr4
+            ("dict.accounting.financial.condition.type.tx.jr4", "en-US", "A/R 销售税 4_us", "条件类型.TX.JR4"),
+            // dict.accounting.financial.condition.type.tx.jr4
+            ("dict.accounting.financial.condition.type.tx.jr4", "ja-JP", "A/R 销售税 4_jp", "条件类型.TX.JR4"),
+            // dict.accounting.financial.condition.type.tx.jr4
+            ("dict.accounting.financial.condition.type.tx.jr4", "zh-CN", "A/R 销售税 4", "条件类型.TX.JR4"),
+            // dict.accounting.financial.condition.type.tx.jr4
+            ("dict.accounting.financial.condition.type.tx.jr4", "zh-HK", "A/R 销售税 4_hk", "条件类型.TX.JR4"),
+
+            // dict.accounting.financial.condition.type.tx.jrc1
+            ("dict.accounting.financial.condition.type.tx.jrc1", "en-US", "A/R 销售 GST_us", "条件类型.TX.JRC1"),
+            // dict.accounting.financial.condition.type.tx.jrc1
+            ("dict.accounting.financial.condition.type.tx.jrc1", "ja-JP", "A/R 销售 GST_jp", "条件类型.TX.JRC1"),
+            // dict.accounting.financial.condition.type.tx.jrc1
+            ("dict.accounting.financial.condition.type.tx.jrc1", "zh-CN", "A/R 销售 GST", "条件类型.TX.JRC1"),
+            // dict.accounting.financial.condition.type.tx.jrc1
+            ("dict.accounting.financial.condition.type.tx.jrc1", "zh-HK", "A/R 销售 GST_hk", "条件类型.TX.JRC1"),
+
+            // dict.accounting.financial.condition.type.tx.jrc2
+            ("dict.accounting.financial.condition.type.tx.jrc2", "en-US", "A/R 销售 PST_us", "条件类型.TX.JRC2"),
+            // dict.accounting.financial.condition.type.tx.jrc2
+            ("dict.accounting.financial.condition.type.tx.jrc2", "ja-JP", "A/R 销售 PST_jp", "条件类型.TX.JRC2"),
+            // dict.accounting.financial.condition.type.tx.jrc2
+            ("dict.accounting.financial.condition.type.tx.jrc2", "zh-CN", "A/R 销售 PST", "条件类型.TX.JRC2"),
+            // dict.accounting.financial.condition.type.tx.jrc2
+            ("dict.accounting.financial.condition.type.tx.jrc2", "zh-HK", "A/R 销售 PST_hk", "条件类型.TX.JRC2"),
+
+            // dict.accounting.financial.condition.type.tx.jrc3
+            ("dict.accounting.financial.condition.type.tx.jrc3", "en-US", "A/R 销售 PST B +PST_us", "条件类型.TX.JRC3"),
+            // dict.accounting.financial.condition.type.tx.jrc3
+            ("dict.accounting.financial.condition.type.tx.jrc3", "ja-JP", "A/R 销售 PST B +PST_jp", "条件类型.TX.JRC3"),
+            // dict.accounting.financial.condition.type.tx.jrc3
+            ("dict.accounting.financial.condition.type.tx.jrc3", "zh-CN", "A/R 销售 PST B +PST", "条件类型.TX.JRC3"),
+            // dict.accounting.financial.condition.type.tx.jrc3
+            ("dict.accounting.financial.condition.type.tx.jrc3", "zh-HK", "A/R 销售 PST B +PST_hk", "条件类型.TX.JRC3"),
+
+            // dict.accounting.financial.condition.type.tx.jrc4
+            ("dict.accounting.financial.condition.type.tx.jrc4", "en-US", "A/R 销售 PST B +PST_us", "条件类型.TX.JRC4"),
+            // dict.accounting.financial.condition.type.tx.jrc4
+            ("dict.accounting.financial.condition.type.tx.jrc4", "ja-JP", "A/R 销售 PST B +PST_jp", "条件类型.TX.JRC4"),
+            // dict.accounting.financial.condition.type.tx.jrc4
+            ("dict.accounting.financial.condition.type.tx.jrc4", "zh-CN", "A/R 销售 PST B +PST", "条件类型.TX.JRC4"),
+            // dict.accounting.financial.condition.type.tx.jrc4
+            ("dict.accounting.financial.condition.type.tx.jrc4", "zh-HK", "A/R 销售 PST B +PST_hk", "条件类型.TX.JRC4"),
+
+            // dict.accounting.financial.condition.type.tx.kpxx
+            ("dict.accounting.financial.condition.type.tx.kpxx", "en-US", "销售税 (测试)_us", "条件类型.TX.KPXX"),
+            // dict.accounting.financial.condition.type.tx.kpxx
+            ("dict.accounting.financial.condition.type.tx.kpxx", "ja-JP", "销售税 (测试)_jp", "条件类型.TX.KPXX"),
+            // dict.accounting.financial.condition.type.tx.kpxx
+            ("dict.accounting.financial.condition.type.tx.kpxx", "zh-CN", "销售税 (测试)", "条件类型.TX.KPXX"),
+            // dict.accounting.financial.condition.type.tx.kpxx
+            ("dict.accounting.financial.condition.type.tx.kpxx", "zh-HK", "销售税 (测试)_hk", "条件类型.TX.KPXX"),
+
+            // dict.accounting.financial.condition.type.tx.kric
+            ("dict.accounting.financial.condition.type.tx.kric", "en-US", "进项税KR结构_us", "条件类型.TX.KRIC"),
+            // dict.accounting.financial.condition.type.tx.kric
+            ("dict.accounting.financial.condition.type.tx.kric", "ja-JP", "进项税KR结构_jp", "条件类型.TX.KRIC"),
+            // dict.accounting.financial.condition.type.tx.kric
+            ("dict.accounting.financial.condition.type.tx.kric", "zh-CN", "进项税KR结构", "条件类型.TX.KRIC"),
+            // dict.accounting.financial.condition.type.tx.kric
+            ("dict.accounting.financial.condition.type.tx.kric", "zh-HK", "进项税KR结构_hk", "条件类型.TX.KRIC"),
+
+            // dict.accounting.financial.condition.type.tx.krit
+            ("dict.accounting.financial.condition.type.tx.krit", "en-US", "进项税KR_us", "条件类型.TX.KRIT"),
+            // dict.accounting.financial.condition.type.tx.krit
+            ("dict.accounting.financial.condition.type.tx.krit", "ja-JP", "进项税KR_jp", "条件类型.TX.KRIT"),
+            // dict.accounting.financial.condition.type.tx.krit
+            ("dict.accounting.financial.condition.type.tx.krit", "zh-CN", "进项税KR", "条件类型.TX.KRIT"),
+            // dict.accounting.financial.condition.type.tx.krit
+            ("dict.accounting.financial.condition.type.tx.krit", "zh-HK", "进项税KR_hk", "条件类型.TX.KRIT"),
+
+            // dict.accounting.financial.condition.type.tx.krni
+            ("dict.accounting.financial.condition.type.tx.krni", "en-US", "发货免税_us", "条件类型.TX.KRNI"),
+            // dict.accounting.financial.condition.type.tx.krni
+            ("dict.accounting.financial.condition.type.tx.krni", "ja-JP", "发货免税_jp", "条件类型.TX.KRNI"),
+            // dict.accounting.financial.condition.type.tx.krni
+            ("dict.accounting.financial.condition.type.tx.krni", "zh-CN", "发货免税", "条件类型.TX.KRNI"),
+            // dict.accounting.financial.condition.type.tx.krni
+            ("dict.accounting.financial.condition.type.tx.krni", "zh-HK", "发货免税_hk", "条件类型.TX.KRNI"),
+
+            // dict.accounting.financial.condition.type.tx.krnt
+            ("dict.accounting.financial.condition.type.tx.krnt", "en-US", "无抵扣输入税 KR_us", "条件类型.TX.KRNT"),
+            // dict.accounting.financial.condition.type.tx.krnt
+            ("dict.accounting.financial.condition.type.tx.krnt", "ja-JP", "无抵扣输入税 KR_jp", "条件类型.TX.KRNT"),
+            // dict.accounting.financial.condition.type.tx.krnt
+            ("dict.accounting.financial.condition.type.tx.krnt", "zh-CN", "无抵扣输入税 KR", "条件类型.TX.KRNT"),
+            // dict.accounting.financial.condition.type.tx.krnt
+            ("dict.accounting.financial.condition.type.tx.krnt", "zh-HK", "无抵扣输入税 KR_hk", "条件类型.TX.KRNT"),
+
+            // dict.accounting.financial.condition.type.tx.krot
+            ("dict.accounting.financial.condition.type.tx.krot", "en-US", "销项税_us", "条件类型.TX.KROT"),
+            // dict.accounting.financial.condition.type.tx.krot
+            ("dict.accounting.financial.condition.type.tx.krot", "ja-JP", "销项税_jp", "条件类型.TX.KROT"),
+            // dict.accounting.financial.condition.type.tx.krot
+            ("dict.accounting.financial.condition.type.tx.krot", "zh-CN", "销项税", "条件类型.TX.KROT"),
+            // dict.accounting.financial.condition.type.tx.krot
+            ("dict.accounting.financial.condition.type.tx.krot", "zh-HK", "销项税_hk", "条件类型.TX.KROT"),
+
+            // dict.accounting.financial.condition.type.tx.krpp
+            ("dict.accounting.financial.condition.type.tx.krpp", "en-US", "付款由代理商 KR_us", "条件类型.TX.KRPP"),
+            // dict.accounting.financial.condition.type.tx.krpp
+            ("dict.accounting.financial.condition.type.tx.krpp", "ja-JP", "付款由代理商 KR_jp", "条件类型.TX.KRPP"),
+            // dict.accounting.financial.condition.type.tx.krpp
+            ("dict.accounting.financial.condition.type.tx.krpp", "zh-CN", "付款由代理商 KR", "条件类型.TX.KRPP"),
+            // dict.accounting.financial.condition.type.tx.krpp
+            ("dict.accounting.financial.condition.type.tx.krpp", "zh-HK", "付款由代理商 KR_hk", "条件类型.TX.KRPP"),
+
+            // dict.accounting.financial.condition.type.tx.mar
+            ("dict.accounting.financial.condition.type.tx.mar", "en-US", "A/P海运_us", "条件类型.TX.MAR"),
+            // dict.accounting.financial.condition.type.tx.mar
+            ("dict.accounting.financial.condition.type.tx.mar", "ja-JP", "A/P海运_jp", "条件类型.TX.MAR"),
+            // dict.accounting.financial.condition.type.tx.mar
+            ("dict.accounting.financial.condition.type.tx.mar", "zh-CN", "A/P海运", "条件类型.TX.MAR"),
+            // dict.accounting.financial.condition.type.tx.mar
+            ("dict.accounting.financial.condition.type.tx.mar", "zh-HK", "A/P海运_hk", "条件类型.TX.MAR"),
+
+            // dict.accounting.financial.condition.type.tx.mar1
+            ("dict.accounting.financial.condition.type.tx.mar1", "en-US", "A/R海运_us", "条件类型.TX.MAR1"),
+            // dict.accounting.financial.condition.type.tx.mar1
+            ("dict.accounting.financial.condition.type.tx.mar1", "ja-JP", "A/R海运_jp", "条件类型.TX.MAR1"),
+            // dict.accounting.financial.condition.type.tx.mar1
+            ("dict.accounting.financial.condition.type.tx.mar1", "zh-CN", "A/R海运", "条件类型.TX.MAR1"),
+            // dict.accounting.financial.condition.type.tx.mar1
+            ("dict.accounting.financial.condition.type.tx.mar1", "zh-HK", "A/R海运_hk", "条件类型.TX.MAR1"),
+
+            // dict.accounting.financial.condition.type.tx.mw01
+            ("dict.accounting.financial.condition.type.tx.mw01", "en-US", "税触发RU_us", "条件类型.TX.MW01"),
+            // dict.accounting.financial.condition.type.tx.mw01
+            ("dict.accounting.financial.condition.type.tx.mw01", "ja-JP", "税触发RU_jp", "条件类型.TX.MW01"),
+            // dict.accounting.financial.condition.type.tx.mw01
+            ("dict.accounting.financial.condition.type.tx.mw01", "zh-CN", "税触发RU", "条件类型.TX.MW01"),
+            // dict.accounting.financial.condition.type.tx.mw01
+            ("dict.accounting.financial.condition.type.tx.mw01", "zh-HK", "税触发RU_hk", "条件类型.TX.MW01"),
+
+            // dict.accounting.financial.condition.type.tx.mwaa
+            ("dict.accounting.financial.condition.type.tx.mwaa", "en-US", "结算税_us", "条件类型.TX.MWAA"),
+            // dict.accounting.financial.condition.type.tx.mwaa
+            ("dict.accounting.financial.condition.type.tx.mwaa", "ja-JP", "结算税_jp", "条件类型.TX.MWAA"),
+            // dict.accounting.financial.condition.type.tx.mwaa
+            ("dict.accounting.financial.condition.type.tx.mwaa", "zh-CN", "结算税", "条件类型.TX.MWAA"),
+            // dict.accounting.financial.condition.type.tx.mwaa
+            ("dict.accounting.financial.condition.type.tx.mwaa", "zh-HK", "结算税_hk", "条件类型.TX.MWAA"),
+
+            // dict.accounting.financial.condition.type.tx.mwai
+            ("dict.accounting.financial.condition.type.tx.mwai", "en-US", "销项税舍入_us", "条件类型.TX.MWAI"),
+            // dict.accounting.financial.condition.type.tx.mwai
+            ("dict.accounting.financial.condition.type.tx.mwai", "ja-JP", "销项税舍入_jp", "条件类型.TX.MWAI"),
+            // dict.accounting.financial.condition.type.tx.mwai
+            ("dict.accounting.financial.condition.type.tx.mwai", "zh-CN", "销项税舍入", "条件类型.TX.MWAI"),
+            // dict.accounting.financial.condition.type.tx.mwai
+            ("dict.accounting.financial.condition.type.tx.mwai", "zh-HK", "销项税舍入_hk", "条件类型.TX.MWAI"),
+
+            // dict.accounting.financial.condition.type.tx.mwal
+            ("dict.accounting.financial.condition.type.tx.mwal", "en-US", "节约税_us", "条件类型.TX.MWAL"),
+            // dict.accounting.financial.condition.type.tx.mwal
+            ("dict.accounting.financial.condition.type.tx.mwal", "ja-JP", "节约税_jp", "条件类型.TX.MWAL"),
+            // dict.accounting.financial.condition.type.tx.mwal
+            ("dict.accounting.financial.condition.type.tx.mwal", "zh-CN", "节约税", "条件类型.TX.MWAL"),
+            // dict.accounting.financial.condition.type.tx.mwal
+            ("dict.accounting.financial.condition.type.tx.mwal", "zh-HK", "节约税_hk", "条件类型.TX.MWAL"),
+
+            // dict.accounting.financial.condition.type.tx.mwan
+            ("dict.accounting.financial.condition.type.tx.mwan", "en-US", "不可抵扣的销项税_us", "条件类型.TX.MWAN"),
+            // dict.accounting.financial.condition.type.tx.mwan
+            ("dict.accounting.financial.condition.type.tx.mwan", "ja-JP", "不可抵扣的销项税_jp", "条件类型.TX.MWAN"),
+            // dict.accounting.financial.condition.type.tx.mwan
+            ("dict.accounting.financial.condition.type.tx.mwan", "zh-CN", "不可抵扣的销项税", "条件类型.TX.MWAN"),
+            // dict.accounting.financial.condition.type.tx.mwan
+            ("dict.accounting.financial.condition.type.tx.mwan", "zh-HK", "不可抵扣的销项税_hk", "条件类型.TX.MWAN"),
+
+            // dict.accounting.financial.condition.type.tx.mwar
+            ("dict.accounting.financial.condition.type.tx.mwar", "en-US", "销售税舍入_us", "条件类型.TX.MWAR"),
+            // dict.accounting.financial.condition.type.tx.mwar
+            ("dict.accounting.financial.condition.type.tx.mwar", "ja-JP", "销售税舍入_jp", "条件类型.TX.MWAR"),
+            // dict.accounting.financial.condition.type.tx.mwar
+            ("dict.accounting.financial.condition.type.tx.mwar", "zh-CN", "销售税舍入", "条件类型.TX.MWAR"),
+            // dict.accounting.financial.condition.type.tx.mwar
+            ("dict.accounting.financial.condition.type.tx.mwar", "zh-HK", "销售税舍入_hk", "条件类型.TX.MWAR"),
+
+            // dict.accounting.financial.condition.type.tx.mwas
+            ("dict.accounting.financial.condition.type.tx.mwas", "en-US", "销项税_us", "条件类型.TX.MWAS"),
+            // dict.accounting.financial.condition.type.tx.mwas
+            ("dict.accounting.financial.condition.type.tx.mwas", "ja-JP", "销项税_jp", "条件类型.TX.MWAS"),
+            // dict.accounting.financial.condition.type.tx.mwas
+            ("dict.accounting.financial.condition.type.tx.mwas", "zh-CN", "销项税", "条件类型.TX.MWAS"),
+            // dict.accounting.financial.condition.type.tx.mwas
+            ("dict.accounting.financial.condition.type.tx.mwas", "zh-HK", "销项税_hk", "条件类型.TX.MWAS"),
+
+            // dict.accounting.financial.condition.type.tx.mwcn
+            ("dict.accounting.financial.condition.type.tx.mwcn", "en-US", "均一税 中国_us", "条件类型.TX.MWCN"),
+            // dict.accounting.financial.condition.type.tx.mwcn
+            ("dict.accounting.financial.condition.type.tx.mwcn", "ja-JP", "均一税 中国_jp", "条件类型.TX.MWCN"),
+            // dict.accounting.financial.condition.type.tx.mwcn
+            ("dict.accounting.financial.condition.type.tx.mwcn", "zh-CN", "均一税 中国", "条件类型.TX.MWCN"),
+            // dict.accounting.financial.condition.type.tx.mwcn
+            ("dict.accounting.financial.condition.type.tx.mwcn", "zh-HK", "均一税 中国_hk", "条件类型.TX.MWCN"),
+
+            // dict.accounting.financial.condition.type.tx.mwni
+            ("dict.accounting.financial.condition.type.tx.mwni", "en-US", "不可抵扣的进项税_us", "条件类型.TX.MWNI"),
+            // dict.accounting.financial.condition.type.tx.mwni
+            ("dict.accounting.financial.condition.type.tx.mwni", "ja-JP", "不可抵扣的进项税_jp", "条件类型.TX.MWNI"),
+            // dict.accounting.financial.condition.type.tx.mwni
+            ("dict.accounting.financial.condition.type.tx.mwni", "zh-CN", "不可抵扣的进项税", "条件类型.TX.MWNI"),
+            // dict.accounting.financial.condition.type.tx.mwni
+            ("dict.accounting.financial.condition.type.tx.mwni", "zh-HK", "不可抵扣的进项税_hk", "条件类型.TX.MWNI"),
+
+            // dict.accounting.financial.condition.type.tx.mwpi
+            ("dict.accounting.financial.condition.type.tx.mwpi", "en-US", "销项税舍入_us", "条件类型.TX.MWPI"),
+            // dict.accounting.financial.condition.type.tx.mwpi
+            ("dict.accounting.financial.condition.type.tx.mwpi", "ja-JP", "销项税舍入_jp", "条件类型.TX.MWPI"),
+            // dict.accounting.financial.condition.type.tx.mwpi
+            ("dict.accounting.financial.condition.type.tx.mwpi", "zh-CN", "销项税舍入", "条件类型.TX.MWPI"),
+            // dict.accounting.financial.condition.type.tx.mwpi
+            ("dict.accounting.financial.condition.type.tx.mwpi", "zh-HK", "销项税舍入_hk", "条件类型.TX.MWPI"),
+
+            // dict.accounting.financial.condition.type.tx.mwr1
+            ("dict.accounting.financial.condition.type.tx.mwr1", "en-US", "销售税贷方(RU)_us", "条件类型.TX.MWR1"),
+            // dict.accounting.financial.condition.type.tx.mwr1
+            ("dict.accounting.financial.condition.type.tx.mwr1", "ja-JP", "销售税贷方(RU)_jp", "条件类型.TX.MWR1"),
+            // dict.accounting.financial.condition.type.tx.mwr1
+            ("dict.accounting.financial.condition.type.tx.mwr1", "zh-CN", "销售税贷方(RU)", "条件类型.TX.MWR1"),
+            // dict.accounting.financial.condition.type.tx.mwr1
+            ("dict.accounting.financial.condition.type.tx.mwr1", "zh-HK", "销售税贷方(RU)_hk", "条件类型.TX.MWR1"),
+
+            // dict.accounting.financial.condition.type.tx.mwr2
+            ("dict.accounting.financial.condition.type.tx.mwr2", "en-US", "销售税借方Rev_us", "条件类型.TX.MWR2"),
+            // dict.accounting.financial.condition.type.tx.mwr2
+            ("dict.accounting.financial.condition.type.tx.mwr2", "ja-JP", "销售税借方Rev_jp", "条件类型.TX.MWR2"),
+            // dict.accounting.financial.condition.type.tx.mwr2
+            ("dict.accounting.financial.condition.type.tx.mwr2", "zh-CN", "销售税借方Rev", "条件类型.TX.MWR2"),
+            // dict.accounting.financial.condition.type.tx.mwr2
+            ("dict.accounting.financial.condition.type.tx.mwr2", "zh-HK", "销售税借方Rev_hk", "条件类型.TX.MWR2"),
+
+            // dict.accounting.financial.condition.type.tx.mwr3
+            ("dict.accounting.financial.condition.type.tx.mwr3", "en-US", "销售税贷方Rev_us", "条件类型.TX.MWR3"),
+            // dict.accounting.financial.condition.type.tx.mwr3
+            ("dict.accounting.financial.condition.type.tx.mwr3", "ja-JP", "销售税贷方Rev_jp", "条件类型.TX.MWR3"),
+            // dict.accounting.financial.condition.type.tx.mwr3
+            ("dict.accounting.financial.condition.type.tx.mwr3", "zh-CN", "销售税贷方Rev", "条件类型.TX.MWR3"),
+            // dict.accounting.financial.condition.type.tx.mwr3
+            ("dict.accounting.financial.condition.type.tx.mwr3", "zh-HK", "销售税贷方Rev_hk", "条件类型.TX.MWR3"),
+
+            // dict.accounting.financial.condition.type.tx.mwr4
+            ("dict.accounting.financial.condition.type.tx.mwr4", "en-US", "当地销售税贷方_us", "条件类型.TX.MWR4"),
+            // dict.accounting.financial.condition.type.tx.mwr4
+            ("dict.accounting.financial.condition.type.tx.mwr4", "ja-JP", "当地销售税贷方_jp", "条件类型.TX.MWR4"),
+            // dict.accounting.financial.condition.type.tx.mwr4
+            ("dict.accounting.financial.condition.type.tx.mwr4", "zh-CN", "当地销售税贷方", "条件类型.TX.MWR4"),
+            // dict.accounting.financial.condition.type.tx.mwr4
+            ("dict.accounting.financial.condition.type.tx.mwr4", "zh-HK", "当地销售税贷方_hk", "条件类型.TX.MWR4"),
+
+            // dict.accounting.financial.condition.type.tx.mwr5
+            ("dict.accounting.financial.condition.type.tx.mwr5", "en-US", "本地借方冲销(RU)_us", "条件类型.TX.MWR5"),
+            // dict.accounting.financial.condition.type.tx.mwr5
+            ("dict.accounting.financial.condition.type.tx.mwr5", "ja-JP", "本地借方冲销(RU)_jp", "条件类型.TX.MWR5"),
+            // dict.accounting.financial.condition.type.tx.mwr5
+            ("dict.accounting.financial.condition.type.tx.mwr5", "zh-CN", "本地借方冲销(RU)", "条件类型.TX.MWR5"),
+            // dict.accounting.financial.condition.type.tx.mwr5
+            ("dict.accounting.financial.condition.type.tx.mwr5", "zh-HK", "本地借方冲销(RU)_hk", "条件类型.TX.MWR5"),
+
+            // dict.accounting.financial.condition.type.tx.mwr6
+            ("dict.accounting.financial.condition.type.tx.mwr6", "en-US", "当地贷方Rev._us", "条件类型.TX.MWR6"),
+            // dict.accounting.financial.condition.type.tx.mwr6
+            ("dict.accounting.financial.condition.type.tx.mwr6", "ja-JP", "当地贷方Rev._jp", "条件类型.TX.MWR6"),
+            // dict.accounting.financial.condition.type.tx.mwr6
+            ("dict.accounting.financial.condition.type.tx.mwr6", "zh-CN", "当地贷方Rev.", "条件类型.TX.MWR6"),
+            // dict.accounting.financial.condition.type.tx.mwr6
+            ("dict.accounting.financial.condition.type.tx.mwr6", "zh-HK", "当地贷方Rev._hk", "条件类型.TX.MWR6"),
+
+            // dict.accounting.financial.condition.type.tx.mwr7
+            ("dict.accounting.financial.condition.type.tx.mwr7", "en-US", "GSM 贷方        (RU)_us", "条件类型.TX.MWR7"),
+            // dict.accounting.financial.condition.type.tx.mwr7
+            ("dict.accounting.financial.condition.type.tx.mwr7", "ja-JP", "GSM 贷方        (RU)_jp", "条件类型.TX.MWR7"),
+            // dict.accounting.financial.condition.type.tx.mwr7
+            ("dict.accounting.financial.condition.type.tx.mwr7", "zh-CN", "GSM 贷方        (RU)", "条件类型.TX.MWR7"),
+            // dict.accounting.financial.condition.type.tx.mwr7
+            ("dict.accounting.financial.condition.type.tx.mwr7", "zh-HK", "GSM 贷方        (RU)_hk", "条件类型.TX.MWR7"),
+
+            // dict.accounting.financial.condition.type.tx.mwr8
+            ("dict.accounting.financial.condition.type.tx.mwr8", "en-US", "GSM 贷方冲销    (RU)_us", "条件类型.TX.MWR8"),
+            // dict.accounting.financial.condition.type.tx.mwr8
+            ("dict.accounting.financial.condition.type.tx.mwr8", "ja-JP", "GSM 贷方冲销    (RU)_jp", "条件类型.TX.MWR8"),
+            // dict.accounting.financial.condition.type.tx.mwr8
+            ("dict.accounting.financial.condition.type.tx.mwr8", "zh-CN", "GSM 贷方冲销    (RU)", "条件类型.TX.MWR8"),
+            // dict.accounting.financial.condition.type.tx.mwr8
+            ("dict.accounting.financial.condition.type.tx.mwr8", "zh-HK", "GSM 贷方冲销    (RU)_hk", "条件类型.TX.MWR8"),
+
+            // dict.accounting.financial.condition.type.tx.mwr9
+            ("dict.accounting.financial.condition.type.tx.mwr9", "en-US", "GSM 贷方冲销    (RU)_us", "条件类型.TX.MWR9"),
+            // dict.accounting.financial.condition.type.tx.mwr9
+            ("dict.accounting.financial.condition.type.tx.mwr9", "ja-JP", "GSM 贷方冲销    (RU)_jp", "条件类型.TX.MWR9"),
+            // dict.accounting.financial.condition.type.tx.mwr9
+            ("dict.accounting.financial.condition.type.tx.mwr9", "zh-CN", "GSM 贷方冲销    (RU)", "条件类型.TX.MWR9"),
+            // dict.accounting.financial.condition.type.tx.mwr9
+            ("dict.accounting.financial.condition.type.tx.mwr9", "zh-HK", "GSM 贷方冲销    (RU)_hk", "条件类型.TX.MWR9"),
+
+            // dict.accounting.financial.condition.type.tx.mwrk
+            ("dict.accounting.financial.condition.type.tx.mwrk", "en-US", "差旅费 （％）_us", "条件类型.TX.MWRK"),
+            // dict.accounting.financial.condition.type.tx.mwrk
+            ("dict.accounting.financial.condition.type.tx.mwrk", "ja-JP", "差旅费 （％）_jp", "条件类型.TX.MWRK"),
+            // dict.accounting.financial.condition.type.tx.mwrk
+            ("dict.accounting.financial.condition.type.tx.mwrk", "zh-CN", "差旅费 （％）", "条件类型.TX.MWRK"),
+            // dict.accounting.financial.condition.type.tx.mwrk
+            ("dict.accounting.financial.condition.type.tx.mwrk", "zh-HK", "差旅费 （％）_hk", "条件类型.TX.MWRK"),
+
+            // dict.accounting.financial.condition.type.tx.mws1
+            ("dict.accounting.financial.condition.type.tx.mws1", "en-US", "小计_us", "条件类型.TX.MWS1"),
+            // dict.accounting.financial.condition.type.tx.mws1
+            ("dict.accounting.financial.condition.type.tx.mws1", "ja-JP", "小计_jp", "条件类型.TX.MWS1"),
+            // dict.accounting.financial.condition.type.tx.mws1
+            ("dict.accounting.financial.condition.type.tx.mws1", "zh-CN", "小计", "条件类型.TX.MWS1"),
+            // dict.accounting.financial.condition.type.tx.mws1
+            ("dict.accounting.financial.condition.type.tx.mws1", "zh-HK", "小计_hk", "条件类型.TX.MWS1"),
+
+            // dict.accounting.financial.condition.type.tx.mwvi
+            ("dict.accounting.financial.condition.type.tx.mwvi", "en-US", "进项税舍入_us", "条件类型.TX.MWVI"),
+            // dict.accounting.financial.condition.type.tx.mwvi
+            ("dict.accounting.financial.condition.type.tx.mwvi", "ja-JP", "进项税舍入_jp", "条件类型.TX.MWVI"),
+            // dict.accounting.financial.condition.type.tx.mwvi
+            ("dict.accounting.financial.condition.type.tx.mwvi", "zh-CN", "进项税舍入", "条件类型.TX.MWVI"),
+            // dict.accounting.financial.condition.type.tx.mwvi
+            ("dict.accounting.financial.condition.type.tx.mwvi", "zh-HK", "进项税舍入_hk", "条件类型.TX.MWVI"),
+
+            // dict.accounting.financial.condition.type.tx.mwvn
+            ("dict.accounting.financial.condition.type.tx.mwvn", "en-US", "不可抵扣的进项税_us", "条件类型.TX.MWVN"),
+            // dict.accounting.financial.condition.type.tx.mwvn
+            ("dict.accounting.financial.condition.type.tx.mwvn", "ja-JP", "不可抵扣的进项税_jp", "条件类型.TX.MWVN"),
+            // dict.accounting.financial.condition.type.tx.mwvn
+            ("dict.accounting.financial.condition.type.tx.mwvn", "zh-CN", "不可抵扣的进项税", "条件类型.TX.MWVN"),
+            // dict.accounting.financial.condition.type.tx.mwvn
+            ("dict.accounting.financial.condition.type.tx.mwvn", "zh-HK", "不可抵扣的进项税_hk", "条件类型.TX.MWVN"),
+
+            // dict.accounting.financial.condition.type.tx.mwvr
+            ("dict.accounting.financial.condition.type.tx.mwvr", "en-US", "舍入进项税_us", "条件类型.TX.MWVR"),
+            // dict.accounting.financial.condition.type.tx.mwvr
+            ("dict.accounting.financial.condition.type.tx.mwvr", "ja-JP", "舍入进项税_jp", "条件类型.TX.MWVR"),
+            // dict.accounting.financial.condition.type.tx.mwvr
+            ("dict.accounting.financial.condition.type.tx.mwvr", "zh-CN", "舍入进项税", "条件类型.TX.MWVR"),
+            // dict.accounting.financial.condition.type.tx.mwvr
+            ("dict.accounting.financial.condition.type.tx.mwvr", "zh-HK", "舍入进项税_hk", "条件类型.TX.MWVR"),
+
+            // dict.accounting.financial.condition.type.tx.mwvs
+            ("dict.accounting.financial.condition.type.tx.mwvs", "en-US", "进项税_us", "条件类型.TX.MWVS"),
+            // dict.accounting.financial.condition.type.tx.mwvs
+            ("dict.accounting.financial.condition.type.tx.mwvs", "ja-JP", "进项税_jp", "条件类型.TX.MWVS"),
+            // dict.accounting.financial.condition.type.tx.mwvs
+            ("dict.accounting.financial.condition.type.tx.mwvs", "zh-CN", "进项税", "条件类型.TX.MWVS"),
+            // dict.accounting.financial.condition.type.tx.mwvs
+            ("dict.accounting.financial.condition.type.tx.mwvs", "zh-HK", "进项税_hk", "条件类型.TX.MWVS"),
+
+            // dict.accounting.financial.condition.type.tx.mwvy
+            ("dict.accounting.financial.condition.type.tx.mwvy", "en-US", "不可抵扣的进项税_us", "条件类型.TX.MWVY"),
+            // dict.accounting.financial.condition.type.tx.mwvy
+            ("dict.accounting.financial.condition.type.tx.mwvy", "ja-JP", "不可抵扣的进项税_jp", "条件类型.TX.MWVY"),
+            // dict.accounting.financial.condition.type.tx.mwvy
+            ("dict.accounting.financial.condition.type.tx.mwvy", "zh-CN", "不可抵扣的进项税", "条件类型.TX.MWVY"),
+            // dict.accounting.financial.condition.type.tx.mwvy
+            ("dict.accounting.financial.condition.type.tx.mwvy", "zh-HK", "不可抵扣的进项税_hk", "条件类型.TX.MWVY"),
+
+            // dict.accounting.financial.condition.type.tx.mwvz
+            ("dict.accounting.financial.condition.type.tx.mwvz", "en-US", "不可抵扣的进项税_us", "条件类型.TX.MWVZ"),
+            // dict.accounting.financial.condition.type.tx.mwvz
+            ("dict.accounting.financial.condition.type.tx.mwvz", "ja-JP", "不可抵扣的进项税_jp", "条件类型.TX.MWVZ"),
+            // dict.accounting.financial.condition.type.tx.mwvz
+            ("dict.accounting.financial.condition.type.tx.mwvz", "zh-CN", "不可抵扣的进项税", "条件类型.TX.MWVZ"),
+            // dict.accounting.financial.condition.type.tx.mwvz
+            ("dict.accounting.financial.condition.type.tx.mwvz", "zh-HK", "不可抵扣的进项税_hk", "条件类型.TX.MWVZ"),
+
+            // dict.accounting.financial.condition.type.tx.mwws
+            ("dict.accounting.financial.condition.type.tx.mwws", "en-US", "简化税收输出_us", "条件类型.TX.MWWS"),
+            // dict.accounting.financial.condition.type.tx.mwws
+            ("dict.accounting.financial.condition.type.tx.mwws", "ja-JP", "简化税收输出_jp", "条件类型.TX.MWWS"),
+            // dict.accounting.financial.condition.type.tx.mwws
+            ("dict.accounting.financial.condition.type.tx.mwws", "zh-CN", "简化税收输出", "条件类型.TX.MWWS"),
+            // dict.accounting.financial.condition.type.tx.mwws
+            ("dict.accounting.financial.condition.type.tx.mwws", "zh-HK", "简化税收输出_hk", "条件类型.TX.MWWS"),
+
+            // dict.accounting.financial.condition.type.tx.mwzb
+            ("dict.accounting.financial.condition.type.tx.mwzb", "en-US", "投资税 Norw.Basis_us", "条件类型.TX.MWZB"),
+            // dict.accounting.financial.condition.type.tx.mwzb
+            ("dict.accounting.financial.condition.type.tx.mwzb", "ja-JP", "投资税 Norw.Basis_jp", "条件类型.TX.MWZB"),
+            // dict.accounting.financial.condition.type.tx.mwzb
+            ("dict.accounting.financial.condition.type.tx.mwzb", "zh-CN", "投资税 Norw.Basis", "条件类型.TX.MWZB"),
+            // dict.accounting.financial.condition.type.tx.mwzb
+            ("dict.accounting.financial.condition.type.tx.mwzb", "zh-HK", "投资税 Norw.Basis_hk", "条件类型.TX.MWZB"),
+
+            // dict.accounting.financial.condition.type.tx.mwzg
+            ("dict.accounting.financial.condition.type.tx.mwzg", "en-US", "抵销项-投资税_us", "条件类型.TX.MWZG"),
+            // dict.accounting.financial.condition.type.tx.mwzg
+            ("dict.accounting.financial.condition.type.tx.mwzg", "ja-JP", "抵销项-投资税_jp", "条件类型.TX.MWZG"),
+            // dict.accounting.financial.condition.type.tx.mwzg
+            ("dict.accounting.financial.condition.type.tx.mwzg", "zh-CN", "抵销项-投资税", "条件类型.TX.MWZG"),
+            // dict.accounting.financial.condition.type.tx.mwzg
+            ("dict.accounting.financial.condition.type.tx.mwzg", "zh-HK", "抵销项-投资税_hk", "条件类型.TX.MWZG"),
+
+            // dict.accounting.financial.condition.type.tx.mwzi
+            ("dict.accounting.financial.condition.type.tx.mwzi", "en-US", "不可抵扣的进项税 -RU_us", "条件类型.TX.MWZI"),
+            // dict.accounting.financial.condition.type.tx.mwzi
+            ("dict.accounting.financial.condition.type.tx.mwzi", "ja-JP", "不可抵扣的进项税 -RU_jp", "条件类型.TX.MWZI"),
+            // dict.accounting.financial.condition.type.tx.mwzi
+            ("dict.accounting.financial.condition.type.tx.mwzi", "zh-CN", "不可抵扣的进项税 -RU", "条件类型.TX.MWZI"),
+            // dict.accounting.financial.condition.type.tx.mwzi
+            ("dict.accounting.financial.condition.type.tx.mwzi", "zh-HK", "不可抵扣的进项税 -RU_hk", "条件类型.TX.MWZI"),
+
+            // dict.accounting.financial.condition.type.tx.mwzs
+            ("dict.accounting.financial.condition.type.tx.mwzs", "en-US", "简化税收输入_us", "条件类型.TX.MWZS"),
+            // dict.accounting.financial.condition.type.tx.mwzs
+            ("dict.accounting.financial.condition.type.tx.mwzs", "ja-JP", "简化税收输入_jp", "条件类型.TX.MWZS"),
+            // dict.accounting.financial.condition.type.tx.mwzs
+            ("dict.accounting.financial.condition.type.tx.mwzs", "zh-CN", "简化税收输入", "条件类型.TX.MWZS"),
+            // dict.accounting.financial.condition.type.tx.mwzs
+            ("dict.accounting.financial.condition.type.tx.mwzs", "zh-HK", "简化税收输入_hk", "条件类型.TX.MWZS"),
+
+            // dict.accounting.financial.condition.type.tx.mwzu
+            ("dict.accounting.financial.condition.type.tx.mwzu", "en-US", "投资税 Norw._us", "条件类型.TX.MWZU"),
+            // dict.accounting.financial.condition.type.tx.mwzu
+            ("dict.accounting.financial.condition.type.tx.mwzu", "ja-JP", "投资税 Norw._jp", "条件类型.TX.MWZU"),
+            // dict.accounting.financial.condition.type.tx.mwzu
+            ("dict.accounting.financial.condition.type.tx.mwzu", "zh-CN", "投资税 Norw.", "条件类型.TX.MWZU"),
+            // dict.accounting.financial.condition.type.tx.mwzu
+            ("dict.accounting.financial.condition.type.tx.mwzu", "zh-HK", "投资税 Norw._hk", "条件类型.TX.MWZU"),
+
+            // dict.accounting.financial.condition.type.tx.nlai
+            ("dict.accounting.financial.condition.type.tx.nlai", "en-US", "支出的采购税-RU_us", "条件类型.TX.NLAI"),
+            // dict.accounting.financial.condition.type.tx.nlai
+            ("dict.accounting.financial.condition.type.tx.nlai", "ja-JP", "支出的采购税-RU_jp", "条件类型.TX.NLAI"),
+            // dict.accounting.financial.condition.type.tx.nlai
+            ("dict.accounting.financial.condition.type.tx.nlai", "zh-CN", "支出的采购税-RU", "条件类型.TX.NLAI"),
+            // dict.accounting.financial.condition.type.tx.nlai
+            ("dict.accounting.financial.condition.type.tx.nlai", "zh-HK", "支出的采购税-RU_hk", "条件类型.TX.NLAI"),
+
+            // dict.accounting.financial.condition.type.tx.nlna
+            ("dict.accounting.financial.condition.type.tx.nlna", "en-US", "不可抵扣的进项税_us", "条件类型.TX.NLNA"),
+            // dict.accounting.financial.condition.type.tx.nlna
+            ("dict.accounting.financial.condition.type.tx.nlna", "ja-JP", "不可抵扣的进项税_jp", "条件类型.TX.NLNA"),
+            // dict.accounting.financial.condition.type.tx.nlna
+            ("dict.accounting.financial.condition.type.tx.nlna", "zh-CN", "不可抵扣的进项税", "条件类型.TX.NLNA"),
+            // dict.accounting.financial.condition.type.tx.nlna
+            ("dict.accounting.financial.condition.type.tx.nlna", "zh-HK", "不可抵扣的进项税_hk", "条件类型.TX.NLNA"),
+
+            // dict.accounting.financial.condition.type.tx.nlvi
+            ("dict.accounting.financial.condition.type.tx.nlvi", "en-US", "包含采购税-舍入_us", "条件类型.TX.NLVI"),
+            // dict.accounting.financial.condition.type.tx.nlvi
+            ("dict.accounting.financial.condition.type.tx.nlvi", "ja-JP", "包含采购税-舍入_jp", "条件类型.TX.NLVI"),
+            // dict.accounting.financial.condition.type.tx.nlvi
+            ("dict.accounting.financial.condition.type.tx.nlvi", "zh-CN", "包含采购税-舍入", "条件类型.TX.NLVI"),
+            // dict.accounting.financial.condition.type.tx.nlvi
+            ("dict.accounting.financial.condition.type.tx.nlvi", "zh-HK", "包含采购税-舍入_hk", "条件类型.TX.NLVI"),
+
+            // dict.accounting.financial.condition.type.tx.nlxa
+            ("dict.accounting.financial.condition.type.tx.nlxa", "en-US", "采购税贷方_us", "条件类型.TX.NLXA"),
+            // dict.accounting.financial.condition.type.tx.nlxa
+            ("dict.accounting.financial.condition.type.tx.nlxa", "ja-JP", "采购税贷方_jp", "条件类型.TX.NLXA"),
+            // dict.accounting.financial.condition.type.tx.nlxa
+            ("dict.accounting.financial.condition.type.tx.nlxa", "zh-CN", "采购税贷方", "条件类型.TX.NLXA"),
+            // dict.accounting.financial.condition.type.tx.nlxa
+            ("dict.accounting.financial.condition.type.tx.nlxa", "zh-HK", "采购税贷方_hk", "条件类型.TX.NLXA"),
+
+            // dict.accounting.financial.condition.type.tx.nlxn
+            ("dict.accounting.financial.condition.type.tx.nlxn", "en-US", "不可抵扣的采购税_us", "条件类型.TX.NLXN"),
+            // dict.accounting.financial.condition.type.tx.nlxn
+            ("dict.accounting.financial.condition.type.tx.nlxn", "ja-JP", "不可抵扣的采购税_jp", "条件类型.TX.NLXN"),
+            // dict.accounting.financial.condition.type.tx.nlxn
+            ("dict.accounting.financial.condition.type.tx.nlxn", "zh-CN", "不可抵扣的采购税", "条件类型.TX.NLXN"),
+            // dict.accounting.financial.condition.type.tx.nlxn
+            ("dict.accounting.financial.condition.type.tx.nlxn", "zh-HK", "不可抵扣的采购税_hk", "条件类型.TX.NLXN"),
+
+            // dict.accounting.financial.condition.type.tx.nlxv
+            ("dict.accounting.financial.condition.type.tx.nlxv", "en-US", "采购税借方_us", "条件类型.TX.NLXV"),
+            // dict.accounting.financial.condition.type.tx.nlxv
+            ("dict.accounting.financial.condition.type.tx.nlxv", "ja-JP", "采购税借方_jp", "条件类型.TX.NLXV"),
+            // dict.accounting.financial.condition.type.tx.nlxv
+            ("dict.accounting.financial.condition.type.tx.nlxv", "zh-CN", "采购税借方", "条件类型.TX.NLXV"),
+            // dict.accounting.financial.condition.type.tx.nlxv
+            ("dict.accounting.financial.condition.type.tx.nlxv", "zh-HK", "采购税借方_hk", "条件类型.TX.NLXV"),
+
+            // dict.accounting.financial.condition.type.tx.nze1
+            ("dict.accounting.financial.condition.type.tx.nze1", "en-US", "NZ 娱乐-GST inv_us", "条件类型.TX.NZE1"),
+            // dict.accounting.financial.condition.type.tx.nze1
+            ("dict.accounting.financial.condition.type.tx.nze1", "ja-JP", "NZ 娱乐-GST inv_jp", "条件类型.TX.NZE1"),
+            // dict.accounting.financial.condition.type.tx.nze1
+            ("dict.accounting.financial.condition.type.tx.nze1", "zh-CN", "NZ 娱乐-GST inv", "条件类型.TX.NZE1"),
+            // dict.accounting.financial.condition.type.tx.nze1
+            ("dict.accounting.financial.condition.type.tx.nze1", "zh-HK", "NZ 娱乐-GST inv_hk", "条件类型.TX.NZE1"),
+
+            // dict.accounting.financial.condition.type.tx.nze2
+            ("dict.accounting.financial.condition.type.tx.nze2", "en-US", "NZ 娱乐税_us", "条件类型.TX.NZE2"),
+            // dict.accounting.financial.condition.type.tx.nze2
+            ("dict.accounting.financial.condition.type.tx.nze2", "ja-JP", "NZ 娱乐税_jp", "条件类型.TX.NZE2"),
+            // dict.accounting.financial.condition.type.tx.nze2
+            ("dict.accounting.financial.condition.type.tx.nze2", "zh-CN", "NZ 娱乐税", "条件类型.TX.NZE2"),
+            // dict.accounting.financial.condition.type.tx.nze2
+            ("dict.accounting.financial.condition.type.tx.nze2", "zh-HK", "NZ 娱乐税_hk", "条件类型.TX.NZE2"),
+
+            // dict.accounting.financial.condition.type.tx.pst
+            ("dict.accounting.financial.condition.type.tx.pst", "en-US", "A/P PST & QST_us", "条件类型.TX.PST"),
+            // dict.accounting.financial.condition.type.tx.pst
+            ("dict.accounting.financial.condition.type.tx.pst", "ja-JP", "A/P PST & QST_jp", "条件类型.TX.PST"),
+            // dict.accounting.financial.condition.type.tx.pst
+            ("dict.accounting.financial.condition.type.tx.pst", "zh-CN", "A/P PST & QST", "条件类型.TX.PST"),
+            // dict.accounting.financial.condition.type.tx.pst
+            ("dict.accounting.financial.condition.type.tx.pst", "zh-HK", "A/P PST & QST_hk", "条件类型.TX.PST"),
+
+            // dict.accounting.financial.condition.type.tx.pst1
+            ("dict.accounting.financial.condition.type.tx.pst1", "en-US", "A/R PST & QST_us", "条件类型.TX.PST1"),
+            // dict.accounting.financial.condition.type.tx.pst1
+            ("dict.accounting.financial.condition.type.tx.pst1", "ja-JP", "A/R PST & QST_jp", "条件类型.TX.PST1"),
+            // dict.accounting.financial.condition.type.tx.pst1
+            ("dict.accounting.financial.condition.type.tx.pst1", "zh-CN", "A/R PST & QST", "条件类型.TX.PST1"),
+            // dict.accounting.financial.condition.type.tx.pst1
+            ("dict.accounting.financial.condition.type.tx.pst1", "zh-HK", "A/R PST & QST_hk", "条件类型.TX.PST1"),
+
+            // dict.accounting.financial.condition.type.tx.pti1
+            ("dict.accounting.financial.condition.type.tx.pti1", "en-US", "A/P PST 已分配的_us", "条件类型.TX.PTI1"),
+            // dict.accounting.financial.condition.type.tx.pti1
+            ("dict.accounting.financial.condition.type.tx.pti1", "ja-JP", "A/P PST 已分配的_jp", "条件类型.TX.PTI1"),
+            // dict.accounting.financial.condition.type.tx.pti1
+            ("dict.accounting.financial.condition.type.tx.pti1", "zh-CN", "A/P PST 已分配的", "条件类型.TX.PTI1"),
+            // dict.accounting.financial.condition.type.tx.pti1
+            ("dict.accounting.financial.condition.type.tx.pti1", "zh-HK", "A/P PST 已分配的_hk", "条件类型.TX.PTI1"),
+
+            // dict.accounting.financial.condition.type.tx.pti2
+            ("dict.accounting.financial.condition.type.tx.pti2", "en-US", "A/P PST 单独的GL_us", "条件类型.TX.PTI2"),
+            // dict.accounting.financial.condition.type.tx.pti2
+            ("dict.accounting.financial.condition.type.tx.pti2", "ja-JP", "A/P PST 单独的GL_jp", "条件类型.TX.PTI2"),
+            // dict.accounting.financial.condition.type.tx.pti2
+            ("dict.accounting.financial.condition.type.tx.pti2", "zh-CN", "A/P PST 单独的GL", "条件类型.TX.PTI2"),
+            // dict.accounting.financial.condition.type.tx.pti2
+            ("dict.accounting.financial.condition.type.tx.pti2", "zh-HK", "A/P PST 单独的GL_hk", "条件类型.TX.PTI2"),
+
+            // dict.accounting.financial.condition.type.tx.pti3
+            ("dict.accounting.financial.condition.type.tx.pti3", "en-US", "A/P PST 单独的GL_us", "条件类型.TX.PTI3"),
+            // dict.accounting.financial.condition.type.tx.pti3
+            ("dict.accounting.financial.condition.type.tx.pti3", "ja-JP", "A/P PST 单独的GL_jp", "条件类型.TX.PTI3"),
+            // dict.accounting.financial.condition.type.tx.pti3
+            ("dict.accounting.financial.condition.type.tx.pti3", "zh-CN", "A/P PST 单独的GL", "条件类型.TX.PTI3"),
+            // dict.accounting.financial.condition.type.tx.pti3
+            ("dict.accounting.financial.condition.type.tx.pti3", "zh-HK", "A/P PST 单独的GL_hk", "条件类型.TX.PTI3"),
+
+            // dict.accounting.financial.condition.type.tx.pti4
+            ("dict.accounting.financial.condition.type.tx.pti4", "en-US", "A/P PST 单独的B+GST_us", "条件类型.TX.PTI4"),
+            // dict.accounting.financial.condition.type.tx.pti4
+            ("dict.accounting.financial.condition.type.tx.pti4", "ja-JP", "A/P PST 单独的B+GST_jp", "条件类型.TX.PTI4"),
+            // dict.accounting.financial.condition.type.tx.pti4
+            ("dict.accounting.financial.condition.type.tx.pti4", "zh-CN", "A/P PST 单独的B+GST", "条件类型.TX.PTI4"),
+            // dict.accounting.financial.condition.type.tx.pti4
+            ("dict.accounting.financial.condition.type.tx.pti4", "zh-HK", "A/P PST 单独的B+GST_hk", "条件类型.TX.PTI4"),
+
+            // dict.accounting.financial.condition.type.tx.ptu1
+            ("dict.accounting.financial.condition.type.tx.ptu1", "en-US", "A/P 应用_us", "条件类型.TX.PTU1"),
+            // dict.accounting.financial.condition.type.tx.ptu1
+            ("dict.accounting.financial.condition.type.tx.ptu1", "ja-JP", "A/P 应用_jp", "条件类型.TX.PTU1"),
+            // dict.accounting.financial.condition.type.tx.ptu1
+            ("dict.accounting.financial.condition.type.tx.ptu1", "zh-CN", "A/P 应用", "条件类型.TX.PTU1"),
+            // dict.accounting.financial.condition.type.tx.ptu1
+            ("dict.accounting.financial.condition.type.tx.ptu1", "zh-HK", "A/P 应用_hk", "条件类型.TX.PTU1"),
+
+            // dict.accounting.financial.condition.type.tx.ptu2
+            ("dict.accounting.financial.condition.type.tx.ptu2", "en-US", "A/P 应用 B+GST_us", "条件类型.TX.PTU2"),
+            // dict.accounting.financial.condition.type.tx.ptu2
+            ("dict.accounting.financial.condition.type.tx.ptu2", "ja-JP", "A/P 应用 B+GST_jp", "条件类型.TX.PTU2"),
+            // dict.accounting.financial.condition.type.tx.ptu2
+            ("dict.accounting.financial.condition.type.tx.ptu2", "zh-CN", "A/P 应用 B+GST", "条件类型.TX.PTU2"),
+            // dict.accounting.financial.condition.type.tx.ptu2
+            ("dict.accounting.financial.condition.type.tx.ptu2", "zh-HK", "A/P 应用 B+GST_hk", "条件类型.TX.PTU2"),
+
+            // dict.accounting.financial.condition.type.tx.xp1e
+            ("dict.accounting.financial.condition.type.tx.xp1e", "en-US", "A/P 销售税 1 费用_us", "条件类型.TX.XP1E"),
+            // dict.accounting.financial.condition.type.tx.xp1e
+            ("dict.accounting.financial.condition.type.tx.xp1e", "ja-JP", "A/P 销售税 1 费用_jp", "条件类型.TX.XP1E"),
+            // dict.accounting.financial.condition.type.tx.xp1e
+            ("dict.accounting.financial.condition.type.tx.xp1e", "zh-CN", "A/P 销售税 1 费用", "条件类型.TX.XP1E"),
+            // dict.accounting.financial.condition.type.tx.xp1e
+            ("dict.accounting.financial.condition.type.tx.xp1e", "zh-HK", "A/P 销售税 1 费用_hk", "条件类型.TX.XP1E"),
+
+            // dict.accounting.financial.condition.type.tx.xp1i
+            ("dict.accounting.financial.condition.type.tx.xp1i", "en-US", "A/P 销售税 1 发票_us", "条件类型.TX.XP1I"),
+            // dict.accounting.financial.condition.type.tx.xp1i
+            ("dict.accounting.financial.condition.type.tx.xp1i", "ja-JP", "A/P 销售税 1 发票_jp", "条件类型.TX.XP1I"),
+            // dict.accounting.financial.condition.type.tx.xp1i
+            ("dict.accounting.financial.condition.type.tx.xp1i", "zh-CN", "A/P 销售税 1 发票", "条件类型.TX.XP1I"),
+            // dict.accounting.financial.condition.type.tx.xp1i
+            ("dict.accounting.financial.condition.type.tx.xp1i", "zh-HK", "A/P 销售税 1 发票_hk", "条件类型.TX.XP1I"),
+
+            // dict.accounting.financial.condition.type.tx.xp1u
+            ("dict.accounting.financial.condition.type.tx.xp1u", "en-US", "A/P 销售税 1 使用_us", "条件类型.TX.XP1U"),
+            // dict.accounting.financial.condition.type.tx.xp1u
+            ("dict.accounting.financial.condition.type.tx.xp1u", "ja-JP", "A/P 销售税 1 使用_jp", "条件类型.TX.XP1U"),
+            // dict.accounting.financial.condition.type.tx.xp1u
+            ("dict.accounting.financial.condition.type.tx.xp1u", "zh-CN", "A/P 销售税 1 使用", "条件类型.TX.XP1U"),
+            // dict.accounting.financial.condition.type.tx.xp1u
+            ("dict.accounting.financial.condition.type.tx.xp1u", "zh-HK", "A/P 销售税 1 使用_hk", "条件类型.TX.XP1U"),
+
+            // dict.accounting.financial.condition.type.tx.xp1x
+            ("dict.accounting.financial.condition.type.tx.xp1x", "en-US", "A/P 销售税 1 外部的_us", "条件类型.TX.XP1X"),
+            // dict.accounting.financial.condition.type.tx.xp1x
+            ("dict.accounting.financial.condition.type.tx.xp1x", "ja-JP", "A/P 销售税 1 外部的_jp", "条件类型.TX.XP1X"),
+            // dict.accounting.financial.condition.type.tx.xp1x
+            ("dict.accounting.financial.condition.type.tx.xp1x", "zh-CN", "A/P 销售税 1 外部的", "条件类型.TX.XP1X"),
+            // dict.accounting.financial.condition.type.tx.xp1x
+            ("dict.accounting.financial.condition.type.tx.xp1x", "zh-HK", "A/P 销售税 1 外部的_hk", "条件类型.TX.XP1X"),
+
+            // dict.accounting.financial.condition.type.tx.xp2e
+            ("dict.accounting.financial.condition.type.tx.xp2e", "en-US", "A/P 销售税 2 费用_us", "条件类型.TX.XP2E"),
+            // dict.accounting.financial.condition.type.tx.xp2e
+            ("dict.accounting.financial.condition.type.tx.xp2e", "ja-JP", "A/P 销售税 2 费用_jp", "条件类型.TX.XP2E"),
+            // dict.accounting.financial.condition.type.tx.xp2e
+            ("dict.accounting.financial.condition.type.tx.xp2e", "zh-CN", "A/P 销售税 2 费用", "条件类型.TX.XP2E"),
+            // dict.accounting.financial.condition.type.tx.xp2e
+            ("dict.accounting.financial.condition.type.tx.xp2e", "zh-HK", "A/P 销售税 2 费用_hk", "条件类型.TX.XP2E"),
+
+            // dict.accounting.financial.condition.type.tx.xp2i
+            ("dict.accounting.financial.condition.type.tx.xp2i", "en-US", "A/P 销售税 2 发票_us", "条件类型.TX.XP2I"),
+            // dict.accounting.financial.condition.type.tx.xp2i
+            ("dict.accounting.financial.condition.type.tx.xp2i", "ja-JP", "A/P 销售税 2 发票_jp", "条件类型.TX.XP2I"),
+            // dict.accounting.financial.condition.type.tx.xp2i
+            ("dict.accounting.financial.condition.type.tx.xp2i", "zh-CN", "A/P 销售税 2 发票", "条件类型.TX.XP2I"),
+            // dict.accounting.financial.condition.type.tx.xp2i
+            ("dict.accounting.financial.condition.type.tx.xp2i", "zh-HK", "A/P 销售税 2 发票_hk", "条件类型.TX.XP2I"),
+
+            // dict.accounting.financial.condition.type.tx.xp2u
+            ("dict.accounting.financial.condition.type.tx.xp2u", "en-US", "A/P 销售税 2 使用_us", "条件类型.TX.XP2U"),
+            // dict.accounting.financial.condition.type.tx.xp2u
+            ("dict.accounting.financial.condition.type.tx.xp2u", "ja-JP", "A/P 销售税 2 使用_jp", "条件类型.TX.XP2U"),
+            // dict.accounting.financial.condition.type.tx.xp2u
+            ("dict.accounting.financial.condition.type.tx.xp2u", "zh-CN", "A/P 销售税 2 使用", "条件类型.TX.XP2U"),
+            // dict.accounting.financial.condition.type.tx.xp2u
+            ("dict.accounting.financial.condition.type.tx.xp2u", "zh-HK", "A/P 销售税 2 使用_hk", "条件类型.TX.XP2U"),
+
+            // dict.accounting.financial.condition.type.tx.xp2x
+            ("dict.accounting.financial.condition.type.tx.xp2x", "en-US", "A/P 销售税 2 外部的_us", "条件类型.TX.XP2X"),
+            // dict.accounting.financial.condition.type.tx.xp2x
+            ("dict.accounting.financial.condition.type.tx.xp2x", "ja-JP", "A/P 销售税 2 外部的_jp", "条件类型.TX.XP2X"),
+            // dict.accounting.financial.condition.type.tx.xp2x
+            ("dict.accounting.financial.condition.type.tx.xp2x", "zh-CN", "A/P 销售税 2 外部的", "条件类型.TX.XP2X"),
+            // dict.accounting.financial.condition.type.tx.xp2x
+            ("dict.accounting.financial.condition.type.tx.xp2x", "zh-HK", "A/P 销售税 2 外部的_hk", "条件类型.TX.XP2X"),
+
+            // dict.accounting.financial.condition.type.tx.xp3e
+            ("dict.accounting.financial.condition.type.tx.xp3e", "en-US", "A/P 销售税 3 费用_us", "条件类型.TX.XP3E"),
+            // dict.accounting.financial.condition.type.tx.xp3e
+            ("dict.accounting.financial.condition.type.tx.xp3e", "ja-JP", "A/P 销售税 3 费用_jp", "条件类型.TX.XP3E"),
+            // dict.accounting.financial.condition.type.tx.xp3e
+            ("dict.accounting.financial.condition.type.tx.xp3e", "zh-CN", "A/P 销售税 3 费用", "条件类型.TX.XP3E"),
+            // dict.accounting.financial.condition.type.tx.xp3e
+            ("dict.accounting.financial.condition.type.tx.xp3e", "zh-HK", "A/P 销售税 3 费用_hk", "条件类型.TX.XP3E"),
+
+            // dict.accounting.financial.condition.type.tx.xp3i
+            ("dict.accounting.financial.condition.type.tx.xp3i", "en-US", "A/P 销售税 3 发票_us", "条件类型.TX.XP3I"),
+            // dict.accounting.financial.condition.type.tx.xp3i
+            ("dict.accounting.financial.condition.type.tx.xp3i", "ja-JP", "A/P 销售税 3 发票_jp", "条件类型.TX.XP3I"),
+            // dict.accounting.financial.condition.type.tx.xp3i
+            ("dict.accounting.financial.condition.type.tx.xp3i", "zh-CN", "A/P 销售税 3 发票", "条件类型.TX.XP3I"),
+            // dict.accounting.financial.condition.type.tx.xp3i
+            ("dict.accounting.financial.condition.type.tx.xp3i", "zh-HK", "A/P 销售税 3 发票_hk", "条件类型.TX.XP3I"),
+
+            // dict.accounting.financial.condition.type.tx.xp3u
+            ("dict.accounting.financial.condition.type.tx.xp3u", "en-US", "A/P 销售税 3 使用_us", "条件类型.TX.XP3U"),
+            // dict.accounting.financial.condition.type.tx.xp3u
+            ("dict.accounting.financial.condition.type.tx.xp3u", "ja-JP", "A/P 销售税 3 使用_jp", "条件类型.TX.XP3U"),
+            // dict.accounting.financial.condition.type.tx.xp3u
+            ("dict.accounting.financial.condition.type.tx.xp3u", "zh-CN", "A/P 销售税 3 使用", "条件类型.TX.XP3U"),
+            // dict.accounting.financial.condition.type.tx.xp3u
+            ("dict.accounting.financial.condition.type.tx.xp3u", "zh-HK", "A/P 销售税 3 使用_hk", "条件类型.TX.XP3U"),
+
+            // dict.accounting.financial.condition.type.tx.xp3x
+            ("dict.accounting.financial.condition.type.tx.xp3x", "en-US", "A/P 销售税 3 费用_us", "条件类型.TX.XP3X"),
+            // dict.accounting.financial.condition.type.tx.xp3x
+            ("dict.accounting.financial.condition.type.tx.xp3x", "ja-JP", "A/P 销售税 3 费用_jp", "条件类型.TX.XP3X"),
+            // dict.accounting.financial.condition.type.tx.xp3x
+            ("dict.accounting.financial.condition.type.tx.xp3x", "zh-CN", "A/P 销售税 3 费用", "条件类型.TX.XP3X"),
+            // dict.accounting.financial.condition.type.tx.xp3x
+            ("dict.accounting.financial.condition.type.tx.xp3x", "zh-HK", "A/P 销售税 3 费用_hk", "条件类型.TX.XP3X"),
+
+            // dict.accounting.financial.condition.type.tx.xp4e
+            ("dict.accounting.financial.condition.type.tx.xp4e", "en-US", "A/P 销售税 4 费用_us", "条件类型.TX.XP4E"),
+            // dict.accounting.financial.condition.type.tx.xp4e
+            ("dict.accounting.financial.condition.type.tx.xp4e", "ja-JP", "A/P 销售税 4 费用_jp", "条件类型.TX.XP4E"),
+            // dict.accounting.financial.condition.type.tx.xp4e
+            ("dict.accounting.financial.condition.type.tx.xp4e", "zh-CN", "A/P 销售税 4 费用", "条件类型.TX.XP4E"),
+            // dict.accounting.financial.condition.type.tx.xp4e
+            ("dict.accounting.financial.condition.type.tx.xp4e", "zh-HK", "A/P 销售税 4 费用_hk", "条件类型.TX.XP4E"),
+
+            // dict.accounting.financial.condition.type.tx.xp4i
+            ("dict.accounting.financial.condition.type.tx.xp4i", "en-US", "A/P 销售税 4 发票_us", "条件类型.TX.XP4I"),
+            // dict.accounting.financial.condition.type.tx.xp4i
+            ("dict.accounting.financial.condition.type.tx.xp4i", "ja-JP", "A/P 销售税 4 发票_jp", "条件类型.TX.XP4I"),
+            // dict.accounting.financial.condition.type.tx.xp4i
+            ("dict.accounting.financial.condition.type.tx.xp4i", "zh-CN", "A/P 销售税 4 发票", "条件类型.TX.XP4I"),
+            // dict.accounting.financial.condition.type.tx.xp4i
+            ("dict.accounting.financial.condition.type.tx.xp4i", "zh-HK", "A/P 销售税 4 发票_hk", "条件类型.TX.XP4I"),
+
+            // dict.accounting.financial.condition.type.tx.xp4u
+            ("dict.accounting.financial.condition.type.tx.xp4u", "en-US", "A/P 销售税 4 使用_us", "条件类型.TX.XP4U"),
+            // dict.accounting.financial.condition.type.tx.xp4u
+            ("dict.accounting.financial.condition.type.tx.xp4u", "ja-JP", "A/P 销售税 4 使用_jp", "条件类型.TX.XP4U"),
+            // dict.accounting.financial.condition.type.tx.xp4u
+            ("dict.accounting.financial.condition.type.tx.xp4u", "zh-CN", "A/P 销售税 4 使用", "条件类型.TX.XP4U"),
+            // dict.accounting.financial.condition.type.tx.xp4u
+            ("dict.accounting.financial.condition.type.tx.xp4u", "zh-HK", "A/P 销售税 4 使用_hk", "条件类型.TX.XP4U"),
+
+            // dict.accounting.financial.condition.type.tx.xp4x
+            ("dict.accounting.financial.condition.type.tx.xp4x", "en-US", "A/P 销售税 4 费用_us", "条件类型.TX.XP4X"),
+            // dict.accounting.financial.condition.type.tx.xp4x
+            ("dict.accounting.financial.condition.type.tx.xp4x", "ja-JP", "A/P 销售税 4 费用_jp", "条件类型.TX.XP4X"),
+            // dict.accounting.financial.condition.type.tx.xp4x
+            ("dict.accounting.financial.condition.type.tx.xp4x", "zh-CN", "A/P 销售税 4 费用", "条件类型.TX.XP4X"),
+            // dict.accounting.financial.condition.type.tx.xp4x
+            ("dict.accounting.financial.condition.type.tx.xp4x", "zh-HK", "A/P 销售税 4 费用_hk", "条件类型.TX.XP4X"),
+
+            // dict.accounting.financial.condition.type.tx.xp5e
+            ("dict.accounting.financial.condition.type.tx.xp5e", "en-US", "A/P 销售税 5 费用_us", "条件类型.TX.XP5E"),
+            // dict.accounting.financial.condition.type.tx.xp5e
+            ("dict.accounting.financial.condition.type.tx.xp5e", "ja-JP", "A/P 销售税 5 费用_jp", "条件类型.TX.XP5E"),
+            // dict.accounting.financial.condition.type.tx.xp5e
+            ("dict.accounting.financial.condition.type.tx.xp5e", "zh-CN", "A/P 销售税 5 费用", "条件类型.TX.XP5E"),
+            // dict.accounting.financial.condition.type.tx.xp5e
+            ("dict.accounting.financial.condition.type.tx.xp5e", "zh-HK", "A/P 销售税 5 费用_hk", "条件类型.TX.XP5E"),
+
+            // dict.accounting.financial.condition.type.tx.xp5i
+            ("dict.accounting.financial.condition.type.tx.xp5i", "en-US", "A/P 销售税 5 发票_us", "条件类型.TX.XP5I"),
+            // dict.accounting.financial.condition.type.tx.xp5i
+            ("dict.accounting.financial.condition.type.tx.xp5i", "ja-JP", "A/P 销售税 5 发票_jp", "条件类型.TX.XP5I"),
+            // dict.accounting.financial.condition.type.tx.xp5i
+            ("dict.accounting.financial.condition.type.tx.xp5i", "zh-CN", "A/P 销售税 5 发票", "条件类型.TX.XP5I"),
+            // dict.accounting.financial.condition.type.tx.xp5i
+            ("dict.accounting.financial.condition.type.tx.xp5i", "zh-HK", "A/P 销售税 5 发票_hk", "条件类型.TX.XP5I"),
+
+            // dict.accounting.financial.condition.type.tx.xp5u
+            ("dict.accounting.financial.condition.type.tx.xp5u", "en-US", "A/P 销售税 5 使用_us", "条件类型.TX.XP5U"),
+            // dict.accounting.financial.condition.type.tx.xp5u
+            ("dict.accounting.financial.condition.type.tx.xp5u", "ja-JP", "A/P 销售税 5 使用_jp", "条件类型.TX.XP5U"),
+            // dict.accounting.financial.condition.type.tx.xp5u
+            ("dict.accounting.financial.condition.type.tx.xp5u", "zh-CN", "A/P 销售税 5 使用", "条件类型.TX.XP5U"),
+            // dict.accounting.financial.condition.type.tx.xp5u
+            ("dict.accounting.financial.condition.type.tx.xp5u", "zh-HK", "A/P 销售税 5 使用_hk", "条件类型.TX.XP5U"),
+
+            // dict.accounting.financial.condition.type.tx.xp6e
+            ("dict.accounting.financial.condition.type.tx.xp6e", "en-US", "A/P 销售税 6 费用_us", "条件类型.TX.XP6E"),
+            // dict.accounting.financial.condition.type.tx.xp6e
+            ("dict.accounting.financial.condition.type.tx.xp6e", "ja-JP", "A/P 销售税 6 费用_jp", "条件类型.TX.XP6E"),
+            // dict.accounting.financial.condition.type.tx.xp6e
+            ("dict.accounting.financial.condition.type.tx.xp6e", "zh-CN", "A/P 销售税 6 费用", "条件类型.TX.XP6E"),
+            // dict.accounting.financial.condition.type.tx.xp6e
+            ("dict.accounting.financial.condition.type.tx.xp6e", "zh-HK", "A/P 销售税 6 费用_hk", "条件类型.TX.XP6E"),
+
+            // dict.accounting.financial.condition.type.tx.xp6i
+            ("dict.accounting.financial.condition.type.tx.xp6i", "en-US", "A/P 销售税 6 发票_us", "条件类型.TX.XP6I"),
+            // dict.accounting.financial.condition.type.tx.xp6i
+            ("dict.accounting.financial.condition.type.tx.xp6i", "ja-JP", "A/P 销售税 6 发票_jp", "条件类型.TX.XP6I"),
+            // dict.accounting.financial.condition.type.tx.xp6i
+            ("dict.accounting.financial.condition.type.tx.xp6i", "zh-CN", "A/P 销售税 6 发票", "条件类型.TX.XP6I"),
+            // dict.accounting.financial.condition.type.tx.xp6i
+            ("dict.accounting.financial.condition.type.tx.xp6i", "zh-HK", "A/P 销售税 6 发票_hk", "条件类型.TX.XP6I"),
+
+            // dict.accounting.financial.condition.type.tx.xp6u
+            ("dict.accounting.financial.condition.type.tx.xp6u", "en-US", "A/P 销售税 6 使用_us", "条件类型.TX.XP6U"),
+            // dict.accounting.financial.condition.type.tx.xp6u
+            ("dict.accounting.financial.condition.type.tx.xp6u", "ja-JP", "A/P 销售税 6 使用_jp", "条件类型.TX.XP6U"),
+            // dict.accounting.financial.condition.type.tx.xp6u
+            ("dict.accounting.financial.condition.type.tx.xp6u", "zh-CN", "A/P 销售税 6 使用", "条件类型.TX.XP6U"),
+            // dict.accounting.financial.condition.type.tx.xp6u
+            ("dict.accounting.financial.condition.type.tx.xp6u", "zh-HK", "A/P 销售税 6 使用_hk", "条件类型.TX.XP6U"),
+
+            // dict.accounting.financial.condition.type.tx.xr1
+            ("dict.accounting.financial.condition.type.tx.xr1", "en-US", "A/R 销售税 1_us", "条件类型.TX.XR1"),
+            // dict.accounting.financial.condition.type.tx.xr1
+            ("dict.accounting.financial.condition.type.tx.xr1", "ja-JP", "A/R 销售税 1_jp", "条件类型.TX.XR1"),
+            // dict.accounting.financial.condition.type.tx.xr1
+            ("dict.accounting.financial.condition.type.tx.xr1", "zh-CN", "A/R 销售税 1", "条件类型.TX.XR1"),
+            // dict.accounting.financial.condition.type.tx.xr1
+            ("dict.accounting.financial.condition.type.tx.xr1", "zh-HK", "A/R 销售税 1_hk", "条件类型.TX.XR1"),
+
+            // dict.accounting.financial.condition.type.tx.xr2
+            ("dict.accounting.financial.condition.type.tx.xr2", "en-US", "A/R 销售税 2_us", "条件类型.TX.XR2"),
+            // dict.accounting.financial.condition.type.tx.xr2
+            ("dict.accounting.financial.condition.type.tx.xr2", "ja-JP", "A/R 销售税 2_jp", "条件类型.TX.XR2"),
+            // dict.accounting.financial.condition.type.tx.xr2
+            ("dict.accounting.financial.condition.type.tx.xr2", "zh-CN", "A/R 销售税 2", "条件类型.TX.XR2"),
+            // dict.accounting.financial.condition.type.tx.xr2
+            ("dict.accounting.financial.condition.type.tx.xr2", "zh-HK", "A/R 销售税 2_hk", "条件类型.TX.XR2"),
+
+            // dict.accounting.financial.condition.type.tx.xr3
+            ("dict.accounting.financial.condition.type.tx.xr3", "en-US", "A/R 销售税 3_us", "条件类型.TX.XR3"),
+            // dict.accounting.financial.condition.type.tx.xr3
+            ("dict.accounting.financial.condition.type.tx.xr3", "ja-JP", "A/R 销售税 3_jp", "条件类型.TX.XR3"),
+            // dict.accounting.financial.condition.type.tx.xr3
+            ("dict.accounting.financial.condition.type.tx.xr3", "zh-CN", "A/R 销售税 3", "条件类型.TX.XR3"),
+            // dict.accounting.financial.condition.type.tx.xr3
+            ("dict.accounting.financial.condition.type.tx.xr3", "zh-HK", "A/R 销售税 3_hk", "条件类型.TX.XR3"),
+
+            // dict.accounting.financial.condition.type.tx.xr4
+            ("dict.accounting.financial.condition.type.tx.xr4", "en-US", "A/R 销售税 4_us", "条件类型.TX.XR4"),
+            // dict.accounting.financial.condition.type.tx.xr4
+            ("dict.accounting.financial.condition.type.tx.xr4", "ja-JP", "A/R 销售税 4_jp", "条件类型.TX.XR4"),
+            // dict.accounting.financial.condition.type.tx.xr4
+            ("dict.accounting.financial.condition.type.tx.xr4", "zh-CN", "A/R 销售税 4", "条件类型.TX.XR4"),
+            // dict.accounting.financial.condition.type.tx.xr4
+            ("dict.accounting.financial.condition.type.tx.xr4", "zh-HK", "A/R 销售税 4_hk", "条件类型.TX.XR4"),
+
+            // dict.accounting.financial.condition.type.tx.xr5
+            ("dict.accounting.financial.condition.type.tx.xr5", "en-US", "A/R 销售税 5_us", "条件类型.TX.XR5"),
+            // dict.accounting.financial.condition.type.tx.xr5
+            ("dict.accounting.financial.condition.type.tx.xr5", "ja-JP", "A/R 销售税 5_jp", "条件类型.TX.XR5"),
+            // dict.accounting.financial.condition.type.tx.xr5
+            ("dict.accounting.financial.condition.type.tx.xr5", "zh-CN", "A/R 销售税 5", "条件类型.TX.XR5"),
+            // dict.accounting.financial.condition.type.tx.xr5
+            ("dict.accounting.financial.condition.type.tx.xr5", "zh-HK", "A/R 销售税 5_hk", "条件类型.TX.XR5"),
+
+            // dict.accounting.financial.condition.type.tx.xr6
+            ("dict.accounting.financial.condition.type.tx.xr6", "en-US", "A/R 销售税 6_us", "条件类型.TX.XR6"),
+            // dict.accounting.financial.condition.type.tx.xr6
+            ("dict.accounting.financial.condition.type.tx.xr6", "ja-JP", "A/R 销售税 6_jp", "条件类型.TX.XR6"),
+            // dict.accounting.financial.condition.type.tx.xr6
+            ("dict.accounting.financial.condition.type.tx.xr6", "zh-CN", "A/R 销售税 6", "条件类型.TX.XR6"),
+            // dict.accounting.financial.condition.type.tx.xr6
+            ("dict.accounting.financial.condition.type.tx.xr6", "zh-HK", "A/R 销售税 6_hk", "条件类型.TX.XR6"),
+
+            // dict.accounting.financial.condition.type.v.amiw
+            ("dict.accounting.financial.condition.type.v.amiw", "en-US", "最小销售订单值_us", "条件类型.V.AMIW"),
+            // dict.accounting.financial.condition.type.v.amiw
+            ("dict.accounting.financial.condition.type.v.amiw", "ja-JP", "最小销售订单值_jp", "条件类型.V.AMIW"),
+            // dict.accounting.financial.condition.type.v.amiw
+            ("dict.accounting.financial.condition.type.v.amiw", "zh-CN", "最小销售订单值", "条件类型.V.AMIW"),
+            // dict.accounting.financial.condition.type.v.amiw
+            ("dict.accounting.financial.condition.type.v.amiw", "zh-HK", "最小销售订单值_hk", "条件类型.V.AMIW"),
+
+            // dict.accounting.financial.condition.type.v.amiz
+            ("dict.accounting.financial.condition.type.v.amiz", "en-US", "最低价值附加费_us", "条件类型.V.AMIZ"),
+            // dict.accounting.financial.condition.type.v.amiz
+            ("dict.accounting.financial.condition.type.v.amiz", "ja-JP", "最低价值附加费_jp", "条件类型.V.AMIZ"),
+            // dict.accounting.financial.condition.type.v.amiz
+            ("dict.accounting.financial.condition.type.v.amiz", "zh-CN", "最低价值附加费", "条件类型.V.AMIZ"),
+            // dict.accounting.financial.condition.type.v.amiz
+            ("dict.accounting.financial.condition.type.v.amiz", "zh-HK", "最低价值附加费_hk", "条件类型.V.AMIZ"),
+
+            // dict.accounting.financial.condition.type.v.atx1
+            ("dict.accounting.financial.condition.type.v.atx1", "en-US", "销项税_us", "条件类型.V.ATX1"),
+            // dict.accounting.financial.condition.type.v.atx1
+            ("dict.accounting.financial.condition.type.v.atx1", "ja-JP", "销项税_jp", "条件类型.V.ATX1"),
+            // dict.accounting.financial.condition.type.v.atx1
+            ("dict.accounting.financial.condition.type.v.atx1", "zh-CN", "销项税", "条件类型.V.ATX1"),
+            // dict.accounting.financial.condition.type.v.atx1
+            ("dict.accounting.financial.condition.type.v.atx1", "zh-HK", "销项税_hk", "条件类型.V.ATX1"),
+
+            // dict.accounting.financial.condition.type.v.aufs
+            ("dict.accounting.financial.condition.type.v.aufs", "en-US", "VKP计算附加费_us", "条件类型.V.AUFS"),
+            // dict.accounting.financial.condition.type.v.aufs
+            ("dict.accounting.financial.condition.type.v.aufs", "ja-JP", "VKP计算附加费_jp", "条件类型.V.AUFS"),
+            // dict.accounting.financial.condition.type.v.aufs
+            ("dict.accounting.financial.condition.type.v.aufs", "zh-CN", "VKP计算附加费", "条件类型.V.AUFS"),
+            // dict.accounting.financial.condition.type.v.aufs
+            ("dict.accounting.financial.condition.type.v.aufs", "zh-HK", "VKP计算附加费_hk", "条件类型.V.AUFS"),
+
+            // dict.accounting.financial.condition.type.v.aufx
+            ("dict.accounting.financial.condition.type.v.aufx", "en-US", "VKP计算附加费_us", "条件类型.V.AUFX"),
+            // dict.accounting.financial.condition.type.v.aufx
+            ("dict.accounting.financial.condition.type.v.aufx", "ja-JP", "VKP计算附加费_jp", "条件类型.V.AUFX"),
+            // dict.accounting.financial.condition.type.v.aufx
+            ("dict.accounting.financial.condition.type.v.aufx", "zh-CN", "VKP计算附加费", "条件类型.V.AUFX"),
+            // dict.accounting.financial.condition.type.v.aufx
+            ("dict.accounting.financial.condition.type.v.aufx", "zh-HK", "VKP计算附加费_hk", "条件类型.V.AUFX"),
+
+            // dict.accounting.financial.condition.type.v.azwr
+            ("dict.accounting.financial.condition.type.v.azwr", "en-US", "Down Pay./结算_us", "条件类型.V.AZWR"),
+            // dict.accounting.financial.condition.type.v.azwr
+            ("dict.accounting.financial.condition.type.v.azwr", "ja-JP", "Down Pay./结算_jp", "条件类型.V.AZWR"),
+            // dict.accounting.financial.condition.type.v.azwr
+            ("dict.accounting.financial.condition.type.v.azwr", "zh-CN", "Down Pay./结算", "条件类型.V.AZWR"),
+            // dict.accounting.financial.condition.type.v.azwr
+            ("dict.accounting.financial.condition.type.v.azwr", "zh-HK", "Down Pay./结算_hk", "条件类型.V.AZWR"),
+
+            // dict.accounting.financial.condition.type.v.bo01
+            ("dict.accounting.financial.condition.type.v.bo01", "en-US", "物料/集团回扣_us", "条件类型.V.BO01"),
+            // dict.accounting.financial.condition.type.v.bo01
+            ("dict.accounting.financial.condition.type.v.bo01", "ja-JP", "物料/集团回扣_jp", "条件类型.V.BO01"),
+            // dict.accounting.financial.condition.type.v.bo01
+            ("dict.accounting.financial.condition.type.v.bo01", "zh-CN", "物料/集团回扣", "条件类型.V.BO01"),
+            // dict.accounting.financial.condition.type.v.bo01
+            ("dict.accounting.financial.condition.type.v.bo01", "zh-HK", "物料/集团回扣_hk", "条件类型.V.BO01"),
+
+            // dict.accounting.financial.condition.type.v.bo02
+            ("dict.accounting.financial.condition.type.v.bo02", "en-US", "物料回扣_us", "条件类型.V.BO02"),
+            // dict.accounting.financial.condition.type.v.bo02
+            ("dict.accounting.financial.condition.type.v.bo02", "ja-JP", "物料回扣_jp", "条件类型.V.BO02"),
+            // dict.accounting.financial.condition.type.v.bo02
+            ("dict.accounting.financial.condition.type.v.bo02", "zh-CN", "物料回扣", "条件类型.V.BO02"),
+            // dict.accounting.financial.condition.type.v.bo02
+            ("dict.accounting.financial.condition.type.v.bo02", "zh-HK", "物料回扣_hk", "条件类型.V.BO02"),
+
+            // dict.accounting.financial.condition.type.v.bo03
+            ("dict.accounting.financial.condition.type.v.bo03", "en-US", "客户回扣_us", "条件类型.V.BO03"),
+            // dict.accounting.financial.condition.type.v.bo03
+            ("dict.accounting.financial.condition.type.v.bo03", "ja-JP", "客户回扣_jp", "条件类型.V.BO03"),
+            // dict.accounting.financial.condition.type.v.bo03
+            ("dict.accounting.financial.condition.type.v.bo03", "zh-CN", "客户回扣", "条件类型.V.BO03"),
+            // dict.accounting.financial.condition.type.v.bo03
+            ("dict.accounting.financial.condition.type.v.bo03", "zh-HK", "客户回扣_hk", "条件类型.V.BO03"),
+
+            // dict.accounting.financial.condition.type.v.bo04
+            ("dict.accounting.financial.condition.type.v.bo04", "en-US", "层次回扣_us", "条件类型.V.BO04"),
+            // dict.accounting.financial.condition.type.v.bo04
+            ("dict.accounting.financial.condition.type.v.bo04", "ja-JP", "层次回扣_jp", "条件类型.V.BO04"),
+            // dict.accounting.financial.condition.type.v.bo04
+            ("dict.accounting.financial.condition.type.v.bo04", "zh-CN", "层次回扣", "条件类型.V.BO04"),
+            // dict.accounting.financial.condition.type.v.bo04
+            ("dict.accounting.financial.condition.type.v.bo04", "zh-HK", "层次回扣_hk", "条件类型.V.BO04"),
+
+            // dict.accounting.financial.condition.type.v.bo05
+            ("dict.accounting.financial.condition.type.v.bo05", "en-US", "层次回扣/物料_us", "条件类型.V.BO05"),
+            // dict.accounting.financial.condition.type.v.bo05
+            ("dict.accounting.financial.condition.type.v.bo05", "ja-JP", "层次回扣/物料_jp", "条件类型.V.BO05"),
+            // dict.accounting.financial.condition.type.v.bo05
+            ("dict.accounting.financial.condition.type.v.bo05", "zh-CN", "层次回扣/物料", "条件类型.V.BO05"),
+            // dict.accounting.financial.condition.type.v.bo05
+            ("dict.accounting.financial.condition.type.v.bo05", "zh-HK", "层次回扣/物料_hk", "条件类型.V.BO05"),
+
+            // dict.accounting.financial.condition.type.v.bo06
+            ("dict.accounting.financial.condition.type.v.bo06", "en-US", "销售独立回扣_us", "条件类型.V.BO06"),
+            // dict.accounting.financial.condition.type.v.bo06
+            ("dict.accounting.financial.condition.type.v.bo06", "ja-JP", "销售独立回扣_jp", "条件类型.V.BO06"),
+            // dict.accounting.financial.condition.type.v.bo06
+            ("dict.accounting.financial.condition.type.v.bo06", "zh-CN", "销售独立回扣", "条件类型.V.BO06"),
+            // dict.accounting.financial.condition.type.v.bo06
+            ("dict.accounting.financial.condition.type.v.bo06", "zh-HK", "销售独立回扣_hk", "条件类型.V.BO06"),
+
+            // dict.accounting.financial.condition.type.v.boll
+            ("dict.accounting.financial.condition.type.v.boll", "en-US", "Bollo in Fattura_us", "条件类型.V.BOLL"),
+            // dict.accounting.financial.condition.type.v.boll
+            ("dict.accounting.financial.condition.type.v.boll", "ja-JP", "Bollo in Fattura_jp", "条件类型.V.BOLL"),
+            // dict.accounting.financial.condition.type.v.boll
+            ("dict.accounting.financial.condition.type.v.boll", "zh-CN", "Bollo in Fattura", "条件类型.V.BOLL"),
+            // dict.accounting.financial.condition.type.v.boll
+            ("dict.accounting.financial.condition.type.v.boll", "zh-HK", "Bollo in Fattura_hk", "条件类型.V.BOLL"),
+
+            // dict.accounting.financial.condition.type.v.citx
+            ("dict.accounting.financial.condition.type.v.citx", "en-US", "城市税销售审计_us", "条件类型.V.CITX"),
+            // dict.accounting.financial.condition.type.v.citx
+            ("dict.accounting.financial.condition.type.v.citx", "ja-JP", "城市税销售审计_jp", "条件类型.V.CITX"),
+            // dict.accounting.financial.condition.type.v.citx
+            ("dict.accounting.financial.condition.type.v.citx", "zh-CN", "城市税销售审计", "条件类型.V.CITX"),
+            // dict.accounting.financial.condition.type.v.citx
+            ("dict.accounting.financial.condition.type.v.citx", "zh-HK", "城市税销售审计_hk", "条件类型.V.CITX"),
+
+            // dict.accounting.financial.condition.type.v.cntx
+            ("dict.accounting.financial.condition.type.v.cntx", "en-US", "县税销售审计_us", "条件类型.V.CNTX"),
+            // dict.accounting.financial.condition.type.v.cntx
+            ("dict.accounting.financial.condition.type.v.cntx", "ja-JP", "县税销售审计_jp", "条件类型.V.CNTX"),
+            // dict.accounting.financial.condition.type.v.cntx
+            ("dict.accounting.financial.condition.type.v.cntx", "zh-CN", "县税销售审计", "条件类型.V.CNTX"),
+            // dict.accounting.financial.condition.type.v.cntx
+            ("dict.accounting.financial.condition.type.v.cntx", "zh-HK", "县税销售审计_hk", "条件类型.V.CNTX"),
+
+            // dict.accounting.financial.condition.type.v.ctx1
+            ("dict.accounting.financial.condition.type.v.ctx1", "en-US", "GST(加拿大)_us", "条件类型.V.CTX1"),
+            // dict.accounting.financial.condition.type.v.ctx1
+            ("dict.accounting.financial.condition.type.v.ctx1", "ja-JP", "GST(加拿大)_jp", "条件类型.V.CTX1"),
+            // dict.accounting.financial.condition.type.v.ctx1
+            ("dict.accounting.financial.condition.type.v.ctx1", "zh-CN", "GST(加拿大)", "条件类型.V.CTX1"),
+            // dict.accounting.financial.condition.type.v.ctx1
+            ("dict.accounting.financial.condition.type.v.ctx1", "zh-HK", "GST(加拿大)_hk", "条件类型.V.CTX1"),
+
+            // dict.accounting.financial.condition.type.v.ctx2
+            ("dict.accounting.financial.condition.type.v.ctx2", "en-US", "PST (加拿大)_us", "条件类型.V.CTX2"),
+            // dict.accounting.financial.condition.type.v.ctx2
+            ("dict.accounting.financial.condition.type.v.ctx2", "ja-JP", "PST (加拿大)_jp", "条件类型.V.CTX2"),
+            // dict.accounting.financial.condition.type.v.ctx2
+            ("dict.accounting.financial.condition.type.v.ctx2", "zh-CN", "PST (加拿大)", "条件类型.V.CTX2"),
+            // dict.accounting.financial.condition.type.v.ctx2
+            ("dict.accounting.financial.condition.type.v.ctx2", "zh-HK", "PST (加拿大)_hk", "条件类型.V.CTX2"),
+
+            // dict.accounting.financial.condition.type.v.ctx3
+            ("dict.accounting.financial.condition.type.v.ctx3", "en-US", "", "条件类型.V.CTX3"),
+            // dict.accounting.financial.condition.type.v.ctx3
+            ("dict.accounting.financial.condition.type.v.ctx3", "ja-JP", "", "条件类型.V.CTX3"),
+            // dict.accounting.financial.condition.type.v.ctx3
+            ("dict.accounting.financial.condition.type.v.ctx3", "zh-CN", "", "条件类型.V.CTX3"),
+            // dict.accounting.financial.condition.type.v.ctx3
+            ("dict.accounting.financial.condition.type.v.ctx3", "zh-HK", "", "条件类型.V.CTX3"),
+
+            // dict.accounting.financial.condition.type.v.ctxj
+            ("dict.accounting.financial.condition.type.v.ctxj", "en-US", "税收管辖区代码_us", "条件类型.V.CTXJ"),
+            // dict.accounting.financial.condition.type.v.ctxj
+            ("dict.accounting.financial.condition.type.v.ctxj", "ja-JP", "税收管辖区代码_jp", "条件类型.V.CTXJ"),
+            // dict.accounting.financial.condition.type.v.ctxj
+            ("dict.accounting.financial.condition.type.v.ctxj", "zh-CN", "税收管辖区代码", "条件类型.V.CTXJ"),
+            // dict.accounting.financial.condition.type.v.ctxj
+            ("dict.accounting.financial.condition.type.v.ctxj", "zh-HK", "税收管辖区代码_hk", "条件类型.V.CTXJ"),
+
+            // dict.accounting.financial.condition.type.v.diff
+            ("dict.accounting.financial.condition.type.v.diff", "en-US", "四舍五入_us", "条件类型.V.DIFF"),
+            // dict.accounting.financial.condition.type.v.diff
+            ("dict.accounting.financial.condition.type.v.diff", "ja-JP", "四舍五入_jp", "条件类型.V.DIFF"),
+            // dict.accounting.financial.condition.type.v.diff
+            ("dict.accounting.financial.condition.type.v.diff", "zh-CN", "四舍五入", "条件类型.V.DIFF"),
+            // dict.accounting.financial.condition.type.v.diff
+            ("dict.accounting.financial.condition.type.v.diff", "zh-HK", "四舍五入_hk", "条件类型.V.DIFF"),
+
+            // dict.accounting.financial.condition.type.v.dupl
+            ("dict.accounting.financial.condition.type.v.dupl", "en-US", "要复制的条件_us", "条件类型.V.DUPL"),
+            // dict.accounting.financial.condition.type.v.dupl
+            ("dict.accounting.financial.condition.type.v.dupl", "ja-JP", "要复制的条件_jp", "条件类型.V.DUPL"),
+            // dict.accounting.financial.condition.type.v.dupl
+            ("dict.accounting.financial.condition.type.v.dupl", "zh-CN", "要复制的条件", "条件类型.V.DUPL"),
+            // dict.accounting.financial.condition.type.v.dupl
+            ("dict.accounting.financial.condition.type.v.dupl", "zh-HK", "要复制的条件_hk", "条件类型.V.DUPL"),
+
+            // dict.accounting.financial.condition.type.v.eccn
+            ("dict.accounting.financial.condition.type.v.eccn", "en-US", "部分值_us", "条件类型.V.ECCN"),
+            // dict.accounting.financial.condition.type.v.eccn
+            ("dict.accounting.financial.condition.type.v.eccn", "ja-JP", "部分值_jp", "条件类型.V.ECCN"),
+            // dict.accounting.financial.condition.type.v.eccn
+            ("dict.accounting.financial.condition.type.v.eccn", "zh-CN", "部分值", "条件类型.V.ECCN"),
+            // dict.accounting.financial.condition.type.v.eccn
+            ("dict.accounting.financial.condition.type.v.eccn", "zh-HK", "部分值_hk", "条件类型.V.ECCN"),
+
+            // dict.accounting.financial.condition.type.v.edi1
+            ("dict.accounting.financial.condition.type.v.edi1", "en-US", "客户期望价格_us", "条件类型.V.EDI1"),
+            // dict.accounting.financial.condition.type.v.edi1
+            ("dict.accounting.financial.condition.type.v.edi1", "ja-JP", "客户期望价格_jp", "条件类型.V.EDI1"),
+            // dict.accounting.financial.condition.type.v.edi1
+            ("dict.accounting.financial.condition.type.v.edi1", "zh-CN", "客户期望价格", "条件类型.V.EDI1"),
+            // dict.accounting.financial.condition.type.v.edi1
+            ("dict.accounting.financial.condition.type.v.edi1", "zh-HK", "客户期望价格_hk", "条件类型.V.EDI1"),
+
+            // dict.accounting.financial.condition.type.v.edi2
+            ("dict.accounting.financial.condition.type.v.edi2", "en-US", "客户期望价值_us", "条件类型.V.EDI2"),
+            // dict.accounting.financial.condition.type.v.edi2
+            ("dict.accounting.financial.condition.type.v.edi2", "ja-JP", "客户期望价值_jp", "条件类型.V.EDI2"),
+            // dict.accounting.financial.condition.type.v.edi2
+            ("dict.accounting.financial.condition.type.v.edi2", "zh-CN", "客户期望价值", "条件类型.V.EDI2"),
+            // dict.accounting.financial.condition.type.v.edi2
+            ("dict.accounting.financial.condition.type.v.edi2", "zh-HK", "客户期望价值_hk", "条件类型.V.EDI2"),
+
+            // dict.accounting.financial.condition.type.v.ek01
+            ("dict.accounting.financial.condition.type.v.ek01", "en-US", "实际成本_us", "条件类型.V.EK01"),
+            // dict.accounting.financial.condition.type.v.ek01
+            ("dict.accounting.financial.condition.type.v.ek01", "ja-JP", "实际成本_jp", "条件类型.V.EK01"),
+            // dict.accounting.financial.condition.type.v.ek01
+            ("dict.accounting.financial.condition.type.v.ek01", "zh-CN", "实际成本", "条件类型.V.EK01"),
+            // dict.accounting.financial.condition.type.v.ek01
+            ("dict.accounting.financial.condition.type.v.ek01", "zh-HK", "实际成本_hk", "条件类型.V.EK01"),
+
+            // dict.accounting.financial.condition.type.v.ek02
+            ("dict.accounting.financial.condition.type.v.ek02", "en-US", "计算成本_us", "条件类型.V.EK02"),
+            // dict.accounting.financial.condition.type.v.ek02
+            ("dict.accounting.financial.condition.type.v.ek02", "ja-JP", "计算成本_jp", "条件类型.V.EK02"),
+            // dict.accounting.financial.condition.type.v.ek02
+            ("dict.accounting.financial.condition.type.v.ek02", "zh-CN", "计算成本", "条件类型.V.EK02"),
+            // dict.accounting.financial.condition.type.v.ek02
+            ("dict.accounting.financial.condition.type.v.ek02", "zh-HK", "计算成本_hk", "条件类型.V.EK02"),
+
+            // dict.accounting.financial.condition.type.v.ek03
+            ("dict.accounting.financial.condition.type.v.ek03", "en-US", "计算装运成本_us", "条件类型.V.EK03"),
+            // dict.accounting.financial.condition.type.v.ek03
+            ("dict.accounting.financial.condition.type.v.ek03", "ja-JP", "计算装运成本_jp", "条件类型.V.EK03"),
+            // dict.accounting.financial.condition.type.v.ek03
+            ("dict.accounting.financial.condition.type.v.ek03", "zh-CN", "计算装运成本", "条件类型.V.EK03"),
+            // dict.accounting.financial.condition.type.v.ek03
+            ("dict.accounting.financial.condition.type.v.ek03", "zh-HK", "计算装运成本_hk", "条件类型.V.EK03"),
+
+            // dict.accounting.financial.condition.type.v.eknn
+            ("dict.accounting.financial.condition.type.v.eknn", "en-US", "净/净 PP IS-R_us", "条件类型.V.EKNN"),
+            // dict.accounting.financial.condition.type.v.eknn
+            ("dict.accounting.financial.condition.type.v.eknn", "ja-JP", "净/净 PP IS-R_jp", "条件类型.V.EKNN"),
+            // dict.accounting.financial.condition.type.v.eknn
+            ("dict.accounting.financial.condition.type.v.eknn", "zh-CN", "净/净 PP IS-R", "条件类型.V.EKNN"),
+            // dict.accounting.financial.condition.type.v.eknn
+            ("dict.accounting.financial.condition.type.v.eknn", "zh-HK", "净/净 PP IS-R_hk", "条件类型.V.EKNN"),
+
+            // dict.accounting.financial.condition.type.v.ev00
+            ("dict.accounting.financial.condition.type.v.ev00", "en-US", "Ret. 价格 Cust.ISR_us", "条件类型.V.EV00"),
+            // dict.accounting.financial.condition.type.v.ev00
+            ("dict.accounting.financial.condition.type.v.ev00", "ja-JP", "Ret. 价格 Cust.ISR_jp", "条件类型.V.EV00"),
+            // dict.accounting.financial.condition.type.v.ev00
+            ("dict.accounting.financial.condition.type.v.ev00", "zh-CN", "Ret. 价格 Cust.ISR", "条件类型.V.EV00"),
+            // dict.accounting.financial.condition.type.v.ev00
+            ("dict.accounting.financial.condition.type.v.ev00", "zh-HK", "Ret. 价格 Cust.ISR_hk", "条件类型.V.EV00"),
+
+            // dict.accounting.financial.condition.type.v.evau
+            ("dict.accounting.financial.condition.type.v.evau", "en-US", "Ret.毛利 SP Calc._us", "条件类型.V.EVAU"),
+            // dict.accounting.financial.condition.type.v.evau
+            ("dict.accounting.financial.condition.type.v.evau", "ja-JP", "Ret.毛利 SP Calc._jp", "条件类型.V.EVAU"),
+            // dict.accounting.financial.condition.type.v.evau
+            ("dict.accounting.financial.condition.type.v.evau", "zh-CN", "Ret.毛利 SP Calc.", "条件类型.V.EVAU"),
+            // dict.accounting.financial.condition.type.v.evau
+            ("dict.accounting.financial.condition.type.v.evau", "zh-HK", "Ret.毛利 SP Calc._hk", "条件类型.V.EVAU"),
+
+            // dict.accounting.financial.condition.type.v.evax
+            ("dict.accounting.financial.condition.type.v.evax", "en-US", "Ret.毛利 SP Calc._us", "条件类型.V.EVAX"),
+            // dict.accounting.financial.condition.type.v.evax
+            ("dict.accounting.financial.condition.type.v.evax", "ja-JP", "Ret.毛利 SP Calc._jp", "条件类型.V.EVAX"),
+            // dict.accounting.financial.condition.type.v.evax
+            ("dict.accounting.financial.condition.type.v.evax", "zh-CN", "Ret.毛利 SP Calc.", "条件类型.V.EVAX"),
+            // dict.accounting.financial.condition.type.v.evax
+            ("dict.accounting.financial.condition.type.v.evax", "zh-HK", "Ret.毛利 SP Calc._hk", "条件类型.V.EVAX"),
+
+            // dict.accounting.financial.condition.type.v.evp0
+            ("dict.accounting.financial.condition.type.v.evp0", "en-US", "零售价格_us", "条件类型.V.EVP0"),
+            // dict.accounting.financial.condition.type.v.evp0
+            ("dict.accounting.financial.condition.type.v.evp0", "ja-JP", "零售价格_jp", "条件类型.V.EVP0"),
+            // dict.accounting.financial.condition.type.v.evp0
+            ("dict.accounting.financial.condition.type.v.evp0", "zh-CN", "零售价格", "条件类型.V.EVP0"),
+            // dict.accounting.financial.condition.type.v.evp0
+            ("dict.accounting.financial.condition.type.v.evp0", "zh-HK", "零售价格_hk", "条件类型.V.EVP0"),
+
+            // dict.accounting.financial.condition.type.v.evp1
+            ("dict.accounting.financial.condition.type.v.evp1", "en-US", "Ret. 价格 1 ISR_us", "条件类型.V.EVP1"),
+            // dict.accounting.financial.condition.type.v.evp1
+            ("dict.accounting.financial.condition.type.v.evp1", "ja-JP", "Ret. 价格 1 ISR_jp", "条件类型.V.EVP1"),
+            // dict.accounting.financial.condition.type.v.evp1
+            ("dict.accounting.financial.condition.type.v.evp1", "zh-CN", "Ret. 价格 1 ISR", "条件类型.V.EVP1"),
+            // dict.accounting.financial.condition.type.v.evp1
+            ("dict.accounting.financial.condition.type.v.evp1", "zh-HK", "Ret. 价格 1 ISR_hk", "条件类型.V.EVP1"),
+
+            // dict.accounting.financial.condition.type.v.ftmo
+            ("dict.accounting.financial.condition.type.v.ftmo", "en-US", "FT: 市场_us", "条件类型.V.FTMO"),
+            // dict.accounting.financial.condition.type.v.ftmo
+            ("dict.accounting.financial.condition.type.v.ftmo", "ja-JP", "FT: 市场_jp", "条件类型.V.FTMO"),
+            // dict.accounting.financial.condition.type.v.ftmo
+            ("dict.accounting.financial.condition.type.v.ftmo", "zh-CN", "FT: 市场", "条件类型.V.FTMO"),
+            // dict.accounting.financial.condition.type.v.ftmo
+            ("dict.accounting.financial.condition.type.v.ftmo", "zh-HK", "FT: 市场_hk", "条件类型.V.FTMO"),
+
+            // dict.accounting.financial.condition.type.v.grwr
+            ("dict.accounting.financial.condition.type.v.grwr", "en-US", "统计值_us", "条件类型.V.GRWR"),
+            // dict.accounting.financial.condition.type.v.grwr
+            ("dict.accounting.financial.condition.type.v.grwr", "ja-JP", "统计值_jp", "条件类型.V.GRWR"),
+            // dict.accounting.financial.condition.type.v.grwr
+            ("dict.accounting.financial.condition.type.v.grwr", "zh-CN", "统计值", "条件类型.V.GRWR"),
+            // dict.accounting.financial.condition.type.v.grwr
+            ("dict.accounting.financial.condition.type.v.grwr", "zh-HK", "统计值_hk", "条件类型.V.GRWR"),
+
+            // dict.accounting.financial.condition.type.v.ha00
+            ("dict.accounting.financial.condition.type.v.ha00", "en-US", "折扣百分数_us", "条件类型.V.HA00"),
+            // dict.accounting.financial.condition.type.v.ha00
+            ("dict.accounting.financial.condition.type.v.ha00", "ja-JP", "折扣百分数_jp", "条件类型.V.HA00"),
+            // dict.accounting.financial.condition.type.v.ha00
+            ("dict.accounting.financial.condition.type.v.ha00", "zh-CN", "折扣百分数", "条件类型.V.HA00"),
+            // dict.accounting.financial.condition.type.v.ha00
+            ("dict.accounting.financial.condition.type.v.ha00", "zh-HK", "折扣百分数_hk", "条件类型.V.HA00"),
+
+            // dict.accounting.financial.condition.type.v.hb00
+            ("dict.accounting.financial.condition.type.v.hb00", "en-US", "折扣（值）_us", "条件类型.V.HB00"),
+            // dict.accounting.financial.condition.type.v.hb00
+            ("dict.accounting.financial.condition.type.v.hb00", "ja-JP", "折扣（值）_jp", "条件类型.V.HB00"),
+            // dict.accounting.financial.condition.type.v.hb00
+            ("dict.accounting.financial.condition.type.v.hb00", "zh-CN", "折扣（值）", "条件类型.V.HB00"),
+            // dict.accounting.financial.condition.type.v.hb00
+            ("dict.accounting.financial.condition.type.v.hb00", "zh-HK", "折扣（值）_hk", "条件类型.V.HB00"),
+
+            // dict.accounting.financial.condition.type.v.hd00
+            ("dict.accounting.financial.condition.type.v.hd00", "en-US", "运费_us", "条件类型.V.HD00"),
+            // dict.accounting.financial.condition.type.v.hd00
+            ("dict.accounting.financial.condition.type.v.hd00", "ja-JP", "运费_jp", "条件类型.V.HD00"),
+            // dict.accounting.financial.condition.type.v.hd00
+            ("dict.accounting.financial.condition.type.v.hd00", "zh-CN", "运费", "条件类型.V.HD00"),
+            // dict.accounting.financial.condition.type.v.hd00
+            ("dict.accounting.financial.condition.type.v.hd00", "zh-HK", "运费_hk", "条件类型.V.HD00"),
+
+            // dict.accounting.financial.condition.type.v.hi01
+            ("dict.accounting.financial.condition.type.v.hi01", "en-US", "层次_us", "条件类型.V.HI01"),
+            // dict.accounting.financial.condition.type.v.hi01
+            ("dict.accounting.financial.condition.type.v.hi01", "ja-JP", "层次_jp", "条件类型.V.HI01"),
+            // dict.accounting.financial.condition.type.v.hi01
+            ("dict.accounting.financial.condition.type.v.hi01", "zh-CN", "层次", "条件类型.V.HI01"),
+            // dict.accounting.financial.condition.type.v.hi01
+            ("dict.accounting.financial.condition.type.v.hi01", "zh-HK", "层次_hk", "条件类型.V.HI01"),
+
+            // dict.accounting.financial.condition.type.v.hi02
+            ("dict.accounting.financial.condition.type.v.hi02", "en-US", "层次/物料_us", "条件类型.V.HI02"),
+            // dict.accounting.financial.condition.type.v.hi02
+            ("dict.accounting.financial.condition.type.v.hi02", "ja-JP", "层次/物料_jp", "条件类型.V.HI02"),
+            // dict.accounting.financial.condition.type.v.hi02
+            ("dict.accounting.financial.condition.type.v.hi02", "zh-CN", "层次/物料", "条件类型.V.HI02"),
+            // dict.accounting.financial.condition.type.v.hi02
+            ("dict.accounting.financial.condition.type.v.hi02", "zh-HK", "层次/物料_hk", "条件类型.V.HI02"),
+
+            // dict.accounting.financial.condition.type.v.hm00
+            ("dict.accounting.financial.condition.type.v.hm00", "en-US", "订单价值_us", "条件类型.V.HM00"),
+            // dict.accounting.financial.condition.type.v.hm00
+            ("dict.accounting.financial.condition.type.v.hm00", "ja-JP", "订单价值_jp", "条件类型.V.HM00"),
+            // dict.accounting.financial.condition.type.v.hm00
+            ("dict.accounting.financial.condition.type.v.hm00", "zh-CN", "订单价值", "条件类型.V.HM00"),
+            // dict.accounting.financial.condition.type.v.hm00
+            ("dict.accounting.financial.condition.type.v.hm00", "zh-HK", "订单价值_hk", "条件类型.V.HM00"),
+
+            // dict.accounting.financial.condition.type.v.ibrx
+            ("dict.accounting.financial.condition.type.v.ibrx", "en-US", "巴西税收计算_us", "条件类型.V.IBRX"),
+            // dict.accounting.financial.condition.type.v.ibrx
+            ("dict.accounting.financial.condition.type.v.ibrx", "ja-JP", "巴西税收计算_jp", "条件类型.V.IBRX"),
+            // dict.accounting.financial.condition.type.v.ibrx
+            ("dict.accounting.financial.condition.type.v.ibrx", "zh-CN", "巴西税收计算", "条件类型.V.IBRX"),
+            // dict.accounting.financial.condition.type.v.ibrx
+            ("dict.accounting.financial.condition.type.v.ibrx", "zh-HK", "巴西税收计算_hk", "条件类型.V.IBRX"),
+
+            // dict.accounting.financial.condition.type.v.icm3
+            ("dict.accounting.financial.condition.type.v.icm3", "en-US", "来自SD的ICMS_us", "条件类型.V.ICM3"),
+            // dict.accounting.financial.condition.type.v.icm3
+            ("dict.accounting.financial.condition.type.v.icm3", "ja-JP", "来自SD的ICMS_jp", "条件类型.V.ICM3"),
+            // dict.accounting.financial.condition.type.v.icm3
+            ("dict.accounting.financial.condition.type.v.icm3", "zh-CN", "来自SD的ICMS", "条件类型.V.ICM3"),
+            // dict.accounting.financial.condition.type.v.icm3
+            ("dict.accounting.financial.condition.type.v.icm3", "zh-HK", "来自SD的ICMS_hk", "条件类型.V.ICM3"),
+
+            // dict.accounting.financial.condition.type.v.icmi
+            ("dict.accounting.financial.condition.type.v.icmi", "en-US", "价格 + 税 (对于NF)_us", "条件类型.V.ICMI"),
+            // dict.accounting.financial.condition.type.v.icmi
+            ("dict.accounting.financial.condition.type.v.icmi", "ja-JP", "价格 + 税 (对于NF)_jp", "条件类型.V.ICMI"),
+            // dict.accounting.financial.condition.type.v.icmi
+            ("dict.accounting.financial.condition.type.v.icmi", "zh-CN", "价格 + 税 (对于NF)", "条件类型.V.ICMI"),
+            // dict.accounting.financial.condition.type.v.icmi
+            ("dict.accounting.financial.condition.type.v.icmi", "zh-HK", "价格 + 税 (对于NF)_hk", "条件类型.V.ICMI"),
+
+            // dict.accounting.financial.condition.type.v.icmo
+            ("dict.accounting.financial.condition.type.v.icmo", "en-US", "ICMS 偏置_us", "条件类型.V.ICMO"),
+            // dict.accounting.financial.condition.type.v.icmo
+            ("dict.accounting.financial.condition.type.v.icmo", "ja-JP", "ICMS 偏置_jp", "条件类型.V.ICMO"),
+            // dict.accounting.financial.condition.type.v.icmo
+            ("dict.accounting.financial.condition.type.v.icmo", "zh-CN", "ICMS 偏置", "条件类型.V.ICMO"),
+            // dict.accounting.financial.condition.type.v.icmo
+            ("dict.accounting.financial.condition.type.v.icmo", "zh-HK", "ICMS 偏置_hk", "条件类型.V.ICMO"),
+
+            // dict.accounting.financial.condition.type.v.icmp
+            ("dict.accounting.financial.condition.type.v.icmp", "en-US", "ICMS/ISS 在价格上_us", "条件类型.V.ICMP"),
+            // dict.accounting.financial.condition.type.v.icmp
+            ("dict.accounting.financial.condition.type.v.icmp", "ja-JP", "ICMS/ISS 在价格上_jp", "条件类型.V.ICMP"),
+            // dict.accounting.financial.condition.type.v.icmp
+            ("dict.accounting.financial.condition.type.v.icmp", "zh-CN", "ICMS/ISS 在价格上", "条件类型.V.ICMP"),
+            // dict.accounting.financial.condition.type.v.icmp
+            ("dict.accounting.financial.condition.type.v.icmp", "zh-HK", "ICMS/ISS 在价格上_hk", "条件类型.V.ICMP"),
+
+            // dict.accounting.financial.condition.type.v.icmr
+            ("dict.accounting.financial.condition.type.v.icmr", "en-US", "价格+ICMS/ISS (NF)_us", "条件类型.V.ICMR"),
+            // dict.accounting.financial.condition.type.v.icmr
+            ("dict.accounting.financial.condition.type.v.icmr", "ja-JP", "价格+ICMS/ISS (NF)_jp", "条件类型.V.ICMR"),
+            // dict.accounting.financial.condition.type.v.icmr
+            ("dict.accounting.financial.condition.type.v.icmr", "zh-CN", "价格+ICMS/ISS (NF)", "条件类型.V.ICMR"),
+            // dict.accounting.financial.condition.type.v.icmr
+            ("dict.accounting.financial.condition.type.v.icmr", "zh-HK", "价格+ICMS/ISS (NF)_hk", "条件类型.V.ICMR"),
+
+            // dict.accounting.financial.condition.type.v.ics3
+            ("dict.accounting.financial.condition.type.v.ics3", "en-US", "来自SD的Sub.Trib._us", "条件类型.V.ICS3"),
+            // dict.accounting.financial.condition.type.v.ics3
+            ("dict.accounting.financial.condition.type.v.ics3", "ja-JP", "来自SD的Sub.Trib._jp", "条件类型.V.ICS3"),
+            // dict.accounting.financial.condition.type.v.ics3
+            ("dict.accounting.financial.condition.type.v.ics3", "zh-CN", "来自SD的Sub.Trib.", "条件类型.V.ICS3"),
+            // dict.accounting.financial.condition.type.v.ics3
+            ("dict.accounting.financial.condition.type.v.ics3", "zh-HK", "来自SD的Sub.Trib._hk", "条件类型.V.ICS3"),
+
+            // dict.accounting.financial.condition.type.v.icso
+            ("dict.accounting.financial.condition.type.v.icso", "en-US", "ISS  偏置_us", "条件类型.V.ICSO"),
+            // dict.accounting.financial.condition.type.v.icso
+            ("dict.accounting.financial.condition.type.v.icso", "ja-JP", "ISS  偏置_jp", "条件类型.V.ICSO"),
+            // dict.accounting.financial.condition.type.v.icso
+            ("dict.accounting.financial.condition.type.v.icso", "zh-CN", "ISS  偏置", "条件类型.V.ICSO"),
+            // dict.accounting.financial.condition.type.v.icso
+            ("dict.accounting.financial.condition.type.v.icso", "zh-HK", "ISS  偏置_hk", "条件类型.V.ICSO"),
+
+            // dict.accounting.financial.condition.type.v.iczf
+            ("dict.accounting.financial.condition.type.v.iczf", "en-US", "ADMS Disc. Zona Fr._us", "条件类型.V.ICZF"),
+            // dict.accounting.financial.condition.type.v.iczf
+            ("dict.accounting.financial.condition.type.v.iczf", "ja-JP", "ADMS Disc. Zona Fr._jp", "条件类型.V.ICZF"),
+            // dict.accounting.financial.condition.type.v.iczf
+            ("dict.accounting.financial.condition.type.v.iczf", "zh-CN", "ADMS Disc. Zona Fr.", "条件类型.V.ICZF"),
+            // dict.accounting.financial.condition.type.v.iczf
+            ("dict.accounting.financial.condition.type.v.iczf", "zh-HK", "ADMS Disc. Zona Fr._hk", "条件类型.V.ICZF"),
+
+            // dict.accounting.financial.condition.type.v.idm2
+            ("dict.accounting.financial.condition.type.v.idm2", "en-US", "销项税_us", "条件类型.V.IDM2"),
+            // dict.accounting.financial.condition.type.v.idm2
+            ("dict.accounting.financial.condition.type.v.idm2", "ja-JP", "销项税_jp", "条件类型.V.IDM2"),
+            // dict.accounting.financial.condition.type.v.idm2
+            ("dict.accounting.financial.condition.type.v.idm2", "zh-CN", "销项税", "条件类型.V.IDM2"),
+            // dict.accounting.financial.condition.type.v.idm2
+            ("dict.accounting.financial.condition.type.v.idm2", "zh-HK", "销项税_hk", "条件类型.V.IDM2"),
+
+            // dict.accounting.financial.condition.type.v.idm3
+            ("dict.accounting.financial.condition.type.v.idm3", "en-US", "销项税_us", "条件类型.V.IDM3"),
+            // dict.accounting.financial.condition.type.v.idm3
+            ("dict.accounting.financial.condition.type.v.idm3", "ja-JP", "销项税_jp", "条件类型.V.IDM3"),
+            // dict.accounting.financial.condition.type.v.idm3
+            ("dict.accounting.financial.condition.type.v.idm3", "zh-CN", "销项税", "条件类型.V.IDM3"),
+            // dict.accounting.financial.condition.type.v.idm3
+            ("dict.accounting.financial.condition.type.v.idm3", "zh-HK", "销项税_hk", "条件类型.V.IDM3"),
+
+            // dict.accounting.financial.condition.type.v.idmw
+            ("dict.accounting.financial.condition.type.v.idmw", "en-US", "销项税_us", "条件类型.V.IDMW"),
+            // dict.accounting.financial.condition.type.v.idmw
+            ("dict.accounting.financial.condition.type.v.idmw", "ja-JP", "销项税_jp", "条件类型.V.IDMW"),
+            // dict.accounting.financial.condition.type.v.idmw
+            ("dict.accounting.financial.condition.type.v.idmw", "zh-CN", "销项税", "条件类型.V.IDMW"),
+            // dict.accounting.financial.condition.type.v.idmw
+            ("dict.accounting.financial.condition.type.v.idmw", "zh-HK", "销项税_hk", "条件类型.V.IDMW"),
+
+            // dict.accounting.financial.condition.type.v.ifr3
+            ("dict.accounting.financial.condition.type.v.ifr3", "en-US", "在运费SD中ICMS_us", "条件类型.V.IFR3"),
+            // dict.accounting.financial.condition.type.v.ifr3
+            ("dict.accounting.financial.condition.type.v.ifr3", "ja-JP", "在运费SD中ICMS_jp", "条件类型.V.IFR3"),
+            // dict.accounting.financial.condition.type.v.ifr3
+            ("dict.accounting.financial.condition.type.v.ifr3", "zh-CN", "在运费SD中ICMS", "条件类型.V.IFR3"),
+            // dict.accounting.financial.condition.type.v.ifr3
+            ("dict.accounting.financial.condition.type.v.ifr3", "zh-HK", "在运费SD中ICMS_hk", "条件类型.V.IFR3"),
+
+            // dict.accounting.financial.condition.type.v.ifs3
+            ("dict.accounting.financial.condition.type.v.ifs3", "en-US", "ICMS ST 运费 SD_us", "条件类型.V.IFS3"),
+            // dict.accounting.financial.condition.type.v.ifs3
+            ("dict.accounting.financial.condition.type.v.ifs3", "ja-JP", "ICMS ST 运费 SD_jp", "条件类型.V.IFS3"),
+            // dict.accounting.financial.condition.type.v.ifs3
+            ("dict.accounting.financial.condition.type.v.ifs3", "zh-CN", "ICMS ST 运费 SD", "条件类型.V.IFS3"),
+            // dict.accounting.financial.condition.type.v.ifs3
+            ("dict.accounting.financial.condition.type.v.ifs3", "zh-HK", "ICMS ST 运费 SD_hk", "条件类型.V.IFS3"),
+
+            // dict.accounting.financial.condition.type.v.indx
+            ("dict.accounting.financial.condition.type.v.indx", "en-US", "通胀指数_us", "条件类型.V.INDX"),
+            // dict.accounting.financial.condition.type.v.indx
+            ("dict.accounting.financial.condition.type.v.indx", "ja-JP", "通胀指数_jp", "条件类型.V.INDX"),
+            // dict.accounting.financial.condition.type.v.indx
+            ("dict.accounting.financial.condition.type.v.indx", "zh-CN", "通胀指数", "条件类型.V.INDX"),
+            // dict.accounting.financial.condition.type.v.indx
+            ("dict.accounting.financial.condition.type.v.indx", "zh-HK", "通胀指数_hk", "条件类型.V.INDX"),
+
+            // dict.accounting.financial.condition.type.v.ipi3
+            ("dict.accounting.financial.condition.type.v.ipi3", "en-US", "来自SD的IPI_us", "条件类型.V.IPI3"),
+            // dict.accounting.financial.condition.type.v.ipi3
+            ("dict.accounting.financial.condition.type.v.ipi3", "ja-JP", "来自SD的IPI_jp", "条件类型.V.IPI3"),
+            // dict.accounting.financial.condition.type.v.ipi3
+            ("dict.accounting.financial.condition.type.v.ipi3", "zh-CN", "来自SD的IPI", "条件类型.V.IPI3"),
+            // dict.accounting.financial.condition.type.v.ipi3
+            ("dict.accounting.financial.condition.type.v.ipi3", "zh-HK", "来自SD的IPI_hk", "条件类型.V.IPI3"),
+
+            // dict.accounting.financial.condition.type.v.ipic
+            ("dict.accounting.financial.condition.type.v.ipic", "en-US", "复制来自SD的IPI_us", "条件类型.V.IPIC"),
+            // dict.accounting.financial.condition.type.v.ipic
+            ("dict.accounting.financial.condition.type.v.ipic", "ja-JP", "复制来自SD的IPI_jp", "条件类型.V.IPIC"),
+            // dict.accounting.financial.condition.type.v.ipic
+            ("dict.accounting.financial.condition.type.v.ipic", "zh-CN", "复制来自SD的IPI", "条件类型.V.IPIC"),
+            // dict.accounting.financial.condition.type.v.ipic
+            ("dict.accounting.financial.condition.type.v.ipic", "zh-HK", "复制来自SD的IPI_hk", "条件类型.V.IPIC"),
+
+            // dict.accounting.financial.condition.type.v.ipio
+            ("dict.accounting.financial.condition.type.v.ipio", "en-US", "IPI 偏置_us", "条件类型.V.IPIO"),
+            // dict.accounting.financial.condition.type.v.ipio
+            ("dict.accounting.financial.condition.type.v.ipio", "ja-JP", "IPI 偏置_jp", "条件类型.V.IPIO"),
+            // dict.accounting.financial.condition.type.v.ipio
+            ("dict.accounting.financial.condition.type.v.ipio", "zh-CN", "IPI 偏置", "条件类型.V.IPIO"),
+            // dict.accounting.financial.condition.type.v.ipio
+            ("dict.accounting.financial.condition.type.v.ipio", "zh-HK", "IPI 偏置_hk", "条件类型.V.IPIO"),
+
+            // dict.accounting.financial.condition.type.v.iss3
+            ("dict.accounting.financial.condition.type.v.iss3", "en-US", "来自SD的ISS_us", "条件类型.V.ISS3"),
+            // dict.accounting.financial.condition.type.v.iss3
+            ("dict.accounting.financial.condition.type.v.iss3", "ja-JP", "来自SD的ISS_jp", "条件类型.V.ISS3"),
+            // dict.accounting.financial.condition.type.v.iss3
+            ("dict.accounting.financial.condition.type.v.iss3", "zh-CN", "来自SD的ISS", "条件类型.V.ISS3"),
+            // dict.accounting.financial.condition.type.v.iss3
+            ("dict.accounting.financial.condition.type.v.iss3", "zh-HK", "来自SD的ISS_hk", "条件类型.V.ISS3"),
+
+            // dict.accounting.financial.condition.type.v.iv01
+            ("dict.accounting.financial.condition.type.v.iv01", "en-US", "公司间价格_us", "条件类型.V.IV01"),
+            // dict.accounting.financial.condition.type.v.iv01
+            ("dict.accounting.financial.condition.type.v.iv01", "ja-JP", "公司间价格_jp", "条件类型.V.IV01"),
+            // dict.accounting.financial.condition.type.v.iv01
+            ("dict.accounting.financial.condition.type.v.iv01", "zh-CN", "公司间价格", "条件类型.V.IV01"),
+            // dict.accounting.financial.condition.type.v.iv01
+            ("dict.accounting.financial.condition.type.v.iv01", "zh-HK", "公司间价格_hk", "条件类型.V.IV01"),
+
+            // dict.accounting.financial.condition.type.v.iv02
+            ("dict.accounting.financial.condition.type.v.iv02", "en-US", "公司间 %_us", "条件类型.V.IV02"),
+            // dict.accounting.financial.condition.type.v.iv02
+            ("dict.accounting.financial.condition.type.v.iv02", "ja-JP", "公司间 %_jp", "条件类型.V.IV02"),
+            // dict.accounting.financial.condition.type.v.iv02
+            ("dict.accounting.financial.condition.type.v.iv02", "zh-CN", "公司间 %", "条件类型.V.IV02"),
+            // dict.accounting.financial.condition.type.v.iv02
+            ("dict.accounting.financial.condition.type.v.iv02", "zh-HK", "公司间 %_hk", "条件类型.V.IV02"),
+
+            // dict.accounting.financial.condition.type.v.j1a1
+            ("dict.accounting.financial.condition.type.v.j1a1", "en-US", "GI Perc. 地区 1_us", "条件类型.V.J1A1"),
+            // dict.accounting.financial.condition.type.v.j1a1
+            ("dict.accounting.financial.condition.type.v.j1a1", "ja-JP", "GI Perc. 地区 1_jp", "条件类型.V.J1A1"),
+            // dict.accounting.financial.condition.type.v.j1a1
+            ("dict.accounting.financial.condition.type.v.j1a1", "zh-CN", "GI Perc. 地区 1", "条件类型.V.J1A1"),
+            // dict.accounting.financial.condition.type.v.j1a1
+            ("dict.accounting.financial.condition.type.v.j1a1", "zh-HK", "GI Perc. 地区 1_hk", "条件类型.V.J1A1"),
+
+            // dict.accounting.financial.condition.type.v.j1a2
+            ("dict.accounting.financial.condition.type.v.j1a2", "en-US", "GI Perc. 地区 2_us", "条件类型.V.J1A2"),
+            // dict.accounting.financial.condition.type.v.j1a2
+            ("dict.accounting.financial.condition.type.v.j1a2", "ja-JP", "GI Perc. 地区 2_jp", "条件类型.V.J1A2"),
+            // dict.accounting.financial.condition.type.v.j1a2
+            ("dict.accounting.financial.condition.type.v.j1a2", "zh-CN", "GI Perc. 地区 2", "条件类型.V.J1A2"),
+            // dict.accounting.financial.condition.type.v.j1a2
+            ("dict.accounting.financial.condition.type.v.j1a2", "zh-HK", "GI Perc. 地区 2_hk", "条件类型.V.J1A2"),
+
+            // dict.accounting.financial.condition.type.v.j1a3
+            ("dict.accounting.financial.condition.type.v.j1a3", "en-US", "GI Perc. 地区 3_us", "条件类型.V.J1A3"),
+            // dict.accounting.financial.condition.type.v.j1a3
+            ("dict.accounting.financial.condition.type.v.j1a3", "ja-JP", "GI Perc. 地区 3_jp", "条件类型.V.J1A3"),
+            // dict.accounting.financial.condition.type.v.j1a3
+            ("dict.accounting.financial.condition.type.v.j1a3", "zh-CN", "GI Perc. 地区 3", "条件类型.V.J1A3"),
+            // dict.accounting.financial.condition.type.v.j1a3
+            ("dict.accounting.financial.condition.type.v.j1a3", "zh-HK", "GI Perc. 地区 3_hk", "条件类型.V.J1A3"),
+
+            // dict.accounting.financial.condition.type.v.j1al
+            ("dict.accounting.financial.condition.type.v.j1al", "en-US", "有贷方的免税_us", "条件类型.V.J1AL"),
+            // dict.accounting.financial.condition.type.v.j1al
+            ("dict.accounting.financial.condition.type.v.j1al", "ja-JP", "有贷方的免税_jp", "条件类型.V.J1AL"),
+            // dict.accounting.financial.condition.type.v.j1al
+            ("dict.accounting.financial.condition.type.v.j1al", "zh-CN", "有贷方的免税", "条件类型.V.J1AL"),
+            // dict.accounting.financial.condition.type.v.j1al
+            ("dict.accounting.financial.condition.type.v.j1al", "zh-HK", "有贷方的免税_hk", "条件类型.V.J1AL"),
+
+            // dict.accounting.financial.condition.type.v.j1an
+            ("dict.accounting.financial.condition.type.v.j1an", "en-US", "无贷方的免税_us", "条件类型.V.J1AN"),
+            // dict.accounting.financial.condition.type.v.j1an
+            ("dict.accounting.financial.condition.type.v.j1an", "ja-JP", "无贷方的免税_jp", "条件类型.V.J1AN"),
+            // dict.accounting.financial.condition.type.v.j1an
+            ("dict.accounting.financial.condition.type.v.j1an", "zh-CN", "无贷方的免税", "条件类型.V.J1AN"),
+            // dict.accounting.financial.condition.type.v.j1an
+            ("dict.accounting.financial.condition.type.v.j1an", "zh-HK", "无贷方的免税_hk", "条件类型.V.J1AN"),
+
+            // dict.accounting.financial.condition.type.v.j1ap
+            ("dict.accounting.financial.condition.type.v.j1ap", "en-US", "VAT 概念 I_us", "条件类型.V.J1AP"),
+            // dict.accounting.financial.condition.type.v.j1ap
+            ("dict.accounting.financial.condition.type.v.j1ap", "ja-JP", "VAT 概念 I_jp", "条件类型.V.J1AP"),
+            // dict.accounting.financial.condition.type.v.j1ap
+            ("dict.accounting.financial.condition.type.v.j1ap", "zh-CN", "VAT 概念 I", "条件类型.V.J1AP"),
+            // dict.accounting.financial.condition.type.v.j1ap
+            ("dict.accounting.financial.condition.type.v.j1ap", "zh-HK", "VAT 概念 I_hk", "条件类型.V.J1AP"),
+
+            // dict.accounting.financial.condition.type.v.j1aq
+            ("dict.accounting.financial.condition.type.v.j1aq", "en-US", "VAT 概念 II_us", "条件类型.V.J1AQ"),
+            // dict.accounting.financial.condition.type.v.j1aq
+            ("dict.accounting.financial.condition.type.v.j1aq", "ja-JP", "VAT 概念 II_jp", "条件类型.V.J1AQ"),
+            // dict.accounting.financial.condition.type.v.j1aq
+            ("dict.accounting.financial.condition.type.v.j1aq", "zh-CN", "VAT 概念 II", "条件类型.V.J1AQ"),
+            // dict.accounting.financial.condition.type.v.j1aq
+            ("dict.accounting.financial.condition.type.v.j1aq", "zh-HK", "VAT 概念 II_hk", "条件类型.V.J1AQ"),
+
+            // dict.accounting.financial.condition.type.v.j1ar
+            ("dict.accounting.financial.condition.type.v.j1ar", "en-US", "VAT附加费RNI_us", "条件类型.V.J1AR"),
+            // dict.accounting.financial.condition.type.v.j1ar
+            ("dict.accounting.financial.condition.type.v.j1ar", "ja-JP", "VAT附加费RNI_jp", "条件类型.V.J1AR"),
+            // dict.accounting.financial.condition.type.v.j1ar
+            ("dict.accounting.financial.condition.type.v.j1ar", "zh-CN", "VAT附加费RNI", "条件类型.V.J1AR"),
+            // dict.accounting.financial.condition.type.v.j1ar
+            ("dict.accounting.financial.condition.type.v.j1ar", "zh-HK", "VAT附加费RNI_hk", "条件类型.V.J1AR"),
+
+            // dict.accounting.financial.condition.type.v.j1au
+            ("dict.accounting.financial.condition.type.v.j1au", "en-US", "增值税_us", "条件类型.V.J1AU"),
+            // dict.accounting.financial.condition.type.v.j1au
+            ("dict.accounting.financial.condition.type.v.j1au", "ja-JP", "增值税_jp", "条件类型.V.J1AU"),
+            // dict.accounting.financial.condition.type.v.j1au
+            ("dict.accounting.financial.condition.type.v.j1au", "zh-CN", "增值税", "条件类型.V.J1AU"),
+            // dict.accounting.financial.condition.type.v.j1au
+            ("dict.accounting.financial.condition.type.v.j1au", "zh-HK", "增值税_hk", "条件类型.V.J1AU"),
+
+            // dict.accounting.financial.condition.type.v.j1av
+            ("dict.accounting.financial.condition.type.v.j1av", "en-US", "内部销售税_us", "条件类型.V.J1AV"),
+            // dict.accounting.financial.condition.type.v.j1av
+            ("dict.accounting.financial.condition.type.v.j1av", "ja-JP", "内部销售税_jp", "条件类型.V.J1AV"),
+            // dict.accounting.financial.condition.type.v.j1av
+            ("dict.accounting.financial.condition.type.v.j1av", "zh-CN", "内部销售税", "条件类型.V.J1AV"),
+            // dict.accounting.financial.condition.type.v.j1av
+            ("dict.accounting.financial.condition.type.v.j1av", "zh-HK", "内部销售税_hk", "条件类型.V.J1AV"),
+
+            // dict.accounting.financial.condition.type.v.j1w1
+            ("dict.accounting.financial.condition.type.v.j1w1", "en-US", "代扣所得税 1_us", "条件类型.V.J1W1"),
+            // dict.accounting.financial.condition.type.v.j1w1
+            ("dict.accounting.financial.condition.type.v.j1w1", "ja-JP", "代扣所得税 1_jp", "条件类型.V.J1W1"),
+            // dict.accounting.financial.condition.type.v.j1w1
+            ("dict.accounting.financial.condition.type.v.j1w1", "zh-CN", "代扣所得税 1", "条件类型.V.J1W1"),
+            // dict.accounting.financial.condition.type.v.j1w1
+            ("dict.accounting.financial.condition.type.v.j1w1", "zh-HK", "代扣所得税 1_hk", "条件类型.V.J1W1"),
+
+            // dict.accounting.financial.condition.type.v.j1w2
+            ("dict.accounting.financial.condition.type.v.j1w2", "en-US", "代扣所得税 2_us", "条件类型.V.J1W2"),
+            // dict.accounting.financial.condition.type.v.j1w2
+            ("dict.accounting.financial.condition.type.v.j1w2", "ja-JP", "代扣所得税 2_jp", "条件类型.V.J1W2"),
+            // dict.accounting.financial.condition.type.v.j1w2
+            ("dict.accounting.financial.condition.type.v.j1w2", "zh-CN", "代扣所得税 2", "条件类型.V.J1W2"),
+            // dict.accounting.financial.condition.type.v.j1w2
+            ("dict.accounting.financial.condition.type.v.j1w2", "zh-HK", "代扣所得税 2_hk", "条件类型.V.J1W2"),
+
+            // dict.accounting.financial.condition.type.v.j1w3
+            ("dict.accounting.financial.condition.type.v.j1w3", "en-US", "代扣所得税 3_us", "条件类型.V.J1W3"),
+            // dict.accounting.financial.condition.type.v.j1w3
+            ("dict.accounting.financial.condition.type.v.j1w3", "ja-JP", "代扣所得税 3_jp", "条件类型.V.J1W3"),
+            // dict.accounting.financial.condition.type.v.j1w3
+            ("dict.accounting.financial.condition.type.v.j1w3", "zh-CN", "代扣所得税 3", "条件类型.V.J1W3"),
+            // dict.accounting.financial.condition.type.v.j1w3
+            ("dict.accounting.financial.condition.type.v.j1w3", "zh-HK", "代扣所得税 3_hk", "条件类型.V.J1W3"),
+
+            // dict.accounting.financial.condition.type.v.jr1
+            ("dict.accounting.financial.condition.type.v.jr1", "en-US", "税收管辖区代码层1_us", "条件类型.V.JR1"),
+            // dict.accounting.financial.condition.type.v.jr1
+            ("dict.accounting.financial.condition.type.v.jr1", "ja-JP", "税收管辖区代码层1_jp", "条件类型.V.JR1"),
+            // dict.accounting.financial.condition.type.v.jr1
+            ("dict.accounting.financial.condition.type.v.jr1", "zh-CN", "税收管辖区代码层1", "条件类型.V.JR1"),
+            // dict.accounting.financial.condition.type.v.jr1
+            ("dict.accounting.financial.condition.type.v.jr1", "zh-HK", "税收管辖区代码层1_hk", "条件类型.V.JR1"),
+
+            // dict.accounting.financial.condition.type.v.jr2
+            ("dict.accounting.financial.condition.type.v.jr2", "en-US", "税收管辖区代码层2_us", "条件类型.V.JR2"),
+            // dict.accounting.financial.condition.type.v.jr2
+            ("dict.accounting.financial.condition.type.v.jr2", "ja-JP", "税收管辖区代码层2_jp", "条件类型.V.JR2"),
+            // dict.accounting.financial.condition.type.v.jr2
+            ("dict.accounting.financial.condition.type.v.jr2", "zh-CN", "税收管辖区代码层2", "条件类型.V.JR2"),
+            // dict.accounting.financial.condition.type.v.jr2
+            ("dict.accounting.financial.condition.type.v.jr2", "zh-HK", "税收管辖区代码层2_hk", "条件类型.V.JR2"),
+
+            // dict.accounting.financial.condition.type.v.jr3
+            ("dict.accounting.financial.condition.type.v.jr3", "en-US", "税收管辖区代码层3_us", "条件类型.V.JR3"),
+            // dict.accounting.financial.condition.type.v.jr3
+            ("dict.accounting.financial.condition.type.v.jr3", "ja-JP", "税收管辖区代码层3_jp", "条件类型.V.JR3"),
+            // dict.accounting.financial.condition.type.v.jr3
+            ("dict.accounting.financial.condition.type.v.jr3", "zh-CN", "税收管辖区代码层3", "条件类型.V.JR3"),
+            // dict.accounting.financial.condition.type.v.jr3
+            ("dict.accounting.financial.condition.type.v.jr3", "zh-HK", "税收管辖区代码层3_hk", "条件类型.V.JR3"),
+
+            // dict.accounting.financial.condition.type.v.jr4
+            ("dict.accounting.financial.condition.type.v.jr4", "en-US", "税收管辖区代码层4_us", "条件类型.V.JR4"),
+            // dict.accounting.financial.condition.type.v.jr4
+            ("dict.accounting.financial.condition.type.v.jr4", "ja-JP", "税收管辖区代码层4_jp", "条件类型.V.JR4"),
+            // dict.accounting.financial.condition.type.v.jr4
+            ("dict.accounting.financial.condition.type.v.jr4", "zh-CN", "税收管辖区代码层4", "条件类型.V.JR4"),
+            // dict.accounting.financial.condition.type.v.jr4
+            ("dict.accounting.financial.condition.type.v.jr4", "zh-HK", "税收管辖区代码层4_hk", "条件类型.V.JR4"),
+
+            // dict.accounting.financial.condition.type.v.jrc1
+            ("dict.accounting.financial.condition.type.v.jrc1", "en-US", "加拿大的GST_us", "条件类型.V.JRC1"),
+            // dict.accounting.financial.condition.type.v.jrc1
+            ("dict.accounting.financial.condition.type.v.jrc1", "ja-JP", "加拿大的GST_jp", "条件类型.V.JRC1"),
+            // dict.accounting.financial.condition.type.v.jrc1
+            ("dict.accounting.financial.condition.type.v.jrc1", "zh-CN", "加拿大的GST", "条件类型.V.JRC1"),
+            // dict.accounting.financial.condition.type.v.jrc1
+            ("dict.accounting.financial.condition.type.v.jrc1", "zh-HK", "加拿大的GST_hk", "条件类型.V.JRC1"),
+
+            // dict.accounting.financial.condition.type.v.jrc2
+            ("dict.accounting.financial.condition.type.v.jrc2", "en-US", "加拿大的PST_us", "条件类型.V.JRC2"),
+            // dict.accounting.financial.condition.type.v.jrc2
+            ("dict.accounting.financial.condition.type.v.jrc2", "ja-JP", "加拿大的PST_jp", "条件类型.V.JRC2"),
+            // dict.accounting.financial.condition.type.v.jrc2
+            ("dict.accounting.financial.condition.type.v.jrc2", "zh-CN", "加拿大的PST", "条件类型.V.JRC2"),
+            // dict.accounting.financial.condition.type.v.jrc2
+            ("dict.accounting.financial.condition.type.v.jrc2", "zh-HK", "加拿大的PST_hk", "条件类型.V.JRC2"),
+
+            // dict.accounting.financial.condition.type.v.jrc3
+            ("dict.accounting.financial.condition.type.v.jrc3", "en-US", "加拿大的PST(B+GST)_us", "条件类型.V.JRC3"),
+            // dict.accounting.financial.condition.type.v.jrc3
+            ("dict.accounting.financial.condition.type.v.jrc3", "ja-JP", "加拿大的PST(B+GST)_jp", "条件类型.V.JRC3"),
+            // dict.accounting.financial.condition.type.v.jrc3
+            ("dict.accounting.financial.condition.type.v.jrc3", "zh-CN", "加拿大的PST(B+GST)", "条件类型.V.JRC3"),
+            // dict.accounting.financial.condition.type.v.jrc3
+            ("dict.accounting.financial.condition.type.v.jrc3", "zh-HK", "加拿大的PST(B+GST)_hk", "条件类型.V.JRC3"),
+
+            // dict.accounting.financial.condition.type.v.k004
+            ("dict.accounting.financial.condition.type.v.k004", "en-US", "物料_us", "条件类型.V.K004"),
+            // dict.accounting.financial.condition.type.v.k004
+            ("dict.accounting.financial.condition.type.v.k004", "ja-JP", "物料_jp", "条件类型.V.K004"),
+            // dict.accounting.financial.condition.type.v.k004
+            ("dict.accounting.financial.condition.type.v.k004", "zh-CN", "物料", "条件类型.V.K004"),
+            // dict.accounting.financial.condition.type.v.k004
+            ("dict.accounting.financial.condition.type.v.k004", "zh-HK", "物料_hk", "条件类型.V.K004"),
+
+            // dict.accounting.financial.condition.type.v.k005
+            ("dict.accounting.financial.condition.type.v.k005", "en-US", "客户/物料_us", "条件类型.V.K005"),
+            // dict.accounting.financial.condition.type.v.k005
+            ("dict.accounting.financial.condition.type.v.k005", "ja-JP", "客户/物料_jp", "条件类型.V.K005"),
+            // dict.accounting.financial.condition.type.v.k005
+            ("dict.accounting.financial.condition.type.v.k005", "zh-CN", "客户/物料", "条件类型.V.K005"),
+            // dict.accounting.financial.condition.type.v.k005
+            ("dict.accounting.financial.condition.type.v.k005", "zh-HK", "客户/物料_hk", "条件类型.V.K005"),
+
+            // dict.accounting.financial.condition.type.v.k007
+            ("dict.accounting.financial.condition.type.v.k007", "en-US", "客户折扣_us", "条件类型.V.K007"),
+            // dict.accounting.financial.condition.type.v.k007
+            ("dict.accounting.financial.condition.type.v.k007", "ja-JP", "客户折扣_jp", "条件类型.V.K007"),
+            // dict.accounting.financial.condition.type.v.k007
+            ("dict.accounting.financial.condition.type.v.k007", "zh-CN", "客户折扣", "条件类型.V.K007"),
+            // dict.accounting.financial.condition.type.v.k007
+            ("dict.accounting.financial.condition.type.v.k007", "zh-HK", "客户折扣_hk", "条件类型.V.K007"),
+
+            // dict.accounting.financial.condition.type.v.k020
+            ("dict.accounting.financial.condition.type.v.k020", "en-US", "价格组_us", "条件类型.V.K020"),
+            // dict.accounting.financial.condition.type.v.k020
+            ("dict.accounting.financial.condition.type.v.k020", "ja-JP", "价格组_jp", "条件类型.V.K020"),
+            // dict.accounting.financial.condition.type.v.k020
+            ("dict.accounting.financial.condition.type.v.k020", "zh-CN", "价格组", "条件类型.V.K020"),
+            // dict.accounting.financial.condition.type.v.k020
+            ("dict.accounting.financial.condition.type.v.k020", "zh-HK", "价格组_hk", "条件类型.V.K020"),
+
+            // dict.accounting.financial.condition.type.v.k029
+            ("dict.accounting.financial.condition.type.v.k029", "en-US", "物料定价组_us", "条件类型.V.K029"),
+            // dict.accounting.financial.condition.type.v.k029
+            ("dict.accounting.financial.condition.type.v.k029", "ja-JP", "物料定价组_jp", "条件类型.V.K029"),
+            // dict.accounting.financial.condition.type.v.k029
+            ("dict.accounting.financial.condition.type.v.k029", "zh-CN", "物料定价组", "条件类型.V.K029"),
+            // dict.accounting.financial.condition.type.v.k029
+            ("dict.accounting.financial.condition.type.v.k029", "zh-HK", "物料定价组_hk", "条件类型.V.K029"),
+
+            // dict.accounting.financial.condition.type.v.k030
+            ("dict.accounting.financial.condition.type.v.k030", "en-US", "客户/物料价格组_us", "条件类型.V.K030"),
+            // dict.accounting.financial.condition.type.v.k030
+            ("dict.accounting.financial.condition.type.v.k030", "ja-JP", "客户/物料价格组_jp", "条件类型.V.K030"),
+            // dict.accounting.financial.condition.type.v.k030
+            ("dict.accounting.financial.condition.type.v.k030", "zh-CN", "客户/物料价格组", "条件类型.V.K030"),
+            // dict.accounting.financial.condition.type.v.k030
+            ("dict.accounting.financial.condition.type.v.k030", "zh-HK", "客户/物料价格组_hk", "条件类型.V.K030"),
+
+            // dict.accounting.financial.condition.type.v.k031
+            ("dict.accounting.financial.condition.type.v.k031", "en-US", "价格组/物料价格组_us", "条件类型.V.K031"),
+            // dict.accounting.financial.condition.type.v.k031
+            ("dict.accounting.financial.condition.type.v.k031", "ja-JP", "价格组/物料价格组_jp", "条件类型.V.K031"),
+            // dict.accounting.financial.condition.type.v.k031
+            ("dict.accounting.financial.condition.type.v.k031", "zh-CN", "价格组/物料价格组", "条件类型.V.K031"),
+            // dict.accounting.financial.condition.type.v.k031
+            ("dict.accounting.financial.condition.type.v.k031", "zh-HK", "价格组/物料价格组_hk", "条件类型.V.K031"),
+
+            // dict.accounting.financial.condition.type.v.k032
+            ("dict.accounting.financial.condition.type.v.k032", "en-US", "价格组/物料_us", "条件类型.V.K032"),
+            // dict.accounting.financial.condition.type.v.k032
+            ("dict.accounting.financial.condition.type.v.k032", "ja-JP", "价格组/物料_jp", "条件类型.V.K032"),
+            // dict.accounting.financial.condition.type.v.k032
+            ("dict.accounting.financial.condition.type.v.k032", "zh-CN", "价格组/物料", "条件类型.V.K032"),
+            // dict.accounting.financial.condition.type.v.k032
+            ("dict.accounting.financial.condition.type.v.k032", "zh-HK", "价格组/物料_hk", "条件类型.V.K032"),
+
+            // dict.accounting.financial.condition.type.v.k148
+            ("dict.accounting.financial.condition.type.v.k148", "en-US", "产品层次_us", "条件类型.V.K148"),
+            // dict.accounting.financial.condition.type.v.k148
+            ("dict.accounting.financial.condition.type.v.k148", "ja-JP", "产品层次_jp", "条件类型.V.K148"),
+            // dict.accounting.financial.condition.type.v.k148
+            ("dict.accounting.financial.condition.type.v.k148", "zh-CN", "产品层次", "条件类型.V.K148"),
+            // dict.accounting.financial.condition.type.v.k148
+            ("dict.accounting.financial.condition.type.v.k148", "zh-HK", "产品层次_hk", "条件类型.V.K148"),
+
+            // dict.accounting.financial.condition.type.v.ka00
+            ("dict.accounting.financial.condition.type.v.ka00", "en-US", "销售交易_us", "条件类型.V.KA00"),
+            // dict.accounting.financial.condition.type.v.ka00
+            ("dict.accounting.financial.condition.type.v.ka00", "ja-JP", "销售交易_jp", "条件类型.V.KA00"),
+            // dict.accounting.financial.condition.type.v.ka00
+            ("dict.accounting.financial.condition.type.v.ka00", "zh-CN", "销售交易", "条件类型.V.KA00"),
+            // dict.accounting.financial.condition.type.v.ka00
+            ("dict.accounting.financial.condition.type.v.ka00", "zh-HK", "销售交易_hk", "条件类型.V.KA00"),
+
+            // dict.accounting.financial.condition.type.v.ka02
+            ("dict.accounting.financial.condition.type.v.ka02", "en-US", "促销折扣 % 1_us", "条件类型.V.KA02"),
+            // dict.accounting.financial.condition.type.v.ka02
+            ("dict.accounting.financial.condition.type.v.ka02", "ja-JP", "促销折扣 % 1_jp", "条件类型.V.KA02"),
+            // dict.accounting.financial.condition.type.v.ka02
+            ("dict.accounting.financial.condition.type.v.ka02", "zh-CN", "促销折扣 % 1", "条件类型.V.KA02"),
+            // dict.accounting.financial.condition.type.v.ka02
+            ("dict.accounting.financial.condition.type.v.ka02", "zh-HK", "促销折扣 % 1_hk", "条件类型.V.KA02"),
+
+            // dict.accounting.financial.condition.type.v.ka03
+            ("dict.accounting.financial.condition.type.v.ka03", "en-US", "促销折扣 % 2_us", "条件类型.V.KA03"),
+            // dict.accounting.financial.condition.type.v.ka03
+            ("dict.accounting.financial.condition.type.v.ka03", "ja-JP", "促销折扣 % 2_jp", "条件类型.V.KA03"),
+            // dict.accounting.financial.condition.type.v.ka03
+            ("dict.accounting.financial.condition.type.v.ka03", "zh-CN", "促销折扣 % 2", "条件类型.V.KA03"),
+            // dict.accounting.financial.condition.type.v.ka03
+            ("dict.accounting.financial.condition.type.v.ka03", "zh-HK", "促销折扣 % 2_hk", "条件类型.V.KA03"),
+
+            // dict.accounting.financial.condition.type.v.ka04
+            ("dict.accounting.financial.condition.type.v.ka04", "en-US", "促销折扣 MD 1_us", "条件类型.V.KA04"),
+            // dict.accounting.financial.condition.type.v.ka04
+            ("dict.accounting.financial.condition.type.v.ka04", "ja-JP", "促销折扣 MD 1_jp", "条件类型.V.KA04"),
+            // dict.accounting.financial.condition.type.v.ka04
+            ("dict.accounting.financial.condition.type.v.ka04", "zh-CN", "促销折扣 MD 1", "条件类型.V.KA04"),
+            // dict.accounting.financial.condition.type.v.ka04
+            ("dict.accounting.financial.condition.type.v.ka04", "zh-HK", "促销折扣 MD 1_hk", "条件类型.V.KA04"),
+
+            // dict.accounting.financial.condition.type.v.ka05
+            ("dict.accounting.financial.condition.type.v.ka05", "en-US", "促销折扣 MD 2_us", "条件类型.V.KA05"),
+            // dict.accounting.financial.condition.type.v.ka05
+            ("dict.accounting.financial.condition.type.v.ka05", "ja-JP", "促销折扣 MD 2_jp", "条件类型.V.KA05"),
+            // dict.accounting.financial.condition.type.v.ka05
+            ("dict.accounting.financial.condition.type.v.ka05", "zh-CN", "促销折扣 MD 2", "条件类型.V.KA05"),
+            // dict.accounting.financial.condition.type.v.ka05
+            ("dict.accounting.financial.condition.type.v.ka05", "zh-HK", "促销折扣 MD 2_hk", "条件类型.V.KA05"),
+
+            // dict.accounting.financial.condition.type.v.kad0
+            ("dict.accounting.financial.condition.type.v.kad0", "en-US", "物料成本(VKHM)_us", "条件类型.V.KAD0"),
+            // dict.accounting.financial.condition.type.v.kad0
+            ("dict.accounting.financial.condition.type.v.kad0", "ja-JP", "物料成本(VKHM)_jp", "条件类型.V.KAD0"),
+            // dict.accounting.financial.condition.type.v.kad0
+            ("dict.accounting.financial.condition.type.v.kad0", "zh-CN", "物料成本(VKHM)", "条件类型.V.KAD0"),
+            // dict.accounting.financial.condition.type.v.kad0
+            ("dict.accounting.financial.condition.type.v.kad0", "zh-HK", "物料成本(VKHM)_hk", "条件类型.V.KAD0"),
+
+            // dict.accounting.financial.condition.type.v.kad1
+            ("dict.accounting.financial.condition.type.v.kad1", "en-US", "处理成本(VKHM)_us", "条件类型.V.KAD1"),
+            // dict.accounting.financial.condition.type.v.kad1
+            ("dict.accounting.financial.condition.type.v.kad1", "ja-JP", "处理成本(VKHM)_jp", "条件类型.V.KAD1"),
+            // dict.accounting.financial.condition.type.v.kad1
+            ("dict.accounting.financial.condition.type.v.kad1", "zh-CN", "处理成本(VKHM)", "条件类型.V.KAD1"),
+            // dict.accounting.financial.condition.type.v.kad1
+            ("dict.accounting.financial.condition.type.v.kad1", "zh-HK", "处理成本(VKHM)_hk", "条件类型.V.KAD1"),
+
+            // dict.accounting.financial.condition.type.v.kbm1
+            ("dict.accounting.financial.condition.type.v.kbm1", "en-US", "商誉/货物担保_us", "条件类型.V.KBM1"),
+            // dict.accounting.financial.condition.type.v.kbm1
+            ("dict.accounting.financial.condition.type.v.kbm1", "ja-JP", "商誉/货物担保_jp", "条件类型.V.KBM1"),
+            // dict.accounting.financial.condition.type.v.kbm1
+            ("dict.accounting.financial.condition.type.v.kbm1", "zh-CN", "商誉/货物担保", "条件类型.V.KBM1"),
+            // dict.accounting.financial.condition.type.v.kbm1
+            ("dict.accounting.financial.condition.type.v.kbm1", "zh-HK", "商誉/货物担保_hk", "条件类型.V.KBM1"),
+
+            // dict.accounting.financial.condition.type.v.kf00
+            ("dict.accounting.financial.condition.type.v.kf00", "en-US", "运费_us", "条件类型.V.KF00"),
+            // dict.accounting.financial.condition.type.v.kf00
+            ("dict.accounting.financial.condition.type.v.kf00", "ja-JP", "运费_jp", "条件类型.V.KF00"),
+            // dict.accounting.financial.condition.type.v.kf00
+            ("dict.accounting.financial.condition.type.v.kf00", "zh-CN", "运费", "条件类型.V.KF00"),
+            // dict.accounting.financial.condition.type.v.kf00
+            ("dict.accounting.financial.condition.type.v.kf00", "zh-HK", "运费_hk", "条件类型.V.KF00"),
+
+            // dict.accounting.financial.condition.type.v.kp00
+            ("dict.accounting.financial.condition.type.v.kp00", "en-US", "托盘折扣_us", "条件类型.V.KP00"),
+            // dict.accounting.financial.condition.type.v.kp00
+            ("dict.accounting.financial.condition.type.v.kp00", "ja-JP", "托盘折扣_jp", "条件类型.V.KP00"),
+            // dict.accounting.financial.condition.type.v.kp00
+            ("dict.accounting.financial.condition.type.v.kp00", "zh-CN", "托盘折扣", "条件类型.V.KP00"),
+            // dict.accounting.financial.condition.type.v.kp00
+            ("dict.accounting.financial.condition.type.v.kp00", "zh-HK", "托盘折扣_hk", "条件类型.V.KP00"),
+
+            // dict.accounting.financial.condition.type.v.kp01
+            ("dict.accounting.financial.condition.type.v.kp01", "en-US", "不完整托盘附加费_us", "条件类型.V.KP01"),
+            // dict.accounting.financial.condition.type.v.kp01
+            ("dict.accounting.financial.condition.type.v.kp01", "ja-JP", "不完整托盘附加费_jp", "条件类型.V.KP01"),
+            // dict.accounting.financial.condition.type.v.kp01
+            ("dict.accounting.financial.condition.type.v.kp01", "zh-CN", "不完整托盘附加费", "条件类型.V.KP01"),
+            // dict.accounting.financial.condition.type.v.kp01
+            ("dict.accounting.financial.condition.type.v.kp01", "zh-HK", "不完整托盘附加费_hk", "条件类型.V.KP01"),
+
+            // dict.accounting.financial.condition.type.v.kp02
+            ("dict.accounting.financial.condition.type.v.kp02", "en-US", "混合托盆回扣_us", "条件类型.V.KP02"),
+            // dict.accounting.financial.condition.type.v.kp02
+            ("dict.accounting.financial.condition.type.v.kp02", "ja-JP", "混合托盆回扣_jp", "条件类型.V.KP02"),
+            // dict.accounting.financial.condition.type.v.kp02
+            ("dict.accounting.financial.condition.type.v.kp02", "zh-CN", "混合托盆回扣", "条件类型.V.KP02"),
+            // dict.accounting.financial.condition.type.v.kp02
+            ("dict.accounting.financial.condition.type.v.kp02", "zh-HK", "混合托盆回扣_hk", "条件类型.V.KP02"),
+
+            // dict.accounting.financial.condition.type.v.kp03
+            ("dict.accounting.financial.condition.type.v.kp03", "en-US", "混合托盘附加费_us", "条件类型.V.KP03"),
+            // dict.accounting.financial.condition.type.v.kp03
+            ("dict.accounting.financial.condition.type.v.kp03", "ja-JP", "混合托盘附加费_jp", "条件类型.V.KP03"),
+            // dict.accounting.financial.condition.type.v.kp03
+            ("dict.accounting.financial.condition.type.v.kp03", "zh-CN", "混合托盘附加费", "条件类型.V.KP03"),
+            // dict.accounting.financial.condition.type.v.kp03
+            ("dict.accounting.financial.condition.type.v.kp03", "zh-HK", "混合托盘附加费_hk", "条件类型.V.KP03"),
+
+            // dict.accounting.financial.condition.type.v.kumu
+            ("dict.accounting.financial.condition.type.v.kumu", "en-US", "累计条件_us", "条件类型.V.KUMU"),
+            // dict.accounting.financial.condition.type.v.kumu
+            ("dict.accounting.financial.condition.type.v.kumu", "ja-JP", "累计条件_jp", "条件类型.V.KUMU"),
+            // dict.accounting.financial.condition.type.v.kumu
+            ("dict.accounting.financial.condition.type.v.kumu", "zh-CN", "累计条件", "条件类型.V.KUMU"),
+            // dict.accounting.financial.condition.type.v.kumu
+            ("dict.accounting.financial.condition.type.v.kumu", "zh-HK", "累计条件_hk", "条件类型.V.KUMU"),
+
+            // dict.accounting.financial.condition.type.v.kv00
+            ("dict.accounting.financial.condition.type.v.kv00", "en-US", "销售成本 (ISR)_us", "条件类型.V.KV00"),
+            // dict.accounting.financial.condition.type.v.kv00
+            ("dict.accounting.financial.condition.type.v.kv00", "ja-JP", "销售成本 (ISR)_jp", "条件类型.V.KV00"),
+            // dict.accounting.financial.condition.type.v.kv00
+            ("dict.accounting.financial.condition.type.v.kv00", "zh-CN", "销售成本 (ISR)", "条件类型.V.KV00"),
+            // dict.accounting.financial.condition.type.v.kv00
+            ("dict.accounting.financial.condition.type.v.kv00", "zh-HK", "销售成本 (ISR)_hk", "条件类型.V.KV00"),
+
+            // dict.accounting.financial.condition.type.v.kw00
+            ("dict.accounting.financial.condition.type.v.kw00", "en-US", "集团评估_us", "条件类型.V.KW00"),
+            // dict.accounting.financial.condition.type.v.kw00
+            ("dict.accounting.financial.condition.type.v.kw00", "ja-JP", "集团评估_jp", "条件类型.V.KW00"),
+            // dict.accounting.financial.condition.type.v.kw00
+            ("dict.accounting.financial.condition.type.v.kw00", "zh-CN", "集团评估", "条件类型.V.KW00"),
+            // dict.accounting.financial.condition.type.v.kw00
+            ("dict.accounting.financial.condition.type.v.kw00", "zh-HK", "集团评估_hk", "条件类型.V.KW00"),
+
+            // dict.accounting.financial.condition.type.v.lcfr
+            ("dict.accounting.financial.condition.type.v.lcfr", "en-US", "许可证－法国_us", "条件类型.V.LCFR"),
+            // dict.accounting.financial.condition.type.v.lcfr
+            ("dict.accounting.financial.condition.type.v.lcfr", "ja-JP", "许可证－法国_jp", "条件类型.V.LCFR"),
+            // dict.accounting.financial.condition.type.v.lcfr
+            ("dict.accounting.financial.condition.type.v.lcfr", "zh-CN", "许可证－法国", "条件类型.V.LCFR"),
+            // dict.accounting.financial.condition.type.v.lcfr
+            ("dict.accounting.financial.condition.type.v.lcfr", "zh-HK", "许可证－法国_hk", "条件类型.V.LCFR"),
+
+            // dict.accounting.financial.condition.type.v.lcit
+            ("dict.accounting.financial.condition.type.v.lcit", "en-US", "VAT 许可证  意大利_us", "条件类型.V.LCIT"),
+            // dict.accounting.financial.condition.type.v.lcit
+            ("dict.accounting.financial.condition.type.v.lcit", "ja-JP", "VAT 许可证  意大利_jp", "条件类型.V.LCIT"),
+            // dict.accounting.financial.condition.type.v.lcit
+            ("dict.accounting.financial.condition.type.v.lcit", "zh-CN", "VAT 许可证  意大利", "条件类型.V.LCIT"),
+            // dict.accounting.financial.condition.type.v.lcit
+            ("dict.accounting.financial.condition.type.v.lcit", "zh-HK", "VAT 许可证  意大利_hk", "条件类型.V.LCIT"),
+
+            // dict.accounting.financial.condition.type.v.ms15
+            ("dict.accounting.financial.condition.type.v.ms15", "en-US", "税 15%_us", "条件类型.V.MS15"),
+            // dict.accounting.financial.condition.type.v.ms15
+            ("dict.accounting.financial.condition.type.v.ms15", "ja-JP", "税 15%_jp", "条件类型.V.MS15"),
+            // dict.accounting.financial.condition.type.v.ms15
+            ("dict.accounting.financial.condition.type.v.ms15", "zh-CN", "税 15%", "条件类型.V.MS15"),
+            // dict.accounting.financial.condition.type.v.ms15
+            ("dict.accounting.financial.condition.type.v.ms15", "zh-HK", "税 15%_hk", "条件类型.V.MS15"),
+
+            // dict.accounting.financial.condition.type.v.mw01
+            ("dict.accounting.financial.condition.type.v.mw01", "en-US", "税触发器_us", "条件类型.V.MW01"),
+            // dict.accounting.financial.condition.type.v.mw01
+            ("dict.accounting.financial.condition.type.v.mw01", "ja-JP", "税触发器_jp", "条件类型.V.MW01"),
+            // dict.accounting.financial.condition.type.v.mw01
+            ("dict.accounting.financial.condition.type.v.mw01", "zh-CN", "税触发器", "条件类型.V.MW01"),
+            // dict.accounting.financial.condition.type.v.mw01
+            ("dict.accounting.financial.condition.type.v.mw01", "zh-HK", "税触发器_hk", "条件类型.V.MW01"),
+
+            // dict.accounting.financial.condition.type.v.mw07
+            ("dict.accounting.financial.condition.type.v.mw07", "en-US", "税 7%_us", "条件类型.V.MW07"),
+            // dict.accounting.financial.condition.type.v.mw07
+            ("dict.accounting.financial.condition.type.v.mw07", "ja-JP", "税 7%_jp", "条件类型.V.MW07"),
+            // dict.accounting.financial.condition.type.v.mw07
+            ("dict.accounting.financial.condition.type.v.mw07", "zh-CN", "税 7%", "条件类型.V.MW07"),
+            // dict.accounting.financial.condition.type.v.mw07
+            ("dict.accounting.financial.condition.type.v.mw07", "zh-HK", "税 7%_hk", "条件类型.V.MW07"),
+
+            // dict.accounting.financial.condition.type.v.mw15
+            ("dict.accounting.financial.condition.type.v.mw15", "en-US", "代理折扣税_us", "条件类型.V.MW15"),
+            // dict.accounting.financial.condition.type.v.mw15
+            ("dict.accounting.financial.condition.type.v.mw15", "ja-JP", "代理折扣税_jp", "条件类型.V.MW15"),
+            // dict.accounting.financial.condition.type.v.mw15
+            ("dict.accounting.financial.condition.type.v.mw15", "zh-CN", "代理折扣税", "条件类型.V.MW15"),
+            // dict.accounting.financial.condition.type.v.mw15
+            ("dict.accounting.financial.condition.type.v.mw15", "zh-HK", "代理折扣税_hk", "条件类型.V.MW15"),
+
             // dict.accounting.financial.tax.code.j0
             ("dict.accounting.financial.tax.code.j0", "en-US", "0% 进项税，中国_us", "税码.J0.中国"),
             // dict.accounting.financial.tax.code.j0
@@ -13377,40 +19011,76 @@ public class TaktDictI18nSeedData : ITaktSeedDataCoordinator
             ("dict.logistics.sales.credit.rating.5", "zh-HK", "C级_hk", "信用等级.C级"),
 
             // dict.logistics.sales.customer.category.0
-            ("dict.logistics.sales.customer.category.0", "en-US", "企业客户_us", "客户类型.企业客户"),
+            ("dict.logistics.sales.customer.category.0", "en-US", "企业客户_us", "客户分类.企业客户"),
             // dict.logistics.sales.customer.category.0
-            ("dict.logistics.sales.customer.category.0", "ja-JP", "企业客户_jp", "客户类型.企业客户"),
+            ("dict.logistics.sales.customer.category.0", "ja-JP", "企业客户_jp", "客户分类.企业客户"),
             // dict.logistics.sales.customer.category.0
-            ("dict.logistics.sales.customer.category.0", "zh-CN", "企业客户", "客户类型.企业客户"),
+            ("dict.logistics.sales.customer.category.0", "zh-CN", "企业客户", "客户分类.企业客户"),
             // dict.logistics.sales.customer.category.0
-            ("dict.logistics.sales.customer.category.0", "zh-HK", "企业客户_hk", "客户类型.企业客户"),
+            ("dict.logistics.sales.customer.category.0", "zh-HK", "企业客户_hk", "客户分类.企业客户"),
 
             // dict.logistics.sales.customer.category.1
-            ("dict.logistics.sales.customer.category.1", "en-US", "个人客户_us", "客户类型.个人客户"),
+            ("dict.logistics.sales.customer.category.1", "en-US", "个人客户_us", "客户分类.个人客户"),
             // dict.logistics.sales.customer.category.1
-            ("dict.logistics.sales.customer.category.1", "ja-JP", "个人客户_jp", "客户类型.个人客户"),
+            ("dict.logistics.sales.customer.category.1", "ja-JP", "个人客户_jp", "客户分类.个人客户"),
             // dict.logistics.sales.customer.category.1
-            ("dict.logistics.sales.customer.category.1", "zh-CN", "个人客户", "客户类型.个人客户"),
+            ("dict.logistics.sales.customer.category.1", "zh-CN", "个人客户", "客户分类.个人客户"),
             // dict.logistics.sales.customer.category.1
-            ("dict.logistics.sales.customer.category.1", "zh-HK", "个人客户_hk", "客户类型.个人客户"),
+            ("dict.logistics.sales.customer.category.1", "zh-HK", "个人客户_hk", "客户分类.个人客户"),
 
             // dict.logistics.sales.customer.category.2
-            ("dict.logistics.sales.customer.category.2", "en-US", "政府机构_us", "客户类型.政府机构"),
+            ("dict.logistics.sales.customer.category.2", "en-US", "政府机构_us", "客户分类.政府机构"),
             // dict.logistics.sales.customer.category.2
-            ("dict.logistics.sales.customer.category.2", "ja-JP", "政府机构_jp", "客户类型.政府机构"),
+            ("dict.logistics.sales.customer.category.2", "ja-JP", "政府机构_jp", "客户分类.政府机构"),
             // dict.logistics.sales.customer.category.2
-            ("dict.logistics.sales.customer.category.2", "zh-CN", "政府机构", "客户类型.政府机构"),
+            ("dict.logistics.sales.customer.category.2", "zh-CN", "政府机构", "客户分类.政府机构"),
             // dict.logistics.sales.customer.category.2
-            ("dict.logistics.sales.customer.category.2", "zh-HK", "政府机构_hk", "客户类型.政府机构"),
+            ("dict.logistics.sales.customer.category.2", "zh-HK", "政府机构_hk", "客户分类.政府机构"),
 
             // dict.logistics.sales.customer.category.3
-            ("dict.logistics.sales.customer.category.3", "en-US", "其他_us", "客户类型.其他"),
+            ("dict.logistics.sales.customer.category.3", "en-US", "其他_us", "客户分类.其他"),
             // dict.logistics.sales.customer.category.3
-            ("dict.logistics.sales.customer.category.3", "ja-JP", "其他_jp", "客户类型.其他"),
+            ("dict.logistics.sales.customer.category.3", "ja-JP", "其他_jp", "客户分类.其他"),
             // dict.logistics.sales.customer.category.3
-            ("dict.logistics.sales.customer.category.3", "zh-CN", "其他", "客户类型.其他"),
+            ("dict.logistics.sales.customer.category.3", "zh-CN", "其他", "客户分类.其他"),
             // dict.logistics.sales.customer.category.3
-            ("dict.logistics.sales.customer.category.3", "zh-HK", "其他_hk", "客户类型.其他"),
+            ("dict.logistics.sales.customer.category.3", "zh-HK", "其他_hk", "客户分类.其他"),
+
+            // dict.logistics.sales.customer.title.1
+            ("dict.logistics.sales.customer.title.1", "en-US", "公司_us", "称谓.公司"),
+            // dict.logistics.sales.customer.title.1
+            ("dict.logistics.sales.customer.title.1", "ja-JP", "公司_jp", "称谓.公司"),
+            // dict.logistics.sales.customer.title.1
+            ("dict.logistics.sales.customer.title.1", "zh-CN", "公司", "称谓.公司"),
+            // dict.logistics.sales.customer.title.1
+            ("dict.logistics.sales.customer.title.1", "zh-HK", "公司_hk", "称谓.公司"),
+
+            // dict.logistics.sales.customer.title.2
+            ("dict.logistics.sales.customer.title.2", "en-US", "先生_us", "称谓.先生"),
+            // dict.logistics.sales.customer.title.2
+            ("dict.logistics.sales.customer.title.2", "ja-JP", "先生_jp", "称谓.先生"),
+            // dict.logistics.sales.customer.title.2
+            ("dict.logistics.sales.customer.title.2", "zh-CN", "先生", "称谓.先生"),
+            // dict.logistics.sales.customer.title.2
+            ("dict.logistics.sales.customer.title.2", "zh-HK", "先生_hk", "称谓.先生"),
+
+            // dict.logistics.sales.customer.title.3
+            ("dict.logistics.sales.customer.title.3", "en-US", "夫人_us", "称谓.夫人"),
+            // dict.logistics.sales.customer.title.3
+            ("dict.logistics.sales.customer.title.3", "ja-JP", "夫人_jp", "称谓.夫人"),
+            // dict.logistics.sales.customer.title.3
+            ("dict.logistics.sales.customer.title.3", "zh-CN", "夫人", "称谓.夫人"),
+            // dict.logistics.sales.customer.title.3
+            ("dict.logistics.sales.customer.title.3", "zh-HK", "夫人_hk", "称谓.夫人"),
+
+            // dict.logistics.sales.customer.title.4
+            ("dict.logistics.sales.customer.title.4", "en-US", "先生和夫人_us", "称谓.先生和夫人"),
+            // dict.logistics.sales.customer.title.4
+            ("dict.logistics.sales.customer.title.4", "ja-JP", "先生和夫人_jp", "称谓.先生和夫人"),
+            // dict.logistics.sales.customer.title.4
+            ("dict.logistics.sales.customer.title.4", "zh-CN", "先生和夫人", "称谓.先生和夫人"),
+            // dict.logistics.sales.customer.title.4
+            ("dict.logistics.sales.customer.title.4", "zh-HK", "先生和夫人_hk", "称谓.先生和夫人"),
 
             // dict.logistics.sales.customer.group.z1
             ("dict.logistics.sales.customer.group.z1", "en-US", "USA/JAPAN+OEM_us", "客户组.Z1"),
@@ -13629,13 +19299,13 @@ public class TaktDictI18nSeedData : ITaktSeedDataCoordinator
             ("dict.logistics.sales.pricing.procedure.zvaa99", "zh-HK", "标准_hk", "销售定价过程.ZVAA99"),
 
             // dict.logistics.procurement.pricing.procedure.zrm001
-            ("dict.logistics.procurement.pricing.procedure.zrm001", "en-US", "采购信息记录_us", "采购定价过程.ZRM001"),
+            ("dict.logistics.procurement.pricing.procedure.zrm001", "en-US", "采购信息_us", "采购定价过程.ZRM001"),
             // dict.logistics.procurement.pricing.procedure.zrm001
-            ("dict.logistics.procurement.pricing.procedure.zrm001", "ja-JP", "采购信息记录_jp", "采购定价过程.ZRM001"),
+            ("dict.logistics.procurement.pricing.procedure.zrm001", "ja-JP", "采购信息_jp", "采购定价过程.ZRM001"),
             // dict.logistics.procurement.pricing.procedure.zrm001
-            ("dict.logistics.procurement.pricing.procedure.zrm001", "zh-CN", "采购信息记录", "采购定价过程.ZRM001"),
+            ("dict.logistics.procurement.pricing.procedure.zrm001", "zh-CN", "采购信息", "采购定价过程.ZRM001"),
             // dict.logistics.procurement.pricing.procedure.zrm001
-            ("dict.logistics.procurement.pricing.procedure.zrm001", "zh-HK", "采购信息记录_hk", "采购定价过程.ZRM001"),
+            ("dict.logistics.procurement.pricing.procedure.zrm001", "zh-HK", "采购信息_hk", "采购定价过程.ZRM001"),
 
             // dict.logistics.procurement.pricing.procedure.zrm002
             ("dict.logistics.procurement.pricing.procedure.zrm002", "en-US", "库存凭证_us", "采购定价过程.ZRM002"),

@@ -156,8 +156,8 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
             dto.ScheduledBatch = pmc.ScheduledBatch;
             dto.ScheduledDate = pmc.ScheduledDate;
         }
-        var route = TaktEcSmtRouteHelper.Resolve(detail);
-        if (route == TaktEcSmtRouteTarget.Smt)
+        var route = TaktEcEmtlRouteHelper.Resolve(detail);
+        if (route == TaktEcEmtlRouteTarget.Smt)
         {
             var electronic = await _ecExecDeptAccess.SmtRepository.FirstAsync(x => x.EcDetailId == detail.Id);
             if (electronic != null)
@@ -166,7 +166,7 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
                 dto.ProductionDate = electronic.OutboundDate;
             }
         }
-        else if (route == TaktEcSmtRouteTarget.Seizounika)
+        else if (route == TaktEcEmtlRouteTarget.Seizounika)
         {
             var seizounika = await _ecExecDeptAccess.SeizounikaRepository.FirstAsync(x => x.EcDetailId == detail.Id);
             if (seizounika != null)
@@ -217,8 +217,8 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
     /// <returns>任务</returns>
     private async Task UpsertSmtBatchFieldsAsync(TaktEcDetail detail, string? productionBatch, DateTime? productionDate)
     {
-        var route = TaktEcSmtRouteHelper.Resolve(detail);
-        if (route == TaktEcSmtRouteTarget.Smt)
+        var route = TaktEcEmtlRouteHelper.Resolve(detail);
+        if (route == TaktEcEmtlRouteTarget.Smt)
         {
             await UpsertSmtBatchFieldAsync(detail, e =>
             {
@@ -227,7 +227,7 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
             });
             return;
         }
-        if (route == TaktEcSmtRouteTarget.Seizounika)
+        if (route == TaktEcEmtlRouteTarget.Seizounika)
         {
             await UpsertSeizounikaBatchFieldAsync(detail, pcba =>
             {
@@ -268,13 +268,13 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
     /// <summary>
     /// 更新或创建 SMT出库批次字段
     /// </summary>
-    private async Task UpsertSmtBatchFieldAsync(TaktEcDetail detail, Action<TaktEcSmt> apply)
+    private async Task UpsertSmtBatchFieldAsync(TaktEcDetail detail, Action<TaktEcEmtl> apply)
     {
         var repo = _ecExecDeptAccess.SmtRepository;
         var row = await repo.FirstAsync(x => x.EcDetailId == detail.Id);
         if (row == null)
         {
-            row = new TaktEcSmt
+            row = new TaktEcEmtl
             {
                 EcDetailId = detail.Id,
                 EcCode = detail.EcCode,
@@ -324,7 +324,7 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
                 SqlFunc.Subqueryable<TaktEcSeikan>()
                     .Where(d => d.EcDetailId == x.Id && d.ScheduledBatch != null && d.ScheduledBatch.Contains(batchCode))
                     .Any()
-                || SqlFunc.Subqueryable<TaktEcSmt>()
+                || SqlFunc.Subqueryable<TaktEcEmtl>()
                     .Where(d => d.EcDetailId == x.Id && d.OutboundBatch != null && d.OutboundBatch.Contains(batchCode))
                     .Any()
                 || SqlFunc.Subqueryable<TaktEcSeizounika>()

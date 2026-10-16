@@ -35,13 +35,18 @@ export const TaktEcDeptScope = {
 } as const
 
 /**
- * 主表制二/制一/品管实施范围可选项
- * 全仕向：按成品/按机种/按设变，默认按机种；部管/内部/技术：仅按设变
+ * 主表部门实施范围可选项。全仕向可选；部管仅按机种；内部/技术仅按设变
  * @param ecScope 实施范围
  * @returns {allowed: readonly number[]; defaultValue: number} 可选项与默认值
  */
 export function taktEcDeptScopeChoices(ecScope: number): { allowed: readonly number[]; defaultValue: number } {
-  if (ecScope === TaktEcScope.MaterialControl || ecScope === TaktEcScope.Internal || ecScope === TaktEcScope.Technical) {
+  if (ecScope === TaktEcScope.MaterialControl) {
+    return {
+      allowed: [TaktEcDeptScope.ByModel],
+      defaultValue: TaktEcDeptScope.ByModel,
+    }
+  }
+  if (ecScope === TaktEcScope.Internal || ecScope === TaktEcScope.Technical) {
     return {
       allowed: [TaktEcDeptScope.ByEngineeringChange],
       defaultValue: TaktEcDeptScope.ByEngineeringChange,
@@ -74,6 +79,9 @@ export function taktEcDeptDedupDisplay(
   if (ecScope === TaktEcScope.MaterialControl) {
     if (deptCode === TaktEcDeptCodes.Pcba || deptCode === TaktEcDeptCodes.Assy || deptCode === TaktEcDeptCodes.Qa) {
       return { mode: 'auto' }
+    }
+    if (deptCode === TaktEcDeptCodes.Pmc) {
+      return { mode: 'dict', value: TaktEcDeptScope.ByModel }
     }
     return { mode: 'dict', value: TaktEcDeptScope.ByEngineeringChange }
   }
@@ -117,41 +125,32 @@ export const EC_SCOPE_MATERIAL_CONTROL_UPDATE_SLUGS = new Set([
   'ecseikan',
   'ecukeken',
   'ecbukan',
-  'ecsmt',
+  'ecemtl',
 ])
 
 /** 执行内容标准前缀（对齐后端 ExecContentPrefix） */
 export const EC_EXEC_CONTENT_PREFIX = '实施范围-'
 
-/** 历史执行内容前缀（读入时规范为 EC_EXEC_CONTENT_PREFIX） */
-export const EC_LEGACY_EXEC_CONTENT_PREFIX = '管理区分-'
-
 /**
- * 历史前缀「管理区分-」统一为「实施范围-」（对齐后端 ReplaceLegacyExecContentPrefix）
- * @param content 执行内容
- * @returns {string} 前缀规范后的文案
- */
-export function replaceLegacyEcExecContentPrefix(content: unknown): string {
-  const value = String(content ?? '').trim()
-  if (!value) {
-    return ''
-  }
-  if (value.startsWith(EC_LEGACY_EXEC_CONTENT_PREFIX)) {
-    return EC_EXEC_CONTENT_PREFIX + value.slice(EC_LEGACY_EXEC_CONTENT_PREFIX.length)
-  }
-  return value
-}
-
-/**
- * 是否为停产自动执行内容（裸 EOL 或「实施范围-*-EOL」；历史「管理区分-」先规范）
+ * 是否为停产自动执行内容（「实施范围-*-EOL」）
  * @param content 执行内容
  * @returns {boolean} 是否 EOL 类文案
  */
+/**
+ * 根物料描述是否显示。仅全仕向且部门实施范围为按成品；机种组或物料组不显示。
+ * @param ecScope 实施范围
+ * @param ecDeptScope 部门实施范围
+ * @returns {boolean} 是否显示根物料描述
+ */
+export function taktShowEcRootMaterialDescription(ecScope: unknown, ecDeptScope: unknown): boolean {
+  return Number(ecScope) === TaktEcScope.AllDestination
+    && Number(ecDeptScope) === TaktEcDeptScope.ByFinishedProduct
+}
+
 export function isEcEolExecContent(content: unknown): boolean {
-  const value = replaceLegacyEcExecContentPrefix(content)
+  const value = String(content ?? '').trim()
   if (!value) {
     return false
   }
-  const upper = value.toUpperCase()
-  return upper === 'EOL' || upper.endsWith('-EOL')
+  return value.toUpperCase().endsWith('-EOL')
 }

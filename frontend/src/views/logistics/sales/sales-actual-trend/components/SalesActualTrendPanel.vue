@@ -407,7 +407,7 @@ const trendSummaryText = computed(() => {
 /** 明细列（每月一行：金额 / 单价 / 数量 / 月份 / 涨跌） */
 const detailColumns = computed<TableColumnsType>(() => [
   {
-    title: t('entity.salesconditionrecord.materialcode'),
+    title: t('entity.salescondition.materialcode'),
     dataIndex: 'materialCode',
     key: 'materialCode',
     width: 140,
@@ -415,7 +415,7 @@ const detailColumns = computed<TableColumnsType>(() => [
     fixed: 'left',
   },
   {
-    title: t('entity.salesconditionrecord.materialdescription'),
+    title: t('entity.salescondition.materialdescription'),
     dataIndex: 'materialDescription',
     key: 'materialDescription',
     width: 160,
@@ -436,13 +436,13 @@ const detailColumns = computed<TableColumnsType>(() => [
     ellipsis: true,
   },
   {
-    title: t('entity.salesconditionrecorditem.conditioncurrencycode'),
+    title: t('entity.salesconditionitem.conditioncurrencycode'),
     dataIndex: 'currencyCode',
     key: 'currencyCode',
     width: 80,
   },
   {
-    title: t('entity.salesconditionrecorditem.unitofmeasure'),
+    title: t('entity.salesconditionitem.unitofmeasure'),
     dataIndex: 'unit',
     key: 'unit',
     width: 80,

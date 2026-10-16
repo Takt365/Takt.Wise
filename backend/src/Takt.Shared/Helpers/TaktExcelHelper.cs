@@ -10,6 +10,7 @@
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
 // ========================================
 
+using System.Diagnostics;
 using OfficeOpenXml;
 using OfficeOpenXml.DataValidation;
 using OfficeOpenXml.Style;
@@ -208,22 +209,38 @@ public static class TaktExcelHelper
         ResolveExcelOptions(excelOptions).Export.MaxSheetsPerFile;
 
     /// <summary>
-    /// 设置工作簿属性（确保所有导出的 Excel 文件都包含完整的 TaktExcelOptions 信息）。
+    /// 设置工作簿属性。作者、公司、应用程序等取配置；标题、主题、类别、关键词、备注按本次导出文件与工作表生成，配置值仅在无法从文件识别时兜底。
     /// </summary>
     /// <param name="workbook">目标工作簿</param>
-    /// <param name="options">工作簿元数据配置</param>
-    private static void SetWorkbookProperties(ExcelWorkbook workbook, TaktExcelOptions options)
+    /// <param name="options">工作簿元数据配置（固定身份与兜底文案）</param>
+    /// <param name="actualFileName">本次导出文件名（可含时间戳与扩展名）</param>
+    /// <param name="sheetNames">工作表名称</param>
+    private static void SetWorkbookProperties(
+        ExcelWorkbook workbook,
+        TaktExcelOptions options,
+        string actualFileName,
+        params string[] sheetNames)
     {
         ArgumentNullException.ThrowIfNull(workbook);
         ArgumentNullException.ThrowIfNull(options);
+        ArgumentException.ThrowIfNullOrWhiteSpace(actualFileName);
 
+        var title = ResolveWorkbookTitle(actualFileName, options.Title);
+        var sheets = sheetNames
+            .Where(name => !string.IsNullOrWhiteSpace(name))
+            .Select(name => RemovePlantTokens(name.Trim()))
+            .Where(name => !string.IsNullOrWhiteSpace(name))
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
+        var subject = ResolveWorkbookSubject(title, sheets, options.Subject);
+        var category = ResolveWorkbookCategory(options.Category);
         var props = workbook.Properties;
         props.Author = options.Author;
-        props.Title = options.Title;
-        props.Subject = options.Subject;
-        props.Category = options.Category;
-        props.Keywords = options.Keywords;
-        props.Comments = options.Comments;
+        props.Title = TruncateWorkbookProperty(title);
+        props.Subject = TruncateWorkbookProperty(subject);
+        props.Category = TruncateWorkbookProperty(category);
+        props.Keywords = TruncateWorkbookProperty(BuildWorkbookKeywords(title, subject, category, options.Keywords));
+        props.Comments = TruncateWorkbookProperty(BuildWorkbookComments(options.Comments, title));
         props.Status = options.Status;
         props.Application = options.Application;
         props.Company = options.Company;
@@ -231,6 +248,256 @@ public static class TaktExcelHelper
         props.LastModifiedBy = options.Author;
         props.Created = DateTime.Now;
         props.Modified = DateTime.Now;
+    }
+
+    /// <summary>
+    /// 从导出文件名去掉扩展名和末尾 _yyyyMMddHHmmss，得到文档标题。
+    /// </summary>
+    /// <param name="actualFileName">导出文件名</param>
+    /// <returns>如 C100_采购价格推移_20261009185446.xlsx → C100_采购价格推移</returns>
+    private static string DocumentTitleFromFileName(string actualFileName)
+    {
+        var baseName = NormalizeFileNameBase(actualFileName);
+        const int stampLength = 14;
+        if (baseName.Length > stampLength + 1
+            && baseName[^(stampLength + 1)] == '_'
+            && baseName[^stampLength..].All(char.IsDigit))
+        {
+            baseName = baseName[..^(stampLength + 1)];
+        }
+        return baseName.Trim();
+    }
+
+    /// <summary>
+    /// 工厂前缀文件（如 C100_采购价格推移）拆出工厂码与报表名。工厂码为 1 位字母 + 3 位数字。
+    /// </summary>
+    /// <param name="title">文档标题</param>
+    /// <param name="plantCode">工厂码</param>
+    /// <param name="reportLabel">报表名</param>
+    /// <returns>是否匹配工厂前缀</returns>
+    private static bool TrySplitPlantPrefixedTitle(string title, out string plantCode, out string reportLabel)
+    {
+        plantCode = string.Empty;
+        reportLabel = string.Empty;
+        var splitAt = title.IndexOf('_');
+        if (splitAt != 4 || title.Length <= 5)
+        {
+            return false;
+        }
+        var head = title[..4];
+        if (!char.IsLetter(head[0]) || !char.IsDigit(head[1]) || !char.IsDigit(head[2]) || !char.IsDigit(head[3]))
+        {
+            return false;
+        }
+        var label = title[(splitAt + 1)..].Trim();
+        if (string.IsNullOrWhiteSpace(label))
+        {
+            return false;
+        }
+        plantCode = head.ToUpperInvariant();
+        reportLabel = label;
+        return true;
+    }
+
+    /// <summary>
+    /// 去掉分批导出附在报表名后的 _序号（1～3 位数字）。
+    /// </summary>
+    /// <param name="label">报表名</param>
+    /// <returns>去掉分批序号后的报表名</returns>
+    private static string TrimTrailingBatchIndex(string label)
+    {
+        var splitAt = label.LastIndexOf('_');
+        if (splitAt <= 0 || splitAt >= label.Length - 1)
+        {
+            return label;
+        }
+        var tail = label[(splitAt + 1)..];
+        if (tail.Length <= 3 && tail.All(char.IsDigit))
+        {
+            return label[..splitAt];
+        }
+        return label;
+    }
+
+    /// <summary>
+    /// 标题：报表或实体名。工厂前缀（如 C100_）去掉，不含工厂码。
+    /// </summary>
+    /// <param name="actualFileName">导出文件名</param>
+    /// <param name="fallback">配置兜底</param>
+    /// <returns>标题</returns>
+    private static string ResolveWorkbookTitle(string actualFileName, string fallback)
+    {
+        var title = TrimTrailingBatchIndex(DocumentTitleFromFileName(actualFileName));
+        if (TrySplitPlantPrefixedTitle(title, out _, out var reportLabel))
+        {
+            title = TrimTrailingBatchIndex(reportLabel);
+        }
+        title = RemovePlantTokens(title);
+        return string.IsNullOrWhiteSpace(title) ? fallback : title;
+    }
+
+    /// <summary>
+    /// 主题：工作表名（已去掉工厂码）。没有工作表名时用标题。
+    /// </summary>
+    /// <param name="title">文档标题</param>
+    /// <param name="sheetNames">工作表名称</param>
+    /// <param name="fallback">配置兜底</param>
+    /// <returns>主题</returns>
+    private static string ResolveWorkbookSubject(string title, IReadOnlyList<string> sheetNames, string fallback)
+    {
+        if (sheetNames.Count > 0)
+        {
+            return string.Join(", ", sheetNames);
+        }
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            return title;
+        }
+        return fallback;
+    }
+
+    /// <summary>
+    /// 类别：调用方服务所在模块路径（菜单目录名，用 | 连接）。识别不到时用配置兜底。
+    /// </summary>
+    /// <param name="fallback">配置兜底</param>
+    /// <returns>类别，如 后勤管理|采购管理</returns>
+    private static string ResolveWorkbookCategory(string fallback)
+    {
+        var category = ResolveCallerModuleCategory();
+        return string.IsNullOrWhiteSpace(category) ? fallback : category;
+    }
+
+    /// <summary>
+    /// 从调用栈取应用服务命名空间，转成模块路径。跳过 Excel 帮助类自身。
+    /// </summary>
+    /// <returns>模块路径；调用栈上没有应用服务时为空</returns>
+    private static string ResolveCallerModuleCategory()
+    {
+        const string servicePrefix = "Takt.Application.Services.";
+        var frames = new StackTrace().GetFrames();
+        if (frames == null)
+        {
+            return string.Empty;
+        }
+        foreach (var frame in frames)
+        {
+            var type = frame.GetMethod()?.DeclaringType;
+            var ns = type?.Namespace;
+            if (string.IsNullOrEmpty(ns) || !ns.StartsWith(servicePrefix, StringComparison.Ordinal))
+            {
+                continue;
+            }
+            return TaktNamingHelper.ExportModuleCategory(ns[servicePrefix.Length..]);
+        }
+        return string.Empty;
+    }
+
+    /// <summary>
+    /// 去掉文本中的工厂码片段（1 位字母 + 3 位数字，如 C100）。
+    /// </summary>
+    /// <param name="value">原始文本</param>
+    /// <returns>去掉工厂码后的文本</returns>
+    private static string RemovePlantTokens(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
+        var tokens = value.Split(['_', ' ', '　'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var kept = tokens.Where(token => !IsPlantCode(token)).ToArray();
+        return kept.Length == 0 ? string.Empty : string.Join("_", kept);
+    }
+
+    /// <summary>
+    /// 是否为工厂码（1 位字母 + 3 位数字）。
+    /// </summary>
+    /// <param name="token">片段</param>
+    /// <returns>是工厂码时为 true</returns>
+    private static bool IsPlantCode(string token)
+    {
+        return token.Length == 4
+            && char.IsLetter(token[0])
+            && char.IsDigit(token[1])
+            && char.IsDigit(token[2])
+            && char.IsDigit(token[3]);
+    }
+
+    /// <summary>
+    /// 关键词：本次标题、主题、类别中的词，再并上配置关键词，按忽略大小写去重。
+    /// </summary>
+    /// <param name="title">文档标题</param>
+    /// <param name="subject">主题</param>
+    /// <param name="category">类别</param>
+    /// <param name="configuredKeywords">配置关键词</param>
+    /// <returns>逗号分隔关键词</returns>
+    private static string BuildWorkbookKeywords(string title, string subject, string category, string configuredKeywords)
+    {
+        var parts = new List<string>();
+        AddKeywordTokens(parts, title);
+        AddKeywordTokens(parts, subject);
+        AddKeywordTokens(parts, category);
+        AddKeywordTokens(parts, configuredKeywords);
+        return string.Join(",", parts);
+    }
+
+    /// <summary>
+    /// 按逗号、下划线和空白拆词并去重。纯数字片段（分批序号、时间戳）不进入关键词。
+    /// </summary>
+    /// <param name="parts">已收集的关键词</param>
+    /// <param name="value">待拆分文本</param>
+    private static void AddKeywordTokens(List<string> parts, string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return;
+        }
+        var tokens = value.Split([',', '，', '_', '|', ' ', '　'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        foreach (var token in tokens)
+        {
+            if (token.All(char.IsDigit) || IsPlantCode(token))
+            {
+                continue;
+            }
+            if (parts.Contains(token, StringComparer.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+            parts.Add(token);
+        }
+    }
+
+    /// <summary>
+    /// 备注：配置说明后追加报表名。不写入带工厂码的文件名。
+    /// </summary>
+    /// <param name="configuredComments">配置备注</param>
+    /// <param name="documentTitle">报表名（不含工厂码）</param>
+    /// <returns>备注</returns>
+    private static string BuildWorkbookComments(string configuredComments, string documentTitle)
+    {
+        if (string.IsNullOrWhiteSpace(configuredComments))
+        {
+            return documentTitle;
+        }
+        if (string.IsNullOrWhiteSpace(documentTitle))
+        {
+            return configuredComments.Trim();
+        }
+        return $"{configuredComments.Trim()} | {documentTitle}";
+    }
+
+    /// <summary>
+    /// 工作簿核心属性截断到 255，避免超出 Office 属性常用长度。
+    /// </summary>
+    /// <param name="value">属性值</param>
+    /// <returns>截断后的值</returns>
+    private static string TruncateWorkbookProperty(string value)
+    {
+        const int maxLength = 255;
+        if (string.IsNullOrEmpty(value) || value.Length <= maxLength)
+        {
+            return value ?? string.Empty;
+        }
+        return value[..maxLength];
     }
 
     #region 单Sheet导入导出
@@ -264,9 +531,9 @@ public static class TaktExcelHelper
             {
                 // 生成只有表头的空Excel
                 using var package = new ExcelPackage();
-                SetWorkbookProperties(package.Workbook, workbookOptions);
-                await Task.Run(() => ExportToSheetAsync(package, dataList, sheetName));
                 var actualFileName = GenerateTimestampFileName(fileName ?? sheetName);
+                SetWorkbookProperties(package.Workbook, workbookOptions, actualFileName, sheetName);
+                await Task.Run(() => ExportToSheetAsync(package, dataList, sheetName));
                 var content = await package.GetAsByteArrayAsync();
                 TaktLogger.Information("[TaktExcelHelper] 导出Excel成功（空数据），Sheet: {SheetName}, 文件名: {FileName}", sheetName, actualFileName);
                 return (actualFileName, content);
@@ -276,9 +543,9 @@ public static class TaktExcelHelper
             {
                 // 只生成一个Excel
                 using var package = new ExcelPackage();
-                SetWorkbookProperties(package.Workbook, workbookOptions);
-                await Task.Run(() => ExportToSheetAsync(package, dataList, sheetName));
                 var actualFileName = GenerateTimestampFileName(fileName ?? sheetName);
+                SetWorkbookProperties(package.Workbook, workbookOptions, actualFileName, sheetName);
+                await Task.Run(() => ExportToSheetAsync(package, dataList, sheetName));
                 var content = await package.GetAsByteArrayAsync();
                 TaktLogger.Information("[TaktExcelHelper] 导出Excel成功，Sheet: {SheetName}, 文件名: {FileName}, 数据行数: {RowCount}", sheetName, actualFileName, total);
                 return (actualFileName, content);
@@ -294,9 +561,9 @@ public static class TaktExcelHelper
                 {
                     var batch = dataList.Skip(i * maxRowsPerSheet).Take(maxRowsPerSheet).ToList();
                     using var package = new ExcelPackage();
-                    SetWorkbookProperties(package.Workbook, workbookOptions);
-                    await Task.Run(() => ExportToSheetAsync(package, batch, sheetName));
                     var batchFileName = GenerateTimestampFileName($"{exportBaseName}_{i + 1}");
+                    SetWorkbookProperties(package.Workbook, workbookOptions, batchFileName, sheetName);
+                    await Task.Run(() => ExportToSheetAsync(package, batch, sheetName));
                     var batchContent = await package.GetAsByteArrayAsync();
                     fileList.Add((batchFileName, batchContent));
                 }
@@ -352,16 +619,16 @@ public static class TaktExcelHelper
         ValidateDictionarySheetColumns(columnKeys, columnLabels);
         var workbookOptions = ResolveExcelOptions(excelOptions);
         using var package = new ExcelPackage();
-        SetWorkbookProperties(package.Workbook, workbookOptions);
-        WriteDictionarySheet(package, sheetName, rows, columnKeys, columnLabels, columnWidths);
         var actualFileName = GenerateTimestampFileName(fileName ?? sheetName);
+        SetWorkbookProperties(package.Workbook, workbookOptions, actualFileName, sheetName);
+        WriteDictionarySheet(package, sheetName, rows, columnKeys, columnLabels, columnWidths);
         var content = await package.GetAsByteArrayAsync();
         TaktLogger.Information("[TaktExcelHelper] 导出动态报表成功，Sheet: {SheetName}, 文件名: {FileName}, 行数: {RowCount}", sheetName, actualFileName, rows.Count);
         return (actualFileName, content);
     }
 
     /// <summary>
-    /// 导出多个字典行动态 Sheet（列键可按 Sheet 不同）
+    /// 导出多个字典行动态 Sheet（列键可按 Sheet 不同）。单表超过 10 万行时按上限拆成多个 xlsx 并打包 zip，行不丢弃
     /// </summary>
     /// <param name="sheets">工作表清单（至少 1 个）</param>
     /// <param name="fileName">文件名（不含扩展名）</param>
@@ -382,6 +649,15 @@ public static class TaktExcelHelper
         var workbookOptions = ResolveExcelOptions(excelOptions);
         var maxSheetsPerFile = ResolveMaxExportSheetsPerFile(excelOptions);
         var maxRowsPerSheet = ResolveMaxExportRowsPerSheet(excelOptions);
+        foreach (var sheet in sheets)
+        {
+            ArgumentNullException.ThrowIfNull(sheet);
+            ArgumentException.ThrowIfNullOrWhiteSpace(sheet.SheetName);
+            ArgumentNullException.ThrowIfNull(sheet.Rows);
+            ArgumentNullException.ThrowIfNull(sheet.ColumnKeys);
+            ArgumentNullException.ThrowIfNull(sheet.ColumnLabels);
+            ValidateDictionarySheetColumns(sheet.ColumnKeys, sheet.ColumnLabels);
+        }
         if (sheets.Count > maxSheetsPerFile)
         {
             throw new TaktLocalizedException(
@@ -395,31 +671,91 @@ public static class TaktExcelHelper
                 },
                 null);
         }
+        var totalRows = sheets.Sum(sheet => sheet.Rows.Count);
+        var exportBaseName = NormalizeFileNameBase(fileName ?? "Data");
+        if (string.IsNullOrWhiteSpace(exportBaseName))
+        {
+            exportBaseName = "Data";
+        }
+        if (sheets.All(sheet => sheet.Rows.Count <= maxRowsPerSheet))
+        {
+            var actualFileName = GenerateTimestampFileName(exportBaseName);
+            var content = await WriteDictionaryWorkbookAsync(sheets, workbookOptions, actualFileName);
+            TaktLogger.Information(
+                "[TaktExcelHelper] 导出多Sheet动态报表成功，Sheet数量: {SheetCount}, 总数据行数: {RowCount}, 文件名: {FileName}",
+                sheets.Count,
+                totalRows,
+                actualFileName);
+            return (actualFileName, content);
+        }
+        var files = new List<(string fileName, byte[] content)>();
+        var companions = sheets.Where(sheet => sheet.Rows.Count <= maxRowsPerSheet).ToList();
+        var partIndex = 0;
+        foreach (var sheet in sheets.Where(sheet => sheet.Rows.Count > maxRowsPerSheet))
+        {
+            var partCount = (int)Math.Ceiling(sheet.Rows.Count / (double)maxRowsPerSheet);
+            for (var i = 0; i < partCount; i++)
+            {
+                partIndex++;
+                var chunk = new TaktExcelDictionarySheet
+                {
+                    SheetName = partCount == 1 ? sheet.SheetName : BuildSplitSheetName(sheet.SheetName, i + 1),
+                    Rows = sheet.Rows.Skip(i * maxRowsPerSheet).Take(maxRowsPerSheet).ToList(),
+                    ColumnKeys = sheet.ColumnKeys,
+                    ColumnLabels = sheet.ColumnLabels,
+                    ColumnWidths = sheet.ColumnWidths,
+                };
+                var workbookSheets = new List<TaktExcelDictionarySheet> { chunk };
+                if (partIndex == 1)
+                {
+                    workbookSheets.AddRange(companions);
+                }
+                var partName = GenerateTimestampFileName($"{exportBaseName}_{partIndex}");
+                var partContent = await WriteDictionaryWorkbookAsync(workbookSheets, workbookOptions, partName);
+                files.Add((partName, partContent));
+            }
+        }
+        var packed = await PackToZipAsync(files, exportBaseName);
+        TaktLogger.Information(
+            "[TaktExcelHelper] 导出多Sheet动态报表成功（超过 {MaxRows} 行，打包 zip），总数据行数: {RowCount}, 文件名: {FileName}, 文件数: {FileCount}",
+            maxRowsPerSheet,
+            totalRows,
+            packed.fileName,
+            files.Count);
+        return packed;
+    }
+
+    /// <summary>
+    /// 分表名称：原名加 _序号，总长不超过 Excel 工作表名 31 字符。
+    /// </summary>
+    /// <param name="sheetName">原工作表名</param>
+    /// <param name="part">从 1 开始的分表序号</param>
+    /// <returns>分表名</returns>
+    private static string BuildSplitSheetName(string sheetName, int part)
+    {
+        var suffix = $"_{part}";
+        var baseName = sheetName.Length + suffix.Length <= 31
+            ? sheetName
+            : sheetName[..(31 - suffix.Length)];
+        return baseName + suffix;
+    }
+
+    /// <summary>
+    /// 把已切分的字典表写入一个工作簿。
+    /// </summary>
+    /// <param name="sheets">工作表（每表行数已不超过上限）</param>
+    /// <param name="workbookOptions">工作簿元数据</param>
+    /// <param name="actualFileName">本次文件名</param>
+    /// <returns>xlsx 内容</returns>
+    private static async Task<byte[]> WriteDictionaryWorkbookAsync(
+        IReadOnlyList<TaktExcelDictionarySheet> sheets,
+        TaktExcelOptions workbookOptions,
+        string actualFileName)
+    {
         using var package = new ExcelPackage();
-        SetWorkbookProperties(package.Workbook, workbookOptions);
-        var totalRows = 0;
+        SetWorkbookProperties(package.Workbook, workbookOptions, actualFileName, sheets.Select(sheet => sheet.SheetName).ToArray());
         foreach (var sheet in sheets)
         {
-            ArgumentNullException.ThrowIfNull(sheet);
-            ArgumentException.ThrowIfNullOrWhiteSpace(sheet.SheetName);
-            ArgumentNullException.ThrowIfNull(sheet.Rows);
-            ArgumentNullException.ThrowIfNull(sheet.ColumnKeys);
-            ArgumentNullException.ThrowIfNull(sheet.ColumnLabels);
-            ValidateDictionarySheetColumns(sheet.ColumnKeys, sheet.ColumnLabels);
-            if (sheet.Rows.Count > maxRowsPerSheet)
-            {
-                throw new TaktLocalizedException(
-                    ExportSheetRowLimitExceededKey,
-                    "Frontend",
-                    null,
-                    new Dictionary<string, string>(StringComparer.Ordinal)
-                    {
-                        ["sheet"] = sheet.SheetName,
-                        ["count"] = sheet.Rows.Count.ToString(CultureInfo.InvariantCulture),
-                        ["max"] = maxRowsPerSheet.ToString(CultureInfo.InvariantCulture),
-                    },
-                    null);
-            }
             WriteDictionarySheet(
                 package,
                 sheet.SheetName,
@@ -427,16 +763,8 @@ public static class TaktExcelHelper
                 sheet.ColumnKeys,
                 sheet.ColumnLabels,
                 sheet.ColumnWidths);
-            totalRows = checked(totalRows + sheet.Rows.Count);
         }
-        var actualFileName = GenerateTimestampFileName(fileName ?? "Data");
-        var content = await package.GetAsByteArrayAsync();
-        TaktLogger.Information(
-            "[TaktExcelHelper] 导出多Sheet动态报表成功，Sheet数量: {SheetCount}, 总数据行数: {RowCount}, 文件名: {FileName}",
-            sheets.Count,
-            totalRows,
-            actualFileName);
-        return (actualFileName, content);
+        return await package.GetAsByteArrayAsync();
     }
 
     /// <summary>
@@ -615,7 +943,6 @@ public static class TaktExcelHelper
         try
         {
             using var package = new ExcelPackage();
-            SetWorkbookProperties(package.Workbook, workbookOptions);
 
             int totalRows = 0;
             foreach (var sheet in sheets)
@@ -661,6 +988,7 @@ public static class TaktExcelHelper
             }
 
             var fileName = GenerateTimestampFileName("多Sheet数据");
+            SetWorkbookProperties(package.Workbook, workbookOptions, fileName, sheets.Keys.ToArray());
             var content = await package.GetAsByteArrayAsync();
             TaktLogger.Information("[TaktExcelHelper] 导出多Sheet Excel成功，Sheet数量: {SheetCount}, 总数据行数: {RowCount}, 文件名: {FileName}", sheets.Count, totalRows, fileName);
             return (fileName, content);
@@ -771,9 +1099,11 @@ public static class TaktExcelHelper
     {
         ArgumentException.ThrowIfNullOrEmpty(sheetName);
         var workbookOptions = ResolveExcelOptions(excelOptions);
+        var baseName = string.IsNullOrWhiteSpace(fileName) ? $"{sheetName}Template" : fileName.Trim();
+        var finalFileName = GenerateTimestampFileName(baseName);
 
         using var package = new ExcelPackage();
-        SetWorkbookProperties(package.Workbook, workbookOptions);
+        SetWorkbookProperties(package.Workbook, workbookOptions, finalFileName, sheetName);
         var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
         // 获取属性信息
@@ -890,9 +1220,6 @@ public static class TaktExcelHelper
         ApplyFixedStandardColumnWidths(worksheet, properties.Count);
 
         var content = await package.GetAsByteArrayAsync();
-        // 无本地化上下文时的技术兜底；业务文件名由应用层传入。
-        var baseName = string.IsNullOrWhiteSpace(fileName) ? $"{sheetName}Template" : fileName.Trim();
-        var finalFileName = GenerateTimestampFileName(baseName);
         TaktLogger.Information("[TaktExcelHelper] 生成Excel模板成功，Sheet: {SheetName}, 数据类型: {TypeName}, 文件名: {FileName}", sheetName, typeof(T).Name, finalFileName);
         return (finalFileName, content);
     }
@@ -1048,6 +1375,10 @@ public static class TaktExcelHelper
                 var cell = worksheet.Cells[row, col];
                 var cellValue = cell.Value?.ToString();
                 if (string.IsNullOrEmpty(cellValue)) continue;
+                if (!IsRichContentProperty(property.Name) && TaktRegexHelper.ContainsFullWidth(cellValue))
+                {
+                    throw new TaktLocalizedException(TaktValidationI18nKeys.FullWidthForbidden, "Frontend");
+                }
 
                 var value = ConvertValue(cellValue, property.PropertyType);
                 if (value != null)
@@ -1060,6 +1391,19 @@ public static class TaktExcelHelper
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// 是否为正文类字段（设变内容、邮件内容、会议议程/纪要等）
+    /// </summary>
+    /// <param name="name">属性名</param>
+    /// <returns>正文类字段时为 true</returns>
+    private static bool IsRichContentProperty(string name)
+    {
+        return name.Equals("content", StringComparison.OrdinalIgnoreCase)
+            || name.EndsWith("Content", StringComparison.OrdinalIgnoreCase)
+            || name.EndsWith("Agenda", StringComparison.OrdinalIgnoreCase)
+            || name.EndsWith("Minutes", StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>

@@ -4,7 +4,7 @@
 // 文件名称：TaktEcSeikan.cs
 // 创建时间：2026-06-29
 // 创建人：Takt365(Cursor AI)
-// 功能描述：设变生管课部门执行表（按设变明细ID+根物料编码唯一）
+// 功能描述：设变生管课部门执行表（部门 D0420；未作废明细均落行。全仕向按成品：设变单号+机种+根物料；按机种及部管范围：设变单号+机种，根物料写入编码组；按设变及内部/技术：设变单号+机种，根物料写入编码组）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -17,7 +17,7 @@ using Takt.Domain.Interfaces;
 namespace Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange;
 
 /// <summary>
-/// 设变生管课（D0420）部门执行表（按设变明细 + 根物料编码唯一）
+/// 设变生管课（部门 D0420）执行表。未作废明细均落行。全仕向按成品去重键为设变单号+机种+根物料；按机种及部管范围为设变单号+机种（根物料写入编码组）；按设变及内部/技术同样为设变单号+机种（根物料写入编码组）
 /// </summary>
 [SugarTable("takt_logistics_manufacturing_ec_seikan", "设变生管执行表")]
 [SugarIndex("ix_ec_seikan_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
@@ -87,7 +87,7 @@ public class TaktEcSeikan : TaktCompanyEntityBase, ITaktEcDeptExecEntity, ITaktE
     [SugarColumn(ColumnName = "ec_old_part_disposition", ColumnDescription = "旧品处理", Length = 4, ColumnDataType = "nvarchar", IsNullable = true)]
     public string? EcOldPartDisposition { get; set; }
     /// <summary>
-    /// 根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）
+    /// 根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）
     /// </summary>
     [SugarColumn(ColumnName = "ec_root_material_description", ColumnDescription = "根物料描述", Length = 40, ColumnDataType = "nvarchar", IsNullable = false)]
     public string EcRootMaterialDescription { get; set; } = string.Empty;

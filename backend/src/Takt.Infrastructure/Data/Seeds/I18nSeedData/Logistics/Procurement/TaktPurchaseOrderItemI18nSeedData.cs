@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Procurement
 // 文件名称：TaktPurchaseOrderItemI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPurchaseOrderItem 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -162,14 +162,14 @@ public class TaktPurchaseOrderItemI18nSeedData : ITaktSeedDataCoordinator
             // entity.purchaseorderitem.materialspecification
             new TranslationSeedItem("entity.purchaseorderitem.materialspecification", "zh-HK", "物料规格_hk", "物料规格（回填：随物料）"),
 
-            // entity.purchaseorderitem.purchaseinforecordcode
-            new TranslationSeedItem("entity.purchaseorderitem.purchaseinforecordcode", "en-US", "采购信息记录编码_us", "采购信息记录编码"),
-            // entity.purchaseorderitem.purchaseinforecordcode
-            new TranslationSeedItem("entity.purchaseorderitem.purchaseinforecordcode", "ja-JP", "采购信息记录编码_jp", "采购信息记录编码"),
-            // entity.purchaseorderitem.purchaseinforecordcode
-            new TranslationSeedItem("entity.purchaseorderitem.purchaseinforecordcode", "zh-CN", "采购信息记录编码", "采购信息记录编码"),
-            // entity.purchaseorderitem.purchaseinforecordcode
-            new TranslationSeedItem("entity.purchaseorderitem.purchaseinforecordcode", "zh-HK", "采购信息记录编码_hk", "采购信息记录编码"),
+            // entity.purchaseorderitem.purchaseinfocode
+            new TranslationSeedItem("entity.purchaseorderitem.purchaseinfocode", "en-US", "采购信息编码_us", "采购信息编码"),
+            // entity.purchaseorderitem.purchaseinfocode
+            new TranslationSeedItem("entity.purchaseorderitem.purchaseinfocode", "ja-JP", "采购信息编码_jp", "采购信息编码"),
+            // entity.purchaseorderitem.purchaseinfocode
+            new TranslationSeedItem("entity.purchaseorderitem.purchaseinfocode", "zh-CN", "采购信息编码", "采购信息编码"),
+            // entity.purchaseorderitem.purchaseinfocode
+            new TranslationSeedItem("entity.purchaseorderitem.purchaseinfocode", "zh-HK", "采购信息编码_hk", "采购信息编码"),
 
             // entity.purchaseorderitem.suppliermaterialcode
             new TranslationSeedItem("entity.purchaseorderitem.suppliermaterialcode", "en-US", "供应商物料编码_us", "供应商物料编码"),
@@ -244,13 +244,13 @@ public class TaktPurchaseOrderItemI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.purchaseorderitem.discountamount", "zh-HK", "折扣金额_hk", "折扣金额（精确到分，存储为整数，单位为分）"),
 
             // entity.purchaseorderitem.taxcode
-            new TranslationSeedItem("entity.purchaseorderitem.taxcode", "en-US", "税码_us", "税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）"),
+            new TranslationSeedItem("entity.purchaseorderitem.taxcode", "en-US", "税码_us", "税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.purchaseorderitem.taxcode
-            new TranslationSeedItem("entity.purchaseorderitem.taxcode", "ja-JP", "税码_jp", "税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）"),
+            new TranslationSeedItem("entity.purchaseorderitem.taxcode", "ja-JP", "税码_jp", "税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.purchaseorderitem.taxcode
-            new TranslationSeedItem("entity.purchaseorderitem.taxcode", "zh-CN", "税码", "税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）"),
+            new TranslationSeedItem("entity.purchaseorderitem.taxcode", "zh-CN", "税码", "税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.purchaseorderitem.taxcode
-            new TranslationSeedItem("entity.purchaseorderitem.taxcode", "zh-HK", "税码_hk", "税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）"),
+            new TranslationSeedItem("entity.purchaseorderitem.taxcode", "zh-HK", "税码_hk", "税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）"),
 
             // entity.purchaseorderitem.taxincludedamount
             new TranslationSeedItem("entity.purchaseorderitem.taxincludedamount", "en-US", "含税金额_us", "含税金额"),

@@ -71,6 +71,8 @@ export interface EcSeikan extends CompanyDtoBase {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 
   /**
    * 部门编码（TaktDept.DeptCode，5 位，如 D0420）
@@ -333,6 +335,8 @@ export interface EcSeikanCreate {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 
   /**
    * 部门编码（TaktDept.DeptCode，5 位，如 D0420）
@@ -424,6 +428,8 @@ export interface EcSeikanDiscontinuedStatus {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 }
 
 /**
@@ -755,6 +761,8 @@ export interface EcSeikanExport {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 
   /**
    * 部门编码（TaktDept.DeptCode，5 位，如 D0420）

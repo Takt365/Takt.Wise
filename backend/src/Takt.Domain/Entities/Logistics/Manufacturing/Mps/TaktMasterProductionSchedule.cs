@@ -27,7 +27,7 @@ public class TaktMasterProductionSchedule : TaktApprovalEntityBase
 {
 
     /// <summary>
-    /// MPS 编码
+    /// MPS 编码（前端表单选择编码规则后自动通过 TaktNumbering MPS编码规则生成并展示，非手输；单据类型菜单：MPS 计划维护）
     /// </summary>
     [SugarColumn(ColumnName = "mps_code", ColumnDescription = "MPS编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string MpsCode { get; set; } = string.Empty;

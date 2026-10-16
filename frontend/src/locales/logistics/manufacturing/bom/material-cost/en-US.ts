@@ -26,7 +26,7 @@ export default {
     modalmasterhint: 'Left model → center product → right lines (no entity split). Import lines, then sum or recalculate cost.',
     costSum: 'Cost sum',
     costRecalculate: 'Recalculate cost',
-    backfillPurchaseInfoRecord: 'Backfill purchase price',
+    backfillPurchaseInfo: 'Backfill purchase price',
     refreshModelFields: 'Backfill model price',
     costingMonth: 'Costing month',
     costingMonthPlaceholder: 'Select costing month',
@@ -40,9 +40,9 @@ export default {
     costRecalculateFailed: 'Cost processing failed',
     costRecalculateConfirmTitle: 'Recalculate cost?',
     costRecalculateConfirmContent: 'Zero existing totals for this costing month, then rebuild from item lines and refresh the summary.',
-    backfillPurchaseInfoRecordSuccess:
+    backfillPurchaseInfoSuccess:
       '{month} backfill done: updated {updated}, skipped {skipped} (scanned {scanned})',
-    backfillPurchaseInfoRecordFailed: 'Failed to backfill purchase price',
+    backfillPurchaseInfoFailed: 'Failed to backfill purchase price',
     refreshModelFieldsSuccess:
       '{month} model price backfill done: scanned {scanned}, model updated {modelUpdated}, average updated {averageUpdated} ({groups} groups)',
     refreshModelFieldsFailed: 'Failed to backfill model price',

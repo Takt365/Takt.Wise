@@ -75,7 +75,7 @@ public class TaktEcExecDeptAccess
     private readonly ITaktCompanyRepository<TaktEcUkeken> _iqcRepository;
     private readonly ITaktCompanyRepository<TaktEcBukan> _mcRepository;
     private readonly ITaktCompanyRepository<TaktEcSeizounika> _seizounikaRepository;
-    private readonly ITaktCompanyRepository<TaktEcSmt> _smtRepository;
+    private readonly ITaktCompanyRepository<TaktEcEmtl> _smtRepository;
     private readonly ITaktCompanyRepository<TaktEcSeizouikka> _assyRepository;
     private readonly ITaktCompanyRepository<TaktEcHinkan> _qaRepository;
     private readonly ITaktCompanyRepository<TaktEcSeizougijutsu> _teRepository;
@@ -89,7 +89,7 @@ public class TaktEcExecDeptAccess
         ITaktCompanyRepository<TaktEcUkeken> iqcRepository,
         ITaktCompanyRepository<TaktEcBukan> mcRepository,
         ITaktCompanyRepository<TaktEcSeizounika> seizounikaRepository,
-        ITaktCompanyRepository<TaktEcSmt> smtRepository,
+        ITaktCompanyRepository<TaktEcEmtl> smtRepository,
         ITaktCompanyRepository<TaktEcSeizouikka> assyRepository,
         ITaktCompanyRepository<TaktEcHinkan> qaRepository,
         ITaktCompanyRepository<TaktEcSeizougijutsu> teRepository)
@@ -118,7 +118,7 @@ public class TaktEcExecDeptAccess
     /// <summary>
     /// PCBA/SMT（F+C003，DeptCode=D0625）仓储
     /// </summary>
-    public ITaktCompanyRepository<TaktEcSmt> SmtRepository => _smtRepository;
+    public ITaktCompanyRepository<TaktEcEmtl> SmtRepository => _smtRepository;
 
     /// <summary>
     /// 按设变单号与部门取首条执行记录（公共字段）
@@ -197,7 +197,7 @@ public class TaktEcExecDeptAccess
     }
 
     /// <summary>
-    /// 设变单号下是否存在任一部门已输入（实施=是或执行内容非空）；仅查首行，不拉全表
+    /// 设变单号下是否存在任一部门已输入（实施=是，或执行内容为人工填写；系统按实施范围写入的文案不算输入）。仅查首行，不拉全表
     /// </summary>
     /// <param name="ecCode">设变单号</param>
     /// <returns>存在已输入行时 true</returns>
@@ -207,55 +207,299 @@ public class TaktEcExecDeptAccess
         var code = ecCode.Trim();
         if (await _pmcRepository.FirstAsync(x =>
                 x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0
-                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""))) != null)
+                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""
+                    && x.ExecContent != TaktEcScopeConstants.AutoCompletedExecContent
+                    && x.ExecContent != TaktEcScopeConstants.ByFinishedProductExecContent
+                    && x.ExecContent != TaktEcScopeConstants.ByModelExecContent
+                    && x.ExecContent != "实施范围-全仕向"
+                    && x.ExecContent != TaktEcScopeConstants.MaterialControlExecContent
+                    && x.ExecContent != TaktEcScopeConstants.InternalExecContent
+                    && x.ExecContent != TaktEcScopeConstants.TechnicalExecContent
+                    && x.ExecContent != TaktEcKoubaiConstants.NotPurchasingRelatedExecContent
+                    && x.ExecContent != TaktEcUkekenConstants.NotRelatedToIqcExecContent
+                    && x.ExecContent != TaktEcBukanConstants.NotRelatedToMaterialControlExecContent
+                    && !x.ExecContent.EndsWith("-EOL")))) != null)
         {
             return true;
         }
         if (await _mpRepository.FirstAsync(x =>
                 x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0
-                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""))) != null)
+                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""
+                    && x.ExecContent != TaktEcScopeConstants.AutoCompletedExecContent
+                    && x.ExecContent != TaktEcScopeConstants.ByFinishedProductExecContent
+                    && x.ExecContent != TaktEcScopeConstants.ByModelExecContent
+                    && x.ExecContent != "实施范围-全仕向"
+                    && x.ExecContent != TaktEcScopeConstants.MaterialControlExecContent
+                    && x.ExecContent != TaktEcScopeConstants.InternalExecContent
+                    && x.ExecContent != TaktEcScopeConstants.TechnicalExecContent
+                    && x.ExecContent != TaktEcKoubaiConstants.NotPurchasingRelatedExecContent
+                    && x.ExecContent != TaktEcUkekenConstants.NotRelatedToIqcExecContent
+                    && x.ExecContent != TaktEcBukanConstants.NotRelatedToMaterialControlExecContent
+                    && !x.ExecContent.EndsWith("-EOL")))) != null)
         {
             return true;
         }
         if (await _iqcRepository.FirstAsync(x =>
                 x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0
-                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""))) != null)
+                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""
+                    && x.ExecContent != TaktEcScopeConstants.AutoCompletedExecContent
+                    && x.ExecContent != TaktEcScopeConstants.ByFinishedProductExecContent
+                    && x.ExecContent != TaktEcScopeConstants.ByModelExecContent
+                    && x.ExecContent != "实施范围-全仕向"
+                    && x.ExecContent != TaktEcScopeConstants.MaterialControlExecContent
+                    && x.ExecContent != TaktEcScopeConstants.InternalExecContent
+                    && x.ExecContent != TaktEcScopeConstants.TechnicalExecContent
+                    && x.ExecContent != TaktEcKoubaiConstants.NotPurchasingRelatedExecContent
+                    && x.ExecContent != TaktEcUkekenConstants.NotRelatedToIqcExecContent
+                    && x.ExecContent != TaktEcBukanConstants.NotRelatedToMaterialControlExecContent
+                    && !x.ExecContent.EndsWith("-EOL")))) != null)
         {
             return true;
         }
         if (await _mcRepository.FirstAsync(x =>
                 x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0
-                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""))) != null)
+                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""
+                    && x.ExecContent != TaktEcScopeConstants.AutoCompletedExecContent
+                    && x.ExecContent != TaktEcScopeConstants.ByFinishedProductExecContent
+                    && x.ExecContent != TaktEcScopeConstants.ByModelExecContent
+                    && x.ExecContent != "实施范围-全仕向"
+                    && x.ExecContent != TaktEcScopeConstants.MaterialControlExecContent
+                    && x.ExecContent != TaktEcScopeConstants.InternalExecContent
+                    && x.ExecContent != TaktEcScopeConstants.TechnicalExecContent
+                    && x.ExecContent != TaktEcKoubaiConstants.NotPurchasingRelatedExecContent
+                    && x.ExecContent != TaktEcUkekenConstants.NotRelatedToIqcExecContent
+                    && x.ExecContent != TaktEcBukanConstants.NotRelatedToMaterialControlExecContent
+                    && !x.ExecContent.EndsWith("-EOL")))) != null)
         {
             return true;
         }
         if (await _smtRepository.FirstAsync(x =>
                 x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0
-                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""))) != null)
+                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""
+                    && x.ExecContent != TaktEcScopeConstants.AutoCompletedExecContent
+                    && x.ExecContent != TaktEcScopeConstants.ByFinishedProductExecContent
+                    && x.ExecContent != TaktEcScopeConstants.ByModelExecContent
+                    && x.ExecContent != "实施范围-全仕向"
+                    && x.ExecContent != TaktEcScopeConstants.MaterialControlExecContent
+                    && x.ExecContent != TaktEcScopeConstants.InternalExecContent
+                    && x.ExecContent != TaktEcScopeConstants.TechnicalExecContent
+                    && x.ExecContent != TaktEcKoubaiConstants.NotPurchasingRelatedExecContent
+                    && x.ExecContent != TaktEcUkekenConstants.NotRelatedToIqcExecContent
+                    && x.ExecContent != TaktEcBukanConstants.NotRelatedToMaterialControlExecContent
+                    && !x.ExecContent.EndsWith("-EOL")))) != null)
         {
             return true;
         }
         if (await _seizounikaRepository.FirstAsync(x =>
                 x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0
-                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""))) != null)
+                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""
+                    && x.ExecContent != TaktEcScopeConstants.AutoCompletedExecContent
+                    && x.ExecContent != TaktEcScopeConstants.ByFinishedProductExecContent
+                    && x.ExecContent != TaktEcScopeConstants.ByModelExecContent
+                    && x.ExecContent != "实施范围-全仕向"
+                    && x.ExecContent != TaktEcScopeConstants.MaterialControlExecContent
+                    && x.ExecContent != TaktEcScopeConstants.InternalExecContent
+                    && x.ExecContent != TaktEcScopeConstants.TechnicalExecContent
+                    && x.ExecContent != TaktEcKoubaiConstants.NotPurchasingRelatedExecContent
+                    && x.ExecContent != TaktEcUkekenConstants.NotRelatedToIqcExecContent
+                    && x.ExecContent != TaktEcBukanConstants.NotRelatedToMaterialControlExecContent
+                    && !x.ExecContent.EndsWith("-EOL")))) != null)
         {
             return true;
         }
         if (await _assyRepository.FirstAsync(x =>
                 x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0
-                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""))) != null)
+                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""
+                    && x.ExecContent != TaktEcScopeConstants.AutoCompletedExecContent
+                    && x.ExecContent != TaktEcScopeConstants.ByFinishedProductExecContent
+                    && x.ExecContent != TaktEcScopeConstants.ByModelExecContent
+                    && x.ExecContent != "实施范围-全仕向"
+                    && x.ExecContent != TaktEcScopeConstants.MaterialControlExecContent
+                    && x.ExecContent != TaktEcScopeConstants.InternalExecContent
+                    && x.ExecContent != TaktEcScopeConstants.TechnicalExecContent
+                    && x.ExecContent != TaktEcKoubaiConstants.NotPurchasingRelatedExecContent
+                    && x.ExecContent != TaktEcUkekenConstants.NotRelatedToIqcExecContent
+                    && x.ExecContent != TaktEcBukanConstants.NotRelatedToMaterialControlExecContent
+                    && !x.ExecContent.EndsWith("-EOL")))) != null)
         {
             return true;
         }
         if (await _qaRepository.FirstAsync(x =>
                 x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0
-                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""))) != null)
+                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""
+                    && x.ExecContent != TaktEcScopeConstants.AutoCompletedExecContent
+                    && x.ExecContent != TaktEcScopeConstants.ByFinishedProductExecContent
+                    && x.ExecContent != TaktEcScopeConstants.ByModelExecContent
+                    && x.ExecContent != "实施范围-全仕向"
+                    && x.ExecContent != TaktEcScopeConstants.MaterialControlExecContent
+                    && x.ExecContent != TaktEcScopeConstants.InternalExecContent
+                    && x.ExecContent != TaktEcScopeConstants.TechnicalExecContent
+                    && x.ExecContent != TaktEcKoubaiConstants.NotPurchasingRelatedExecContent
+                    && x.ExecContent != TaktEcUkekenConstants.NotRelatedToIqcExecContent
+                    && x.ExecContent != TaktEcBukanConstants.NotRelatedToMaterialControlExecContent
+                    && !x.ExecContent.EndsWith("-EOL")))) != null)
         {
             return true;
         }
         return await _teRepository.FirstAsync(x =>
                 x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0
-                && (x.IsImplemented == 1 || (x.ExecContent != null && x.ExecContent != ""))) != null;
+                && (x.SopDate != null
+                    || x.IsSopUpdated == 1
+                    || (x.TechLeader != null && x.TechLeader != "")
+                    || (x.SopLeader != null && x.SopLeader != ""))) != null;
+    }
+
+    /// <summary>
+    /// 设变单号下是否仍有未完成的执行部门行（无人工输入）。没有未完成行且已有输入时主表为完成
+    /// </summary>
+    /// <param name="ecCode">设变单号</param>
+    /// <returns>存在未完成行时 true</returns>
+    public async Task<bool> ExistsAnyUnfilledDeptByEcCodeAsync(string ecCode)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(ecCode);
+        var code = ecCode.Trim();
+        if (await _pmcRepository.FirstAsync(x =>
+                x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0 && x.IsImplemented != 1
+                && (x.ExecContent == null || x.ExecContent == ""
+                    || x.ExecContent == TaktEcScopeConstants.AutoCompletedExecContent
+                    || x.ExecContent == TaktEcScopeConstants.ByFinishedProductExecContent
+                    || x.ExecContent == TaktEcScopeConstants.ByModelExecContent
+                    || x.ExecContent == "实施范围-全仕向"
+                    || x.ExecContent == TaktEcScopeConstants.MaterialControlExecContent
+                    || x.ExecContent == TaktEcScopeConstants.InternalExecContent
+                    || x.ExecContent == TaktEcScopeConstants.TechnicalExecContent
+                    || x.ExecContent == TaktEcKoubaiConstants.NotPurchasingRelatedExecContent
+                    || x.ExecContent == TaktEcUkekenConstants.NotRelatedToIqcExecContent
+                    || x.ExecContent == TaktEcBukanConstants.NotRelatedToMaterialControlExecContent
+                    || x.ExecContent.EndsWith("-EOL"))) != null)
+        {
+            return true;
+        }
+        if (await _mpRepository.FirstAsync(x =>
+                x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0 && x.IsImplemented != 1
+                && (x.ExecContent == null || x.ExecContent == ""
+                    || x.ExecContent == TaktEcScopeConstants.AutoCompletedExecContent
+                    || x.ExecContent == TaktEcScopeConstants.ByFinishedProductExecContent
+                    || x.ExecContent == TaktEcScopeConstants.ByModelExecContent
+                    || x.ExecContent == "实施范围-全仕向"
+                    || x.ExecContent == TaktEcScopeConstants.MaterialControlExecContent
+                    || x.ExecContent == TaktEcScopeConstants.InternalExecContent
+                    || x.ExecContent == TaktEcScopeConstants.TechnicalExecContent
+                    || x.ExecContent == TaktEcKoubaiConstants.NotPurchasingRelatedExecContent
+                    || x.ExecContent == TaktEcUkekenConstants.NotRelatedToIqcExecContent
+                    || x.ExecContent == TaktEcBukanConstants.NotRelatedToMaterialControlExecContent
+                    || x.ExecContent.EndsWith("-EOL"))) != null)
+        {
+            return true;
+        }
+        if (await _iqcRepository.FirstAsync(x =>
+                x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0 && x.IsImplemented != 1
+                && (x.ExecContent == null || x.ExecContent == ""
+                    || x.ExecContent == TaktEcScopeConstants.AutoCompletedExecContent
+                    || x.ExecContent == TaktEcScopeConstants.ByFinishedProductExecContent
+                    || x.ExecContent == TaktEcScopeConstants.ByModelExecContent
+                    || x.ExecContent == "实施范围-全仕向"
+                    || x.ExecContent == TaktEcScopeConstants.MaterialControlExecContent
+                    || x.ExecContent == TaktEcScopeConstants.InternalExecContent
+                    || x.ExecContent == TaktEcScopeConstants.TechnicalExecContent
+                    || x.ExecContent == TaktEcKoubaiConstants.NotPurchasingRelatedExecContent
+                    || x.ExecContent == TaktEcUkekenConstants.NotRelatedToIqcExecContent
+                    || x.ExecContent == TaktEcBukanConstants.NotRelatedToMaterialControlExecContent
+                    || x.ExecContent.EndsWith("-EOL"))) != null)
+        {
+            return true;
+        }
+        if (await _mcRepository.FirstAsync(x =>
+                x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0 && x.IsImplemented != 1
+                && (x.ExecContent == null || x.ExecContent == ""
+                    || x.ExecContent == TaktEcScopeConstants.AutoCompletedExecContent
+                    || x.ExecContent == TaktEcScopeConstants.ByFinishedProductExecContent
+                    || x.ExecContent == TaktEcScopeConstants.ByModelExecContent
+                    || x.ExecContent == "实施范围-全仕向"
+                    || x.ExecContent == TaktEcScopeConstants.MaterialControlExecContent
+                    || x.ExecContent == TaktEcScopeConstants.InternalExecContent
+                    || x.ExecContent == TaktEcScopeConstants.TechnicalExecContent
+                    || x.ExecContent == TaktEcKoubaiConstants.NotPurchasingRelatedExecContent
+                    || x.ExecContent == TaktEcUkekenConstants.NotRelatedToIqcExecContent
+                    || x.ExecContent == TaktEcBukanConstants.NotRelatedToMaterialControlExecContent
+                    || x.ExecContent.EndsWith("-EOL"))) != null)
+        {
+            return true;
+        }
+        if (await _smtRepository.FirstAsync(x =>
+                x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0 && x.IsImplemented != 1
+                && (x.ExecContent == null || x.ExecContent == ""
+                    || x.ExecContent == TaktEcScopeConstants.AutoCompletedExecContent
+                    || x.ExecContent == TaktEcScopeConstants.ByFinishedProductExecContent
+                    || x.ExecContent == TaktEcScopeConstants.ByModelExecContent
+                    || x.ExecContent == "实施范围-全仕向"
+                    || x.ExecContent == TaktEcScopeConstants.MaterialControlExecContent
+                    || x.ExecContent == TaktEcScopeConstants.InternalExecContent
+                    || x.ExecContent == TaktEcScopeConstants.TechnicalExecContent
+                    || x.ExecContent == TaktEcKoubaiConstants.NotPurchasingRelatedExecContent
+                    || x.ExecContent == TaktEcUkekenConstants.NotRelatedToIqcExecContent
+                    || x.ExecContent == TaktEcBukanConstants.NotRelatedToMaterialControlExecContent
+                    || x.ExecContent.EndsWith("-EOL"))) != null)
+        {
+            return true;
+        }
+        if (await _seizounikaRepository.FirstAsync(x =>
+                x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0 && x.IsImplemented != 1
+                && (x.ExecContent == null || x.ExecContent == ""
+                    || x.ExecContent == TaktEcScopeConstants.AutoCompletedExecContent
+                    || x.ExecContent == TaktEcScopeConstants.ByFinishedProductExecContent
+                    || x.ExecContent == TaktEcScopeConstants.ByModelExecContent
+                    || x.ExecContent == "实施范围-全仕向"
+                    || x.ExecContent == TaktEcScopeConstants.MaterialControlExecContent
+                    || x.ExecContent == TaktEcScopeConstants.InternalExecContent
+                    || x.ExecContent == TaktEcScopeConstants.TechnicalExecContent
+                    || x.ExecContent == TaktEcKoubaiConstants.NotPurchasingRelatedExecContent
+                    || x.ExecContent == TaktEcUkekenConstants.NotRelatedToIqcExecContent
+                    || x.ExecContent == TaktEcBukanConstants.NotRelatedToMaterialControlExecContent
+                    || x.ExecContent.EndsWith("-EOL"))) != null)
+        {
+            return true;
+        }
+        if (await _assyRepository.FirstAsync(x =>
+                x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0 && x.IsImplemented != 1
+                && (x.ExecContent == null || x.ExecContent == ""
+                    || x.ExecContent == TaktEcScopeConstants.AutoCompletedExecContent
+                    || x.ExecContent == TaktEcScopeConstants.ByFinishedProductExecContent
+                    || x.ExecContent == TaktEcScopeConstants.ByModelExecContent
+                    || x.ExecContent == "实施范围-全仕向"
+                    || x.ExecContent == TaktEcScopeConstants.MaterialControlExecContent
+                    || x.ExecContent == TaktEcScopeConstants.InternalExecContent
+                    || x.ExecContent == TaktEcScopeConstants.TechnicalExecContent
+                    || x.ExecContent == TaktEcKoubaiConstants.NotPurchasingRelatedExecContent
+                    || x.ExecContent == TaktEcUkekenConstants.NotRelatedToIqcExecContent
+                    || x.ExecContent == TaktEcBukanConstants.NotRelatedToMaterialControlExecContent
+                    || x.ExecContent.EndsWith("-EOL"))) != null)
+        {
+            return true;
+        }
+        if (await _qaRepository.FirstAsync(x =>
+                x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0 && x.IsImplemented != 1
+                && (x.ExecContent == null || x.ExecContent == ""
+                    || x.ExecContent == TaktEcScopeConstants.AutoCompletedExecContent
+                    || x.ExecContent == TaktEcScopeConstants.ByFinishedProductExecContent
+                    || x.ExecContent == TaktEcScopeConstants.ByModelExecContent
+                    || x.ExecContent == "实施范围-全仕向"
+                    || x.ExecContent == TaktEcScopeConstants.MaterialControlExecContent
+                    || x.ExecContent == TaktEcScopeConstants.InternalExecContent
+                    || x.ExecContent == TaktEcScopeConstants.TechnicalExecContent
+                    || x.ExecContent == TaktEcKoubaiConstants.NotPurchasingRelatedExecContent
+                    || x.ExecContent == TaktEcUkekenConstants.NotRelatedToIqcExecContent
+                    || x.ExecContent == TaktEcBukanConstants.NotRelatedToMaterialControlExecContent
+                    || x.ExecContent.EndsWith("-EOL"))) != null)
+        {
+            return true;
+        }
+        return await _teRepository.FirstAsync(x =>
+                x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0
+                && x.SopDate == null
+                && x.IsSopUpdated != 1
+                && (x.TechLeader == null || x.TechLeader == "")
+                && (x.SopLeader == null || x.SopLeader == "")) != null;
     }
 
     /// <summary>
@@ -501,7 +745,7 @@ public class TaktEcExecDeptAccess
             TenantCode = e.TenantCode,
             CompanyCode = e.CompanyCode,
         },
-        TaktEcSmt e => new TaktEcExecBaseRow
+        TaktEcEmtl e => new TaktEcExecBaseRow
         {
             Id = e.Id,
             EcDetailId = e.EcDetailId,

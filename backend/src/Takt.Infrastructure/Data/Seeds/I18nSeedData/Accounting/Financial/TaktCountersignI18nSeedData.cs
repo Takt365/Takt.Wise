@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Accounting.Financial
 // 文件名称：TaktCountersignI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktCountersign 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktCountersignI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.countersign._self", "zh-HK", "会签单信息_hk", "实体名称"),
 
             // entity.countersign.code
-            new TranslationSeedItem("entity.countersign.code", "en-US", "会签编码_us", "会签编码"),
+            new TranslationSeedItem("entity.countersign.code", "en-US", "会签编码_us", "会签编码（前端表单选择编码规则后自动通过 TaktNumbering 会签编码规则生成并展示，非手输；单据类型菜单：会签管理）"),
             // entity.countersign.code
-            new TranslationSeedItem("entity.countersign.code", "ja-JP", "会签编码_jp", "会签编码"),
+            new TranslationSeedItem("entity.countersign.code", "ja-JP", "会签编码_jp", "会签编码（前端表单选择编码规则后自动通过 TaktNumbering 会签编码规则生成并展示，非手输；单据类型菜单：会签管理）"),
             // entity.countersign.code
-            new TranslationSeedItem("entity.countersign.code", "zh-CN", "会签编码", "会签编码"),
+            new TranslationSeedItem("entity.countersign.code", "zh-CN", "会签编码", "会签编码（前端表单选择编码规则后自动通过 TaktNumbering 会签编码规则生成并展示，非手输；单据类型菜单：会签管理）"),
             // entity.countersign.code
-            new TranslationSeedItem("entity.countersign.code", "zh-HK", "会签编码_hk", "会签编码"),
+            new TranslationSeedItem("entity.countersign.code", "zh-HK", "会签编码_hk", "会签编码（前端表单选择编码规则后自动通过 TaktNumbering 会签编码规则生成并展示，非手输；单据类型菜单：会签管理）"),
 
             // entity.countersign.purchaseinquiryid
             new TranslationSeedItem("entity.countersign.purchaseinquiryid", "en-US", "来源采购询价ID_us", "来源采购询价（选项 TaktPurchaseInquiries/options；DictValue=Id）"),

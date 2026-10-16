@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Sop
 // 文件名称：TaktSopDocI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSopDoc 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktSopDocI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.sopdoc._self", "zh-HK", "SOP 文档头信息_hk", "实体名称"),
 
             // entity.sopdoc.sopcode
-            new TranslationSeedItem("entity.sopdoc.sopcode", "en-US", "SOP编码_us", "SOP 编码"),
+            new TranslationSeedItem("entity.sopdoc.sopcode", "en-US", "SOP编码_us", "SOP 编码（前端表单选择编码规则后自动通过 TaktNumbering SOP编码规则生成并展示，非手输；单据类型菜单：SOP文档）"),
             // entity.sopdoc.sopcode
-            new TranslationSeedItem("entity.sopdoc.sopcode", "ja-JP", "SOP编码_jp", "SOP 编码"),
+            new TranslationSeedItem("entity.sopdoc.sopcode", "ja-JP", "SOP编码_jp", "SOP 编码（前端表单选择编码规则后自动通过 TaktNumbering SOP编码规则生成并展示，非手输；单据类型菜单：SOP文档）"),
             // entity.sopdoc.sopcode
-            new TranslationSeedItem("entity.sopdoc.sopcode", "zh-CN", "SOP编码", "SOP 编码"),
+            new TranslationSeedItem("entity.sopdoc.sopcode", "zh-CN", "SOP编码", "SOP 编码（前端表单选择编码规则后自动通过 TaktNumbering SOP编码规则生成并展示，非手输；单据类型菜单：SOP文档）"),
             // entity.sopdoc.sopcode
-            new TranslationSeedItem("entity.sopdoc.sopcode", "zh-HK", "SOP编码_hk", "SOP 编码"),
+            new TranslationSeedItem("entity.sopdoc.sopcode", "zh-HK", "SOP编码_hk", "SOP 编码（前端表单选择编码规则后自动通过 TaktNumbering SOP编码规则生成并展示，非手输；单据类型菜单：SOP文档）"),
 
             // entity.sopdoc.sopname
             new TranslationSeedItem("entity.sopdoc.sopname", "en-US", "SOP名称_us", "SOP 名称"),

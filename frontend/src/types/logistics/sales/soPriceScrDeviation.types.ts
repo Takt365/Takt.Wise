@@ -37,7 +37,7 @@ export interface SoPriceScrDeviationQuery extends TaktPagedQuery {
  */
 export interface SoPriceScrPeriodPrice {
   /** 定价记录号 */
-  salesConditionRecordCode: string;
+  salesConditionCode: string;
   /** 条件类型 */
   priceType: string;
   /** 有效起始日 */
@@ -47,7 +47,7 @@ export interface SoPriceScrPeriodPrice {
   /** item / scaleQuantity / scaleValue */
   priceSource: string;
   /** 定价序号 */
-  salesConditionRecordSeq: number;
+  salesConditionSeq: number;
   /** 等级序号 */
   salesScaleSeq?: number | null;
   /** 数量门槛 */
@@ -104,7 +104,7 @@ export interface SoPriceScrDeviationRow {
   /** 周期价目文案 */
   scrPricesText: string;
   /** SCR 记录号（分号拼接） */
-  scrSalesConditionRecordCodes: string;
+  scrSalesConditionCodes: string;
   /** SCR 有效起 */
   scrValidFrom?: string | null;
   /** SCR 有效止 */

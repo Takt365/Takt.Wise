@@ -30,7 +30,7 @@ public class TaktProductionPlan : TaktApprovalEntityBase
 {
 
     /// <summary>
-    /// 生产计划编码（租户+公司+工厂内业务唯一）
+    /// 生产计划编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 生产计划编码规则生成并展示，非手输；单据类型菜单：生产计划）
     /// </summary>
     [SugarColumn(ColumnName = "production_plan_code", ColumnDescription = "生产计划编码", ColumnDataType = "nvarchar", Length = 10, IsNullable = false)]
     public string ProductionPlanCode { get; set; } = string.Empty;

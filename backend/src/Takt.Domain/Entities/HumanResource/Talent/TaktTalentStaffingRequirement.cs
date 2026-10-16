@@ -28,7 +28,7 @@ namespace Takt.Domain.Entities.HumanResource.Talent;
 public class TaktTalentStaffingRequirement : TaktApprovalEntityBase
 {
     /// <summary>
-    /// 需求单号（租户+公司内唯一；自动生成，如 PR-2026-00123）
+    /// 需求单号（租户+公司内唯一；自动生成，如 PR-2026-00123；前端表单选择编码规则后自动通过 TaktNumbering 需求单号规则生成并展示，非手输；单据类型菜单：用人需求）
     /// </summary>
     [SugarColumn(ColumnName = "req_code", ColumnDescription = "需求单号", ColumnDataType = "varchar", Length = 30, IsNullable = false)]
     public string ReqCode { get; set; } = string.Empty;

@@ -109,7 +109,7 @@ alwaysApply: true
 | 采购订单 / 请购（采购申请）编码 | `purchase_order_code`、`purchase_request_code`、`request_code`（请购） | **20** |
 | 采购预测编码 | `purchase_forecast_code` | **20** |
 | 销售报价 / 采购询价编码 | `sales_quotation_code`、`purchase_inquiry_code` | **20** |
-| 销售价格 / 采购价格编码（定价记录号） | `sales_condition_record_code`、`purchase_info_record_code` | **20** |
+| 销售价格 / 采购价格编码（定价记录号） | `sales_condition_code`、`purchase_info_code` | **20** |
 | 客户编码 | `customer_code` | **10** |
 | 供应商编码 | `supplier_code` | **10** |
 

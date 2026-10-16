@@ -20,7 +20,7 @@ using Takt.Shared.Options;
 namespace Takt.WebApi.Controllers.Logistics.Procurement;
 
 /// <summary>
-/// 采购价格推移转置分析控制器（与 TaktPurchaseInfoRecords CRUD 分离）
+/// 采购价格推移转置分析控制器（与 TaktPurchaseInfos CRUD 分离）
 /// </summary>
 [ApiModule(4, "后勤管理")]
 [Route("api/[controller]", Name = "采购价格推移")]

@@ -20,7 +20,7 @@ namespace Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange;
 /// </summary>
 [SugarTable("takt_logistics_manufacturing_ec_execution_task", "工程变更执行任务表")]
 [SugarIndex("ix_ec_execution_task_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
-[SugarIndex("ix_ec_execution_task_notification_dept", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcNotificationId), OrderByType.Asc, nameof(DeptCode), OrderByType.Asc, true)]
+[SugarIndex("ix_ec_execution_task_notification_dept_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcNotificationId), OrderByType.Asc, nameof(DeptCode), OrderByType.Asc, true)]
 [SugarIndex("ix_ec_execution_task_plant_code", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(PlantCode), OrderByType.Asc, false)]
 [SugarIndex("ix_ec_execution_task_status", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(TaskStatus), OrderByType.Asc, false)]
 [SugarIndex("ix_ec_execution_task_due_date", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(DueDate), OrderByType.Asc, false)]

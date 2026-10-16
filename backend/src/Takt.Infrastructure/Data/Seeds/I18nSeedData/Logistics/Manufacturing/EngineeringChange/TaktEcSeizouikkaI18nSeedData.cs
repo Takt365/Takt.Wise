@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcSeizouikkaI18nSeedData.cs
-// 创建时间：2026-08-26
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEcSeizouikka 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -90,24 +90,6 @@ public class TaktEcSeizouikkaI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecseizouikka._self
             new TranslationSeedItem("entity.ecseizouikka._self", "zh-HK", "设变制造1课信息_hk", "实体名称"),
 
-            // entity.ecseizouikka.ecdetailid
-            new TranslationSeedItem("entity.ecseizouikka.ecdetailid", "en-US", "设变明细ID_us", "设变明细 ID（TaktEcDetail 主键；主表多对一导航 EcDetail）"),
-            // entity.ecseizouikka.ecdetailid
-            new TranslationSeedItem("entity.ecseizouikka.ecdetailid", "ja-JP", "设变明细ID_jp", "设变明细 ID（TaktEcDetail 主键；主表多对一导航 EcDetail）"),
-            // entity.ecseizouikka.ecdetailid
-            new TranslationSeedItem("entity.ecseizouikka.ecdetailid", "zh-CN", "设变明细ID", "设变明细 ID（TaktEcDetail 主键；主表多对一导航 EcDetail）"),
-            // entity.ecseizouikka.ecdetailid
-            new TranslationSeedItem("entity.ecseizouikka.ecdetailid", "zh-HK", "设变明细ID_hk", "设变明细 ID（TaktEcDetail 主键；主表多对一导航 EcDetail）"),
-
-            // entity.ecseizouikka.eccode
-            new TranslationSeedItem("entity.ecseizouikka.eccode", "en-US", "设变单号_us", "设变单号（冗余，便于查询）"),
-            // entity.ecseizouikka.eccode
-            new TranslationSeedItem("entity.ecseizouikka.eccode", "ja-JP", "设变单号_jp", "设变单号（冗余，便于查询）"),
-            // entity.ecseizouikka.eccode
-            new TranslationSeedItem("entity.ecseizouikka.eccode", "zh-CN", "设变单号", "设变单号（冗余，便于查询）"),
-            // entity.ecseizouikka.eccode
-            new TranslationSeedItem("entity.ecseizouikka.eccode", "zh-HK", "设变单号_hk", "设变单号（冗余，便于查询）"),
-
             // entity.ecseizouikka.linenumber
             new TranslationSeedItem("entity.ecseizouikka.linenumber", "en-US", "行号_us", "行号（项号/序号，固定步长=10）"),
             // entity.ecseizouikka.linenumber
@@ -117,63 +99,41 @@ public class TaktEcSeizouikkaI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecseizouikka.linenumber
             new TranslationSeedItem("entity.ecseizouikka.linenumber", "zh-HK", "行号_hk", "行号（项号/序号，固定步长=10）"),
 
-            // entity.ecseizouikka.ecmodelcode
-            new TranslationSeedItem("entity.ecseizouikka.ecmodelcode", "en-US", "Model code_us", "机种编码（冗余：来自 TaktEcDetail.EcModelCode）"),
-            // entity.ecseizouikka.ecmodelcode
-            new TranslationSeedItem("entity.ecseizouikka.ecmodelcode", "ja-JP", "機種コード_jp", "机种编码（冗余：来自 TaktEcDetail.EcModelCode）"),
-            // entity.ecseizouikka.ecmodelcode
-            new TranslationSeedItem("entity.ecseizouikka.ecmodelcode", "zh-CN", "机种编码", "机种编码（冗余：来自 TaktEcDetail.EcModelCode）"),
-            // entity.ecseizouikka.ecmodelcode
-            new TranslationSeedItem("entity.ecseizouikka.ecmodelcode", "zh-HK", "機種編碼_hk", "机种编码（冗余：来自 TaktEcDetail.EcModelCode）"),
-            new TranslationSeedItem("entity.ecseizouikka.ecmodelcodegroup", "en-US", "Model code group", "机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）"),
-            new TranslationSeedItem("entity.ecseizouikka.ecmodelcodegroup", "ja-JP", "機種コード組", "机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）"),
-            new TranslationSeedItem("entity.ecseizouikka.ecmodelcodegroup", "zh-CN", "机种编码组", "机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）"),
-            new TranslationSeedItem("entity.ecseizouikka.ecmodelcodegroup", "zh-HK", "機種編碼組", "机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）"),
-
-            // entity.ecseizouikka.ecrootmaterialcode
-            new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialcode", "en-US", "根物料编码_us", "根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）"),
-            // entity.ecseizouikka.ecrootmaterialcode
-            new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialcode", "ja-JP", "根物料编码_jp", "根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）"),
-            // entity.ecseizouikka.ecrootmaterialcode
-            new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialcode", "zh-CN", "根物料编码", "根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）"),
-            // entity.ecseizouikka.ecrootmaterialcode
-            new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialcode", "zh-HK", "根物料编码_hk", "根物料编码（冗余：来自 TaktEcDetail.EcRootMaterialCode）"),
-
-            // entity.ecseizouikka.ecrootmaterialdescription
-            new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialdescription", "en-US", "根物料描述_us", "根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）"),
-            // entity.ecseizouikka.ecrootmaterialdescription
-            new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialdescription", "ja-JP", "根物料描述_jp", "根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）"),
-            // entity.ecseizouikka.ecrootmaterialdescription
-            new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialdescription", "zh-CN", "根物料描述", "根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）"),
-            // entity.ecseizouikka.ecrootmaterialdescription
-            new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialdescription", "zh-HK", "根物料描述_hk", "根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）"),
+            // entity.ecseizouikka.eccode
+            new TranslationSeedItem("entity.ecseizouikka.eccode", "en-US", "设变单号_us", "设变单号（冗余：来自 TaktEcDetail.EcCode）"),
+            // entity.ecseizouikka.eccode
+            new TranslationSeedItem("entity.ecseizouikka.eccode", "ja-JP", "设变单号_jp", "设变单号（冗余：来自 TaktEcDetail.EcCode）"),
+            // entity.ecseizouikka.eccode
+            new TranslationSeedItem("entity.ecseizouikka.eccode", "zh-CN", "设变单号", "设变单号（冗余：来自 TaktEcDetail.EcCode）"),
+            // entity.ecseizouikka.eccode
+            new TranslationSeedItem("entity.ecseizouikka.eccode", "zh-HK", "设变单号_hk", "设变单号（冗余：来自 TaktEcDetail.EcCode）"),
 
             // entity.ecseizouikka.discontinuedstatus
-            new TranslationSeedItem("entity.ecseizouikka.discontinuedstatus", "en-US", "根物料EOL_us", "停产状态（字典 logistics_materials_material_discontinued_status；DictValue=01/Z0 等；默认 Z0=计划物料；冗余：来自 TaktEcDetail.DiscontinuedStatus）"),
+            new TranslationSeedItem("entity.ecseizouikka.discontinuedstatus", "en-US", "停产状态_us", "停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）"),
             // entity.ecseizouikka.discontinuedstatus
-            new TranslationSeedItem("entity.ecseizouikka.discontinuedstatus", "ja-JP", "根物料EOL_jp", "停产状态（字典 logistics_materials_material_discontinued_status；DictValue=01/Z0 等；默认 Z0=计划物料；冗余：来自 TaktEcDetail.DiscontinuedStatus）"),
+            new TranslationSeedItem("entity.ecseizouikka.discontinuedstatus", "ja-JP", "停产状态_jp", "停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）"),
             // entity.ecseizouikka.discontinuedstatus
-            new TranslationSeedItem("entity.ecseizouikka.discontinuedstatus", "zh-CN", "根物料EOL", "停产状态（字典 logistics_materials_material_discontinued_status；DictValue=01/Z0 等；默认 Z0=计划物料；冗余：来自 TaktEcDetail.DiscontinuedStatus）"),
+            new TranslationSeedItem("entity.ecseizouikka.discontinuedstatus", "zh-CN", "停产状态", "停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）"),
             // entity.ecseizouikka.discontinuedstatus
-            new TranslationSeedItem("entity.ecseizouikka.discontinuedstatus", "zh-HK", "根物料EOL_hk", "停产状态（字典 logistics_materials_material_discontinued_status；DictValue=01/Z0 等；默认 Z0=计划物料；冗余：来自 TaktEcDetail.DiscontinuedStatus）"),
+            new TranslationSeedItem("entity.ecseizouikka.discontinuedstatus", "zh-HK", "停产状态_hk", "停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）"),
 
-            
-            // entity.ecseizouikka.ecscope
-            new TranslationSeedItem("entity.ecseizouikka.ecscope", "en-US", "Scope", "实施范围（冗余：来自 TaktEcDetail.EcScope）"),
-            // entity.ecseizouikka.ecscope
-            new TranslationSeedItem("entity.ecseizouikka.ecscope", "ja-JP", "実施範囲", "实施范围（冗余：来自 TaktEcDetail.EcScope）"),
-            // entity.ecseizouikka.ecscope
-            new TranslationSeedItem("entity.ecseizouikka.ecscope", "zh-CN", "实施范围", "实施范围（冗余：来自 TaktEcDetail.EcScope）"),
-            // entity.ecseizouikka.ecscope
-            new TranslationSeedItem("entity.ecseizouikka.ecscope", "zh-HK", "實施範圍", "实施范围（冗余：来自 TaktEcDetail.EcScope）"),
-// entity.ecseizouikka.deptcode
-            new TranslationSeedItem("entity.ecseizouikka.deptcode", "en-US", "部门编码_us", "部门编码（TaktDept.DeptCode，5 位，如 D0610）"),
-            // entity.ecseizouikka.deptcode
-            new TranslationSeedItem("entity.ecseizouikka.deptcode", "ja-JP", "部门编码_jp", "部门编码（TaktDept.DeptCode，5 位，如 D0610）"),
-            // entity.ecseizouikka.deptcode
-            new TranslationSeedItem("entity.ecseizouikka.deptcode", "zh-CN", "部门编码", "部门编码（TaktDept.DeptCode，5 位，如 D0610）"),
-            // entity.ecseizouikka.deptcode
-            new TranslationSeedItem("entity.ecseizouikka.deptcode", "zh-HK", "部门编码_hk", "部门编码（TaktDept.DeptCode，5 位，如 D0610）"),
+            // entity.ecseizouikka.ecmodelcodegroup
+            new TranslationSeedItem("entity.ecseizouikka.ecmodelcodegroup", "en-US", "机种编码组_us", "机种编码组（单个或多个机种，分号分隔；ntext）"),
+            // entity.ecseizouikka.ecmodelcodegroup
+            new TranslationSeedItem("entity.ecseizouikka.ecmodelcodegroup", "ja-JP", "机种编码组_jp", "机种编码组（单个或多个机种，分号分隔；ntext）"),
+            // entity.ecseizouikka.ecmodelcodegroup
+            new TranslationSeedItem("entity.ecseizouikka.ecmodelcodegroup", "zh-CN", "机种编码组", "机种编码组（单个或多个机种，分号分隔；ntext）"),
+            // entity.ecseizouikka.ecmodelcodegroup
+            new TranslationSeedItem("entity.ecseizouikka.ecmodelcodegroup", "zh-HK", "机种编码组_hk", "机种编码组（单个或多个机种，分号分隔；ntext）"),
+
+            // entity.ecseizouikka.ecrootmaterialcodegroup
+            new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialcodegroup", "en-US", "根物料编码组_us", "根物料编码组（同去重键下的根物料编码，分号分隔；ntext，按机种时同机种根物料可能很多）"),
+            // entity.ecseizouikka.ecrootmaterialcodegroup
+            new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialcodegroup", "ja-JP", "根物料编码组_jp", "根物料编码组（同去重键下的根物料编码，分号分隔；ntext，按机种时同机种根物料可能很多）"),
+            // entity.ecseizouikka.ecrootmaterialcodegroup
+            new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialcodegroup", "zh-CN", "根物料编码组", "根物料编码组（同去重键下的根物料编码，分号分隔；ntext，按机种时同机种根物料可能很多）"),
+            // entity.ecseizouikka.ecrootmaterialcodegroup
+            new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialcodegroup", "zh-HK", "根物料编码组_hk", "根物料编码组（同去重键下的根物料编码，分号分隔；ntext，按机种时同机种根物料可能很多）"),
 
             // entity.ecseizouikka.isimplemented
             new TranslationSeedItem("entity.ecseizouikka.isimplemented", "en-US", "实施_us", "是否实施（0=否 1=是，字典 sys_yes_no）"),
@@ -183,6 +143,24 @@ public class TaktEcSeizouikkaI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecseizouikka.isimplemented", "zh-CN", "实施", "是否实施（0=否 1=是，字典 sys_yes_no）"),
             // entity.ecseizouikka.isimplemented
             new TranslationSeedItem("entity.ecseizouikka.isimplemented", "zh-HK", "实施_hk", "是否实施（0=否 1=是，字典 sys_yes_no）"),
+
+            // entity.ecseizouikka.scheduleddate
+            new TranslationSeedItem("entity.ecseizouikka.scheduleddate", "en-US", "预定日期_us", "预定日期（冗余：来自 TaktEcSeikan.ScheduledDate）"),
+            // entity.ecseizouikka.scheduleddate
+            new TranslationSeedItem("entity.ecseizouikka.scheduleddate", "ja-JP", "预定日期_jp", "预定日期（冗余：来自 TaktEcSeikan.ScheduledDate）"),
+            // entity.ecseizouikka.scheduleddate
+            new TranslationSeedItem("entity.ecseizouikka.scheduleddate", "zh-CN", "预定日期", "预定日期（冗余：来自 TaktEcSeikan.ScheduledDate）"),
+            // entity.ecseizouikka.scheduleddate
+            new TranslationSeedItem("entity.ecseizouikka.scheduleddate", "zh-HK", "预定日期_hk", "预定日期（冗余：来自 TaktEcSeikan.ScheduledDate）"),
+
+            // entity.ecseizouikka.scheduledbatch
+            new TranslationSeedItem("entity.ecseizouikka.scheduledbatch", "en-US", "预定批次_us", "预定批次（冗余：来自 TaktEcSeikan.ScheduledBatch）"),
+            // entity.ecseizouikka.scheduledbatch
+            new TranslationSeedItem("entity.ecseizouikka.scheduledbatch", "ja-JP", "预定批次_jp", "预定批次（冗余：来自 TaktEcSeikan.ScheduledBatch）"),
+            // entity.ecseizouikka.scheduledbatch
+            new TranslationSeedItem("entity.ecseizouikka.scheduledbatch", "zh-CN", "预定批次", "预定批次（冗余：来自 TaktEcSeikan.ScheduledBatch）"),
+            // entity.ecseizouikka.scheduledbatch
+            new TranslationSeedItem("entity.ecseizouikka.scheduledbatch", "zh-HK", "预定批次_hk", "预定批次（冗余：来自 TaktEcSeikan.ScheduledBatch）"),
 
             // entity.ecseizouikka.execcontent
             new TranslationSeedItem("entity.ecseizouikka.execcontent", "en-US", "执行内容_us", "执行内容（各部门通用）"),
@@ -220,6 +198,60 @@ public class TaktEcSeizouikkaI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecseizouikka.implementationbatch
             new TranslationSeedItem("entity.ecseizouikka.implementationbatch", "zh-HK", "实施批次_hk", "实施批次"),
 
+            // entity.ecseizouikka.ecrootmaterialdescription
+            new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialdescription", "en-US", "根物料描述_us", "根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）"),
+            // entity.ecseizouikka.ecrootmaterialdescription
+            new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialdescription", "ja-JP", "根物料描述_jp", "根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）"),
+            // entity.ecseizouikka.ecrootmaterialdescription
+            new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialdescription", "zh-CN", "根物料描述", "根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）"),
+            // entity.ecseizouikka.ecrootmaterialdescription
+            new TranslationSeedItem("entity.ecseizouikka.ecrootmaterialdescription", "zh-HK", "根物料描述_hk", "根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）"),
+
+            // entity.ecseizouikka.deptcode
+            new TranslationSeedItem("entity.ecseizouikka.deptcode", "en-US", "部门编码_us", "部门编码（TaktDept.DeptCode；本表固定课别）"),
+            // entity.ecseizouikka.deptcode
+            new TranslationSeedItem("entity.ecseizouikka.deptcode", "ja-JP", "部门编码_jp", "部门编码（TaktDept.DeptCode；本表固定课别）"),
+            // entity.ecseizouikka.deptcode
+            new TranslationSeedItem("entity.ecseizouikka.deptcode", "zh-CN", "部门编码", "部门编码（TaktDept.DeptCode；本表固定课别）"),
+            // entity.ecseizouikka.deptcode
+            new TranslationSeedItem("entity.ecseizouikka.deptcode", "zh-HK", "部门编码_hk", "部门编码（TaktDept.DeptCode；本表固定课别）"),
+
+            // entity.ecseizouikka.deptname
+            new TranslationSeedItem("entity.ecseizouikka.deptname", "en-US", "部门名称_us", "部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）"),
+            // entity.ecseizouikka.deptname
+            new TranslationSeedItem("entity.ecseizouikka.deptname", "ja-JP", "部门名称_jp", "部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）"),
+            // entity.ecseizouikka.deptname
+            new TranslationSeedItem("entity.ecseizouikka.deptname", "zh-CN", "部门名称", "部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）"),
+            // entity.ecseizouikka.deptname
+            new TranslationSeedItem("entity.ecseizouikka.deptname", "zh-HK", "部门名称_hk", "部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）"),
+
+            // entity.ecseizouikka.ecscope
+            new TranslationSeedItem("entity.ecseizouikka.ecscope", "en-US", "实施范围_us", "实施范围（冗余：来自 TaktEcDetail.EcScope）"),
+            // entity.ecseizouikka.ecscope
+            new TranslationSeedItem("entity.ecseizouikka.ecscope", "ja-JP", "实施范围_jp", "实施范围（冗余：来自 TaktEcDetail.EcScope）"),
+            // entity.ecseizouikka.ecscope
+            new TranslationSeedItem("entity.ecseizouikka.ecscope", "zh-CN", "实施范围", "实施范围（冗余：来自 TaktEcDetail.EcScope）"),
+            // entity.ecseizouikka.ecscope
+            new TranslationSeedItem("entity.ecseizouikka.ecscope", "zh-HK", "实施范围_hk", "实施范围（冗余：来自 TaktEcDetail.EcScope）"),
+
+            // entity.ecseizouikka.ecdeptscope
+            new TranslationSeedItem("entity.ecseizouikka.ecdeptscope", "en-US", "部门实施范围_us", "部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）"),
+            // entity.ecseizouikka.ecdeptscope
+            new TranslationSeedItem("entity.ecseizouikka.ecdeptscope", "ja-JP", "部门实施范围_jp", "部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）"),
+            // entity.ecseizouikka.ecdeptscope
+            new TranslationSeedItem("entity.ecseizouikka.ecdeptscope", "zh-CN", "部门实施范围", "部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）"),
+            // entity.ecseizouikka.ecdeptscope
+            new TranslationSeedItem("entity.ecseizouikka.ecdeptscope", "zh-HK", "部门实施范围_hk", "部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）"),
+
+            // entity.ecseizouikka.ecdetailid
+            new TranslationSeedItem("entity.ecseizouikka.ecdetailid", "en-US", "设变明细ID_us", "设变明细 ID（TaktEcDetail 主键；去重组内代表/种子明细 Id；同组多明细按业务键 FanOut）"),
+            // entity.ecseizouikka.ecdetailid
+            new TranslationSeedItem("entity.ecseizouikka.ecdetailid", "ja-JP", "设变明细ID_jp", "设变明细 ID（TaktEcDetail 主键；去重组内代表/种子明细 Id；同组多明细按业务键 FanOut）"),
+            // entity.ecseizouikka.ecdetailid
+            new TranslationSeedItem("entity.ecseizouikka.ecdetailid", "zh-CN", "设变明细ID", "设变明细 ID（TaktEcDetail 主键；去重组内代表/种子明细 Id；同组多明细按业务键 FanOut）"),
+            // entity.ecseizouikka.ecdetailid
+            new TranslationSeedItem("entity.ecseizouikka.ecdetailid", "zh-HK", "设变明细ID_hk", "设变明细 ID（TaktEcDetail 主键；去重组内代表/种子明细 Id；同组多明细按业务键 FanOut）"),
+
             // entity.ecseizouikka.isobsolete
             new TranslationSeedItem("entity.ecseizouikka.isobsolete", "en-US", "是否作废_us", "是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）"),
             // entity.ecseizouikka.isobsolete
@@ -228,6 +260,15 @@ public class TaktEcSeizouikkaI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecseizouikka.isobsolete", "zh-CN", "是否作废", "是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）"),
             // entity.ecseizouikka.isobsolete
             new TranslationSeedItem("entity.ecseizouikka.isobsolete", "zh-HK", "是否作废_hk", "是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）"),
+
+            // entity.ecseizouikka.ecdetail
+            new TranslationSeedItem("entity.ecseizouikka.ecdetail", "en-US", "设变明细_us", "设变明细（数据主从：本表由明细派生；多对一，外键 EcDetailId → TaktEcDetail.Id）"),
+            // entity.ecseizouikka.ecdetail
+            new TranslationSeedItem("entity.ecseizouikka.ecdetail", "ja-JP", "设变明细_jp", "设变明细（数据主从：本表由明细派生；多对一，外键 EcDetailId → TaktEcDetail.Id）"),
+            // entity.ecseizouikka.ecdetail
+            new TranslationSeedItem("entity.ecseizouikka.ecdetail", "zh-CN", "设变明细", "设变明细（数据主从：本表由明细派生；多对一，外键 EcDetailId → TaktEcDetail.Id）"),
+            // entity.ecseizouikka.ecdetail
+            new TranslationSeedItem("entity.ecseizouikka.ecdetail", "zh-HK", "设变明细_hk", "设变明细（数据主从：本表由明细派生；多对一，外键 EcDetailId → TaktEcDetail.Id）"),
         };
     }
 

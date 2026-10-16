@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Maintenance
 // 文件名称：TaktMaintenanceNotificationI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktMaintenanceNotification 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktMaintenanceNotificationI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.maintenancenotification._self", "zh-HK", "维护通知单信息_hk", "实体名称"),
 
             // entity.maintenancenotification.notificationcode
-            new TranslationSeedItem("entity.maintenancenotification.notificationcode", "en-US", "通知单号_us", "通知单号"),
+            new TranslationSeedItem("entity.maintenancenotification.notificationcode", "en-US", "通知单号_us", "通知单号（前端表单选择编码规则后自动通过 TaktNumbering 通知单号规则生成并展示，非手输；单据类型菜单：维护通知）"),
             // entity.maintenancenotification.notificationcode
-            new TranslationSeedItem("entity.maintenancenotification.notificationcode", "ja-JP", "通知单号_jp", "通知单号"),
+            new TranslationSeedItem("entity.maintenancenotification.notificationcode", "ja-JP", "通知单号_jp", "通知单号（前端表单选择编码规则后自动通过 TaktNumbering 通知单号规则生成并展示，非手输；单据类型菜单：维护通知）"),
             // entity.maintenancenotification.notificationcode
-            new TranslationSeedItem("entity.maintenancenotification.notificationcode", "zh-CN", "通知单号", "通知单号"),
+            new TranslationSeedItem("entity.maintenancenotification.notificationcode", "zh-CN", "通知单号", "通知单号（前端表单选择编码规则后自动通过 TaktNumbering 通知单号规则生成并展示，非手输；单据类型菜单：维护通知）"),
             // entity.maintenancenotification.notificationcode
-            new TranslationSeedItem("entity.maintenancenotification.notificationcode", "zh-HK", "通知单号_hk", "通知单号"),
+            new TranslationSeedItem("entity.maintenancenotification.notificationcode", "zh-HK", "通知单号_hk", "通知单号（前端表单选择编码规则后自动通过 TaktNumbering 通知单号规则生成并展示，非手输；单据类型菜单：维护通知）"),
 
             // entity.maintenancenotification.equipmentid
             new TranslationSeedItem("entity.maintenancenotification.equipmentid", "en-US", "设备ID_us", "设备ID（序列化为string以避免Javascript精度问题）"),

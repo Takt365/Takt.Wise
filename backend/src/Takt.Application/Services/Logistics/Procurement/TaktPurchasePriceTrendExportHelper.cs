@@ -76,6 +76,90 @@ internal static class TaktPurchasePriceTrendExportHelper
     }
 
     /// <summary>
+    /// 只保留所选工厂的推移行（导出与列表共用）
+    /// </summary>
+    /// <param name="rows">推移行</param>
+    /// <param name="plantCode">所选工厂</param>
+    /// <returns>该工厂的行</returns>
+    public static List<TaktPurchasePriceTrendDto> WhereSelectedPlant(
+        IReadOnlyList<TaktPurchasePriceTrendDto> rows,
+        string plantCode)
+    {
+        ArgumentNullException.ThrowIfNull(rows);
+        ArgumentException.ThrowIfNullOrWhiteSpace(plantCode);
+        var plant = plantCode.Trim();
+        return rows
+            .Where(r => string.Equals(r.PlantCode?.Trim(), plant, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    /// <summary>
+    /// 展开为与导出相同的有效起始日行（一组多笔日期变成多行；列表分页总数与此一致）
+    /// </summary>
+    /// <param name="rows">物料×供应商组</param>
+    /// <returns>每笔有效起始日一行</returns>
+    public static List<TaktPurchasePriceTrendDto> ExpandToValidFromLines(
+        IReadOnlyList<TaktPurchasePriceTrendDto> rows)
+    {
+        ArgumentNullException.ThrowIfNull(rows);
+        var lines = new List<TaktPurchasePriceTrendDto>();
+        foreach (var row in rows)
+        {
+            var points = row.PeriodPoints;
+            if (points == null || points.Count == 0)
+            {
+                lines.Add(row);
+                continue;
+            }
+            foreach (var point in points)
+            {
+                lines.Add(CopyValidFromLine(row, point));
+            }
+        }
+        return lines;
+    }
+
+    /// <summary>
+    /// 复制一组上的单笔有效起始日（列表页与导出共用这一行）
+    /// </summary>
+    /// <param name="row">物料×供应商组</param>
+    /// <param name="point">当前笔</param>
+    /// <returns>仅含该笔的行</returns>
+    private static TaktPurchasePriceTrendDto CopyValidFromLine(
+        TaktPurchasePriceTrendDto row,
+        TaktPurchasePriceTrendPointDto point)
+    {
+        return new TaktPurchasePriceTrendDto
+        {
+            PlantCode = row.PlantCode,
+            PurchaseInfoCode = row.PurchaseInfoCode,
+            MaterialCode = row.MaterialCode,
+            MaterialName = row.MaterialName,
+            MaterialDescription = row.MaterialDescription,
+            SupplierCode = row.SupplierCode,
+            SupplierName = row.SupplierName,
+            Currency = row.Currency,
+            CurrencyCode = row.CurrencyCode,
+            Unit = row.Unit,
+            Trend = row.Trend,
+            BasePeriod = row.BasePeriod,
+            ComparePeriod = row.ComparePeriod,
+            VarianceAmount = row.VarianceAmount,
+            VariancePercent = row.VariancePercent,
+            PeriodPoints = new List<TaktPurchasePriceTrendPointDto> { point },
+            PeriodUnitPrices = new Dictionary<string, decimal>(StringComparer.Ordinal)
+            {
+                [point.ValidFrom] = point.UnitPrice,
+            },
+            PeriodPriceSourcePeriods = new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                [point.ValidFrom] = point.ValidFrom,
+            },
+            PeriodAdjacents = new Dictionary<string, TaktPurchasePriceTrendAdjacentDto>(StringComparer.Ordinal),
+        };
+    }
+
+    /// <summary>
     /// 采购价格推移明细导出行：每笔 ValidFrom 一行；单价 / 有效起始日 / 涨跌分列；组内续行物料维留空
     /// </summary>
     /// <param name="rows">物料推移行</param>
@@ -117,6 +201,8 @@ internal static class TaktPurchasePriceTrendExportHelper
         _ = isFirst;
         return new Dictionary<string, object?>(StringComparer.Ordinal)
         {
+            ["plantCode"] = row.PlantCode,
+            ["purchaseInfoCode"] = row.PurchaseInfoCode,
             ["materialCode"] = row.MaterialCode,
             ["materialDescription"] = row.MaterialDescription,
             ["supplierCode"] = row.SupplierCode,
@@ -621,6 +707,7 @@ internal static class TaktPurchasePriceTrendExportHelper
         ArgumentNullException.ThrowIfNull(row);
         return new Dictionary<string, object?>(StringComparer.Ordinal)
         {
+            ["plantCode"] = row.PlantCode,
             ["materialCode"] = row.MaterialCode,
             ["materialDescription"] = row.MaterialDescription,
             ["supplierCode"] = row.SupplierCode,

@@ -196,9 +196,14 @@ export interface SalesGroupCreate {
   plantCode: string;
 
   /**
-   * 销售组编码（3）
+   * 销售组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 销售组编码规则生成并展示，非手输；单据类型菜单：销售组）
    */
   salesGroupCode: string;
+
+  /**
+   * 编码规则编码（新增时选择销售组编码规则后取号；不落库）
+   */
+  numberingRuleCode?: string;
 
   /**
    * 销售组名称

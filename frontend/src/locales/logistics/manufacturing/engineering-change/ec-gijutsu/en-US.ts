@@ -66,6 +66,8 @@ export default {
       assy: 'Assembly',
       qa: 'QA',
       te: 'Manufacturing Tech',
+      nonFert: 'Non-FERT',
+      discontinued: 'Discontinued',
     },
     persist: {
       submitted: 'Submitted EC {ecCode} for background {action} ({detailCount} detail lines, incl. dept exec sync). You will be notified when done.',

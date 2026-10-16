@@ -128,16 +128,10 @@
           />
         </template>
         <template v-else-if="column.key === 'inputTaxCode'">
-          <TaktDictTag
-            :value="getCompanyDictValue(record, 'inputTaxCode')"
-            dict-type="accounting_financial_tax_code"
-          />
+          {{ record.inputTaxCode }}
         </template>
         <template v-else-if="column.key === 'outputTaxCode'">
-          <TaktDictTag
-            :value="getCompanyDictValue(record, 'outputTaxCode')"
-            dict-type="accounting_financial_tax_code"
-          />
+          {{ record.outputTaxCode }}
         </template>
         <template v-else-if="column.key === 'postingPeriodVariant'">
           <TaktDictTag
@@ -603,7 +597,7 @@
       <a-form-item :label="pi.queryLabel('inputTaxCode')">
         <TaktSelect
           v-model:value="advancedQueryForm.inputTaxCode"
-          dict-type="accounting_financial_tax_code"
+          api-url="TaktTaxCodes/options"
           :placeholder="pi.queryPh('inputTaxCode', 'select')"
           allow-clear
         />
@@ -613,7 +607,7 @@
       <a-form-item :label="pi.queryLabel('outputTaxCode')">
         <TaktSelect
           v-model:value="advancedQueryForm.outputTaxCode"
-          dict-type="accounting_financial_tax_code"
+          api-url="TaktTaxCodes/options"
           :placeholder="pi.queryPh('outputTaxCode', 'select')"
           allow-clear
         />

@@ -2,7 +2,7 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/procurement/po-price-pir-deviation -->
 <!-- 文件名称：index.vue -->
-<!-- 功能描述：PO价偏离PIR（同生效周期订单折算单价与采购信息记录不一致） -->
+<!-- 功能描述：PO价偏离PIR（同生效周期订单折算单价与采购信息不一致） -->
 <!-- 版权信息：Copyright (c) 2026 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->

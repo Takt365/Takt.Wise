@@ -28,7 +28,7 @@ namespace Takt.Domain.Entities.Logistics.Quality.Operation;
 public class TaktSamplingScheme : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 抽样方案编码（唯一索引）
+    /// 抽样方案编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 抽样方案编码规则生成并展示，非手输；单据类型菜单：抽样方案）
     /// </summary>
     [SugarColumn(ColumnName = "sampling_scheme_code", ColumnDescription = "抽样方案编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string SamplingSchemeCode { get; set; } = string.Empty;

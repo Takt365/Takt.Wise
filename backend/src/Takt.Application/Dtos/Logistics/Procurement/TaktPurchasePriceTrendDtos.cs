@@ -79,6 +79,11 @@ public class TaktPurchasePriceTrendDto
     public string PlantCode { get; set; } = string.Empty;
 
     /// <summary>
+    /// 定价记录号（与采购信息头一致；只来自所选工厂）
+    /// </summary>
+    public string PurchaseInfoCode { get; set; } = string.Empty;
+
+    /// <summary>
     /// 物料编码
     /// </summary>
     public string MaterialCode { get; set; } = string.Empty;
@@ -180,7 +185,7 @@ public class TaktPurchasePriceTrendResultDto
     public List<string> PeriodOrder { get; set; } = new();
 
     /// <summary>
-    /// 物料行总数（分页前，已应用涨跌筛选）
+    /// 有效起始日行总数（与导出条数一致；分页前，已应用涨跌筛选）
     /// </summary>
     public int MaterialCount { get; set; }
 

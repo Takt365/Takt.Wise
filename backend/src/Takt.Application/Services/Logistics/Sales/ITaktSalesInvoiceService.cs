@@ -104,15 +104,4 @@ public interface ITaktSalesInvoiceService
     /// <returns>Excel 文件</returns>
     Task<(string fileName, byte[] fileContent)> ExportSalesInvoiceAsync(TaktSalesInvoiceQueryDto? query = null, string? sheetName = null, string? fileName = null);
 
-    // ========================================
-    // 扩展方法（保留）
-    // ========================================
-
-    /// <summary>
-    /// 获取销售发票统计（数据看板）
-    /// </summary>
-    /// <param name="queryDto">查询 DTO</param>
-    /// <returns>销售发票统计</returns>
-    Task<TaktSalesInvoiceStatDto> GetSalesInvoiceStatAsync(TaktSalesInvoiceStatQueryDto queryDto);
-
 }

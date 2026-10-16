@@ -28,12 +28,12 @@ DECLARE @dml_n INT;
 DECLARE @desc_updated INT = 0;
 
 -- =============================================================================
--- QT_SYNC_SP_BK：销售条件记录主表物料描述回填（❌ 仅空字段，禁止全局覆盖）
--- 唯一写入目标：takt_logistics_sales_condition_record.material_description
---   （实体 TaktSalesConditionRecord.MaterialDescription；Length=40）
+-- QT_SYNC_SP_BK：销售条件主表物料描述回填（❌ 仅空字段，禁止全局覆盖）
+-- 唯一写入目标：takt_logistics_sales_condition.material_description
+--   （实体 TaktSalesCondition.MaterialDescription；Length=40）
 -- 来源只读：takt_logistics_materials_material_description
 --   语言优先：zh-CN → Z1 → ja-JP（与原 sync_desc 销售段一致）
--- ❌ 不回填：sales_condition_record_item / scale_* / 采购信息记录 / 机种目的地 / 规格型号长描述等
+-- ❌ 不回填：sales_condition_item / scale_* / 采购信息 / 机种目的地 / 规格型号长描述等
 -- ❌ 不改写：material_code、price_type、客户及其它业务列（仅顺带写 updated_by/updated_at）
 -- 规则：仅当目标 material_description 为空时写入；已有描述一律保留
 -- 本次写入合并到 ext_field：$._bk.sp = { at, material_description }
@@ -52,7 +52,7 @@ IF OBJECT_ID('tempdb..#mat_desc') IS NOT NULL DROP TABLE #mat_desc;
       THEN RIGHT(LTRIM(RTRIM(t.[material_code])), 10)
       ELSE LTRIM(RTRIM(t.[material_code]))
     END AS [mat_key]
-  FROM [dbo].[takt_logistics_sales_condition_record] AS t
+  FROM [dbo].[takt_logistics_sales_condition] AS t
   WHERE t.[tenant_code] = @tenant_code
     AND t.[company_code] = @company_code
     AND t.[is_deleted] = 0
@@ -106,7 +106,7 @@ SET
   t.[ext_field] = LEFT(x.[new_ext], 4000),
   t.[updated_by] = @sync_user_id,
   t.[updated_at] = @now
-FROM [dbo].[takt_logistics_sales_condition_record] AS t
+FROM [dbo].[takt_logistics_sales_condition] AS t
 INNER JOIN #mat_desc AS m
   ON m.[mat_key] = CASE
     WHEN LEN(LTRIM(RTRIM(t.[material_code]))) = 18

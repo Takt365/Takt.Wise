@@ -8,7 +8,7 @@
 //
 // 业务语义说明：
 // 记录制造商物料编码与本厂物料的对应关系，不涉及商务价格；
-// 价格和交易信息应在 TaktPurchaseInfoRecord/TaktPurchaseInfoRecordItem 中管理
+// 价格和交易信息应在 TaktPurchaseInfo/TaktPurchaseInfoItem 中管理
 //
 // 版权信息：Copyright (c) 2025 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -86,7 +86,7 @@ public class TaktManufacturerMaterial : TaktTenantCoreEntityBase
     public string MaterialDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 制造商物料编码（制造商内部的物料编码）
+    /// 制造商物料编码（制造商内部的物料编码；前端表单选择编码规则后自动通过 TaktNumbering 制造商物料编码规则生成并展示，非手输；单据类型菜单：制造商物料）
     /// </summary>
     [SugarColumn(ColumnName = "manufacturer_material_code", ColumnDescription = "制造商物料编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string ManufacturerMaterialCode { get; set; } = string.Empty;

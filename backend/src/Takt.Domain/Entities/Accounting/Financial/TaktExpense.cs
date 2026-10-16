@@ -29,7 +29,7 @@ namespace Takt.Domain.Entities.Accounting.Financial;
 public class TaktExpense : TaktApprovalEntityBase
 {
     /// <summary>
-    /// 费用单编码（租户+公司内唯一）
+    /// 费用单编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 费用单编码规则生成并展示，非手输；单据类型菜单：费用管理）
     /// </summary>
     [SugarColumn(ColumnName = "expense_code", ColumnDescription = "费用单编码", ColumnDataType = "varchar", Length = 40, IsNullable = false)]
     public string ExpenseCode { get; set; } = string.Empty;

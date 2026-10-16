@@ -10,6 +10,7 @@
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
 // ========================================
 
+using System.Linq.Expressions;
 using Takt.Application.Dtos.Logistics.Procurement;
 using Takt.Domain.Entities.Accounting.Financial;
 using Takt.Domain.Entities.Logistics.Sales;
@@ -210,9 +211,11 @@ public class TaktSalesActualTrendService : TaktServiceBase, ITaktSalesActualTren
         string? fileName = null)
     {
         ArgumentNullException.ThrowIfNull(query);
+        ArgumentException.ThrowIfNullOrWhiteSpace(query.PlantCode);
         var built = await _analysisBuilder.BuildAsync(query);
+        var plantRows = TaktPurchasePriceTrendExportHelper.WhereSelectedPlant(built.OrderedRows, query.PlantCode);
         var summaries = built.MonthSummaries ?? new List<TaktPurchasePriceTrendMonthSummaryDto>();
-        var detailRows = TaktPurchasePriceTrendExportHelper.BuildHistoryDetailExpandedSheetRows(built.OrderedRows);
+        var detailRows = TaktPurchasePriceTrendExportHelper.BuildHistoryDetailExpandedSheetRows(plantRows);
         var trendRows = TaktPurchasePriceTrendExportHelper.BuildHistoryTrendSheetRows(
             summaries,
             built.TotalAmount,
@@ -220,12 +223,12 @@ public class TaktSalesActualTrendService : TaktServiceBase, ITaktSalesActualTren
             built.TotalDownAmount);
         var allDetailKeys = new[]
         {
-            "materialCode", "materialDescription", "supplierCode", "supplierName", "currencyCode", "unit",
+            "plantCode", "materialCode", "materialDescription", "supplierCode", "supplierName", "currencyCode", "unit",
             "amount", "unitPrice", "quantity", "month", "adjacent", "trend", "varianceAmount",
         };
         var allDetailLabels = new[]
         {
-            "物料编码", "物料描述", "客户编码", "客户名称", "币种", "单位",
+            "工厂代码", "物料编码", "物料描述", "客户编码", "客户名称", "币种", "单位",
             "金额", "单价", "数量", "月份", "单价涨跌%", "期间涨跌", "期间单价影响金额",
         };
         var (detailKeys, detailLabels) = ResolveDetailExportColumns(
@@ -267,6 +270,57 @@ public class TaktSalesActualTrendService : TaktServiceBase, ITaktSalesActualTren
                 },
             },
             fileName ?? TaktNamingHelper.PlantPrefixedTrendExportBase(query.PlantCode, "销售实绩推移"));
+    }
+
+    /// <inheritdoc />
+    public async Task<TaktSalesInvoiceStatDto> GetSalesActualTrendInvoiceStatAsync(TaktSalesInvoiceStatQueryDto queryDto)
+    {
+        ArgumentNullException.ThrowIfNull(queryDto);
+        EnsureThreeLayerContext();
+        var (start, end, statMonth) = TaktStatMonthRangeHelper.ResolveMonthRange(
+            queryDto.PostingDateStart,
+            queryDto.PostingDateEnd);
+        var yearMonth = !string.IsNullOrWhiteSpace(queryDto.YearMonth)
+            ? queryDto.YearMonth
+            : start.ToString("yyyyMM");
+        var tenantCode = CurrentTenantCode;
+        var companyCode = CurrentCompanyCode;
+        Expression<Func<TaktSalesInvoice, bool>> predicate = x =>
+            x.TenantCode == tenantCode
+            && x.CompanyCode == companyCode
+            && x.BillingDate >= start
+            && x.BillingDate <= end;
+        var monthInvoiceCount = await _invoiceRepository.CountAsync(predicate);
+        var monthSalesAmount = await _invoiceRepository.SumAsync(x => x.NetAmount, predicate);
+        var compareStart = start.AddYears(-1);
+        var compareEnd = end.AddYears(-1);
+        if (!string.IsNullOrWhiteSpace(queryDto.CompareYearMonth)
+            && queryDto.CompareYearMonth.Length == 6
+            && int.TryParse(queryDto.CompareYearMonth[..4], out var compareYear)
+            && int.TryParse(queryDto.CompareYearMonth[4..], out var compareMonth)
+            && compareMonth is >= 1 and <= 12)
+        {
+            compareStart = new DateTime(compareYear, compareMonth, 1);
+            compareEnd = compareStart.AddMonths(1).AddTicks(-1);
+        }
+        Expression<Func<TaktSalesInvoice, bool>> comparePredicate = x =>
+            x.TenantCode == tenantCode
+            && x.CompanyCode == companyCode
+            && x.BillingDate >= compareStart
+            && x.BillingDate <= compareEnd;
+        var compareInvoiceCount = await _invoiceRepository.CountAsync(comparePredicate);
+        var compareSalesAmount = await _invoiceRepository.SumAsync(x => x.NetAmount, comparePredicate);
+        return new TaktSalesInvoiceStatDto
+        {
+            StatMonth = statMonth,
+            YearMonth = yearMonth,
+            MonthInvoiceCount = monthInvoiceCount,
+            MonthSalesAmount = monthSalesAmount,
+            CompareInvoiceCount = compareInvoiceCount,
+            CompareSalesAmount = compareSalesAmount,
+            InvoiceCountYoYPercent = TaktYoYStatHelper.CalculateYoYPercent(monthInvoiceCount, compareInvoiceCount),
+            SalesAmountYoYPercent = TaktYoYStatHelper.CalculateYoYPercent(monthSalesAmount, compareSalesAmount),
+        };
     }
 
     /// <summary>
@@ -384,6 +438,12 @@ public class TaktSalesActualTrendService : TaktServiceBase, ITaktSalesActualTren
             selected.RemoveAll(k => string.Equals(k, "customerName", StringComparison.OrdinalIgnoreCase));
             selected.Add("supplierName");
             selected = selected.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        }
+        if (selected.Count > 0
+            && allKeys.Contains("plantCode", StringComparer.OrdinalIgnoreCase)
+            && !selected.Exists(k => string.Equals(k, "plantCode", StringComparison.OrdinalIgnoreCase)))
+        {
+            selected.Insert(0, "plantCode");
         }
         var selectedSet = selected.ToHashSet(StringComparer.OrdinalIgnoreCase);
         if (selectedSet.Count == 0)

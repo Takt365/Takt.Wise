@@ -24,6 +24,7 @@ export const TaktEcKanbanOrder: readonly string[] = [
   TaktEcDeptCodes.Mp,
   TaktEcDeptCodes.Iqc,
   TaktEcDeptCodes.Mc,
+  TaktEcDeptCodes.Smt,
   TaktEcDeptCodes.Pcba,
   TaktEcDeptCodes.Assy,
   TaktEcDeptCodes.Qa,

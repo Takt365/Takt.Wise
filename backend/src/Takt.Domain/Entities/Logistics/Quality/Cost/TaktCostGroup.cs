@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Logistics.Quality.Cost;
 public class TaktCostGroup : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 成本组编码（与员工编码同长 6）
+    /// 成本组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 成本组编码规则生成并展示，非手输；单据类型菜单：品质成本）
     /// </summary>
     [SugarColumn(ColumnName = "cost_group_code", ColumnDescription = "成本组编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string CostGroupCode { get; set; } = string.Empty;

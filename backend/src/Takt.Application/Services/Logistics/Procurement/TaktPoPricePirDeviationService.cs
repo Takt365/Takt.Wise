@@ -48,18 +48,18 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
 
     private readonly ITaktCompanyRepository<TaktPurchaseOrder> _purchaseOrderRepository;
     private readonly ITaktCompanyRepository<TaktPurchaseOrderItem> _purchaseOrderItemRepository;
-    private readonly ITaktCompanyRepository<TaktPurchaseInfoRecord> _purchaseInfoRecordRepository;
-    private readonly ITaktCompanyRepository<TaktPurchaseInfoRecordItem> _purchaseInfoRecordItemRepository;
-    private readonly ITaktCompanyRepository<TaktPurchaseInfoRecordScaleQuantity> _scaleQuantityRepository;
-    private readonly ITaktCompanyRepository<TaktPurchaseInfoRecordScaleValue> _scaleValueRepository;
+    private readonly ITaktCompanyRepository<TaktPurchaseInfo> _purchaseInfoRepository;
+    private readonly ITaktCompanyRepository<TaktPurchaseInfoItem> _purchaseInfoItemRepository;
+    private readonly ITaktCompanyRepository<TaktPurchaseInfoScaleQuantity> _scaleQuantityRepository;
+    private readonly ITaktCompanyRepository<TaktPurchaseInfoScaleValue> _scaleValueRepository;
 
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="purchaseOrderRepository">采购订单仓储</param>
     /// <param name="purchaseOrderItemRepository">采购订单明细仓储</param>
-    /// <param name="purchaseInfoRecordRepository">采购价格仓储</param>
-    /// <param name="purchaseInfoRecordItemRepository">采购信息记录行仓储</param>
+    /// <param name="purchaseInfoRepository">采购价格仓储</param>
+    /// <param name="purchaseInfoItemRepository">采购信息行仓储</param>
     /// <param name="scaleQuantityRepository">数量等级仓储</param>
     /// <param name="scaleValueRepository">价值等级仓储</param>
     /// <param name="userContext">用户上下文</param>
@@ -67,18 +67,18 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
     public TaktPoPricePirDeviationService(
         ITaktCompanyRepository<TaktPurchaseOrder> purchaseOrderRepository,
         ITaktCompanyRepository<TaktPurchaseOrderItem> purchaseOrderItemRepository,
-        ITaktCompanyRepository<TaktPurchaseInfoRecord> purchaseInfoRecordRepository,
-        ITaktCompanyRepository<TaktPurchaseInfoRecordItem> purchaseInfoRecordItemRepository,
-        ITaktCompanyRepository<TaktPurchaseInfoRecordScaleQuantity> scaleQuantityRepository,
-        ITaktCompanyRepository<TaktPurchaseInfoRecordScaleValue> scaleValueRepository,
+        ITaktCompanyRepository<TaktPurchaseInfo> purchaseInfoRepository,
+        ITaktCompanyRepository<TaktPurchaseInfoItem> purchaseInfoItemRepository,
+        ITaktCompanyRepository<TaktPurchaseInfoScaleQuantity> scaleQuantityRepository,
+        ITaktCompanyRepository<TaktPurchaseInfoScaleValue> scaleValueRepository,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
     {
         _purchaseOrderRepository = purchaseOrderRepository;
         _purchaseOrderItemRepository = purchaseOrderItemRepository;
-        _purchaseInfoRecordRepository = purchaseInfoRecordRepository;
-        _purchaseInfoRecordItemRepository = purchaseInfoRecordItemRepository;
+        _purchaseInfoRepository = purchaseInfoRepository;
+        _purchaseInfoItemRepository = purchaseInfoItemRepository;
         _scaleQuantityRepository = scaleQuantityRepository;
         _scaleValueRepository = scaleValueRepository;
     }
@@ -369,7 +369,7 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
             return (new List<TaktPoPricePirDeviationDto>(), 0, 0);
         }
 
-        var prices = await _purchaseInfoRecordRepository.GetListAsync(x => x.PlantCode == plant);
+        var prices = await _purchaseInfoRepository.GetListAsync(x => x.PlantCode == plant);
         if (!string.IsNullOrWhiteSpace(queryDto.PriceType))
         {
             var priceType = queryDto.PriceType.Trim();
@@ -380,31 +380,31 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
         var priceById = prices.ToDictionary(x => x.Id);
         var priceIds = priceById.Keys.ToList();
         var priceItems = priceIds.Count == 0
-            ? new List<TaktPurchaseInfoRecordItem>()
-            : await _purchaseInfoRecordItemRepository.GetListAsync(
-                x => priceIds.Contains(x.PurchaseInfoRecordId) && x.IsObsolete == 0);
+            ? new List<TaktPurchaseInfoItem>()
+            : await _purchaseInfoItemRepository.GetListAsync(
+                x => priceIds.Contains(x.PurchaseInfoId) && x.IsObsolete == 0);
         var priceItemIds = priceItems.Select(x => x.Id).ToList();
         var scaleQuantities = priceItemIds.Count == 0
-            ? new List<TaktPurchaseInfoRecordScaleQuantity>()
+            ? new List<TaktPurchaseInfoScaleQuantity>()
             : await _scaleQuantityRepository.GetListAsync(
-                x => priceItemIds.Contains(x.PurchaseInfoRecordItemId) && x.IsObsolete == 0);
+                x => priceItemIds.Contains(x.PurchaseInfoItemId) && x.IsObsolete == 0);
         var scaleValues = priceItemIds.Count == 0
-            ? new List<TaktPurchaseInfoRecordScaleValue>()
+            ? new List<TaktPurchaseInfoScaleValue>()
             : await _scaleValueRepository.GetListAsync(
-                x => priceItemIds.Contains(x.PurchaseInfoRecordItemId) && x.IsObsolete == 0);
+                x => priceItemIds.Contains(x.PurchaseInfoItemId) && x.IsObsolete == 0);
 
         var priceItemsByPriceId = priceItems
-            .GroupBy(x => x.PurchaseInfoRecordId)
-            .ToDictionary(g => g.Key, g => g.OrderBy(x => x.PurchaseInfoRecordSeq).ToList());
+            .GroupBy(x => x.PurchaseInfoId)
+            .ToDictionary(g => g.Key, g => g.OrderBy(x => x.PurchaseInfoSeq).ToList());
         var scaleQtyByItemId = scaleQuantities
-            .GroupBy(x => x.PurchaseInfoRecordItemId)
+            .GroupBy(x => x.PurchaseInfoItemId)
             .ToDictionary(g => g.Key, g => g.OrderBy(x => x.PurchaseScaleSeq).ToList());
         var scaleValByItemId = scaleValues
-            .GroupBy(x => x.PurchaseInfoRecordItemId)
+            .GroupBy(x => x.PurchaseInfoItemId)
             .ToDictionary(g => g.Key, g => g.OrderBy(x => x.PurchaseScaleSeq).ToList());
 
         var pricesByCode = prices
-            .GroupBy(x => x.PurchaseInfoRecordCode, StringComparer.OrdinalIgnoreCase)
+            .GroupBy(x => x.PurchaseInfoCode, StringComparer.OrdinalIgnoreCase)
             .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
         var pricesBySupplierMaterial = prices
             .GroupBy(
@@ -513,14 +513,14 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
                 PoUnitPrice = item.PurchaseUnitPrice,
                 PoPerUnit = item.PurchasePerUnit,
                 PoNormalizedUnitPrice = poNorm,
-                PurchaseInfoRecordCode = item.PurchaseInfoRecordCode,
+                PurchaseInfoCode = item.PurchaseInfoCode,
                 MatchReason = matchReason,
                 PirPriceCount = periodPrices.Count,
                 PirPricesInPeriod = periodPrices,
                 PirPricesText = FormatPeriodPricesText(periodPrices),
-                PirPurchaseInfoRecordCodes = string.Join(
+                PirPurchaseInfoCodes = string.Join(
                     ";",
-                    pirsInPeriod.Select(p => p.PurchaseInfoRecordCode).Distinct(StringComparer.OrdinalIgnoreCase)),
+                    pirsInPeriod.Select(p => p.PurchaseInfoCode).Distinct(StringComparer.OrdinalIgnoreCase)),
                 PirValidFrom = pirFrom,
                 PirValidTo = pirTo,
                 PirValidPeriod = pirValidPeriod,
@@ -582,17 +582,17 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
 
     /// <summary>
     /// 解析价格日期落在 ValidFrom～ValidTo 内的 PIR 头。
-    /// 优先按行上采购信息记录编码；该编码在周期内无命中时回退供应商+物料。
+    /// 优先按行上采购信息编码；该编码在周期内无命中时回退供应商+物料。
     /// </summary>
-    private static List<TaktPurchaseInfoRecord> ResolvePirsInPeriod(
+    private static List<TaktPurchaseInfo> ResolvePirsInPeriod(
         TaktPurchaseOrderItem item,
         TaktPurchaseOrder order,
         DateTime pricingDate,
-        IReadOnlyDictionary<string, List<TaktPurchaseInfoRecord>> pricesByCode,
-        IReadOnlyDictionary<string, List<TaktPurchaseInfoRecord>> pricesBySupplierMaterial)
+        IReadOnlyDictionary<string, List<TaktPurchaseInfo>> pricesByCode,
+        IReadOnlyDictionary<string, List<TaktPurchaseInfo>> pricesBySupplierMaterial)
     {
-        static List<TaktPurchaseInfoRecord> FilterInPeriod(
-            IEnumerable<TaktPurchaseInfoRecord> source,
+        static List<TaktPurchaseInfo> FilterInPeriod(
+            IEnumerable<TaktPurchaseInfo> source,
             DateTime day)
         {
             return source
@@ -602,8 +602,8 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
                 .ToList();
         }
 
-        if (!string.IsNullOrWhiteSpace(item.PurchaseInfoRecordCode)
-            && pricesByCode.TryGetValue(item.PurchaseInfoRecordCode.Trim(), out var byCode))
+        if (!string.IsNullOrWhiteSpace(item.PurchaseInfoCode)
+            && pricesByCode.TryGetValue(item.PurchaseInfoCode.Trim(), out var byCode))
         {
             var byCodeInPeriod = FilterInPeriod(byCode, pricingDate);
             if (byCodeInPeriod.Count > 0)
@@ -615,7 +615,7 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
         var key = $"{order.SupplierCode}\u001f{item.MaterialCode}";
         if (!pricesBySupplierMaterial.TryGetValue(key, out var bySm))
         {
-            return new List<TaktPurchaseInfoRecord>();
+            return new List<TaktPurchaseInfo>();
         }
         return FilterInPeriod(bySm, pricingDate);
     }
@@ -624,10 +624,10 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
     /// 收集同周期 PIR 的全部价目点（条件行 + 数量等级 + 价值等级；用于展示）
     /// </summary>
     private static List<TaktPoPricePirPeriodPriceDto> CollectPeriodPrices(
-        IReadOnlyList<TaktPurchaseInfoRecord> pirs,
-        IReadOnlyDictionary<long, List<TaktPurchaseInfoRecordItem>> priceItemsByPriceId,
-        IReadOnlyDictionary<long, List<TaktPurchaseInfoRecordScaleQuantity>> scaleQtyByItemId,
-        IReadOnlyDictionary<long, List<TaktPurchaseInfoRecordScaleValue>> scaleValByItemId)
+        IReadOnlyList<TaktPurchaseInfo> pirs,
+        IReadOnlyDictionary<long, List<TaktPurchaseInfoItem>> priceItemsByPriceId,
+        IReadOnlyDictionary<long, List<TaktPurchaseInfoScaleQuantity>> scaleQtyByItemId,
+        IReadOnlyDictionary<long, List<TaktPurchaseInfoScaleValue>> scaleValByItemId)
     {
         var result = new List<TaktPoPricePirPeriodPriceDto>();
         foreach (var pir in pirs)
@@ -641,12 +641,12 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
                 var unit = pirItem.PriceUnit <= 0 ? 1 : pirItem.PriceUnit;
                 result.Add(new TaktPoPricePirPeriodPriceDto
                 {
-                    PurchaseInfoRecordCode = pir.PurchaseInfoRecordCode,
+                    PurchaseInfoCode = pir.PurchaseInfoCode,
                     PriceType = pir.PriceType,
                     ValidFrom = pir.ValidFrom.Date,
                     ValidTo = pir.ValidTo.Date,
                     PriceSource = "item",
-                    PurchaseInfoRecordSeq = pirItem.PurchaseInfoRecordSeq,
+                    PurchaseInfoSeq = pirItem.PurchaseInfoSeq,
                     Price = pirItem.Price,
                     PriceUnit = unit,
                     NormalizedUnitPrice = TaktPriceTrendAnalysisHelper.NormalizeUnitPrice(pirItem.Price, unit),
@@ -657,12 +657,12 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
                     {
                         result.Add(new TaktPoPricePirPeriodPriceDto
                         {
-                            PurchaseInfoRecordCode = pir.PurchaseInfoRecordCode,
+                            PurchaseInfoCode = pir.PurchaseInfoCode,
                             PriceType = pir.PriceType,
                             ValidFrom = pir.ValidFrom.Date,
                             ValidTo = pir.ValidTo.Date,
                             PriceSource = "scaleQuantity",
-                            PurchaseInfoRecordSeq = pirItem.PurchaseInfoRecordSeq,
+                            PurchaseInfoSeq = pirItem.PurchaseInfoSeq,
                             PurchaseScaleSeq = scale.PurchaseScaleSeq,
                             ScaleQuantity = scale.ScaleQuantity,
                             Price = scale.Price,
@@ -677,12 +677,12 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
                     {
                         result.Add(new TaktPoPricePirPeriodPriceDto
                         {
-                            PurchaseInfoRecordCode = pir.PurchaseInfoRecordCode,
+                            PurchaseInfoCode = pir.PurchaseInfoCode,
                             PriceType = pir.PriceType,
                             ValidFrom = pir.ValidFrom.Date,
                             ValidTo = pir.ValidTo.Date,
                             PriceSource = "scaleValue",
-                            PurchaseInfoRecordSeq = pirItem.PurchaseInfoRecordSeq,
+                            PurchaseInfoSeq = pirItem.PurchaseInfoSeq,
                             PurchaseScaleSeq = scale.PurchaseScaleSeq,
                             ScaleValue = scale.ScaleValue,
                             Price = scale.Price,
@@ -700,14 +700,14 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
     /// 收集同周期各 PIR 按订购数量解析的适用折算单价（与 BOM 采购价回填同档规则）
     /// </summary>
     private static List<TaktPoPricePirPeriodPriceDto> CollectApplicablePeriodPrices(
-        IReadOnlyList<TaktPurchaseInfoRecord> pirs,
+        IReadOnlyList<TaktPurchaseInfo> pirs,
         decimal orderQuantity,
-        IReadOnlyDictionary<long, List<TaktPurchaseInfoRecordItem>> priceItemsByPriceId,
-        IReadOnlyDictionary<long, List<TaktPurchaseInfoRecordScaleQuantity>> scaleQtyByItemId,
-        IReadOnlyDictionary<long, List<TaktPurchaseInfoRecordScaleValue>> scaleValByItemId)
+        IReadOnlyDictionary<long, List<TaktPurchaseInfoItem>> priceItemsByPriceId,
+        IReadOnlyDictionary<long, List<TaktPurchaseInfoScaleQuantity>> scaleQtyByItemId,
+        IReadOnlyDictionary<long, List<TaktPurchaseInfoScaleValue>> scaleValByItemId)
     {
-        var emptyQty = (IReadOnlyList<TaktPurchaseInfoRecordScaleQuantity>)Array.Empty<TaktPurchaseInfoRecordScaleQuantity>();
-        var emptyVal = (IReadOnlyList<TaktPurchaseInfoRecordScaleValue>)Array.Empty<TaktPurchaseInfoRecordScaleValue>();
+        var emptyQty = (IReadOnlyList<TaktPurchaseInfoScaleQuantity>)Array.Empty<TaktPurchaseInfoScaleQuantity>();
+        var emptyVal = (IReadOnlyList<TaktPurchaseInfoScaleValue>)Array.Empty<TaktPurchaseInfoScaleValue>();
         var result = new List<TaktPoPricePirPeriodPriceDto>();
         foreach (var pir in pirs)
         {
@@ -715,18 +715,18 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
             {
                 continue;
             }
-            var pirItem = TaktBomCalculatePurchaseInfoRecordHelper.ResolveActiveItem(pirItems);
+            var pirItem = TaktBomCalculatePurchaseInfoHelper.ResolveActiveItem(pirItems);
             if (pirItem == null)
             {
                 continue;
             }
             var qtyRows = scaleQtyByItemId.TryGetValue(pirItem.Id, out var qtyScales)
-                ? (IReadOnlyList<TaktPurchaseInfoRecordScaleQuantity>)qtyScales
+                ? (IReadOnlyList<TaktPurchaseInfoScaleQuantity>)qtyScales
                 : emptyQty;
             var valRows = scaleValByItemId.TryGetValue(pirItem.Id, out var valScales)
-                ? (IReadOnlyList<TaktPurchaseInfoRecordScaleValue>)valScales
+                ? (IReadOnlyList<TaktPurchaseInfoScaleValue>)valScales
                 : emptyVal;
-            var rawPrice = TaktBomCalculatePurchaseInfoRecordHelper.ResolveNetPrice(
+            var rawPrice = TaktBomCalculatePurchaseInfoHelper.ResolveNetPrice(
                 pirItem,
                 qtyRows,
                 valRows,
@@ -739,12 +739,12 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
                 orderQuantity);
             result.Add(new TaktPoPricePirPeriodPriceDto
             {
-                PurchaseInfoRecordCode = pir.PurchaseInfoRecordCode,
+                PurchaseInfoCode = pir.PurchaseInfoCode,
                 PriceType = pir.PriceType,
                 ValidFrom = pir.ValidFrom.Date,
                 ValidTo = pir.ValidTo.Date,
                 PriceSource = priceSource,
-                PurchaseInfoRecordSeq = pirItem.PurchaseInfoRecordSeq,
+                PurchaseInfoSeq = pirItem.PurchaseInfoSeq,
                 PurchaseScaleSeq = scaleSeq,
                 ScaleQuantity = scaleQty,
                 ScaleValue = scaleVal,
@@ -760,19 +760,19 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
     /// 标注适用价来源（条件行 / 数量等级 / 价值等级）
     /// </summary>
     private static (string Source, decimal? ScaleQuantity, decimal? ScaleValue, int? ScaleSeq) ResolveApplicablePriceSource(
-        TaktPurchaseInfoRecordItem item,
-        IReadOnlyList<TaktPurchaseInfoRecordScaleQuantity> quantityScales,
-        IReadOnlyList<TaktPurchaseInfoRecordScaleValue> valueScales,
+        TaktPurchaseInfoItem item,
+        IReadOnlyList<TaktPurchaseInfoScaleQuantity> quantityScales,
+        IReadOnlyList<TaktPurchaseInfoScaleValue> valueScales,
         decimal orderQuantity)
     {
         var basis = item.ScaleBasis?.Trim() ?? string.Empty;
         var preferQuantity = string.Equals(
                 basis,
-                TaktBomCalculatePurchaseInfoRecordHelper.QuantityScaleBasis,
+                TaktBomCalculatePurchaseInfoHelper.QuantityScaleBasis,
                 StringComparison.OrdinalIgnoreCase)
             || (!string.Equals(
                     basis,
-                    TaktBomCalculatePurchaseInfoRecordHelper.ValueScaleBasis,
+                    TaktBomCalculatePurchaseInfoHelper.ValueScaleBasis,
                     StringComparison.OrdinalIgnoreCase)
                 && quantityScales.Count > 0);
         if (preferQuantity && quantityScales.Count > 0)
@@ -821,7 +821,7 @@ public class TaktPoPricePirDeviationService : TaktServiceBase, ITaktPoPricePirDe
                 "scaleValue" => $"值≥{p.ScaleValue:0.####}",
                 _ => "条件行",
             };
-            builder.Append(CultureInfo.InvariantCulture, $"{p.PurchaseInfoRecordCode} {p.ValidFrom:yyyy-MM-dd}~{p.ValidTo:yyyy-MM-dd} {source} {p.NormalizedUnitPrice:0.00000}");
+            builder.Append(CultureInfo.InvariantCulture, $"{p.PurchaseInfoCode} {p.ValidFrom:yyyy-MM-dd}~{p.ValidTo:yyyy-MM-dd} {source} {p.NormalizedUnitPrice:0.00000}");
         }
         return builder.ToString();
     }

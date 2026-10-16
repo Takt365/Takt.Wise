@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Operation
 // 文件名称：TaktFqcOrderI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktFqcOrder 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -109,13 +109,13 @@ public class TaktFqcOrderI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.fqcorder.inspectiondate", "zh-HK", "检验日期_hk", "检验日期"),
 
             // entity.fqcorder.code
-            new TranslationSeedItem("entity.fqcorder.code", "en-US", "FQC检验单编码_us", "FQC检验单编码（唯一索引，根据来源单号自动生成）"),
+            new TranslationSeedItem("entity.fqcorder.code", "en-US", "FQC检验单编码_us", "FQC检验单编码（租户+公司+工厂内唯一，根据来源单号自动生成）"),
             // entity.fqcorder.code
-            new TranslationSeedItem("entity.fqcorder.code", "ja-JP", "FQC检验单编码_jp", "FQC检验单编码（唯一索引，根据来源单号自动生成）"),
+            new TranslationSeedItem("entity.fqcorder.code", "ja-JP", "FQC检验单编码_jp", "FQC检验单编码（租户+公司+工厂内唯一，根据来源单号自动生成）"),
             // entity.fqcorder.code
-            new TranslationSeedItem("entity.fqcorder.code", "zh-CN", "FQC检验单编码", "FQC检验单编码（唯一索引，根据来源单号自动生成）"),
+            new TranslationSeedItem("entity.fqcorder.code", "zh-CN", "FQC检验单编码", "FQC检验单编码（租户+公司+工厂内唯一，根据来源单号自动生成）"),
             // entity.fqcorder.code
-            new TranslationSeedItem("entity.fqcorder.code", "zh-HK", "FQC检验单编码_hk", "FQC检验单编码（唯一索引，根据来源单号自动生成）"),
+            new TranslationSeedItem("entity.fqcorder.code", "zh-HK", "FQC检验单编码_hk", "FQC检验单编码（租户+公司+工厂内唯一，根据来源单号自动生成）"),
 
             // entity.fqcorder.customercode
             new TranslationSeedItem("entity.fqcorder.customercode", "en-US", "客户编码_us", "客户编码（选项 TaktCustomers/options；DictValue=CustomerCode）"),

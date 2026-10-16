@@ -55,16 +55,27 @@
             </a-col>
             <a-col :span="12">
               <a-form-item
+                :label="t('common.page.form.numberingRule')"
+                name="numberingRuleCode"
+              >
+                <TaktSelect
+                  v-model:value="formState.numberingRuleCode"
+                  api-url="TaktNumberings/options"
+                  :api-params="{ documentType: '销售组' }"
+                  :placeholder="t('common.page.form.placeholder.selectonly')"
+                  :disabled="!!formData?.salesGroupId || loading"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
                 :label="pi.label('salesGroupCode')"
                 name="salesGroupCode"
               >
                 <a-input
                   v-model:value="formState.salesGroupCode"
-                  :placeholder="pi.ph('salesGroupCode')"
-                  show-count
-                  :maxlength="3"
-                  allow-clear
-                  :disabled="!!formData?.salesGroupId"
+                  :placeholder="t('common.page.form.numberingCodePreview')"
+                  disabled
                 />
               </a-form-item>
             </a-col>
@@ -251,6 +262,7 @@
 import { useI18n } from 'vue-i18n'
 import type { Rule } from 'ant-design-vue/es/form'
 import { useSalesGroupI18n } from '../composables/useGroupI18n'
+import { useTaktFormNumbering } from '@/composables/useTaktFormNumbering'
 
 /** 实体字段 i18n */
 const pi = useSalesGroupI18n()
@@ -366,15 +378,41 @@ watch(
   },
 )
 
+/** 是否编辑态 */
+const isEditMode = computed(() => !!props.formData?.salesGroupId)
+
+useTaktFormNumbering({
+  formState,
+  isEdit: isEditMode,
+  businessCodeField: 'salesGroupCode',
+})
+
 /** 表单校验规则（与 FluentValidation 必填对齐） */
 const rules = computed<Record<string, Rule[]>>(() => ({
-  salesGroupCode: [
-    {
-      required: true,
-      message: pi.ph('salesGroupCode'),
-      trigger: 'blur'
-    }
-  ],
+  numberingRuleCode: [{
+    validator: async (_rule, value) => {
+      if (isEditMode.value) {
+        return Promise.resolve()
+      }
+      if (!String(value ?? '').trim()) {
+        return Promise.reject(t('common.page.form.numberingRuleRequired'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change',
+  }],
+  salesGroupCode: [{
+    validator: async (_rule, value) => {
+      if (isEditMode.value) {
+        return Promise.resolve()
+      }
+      if (!String(value ?? '').trim()) {
+        return Promise.reject(t('common.page.form.numberingCodePreview'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change',
+  }],
   salesGroupName: [
     {
       required: true,

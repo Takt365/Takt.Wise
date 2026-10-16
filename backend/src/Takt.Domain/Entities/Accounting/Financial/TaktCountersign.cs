@@ -26,7 +26,7 @@ namespace Takt.Domain.Entities.Accounting.Financial;
 public class TaktCountersign : TaktApprovalEntityBase
 {
     /// <summary>
-    /// 会签编码
+    /// 会签编码（前端表单选择编码规则后自动通过 TaktNumbering 会签编码规则生成并展示，非手输；单据类型菜单：会签管理）
     /// </summary>
     [SugarColumn(ColumnName = "countersign_code", ColumnDescription = "会签编码", ColumnDataType = "varchar", Length = 50, IsNullable = false)]
     public string CountersignCode { get; set; } = string.Empty;

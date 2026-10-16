@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Aps
 // 文件名称：TaktWorkCenterI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktWorkCenter 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktWorkCenterI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.workcenter._self", "zh-HK", "工作中心信息_hk", "实体名称"),
 
             // entity.workcenter.code
-            new TranslationSeedItem("entity.workcenter.code", "en-US", "工作中心编码_us", "工作中心编码"),
+            new TranslationSeedItem("entity.workcenter.code", "en-US", "工作中心编码_us", "工作中心编码（前端表单选择编码规则后自动通过 TaktNumbering 工作中心编码规则生成并展示，非手输；单据类型菜单：工作中心）"),
             // entity.workcenter.code
-            new TranslationSeedItem("entity.workcenter.code", "ja-JP", "工作中心编码_jp", "工作中心编码"),
+            new TranslationSeedItem("entity.workcenter.code", "ja-JP", "工作中心编码_jp", "工作中心编码（前端表单选择编码规则后自动通过 TaktNumbering 工作中心编码规则生成并展示，非手输；单据类型菜单：工作中心）"),
             // entity.workcenter.code
-            new TranslationSeedItem("entity.workcenter.code", "zh-CN", "工作中心编码", "工作中心编码"),
+            new TranslationSeedItem("entity.workcenter.code", "zh-CN", "工作中心编码", "工作中心编码（前端表单选择编码规则后自动通过 TaktNumbering 工作中心编码规则生成并展示，非手输；单据类型菜单：工作中心）"),
             // entity.workcenter.code
-            new TranslationSeedItem("entity.workcenter.code", "zh-HK", "工作中心编码_hk", "工作中心编码"),
+            new TranslationSeedItem("entity.workcenter.code", "zh-HK", "工作中心编码_hk", "工作中心编码（前端表单选择编码规则后自动通过 TaktNumbering 工作中心编码规则生成并展示，非手输；单据类型菜单：工作中心）"),
 
             // entity.workcenter.description
             new TranslationSeedItem("entity.workcenter.description", "en-US", "工作中心描述_us", "工作中心描述"),

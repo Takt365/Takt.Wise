@@ -106,7 +106,8 @@
                   :placeholder="pi.ph('clientCode')"
                   show-count
                   :maxlength="20"
-                  disabled
+                  allow-clear
+                  :disabled="!!formData?.customerServiceContractId"
                 />
               </a-form-item>
             </a-col>

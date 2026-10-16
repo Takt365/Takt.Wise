@@ -29,7 +29,7 @@ public class TaktMaintenanceNotification : TaktApprovalEntityBase
 {
 
     /// <summary>
-    /// 通知单号
+    /// 通知单号（前端表单选择编码规则后自动通过 TaktNumbering 通知单号规则生成并展示，非手输；单据类型菜单：维护通知）
     /// </summary>
     [SugarColumn(ColumnName = "notification_code", ColumnDescription = "通知单号", ColumnDataType = "nvarchar", Length = 50, IsNullable = false)]
     public string NotificationCode { get; set; } = string.Empty;

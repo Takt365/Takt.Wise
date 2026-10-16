@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData
 // 文件名称：TaktMenuI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Cursor AI)
 // 功能描述：菜单导航国际化翻译种子（menu.* 键，与 TaktMenuLevel1~4SeedData I18nKey 对齐）
 // 
@@ -803,6 +803,24 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.accounting.financial.bank
             ("menu.accounting.financial.bank", "zh-HK", "银行信息_hk", "菜单导航"),
 
+            // menu.accounting.financial.tax.code
+            ("menu.accounting.financial.tax.code", "en-US", "税收代码_us", "菜单导航"),
+            // menu.accounting.financial.tax.code
+            ("menu.accounting.financial.tax.code", "ja-JP", "税收代码_jp", "菜单导航"),
+            // menu.accounting.financial.tax.code
+            ("menu.accounting.financial.tax.code", "zh-CN", "税收代码", "菜单导航"),
+            // menu.accounting.financial.tax.code
+            ("menu.accounting.financial.tax.code", "zh-HK", "税收代码_hk", "菜单导航"),
+
+            // menu.accounting.financial.tax.condition
+            ("menu.accounting.financial.tax.condition", "en-US", "税务条件_us", "菜单导航"),
+            // menu.accounting.financial.tax.condition
+            ("menu.accounting.financial.tax.condition", "ja-JP", "税务条件_jp", "菜单导航"),
+            // menu.accounting.financial.tax.condition
+            ("menu.accounting.financial.tax.condition", "zh-CN", "税务条件", "菜单导航"),
+            // menu.accounting.financial.tax.condition
+            ("menu.accounting.financial.tax.condition", "zh-HK", "税务条件_hk", "菜单导航"),
+
             // menu.accounting.controlling.profit.center
             ("menu.accounting.controlling.profit.center", "en-US", "利润中心_us", "菜单导航"),
             // menu.accounting.controlling.profit.center
@@ -1001,14 +1019,14 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.procurement.purchase.order
             ("menu.logistics.procurement.purchase.order", "zh-HK", "采购订单_hk", "菜单导航"),
 
-            // menu.logistics.procurement.purchase.info.record
-            ("menu.logistics.procurement.purchase.info.record", "en-US", "采购信息记录_us", "菜单导航"),
-            // menu.logistics.procurement.purchase.info.record
-            ("menu.logistics.procurement.purchase.info.record", "ja-JP", "采购信息记录_jp", "菜单导航"),
-            // menu.logistics.procurement.purchase.info.record
-            ("menu.logistics.procurement.purchase.info.record", "zh-CN", "采购信息记录", "菜单导航"),
-            // menu.logistics.procurement.purchase.info.record
-            ("menu.logistics.procurement.purchase.info.record", "zh-HK", "采购信息记录_hk", "菜单导航"),
+            // menu.logistics.procurement.purchase.info
+            ("menu.logistics.procurement.purchase.info", "en-US", "采购信息_us", "菜单导航"),
+            // menu.logistics.procurement.purchase.info
+            ("menu.logistics.procurement.purchase.info", "ja-JP", "采购信息_jp", "菜单导航"),
+            // menu.logistics.procurement.purchase.info
+            ("menu.logistics.procurement.purchase.info", "zh-CN", "采购信息", "菜单导航"),
+            // menu.logistics.procurement.purchase.info
+            ("menu.logistics.procurement.purchase.info", "zh-HK", "采购信息_hk", "菜单导航"),
 
             // menu.logistics.procurement.purchase.price.trend
             ("menu.logistics.procurement.purchase.price.trend", "en-US", "采购价格推移_us", "菜单导航"),
@@ -1316,14 +1334,14 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.sales.order
             ("menu.logistics.sales.order", "zh-HK", "销售订单_hk", "菜单导航"),
 
-            // menu.logistics.sales.condition.record
-            ("menu.logistics.sales.condition.record", "en-US", "销售条件记录_us", "菜单导航"),
-            // menu.logistics.sales.condition.record
-            ("menu.logistics.sales.condition.record", "ja-JP", "销售条件记录_jp", "菜单导航"),
-            // menu.logistics.sales.condition.record
-            ("menu.logistics.sales.condition.record", "zh-CN", "销售条件记录", "菜单导航"),
-            // menu.logistics.sales.condition.record
-            ("menu.logistics.sales.condition.record", "zh-HK", "销售条件记录_hk", "菜单导航"),
+            // menu.logistics.sales.condition
+            ("menu.logistics.sales.condition", "en-US", "销售条件_us", "菜单导航"),
+            // menu.logistics.sales.condition
+            ("menu.logistics.sales.condition", "ja-JP", "销售条件_jp", "菜单导航"),
+            // menu.logistics.sales.condition
+            ("menu.logistics.sales.condition", "zh-CN", "销售条件", "菜单导航"),
+            // menu.logistics.sales.condition
+            ("menu.logistics.sales.condition", "zh-HK", "销售条件_hk", "菜单导航"),
 
             // menu.logistics.sales.price.trend
             ("menu.logistics.sales.price.trend", "en-US", "销售价格推移_us", "菜单导航"),
@@ -2378,14 +2396,14 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.manufacturing.engineering.change.bukan
             ("menu.logistics.manufacturing.engineering.change.bukan", "zh-HK", "部管部门_hk", "菜单导航"),
 
-            // menu.logistics.manufacturing.engineering.change.smt
-            ("menu.logistics.manufacturing.engineering.change.smt", "en-US", "SMT仓库_us", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.smt
-            ("menu.logistics.manufacturing.engineering.change.smt", "ja-JP", "SMT仓库_jp", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.smt
-            ("menu.logistics.manufacturing.engineering.change.smt", "zh-CN", "SMT仓库", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.smt
-            ("menu.logistics.manufacturing.engineering.change.smt", "zh-HK", "SMT仓库_hk", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.emtl
+            ("menu.logistics.manufacturing.engineering.change.emtl", "en-US", "电子物料_us", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.emtl
+            ("menu.logistics.manufacturing.engineering.change.emtl", "ja-JP", "电子物料_jp", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.emtl
+            ("menu.logistics.manufacturing.engineering.change.emtl", "zh-CN", "电子物料", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.emtl
+            ("menu.logistics.manufacturing.engineering.change.emtl", "zh-HK", "电子物料_hk", "菜单导航"),
 
             // menu.logistics.manufacturing.engineering.change.seizounika
             ("menu.logistics.manufacturing.engineering.change.seizounika", "en-US", "制造二课_us", "菜单导航"),

@@ -46,6 +46,7 @@ public class TaktEcGijutsuService : TaktServiceBase, ITaktEcGijutsuService
     private readonly TaktEcExecPersistence _ecExecPersistence;
     private readonly TaktEcScopeExecOrchestrator _ecScopeExecOrchestrator;
     private readonly TaktEcHandoffMailService _handoffMailService;
+    private readonly TaktEcGijutsuStatusSynchronizer _ecGijutsuStatusSynchronizer;
     private readonly ITaktLineNumberGenerator _lineNumberGenerator;
     private readonly ITaktUniqueValidator _uniqueValidator;
     private readonly ITaktNumberingGenerator _numberingGenerator;
@@ -66,6 +67,7 @@ public class TaktEcGijutsuService : TaktServiceBase, ITaktEcGijutsuService
     /// <param name="ecExecPersistence">设变部门执行持久化</param>
     /// <param name="ecScopeExecOrchestrator">设变实施范围执行编排</param>
     /// <param name="handoffMailService">实施顺序邮件</param>
+    /// <param name="ecGijutsuStatusSynchronizer">按执行部门输入回写设变状态</param>
     /// <param name="lineNumberGenerator">明细行号生成器</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
     /// <param name="numberingGenerator">业务编码生成器</param>
@@ -85,6 +87,7 @@ public class TaktEcGijutsuService : TaktServiceBase, ITaktEcGijutsuService
         TaktEcExecPersistence ecExecPersistence,
         TaktEcScopeExecOrchestrator ecScopeExecOrchestrator,
         TaktEcHandoffMailService handoffMailService,
+        TaktEcGijutsuStatusSynchronizer ecGijutsuStatusSynchronizer,
         ITaktLineNumberGenerator lineNumberGenerator,
         ITaktUniqueValidator uniqueValidator,
         ITaktNumberingGenerator numberingGenerator,
@@ -105,6 +108,7 @@ public class TaktEcGijutsuService : TaktServiceBase, ITaktEcGijutsuService
         _ecExecPersistence = ecExecPersistence;
         _ecScopeExecOrchestrator = ecScopeExecOrchestrator;
         _handoffMailService = handoffMailService;
+        _ecGijutsuStatusSynchronizer = ecGijutsuStatusSynchronizer;
         _lineNumberGenerator = lineNumberGenerator;
         _uniqueValidator = uniqueValidator;
         _numberingGenerator = numberingGenerator;
@@ -193,6 +197,7 @@ public class TaktEcGijutsuService : TaktServiceBase, ITaktEcGijutsuService
         var applyResult = await ApplyScopeExecAndMaybeNotifyAsync(entity, createNotificationIfMissing: true, notificationDate);
         var result = await GetEcGijutsuByIdAsync(entity.Id) ?? entity.Adapt<TaktEcGijutsuDto>();
         result.PersistDeptExecSummary = applyResult.FormatSummary();
+        result.PersistDetailCount = await CountLiveEcDetailsAsync(entity.Id);
         return result;
     }
 
@@ -231,9 +236,17 @@ public class TaktEcGijutsuService : TaktServiceBase, ITaktEcGijutsuService
         var entity = await _ecEngRepository.GetByIdAsync(id)
             ?? throw new TaktBusinessException("设变技术课主不存在");
         var previousEcStatus = entity.EcStatus;
+        var previousEcScope = entity.EcScope;
+        var previousEcDeptScope = entity.EcDeptScope;
         dto.Adapt(entity);
         entity.EcDeptScope = TaktEcDeptScopeConstants.Normalize(entity.EcScope, entity.EcDeptScope);
         entity.EcStatus = previousEcStatus;
+        if (previousEcStatus == TaktEcGijutsuStatusConstants.Completed)
+        {
+            entity.EcScope = previousEcScope;
+            entity.EcDeptScope = previousEcDeptScope;
+        }
+        var scopeChanged = previousEcScope != entity.EcScope || previousEcDeptScope != entity.EcDeptScope;
         await _ecEngRepository.UpdateAsync(entity);
         TaktLogger.Information(
             "[EcGijutsuPersist] 主表已更新 EcCode={EcCode} Id={Id} DetailCount={DetailCount}",
@@ -244,13 +257,38 @@ public class TaktEcGijutsuService : TaktServiceBase, ITaktEcGijutsuService
         TaktLogger.Information(
             "[EcGijutsuPersist] 子表（明细/附件）已更新 EcCode={EcCode}",
             entity.EcCode);
-        // 未提交明细载荷：不重跑部门派生（明细由右侧分页 CRUD 维护；避免十万行重复 Upsert）
-        var applyResult = dto.EcDetails is { Count: > 0 }
-            ? await ApplyScopeExecAndMaybeNotifyAsync(entity, createNotificationIfMissing: false)
-            : TaktEcScopeExecApplyResult.Empty;
+        // 提交了明细：明细已带上新范围，按范围重算各部门执行行。
+        // 未提交明细但实施范围或部门实施范围变了：先把新范围写回已有明细，再重算，避免执行子表仍按旧粒度去重。
+        // 范围未变且无明细载荷：不重跑（明细由右侧分页维护，避免十万行重复 Upsert）。
+        TaktEcScopeExecApplyResult applyResult;
+        if (dto.EcDetails is { Count: > 0 })
+        {
+            applyResult = await ApplyScopeExecAndMaybeNotifyAsync(entity, createNotificationIfMissing: false);
+        }
+        else if (scopeChanged)
+        {
+            await SyncDetailScopeFromMasterAsync(entity);
+            applyResult = await ApplyScopeExecAndMaybeNotifyAsync(entity, createNotificationIfMissing: false);
+        }
+        else
+        {
+            applyResult = TaktEcScopeExecApplyResult.Empty;
+            await _ecGijutsuStatusSynchronizer.RefreshByEcCodeAsync(entity.EcCode);
+        }
         var result = await GetEcGijutsuByIdAsync(id) ?? throw new TaktBusinessException("设变技术课主不存在");
         result.PersistDeptExecSummary = applyResult.FormatSummary();
+        result.PersistDetailCount = await CountLiveEcDetailsAsync(entity.Id);
         return result;
+    }
+
+    /// <summary>
+    /// 统计设变明细未作废行数（表 takt_logistics_manufacturing_ec_detail，仓储已排除软删）。
+    /// </summary>
+    /// <param name="ecGijutsuId">设变技术课主表 Id</param>
+    /// <returns>未作废明细行数</returns>
+    public async Task<int> CountLiveEcDetailsAsync(long ecGijutsuId)
+    {
+        return await _ecDetailRepository.CountAsync(x => x.EcGijutsuId == ecGijutsuId && x.IsObsolete == 0);
     }
 
     /// <summary>
@@ -453,6 +491,30 @@ public class TaktEcGijutsuService : TaktServiceBase, ITaktEcGijutsuService
     }
 
     /// <summary>
+    /// 将主表实施范围、部门实施范围写回该设变下已有明细（不改物料与行号）
+    /// </summary>
+    /// <param name="entity">已规范化范围的设变主表</param>
+    /// <returns>任务</returns>
+    private async Task SyncDetailScopeFromMasterAsync(TaktEcGijutsu entity)
+    {
+        var ecScope = entity.EcScope;
+        var ecDeptScope = entity.EcDeptScope;
+        var updated = await _ecDetailRepository.UpdateAsync(
+            x => x.EcGijutsuId == entity.Id,
+            x => new TaktEcDetail
+            {
+                EcScope = ecScope,
+                EcDeptScope = ecDeptScope,
+            });
+        TaktLogger.Information(
+            "[EcGijutsuPersist] 实施范围已同步到明细 EcCode={EcCode} EcScope={EcScope} EcDeptScope={EcDeptScope} Updated={Updated}",
+            entity.EcCode,
+            ecScope,
+            ecDeptScope,
+            updated);
+    }
+
+    /// <summary>
     /// 保存设变技术课主子表级联（设变明细、设变附件、工程变更通知单）。
     /// 明细：仅当提交非空 EcDetails 时先删后插；空载荷保留库内已有明细（视图内明细由独立 CRUD 维护）。
     /// </summary>
@@ -545,8 +607,14 @@ public class TaktEcGijutsuService : TaktServiceBase, ITaktEcGijutsuService
                 "[EcGijutsuPersist] 明细载荷为空，保留库内已有明细 EcCode={EcCode}",
                 entity.EcCode);
         }
-        // 设变附件（Attachments）
-        if (dto.Attachments is not { Count: > 0 })
+        // 设变附件：未提交（null）不改库；仅当本次载荷相对库内行有增删改时才写对应行
+        if (dto.Attachments == null)
+        {
+            TaktLogger.Information(
+                "[EcGijutsuPersist] 附件载荷未提交，保留库内已有附件 EcCode={EcCode}",
+                entity.EcCode);
+        }
+        else if (dto.Attachments.Count == 0)
         {
             await _ecAttachmentRepository.DeleteAsync(x => x.EcGijutsuId == entity.Id);
         }
@@ -600,22 +668,7 @@ public class TaktEcGijutsuService : TaktServiceBase, ITaktEcGijutsuService
                     throw new TaktBusinessException($"设变附件第{i + 1}项与本次提交的其他项重复（CompanyCode、EcGijutsuId、DocCode、LineNumber）");
                 }
             }
-            await _ecAttachmentRepository.DeleteAsync(x => x.EcGijutsuId == entity.Id);
-            foreach (var child in attachments)
-            {
-                var trimmedDoc = (child.DocCode ?? string.Empty).Trim();
-                var isUnique_ix_takt_logistics_manufacturing_ec_attachment_unique = await _uniqueValidator.IsUniqueAsync(
-                    _ecAttachmentRepository,
-                    x => x.CompanyCode == child.CompanyCode
-                        && x.EcGijutsuId == child.EcGijutsuId
-                        && x.DocCode == trimmedDoc
-                        && x.LineNumber == child.LineNumber);
-                if (!isUnique_ix_takt_logistics_manufacturing_ec_attachment_unique)
-                {
-                    throw new TaktBusinessException("设变附件的CompanyCode、EcGijutsuId、DocCode、LineNumber已存在");
-                }
-            }
-            await _ecAttachmentRepository.CreateRangeAsync(attachments);
+            await ApplyChangedEcAttachmentsAsync(entity.Id, attachments);
         }
         // 工程变更通知单（Notifications）
         if (dto.Notifications is not { Count: > 0 })
@@ -652,6 +705,89 @@ public class TaktEcGijutsuService : TaktServiceBase, ITaktEcGijutsuService
             }
             await _ecNotificationRepository.CreateRangeAsync(notifications);
         }
+    }
+
+    /// <summary>
+    /// 按本次提交差异写设变附件：内容未变的行不更新，仅插入新行、更新改过的行、删除提交中已去掉的行。
+    /// </summary>
+    /// <param name="ecGijutsuId">设变技术课主表 Id</param>
+    /// <param name="attachments">已校验的附件实体（Id 大于 0 表示已有行）</param>
+    private async Task ApplyChangedEcAttachmentsAsync(long ecGijutsuId, List<TaktEcAttachment> attachments)
+    {
+        var existing = await _ecAttachmentRepository.GetListAsync(x => x.EcGijutsuId == ecGijutsuId);
+        var existingById = existing.ToDictionary(x => x.Id);
+        var keptIds = new HashSet<long>();
+        var toInsert = new List<TaktEcAttachment>();
+        foreach (var child in attachments)
+        {
+            if (child.Id > 0 && existingById.TryGetValue(child.Id, out var current))
+            {
+                keptIds.Add(current.Id);
+                if (IsSameEcAttachmentContent(current, child))
+                {
+                    continue;
+                }
+                current.EcCode = child.EcCode;
+                current.LineNumber = child.LineNumber;
+                current.AttachmentType = child.AttachmentType;
+                current.DocCode = (child.DocCode ?? string.Empty).Trim();
+                current.FileName = child.FileName;
+                current.AccessUrl = child.AccessUrl;
+                current.IsObsolete = child.IsObsolete;
+                if (!string.IsNullOrWhiteSpace(child.PlantCode))
+                {
+                    current.PlantCode = child.PlantCode;
+                }
+                current.Remark = child.Remark;
+                current.ExtField = child.ExtField;
+                await _ecAttachmentRepository.UpdateAsync(current);
+                continue;
+            }
+            child.Id = 0;
+            toInsert.Add(child);
+        }
+        var removedIds = existing.Where(x => !keptIds.Contains(x.Id)).Select(x => x.Id).ToList();
+        if (removedIds.Count > 0)
+        {
+            await _ecAttachmentRepository.DeleteAsync(x => removedIds.Contains(x.Id));
+        }
+        foreach (var child in toInsert)
+        {
+            var trimmedDoc = (child.DocCode ?? string.Empty).Trim();
+            var isUnique = await _uniqueValidator.IsUniqueAsync(
+                _ecAttachmentRepository,
+                x => x.CompanyCode == child.CompanyCode
+                    && x.EcGijutsuId == child.EcGijutsuId
+                    && x.DocCode == trimmedDoc
+                    && x.LineNumber == child.LineNumber);
+            if (!isUnique)
+            {
+                throw new TaktBusinessException("设变附件的CompanyCode、EcGijutsuId、DocCode、LineNumber已存在");
+            }
+        }
+        if (toInsert.Count > 0)
+        {
+            await _ecAttachmentRepository.CreateRangeAsync(toInsert);
+        }
+    }
+
+    /// <summary>
+    /// 比较附件业务内容是否一致（一致则本次保存不写该行）。
+    /// </summary>
+    /// <param name="current">库内行</param>
+    /// <param name="incoming">本次提交行</param>
+    /// <returns>内容一致返回 true</returns>
+    private static bool IsSameEcAttachmentContent(TaktEcAttachment current, TaktEcAttachment incoming)
+    {
+        return string.Equals(current.EcCode, incoming.EcCode, StringComparison.Ordinal)
+            && current.LineNumber == incoming.LineNumber
+            && string.Equals(current.AttachmentType, incoming.AttachmentType, StringComparison.Ordinal)
+            && string.Equals((current.DocCode ?? string.Empty).Trim(), (incoming.DocCode ?? string.Empty).Trim(), StringComparison.Ordinal)
+            && string.Equals(current.FileName, incoming.FileName, StringComparison.Ordinal)
+            && string.Equals(current.AccessUrl, incoming.AccessUrl, StringComparison.Ordinal)
+            && current.IsObsolete == incoming.IsObsolete
+            && string.Equals(current.Remark ?? string.Empty, incoming.Remark ?? string.Empty, StringComparison.Ordinal)
+            && string.Equals(current.ExtField ?? string.Empty, incoming.ExtField ?? string.Empty, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -1229,11 +1365,10 @@ public class TaktEcGijutsuService : TaktServiceBase, ITaktEcGijutsuService
             }
         }
         await _handoffMailService.TryDispatchAsync(entity);
-        // 技术课视图导入/保存：派生结束后不按部门子表重算 EcStatus（Create 已写发行；Update 保留原状态）
+        await _ecGijutsuStatusSynchronizer.RefreshByEcCodeAsync(entity.EcCode);
         TaktLogger.Information(
-            "[EcGijutsuPersist] 部门执行派生结束（跳过子表状态同步） EcCode={EcCode} EcStatus={EcStatus}",
-            entity.EcCode,
-            entity.EcStatus);
+            "[EcGijutsuPersist] 部门执行派生结束，已按执行部门输入回写 EcStatus EcCode={EcCode}",
+            entity.EcCode);
         return applyResult;
     }
 
@@ -1520,6 +1655,106 @@ public class TaktEcGijutsuService : TaktServiceBase, ITaktEcGijutsuService
             exp = exp.And(x => x.CreatedAt <= queryDto.CreatedAtEnd);
         }
 
+        AppendExecDeptExists(exp, queryDto?.ExecDeptCode);
+
         return exp.ToExpression();
+    }
+
+    /// <summary>
+    /// 按执行部门反查：主表设变号在该部门执行表中存在未作废行才进入清单。
+    /// </summary>
+    /// <param name="exp">主表查询</param>
+    /// <param name="execDeptCode">执行部门编码</param>
+    private static void AppendExecDeptExists(Expressionable<TaktEcGijutsu> exp, string? execDeptCode)
+    {
+        var deptCode = execDeptCode?.Trim();
+        if (string.IsNullOrEmpty(deptCode))
+        {
+            return;
+        }
+        switch (deptCode)
+        {
+            case TaktEcDeptCodes.Pmc:
+                exp.And(x => SqlFunc.Subqueryable<TaktEcSeikan>().Where(s =>
+                    s.TenantCode == x.TenantCode
+                    && s.CompanyCode == x.CompanyCode
+                    && s.PlantCode == x.PlantCode
+                    && s.EcCode == x.EcCode
+                    && s.IsDeleted == 0
+                    && s.IsObsolete == 0).Any());
+                break;
+            case TaktEcDeptCodes.Mp:
+                exp.And(x => SqlFunc.Subqueryable<TaktEcKoubai>().Where(s =>
+                    s.TenantCode == x.TenantCode
+                    && s.CompanyCode == x.CompanyCode
+                    && s.PlantCode == x.PlantCode
+                    && s.EcCode == x.EcCode
+                    && s.IsDeleted == 0
+                    && s.IsObsolete == 0).Any());
+                break;
+            case TaktEcDeptCodes.Iqc:
+                exp.And(x => SqlFunc.Subqueryable<TaktEcUkeken>().Where(s =>
+                    s.TenantCode == x.TenantCode
+                    && s.CompanyCode == x.CompanyCode
+                    && s.PlantCode == x.PlantCode
+                    && s.EcCode == x.EcCode
+                    && s.IsDeleted == 0
+                    && s.IsObsolete == 0).Any());
+                break;
+            case TaktEcDeptCodes.Mc:
+                exp.And(x => SqlFunc.Subqueryable<TaktEcBukan>().Where(s =>
+                    s.TenantCode == x.TenantCode
+                    && s.CompanyCode == x.CompanyCode
+                    && s.PlantCode == x.PlantCode
+                    && s.EcCode == x.EcCode
+                    && s.IsDeleted == 0
+                    && s.IsObsolete == 0).Any());
+                break;
+            case TaktEcDeptCodes.Smt:
+                exp.And(x => SqlFunc.Subqueryable<TaktEcEmtl>().Where(s =>
+                    s.TenantCode == x.TenantCode
+                    && s.CompanyCode == x.CompanyCode
+                    && s.PlantCode == x.PlantCode
+                    && s.EcCode == x.EcCode
+                    && s.IsDeleted == 0
+                    && s.IsObsolete == 0).Any());
+                break;
+            case TaktEcDeptCodes.Pcba:
+                exp.And(x => SqlFunc.Subqueryable<TaktEcSeizounika>().Where(s =>
+                    s.TenantCode == x.TenantCode
+                    && s.CompanyCode == x.CompanyCode
+                    && s.PlantCode == x.PlantCode
+                    && s.EcCode == x.EcCode
+                    && s.IsDeleted == 0
+                    && s.IsObsolete == 0).Any());
+                break;
+            case TaktEcDeptCodes.Assy:
+                exp.And(x => SqlFunc.Subqueryable<TaktEcSeizouikka>().Where(s =>
+                    s.TenantCode == x.TenantCode
+                    && s.CompanyCode == x.CompanyCode
+                    && s.PlantCode == x.PlantCode
+                    && s.EcCode == x.EcCode
+                    && s.IsDeleted == 0
+                    && s.IsObsolete == 0).Any());
+                break;
+            case TaktEcDeptCodes.Qa:
+                exp.And(x => SqlFunc.Subqueryable<TaktEcHinkan>().Where(s =>
+                    s.TenantCode == x.TenantCode
+                    && s.CompanyCode == x.CompanyCode
+                    && s.PlantCode == x.PlantCode
+                    && s.EcCode == x.EcCode
+                    && s.IsDeleted == 0
+                    && s.IsObsolete == 0).Any());
+                break;
+            case TaktEcDeptCodes.Te:
+                exp.And(x => SqlFunc.Subqueryable<TaktEcSeizougijutsu>().Where(s =>
+                    s.TenantCode == x.TenantCode
+                    && s.CompanyCode == x.CompanyCode
+                    && s.PlantCode == x.PlantCode
+                    && s.EcCode == x.EcCode
+                    && s.IsDeleted == 0
+                    && s.IsObsolete == 0).Any());
+                break;
+        }
     }
 }

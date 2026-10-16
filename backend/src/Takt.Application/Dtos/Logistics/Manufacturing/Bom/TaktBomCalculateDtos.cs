@@ -206,7 +206,7 @@ public class TaktBomCalculateAverageResultDto
 /// <summary>
 /// 回填 BOM 明细采购价结果（采购组织=主表工厂编码；净价取条件行或数量/价值等级）
 /// </summary>
-public class TaktBomCalculatePurchaseInfoRecordBackfillResultDto
+public class TaktBomCalculatePurchaseInfoBackfillResultDto
 {
     /// <summary>
     /// 扫描明细行数

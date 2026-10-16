@@ -27,7 +27,7 @@ public class TaktProductionTeam : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// 班组编码（唯一标识，例如：1、1SMT1、1SMT2、2自插A 等）
+    /// 班组编码（唯一标识，例如：1、1SMT1、1SMT2、2自插A 等；前端表单选择编码规则后自动通过 TaktNumbering 班组编码规则生成并展示，非手输；单据类型菜单：生产班组）
     /// </summary>
     [SugarColumn(ColumnName = "team_code", ColumnDescription = "班组编码", ColumnDataType = "nvarchar", Length = 8, IsNullable = false)]
     public string TeamCode { get; set; } = string.Empty;

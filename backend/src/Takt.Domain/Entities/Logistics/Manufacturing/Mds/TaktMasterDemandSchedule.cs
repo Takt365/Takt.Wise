@@ -26,7 +26,7 @@ public class TaktMasterDemandSchedule : TaktApprovalEntityBase
 {
 
     /// <summary>
-    /// MDS 编码（租户+公司+工厂内业务唯一）
+    /// MDS 编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering MDS编码规则生成并展示，非手输；单据类型菜单：主需求计划）
     /// </summary>
     [SugarColumn(ColumnName = "mds_code", ColumnDescription = "MDS编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string MdsCode { get; set; } = string.Empty;

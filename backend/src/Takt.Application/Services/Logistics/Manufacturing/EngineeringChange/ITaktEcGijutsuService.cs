@@ -74,6 +74,13 @@ public interface ITaktEcGijutsuService
     Task EnsureEcGijutsuUpdateReadyAsync(long id, TaktEcGijutsuUpdateDto dto);
 
     /// <summary>
+    /// 统计设变明细未作废行数（表 takt_logistics_manufacturing_ec_detail）
+    /// </summary>
+    /// <param name="ecGijutsuId">设变技术课主表 Id</param>
+    /// <returns>未作废明细行数</returns>
+    Task<int> CountLiveEcDetailsAsync(long ecGijutsuId);
+
+    /// <summary>
     /// 删除设变技术课主
     /// </summary>
     /// <param name="id">设变技术课主ID</param>

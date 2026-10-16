@@ -33,6 +33,7 @@ public class TaktPurchaseForecastService : TaktServiceBase, ITaktPurchaseForecas
     private readonly ITaktCompanyRepository<TaktPurchaseForecastItem> _purchaseForecastItemRepository;
     private readonly ITaktLineNumberGenerator _lineNumberGenerator;
     private readonly ITaktUniqueValidator _uniqueValidator;
+    private readonly ITaktNumberingGenerator _numberingGenerator;
 
     /// <summary>
     /// 构造函数
@@ -41,6 +42,7 @@ public class TaktPurchaseForecastService : TaktServiceBase, ITaktPurchaseForecas
     /// <param name="purchaseForecastItemRepository">PurchaseForecastItem仓储</param>
     /// <param name="lineNumberGenerator">明细行号生成器</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
+    /// <param name="numberingGenerator">业务编码生成器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktPurchaseForecastService(
@@ -48,6 +50,7 @@ public class TaktPurchaseForecastService : TaktServiceBase, ITaktPurchaseForecas
         ITaktCompanyRepository<TaktPurchaseForecastItem> purchaseForecastItemRepository,
         ITaktLineNumberGenerator lineNumberGenerator,
         ITaktUniqueValidator uniqueValidator,
+        ITaktNumberingGenerator numberingGenerator,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
@@ -56,6 +59,7 @@ public class TaktPurchaseForecastService : TaktServiceBase, ITaktPurchaseForecas
         _purchaseForecastItemRepository = purchaseForecastItemRepository;
         _lineNumberGenerator = lineNumberGenerator;
         _uniqueValidator = uniqueValidator;
+        _numberingGenerator = numberingGenerator;
     }
 
     /// <summary>
@@ -129,6 +133,19 @@ public class TaktPurchaseForecastService : TaktServiceBase, ITaktPurchaseForecas
     public async Task<TaktPurchaseForecastDto> CreatePurchaseForecastAsync(TaktPurchaseForecastCreateDto dto)
     {
         var entity = dto.Adapt<TaktPurchaseForecast>();
+        if (!string.IsNullOrWhiteSpace(dto.NumberingRuleCode))
+        {
+            var generated = await _numberingGenerator.GenerateNextAsync(dto.NumberingRuleCode.Trim());
+            if (string.IsNullOrWhiteSpace(generated.BusinessCode))
+            {
+                throw new TaktBusinessException("业务编码生成失败");
+            }
+            entity.PurchaseForecastCode = generated.BusinessCode;
+        }
+        else if (string.IsNullOrWhiteSpace(entity.PurchaseForecastCode))
+        {
+            throw new TaktBusinessException("采购预测编码不能为空");
+        }
         var isUnique_ix_takt_logistics_procurement_purchase_forecast_unique = await _uniqueValidator.IsUniqueAsync(
             _purchaseForecastRepository,
             x => x.PlantCode == entity.PlantCode

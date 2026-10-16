@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Aps
 // 文件名称：TaktPlannedOrderI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPlannedOrder 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktPlannedOrderI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.plannedorder._self", "zh-HK", "计划订单信息_hk", "实体名称"),
 
             // entity.plannedorder.code
-            new TranslationSeedItem("entity.plannedorder.code", "en-US", "计划订单编码_us", "计划订单编码"),
+            new TranslationSeedItem("entity.plannedorder.code", "en-US", "计划订单编码_us", "计划订单编码（前端表单选择编码规则后自动通过 TaktNumbering 计划订单编码规则生成并展示，非手输；单据类型菜单：计划订单）"),
             // entity.plannedorder.code
-            new TranslationSeedItem("entity.plannedorder.code", "ja-JP", "计划订单编码_jp", "计划订单编码"),
+            new TranslationSeedItem("entity.plannedorder.code", "ja-JP", "计划订单编码_jp", "计划订单编码（前端表单选择编码规则后自动通过 TaktNumbering 计划订单编码规则生成并展示，非手输；单据类型菜单：计划订单）"),
             // entity.plannedorder.code
-            new TranslationSeedItem("entity.plannedorder.code", "zh-CN", "计划订单编码", "计划订单编码"),
+            new TranslationSeedItem("entity.plannedorder.code", "zh-CN", "计划订单编码", "计划订单编码（前端表单选择编码规则后自动通过 TaktNumbering 计划订单编码规则生成并展示，非手输；单据类型菜单：计划订单）"),
             // entity.plannedorder.code
-            new TranslationSeedItem("entity.plannedorder.code", "zh-HK", "计划订单编码_hk", "计划订单编码"),
+            new TranslationSeedItem("entity.plannedorder.code", "zh-HK", "计划订单编码_hk", "计划订单编码（前端表单选择编码规则后自动通过 TaktNumbering 计划订单编码规则生成并展示，非手输；单据类型菜单：计划订单）"),
 
             // entity.plannedorder.materialrequirementsplanningid
             new TranslationSeedItem("entity.plannedorder.materialrequirementsplanningid", "en-US", "来源MRP头表ID_us", "来源 MRP 头表 ID"),

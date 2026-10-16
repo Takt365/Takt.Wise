@@ -24,7 +24,7 @@ namespace Takt.Domain.Entities.HumanResource.Performance;
 public class TaktPerfCycle : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 周期编码（租户+公司内唯一）
+    /// 周期编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 周期编码规则生成并展示，非手输；单据类型菜单：绩效周期）
     /// </summary>
     [SugarColumn(ColumnName = "cycle_code", ColumnDescription = "周期编码", ColumnDataType = "nvarchar", Length = 64, IsNullable = false)]
     public string CycleCode { get; set; } = string.Empty;

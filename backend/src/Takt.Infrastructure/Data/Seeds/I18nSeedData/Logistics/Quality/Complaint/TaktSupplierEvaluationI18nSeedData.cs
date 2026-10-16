@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Complaint
 // 文件名称：TaktSupplierEvaluationI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSupplierEvaluation 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktSupplierEvaluationI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.supplierevaluation._self", "zh-HK", "供应商评价考核主表信息_hk", "实体名称"),
 
             // entity.supplierevaluation.code
-            new TranslationSeedItem("entity.supplierevaluation.code", "en-US", "评价表编码_us", "评价表编码（组合唯一索引）"),
+            new TranslationSeedItem("entity.supplierevaluation.code", "en-US", "评价表编码_us", "评价表编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 评价表编码规则生成并展示，非手输；单据类型菜单：供应商评价考核）"),
             // entity.supplierevaluation.code
-            new TranslationSeedItem("entity.supplierevaluation.code", "ja-JP", "评价表编码_jp", "评价表编码（组合唯一索引）"),
+            new TranslationSeedItem("entity.supplierevaluation.code", "ja-JP", "评价表编码_jp", "评价表编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 评价表编码规则生成并展示，非手输；单据类型菜单：供应商评价考核）"),
             // entity.supplierevaluation.code
-            new TranslationSeedItem("entity.supplierevaluation.code", "zh-CN", "评价表编码", "评价表编码（组合唯一索引）"),
+            new TranslationSeedItem("entity.supplierevaluation.code", "zh-CN", "评价表编码", "评价表编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 评价表编码规则生成并展示，非手输；单据类型菜单：供应商评价考核）"),
             // entity.supplierevaluation.code
-            new TranslationSeedItem("entity.supplierevaluation.code", "zh-HK", "评价表编码_hk", "评价表编码（组合唯一索引）"),
+            new TranslationSeedItem("entity.supplierevaluation.code", "zh-HK", "评价表编码_hk", "评价表编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 评价表编码规则生成并展示，非手输；单据类型菜单：供应商评价考核）"),
 
             // entity.supplierevaluation.supplierid
             new TranslationSeedItem("entity.supplierevaluation.supplierid", "en-US", "供应商ID_us", "供应商 ID（选项 TaktSuppliers/options；DictValue=Id）"),

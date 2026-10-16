@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Sales
 // 文件名称：TaktSalesInvoiceI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSalesInvoice 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktSalesInvoiceI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.salesinvoice._self", "zh-HK", "Takt销售发票主表信息_hk", "实体名称"),
 
             // entity.salesinvoice.billingdocumentcode
-            new TranslationSeedItem("entity.salesinvoice.billingdocumentcode", "en-US", "开票凭证_us", "开票凭证"),
+            new TranslationSeedItem("entity.salesinvoice.billingdocumentcode", "en-US", "开票凭证_us", "开票凭证（前端表单选择编码规则后自动通过 TaktNumbering 开票凭证规则生成并展示，非手输；单据类型菜单：销售发票）"),
             // entity.salesinvoice.billingdocumentcode
-            new TranslationSeedItem("entity.salesinvoice.billingdocumentcode", "ja-JP", "开票凭证_jp", "开票凭证"),
+            new TranslationSeedItem("entity.salesinvoice.billingdocumentcode", "ja-JP", "开票凭证_jp", "开票凭证（前端表单选择编码规则后自动通过 TaktNumbering 开票凭证规则生成并展示，非手输；单据类型菜单：销售发票）"),
             // entity.salesinvoice.billingdocumentcode
-            new TranslationSeedItem("entity.salesinvoice.billingdocumentcode", "zh-CN", "开票凭证", "开票凭证"),
+            new TranslationSeedItem("entity.salesinvoice.billingdocumentcode", "zh-CN", "开票凭证", "开票凭证（前端表单选择编码规则后自动通过 TaktNumbering 开票凭证规则生成并展示，非手输；单据类型菜单：销售发票）"),
             // entity.salesinvoice.billingdocumentcode
-            new TranslationSeedItem("entity.salesinvoice.billingdocumentcode", "zh-HK", "开票凭证_hk", "开票凭证"),
+            new TranslationSeedItem("entity.salesinvoice.billingdocumentcode", "zh-HK", "开票凭证_hk", "开票凭证（前端表单选择编码规则后自动通过 TaktNumbering 开票凭证规则生成并展示，非手输；单据类型菜单：销售发票）"),
 
             // entity.salesinvoice.billingtype
             new TranslationSeedItem("entity.salesinvoice.billingtype", "en-US", "开票类型_us", "开票类型"),

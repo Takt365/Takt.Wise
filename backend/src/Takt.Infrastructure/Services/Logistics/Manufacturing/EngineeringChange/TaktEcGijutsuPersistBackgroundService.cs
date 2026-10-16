@@ -184,7 +184,9 @@ public sealed class TaktEcGijutsuPersistBackgroundService : ITaktEcGijutsuPersis
             throw new TaktBusinessException("设变单号不能为空");
         }
 
-        var detailCount = dto.EcDetails?.Count ?? 0;
+        var detailCount = dto.EcDetails is { Count: > 0 }
+            ? dto.EcDetails.Count
+            : await _ecGijutsuService.CountLiveEcDetailsAsync(id);
         var jobKey = BuildJobKey(context.TenantCode, context.CompanyCode, plantCode, ecCode);
         if (!RunningJobs.TryAdd(jobKey, 0))
         {
@@ -271,6 +273,7 @@ public sealed class TaktEcGijutsuPersistBackgroundService : ITaktEcGijutsuPersis
         var executeStatus = (int)TaktExecuteStatus.Success;
         string? errorMessage = null;
         string? deptExecSummary = null;
+        var detailCount = context.DetailCount;
         long resultId = context.EcGijutsuId;
         try
         {
@@ -288,6 +291,7 @@ public sealed class TaktEcGijutsuPersistBackgroundService : ITaktEcGijutsuPersis
                 var updated = await service.UpdateEcGijutsuAsync(context.EcGijutsuId, context.UpdateDto).ConfigureAwait(false);
                 resultId = updated.EcGijutsuId;
                 deptExecSummary = updated.PersistDeptExecSummary;
+                detailCount = updated.PersistDetailCount;
             }
             else
             {
@@ -295,6 +299,7 @@ public sealed class TaktEcGijutsuPersistBackgroundService : ITaktEcGijutsuPersis
                 var created = await service.CreateEcGijutsuAsync(context.CreateDto).ConfigureAwait(false);
                 resultId = created.EcGijutsuId;
                 deptExecSummary = created.PersistDeptExecSummary;
+                detailCount = created.PersistDetailCount;
             }
             TaktLogger.Information(
                 "[EcGijutsuPersist] 后台落库+派生完成 EcCode={EcCode} Id={Id} Summary={Summary}",
@@ -329,7 +334,7 @@ public sealed class TaktEcGijutsuPersistBackgroundService : ITaktEcGijutsuPersis
                 EcCode = context.EcCode,
                 IsUpdate = context.IsUpdate,
                 EcGijutsuId = resultId,
-                DetailCount = context.DetailCount,
+                DetailCount = detailCount,
                 ExecuteStatus = executeStatus,
                 ExecuteDuration = stopwatch.ElapsedMilliseconds,
                 ErrorMessage = errorMessage,
@@ -362,7 +367,7 @@ public sealed class TaktEcGijutsuPersistBackgroundService : ITaktEcGijutsuPersis
                 context.IsUpdate,
                 executeStatus == (int)TaktExecuteStatus.Success,
                 stopwatch.ElapsedMilliseconds,
-                context.DetailCount,
+                detailCount,
                 errorMessage,
                 deptExecSummary);
             var ok = await TaktEcGijutsuPersistMessageHelper.TryNotifyAsync(messageService, content).ConfigureAwait(false);

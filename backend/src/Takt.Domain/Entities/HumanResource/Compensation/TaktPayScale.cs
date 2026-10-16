@@ -24,7 +24,7 @@ namespace Takt.Domain.Entities.HumanResource.Compensation;
 public class TaktPayScale : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 薪级编码（租户+公司内唯一）
+    /// 薪级编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 薪级编码规则生成并展示，非手输；单据类型菜单：薪级）
     /// </summary>
     [SugarColumn(ColumnName = "scale_code", ColumnDescription = "薪级编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string ScaleCode { get; set; } = string.Empty;

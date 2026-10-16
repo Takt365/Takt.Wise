@@ -27,7 +27,7 @@ public class TaktProductionDispatch : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// 派工单编码
+    /// 派工单编码（前端表单选择编码规则后自动通过 TaktNumbering 派工单编码规则生成并展示，非手输；单据类型菜单：生产派工）
     /// </summary>
     [SugarColumn(ColumnName = "dispatch_code", ColumnDescription = "派工单编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string DispatchCode { get; set; } = string.Empty;

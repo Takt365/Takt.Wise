@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Logistics.Manufacturing.Sop;
 public class TaktSopGroup : TaktCompanyEntityBase
 {
     /// <summary>
-    /// SOP组编码（与员工编码同长 6）
+    /// SOP组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering SOP组编码规则生成并展示，非手输；单据类型菜单：SOP组）
     /// </summary>
     [SugarColumn(ColumnName = "sop_group_code", ColumnDescription = "SOP组编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string SopGroupCode { get; set; } = string.Empty;

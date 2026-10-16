@@ -12,7 +12,8 @@
 
 import request from '@/api/request';
 import type { TaktPagedResult } from '@/types/common.types';
-import type { EcKakunin, EcKakuninQuery, EcKakuninUpdate } from '@/types/logistics/manufacturing/engineering-change/ecKakunin.types';
+import type { EcDetail } from '@/types/logistics/manufacturing/engineering-change/ecDetail.types';
+import type { EcKakuninQuery, EcKakuninUpdate } from '@/types/logistics/manufacturing/engineering-change/ecKakunin.types';
 
 const TAKTECKAKUNINS_API_BASE = 'TaktEcKakunins';
 
@@ -20,21 +21,21 @@ const TAKTECKAKUNINS_API_BASE = 'TaktEcKakunins';
  * 获取物料确认列表（分页）
  */
 export function getEcKakuninList(queryDto: EcKakuninQuery) {
-  return request.get<TaktPagedResult<EcKakunin>>(`/${TAKTECKAKUNINS_API_BASE}/list`, { params: queryDto });
+  return request.get<TaktPagedResult<EcDetail>>(`/${TAKTECKAKUNINS_API_BASE}/list`, { params: queryDto });
 }
 
 /**
  * 获取物料确认详情
  */
 export function getEcKakuninByEcDetailId(ecDetailId: string) {
-  return request.get<EcKakunin>(`/${TAKTECKAKUNINS_API_BASE}/detail/${ecDetailId}`);
+  return request.get<EcDetail>(`/${TAKTECKAKUNINS_API_BASE}/detail/${ecDetailId}`);
 }
 
 /**
  * 更新物料确认
  */
 export function updateEcKakunin(ecDetailId: string, dto: EcKakuninUpdate) {
-  return request.put<EcKakunin>(`/${TAKTECKAKUNINS_API_BASE}/detail/${ecDetailId}`, dto);
+  return request.put<EcDetail>(`/${TAKTECKAKUNINS_API_BASE}/detail/${ecDetailId}`, dto);
 }
 
 /**

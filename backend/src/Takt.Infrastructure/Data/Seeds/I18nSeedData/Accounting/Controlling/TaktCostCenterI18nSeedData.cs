@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Accounting.Controlling
 // 文件名称：TaktCostCenterI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktCostCenter 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktCostCenterI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.costcenter._self", "zh-HK", "成本中心信息_hk", "实体名称"),
 
             // entity.costcenter.code
-            new TranslationSeedItem("entity.costcenter.code", "en-US", "成本中心编码_us", "成本中心编码（6 位，与部门编码同长；租户+公司内唯一）"),
+            new TranslationSeedItem("entity.costcenter.code", "en-US", "成本中心编码_us", "成本中心编码（6 位，与部门编码同长；租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 成本中心编码规则生成并展示，非手输；单据类型菜单：成本中心）"),
             // entity.costcenter.code
-            new TranslationSeedItem("entity.costcenter.code", "ja-JP", "成本中心编码_jp", "成本中心编码（6 位，与部门编码同长；租户+公司内唯一）"),
+            new TranslationSeedItem("entity.costcenter.code", "ja-JP", "成本中心编码_jp", "成本中心编码（6 位，与部门编码同长；租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 成本中心编码规则生成并展示，非手输；单据类型菜单：成本中心）"),
             // entity.costcenter.code
-            new TranslationSeedItem("entity.costcenter.code", "zh-CN", "成本中心编码", "成本中心编码（6 位，与部门编码同长；租户+公司内唯一）"),
+            new TranslationSeedItem("entity.costcenter.code", "zh-CN", "成本中心编码", "成本中心编码（6 位，与部门编码同长；租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 成本中心编码规则生成并展示，非手输；单据类型菜单：成本中心）"),
             // entity.costcenter.code
-            new TranslationSeedItem("entity.costcenter.code", "zh-HK", "成本中心编码_hk", "成本中心编码（6 位，与部门编码同长；租户+公司内唯一）"),
+            new TranslationSeedItem("entity.costcenter.code", "zh-HK", "成本中心编码_hk", "成本中心编码（6 位，与部门编码同长；租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 成本中心编码规则生成并展示，非手输；单据类型菜单：成本中心）"),
 
             // entity.costcenter.name
             new TranslationSeedItem("entity.costcenter.name", "en-US", "成本中心名称_us", "成本中心名称"),

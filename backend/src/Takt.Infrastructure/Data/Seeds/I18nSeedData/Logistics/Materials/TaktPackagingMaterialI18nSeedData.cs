@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Materials
 // 文件名称：TaktPackagingMaterialI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPackagingMaterial 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktPackagingMaterialI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.packagingmaterial._self", "zh-HK", "Takt包装物料信息_hk", "实体名称"),
 
             // entity.packagingmaterial.code
-            new TranslationSeedItem("entity.packagingmaterial.code", "en-US", "包装物料编码_us", "包装物料编码"),
+            new TranslationSeedItem("entity.packagingmaterial.code", "en-US", "包装物料编码_us", "包装物料编码（前端表单选择编码规则后自动通过 TaktNumbering 包装物料编码规则生成并展示，非手输；单据类型菜单：包装物料）"),
             // entity.packagingmaterial.code
-            new TranslationSeedItem("entity.packagingmaterial.code", "ja-JP", "包装物料编码_jp", "包装物料编码"),
+            new TranslationSeedItem("entity.packagingmaterial.code", "ja-JP", "包装物料编码_jp", "包装物料编码（前端表单选择编码规则后自动通过 TaktNumbering 包装物料编码规则生成并展示，非手输；单据类型菜单：包装物料）"),
             // entity.packagingmaterial.code
-            new TranslationSeedItem("entity.packagingmaterial.code", "zh-CN", "包装物料编码", "包装物料编码"),
+            new TranslationSeedItem("entity.packagingmaterial.code", "zh-CN", "包装物料编码", "包装物料编码（前端表单选择编码规则后自动通过 TaktNumbering 包装物料编码规则生成并展示，非手输；单据类型菜单：包装物料）"),
             // entity.packagingmaterial.code
-            new TranslationSeedItem("entity.packagingmaterial.code", "zh-HK", "包装物料编码_hk", "包装物料编码"),
+            new TranslationSeedItem("entity.packagingmaterial.code", "zh-HK", "包装物料编码_hk", "包装物料编码（前端表单选择编码规则后自动通过 TaktNumbering 包装物料编码规则生成并展示，非手输；单据类型菜单：包装物料）"),
 
             // entity.packagingmaterial.materialcode
             new TranslationSeedItem("entity.packagingmaterial.materialcode", "en-US", "物料编码_us", "物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）"),

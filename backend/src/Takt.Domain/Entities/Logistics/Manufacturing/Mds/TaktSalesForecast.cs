@@ -32,7 +32,7 @@ public class TaktSalesForecast : TaktApprovalEntityBase
 {
 
     /// <summary>
-    /// 销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一）
+    /// 销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 销售预测编码规则生成并展示，非手输；单据类型菜单：销售预测）
     /// </summary>
     [SugarColumn(ColumnName = "sales_plan_code", ColumnDescription = "销售预测编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string SalesForecastCode { get; set; } = string.Empty;

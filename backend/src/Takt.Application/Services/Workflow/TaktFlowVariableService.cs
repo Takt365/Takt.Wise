@@ -120,11 +120,11 @@ public class TaktFlowVariableService : TaktServiceBase, ITaktFlowVariableService
     public async Task<TaktFlowVariableDto> CreateFlowVariableAsync(TaktFlowVariableCreateDto dto)
     {
         var entity = dto.Adapt<TaktFlowVariable>();
-        var isUnique_ix_flow_variable_instance_name = await _uniqueValidator.IsUniqueAsync(
+        var isUnique_ix_flow_variable_instance_name_unique = await _uniqueValidator.IsUniqueAsync(
             _flowVariableRepository,
             x => x.InstanceId == entity.InstanceId
                 && x.VariableName == entity.VariableName);
-        if (!isUnique_ix_flow_variable_instance_name)
+        if (!isUnique_ix_flow_variable_instance_name_unique)
         {
             throw new TaktBusinessException("流程变量的InstanceId、VariableName已存在");
         }
@@ -146,12 +146,12 @@ public class TaktFlowVariableService : TaktServiceBase, ITaktFlowVariableService
             throw new TaktBusinessException("流程变量不存在");
         }
         dto.Adapt(entity);
-        var isUnique_ix_flow_variable_instance_name = await _uniqueValidator.IsUniqueAsync(
+        var isUnique_ix_flow_variable_instance_name_unique = await _uniqueValidator.IsUniqueAsync(
             _flowVariableRepository,
             x => x.InstanceId == entity.InstanceId
                 && x.VariableName == entity.VariableName,
             id);
-        if (!isUnique_ix_flow_variable_instance_name)
+        if (!isUnique_ix_flow_variable_instance_name_unique)
         {
             throw new TaktBusinessException("流程变量的InstanceId、VariableName已存在");
         }
@@ -232,11 +232,11 @@ public class TaktFlowVariableService : TaktServiceBase, ITaktFlowVariableService
                 {
                     throw new TaktBusinessException("与Excel中其他行重复（InstanceId、VariableName）");
                 }
-                var isUnique_ix_flow_variable_instance_name = await _uniqueValidator.IsUniqueAsync(
+                var isUnique_ix_flow_variable_instance_name_unique = await _uniqueValidator.IsUniqueAsync(
                     _flowVariableRepository,
                     x => x.InstanceId == entity.InstanceId
                         && x.VariableName == entity.VariableName);
-                if (!isUnique_ix_flow_variable_instance_name)
+                if (!isUnique_ix_flow_variable_instance_name_unique)
                 {
                     throw new TaktBusinessException("流程变量的InstanceId、VariableName已存在");
                 }

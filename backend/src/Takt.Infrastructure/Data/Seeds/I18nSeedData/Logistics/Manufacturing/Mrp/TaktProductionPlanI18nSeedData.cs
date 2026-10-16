@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Mrp
 // 文件名称：TaktProductionPlanI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktProductionPlan 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktProductionPlanI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.productionplan._self", "zh-HK", "Takt生产计划信息_hk", "实体名称"),
 
             // entity.productionplan.code
-            new TranslationSeedItem("entity.productionplan.code", "en-US", "生产计划编码_us", "生产计划编码（租户+公司+工厂内业务唯一）"),
+            new TranslationSeedItem("entity.productionplan.code", "en-US", "生产计划编码_us", "生产计划编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 生产计划编码规则生成并展示，非手输；单据类型菜单：生产计划）"),
             // entity.productionplan.code
-            new TranslationSeedItem("entity.productionplan.code", "ja-JP", "生产计划编码_jp", "生产计划编码（租户+公司+工厂内业务唯一）"),
+            new TranslationSeedItem("entity.productionplan.code", "ja-JP", "生产计划编码_jp", "生产计划编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 生产计划编码规则生成并展示，非手输；单据类型菜单：生产计划）"),
             // entity.productionplan.code
-            new TranslationSeedItem("entity.productionplan.code", "zh-CN", "生产计划编码", "生产计划编码（租户+公司+工厂内业务唯一）"),
+            new TranslationSeedItem("entity.productionplan.code", "zh-CN", "生产计划编码", "生产计划编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 生产计划编码规则生成并展示，非手输；单据类型菜单：生产计划）"),
             // entity.productionplan.code
-            new TranslationSeedItem("entity.productionplan.code", "zh-HK", "生产计划编码_hk", "生产计划编码（租户+公司+工厂内业务唯一）"),
+            new TranslationSeedItem("entity.productionplan.code", "zh-HK", "生产计划编码_hk", "生产计划编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 生产计划编码规则生成并展示，非手输；单据类型菜单：生产计划）"),
 
             // entity.productionplan.materialrequirementsplanningid
             new TranslationSeedItem("entity.productionplan.materialrequirementsplanningid", "en-US", "来源MRP头表ID_us", "来源物料需求计划 ID（Planning 层 MRP 上游，序列化为 string 以避免 Javascript 精度问题）"),

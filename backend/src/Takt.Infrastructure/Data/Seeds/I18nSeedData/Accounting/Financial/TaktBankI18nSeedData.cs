@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Accounting.Financial
 // 文件名称：TaktBankI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktBank 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -100,13 +100,13 @@ public class TaktBankI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.bank.countryregion", "zh-HK", "国家地区_hk", "国家地区（选项字典 sys_country_code，DictValue=ISO alpha-2）"),
 
             // entity.bank.code
-            new TranslationSeedItem("entity.bank.code", "en-US", "银行代码_us", "银行代码（；CHAR 15；与国家地区组成业务唯一键）"),
+            new TranslationSeedItem("entity.bank.code", "en-US", "银行代码_us", "银行代码（；CHAR 15；与国家地区组成业务唯一键；前端表单选择编码规则后自动通过 TaktNumbering 银行代码规则生成并展示，非手输；单据类型菜单：银行信息）"),
             // entity.bank.code
-            new TranslationSeedItem("entity.bank.code", "ja-JP", "银行代码_jp", "银行代码（；CHAR 15；与国家地区组成业务唯一键）"),
+            new TranslationSeedItem("entity.bank.code", "ja-JP", "银行代码_jp", "银行代码（；CHAR 15；与国家地区组成业务唯一键；前端表单选择编码规则后自动通过 TaktNumbering 银行代码规则生成并展示，非手输；单据类型菜单：银行信息）"),
             // entity.bank.code
-            new TranslationSeedItem("entity.bank.code", "zh-CN", "银行代码", "银行代码（；CHAR 15；与国家地区组成业务唯一键）"),
+            new TranslationSeedItem("entity.bank.code", "zh-CN", "银行代码", "银行代码（；CHAR 15；与国家地区组成业务唯一键；前端表单选择编码规则后自动通过 TaktNumbering 银行代码规则生成并展示，非手输；单据类型菜单：银行信息）"),
             // entity.bank.code
-            new TranslationSeedItem("entity.bank.code", "zh-HK", "银行代码_hk", "银行代码（；CHAR 15；与国家地区组成业务唯一键）"),
+            new TranslationSeedItem("entity.bank.code", "zh-HK", "银行代码_hk", "银行代码（；CHAR 15；与国家地区组成业务唯一键；前端表单选择编码规则后自动通过 TaktNumbering 银行代码规则生成并展示，非手输；单据类型菜单：银行信息）"),
 
             // entity.bank.name1
             new TranslationSeedItem("entity.bank.name1", "en-US", "银行名称1_us", "银行名称1"),
@@ -217,13 +217,13 @@ public class TaktBankI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.bank.pobkcurac", "zh-HK", "邮政银行往来账户_hk", "邮政银行往来账户（字典 sys_yes_no）"),
 
             // entity.bank.number
-            new TranslationSeedItem("entity.bank.number", "en-US", "银行编码_us", "银行编码（；CHAR 15）"),
+            new TranslationSeedItem("entity.bank.number", "en-US", "银行编码_us", "银行编码（；CHAR 15；前端表单选择编码规则后自动通过 TaktNumbering 银行编码规则生成并展示，非手输；单据类型菜单：银行信息）"),
             // entity.bank.number
-            new TranslationSeedItem("entity.bank.number", "ja-JP", "银行编码_jp", "银行编码（；CHAR 15）"),
+            new TranslationSeedItem("entity.bank.number", "ja-JP", "银行编码_jp", "银行编码（；CHAR 15；前端表单选择编码规则后自动通过 TaktNumbering 银行编码规则生成并展示，非手输；单据类型菜单：银行信息）"),
             // entity.bank.number
-            new TranslationSeedItem("entity.bank.number", "zh-CN", "银行编码", "银行编码（；CHAR 15）"),
+            new TranslationSeedItem("entity.bank.number", "zh-CN", "银行编码", "银行编码（；CHAR 15；前端表单选择编码规则后自动通过 TaktNumbering 银行编码规则生成并展示，非手输；单据类型菜单：银行信息）"),
             // entity.bank.number
-            new TranslationSeedItem("entity.bank.number", "zh-HK", "银行编码_hk", "银行编码（；CHAR 15）"),
+            new TranslationSeedItem("entity.bank.number", "zh-HK", "银行编码_hk", "银行编码（；CHAR 15；前端表单选择编码规则后自动通过 TaktNumbering 银行编码规则生成并展示，非手输；单据类型菜单：银行信息）"),
 
             // entity.bank.postalbank
             new TranslationSeedItem("entity.bank.postalbank", "en-US", "邮政银行_us", "邮政银行（；CHAR 16）"),

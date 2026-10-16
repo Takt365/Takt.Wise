@@ -390,7 +390,7 @@ public class TaktPurchaseOrderItemService : TaktServiceBase, ITaktPurchaseOrderI
                 || (x.MaterialCode != null && x.MaterialCode.Contains(keywords))
                 || (x.MaterialDescription != null && x.MaterialDescription.Contains(keywords))
                 || (x.MaterialSpecification != null && x.MaterialSpecification.Contains(keywords))
-                || (x.PurchaseInfoRecordCode != null && x.PurchaseInfoRecordCode.Contains(keywords))
+                || (x.PurchaseInfoCode != null && x.PurchaseInfoCode.Contains(keywords))
                 || (x.SupplierMaterialCode != null && x.SupplierMaterialCode.Contains(keywords))
                 || (x.PurchaseUnit != null && x.PurchaseUnit.Contains(keywords))
                 || (x.TaxCode != null && x.TaxCode.Contains(keywords))
@@ -462,10 +462,10 @@ public class TaktPurchaseOrderItemService : TaktServiceBase, ITaktPurchaseOrderI
             exp = exp.And(x => x.MaterialSpecification != null && x.MaterialSpecification.Contains(materialSpecification));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.PurchaseInfoRecordCode))
+        if (!string.IsNullOrWhiteSpace(queryDto?.PurchaseInfoCode))
         {
-            var purchaseInfoRecordCode = queryDto.PurchaseInfoRecordCode;
-            exp = exp.And(x => x.PurchaseInfoRecordCode != null && x.PurchaseInfoRecordCode.Contains(purchaseInfoRecordCode));
+            var purchaseInfoCode = queryDto.PurchaseInfoCode;
+            exp = exp.And(x => x.PurchaseInfoCode != null && x.PurchaseInfoCode.Contains(purchaseInfoCode));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.SupplierMaterialCode))
@@ -682,7 +682,7 @@ public class TaktPurchaseOrderItemService : TaktServiceBase, ITaktPurchaseOrderI
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.PurchaseInfoRecordCode))
+        if (!string.IsNullOrWhiteSpace(queryDto.PurchaseInfoCode))
         {
             return true;
         }

@@ -21,7 +21,7 @@ export default {
     selectPeriodRequired: '請選擇期間年月',
     selectPriceTypeRequired: '請選擇條件類型',
     selectSupplierRequired: '請選擇供應商',
-    summary: '物料×供應商行 {count} 條（每筆有效起始日一行；相鄰比較，右側為首筆對末筆）',
+    summary: '定價記錄 {count} 行（與導出條數一致；僅所選工廠；同一物料相鄰比較）',
     summaryModel: '物料×供應商行 {count} 條（機種/產品組來自 BOM；列與漲跌規則同左）',
     trendSummary: '{base} → {compare}：漲 {up} · 跌 {down} · 平 {flat}',
     trendSummaryValidFrom: '各行第 1 筆對末筆：漲 {up} · 跌 {down} · 平 {flat}',

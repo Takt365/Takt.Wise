@@ -121,11 +121,7 @@ public class TaktEcHinkanDto : TaktCompanyDtoBase
     public string? SamplingCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种（冗余：来自 TaktEcDetail.EcModelCode）
-    /// </summary>
-    public string EcModelCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
+    /// 机种编码组（单个或多个机种，分号分隔；ntext）
     /// </summary>
     public string EcModelCodeGroup { get; set; } = string.Empty;
     /// <summary>
@@ -142,7 +138,7 @@ public class TaktEcHinkanDto : TaktCompanyDtoBase
     public int IsObsolete { get; set; } = 0;
 
     /// <summary>
-    /// 设变明细列表（视图主从：执行表为主；一对多；业务键 EcCode + EcModelCode + EcRootMaterialCode）
+    /// 设变明细列表（视图主从：执行表为主；一对多；机种以编码组为准）
     /// </summary>
     public List<TaktEcDetailDto>? EcDetails { get; set; }
 
@@ -254,11 +250,7 @@ public class TaktEcHinkanQueryDto : TaktPagedQuery
     public string? SamplingCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种（冗余：来自 TaktEcDetail.EcModelCode）
-    /// </summary>
-    public string? EcModelCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
+    /// 机种编码组（单个或多个机种，分号分隔；ntext）
     /// </summary>
     public string? EcModelCodeGroup { get; set; } = string.Empty;
     /// <summary>
@@ -407,12 +399,7 @@ public class TaktEcHinkanCreateDto
     public string? SamplingCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种（冗余：来自 TaktEcDetail.EcModelCode）
-    /// </summary>
-    [Required(ErrorMessage = "机种（冗余：来自 TaktEcDetail.EcModelCode）不能为空")]
-    public string EcModelCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
+    /// 机种编码组（单个或多个机种，分号分隔；ntext）
     /// </summary>
     public string EcModelCodeGroup { get; set; } = string.Empty;
     /// <summary>
@@ -611,11 +598,7 @@ public class TaktEcHinkanTemplateDto
     public string? SamplingCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种（冗余：来自 TaktEcDetail.EcModelCode）
-    /// </summary>
-    public string? EcModelCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
+    /// 机种编码组（单个或多个机种，分号分隔；ntext）
     /// </summary>
     public string? EcModelCodeGroup { get; set; } = string.Empty;
     /// <summary>
@@ -739,11 +722,7 @@ public class TaktEcHinkanImportDto
     public string? SamplingCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种（冗余：来自 TaktEcDetail.EcModelCode）
-    /// </summary>
-    public string? EcModelCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
+    /// 机种编码组（单个或多个机种，分号分隔；ntext）
     /// </summary>
     public string? EcModelCodeGroup { get; set; } = string.Empty;
     /// <summary>
@@ -883,11 +862,7 @@ public class TaktEcHinkanExportDto
     public string? SamplingCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种（冗余：来自 TaktEcDetail.EcModelCode）
-    /// </summary>
-    public string EcModelCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
+    /// 机种编码组（单个或多个机种，分号分隔；ntext）
     /// </summary>
     public string EcModelCodeGroup { get; set; } = string.Empty;
     /// <summary>

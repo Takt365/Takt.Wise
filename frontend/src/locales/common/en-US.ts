@@ -16,8 +16,8 @@ export default {
       title: "TaktWise",
       name: "TaktWise",
       productcode: "TP-MES-PRO",
-      slogan: "Takt-driven smart manufacturing",
-      tagline: "Practical · Simple · Flexible",
+      slogan: "Keep your line in step with customer demand.",//"Takt-driven smart manufacturing",
+      tagline: "Calculate Takt · Check Balance · Adjust Line",//"Practical · Simple · Flexible",
     },
     api: {
       connect: {

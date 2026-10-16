@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Logistics.Maintenance;
 public class TaktMaintenanceGroup : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 设备维护组编码（与员工编码同长 6）
+    /// 设备维护组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 设备维护组编码规则生成并展示，非手输；单据类型菜单：设备维护组）
     /// </summary>
     [SugarColumn(ColumnName = "maintenance_group_code", ColumnDescription = "设备维护组编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string MaintenanceGroupCode { get; set; } = string.Empty;

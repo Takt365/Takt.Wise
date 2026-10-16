@@ -237,11 +237,10 @@
       </div>
       <div v-show="isFieldVisible('taxCode')">
       <a-form-item :label="pi.queryLabel('taxCode')">
-        <a-input
+        <TaktSelect
           v-model:value="advancedQueryForm.taxCode"
-          :placeholder="pi.queryPh('taxCode', 'required')"
-          show-count
-          :maxlength="2"
+          api-url="TaktTaxCodes/options"
+          :placeholder="pi.queryPh('taxCode', 'select')"
           allow-clear
         />
       </a-form-item>

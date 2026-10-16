@@ -91,7 +91,7 @@ public static class TaktEcImplementationPathHelper
                 ? TaktEcImplementationStatusConstants.FullyCompleted
                 : TaktEcImplementationStatusConstants.OfficiallyCompleted;
         }
-        else if (anyProgress || currentDept != null)
+        else if (anyProgress)
         {
             status = TaktEcImplementationStatusConstants.InProgress;
         }

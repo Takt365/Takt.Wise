@@ -119,7 +119,7 @@
       @ok="handleFormSubmit"
       @cancel="handleFormCancel"
     >
-      <MaterialMovingConditionRecordForm
+      <MaterialMovingConditionForm
         :key="formData?.materialMovingPriceId ?? 'create'"
         ref="formRef"
         :form-data="formData"
@@ -358,7 +358,7 @@ import { CreateActionColumn } from '@/components/business/TaktActionColumn/index
 import { useI18n } from 'vue-i18n'
 import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
 import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
-import MaterialMovingConditionRecordForm from './components/MaterialMovingConditionRecordForm.vue'
+import MaterialMovingConditionForm from './components/MaterialMovingConditionForm.vue'
 import { getMaterialMovingPriceList, getMaterialMovingPriceById, createMaterialMovingPrice, updateMaterialMovingPrice, deleteMaterialMovingPriceById, deleteMaterialMovingPriceBatch, getMaterialMovingPriceTemplate, importMaterialMovingPrice, exportMaterialMovingPrice } from '@/api/logistics/materials/materialMovingPrice.api'
 import type { MaterialMovingPrice, MaterialMovingPriceQuery } from '@/types/logistics/materials/materialMovingPrice.types'
 import { useDictDataStore } from '@/stores/foundation/useDictDataStore'

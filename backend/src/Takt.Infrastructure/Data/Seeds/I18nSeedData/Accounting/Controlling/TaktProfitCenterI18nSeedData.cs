@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Accounting.Controlling
 // 文件名称：TaktProfitCenterI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktProfitCenter 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktProfitCenterI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.profitcenter._self", "zh-HK", "利润中心信息_hk", "实体名称"),
 
             // entity.profitcenter.code
-            new TranslationSeedItem("entity.profitcenter.code", "en-US", "利润中心编码_us", "利润中心编码（4位，租户+公司内唯一）"),
+            new TranslationSeedItem("entity.profitcenter.code", "en-US", "利润中心编码_us", "利润中心编码（4位，租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 利润中心编码规则生成并展示，非手输；单据类型菜单：利润中心）"),
             // entity.profitcenter.code
-            new TranslationSeedItem("entity.profitcenter.code", "ja-JP", "利润中心编码_jp", "利润中心编码（4位，租户+公司内唯一）"),
+            new TranslationSeedItem("entity.profitcenter.code", "ja-JP", "利润中心编码_jp", "利润中心编码（4位，租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 利润中心编码规则生成并展示，非手输；单据类型菜单：利润中心）"),
             // entity.profitcenter.code
-            new TranslationSeedItem("entity.profitcenter.code", "zh-CN", "利润中心编码", "利润中心编码（4位，租户+公司内唯一）"),
+            new TranslationSeedItem("entity.profitcenter.code", "zh-CN", "利润中心编码", "利润中心编码（4位，租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 利润中心编码规则生成并展示，非手输；单据类型菜单：利润中心）"),
             // entity.profitcenter.code
-            new TranslationSeedItem("entity.profitcenter.code", "zh-HK", "利润中心编码_hk", "利润中心编码（4位，租户+公司内唯一）"),
+            new TranslationSeedItem("entity.profitcenter.code", "zh-HK", "利润中心编码_hk", "利润中心编码（4位，租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 利润中心编码规则生成并展示，非手输；单据类型菜单：利润中心）"),
 
             // entity.profitcenter.name
             new TranslationSeedItem("entity.profitcenter.name", "en-US", "利润中心名称_us", "利润中心名称"),

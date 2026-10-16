@@ -127,6 +127,26 @@ public class TaktPurchaseActualTrendsController : TaktControllerBase
     }
 
     /// <summary>
+    /// 采购发票金额统计（数据看板近三月；按过帐日期）
+    /// </summary>
+    /// <param name="queryDto">查询 DTO</param>
+    /// <returns>采购发票统计</returns>
+    [TaktPermission("logistics:procurement:purchase:actual:trend:list", "采购实绩发票统计")]
+    [HttpGet("invoice-stat")]
+    public async Task<IActionResult> GetPurchaseActualTrendInvoiceStatAsync([FromQuery] TaktProcurementStatQueryDto queryDto)
+    {
+        try
+        {
+            var result = await _purchaseActualTrendService.GetPurchaseActualTrendInvoiceStatAsync(queryDto);
+            return Success(result, "查询成功");
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
     /// 清单导出：采购实绩推移
     /// </summary>
     /// <param name="query">查询条件</param>
@@ -144,7 +164,7 @@ public class TaktPurchaseActualTrendsController : TaktControllerBase
         {
             var (resultFileName, fileContent) = await _purchaseActualTrendService.ExportPurchaseActualTrendAnalysisAsync(
                 query, sheetName, exportName);
-            return File(fileContent, TaktExcelHelper.ExcelContentType, resultFileName);
+            return File(fileContent, TaktExcelHelper.GetExportContentType(resultFileName), resultFileName);
         }
         catch (Exception ex)
         {

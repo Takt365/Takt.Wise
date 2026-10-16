@@ -29,7 +29,7 @@ public class TaktPurchaseOrder : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// 采购订单编码（唯一索引）
+    /// 采购订单编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 采购订单编码规则生成并展示，非手输；单据类型菜单：采购订单）
     /// </summary>
     [SugarColumn(ColumnName = "purchase_order_code", ColumnDescription = "采购订单编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string PurchaseOrderCode { get; set; } = string.Empty;
@@ -120,12 +120,12 @@ public class TaktPurchaseOrder : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "exchange_rate", ColumnDescription = "汇率", ColumnDataType = "decimal", Length = 18, DecimalDigits = 5, IsNullable = false, DefaultValue = "1.00000")]
     public decimal ExchangeRate { get; set; } = 1.00000m;
     /// <summary>
-    /// 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     [SugarColumn(ColumnName = "tax_code", ColumnDescription = "税码", ColumnDataType = "nvarchar", Length = 4, IsNullable = true)]
     public string? TaxCode { get; set; }
     /// <summary>
-    /// 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+    /// 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
     /// </summary>
     [SugarColumn(ColumnName = "tax_rate", ColumnDescription = "税率", ColumnDataType = "int", IsNullable = false, DefaultValue = "13")]
     public int TaxRate { get; set; } = 13;

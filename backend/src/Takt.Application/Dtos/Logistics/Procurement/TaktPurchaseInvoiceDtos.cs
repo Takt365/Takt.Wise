@@ -126,7 +126,7 @@ public class TaktPurchaseInvoiceDto : TaktCompanyDtoBase
     public string? ReversalFiscalYear { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税码
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -299,7 +299,7 @@ public class TaktPurchaseInvoiceQueryDto : TaktPagedQuery
     public string? ReversalFiscalYear { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税码
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -394,10 +394,15 @@ public class TaktPurchaseInvoiceCreateDto
     public string PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 发票凭证编号
+    /// 发票凭证编号（前端表单选择编码规则后自动通过 TaktNumbering 发票凭证编号规则生成并展示，非手输；单据类型菜单：采购发票）
     /// </summary>
     [Required(ErrorMessage = "发票凭证编号不能为空")]
     public string PurchaseInvoiceCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 编码规则编码（新增时选择采购发票编码规则后取号；对应 TaktNumbering.RuleCode；不落库）
+    /// </summary>
+    public string? NumberingRuleCode { get; set; }
 
     /// <summary>
     /// 会计年度
@@ -488,7 +493,7 @@ public class TaktPurchaseInvoiceCreateDto
     public string? ReversalFiscalYear { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税码
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -684,7 +689,7 @@ public class TaktPurchaseInvoiceTemplateDto
     public string? ReversalFiscalYear { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税码
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -851,7 +856,7 @@ public class TaktPurchaseInvoiceImportDto
     public string? ReversalFiscalYear { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税码
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
@@ -1024,7 +1029,7 @@ public class TaktPurchaseInvoiceExportDto
     public string? ReversalFiscalYear { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税码
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 

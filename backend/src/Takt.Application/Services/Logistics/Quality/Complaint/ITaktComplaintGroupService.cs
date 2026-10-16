@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Quality.Complaint
 // 文件名称：ITaktComplaintGroupService.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-12
 // 创建人：Takt365(Cursor AI)
 // 功能描述：客诉组主数据应用服务接口
 // 

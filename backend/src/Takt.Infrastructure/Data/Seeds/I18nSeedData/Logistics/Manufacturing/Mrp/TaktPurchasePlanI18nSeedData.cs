@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Mrp
 // 文件名称：TaktPurchasePlanI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPurchasePlan 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktPurchasePlanI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.purchaseplan._self", "zh-HK", "Takt采购计划信息_hk", "实体名称"),
 
             // entity.purchaseplan.code
-            new TranslationSeedItem("entity.purchaseplan.code", "en-US", "采购计划编码_us", "采购计划编码（租户+公司+工厂内业务唯一）"),
+            new TranslationSeedItem("entity.purchaseplan.code", "en-US", "采购计划编码_us", "采购计划编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 采购计划编码规则生成并展示，非手输；单据类型菜单：采购计划）"),
             // entity.purchaseplan.code
-            new TranslationSeedItem("entity.purchaseplan.code", "ja-JP", "采购计划编码_jp", "采购计划编码（租户+公司+工厂内业务唯一）"),
+            new TranslationSeedItem("entity.purchaseplan.code", "ja-JP", "采购计划编码_jp", "采购计划编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 采购计划编码规则生成并展示，非手输；单据类型菜单：采购计划）"),
             // entity.purchaseplan.code
-            new TranslationSeedItem("entity.purchaseplan.code", "zh-CN", "采购计划编码", "采购计划编码（租户+公司+工厂内业务唯一）"),
+            new TranslationSeedItem("entity.purchaseplan.code", "zh-CN", "采购计划编码", "采购计划编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 采购计划编码规则生成并展示，非手输；单据类型菜单：采购计划）"),
             // entity.purchaseplan.code
-            new TranslationSeedItem("entity.purchaseplan.code", "zh-HK", "采购计划编码_hk", "采购计划编码（租户+公司+工厂内业务唯一）"),
+            new TranslationSeedItem("entity.purchaseplan.code", "zh-HK", "采购计划编码_hk", "采购计划编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 采购计划编码规则生成并展示，非手输；单据类型菜单：采购计划）"),
 
             // entity.purchaseplan.materialrequirementsplanningid
             new TranslationSeedItem("entity.purchaseplan.materialrequirementsplanningid", "en-US", "来源MRP头表ID_us", "来源物料需求计划 ID（Planning 层 MRP 上游，序列化为 string 以避免 Javascript 精度问题）"),

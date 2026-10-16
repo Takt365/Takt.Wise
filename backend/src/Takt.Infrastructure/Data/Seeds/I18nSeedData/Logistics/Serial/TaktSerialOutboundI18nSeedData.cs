@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Serial
 // 文件名称：TaktSerialOutboundI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSerialOutbound 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktSerialOutboundI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.serialoutbound._self", "zh-HK", "序列号出库主表信息_hk", "实体名称"),
 
             // entity.serialoutbound.outboundcode
-            new TranslationSeedItem("entity.serialoutbound.outboundcode", "en-US", "出库单号_us", "出库单号（租户+公司+工厂内唯一）"),
+            new TranslationSeedItem("entity.serialoutbound.outboundcode", "en-US", "出库单号_us", "出库单号（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 出库单号规则生成并展示，非手输；单据类型菜单：序列号出库）"),
             // entity.serialoutbound.outboundcode
-            new TranslationSeedItem("entity.serialoutbound.outboundcode", "ja-JP", "出库单号_jp", "出库单号（租户+公司+工厂内唯一）"),
+            new TranslationSeedItem("entity.serialoutbound.outboundcode", "ja-JP", "出库单号_jp", "出库单号（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 出库单号规则生成并展示，非手输；单据类型菜单：序列号出库）"),
             // entity.serialoutbound.outboundcode
-            new TranslationSeedItem("entity.serialoutbound.outboundcode", "zh-CN", "出库单号", "出库单号（租户+公司+工厂内唯一）"),
+            new TranslationSeedItem("entity.serialoutbound.outboundcode", "zh-CN", "出库单号", "出库单号（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 出库单号规则生成并展示，非手输；单据类型菜单：序列号出库）"),
             // entity.serialoutbound.outboundcode
-            new TranslationSeedItem("entity.serialoutbound.outboundcode", "zh-HK", "出库单号_hk", "出库单号（租户+公司+工厂内唯一）"),
+            new TranslationSeedItem("entity.serialoutbound.outboundcode", "zh-HK", "出库单号_hk", "出库单号（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 出库单号规则生成并展示，非手输；单据类型菜单：序列号出库）"),
 
             // entity.serialoutbound.shippinginvoicecode
             new TranslationSeedItem("entity.serialoutbound.shippinginvoicecode", "en-US", "发货单号_us", "发货单号"),

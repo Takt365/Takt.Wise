@@ -330,7 +330,7 @@ public abstract class TaktEcDeptViewServiceBase : TaktServiceBase
                 TaktEcDeptCodes.Iqc => exp.And(x => SqlFunc.Subqueryable<TaktEcUkeken>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
                 TaktEcDeptCodes.Mc => exp.And(x => SqlFunc.Subqueryable<TaktEcBukan>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
                 TaktEcDeptCodes.Pcba => exp.And(x =>
-                    SqlFunc.Subqueryable<TaktEcSmt>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()
+                    SqlFunc.Subqueryable<TaktEcEmtl>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()
                     || SqlFunc.Subqueryable<TaktEcSeizounika>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
                 TaktEcDeptCodes.Assy => exp.And(x => SqlFunc.Subqueryable<TaktEcSeizouikka>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
                 TaktEcDeptCodes.Qa => exp.And(x => SqlFunc.Subqueryable<TaktEcHinkan>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),

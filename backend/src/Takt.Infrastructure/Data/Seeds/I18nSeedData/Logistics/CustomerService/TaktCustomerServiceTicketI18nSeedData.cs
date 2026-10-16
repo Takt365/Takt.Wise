@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.CustomerService
 // 文件名称：TaktCustomerServiceTicketI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktCustomerServiceTicket 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktCustomerServiceTicketI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.customerserviceticket._self", "zh-HK", "服务工单信息_hk", "实体名称"),
 
             // entity.customerserviceticket.serviceticketcode
-            new TranslationSeedItem("entity.customerserviceticket.serviceticketcode", "en-US", "服务工单编码_us", "服务工单编码（组合唯一索引）"),
+            new TranslationSeedItem("entity.customerserviceticket.serviceticketcode", "en-US", "服务工单编码_us", "服务工单编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 服务工单编码规则生成并展示，非手输；单据类型菜单：服务工单）"),
             // entity.customerserviceticket.serviceticketcode
-            new TranslationSeedItem("entity.customerserviceticket.serviceticketcode", "ja-JP", "服务工单编码_jp", "服务工单编码（组合唯一索引）"),
+            new TranslationSeedItem("entity.customerserviceticket.serviceticketcode", "ja-JP", "服务工单编码_jp", "服务工单编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 服务工单编码规则生成并展示，非手输；单据类型菜单：服务工单）"),
             // entity.customerserviceticket.serviceticketcode
-            new TranslationSeedItem("entity.customerserviceticket.serviceticketcode", "zh-CN", "服务工单编码", "服务工单编码（组合唯一索引）"),
+            new TranslationSeedItem("entity.customerserviceticket.serviceticketcode", "zh-CN", "服务工单编码", "服务工单编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 服务工单编码规则生成并展示，非手输；单据类型菜单：服务工单）"),
             // entity.customerserviceticket.serviceticketcode
-            new TranslationSeedItem("entity.customerserviceticket.serviceticketcode", "zh-HK", "服务工单编码_hk", "服务工单编码（组合唯一索引）"),
+            new TranslationSeedItem("entity.customerserviceticket.serviceticketcode", "zh-HK", "服务工单编码_hk", "服务工单编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 服务工单编码规则生成并展示，非手输；单据类型菜单：服务工单）"),
 
             // entity.customerserviceticket.clientid
             new TranslationSeedItem("entity.customerserviceticket.clientid", "en-US", "客户端ID_us", "客户端ID（关联 TaktClient，序列化为string以避免Javascript精度问题）"),

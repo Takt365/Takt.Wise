@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Logistics.Manufacturing.Aps;
 public class TaktApsGroup : TaktCompanyEntityBase
 {
     /// <summary>
-    /// APS组编码（与员工编码同长 6）
+    /// APS组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering APS组编码规则生成并展示，非手输；单据类型菜单：APS组）
     /// </summary>
     [SugarColumn(ColumnName = "aps_group_code", ColumnDescription = "APS组编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string ApsGroupCode { get; set; } = string.Empty;

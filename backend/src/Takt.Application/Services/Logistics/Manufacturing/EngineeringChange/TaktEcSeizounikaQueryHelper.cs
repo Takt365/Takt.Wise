@@ -48,9 +48,21 @@ internal static class TaktEcSeizounikaQueryHelper
     }
 
     /// <summary>
-    /// 制二执行列表可见：本表自去重（同设变+机种+根物料编码保留最大 EcDetailId；表内已仅非 F）
+    /// 制二执行列表可见：同一设变单号、机种编码组、根物料编码组只留 Id 最大的一行。机种只看编码组。
     /// </summary>
     /// <returns>执行表过滤表达式</returns>
-    internal static Expression<Func<TaktEcSeizounika, bool>> VisibleExecExpression() =>
-        TaktEcExecModelRootMaterialDedup.VisibleExecExpression<TaktEcSeizounika>();
+    internal static Expression<Func<TaktEcSeizounika, bool>> VisibleExecExpression()
+    {
+        return x => !SqlFunc.Subqueryable<TaktEcSeizounika>()
+            .Where(s =>
+                s.TenantCode == x.TenantCode
+                && s.CompanyCode == x.CompanyCode
+                && s.IsDeleted == 0
+                && s.IsObsolete == 0
+                && s.EcCode == x.EcCode
+                && SqlFunc.ToString(s.EcModelCodeGroup) == SqlFunc.ToString(x.EcModelCodeGroup)
+                && SqlFunc.ToString(s.EcRootMaterialCodeGroup) == SqlFunc.ToString(x.EcRootMaterialCodeGroup)
+                && s.Id > x.Id)
+            .Any();
+    }
 }

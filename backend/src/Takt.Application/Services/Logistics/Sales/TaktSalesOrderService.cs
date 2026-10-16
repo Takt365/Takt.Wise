@@ -33,6 +33,7 @@ public class TaktSalesOrderService : TaktServiceBase, ITaktSalesOrderService
     private readonly ITaktCompanyRepository<TaktSalesOrderItem> _salesOrderItemRepository;
     private readonly ITaktLineNumberGenerator _lineNumberGenerator;
     private readonly ITaktUniqueValidator _uniqueValidator;
+    private readonly ITaktNumberingGenerator _numberingGenerator;
 
     /// <summary>
     /// 构造函数
@@ -41,6 +42,7 @@ public class TaktSalesOrderService : TaktServiceBase, ITaktSalesOrderService
     /// <param name="salesOrderItemRepository">SalesOrderItem仓储</param>
     /// <param name="lineNumberGenerator">明细行号生成器</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
+    /// <param name="numberingGenerator">业务编码生成器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktSalesOrderService(
@@ -48,6 +50,7 @@ public class TaktSalesOrderService : TaktServiceBase, ITaktSalesOrderService
         ITaktCompanyRepository<TaktSalesOrderItem> salesOrderItemRepository,
         ITaktLineNumberGenerator lineNumberGenerator,
         ITaktUniqueValidator uniqueValidator,
+        ITaktNumberingGenerator numberingGenerator,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
@@ -56,6 +59,7 @@ public class TaktSalesOrderService : TaktServiceBase, ITaktSalesOrderService
         _salesOrderItemRepository = salesOrderItemRepository;
         _lineNumberGenerator = lineNumberGenerator;
         _uniqueValidator = uniqueValidator;
+        _numberingGenerator = numberingGenerator;
     }
 
     /// <summary>
@@ -129,6 +133,19 @@ public class TaktSalesOrderService : TaktServiceBase, ITaktSalesOrderService
     public async Task<TaktSalesOrderDto> CreateSalesOrderAsync(TaktSalesOrderCreateDto dto)
     {
         var entity = dto.Adapt<TaktSalesOrder>();
+        if (!string.IsNullOrWhiteSpace(dto.NumberingRuleCode))
+        {
+            var generated = await _numberingGenerator.GenerateNextAsync(dto.NumberingRuleCode.Trim());
+            if (string.IsNullOrWhiteSpace(generated.BusinessCode))
+            {
+                throw new TaktBusinessException("业务编码生成失败");
+            }
+            entity.SalesOrderCode = generated.BusinessCode;
+        }
+        else if (string.IsNullOrWhiteSpace(entity.SalesOrderCode))
+        {
+            throw new TaktBusinessException("销售订单编码不能为空");
+        }
         var isUnique_ix_takt_logistics_sales_order_so_unique = await _uniqueValidator.IsUniqueAsync(
             _salesOrderRepository,
             x => x.PlantCode == entity.PlantCode

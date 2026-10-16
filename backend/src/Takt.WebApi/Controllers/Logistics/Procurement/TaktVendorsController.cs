@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi.Controllers.Logistics.Procurement
 // 文件名称：TaktVendorsController.cs
-// 创建时间：2026-08-23
+// 创建时间：2026-10-14
 // 创建人：Takt365(Cursor AI)
 // 功能描述：经销商信息控制器
 // 
@@ -62,7 +62,7 @@ public class TaktVendorsController : TaktControllerBase
     /// <param name="id">经销商信息ID</param>
     /// <returns>经销商信息DTO</returns>
     [TaktPermission("logistics:procurement:vendor:query", "经销商信息详情")]
-    [HttpGet("{id}")]
+    [HttpGet("{id:long}")]
     public async Task<IActionResult> GetVendorByIdAsync(long id)
     {
         try
@@ -83,6 +83,8 @@ public class TaktVendorsController : TaktControllerBase
     /// <summary>
     /// 获取经销商信息选项列表
     /// </summary>
+    /// <param name="plantCode">工厂代码（可选，用于按工厂过滤）</param>
+    /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
     /// <returns>下拉选项</returns>
     [TaktPermission("logistics:procurement:vendor:query", "经销商信息选项")]
     [HttpGet("options")]

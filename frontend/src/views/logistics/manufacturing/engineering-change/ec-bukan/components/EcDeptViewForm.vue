@@ -31,8 +31,9 @@
           <TaktSelect v-model:value="formState.discontinuedStatus" dict-type="logistics_materials_material_discontinued_status" disabled />
         </a-form-item>
       </a-col>
-      <a-col :span="12"><a-form-item :label="pi.label('ecModelCode')"><a-input v-model:value="formState.ecModelCode" disabled /></a-form-item></a-col>
+      <a-col :span="24"><a-form-item :label="pi.label('ecModelCodeGroup')"><a-textarea v-model:value="formState.ecModelCodeGroup" :rows="2" disabled /></a-form-item></a-col>
       <a-col :span="24"><a-form-item :label="pi.label('ecRootMaterialCodeGroup')"><a-textarea v-model:value="formState.ecRootMaterialCodeGroup" :rows="2" disabled /></a-form-item></a-col>
+      <a-col v-if="showRootMaterialDescription" :span="12"><a-form-item :label="pi.label('ecRootMaterialDescription')"><a-input v-model:value="formState.ecRootMaterialDescription" disabled /></a-form-item></a-col>
       <a-col :span="12"><a-form-item :label="pi.label('ecNewMaterialCode')"><a-input v-model:value="formState.ecNewMaterialCode" disabled /></a-form-item></a-col>
       <a-col :span="12"><a-form-item :label="pi.label('ecNewMaterialDescription')"><a-input v-model:value="formState.ecNewMaterialDescription" disabled /></a-form-item></a-col>
       <a-col :span="12">
@@ -71,6 +72,11 @@
           <TaktSelect v-model:value="formState.ecScope" dict-type="logistics_manufacturing_ec_scope_category" disabled />
         </a-form-item>
       </a-col>
+      <a-col :span="12">
+        <a-form-item :label="pi.label('ecDeptScope')">
+          <TaktSelect v-model:value="formState.ecDeptScope" dict-type="logistics_manufacturing_ec_dept_scope_category" disabled />
+        </a-form-item>
+      </a-col>
       <a-col :span="12"><a-form-item :label="pi.label('ecDetailId')"><a-input v-model:value="formState.ecDetailId" disabled /></a-form-item></a-col>
       <a-col :span="12">
         <a-form-item :label="pi.label('isObsolete')">
@@ -85,6 +91,7 @@
 
 <script setup lang="ts">
 import type { EcBukan, EcBukanUpdate } from '@/types/logistics/manufacturing/engineering-change/ecBukan.types'
+import { taktShowEcRootMaterialDescription } from '@/constants/logistics/ecScope.constants'
 import { useEcDeptViewI18n } from '../../composables/useEcDeptViewI18n'
 import { useEcDeptViewFormRules } from '../../composables/useEcDeptViewFormRules'
 
@@ -101,8 +108,9 @@ const formState = reactive<{
   plantCode?: string;
   ecCode?: string;
   lineNumber?: number;
-  ecModelCode?: string;
+  ecModelCodeGroup?: string;
   ecRootMaterialCodeGroup?: string;
+  ecRootMaterialDescription?: string;
   discontinuedStatus?: string;
   ecNewMaterialCode?: string;
   ecNewMaterialDescription?: string;
@@ -118,9 +126,13 @@ const formState = reactive<{
   deptCode?: string;
   deptName?: string;
   ecScope?: number;
+  ecDeptScope?: number;
   isObsolete: number;
   remark?: string;
 }>({ isImplemented: 1, execContent: '', discontinuedStatus: 'Z0', isObsolete: 0 });
+
+/** 仅全仕向且按成品时显示根物料描述 */
+const showRootMaterialDescription = computed(() => taktShowEcRootMaterialDescription(formState.ecScope, formState.ecDeptScope))
 
 watch(() => props.formData, (val) => {
   if (!val) { resetFields(); return; }
@@ -132,8 +144,9 @@ watch(() => props.formData, (val) => {
     plantCode: val.plantCode,
     ecCode: val.ecCode,
     lineNumber: val.lineNumber,
-    ecModelCode: val.ecModelCode,
+    ecModelCodeGroup: val.ecModelCodeGroup,
     ecRootMaterialCodeGroup: val.ecRootMaterialCodeGroup,
+    ecRootMaterialDescription: val.ecRootMaterialDescription,
     discontinuedStatus: val.discontinuedStatus ?? 'Z0',
     ecNewMaterialCode: val.ecNewMaterialCode,
     ecNewMaterialDescription: val.ecNewMaterialDescription,
@@ -149,6 +162,7 @@ watch(() => props.formData, (val) => {
     deptCode: val.deptCode,
     deptName: val.deptName,
     ecScope: val.ecScope,
+    ecDeptScope: val.ecDeptScope,
     isObsolete: val.isObsolete ?? 0,
     remark: val.remark,
   });
@@ -156,14 +170,14 @@ watch(() => props.formData, (val) => {
 
 async function validate() { await formRef.value?.validate(); }
 function getValues(): EcBukanUpdate {
-  // 冗余字段（ecCode/deptCode/ecModelCode 等）界面只读但须随提交带回，否则后端 [Required]/Adapt 会当成空
+  // 冗余字段（ecCode/deptCode/ecModelCodeGroup 等）界面只读但须随提交带回，否则后端 [Required]/Adapt 会当成空
   return { ...formState } as EcBukanUpdate;
 }
 function resetFields() {
   Object.assign(formState, {
     ecBukanId: '',
     tenantCode: '', companyCode: '', cultureCode: '', plantCode: '',
-    ecCode: '', lineNumber: undefined, ecModelCode: '', ecRootMaterialCodeGroup: '',
+    ecCode: '', lineNumber: undefined, ecModelCodeGroup: '', ecRootMaterialCodeGroup: '', ecRootMaterialDescription: '',
     discontinuedStatus: 'Z0',
     ecNewMaterialCode: '', ecNewMaterialDescription: '',
     ecNewPurchaseType: undefined, ecNewWarehouse: undefined,
@@ -171,7 +185,7 @@ function resetFields() {
     scheduledDate: undefined, scheduledBatch: undefined,
     outboundDate: undefined, outboundBatch: undefined,
     ecDetailId: '', deptCode: '', deptName: '',
-    ecScope: undefined, isObsolete: 0, remark: undefined,
+    ecScope: undefined, ecDeptScope: undefined, isObsolete: 0, remark: undefined,
   });
 }
 defineExpose({ validate, getValues, resetFields });

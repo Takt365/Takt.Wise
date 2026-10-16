@@ -26,7 +26,7 @@ namespace Takt.Domain.Entities.HumanResource.Organization;
 public class TaktDept : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 部门编码（唯一索引：租户+公司内唯一，见 ix_dept_code_unique；与成本中心编码同长 6）
+    /// 部门编码（唯一索引：租户+公司内唯一，见 ix_dept_code_unique；与成本中心编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 部门编码规则生成并展示，非手输；单据类型菜单：部门管理）
     /// </summary>
     [SugarColumn(ColumnName = "dept_code", ColumnDescription = "部门编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string DeptCode { get; set; } = string.Empty;

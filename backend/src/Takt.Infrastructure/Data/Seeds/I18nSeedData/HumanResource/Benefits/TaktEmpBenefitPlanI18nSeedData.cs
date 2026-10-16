@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.HumanResource.Benefits
 // 文件名称：TaktEmpBenefitPlanI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEmpBenefitPlan 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -118,13 +118,13 @@ public class TaktEmpBenefitPlanI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.empbenefitplan.benefititemid", "zh-HK", "福利项目ID_hk", "福利项目（选项 TaktBenefitItems/options；DictValue=Id）"),
 
             // entity.empbenefitplan.plancode
-            new TranslationSeedItem("entity.empbenefitplan.plancode", "en-US", "方案编码_us", "方案编码"),
+            new TranslationSeedItem("entity.empbenefitplan.plancode", "en-US", "方案编码_us", "方案编码（前端表单选择编码规则后自动通过 TaktNumbering 方案编码规则生成并展示，非手输；单据类型菜单：员工福利方案）"),
             // entity.empbenefitplan.plancode
-            new TranslationSeedItem("entity.empbenefitplan.plancode", "ja-JP", "方案编码_jp", "方案编码"),
+            new TranslationSeedItem("entity.empbenefitplan.plancode", "ja-JP", "方案编码_jp", "方案编码（前端表单选择编码规则后自动通过 TaktNumbering 方案编码规则生成并展示，非手输；单据类型菜单：员工福利方案）"),
             // entity.empbenefitplan.plancode
-            new TranslationSeedItem("entity.empbenefitplan.plancode", "zh-CN", "方案编码", "方案编码"),
+            new TranslationSeedItem("entity.empbenefitplan.plancode", "zh-CN", "方案编码", "方案编码（前端表单选择编码规则后自动通过 TaktNumbering 方案编码规则生成并展示，非手输；单据类型菜单：员工福利方案）"),
             // entity.empbenefitplan.plancode
-            new TranslationSeedItem("entity.empbenefitplan.plancode", "zh-HK", "方案编码_hk", "方案编码"),
+            new TranslationSeedItem("entity.empbenefitplan.plancode", "zh-HK", "方案编码_hk", "方案编码（前端表单选择编码规则后自动通过 TaktNumbering 方案编码规则生成并展示，非手输；单据类型菜单：员工福利方案）"),
 
             // entity.empbenefitplan.enrollmentdate
             new TranslationSeedItem("entity.empbenefitplan.enrollmentdate", "en-US", "参与日期_us", "参保/参与日期"),

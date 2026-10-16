@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Accounting.Financial;
 public class TaktCompany : TaktTenantEntityBase
 {
     /// <summary>
-    /// 公司代码（唯一索引：租户内唯一，见 ix_company_code_unique）
+    /// 公司代码（唯一索引：租户内唯一，见 ix_company_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 公司代码规则生成并展示，非手输；单据类型菜单：公司信息）
     /// </summary>
     [SugarColumn(ColumnName = "company_code", ColumnDescription = "公司代码", ColumnDataType = "varchar", Length = 4, IsNullable = false)]
     public string CompanyCode { get; set; } = string.Empty;
@@ -213,12 +213,12 @@ public class TaktCompany : TaktTenantEntityBase
     [SugarColumn(ColumnName = "chart_of_accounts", ColumnDescription = "帐目表", ColumnDataType = "varchar", Length = 4, IsNullable = false, DefaultValue = "")]
     public string ChartOfAccounts { get; set; } = string.Empty;
     /// <summary>
-    /// 进项税码（字典 accounting_financial_tax_code）
+    /// 进项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     [SugarColumn(ColumnName = "input_tax_code", ColumnDescription = "进项税码", ColumnDataType = "varchar", Length = 2, IsNullable = false, DefaultValue = "")]
     public string InputTaxCode { get; set; } = string.Empty;
     /// <summary>
-    /// 销项税码（字典 accounting_financial_tax_code）
+    /// 销项税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     [SugarColumn(ColumnName = "output_tax_code", ColumnDescription = "销项税码", ColumnDataType = "varchar", Length = 2, IsNullable = false, DefaultValue = "")]
     public string OutputTaxCode { get; set; } = string.Empty;

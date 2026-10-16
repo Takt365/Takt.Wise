@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Identity
 // 文件名称：TaktMenuI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktMenu 实体字段国际化种子（已对齐前端 locales：src/locales/identity/menu）
 // 
@@ -91,13 +91,13 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.menu._self", "zh-HK", "菜单信息_hk", "实体名称"),
 
             // entity.menu.code
-            new TranslationSeedItem("entity.menu.code", "en-US", "菜单编码_us", "菜单编码（唯一索引：租户内唯一，见 ix_menu_code_unique）"),
+            new TranslationSeedItem("entity.menu.code", "en-US", "菜单编码_us", "菜单编码（唯一索引：租户内唯一，见 ix_menu_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 菜单编码规则生成并展示，非手输；单据类型菜单：菜单管理）"),
             // entity.menu.code
-            new TranslationSeedItem("entity.menu.code", "ja-JP", "菜单编码_jp", "菜单编码（唯一索引：租户内唯一，见 ix_menu_code_unique）"),
+            new TranslationSeedItem("entity.menu.code", "ja-JP", "菜单编码_jp", "菜单编码（唯一索引：租户内唯一，见 ix_menu_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 菜单编码规则生成并展示，非手输；单据类型菜单：菜单管理）"),
             // entity.menu.code
-            new TranslationSeedItem("entity.menu.code", "zh-CN", "菜单编码", "菜单编码（唯一索引：租户内唯一，见 ix_menu_code_unique）"),
+            new TranslationSeedItem("entity.menu.code", "zh-CN", "菜单编码", "菜单编码（唯一索引：租户内唯一，见 ix_menu_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 菜单编码规则生成并展示，非手输；单据类型菜单：菜单管理）"),
             // entity.menu.code
-            new TranslationSeedItem("entity.menu.code", "zh-HK", "菜单编码_hk", "菜单编码（唯一索引：租户内唯一，见 ix_menu_code_unique）"),
+            new TranslationSeedItem("entity.menu.code", "zh-HK", "菜单编码_hk", "菜单编码（唯一索引：租户内唯一，见 ix_menu_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 菜单编码规则生成并展示，非手输；单据类型菜单：菜单管理）"),
 
             // entity.menu.name
             new TranslationSeedItem("entity.menu.name", "en-US", "菜单名称_us", "菜单名称"),

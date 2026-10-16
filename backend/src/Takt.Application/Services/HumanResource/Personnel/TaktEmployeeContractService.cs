@@ -125,10 +125,10 @@ public class TaktEmployeeContractService : TaktServiceBase, ITaktEmployeeContrac
     {
         var entity = dto.Adapt<TaktEmployeeContract>();
         await StampEmployeeContractEmployeeAsync(entity, dto);
-        var isUnique_ix_employee_contract_code = await _uniqueValidator.IsUniqueAsync(
+        var isUnique_ix_employee_contract_code_unique = await _uniqueValidator.IsUniqueAsync(
             _employeeContractRepository,
             x => x.ContractCode == entity.ContractCode);
-        if (!isUnique_ix_employee_contract_code)
+        if (!isUnique_ix_employee_contract_code_unique)
         {
             throw new TaktBusinessException("员工劳动合同的ContractCode已存在");
         }
@@ -151,11 +151,11 @@ public class TaktEmployeeContractService : TaktServiceBase, ITaktEmployeeContrac
         }
         dto.Adapt(entity);
         await StampEmployeeContractEmployeeAsync(entity, dto);
-        var isUnique_ix_employee_contract_code = await _uniqueValidator.IsUniqueAsync(
+        var isUnique_ix_employee_contract_code_unique = await _uniqueValidator.IsUniqueAsync(
             _employeeContractRepository,
             x => x.ContractCode == entity.ContractCode,
             id);
-        if (!isUnique_ix_employee_contract_code)
+        if (!isUnique_ix_employee_contract_code_unique)
         {
             throw new TaktBusinessException("员工劳动合同的ContractCode已存在");
         }
@@ -255,10 +255,10 @@ public class TaktEmployeeContractService : TaktServiceBase, ITaktEmployeeContrac
                 {
                     throw new TaktBusinessException("与Excel中其他行重复（ContractCode）");
                 }
-                var isUnique_ix_employee_contract_code = await _uniqueValidator.IsUniqueAsync(
+                var isUnique_ix_employee_contract_code_unique = await _uniqueValidator.IsUniqueAsync(
                     _employeeContractRepository,
                     x => x.ContractCode == entity.ContractCode);
-                if (!isUnique_ix_employee_contract_code)
+                if (!isUnique_ix_employee_contract_code_unique)
                 {
                     throw new TaktBusinessException("员工劳动合同的ContractCode已存在");
                 }

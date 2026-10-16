@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Materials
 // 文件名称：TaktMaterialDocumentI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktMaterialDocument 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktMaterialDocumentI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.materialdocument._self", "zh-HK", "Takt物料凭证主表信息_hk", "实体名称"),
 
             // entity.materialdocument.code
-            new TranslationSeedItem("entity.materialdocument.code", "en-US", "物料凭证_us", "物料凭证"),
+            new TranslationSeedItem("entity.materialdocument.code", "en-US", "物料凭证_us", "物料凭证（前端表单选择编码规则后自动通过 TaktNumbering 物料凭证规则生成并展示，非手输；单据类型菜单：物料凭证）"),
             // entity.materialdocument.code
-            new TranslationSeedItem("entity.materialdocument.code", "ja-JP", "物料凭证_jp", "物料凭证"),
+            new TranslationSeedItem("entity.materialdocument.code", "ja-JP", "物料凭证_jp", "物料凭证（前端表单选择编码规则后自动通过 TaktNumbering 物料凭证规则生成并展示，非手输；单据类型菜单：物料凭证）"),
             // entity.materialdocument.code
-            new TranslationSeedItem("entity.materialdocument.code", "zh-CN", "物料凭证", "物料凭证"),
+            new TranslationSeedItem("entity.materialdocument.code", "zh-CN", "物料凭证", "物料凭证（前端表单选择编码规则后自动通过 TaktNumbering 物料凭证规则生成并展示，非手输；单据类型菜单：物料凭证）"),
             // entity.materialdocument.code
-            new TranslationSeedItem("entity.materialdocument.code", "zh-HK", "物料凭证_hk", "物料凭证"),
+            new TranslationSeedItem("entity.materialdocument.code", "zh-HK", "物料凭证_hk", "物料凭证（前端表单选择编码规则后自动通过 TaktNumbering 物料凭证规则生成并展示，非手输；单据类型菜单：物料凭证）"),
 
             // entity.materialdocument.year
             new TranslationSeedItem("entity.materialdocument.year", "en-US", "物料凭证的年份_us", "物料凭证的年份"),

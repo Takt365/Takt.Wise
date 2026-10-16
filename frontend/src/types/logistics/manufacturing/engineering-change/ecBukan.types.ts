@@ -49,14 +49,16 @@ export interface EcBukan extends CompanyDtoBase {
   lineNumber: number;
 
   /**
-   * 机种编码（冗余：来自 TaktEcDetail.EcModelCode）
+   * 机种编码组（单个或多个机种，分号分隔；ntext）
    */
-  ecModelCode: string;
+  ecModelCodeGroup?: string;
 
   /**
    * 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔）
    */
   ecRootMaterialCodeGroup?: string;
+  /** 根物料描述（仅全仕向且按成品时有值） */
+  ecRootMaterialDescription?: string;
 
   /**
    * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
@@ -66,6 +68,8 @@ export interface EcBukan extends CompanyDtoBase {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 
   /**
    * 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
@@ -183,14 +187,16 @@ export interface EcBukanQuery extends TaktPagedQuery {
   lineNumber?: number;
 
   /**
-   * 机种编码（冗余：来自 TaktEcDetail.EcModelCode）
+   * 机种编码组（单个或多个机种，分号分隔；ntext）
    */
-  ecModelCode?: string;
+  ecModelCodeGroup?: string;
 
   /**
    * 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔）
    */
   ecRootMaterialCodeGroup?: string;
+  /** 根物料描述（仅全仕向且按成品时有值） */
+  ecRootMaterialDescription?: string;
 
   /**
    * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
@@ -326,14 +332,16 @@ export interface EcBukanCreate {
   lineNumber: number;
 
   /**
-   * 机种编码（冗余：来自 TaktEcDetail.EcModelCode）
+   * 机种编码组（单个或多个机种，分号分隔；ntext）
    */
-  ecModelCode: string;
+  ecModelCodeGroup?: string;
 
   /**
    * 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔）
    */
   ecRootMaterialCodeGroup?: string;
+  /** 根物料描述（仅全仕向且按成品时有值） */
+  ecRootMaterialDescription?: string;
 
   /**
    * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
@@ -343,6 +351,8 @@ export interface EcBukanCreate {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 
   /**
    * 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
@@ -456,6 +466,8 @@ export interface EcBukanStatus {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 
 }
 
@@ -477,6 +489,8 @@ export interface EcBukanDiscontinuedStatus {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 }
 
 /**
@@ -540,14 +554,16 @@ export interface EcBukanTemplate {
   lineNumber?: number;
 
   /**
-   * 机种编码（冗余：来自 TaktEcDetail.EcModelCode）
+   * 机种编码组（单个或多个机种，分号分隔；ntext）
    */
-  ecModelCode?: string;
+  ecModelCodeGroup?: string;
 
   /**
    * 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔）
    */
   ecRootMaterialCodeGroup?: string;
+  /** 根物料描述（仅全仕向且按成品时有值） */
+  ecRootMaterialDescription?: string;
 
   /**
    * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
@@ -668,14 +684,16 @@ export interface EcBukanImport {
   lineNumber?: number;
 
   /**
-   * 机种编码（冗余：来自 TaktEcDetail.EcModelCode）
+   * 机种编码组（单个或多个机种，分号分隔；ntext）
    */
-  ecModelCode?: string;
+  ecModelCodeGroup?: string;
 
   /**
    * 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔）
    */
   ecRootMaterialCodeGroup?: string;
+  /** 根物料描述（仅全仕向且按成品时有值） */
+  ecRootMaterialDescription?: string;
 
   /**
    * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
@@ -796,14 +814,16 @@ export interface EcBukanExport {
   lineNumber: number;
 
   /**
-   * 机种编码（冗余：来自 TaktEcDetail.EcModelCode）
+   * 机种编码组（单个或多个机种，分号分隔；ntext）
    */
-  ecModelCode: string;
+  ecModelCodeGroup?: string;
 
   /**
    * 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔）
    */
   ecRootMaterialCodeGroup?: string;
+  /** 根物料描述（仅全仕向且按成品时有值） */
+  ecRootMaterialDescription?: string;
 
   /**
    * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
@@ -813,6 +833,8 @@ export interface EcBukanExport {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 
   /**
    * 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）

@@ -24,7 +24,7 @@ namespace Takt.Domain.Entities.HumanResource.Performance;
 public class TaktPerfScheme : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 方案编码
+    /// 方案编码（前端表单选择编码规则后自动通过 TaktNumbering 方案编码规则生成并展示，非手输；单据类型菜单：绩效方案）
     /// </summary>
     [SugarColumn(ColumnName = "scheme_code", ColumnDescription = "方案编码", ColumnDataType = "nvarchar", Length = 64, IsNullable = false)]
     public string SchemeCode { get; set; } = string.Empty;

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.CustomerService
 // 文件名称：TaktCustomerServiceGroupI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktCustomerServiceGroup 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktCustomerServiceGroupI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.customerservicegroup._self", "zh-HK", "客户服务组主数据信息_hk", "实体名称"),
 
             // entity.customerservicegroup.code
-            new TranslationSeedItem("entity.customerservicegroup.code", "en-US", "客户服务组编码_us", "客户服务组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.customerservicegroup.code", "en-US", "客户服务组编码_us", "客户服务组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 客户服务组编码规则生成并展示，非手输；单据类型菜单：客户服务组）"),
             // entity.customerservicegroup.code
-            new TranslationSeedItem("entity.customerservicegroup.code", "ja-JP", "客户服务组编码_jp", "客户服务组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.customerservicegroup.code", "ja-JP", "客户服务组编码_jp", "客户服务组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 客户服务组编码规则生成并展示，非手输；单据类型菜单：客户服务组）"),
             // entity.customerservicegroup.code
-            new TranslationSeedItem("entity.customerservicegroup.code", "zh-CN", "客户服务组编码", "客户服务组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.customerservicegroup.code", "zh-CN", "客户服务组编码", "客户服务组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 客户服务组编码规则生成并展示，非手输；单据类型菜单：客户服务组）"),
             // entity.customerservicegroup.code
-            new TranslationSeedItem("entity.customerservicegroup.code", "zh-HK", "客户服务组编码_hk", "客户服务组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.customerservicegroup.code", "zh-HK", "客户服务组编码_hk", "客户服务组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 客户服务组编码规则生成并展示，非手输；单据类型菜单：客户服务组）"),
 
             // entity.customerservicegroup.name
             new TranslationSeedItem("entity.customerservicegroup.name", "en-US", "客户服务组名称_us", "客户服务组名称"),

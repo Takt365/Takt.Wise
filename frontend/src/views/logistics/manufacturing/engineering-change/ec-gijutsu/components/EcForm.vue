@@ -2,7 +2,7 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/ec-gijutsu/components -->
 <!-- 文件名称：EcForm.vue -->
-<!-- 功能描述：设变维护弹窗内嵌表单；主表仅 ecLeader/ecContent/ecStatus/remark 可编辑；实施范围单独 Tab：生管选实施范围并联动部门范围，制二/制一/品管跟随，采购/受检/部管/SMT/制技固定按设变；来源导入时 ecEntryDate 只读且固定当天，设变状态默认发行；明细 Tab 客户端分页，表高按弹出窗体 × 5/4 且不超过 Tab 剩余区（仅表格滚动、弹出窗体无滚动条）；附件 Tab 工具栏增删改（来源导入无预置行，须手工维护） -->
+<!-- 功能描述：设变维护弹窗内嵌表单；主表仅 ecLeader/ecContent/ecStatus/remark 可编辑；实施范围单独 Tab：全仕向时部门实施范围可选，部管锁定按机种，内部/技术锁定按设变；制二/制一/品管跟随主表，采购/受检/部管/SMT 固定按设变，制技固定按机种；来源导入时 ecEntryDate 只读且固定当天，设变状态默认发行；明细 Tab 客户端分页，表高按弹出窗体 × 5/4 且不超过 Tab 剩余区（仅表格滚动、弹出窗体无滚动条）；附件 Tab 工具栏增删改（来源导入无预置行，须手工维护） -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->
@@ -216,9 +216,8 @@
                   v-model:value="formState.ecStatus"
                   dict-type="logistics_manufacturing_ec_gijutsu_status"
                   :placeholder="t('common.page.form.placeholder.select', { field: gi.label('ecStatus') })"
-                  allow-clear
                   class="w-full"
-                  :disabled="loading"
+                  disabled
                 />
               </a-form-item>
             </a-col>
@@ -264,7 +263,7 @@
                   :options="ecScopeSelectOptions"
                   variant="borderless"
                   class="w-full"
-                  :disabled="loading"
+                  :disabled="loading || ecScopeLocked"
                   @change="handleEcScopeChange"
                 />
               </a-form-item>
@@ -279,7 +278,7 @@
                   :options="ecDeptScopeSelectOptions"
                   variant="borderless"
                   class="w-full"
-                  :disabled="loading"
+                  :disabled="loading || ecDeptScopeLocked || ecScopeLocked"
                 />
               </a-form-item>
             </a-descriptions-item>
@@ -307,8 +306,8 @@
             entity-scope="company"
             :columns="ecDetailTableColumns"
             :visible-column-keys="ecDetailVisibleColumnKeys"
-            :data-source="paginatedEcDetailRows"
-            :loading="loading"
+            :data-source="ecDetailTableRows"
+            :loading="loading || ecDetailRowsLoading"
             :stripe="true"
             :row-key="getEcDetailRowKey"
             :show-row-selection="false"
@@ -319,7 +318,7 @@
             :show-pagination="true"
             v-model:current="ecDetailCurrentPage"
             v-model:page-size="ecDetailPageSize"
-            :total="ecDetailTotal"
+            :total="ecDetailTableTotal"
           />
         </div>
       </a-tab-pane>
@@ -352,13 +351,17 @@
           @update="handleAttachmentUpdate"
           @delete="handleAttachmentDelete"
         />
-        <div class="ec-form-sub-table-wrap min-h-0 min-w-0 flex-1 overflow-hidden">
+        <div
+          ref="ecAttachmentTableHostEl"
+          class="ec-form-sub-table-wrap ec-form-detail-table-wrap min-h-0 min-w-0 flex-1 overflow-hidden"
+        >
           <TaktSingleTable
             class="h-full min-h-0"
             entity-scope="company"
             :columns="ecAttachmentTableColumns"
+            :visible-column-keys="ecAttachmentVisibleColumnKeys"
             :data-source="childEcAttachmentRows"
-            :loading="loading"
+            :loading="loading || attachmentRowsLoading"
             :stripe="true"
             :row-key="getEcAttachmentTableRowKey"
             :row-selection="attachmentRowSelection"
@@ -366,6 +369,7 @@
             :show-row-selection="true"
             :include-audit-fields="false"
             scroll-layout="editable"
+            :scroll="ecDetailTableScroll"
             table-mode="single"
             :show-pagination="false"
           />
@@ -413,6 +417,8 @@ import TaktDictTag from '@/components/common/TaktDictTag/index.vue'
 import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { useTenantStore } from '@/stores/identity/useTenantStore'
 import { useUserStore } from '@/stores/identity/useUserStore'
+import { getEcAttachmentList } from '@/api/logistics/manufacturing/engineering-change/ecAttachment.api'
+import { getEcDetailList } from '@/api/logistics/manufacturing/engineering-change/ecDetail.api'
 import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 import { measureMasterDetailLrTableScrollY } from '@/composables/useTaktMasterDetailLrScrollY'
 import {
@@ -435,6 +441,7 @@ import { useEcAttachmentI18n } from '@/views/logistics/manufacturing/engineering
 import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
 import {
   EC_SCOPE_FORM_DEPTS,
+  TaktEcScope,
   taktEcDeptDedupDisplay,
   taktEcDeptScopeChoices,
   taktNormalizeEcDeptScope,
@@ -492,8 +499,20 @@ const childEcDetailRows = ref<Record<string, unknown>[]>([])
 const ecDetailCurrentPage = ref(getTaktDefaultPageIndex())
 /** 明细子表每页条数 */
 const ecDetailPageSize = ref(getTaktDefaultPageSize())
-/** 明细子表总行数 */
-const ecDetailTotal = computed(() => childEcDetailRows.value.length)
+/** 编辑态明细分页走服务端（详情不内嵌明细，避免把一页当成全量提交） */
+const ecDetailUseServerPage = ref(false)
+/** 服务端明细当前页 */
+const ecDetailPageRows = ref<Record<string, unknown>[]>([])
+/** 服务端明细总行数 */
+const ecDetailServerTotal = ref(0)
+/** 服务端明细加载 */
+const ecDetailRowsLoading = ref(false)
+/** 明细列表请求序号 */
+let ecDetailRowsRequestSeq = 0
+/** 明细子表总行数（来源导入走内存行；编辑走服务端总数） */
+const ecDetailTableTotal = computed(() =>
+  ecDetailUseServerPage.value ? ecDetailServerTotal.value : childEcDetailRows.value.length,
+)
 /** 明细子表当前页数据（内存分页） */
 const paginatedEcDetailRows = computed(() => {
   const rows = childEcDetailRows.value
@@ -504,9 +523,55 @@ const paginatedEcDetailRows = computed(() => {
   const start = (ecDetailCurrentPage.value - 1) * size
   return rows.slice(start, start + size)
 })
+/** 明细表绑定行：编辑按主表分页，来源导入仍用内存行 */
+const ecDetailTableRows = computed(() =>
+  ecDetailUseServerPage.value ? ecDetailPageRows.value : paginatedEcDetailRows.value,
+)
+
+/**
+ * 按主表 Id 分页加载未作废设变明细
+ * @param ecGijutsuId 设变技术课主表 Id
+ */
+async function loadEcDetailPage(ecGijutsuId: string): Promise<void> {
+  const id = ecGijutsuId.trim()
+  if (!id || id === '0') {
+    ecDetailPageRows.value = []
+    ecDetailServerTotal.value = 0
+    return
+  }
+  const seq = ++ecDetailRowsRequestSeq
+  ecDetailRowsLoading.value = true
+  try {
+    const res = await getEcDetailList({
+      ecGijutsuId: id,
+      isObsolete: 0,
+      pageIndex: ecDetailCurrentPage.value,
+      pageSize: ecDetailPageSize.value,
+    })
+    if (seq !== ecDetailRowsRequestSeq) {
+      return
+    }
+    ecDetailPageRows.value = (res.data ?? []) as Record<string, unknown>[]
+    ecDetailServerTotal.value = res.total ?? 0
+  } catch (error: unknown) {
+    if (seq !== ecDetailRowsRequestSeq) {
+      return
+    }
+    const err = error as { message?: string }
+    message.error(err?.message || t('common.feedback.load.data.failed'))
+    ecDetailPageRows.value = []
+    ecDetailServerTotal.value = 0
+  } finally {
+    if (seq === ecDetailRowsRequestSeq) {
+      ecDetailRowsLoading.value = false
+    }
+  }
+}
 
 /** 明细表宿主（定位弹出窗体并实测 Tab 剩余高度） */
 const ecDetailTableHostEl = ref<HTMLElement | null>(null)
+/** 附件表宿主（切到附件 Tab 时按同一规则实测剩余高度） */
+const ecAttachmentTableHostEl = ref<HTMLElement | null>(null)
 /** 弹出窗体 ResizeObserver */
 let ecDetailFormHostResizeObserver: ResizeObserver | null = null
 
@@ -514,8 +579,8 @@ let ecDetailFormHostResizeObserver: ResizeObserver | null = null
  * 明细表 scroll.y：目标为弹出窗体高度 × 5/4，且不得超过 Tab 剩余高度
  * （超出则弹出窗体出现第二套滚动条；❌ 禁止用浏览器视口）
  */
-function computeEcDetailTableScrollYPx(): number {
-  const host = ecDetailTableHostEl.value
+function computeEcDetailTableScrollYPx(hostEl?: HTMLElement | null): number {
+  const host = hostEl ?? ecDetailTableHostEl.value
   const ratioY = computeFormHostRatioScrollYPx(host, 5, 4)
   if (host == null || host.clientHeight <= 0) {
     return ratioY
@@ -534,16 +599,17 @@ const ecDetailTableScrollYPx = ref(TAKT_TABLE_SCROLL_Y_MIN)
 /** 明细表 scroll 配置 */
 const ecDetailTableScroll = computed(() => ({ y: ecDetailTableScrollYPx.value }))
 
-/** 按弹出窗体与 Tab 剩余区重算明细表高度 */
-function recalcEcDetailTableScrollY(): void {
-  ecDetailTableScrollYPx.value = computeEcDetailTableScrollYPx()
+/** 按弹出窗体与 Tab 剩余区重算明细/附件表高度 */
+function recalcEcDetailTableScrollY(hostEl?: HTMLElement | null): void {
+  ecDetailTableScrollYPx.value = computeEcDetailTableScrollYPx(hostEl)
 }
 
 /** 绑定弹出窗体 ResizeObserver（全屏/拖拽改高时重算） */
 function bindEcDetailFormHostResizeObserver(): void {
   ecDetailFormHostResizeObserver?.disconnect()
   ecDetailFormHostResizeObserver = null
-  const host = ecDetailTableHostEl.value
+  const host = (activeTab.value === 'tab-3' ? ecAttachmentTableHostEl.value : ecDetailTableHostEl.value)
+    ?? ecDetailTableHostEl.value
   if (host == null || typeof ResizeObserver === 'undefined') {
     return
   }
@@ -552,7 +618,10 @@ function bindEcDetailFormHostResizeObserver(): void {
     ?? (host.closest('.ant-modal') as HTMLElement | null)
     ?? (host.closest('.ant-modal-body') as HTMLElement | null)
   ecDetailFormHostResizeObserver = new ResizeObserver(() => {
-    recalcEcDetailTableScrollY()
+    const measureHost = activeTab.value === 'tab-3'
+      ? ecAttachmentTableHostEl.value
+      : ecDetailTableHostEl.value
+    recalcEcDetailTableScrollY(measureHost)
   })
   if (modalTarget != null) {
     ecDetailFormHostResizeObserver.observe(modalTarget)
@@ -568,11 +637,11 @@ onMounted(() => {
   })
 })
 
-/** 切到明细 Tab 时再测一次（弹窗动画/全屏切换后） */
+/** 切到明细或附件 Tab 时再测一次（弹窗动画/全屏切换后） */
 watch(activeTab, (key) => {
-  if (key === 'tab-2') {
+  if (key === 'tab-2' || key === 'tab-3') {
     void nextTick(() => {
-      recalcEcDetailTableScrollY()
+      recalcEcDetailTableScrollY(key === 'tab-3' ? ecAttachmentTableHostEl.value : ecDetailTableHostEl.value)
       bindEcDetailFormHostResizeObserver()
     })
   }
@@ -649,6 +718,59 @@ const ecDetailTableColumns = computed<TableColumnsType>(() =>
 
 /** 内嵌明细 Tab 可见列（显式全列，绕过 TaktSingleTable 默认 8 列截断） */
 const ecDetailVisibleColumnKeys = computed(() => [...ECDETAIL_FORM_SUBTABLE_VISIBLE_COLUMN_KEYS])
+
+/** 附件子表默认可见列（与列 dataIndex 一致，避免默认 id 列把业务列挤掉） */
+const ecAttachmentVisibleColumnKeys = [
+  'plantCode',
+  'lineNumber',
+  'attachmentType',
+  'docCode',
+  'fileName',
+  'accessUrl',
+]
+/** 附件列表加载（编辑态按主表 Id 分页拉取，不依赖详情是否内嵌 attachments） */
+const attachmentRowsLoading = ref(false)
+/** 本次弹窗内用户是否增删改过附件；未改则主表保存不提交附件，避免空表把库内行软删 */
+const attachmentRowsTouched = ref(false)
+/** 附件列表请求序号（快速切换编辑对象时丢弃过期响应） */
+let attachmentRowsRequestSeq = 0
+
+/**
+ * 按主表 Id 加载未作废附件（与右侧附件面板同一 list 接口）
+ * @param ecGijutsuId 设变技术课主表 Id
+ */
+async function loadPersistedAttachmentRows(ecGijutsuId: string): Promise<void> {
+  const id = ecGijutsuId.trim()
+  if (!id || id === '0') {
+    return
+  }
+  const seq = ++attachmentRowsRequestSeq
+  attachmentRowsLoading.value = true
+  try {
+    const res = await getEcAttachmentList({
+      ecGijutsuId: id,
+      isObsolete: 0,
+      pageIndex: getTaktDefaultPageIndex(),
+      pageSize: 100,
+    })
+    if (seq !== attachmentRowsRequestSeq) {
+      return
+    }
+    const rows = (res.data ?? []) as Record<string, unknown>[]
+    childEcAttachmentRows.value = normalizeAttachmentRows(rows)
+    clearAttachmentSelection()
+  } catch (error: unknown) {
+    if (seq !== attachmentRowsRequestSeq) {
+      return
+    }
+    const err = error as { message?: string }
+    message.error(err?.message || t('common.feedback.load.data.failed'))
+  } finally {
+    if (seq === attachmentRowsRequestSeq) {
+      attachmentRowsLoading.value = false
+    }
+  }
+}
 
 /** 附件子表列（只读展示 + 操作列） */
 const ecAttachmentTableColumns = computed<TableColumnsType>(() => {
@@ -730,21 +852,19 @@ const ecAttachmentTableColumns = computed<TableColumnsType>(() => {
 /**
  * 明细行 row-key
  * @param record 明细行
- * @param index 行索引
  * @returns 行 key
  */
-function getEcDetailRowKey(record: Record<string, unknown>, index?: number): string {
-  return String(record.ecDetailId ?? record.__rowKey ?? `detail-row-${index ?? 0}`)
+function getEcDetailRowKey(record: Record<string, unknown>): string {
+  return String(record.ecDetailId ?? record.__rowKey ?? '')
 }
 
 /**
  * 附件行 row-key（TaktSingleTable）
  * @param record 附件行
- * @param index 行索引
  * @returns 行 key
  */
-function getEcAttachmentTableRowKey(record: Record<string, unknown>, index?: number): string {
-  return getAttachmentRowKey(record, index ?? 0)
+function getEcAttachmentTableRowKey(record: Record<string, unknown>): string {
+  return String(record.__rowKey ?? record.ecAttachmentId ?? '')
 }
 
 /**
@@ -992,6 +1112,7 @@ async function handleAttachmentFormSubmit() {
         },
       ]
     }
+    attachmentRowsTouched.value = true
     attachmentFormVisible.value = false
     attachmentFormData.value = {}
     nextTick(() => attachmentFormRef.value?.resetFields?.())
@@ -1016,6 +1137,7 @@ function removeAttachmentRows(records: Record<string, unknown>[]) {
   if (records.length === 0) {
     return
   }
+  attachmentRowsTouched.value = true
   childEcAttachmentRows.value = childEcAttachmentRows.value.filter(
     (row, index) => !records.some((target) => isSameAttachmentRow(row, target, index)),
   )
@@ -1090,7 +1212,14 @@ function buildSubmitPayload() {
         ecGijutsuId: ecIdForChild,
       }
     }),
-    attachments: childEcAttachmentRows.value.map((rest) => {
+  }
+  const submitAttachments = props.sourceImportMode
+    || attachmentRowsTouched.value
+    || !props.formData?.ecGijutsuId
+  if (!submitAttachments) {
+    delete payload.attachments
+  } else {
+    payload.attachments = childEcAttachmentRows.value.map((rest) => {
       const { __rowKey, ecNo, docNo, ...row } = rest
       const docCode = String(row.docCode ?? docNo ?? '').trim()
       return {
@@ -1104,7 +1233,7 @@ function buildSubmitPayload() {
         docCode,
         fileName: buildEcAttachmentFileName(docCode, String(row.fileName ?? ''), String(row.accessUrl ?? '')) || row.fileName,
       }
-    }),
+    })
   }
   if (props.sourceImportMode) {
     payload.ecEntryDate = formatLocalTodayYmd()
@@ -1199,8 +1328,14 @@ function scopeDictOptions(dictType: string, includeValues?: readonly number[]) {
 /** 实施范围下拉 */
 const ecScopeSelectOptions = computed(() => scopeDictOptions('logistics_manufacturing_ec_scope_category'))
 
-/** 部门范围可选项（全仕向三项；部管/内部/技术仅按设变） */
+/** 部门范围可选项（全仕向三项可选；部管仅按机种；内部/技术仅按设变） */
 const ecDeptScopeIncludeValues = computed(() => taktEcDeptScopeChoices(Number(formState.ecScope)).allowed)
+
+/** 部管、内部、技术的部门实施范围只有一项，下拉不可改 */
+const ecDeptScopeLocked = computed(() => Number(formState.ecScope) !== TaktEcScope.AllDestination)
+
+/** 设变状态为完成时，实施范围与部门实施范围不可改 */
+const ecScopeLocked = computed(() => Number(formState.ecStatus) === 3)
 
 /** 部门范围下拉 */
 const ecDeptScopeSelectOptions = computed(() => scopeDictOptions(
@@ -1209,19 +1344,34 @@ const ecDeptScopeSelectOptions = computed(() => scopeDictOptions(
 ))
 
 /**
- * 实施范围对照表。制二/制一/品管随部门范围显示同一字典文案
+ * 实施范围对照表。制技之下，全仕向与部管追加非 FERT、停产两行，文案为自动填写。内部与技术不追加。
  */
 const deptScopeRows = computed(() => {
   const ecScope = Number(formState.ecScope)
   const ecDeptScope = Number(formState.ecDeptScope)
   const autoFill = t('logistics.manufacturing.engineering-change.ec-gijutsu.page.scopeDepts.autoFill')
-  return EC_SCOPE_FORM_DEPTS.map((dept) => {
+  const rows = EC_SCOPE_FORM_DEPTS.map((dept) => {
     const display = taktEcDeptDedupDisplay(dept.code, ecScope, ecDeptScope)
     const text = display.mode === 'dict'
       ? (scopeDictOptions('logistics_manufacturing_ec_dept_scope_category').find((item) => item.value === display.value)?.label ?? '')
       : autoFill
     return { ...dept, text }
   })
+  if (ecScope === TaktEcScope.AllDestination || ecScope === TaktEcScope.MaterialControl) {
+    rows.push(
+      {
+        code: 'nonFert',
+        labelKey: 'logistics.manufacturing.engineering-change.ec-gijutsu.page.scopeDepts.nonFert',
+        text: autoFill,
+      },
+      {
+        code: 'discontinued',
+        labelKey: 'logistics.manufacturing.engineering-change.ec-gijutsu.page.scopeDepts.discontinued',
+        text: autoFill,
+      },
+    )
+  }
+  return rows
 })
 
 /**
@@ -1272,6 +1422,7 @@ watch(
   () => props.formData,
   (val) => {
     if (val?.ecGijutsuId) {
+      attachmentRowsTouched.value = false
       const next = { ...val } as Record<string, unknown>
       Object.keys(formState).forEach((k) => delete formState[k])
       delete (next as any).ecDetails
@@ -1281,6 +1432,13 @@ watch(
       applyDefaultEcScope(next)
       Object.assign(formState, next)
       syncChildRowsFromFormData(val)
+      ecDetailUseServerPage.value = !props.sourceImportMode
+      if (ecDetailUseServerPage.value) {
+        childEcDetailRows.value = []
+        resetEcDetailPagination()
+        void loadEcDetailPage(String(val.ecGijutsuId ?? ''))
+      }
+      void loadPersistedAttachmentRows(String(val.ecGijutsuId ?? ''))
       formRef.value?.clearValidate()
     } else {
       Object.keys(formState).forEach((k) => delete formState[k])
@@ -1291,7 +1449,11 @@ watch(
         normalizeMasterFormFields(next)
         Object.assign(formState, next)
         syncChildRowsFromFormData(val)
+        ecDetailUseServerPage.value = false
       } else {
+        ecDetailUseServerPage.value = false
+        ecDetailPageRows.value = []
+        ecDetailServerTotal.value = 0
         childEcDetailRows.value = []
         resetEcDetailPagination()
         childEcAttachmentRows.value = []
@@ -1303,6 +1465,21 @@ watch(
     }
   },
   { immediate: true }
+)
+
+/** 编辑态翻页向服务端重拉明细 */
+watch(
+  () => [ecDetailCurrentPage.value, ecDetailPageSize.value] as const,
+  () => {
+    if (!ecDetailUseServerPage.value) {
+      return
+    }
+    const id = String(props.formData?.ecGijutsuId ?? '').trim()
+    if (!id) {
+      return
+    }
+    void loadEcDetailPage(id)
+  },
 )
 
 /** 明细行数变化时校正当前页（避免删行后停留在空页） */
@@ -1531,10 +1708,26 @@ function resetFields() {
   }
   applyFormDefaults(formState)
   applyScopeDefaults(formState as Record<string, unknown>, !props.formData?.ecGijutsuId)
-  childEcDetailRows.value = []
-  resetEcDetailPagination()
-  childEcAttachmentRows.value = []
-  clearAttachmentSelection()
+  attachmentRowsTouched.value = false
+  const ecId = String(props.formData?.ecGijutsuId ?? '').trim()
+  if (ecId && ecId !== '0') {
+    syncChildRowsFromFormData(props.formData)
+    ecDetailUseServerPage.value = !props.sourceImportMode
+    if (ecDetailUseServerPage.value) {
+      childEcDetailRows.value = []
+      resetEcDetailPagination()
+      void loadEcDetailPage(ecId)
+    }
+    void loadPersistedAttachmentRows(ecId)
+  } else {
+    ecDetailUseServerPage.value = false
+    ecDetailPageRows.value = []
+    ecDetailServerTotal.value = 0
+    childEcDetailRows.value = []
+    resetEcDetailPagination()
+    childEcAttachmentRows.value = []
+    clearAttachmentSelection()
+  }
   attachmentFormVisible.value = false
   attachmentFormData.value = {}
   activeTab.value = 'tab-0'
@@ -1565,16 +1758,22 @@ defineExpose({ validate, getValues, resetFields })
   overflow: hidden;
 }
 
-.ec-form-tabs :deep(.ant-tabs-content),
-.ec-form-tabs :deep(.ant-tabs-tabpane) {
+.ec-form-tabs :deep(.ant-tabs-content) {
   height: 100%;
   min-height: 0;
   min-width: 0;
 }
 
-.ec-form-tabs :deep(.ant-tabs-tabpane) {
+.ec-form-tabs :deep(.ant-tabs-tabpane-hidden) {
+  display: none !important;
+}
+
+.ec-form-tabs :deep(.ant-tabs-tabpane-active) {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
   overflow: hidden;
 }
 
@@ -1583,10 +1782,6 @@ defineExpose({ validate, getValues, resetFields })
   flex: 1 1 auto;
   min-height: 0;
   overflow: auto;
-}
-
-.ec-form-tabs :deep(.ant-tabs-tabpane-active) {
-  height: 100%;
 }
 
 .ec-form-detail-table-wrap {

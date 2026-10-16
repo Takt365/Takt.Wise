@@ -26,24 +26,24 @@ namespace Takt.Application.Services.Logistics.Sales;
 /// </summary>
 public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendService
 {
-    private readonly ITaktCompanyRepository<TaktSalesConditionRecord> _salesConditionRecordRepository;
+    private readonly ITaktCompanyRepository<TaktSalesCondition> _salesConditionRepository;
     private readonly ITaktSalesPriceTrendMonthlyAnalysisBuilder _monthlyAnalysisBuilder;
 
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="salesConditionRecordRepository">销售价格仓储</param>
+    /// <param name="salesConditionRepository">销售价格仓储</param>
     /// <param name="monthlyAnalysisBuilder">推移分析构建器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktSalesPriceTrendService(
-        ITaktCompanyRepository<TaktSalesConditionRecord> salesConditionRecordRepository,
+        ITaktCompanyRepository<TaktSalesCondition> salesConditionRepository,
         ITaktSalesPriceTrendMonthlyAnalysisBuilder monthlyAnalysisBuilder,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
     {
-        _salesConditionRecordRepository = salesConditionRecordRepository;
+        _salesConditionRepository = salesConditionRepository;
         _monthlyAnalysisBuilder = monthlyAnalysisBuilder;
     }
 
@@ -56,7 +56,7 @@ public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendS
     public async Task<List<TaktSelectOption>> GetSalesPriceTrendPlantOptionsAsync(string? plantCode = null, string? keyword = null)
     {
         EnsureThreeLayerContext();
-        var list = await _salesConditionRecordRepository.GetListAsync(
+        var list = await _salesConditionRepository.GetListAsync(
             x => x.TenantCode == CurrentTenantCode
                 && x.CompanyCode == CurrentCompanyCode
                 && x.PlantCode != null
@@ -86,7 +86,7 @@ public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendS
         {
             return new List<TaktSelectOption>();
         }
-        var list = await _salesConditionRecordRepository.GetListAsync(
+        var list = await _salesConditionRepository.GetListAsync(
             x => x.TenantCode == CurrentTenantCode
                 && x.CompanyCode == CurrentCompanyCode
                 && x.PlantCode == plant
@@ -119,7 +119,7 @@ public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendS
         {
             return new List<TaktSelectOption>();
         }
-        var list = await _salesConditionRecordRepository.GetListAsync(
+        var list = await _salesConditionRepository.GetListAsync(
             x => x.TenantCode == CurrentTenantCode
                 && x.CompanyCode == CurrentCompanyCode
                 && x.PlantCode == plant
@@ -156,14 +156,14 @@ public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendS
             return new List<TaktSelectOption>();
         }
         var list = string.IsNullOrEmpty(customer)
-            ? await _salesConditionRecordRepository.GetListAsync(
+            ? await _salesConditionRepository.GetListAsync(
                 x => x.TenantCode == CurrentTenantCode
                     && x.CompanyCode == CurrentCompanyCode
                     && x.PlantCode == plant
                     && x.PriceType == type
                     && x.MaterialCode != null
                     && x.MaterialCode != string.Empty)
-            : await _salesConditionRecordRepository.GetListAsync(
+            : await _salesConditionRepository.GetListAsync(
                 x => x.TenantCode == CurrentTenantCode
                     && x.CompanyCode == CurrentCompanyCode
                     && x.PlantCode == plant
@@ -230,7 +230,12 @@ public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendS
         string? fileName = null)
     {
         ArgumentNullException.ThrowIfNull(query);
+        ArgumentException.ThrowIfNullOrWhiteSpace(query.PlantCode);
         var built = await _monthlyAnalysisBuilder.BuildAsync(query);
+        var plant = query.PlantCode.Trim();
+        var plantRows = built.OrderedRows
+            .Where(r => string.Equals(r.PlantCode?.Trim(), plant, StringComparison.OrdinalIgnoreCase))
+            .ToList();
         var columnKeys = new List<string>
         {
             "plantCode", "materialCode", "materialDescription", "customerCode", "customerName", "currencyCode", "unit",
@@ -246,7 +251,7 @@ public class TaktSalesPriceTrendService : TaktServiceBase, ITaktSalesPriceTrendS
         }
         columnKeys.AddRange(new[] { "basePeriod", "comparePeriod", "varianceAmount", "variancePercent", "trend" });
         columnLabels.AddRange(new[] { "基准有效起始日", "对比有效起始日", "环比差额", "环比%", "涨跌" });
-        var exportRows = built.OrderedRows.Select(row =>
+        var exportRows = plantRows.Select(row =>
         {
             var dict = new Dictionary<string, object?>(StringComparer.Ordinal)
             {

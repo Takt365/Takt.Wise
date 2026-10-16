@@ -57,16 +57,27 @@
             </a-col>
             <a-col :span="12">
               <a-form-item
+                :label="t('common.page.form.numberingRule')"
+                name="numberingRuleCode"
+              >
+                <TaktSelect
+                  v-model:value="formState.numberingRuleCode"
+                  api-url="TaktNumberings/options"
+                  :api-params="{ documentType: '采购发票' }"
+                  :placeholder="t('common.page.form.placeholder.selectonly')"
+                  :disabled="!!formData?.purchaseInvoiceId || loading"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
                 :label="pi.label('purchaseInvoiceCode')"
                 name="purchaseInvoiceCode"
               >
                 <a-input
                   v-model:value="formState.purchaseInvoiceCode"
-                  :placeholder="pi.ph('purchaseInvoiceCode')"
-                  show-count
-                  :maxlength="10"
-                  allow-clear
-                  :disabled="!!formData?.purchaseInvoiceId"
+                  :placeholder="t('common.page.form.numberingCodePreview')"
+                  disabled
                 />
               </a-form-item>
             </a-col>
@@ -320,11 +331,10 @@
                 :label="pi.label('taxCode')"
                 name="taxCode"
               >
-                <a-input
+                <TaktSelect
                   v-model:value="formState.taxCode"
+                  api-url="TaktTaxCodes/options"
                   :placeholder="pi.ph('taxCode')"
-                  show-count
-                  :maxlength="2"
                   allow-clear
                   :disabled="!!formData?.purchaseInvoiceId"
                 />
@@ -534,6 +544,17 @@
           allow-clear
         />
       </template>
+      <template #cell-taxCode="{ record }">
+        <TaktSelect
+          v-model:value="record.taxCode"
+          api-url="TaktTaxCodes/options"
+          class="w-full"
+          :get-popup-container="getSelectPopupContainer"
+          :placeholder="purchaseInvoiceItemPi.ph('taxCode')"
+          :disabled="loading"
+          allow-clear
+        />
+      </template>
       <template #cell-isObsolete="{ record }">
         <TaktSelect
           v-model:value="record.isObsolete"
@@ -558,6 +579,7 @@
 import { useI18n } from 'vue-i18n'
 import type { Rule } from 'ant-design-vue/es/form'
 import { usePurchaseInvoiceI18n } from '../composables/usePurchaseInvoiceI18n'
+import { useTaktFormNumbering } from '@/composables/useTaktFormNumbering'
 
 /** 实体字段 i18n */
 const pi = usePurchaseInvoiceI18n()
@@ -686,8 +708,7 @@ const purchaseInvoiceItemFormColumns = computed<TaktEditableTableColumn[]>(() =>
   {
     key: 'taxCode',
     title: purchaseInvoiceItemPi.label('taxCode'),
-    editor: 'input',
-    width: 140, allowClear: true, placeholder: purchaseInvoiceItemPi.ph('taxCode'),
+    width: 160,
   },
   {
     key: 'quantity',
@@ -1063,15 +1084,41 @@ watch(
   },
 )
 
+/** 是否编辑态 */
+const isEditMode = computed(() => !!props.formData?.purchaseInvoiceId)
+
+useTaktFormNumbering({
+  formState,
+  isEdit: isEditMode,
+  businessCodeField: 'purchaseInvoiceCode',
+})
+
 /** 表单校验规则（与 FluentValidation 必填对齐） */
 const rules = computed<Record<string, Rule[]>>(() => ({
-  purchaseInvoiceCode: [
-    {
-      required: true,
-      message: pi.ph('purchaseInvoiceCode'),
-      trigger: 'blur'
-    }
-  ],
+  numberingRuleCode: [{
+    validator: async (_rule, value) => {
+      if (isEditMode.value) {
+        return Promise.resolve()
+      }
+      if (!String(value ?? '').trim()) {
+        return Promise.reject(t('common.page.form.numberingRuleRequired'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change',
+  }],
+  purchaseInvoiceCode: [{
+    validator: async (_rule, value) => {
+      if (isEditMode.value) {
+        return Promise.resolve()
+      }
+      if (!String(value ?? '').trim()) {
+        return Promise.reject(t('common.page.form.numberingCodePreview'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change',
+  }],
   fiscalYear: [
     {
       required: true,

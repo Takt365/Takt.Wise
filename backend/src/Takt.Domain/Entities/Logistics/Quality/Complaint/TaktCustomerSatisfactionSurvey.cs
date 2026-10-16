@@ -29,7 +29,7 @@ namespace Takt.Domain.Entities.Logistics.Quality.Complaint;
 public class TaktCustomerSatisfactionSurvey : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 调查表编码（组合唯一索引）
+    /// 调查表编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 调查表编码规则生成并展示，非手输；单据类型菜单：客户满意度调查）
     /// </summary>
     [SugarColumn(ColumnName = "customer_satisfaction_survey_code", ColumnDescription = "调查表编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string CustomerSatisfactionSurveyCode { get; set; } = string.Empty;

@@ -31,7 +31,7 @@ namespace Takt.Domain.Entities.HumanResource.Compensation;
 public class TaktSalaryFormula : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 公式方案编码（同编码多行=一套完整核算步骤，租户+公司内业务唯一标识）
+    /// 公式方案编码（同编码多行=一套完整核算步骤，租户+公司内业务唯一标识；前端表单选择编码规则后自动通过 TaktNumbering 公式方案编码规则生成并展示，非手输；单据类型菜单：薪资计算公式）
     /// </summary>
     [SugarColumn(ColumnName = "set_code", ColumnDescription = "公式方案编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string SetCode { get; set; } = string.Empty;
@@ -47,7 +47,7 @@ public class TaktSalaryFormula : TaktCompanyEntityBase
     [JsonConverter(typeof(ValueToStringConverter))]
     public long? PayrollId { get; set; }
     /// <summary>
-    /// 步骤编码（同方案内唯一，如 GROSS、SS_EMP、HF_EMP、TAX、NET）
+    /// 步骤编码（同方案内唯一，如 GROSS、SS_EMP、HF_EMP、TAX、NET；前端表单选择编码规则后自动通过 TaktNumbering 步骤编码规则生成并展示，非手输；单据类型菜单：薪资计算公式）
     /// </summary>
     [SugarColumn(ColumnName = "formula_code", ColumnDescription = "步骤编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string FormulaCode { get; set; } = string.Empty;

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Maintenance
 // 文件名称：TaktEquipmentI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEquipment 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktEquipmentI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.equipment._self", "zh-HK", "Takt工厂设备信息_hk", "实体名称"),
 
             // entity.equipment.equipcode
-            new TranslationSeedItem("entity.equipment.equipcode", "en-US", "设备编码_us", "设备编码（唯一索引：租户+公司+工厂内唯一，见 ix_equipment_code_unique）"),
+            new TranslationSeedItem("entity.equipment.equipcode", "en-US", "设备编码_us", "设备编码（唯一索引：租户+公司+工厂内唯一，见 ix_equipment_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 设备编码规则生成并展示，非手输；单据类型菜单：设备信息）"),
             // entity.equipment.equipcode
-            new TranslationSeedItem("entity.equipment.equipcode", "ja-JP", "设备编码_jp", "设备编码（唯一索引：租户+公司+工厂内唯一，见 ix_equipment_code_unique）"),
+            new TranslationSeedItem("entity.equipment.equipcode", "ja-JP", "设备编码_jp", "设备编码（唯一索引：租户+公司+工厂内唯一，见 ix_equipment_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 设备编码规则生成并展示，非手输；单据类型菜单：设备信息）"),
             // entity.equipment.equipcode
-            new TranslationSeedItem("entity.equipment.equipcode", "zh-CN", "设备编码", "设备编码（唯一索引：租户+公司+工厂内唯一，见 ix_equipment_code_unique）"),
+            new TranslationSeedItem("entity.equipment.equipcode", "zh-CN", "设备编码", "设备编码（唯一索引：租户+公司+工厂内唯一，见 ix_equipment_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 设备编码规则生成并展示，非手输；单据类型菜单：设备信息）"),
             // entity.equipment.equipcode
-            new TranslationSeedItem("entity.equipment.equipcode", "zh-HK", "设备编码_hk", "设备编码（唯一索引：租户+公司+工厂内唯一，见 ix_equipment_code_unique）"),
+            new TranslationSeedItem("entity.equipment.equipcode", "zh-HK", "设备编码_hk", "设备编码（唯一索引：租户+公司+工厂内唯一，见 ix_equipment_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 设备编码规则生成并展示，非手输；单据类型菜单：设备信息）"),
 
             // entity.equipment.name
             new TranslationSeedItem("entity.equipment.name", "en-US", "设备名称_us", "设备名称"),

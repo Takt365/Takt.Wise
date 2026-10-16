@@ -34,7 +34,7 @@ public sealed class TaktValidationFilter : IAsyncActionFilter
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(next);
         var failures = new List<FluentValidation.Results.ValidationFailure>();
-        foreach (var argument in context.ActionArguments.Values)
+        foreach (var (_, argument) in context.ActionArguments)
         {
             if (argument == null || !ShouldValidate(argument.GetType()))
             {

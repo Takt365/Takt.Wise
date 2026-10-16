@@ -24,7 +24,7 @@ namespace Takt.Domain.Entities.HumanResource.Benefits;
 public class TaktBenefitItem : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 福利项目编码（租户+公司内唯一）
+    /// 福利项目编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 福利项目编码规则生成并展示，非手输；单据类型菜单：福利项目）
     /// </summary>
     [SugarColumn(ColumnName = "item_code", ColumnDescription = "福利项目编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string ItemCode { get; set; } = string.Empty;

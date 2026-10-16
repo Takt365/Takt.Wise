@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Operation
 // 文件名称：TaktQualityGroupI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktQualityGroup 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktQualityGroupI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.qualitygroup._self", "zh-HK", "质量组主数据信息_hk", "实体名称"),
 
             // entity.qualitygroup.code
-            new TranslationSeedItem("entity.qualitygroup.code", "en-US", "质量组编码_us", "质量组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.qualitygroup.code", "en-US", "质量组编码_us", "质量组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 质量组编码规则生成并展示，非手输；单据类型菜单：质量组）"),
             // entity.qualitygroup.code
-            new TranslationSeedItem("entity.qualitygroup.code", "ja-JP", "质量组编码_jp", "质量组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.qualitygroup.code", "ja-JP", "质量组编码_jp", "质量组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 质量组编码规则生成并展示，非手输；单据类型菜单：质量组）"),
             // entity.qualitygroup.code
-            new TranslationSeedItem("entity.qualitygroup.code", "zh-CN", "质量组编码", "质量组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.qualitygroup.code", "zh-CN", "质量组编码", "质量组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 质量组编码规则生成并展示，非手输；单据类型菜单：质量组）"),
             // entity.qualitygroup.code
-            new TranslationSeedItem("entity.qualitygroup.code", "zh-HK", "质量组编码_hk", "质量组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.qualitygroup.code", "zh-HK", "质量组编码_hk", "质量组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 质量组编码规则生成并展示，非手输；单据类型菜单：质量组）"),
 
             // entity.qualitygroup.name
             new TranslationSeedItem("entity.qualitygroup.name", "en-US", "质量组名称_us", "质量组名称"),

@@ -26,7 +26,7 @@ namespace Takt.Domain.Entities.Logistics.Procurement;
 public class TaktPurchaseGroup : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 采购组编码（与员工编码同长 6）
+    /// 采购组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 采购组编码规则生成并展示，非手输；单据类型菜单：采购组）
     /// </summary>
     [SugarColumn(ColumnName = "purchase_group_code", ColumnDescription = "采购组编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string PurchaseGroupCode { get; set; } = string.Empty;

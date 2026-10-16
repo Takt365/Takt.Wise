@@ -33,7 +33,7 @@ public class TaktBank : TaktCompanyEntityBase
     public string CountryRegion { get; set; } = string.Empty;
 
     /// <summary>
-    /// 银行代码（；CHAR 15；与国家地区组成业务唯一键）
+    /// 银行代码（；CHAR 15；与国家地区组成业务唯一键；前端表单选择编码规则后自动通过 TaktNumbering 银行代码规则生成并展示，非手输；单据类型菜单：银行信息）
     /// </summary>
     [SugarColumn(ColumnName = "bank_code", ColumnDescription = "银行代码", ColumnDataType = "nvarchar", Length = 15, IsNullable = false)]
     public string BankCode { get; set; } = string.Empty;
@@ -111,7 +111,7 @@ public class TaktBank : TaktCompanyEntityBase
     public int PobkCurAc { get; set; } = 0;
 
     /// <summary>
-    /// 银行编码（；CHAR 15）
+    /// 银行编码（；CHAR 15；前端表单选择编码规则后自动通过 TaktNumbering 银行编码规则生成并展示，非手输；单据类型菜单：银行信息）
     /// </summary>
     [SugarColumn(ColumnName = "bank_number", ColumnDescription = "银行编码", ColumnDataType = "nvarchar", Length = 15, IsNullable = true)]
     public string? BankNumber { get; set; }

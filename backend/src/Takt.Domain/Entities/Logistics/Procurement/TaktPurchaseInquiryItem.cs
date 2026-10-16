@@ -83,7 +83,7 @@ public class TaktPurchaseInquiryItem : TaktCompanyEntityBase
     public decimal QuotedUnitPrice { get; set; }
 
     /// <summary>
-    /// 税码（冗余：按 PurchaseInquiryId 取 TaktPurchaseInquiry.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（冗余：按 PurchaseInquiryId 取 TaktPurchaseInquiry.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     [SugarColumn(ColumnName = "tax_code", ColumnDescription = "税码", ColumnDataType = "nvarchar", Length = 4, IsNullable = true)]
     public string? TaxCode { get; set; }

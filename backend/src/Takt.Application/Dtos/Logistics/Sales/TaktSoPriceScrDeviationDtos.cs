@@ -56,7 +56,7 @@ public class TaktSoPriceScrPeriodPriceDto
     /// <summary>
     /// 定价记录号
     /// </summary>
-    public string SalesConditionRecordCode { get; set; } = string.Empty;
+    public string SalesConditionCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 条件类型
@@ -81,7 +81,7 @@ public class TaktSoPriceScrPeriodPriceDto
     /// <summary>
     /// 定价序号
     /// </summary>
-    public int SalesConditionRecordSeq { get; set; }
+    public int SalesConditionSeq { get; set; }
 
     /// <summary>
     /// 等级序号（等级行才有）
@@ -212,7 +212,7 @@ public class TaktSoPriceScrDeviationDto
     /// <summary>
     /// 代表 SCR 定价记录号（多条时用分号拼接编码）
     /// </summary>
-    public string ScrSalesConditionRecordCodes { get; set; } = string.Empty;
+    public string ScrSalesConditionCodes { get; set; } = string.Empty;
 
     /// <summary>
     /// 代表生效起（同周期最早 ValidFrom）

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.HumanResource.Performance
 // 文件名称：TaktPerfSchemeI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPerfScheme 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktPerfSchemeI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.perfscheme._self", "zh-HK", "绩效方案指标信息_hk", "实体名称"),
 
             // entity.perfscheme.schemecode
-            new TranslationSeedItem("entity.perfscheme.schemecode", "en-US", "方案编码_us", "方案编码"),
+            new TranslationSeedItem("entity.perfscheme.schemecode", "en-US", "方案编码_us", "方案编码（前端表单选择编码规则后自动通过 TaktNumbering 方案编码规则生成并展示，非手输；单据类型菜单：绩效方案）"),
             // entity.perfscheme.schemecode
-            new TranslationSeedItem("entity.perfscheme.schemecode", "ja-JP", "方案编码_jp", "方案编码"),
+            new TranslationSeedItem("entity.perfscheme.schemecode", "ja-JP", "方案编码_jp", "方案编码（前端表单选择编码规则后自动通过 TaktNumbering 方案编码规则生成并展示，非手输；单据类型菜单：绩效方案）"),
             // entity.perfscheme.schemecode
-            new TranslationSeedItem("entity.perfscheme.schemecode", "zh-CN", "方案编码", "方案编码"),
+            new TranslationSeedItem("entity.perfscheme.schemecode", "zh-CN", "方案编码", "方案编码（前端表单选择编码规则后自动通过 TaktNumbering 方案编码规则生成并展示，非手输；单据类型菜单：绩效方案）"),
             // entity.perfscheme.schemecode
-            new TranslationSeedItem("entity.perfscheme.schemecode", "zh-HK", "方案编码_hk", "方案编码"),
+            new TranslationSeedItem("entity.perfscheme.schemecode", "zh-HK", "方案编码_hk", "方案编码（前端表单选择编码规则后自动通过 TaktNumbering 方案编码规则生成并展示，非手输；单据类型菜单：绩效方案）"),
 
             // entity.perfscheme.schemename
             new TranslationSeedItem("entity.perfscheme.schemename", "en-US", "方案名称_us", "方案名称"),

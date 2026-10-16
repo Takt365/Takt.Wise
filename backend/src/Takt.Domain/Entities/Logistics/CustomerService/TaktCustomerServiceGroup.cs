@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Logistics.CustomerService;
 public class TaktCustomerServiceGroup : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 客户服务组编码（与员工编码同长 6）
+    /// 客户服务组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 客户服务组编码规则生成并展示，非手输；单据类型菜单：客户服务组）
     /// </summary>
     [SugarColumn(ColumnName = "customer_service_group_code", ColumnDescription = "客户服务组编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string CustomerServiceGroupCode { get; set; } = string.Empty;

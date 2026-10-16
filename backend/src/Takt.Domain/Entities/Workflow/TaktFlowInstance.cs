@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Workflow;
 public class TaktFlowInstance : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 实例编码（对外业务单号）
+    /// 实例编码（对外业务单号；前端表单选择编码规则后自动通过 TaktNumbering 实例编码规则生成并展示，非手输；单据类型菜单：流程实例）
     /// </summary>
     [SugarColumn(ColumnName = "instance_code", ColumnDescription = "实例编码", ColumnDataType = "varchar", Length = 64, IsNullable = false)]
     public string InstanceCode { get; set; } = string.Empty;

@@ -29,7 +29,7 @@ public class TaktCustomerComplaintHandling : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// 客诉处理记录编码（唯一索引）
+    /// 客诉处理记录编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 客诉处理记录编码规则生成并展示，非手输；单据类型菜单：客诉处理）
     /// </summary>
     [SugarColumn(ColumnName = "complaint_handling_code", ColumnDescription = "客诉处理记录编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string ComplaintHandlingCode { get; set; } = string.Empty;

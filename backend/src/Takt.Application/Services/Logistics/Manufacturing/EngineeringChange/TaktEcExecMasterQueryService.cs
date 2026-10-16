@@ -74,7 +74,7 @@ public class TaktEcExecMasterQueryService : TaktServiceBase, ITaktEcExecMasterQu
         }
         else if (string.Equals(execDeptCode, TaktEcDeptCodes.Pcba, StringComparison.Ordinal))
         {
-            exp = exp.And(TaktEcSmtQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcEmtlQueryHelper.VisibleDetailExpression());
         }
         else if (string.Equals(execDeptCode, TaktEcDeptCodes.SeizounikaMaster, StringComparison.Ordinal))
         {

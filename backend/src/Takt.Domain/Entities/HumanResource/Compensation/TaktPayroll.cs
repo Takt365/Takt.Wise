@@ -24,7 +24,7 @@ namespace Takt.Domain.Entities.HumanResource.Compensation;
 public class TaktPayroll : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 薪酬体系编码（租户+公司内唯一）
+    /// 薪酬体系编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 薪酬体系编码规则生成并展示，非手输；单据类型菜单：薪酬体系）
     /// </summary>
     [SugarColumn(ColumnName = "payroll_code", ColumnDescription = "薪酬体系编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string PayrollCode { get; set; } = string.Empty;

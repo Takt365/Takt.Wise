@@ -133,7 +133,7 @@ export interface SourceOfSupplyExport {
   plantCode: string;
 
   /**
-   * 货源清单编码（租户+公司内唯一；业务单据号）
+   * 货源清单编码（租户+公司内唯一；业务单据号；前端表单选择编码规则后自动通过 TaktNumbering 货源清单编码规则生成并展示，非手输；单据类型菜单：货源清单）
    */
   sourceOfSupplyCode: string;
 

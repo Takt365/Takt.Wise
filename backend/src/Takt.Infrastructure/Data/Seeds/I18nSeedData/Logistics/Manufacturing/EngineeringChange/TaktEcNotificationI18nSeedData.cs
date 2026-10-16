@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcNotificationI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEcNotification 实体字段国际化种子（已对齐前端 locales：src/locales/logistics/manufacturing/engineering-change/ec-notification）
 // 
@@ -91,13 +91,13 @@ public class TaktEcNotificationI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecnotification._self", "zh-HK", "工程变更通知单信息_hk", "实体名称"),
 
             // entity.ecnotification.code
-            new TranslationSeedItem("entity.ecnotification.code", "en-US", "通知单号_us", "通知单号（按通知方式经编码规则生成）"),
+            new TranslationSeedItem("entity.ecnotification.code", "en-US", "通知单号_us", "通知单号（按通知方式经编码规则生成；前端表单选择编码规则后自动通过 TaktNumbering 通知单号规则生成并展示，非手输；单据类型菜单：设变通知）"),
             // entity.ecnotification.code
-            new TranslationSeedItem("entity.ecnotification.code", "ja-JP", "通知单号_jp", "通知单号（按通知方式经编码规则生成）"),
+            new TranslationSeedItem("entity.ecnotification.code", "ja-JP", "通知单号_jp", "通知单号（按通知方式经编码规则生成；前端表单选择编码规则后自动通过 TaktNumbering 通知单号规则生成并展示，非手输；单据类型菜单：设变通知）"),
             // entity.ecnotification.code
-            new TranslationSeedItem("entity.ecnotification.code", "zh-CN", "通知单号", "通知单号（按通知方式经编码规则生成）"),
+            new TranslationSeedItem("entity.ecnotification.code", "zh-CN", "通知单号", "通知单号（按通知方式经编码规则生成；前端表单选择编码规则后自动通过 TaktNumbering 通知单号规则生成并展示，非手输；单据类型菜单：设变通知）"),
             // entity.ecnotification.code
-            new TranslationSeedItem("entity.ecnotification.code", "zh-HK", "通知单号_hk", "通知单号（按通知方式经编码规则生成）"),
+            new TranslationSeedItem("entity.ecnotification.code", "zh-HK", "通知单号_hk", "通知单号（按通知方式经编码规则生成；前端表单选择编码规则后自动通过 TaktNumbering 通知单号规则生成并展示，非手输；单据类型菜单：设变通知）"),
 
             // entity.ecnotification.ecgijutsuid
             new TranslationSeedItem("entity.ecnotification.ecgijutsuid", "en-US", "技术课主表ID_us", "技术课主表 ID（TaktEcGijutsu 主键；序列化为 string 避免 Javascript 精度问题）"),

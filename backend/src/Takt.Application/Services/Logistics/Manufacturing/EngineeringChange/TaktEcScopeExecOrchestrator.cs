@@ -19,7 +19,7 @@ namespace Takt.Application.Services.Logistics.Manufacturing.EngineeringChange;
 
 /// <summary>
 /// 设变实施范围 → 部门执行行编排（新增/更新/来源导入共用）。
-    /// 规则：停产≠Z0→「实施范围-{范围}-EOL」；按成品/按机种空白待填；内部/技术→「&lt;内部管理&gt;」「&lt;技术管理&gt;」；部管时生管/采购/受检/部管/SMT空白，制一/制二/品管→「&lt;部管管理&gt;」。
+/// 规则：工厂物料查不到根物料则不派生。停产与非 FERT 的冒号文案只用于全仕向、部管中仍须人工实施的部门。内部、技术以及部管下制二/制一/品管写实施范围自动文案。按机种与按设变：整组停产写 EOL，否则整组非 FERT 写物料类型。按成品：当前成品停产写 EOL，否则非 FERT 写该类型。
 /// </summary>
 public class TaktEcScopeExecOrchestrator
 {
@@ -73,6 +73,11 @@ public class TaktEcScopeExecOrchestrator
         var totalSw = Stopwatch.StartNew();
         foreach (var deptCode in TaktEcDeptCodes.KanbanOrder)
         {
+            // 电子物料 D0625 不单独走单表开关：与制造2课 D0620 同一次双表写入（F+C003 → TaktEcEmtl）
+            if (deptCode == TaktEcDeptCodes.Smt)
+            {
+                continue;
+            }
             var deptName = TaktEcDeptCodes.GetDisplayName(deptCode);
             var needCount = needPerDetail;
             TaktLogger.Information(

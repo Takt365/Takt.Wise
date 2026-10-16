@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Logistics.Procurement;
 public class TaktPurchaseInvoice : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 发票凭证编号
+    /// 发票凭证编号（前端表单选择编码规则后自动通过 TaktNumbering 发票凭证编号规则生成并展示，非手输；单据类型菜单：采购发票）
     /// </summary>
     [SugarColumn(ColumnName = "purchase_invoice_code", ColumnDescription = "发票凭证编号", ColumnDataType = "nvarchar", Length = 10, IsNullable = false)]
     public string PurchaseInvoiceCode { get; set; } = string.Empty;
@@ -135,7 +135,7 @@ public class TaktPurchaseInvoice : TaktCompanyEntityBase
     public string? ReversalFiscalYear { get; set; }
 
     /// <summary>
-    /// 税码
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     [SugarColumn(ColumnName = "tax_code", ColumnDescription = "税码", ColumnDataType = "nvarchar", Length = 2, IsNullable = true)]
     public string? TaxCode { get; set; }

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Operation
 // 文件名称：TaktIpqcDefectHandlingI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktIpqcDefectHandling 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktIpqcDefectHandlingI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ipqcdefecthandling._self", "zh-HK", "IPQC制程检验不良处理记录信息_hk", "实体名称"),
 
             // entity.ipqcdefecthandling.code
-            new TranslationSeedItem("entity.ipqcdefecthandling.code", "en-US", "IPQC不良处理编码_us", "IPQC不良处理编码"),
+            new TranslationSeedItem("entity.ipqcdefecthandling.code", "en-US", "IPQC不良处理编码_us", "IPQC不良处理编码（前端表单选择编码规则后自动通过 TaktNumbering IPQC不良处理编码规则生成并展示，非手输；单据类型菜单：制程检验）"),
             // entity.ipqcdefecthandling.code
-            new TranslationSeedItem("entity.ipqcdefecthandling.code", "ja-JP", "IPQC不良处理编码_jp", "IPQC不良处理编码"),
+            new TranslationSeedItem("entity.ipqcdefecthandling.code", "ja-JP", "IPQC不良处理编码_jp", "IPQC不良处理编码（前端表单选择编码规则后自动通过 TaktNumbering IPQC不良处理编码规则生成并展示，非手输；单据类型菜单：制程检验）"),
             // entity.ipqcdefecthandling.code
-            new TranslationSeedItem("entity.ipqcdefecthandling.code", "zh-CN", "IPQC不良处理编码", "IPQC不良处理编码"),
+            new TranslationSeedItem("entity.ipqcdefecthandling.code", "zh-CN", "IPQC不良处理编码", "IPQC不良处理编码（前端表单选择编码规则后自动通过 TaktNumbering IPQC不良处理编码规则生成并展示，非手输；单据类型菜单：制程检验）"),
             // entity.ipqcdefecthandling.code
-            new TranslationSeedItem("entity.ipqcdefecthandling.code", "zh-HK", "IPQC不良处理编码_hk", "IPQC不良处理编码"),
+            new TranslationSeedItem("entity.ipqcdefecthandling.code", "zh-HK", "IPQC不良处理编码_hk", "IPQC不良处理编码（前端表单选择编码规则后自动通过 TaktNumbering IPQC不良处理编码规则生成并展示，非手输；单据类型菜单：制程检验）"),
 
             // entity.ipqcdefecthandling.ipqcorderitemid
             new TranslationSeedItem("entity.ipqcdefecthandling.ipqcorderitemid", "en-US", "IPQC检验单明细ID_us", "IPQC检验单明细 ID（选项 TaktIpqcOrderItems/options；DictValue=Id）"),

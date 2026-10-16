@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Logistics.Sales;
 public class TaktSalesInvoice : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 开票凭证
+    /// 开票凭证（前端表单选择编码规则后自动通过 TaktNumbering 开票凭证规则生成并展示，非手输；单据类型菜单：销售发票）
     /// </summary>
     [SugarColumn(ColumnName = "billing_document_code", ColumnDescription = "开票凭证", ColumnDataType = "nvarchar", Length = 10, IsNullable = false)]
     public string BillingDocumentCode { get; set; } = string.Empty;

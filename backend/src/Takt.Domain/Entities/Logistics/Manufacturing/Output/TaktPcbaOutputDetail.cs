@@ -29,7 +29,7 @@ namespace Takt.Domain.Entities.Logistics.Manufacturing.Output;
 public class TaktPcbaOutputDetail : TaktCompanyEntityBase
 {
     /// <summary>
-    /// PCBA日报ID（主表主键；与 TeamCode、ShiftNo、PcbBoardType、PanelSide、LineNumber 组成唯一键；序列化为 string 以避免 Javascript 精度问题）
+    /// PCBA日报ID（主表主键；与租户、TeamCode、ShiftNo、PcbBoardType、PanelSide、LineNumber 组成唯一键；序列化为 string 以避免 Javascript 精度问题）
     /// </summary>
     [SugarColumn(ColumnName = "pcba_output_id", ColumnDescription = "PCBA日报ID", ColumnDataType = "bigint", IsNullable = false)]
     [JsonConverter(typeof(ValueToStringConverter))]
@@ -42,7 +42,7 @@ public class TaktPcbaOutputDetail : TaktCompanyEntityBase
     public string ProdOrderCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 行号（项号/序号，固定步长=10；与 PcbaOutputId、TeamCode、ShiftNo、PcbBoardType、PanelSide 组成唯一键）
+    /// 行号（项号/序号，固定步长=10；与租户、PcbaOutputId、TeamCode、ShiftNo、PcbBoardType、PanelSide 组成唯一键）
     /// </summary>
     [SugarColumn(ColumnName = "line_number", ColumnDescription = "行号", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
     public int LineNumber { get; set; } = 0;
@@ -54,7 +54,7 @@ public class TaktPcbaOutputDetail : TaktCompanyEntityBase
     public string TimePeriod { get; set; } = string.Empty;
 
     /// <summary>
-    /// 生产班组（选项 TaktProductionTeams/options?teamCategory=P；DictValue=TeamCode，ExtValue=PlantCode；与 PcbaOutputId、ShiftNo、PcbBoardType、PanelSide、LineNumber 组成唯一键）
+    /// 生产班组（选项 TaktProductionTeams/options?teamCategory=P；DictValue=TeamCode，ExtValue=PlantCode；与租户、PcbaOutputId、ShiftNo、PcbBoardType、PanelSide、LineNumber 组成唯一键）
     /// </summary>
     [SugarColumn(ColumnName = "team_code", ColumnDescription = "生产班组", Length = 8, ColumnDataType = "nvarchar", IsNullable = false)]
     public string TeamCode { get; set; } = string.Empty;
@@ -78,7 +78,7 @@ public class TaktPcbaOutputDetail : TaktCompanyEntityBase
     public int IndirectLabor { get; set; } = 0;
 
     /// <summary>
-    /// 班次（字典 logistics_manufacturing_shift_category；1=早 2=中 3=晚 4=白班 5=夜班；与 PcbaOutputId、TeamCode、PcbBoardType、PanelSide、LineNumber 组成唯一键）
+    /// 班次（字典 logistics_manufacturing_shift_category；1=早 2=中 3=晚 4=白班 5=夜班；与租户、PcbaOutputId、TeamCode、PcbBoardType、PanelSide、LineNumber 组成唯一键）
     /// </summary>
     [SugarColumn(ColumnName = "shift_no", ColumnDescription = "班次", ColumnDataType = "int", IsNullable = false, DefaultValue = "1")]
     public int ShiftNo { get; set; } = 1;
@@ -108,13 +108,13 @@ public class TaktPcbaOutputDetail : TaktCompanyEntityBase
     public decimal StdEquipmentCapacity { get; set; } = 0;
 
     /// <summary>
-    /// PCB板别（字典 logistics_manufacturing_pcba_function；存 DictLabel；UI 提交由前端 dict-type 转换；与 PcbaOutputId、TeamCode、ShiftNo、PanelSide、LineNumber 组成唯一键）
+    /// PCB板别（字典 logistics_manufacturing_pcba_function；存 DictLabel；UI 提交由前端 dict-type 转换；与租户、PcbaOutputId、TeamCode、ShiftNo、PanelSide、LineNumber 组成唯一键）
     /// </summary>
     [SugarColumn(ColumnName = "pcb_board_type", ColumnDescription = "PCB板别", Length = 40, ColumnDataType = "nvarchar", IsNullable = false)]
     public string PcbBoardType { get; set; } = string.Empty;
 
     /// <summary>
-    /// 面板别（字典 logistics_manufacturing_pcba_side_category；存 DictValue：b= B面 t= T面；与 PcbaOutputId、TeamCode、ShiftNo、PcbBoardType、LineNumber 组成唯一键）
+    /// 面板别（字典 logistics_manufacturing_pcba_side_category；存 DictValue：b= B面 t= T面；与租户、PcbaOutputId、TeamCode、ShiftNo、PcbBoardType、LineNumber 组成唯一键）
     /// </summary>
     [SugarColumn(ColumnName = "panel_side", ColumnDescription = "面板别", Length = 40, ColumnDataType = "nvarchar", IsNullable = false)]
     public string PanelSide { get; set; } = string.Empty;

@@ -25,7 +25,7 @@ namespace Takt.Domain.Entities.Logistics.Manufacturing.Output;
 public class TaktAssyOutputDetail : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 组立日报ID（主表主键；与 TimePeriod、LineNumber 组成唯一键；序列化为 string 以避免 Javascript 精度问题）
+    /// 组立日报ID（主表主键；与租户、TimePeriod、LineNumber 组成唯一键；序列化为 string 以避免 Javascript 精度问题）
     /// </summary>
     [SugarColumn(ColumnName = "assy_output_id", ColumnDescription = "组立日报ID", ColumnDataType = "bigint", IsNullable = false)]
     [JsonConverter(typeof(ValueToStringConverter))]
@@ -38,13 +38,13 @@ public class TaktAssyOutputDetail : TaktCompanyEntityBase
     public string ProdOrderCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 行号（项号/序号，固定步长=10；与 AssyOutputId、TimePeriod 组成唯一键）
+    /// 行号（项号/序号，固定步长=10；与租户、AssyOutputId、TimePeriod 组成唯一键）
     /// </summary>
     [SugarColumn(ColumnName = "line_number", ColumnDescription = "行号", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
     public int LineNumber { get; set; } = 0;
 
     /// <summary>
-    /// 生产时段（固定值；与 AssyOutputId、LineNumber 组成唯一键）
+    /// 生产时段（固定值；与租户、AssyOutputId、LineNumber 组成唯一键）
     /// </summary>
     [SugarColumn(ColumnName = "time_period", ColumnDescription = "生产时段", Length = 20, ColumnDataType = "nvarchar", IsNullable = false)]
     public string TimePeriod { get; set; } = string.Empty;

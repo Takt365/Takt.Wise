@@ -21,7 +21,7 @@ export default {
     selectPeriodRequired: 'Please select a period range',
     selectPriceTypeRequired: 'Please select a condition type',
     selectSupplierRequired: 'Please select a supplier',
-    summary: '{count} material×supplier rows (one row per ValidFrom; adjacent compare, right side is first vs last)',
+    summary: '{count} pricing records (same count as export; selected plant only; adjacent compare within material)',
     summaryModel: '{count} material×supplier rows (model/product groups from BOM; same columns and trend rules as the left tab)',
     trendSummary: '{base} → {compare}: up {up} · down {down} · flat {flat}',
     trendSummaryValidFrom: 'Each row compares first vs last point: up {up} · down {down} · flat {flat}',

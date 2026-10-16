@@ -32,31 +32,31 @@ public class TaktSalesPriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITaktS
     /// </summary>
     private const int MaterialNameLookupBatchSize = 500;
 
-    private readonly ITaktCompanyRepository<TaktSalesConditionRecord> _salesConditionRecordRepository;
-    private readonly ITaktCompanyRepository<TaktSalesConditionRecordItem> _salesConditionRecordItemRepository;
+    private readonly ITaktCompanyRepository<TaktSalesCondition> _salesConditionRepository;
+    private readonly ITaktCompanyRepository<TaktSalesConditionItem> _salesConditionItemRepository;
     private readonly ITaktCompanyRepository<TaktMaterialPlant> _materialPlantRepository;
     private readonly ITaktCompanyRepository<TaktCustomer> _customerRepository;
 
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="salesConditionRecordRepository">销售价格仓储</param>
-    /// <param name="salesConditionRecordItemRepository">销售条件记录行仓储</param>
+    /// <param name="salesConditionRepository">销售价格仓储</param>
+    /// <param name="salesConditionItemRepository">销售条件行仓储</param>
     /// <param name="materialPlantRepository">工厂物料仓储</param>
     /// <param name="customerRepository">客户仓储</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktSalesPriceTrendMonthlyAnalysisBuilder(
-        ITaktCompanyRepository<TaktSalesConditionRecord> salesConditionRecordRepository,
-        ITaktCompanyRepository<TaktSalesConditionRecordItem> salesConditionRecordItemRepository,
+        ITaktCompanyRepository<TaktSalesCondition> salesConditionRepository,
+        ITaktCompanyRepository<TaktSalesConditionItem> salesConditionItemRepository,
         ITaktCompanyRepository<TaktMaterialPlant> materialPlantRepository,
         ITaktCompanyRepository<TaktCustomer> customerRepository,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
     {
-        _salesConditionRecordRepository = salesConditionRecordRepository;
-        _salesConditionRecordItemRepository = salesConditionRecordItemRepository;
+        _salesConditionRepository = salesConditionRepository;
+        _salesConditionItemRepository = salesConditionItemRepository;
         _materialPlantRepository = materialPlantRepository;
         _customerRepository = customerRepository;
     }
@@ -84,24 +84,27 @@ public class TaktSalesPriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITaktS
             priceTypeFilter,
             rangeStart,
             rangeEndExclusive);
-        var masters = await _salesConditionRecordRepository.GetListAsync(masterExp);
+        var masters = (await _salesConditionRepository.GetListAsync(masterExp))
+            .Where(m => string.Equals(m.PlantCode?.Trim(), plantCode, StringComparison.OrdinalIgnoreCase))
+            .ToList();
         if (masters.Count == 0)
         {
             return TaktSalesPriceTrendAnalysisBuilt.Empty();
         }
         var masterById = masters.ToDictionary(m => m.Id);
         var masterIds = masters.Select(m => m.Id).ToList();
-        var itemExp = BuildSalesPriceTrendItemExpression(masterIds);
-        var items = await _salesConditionRecordItemRepository.GetListAsync(itemExp);
+        var itemExp = BuildSalesPriceTrendItemExpression(plantCode, masterIds);
+        var items = await _salesConditionItemRepository.GetListAsync(itemExp);
         if (items.Count == 0)
         {
             return TaktSalesPriceTrendAnalysisBuilt.Empty();
         }
         var sourceRows = items
-            .Where(i => masterById.ContainsKey(i.SalesConditionRecordId))
+            .Where(i => masterById.ContainsKey(i.SalesConditionId)
+                && string.Equals(i.PlantCode?.Trim(), plantCode, StringComparison.OrdinalIgnoreCase))
             .Select(i => new SalesPriceTrendSourceRow
             {
-                Master = masterById[i.SalesConditionRecordId],
+                Master = masterById[i.SalesConditionId],
                 Item = i,
             })
             .ToList();
@@ -150,7 +153,7 @@ public class TaktSalesPriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITaktS
     /// <param name="validFromStart">有效起始日区间起（含）</param>
     /// <param name="validFromEndExclusive">有效起始日区间止（不含）</param>
     /// <returns>表达式</returns>
-    private Expression<Func<TaktSalesConditionRecord, bool>> BuildSalesPriceTrendMasterExpression(
+    private Expression<Func<TaktSalesCondition, bool>> BuildSalesPriceTrendMasterExpression(
         string plantCode,
         string? customerFilter,
         string? materialFilter,
@@ -158,7 +161,7 @@ public class TaktSalesPriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITaktS
         DateTime validFromStart,
         DateTime validFromEndExclusive)
     {
-        var exp = Expressionable.Create<TaktSalesConditionRecord>();
+        var exp = Expressionable.Create<TaktSalesCondition>();
         exp = exp.And(x =>
             x.TenantCode == CurrentTenantCode
             && x.CompanyCode == CurrentCompanyCode
@@ -185,16 +188,19 @@ public class TaktSalesPriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITaktS
     /// <summary>
     /// 构建销售价格推移明细筛选条件
     /// </summary>
+    /// <param name="plantCode">工厂代码</param>
     /// <param name="masterIds">主表 ID 列表</param>
     /// <returns>表达式</returns>
-    private Expression<Func<TaktSalesConditionRecordItem, bool>> BuildSalesPriceTrendItemExpression(
+    private Expression<Func<TaktSalesConditionItem, bool>> BuildSalesPriceTrendItemExpression(
+        string plantCode,
         IReadOnlyList<long> masterIds)
     {
-        var exp = Expressionable.Create<TaktSalesConditionRecordItem>();
+        var exp = Expressionable.Create<TaktSalesConditionItem>();
         exp = exp.And(x =>
             x.TenantCode == CurrentTenantCode
             && x.CompanyCode == CurrentCompanyCode
-            && masterIds.Contains(x.SalesConditionRecordId)
+            && x.PlantCode == plantCode
+            && masterIds.Contains(x.SalesConditionId)
             && x.IsObsolete == 0);
         return exp.ToExpression();
     }
@@ -207,7 +213,7 @@ public class TaktSalesPriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITaktS
     private static (DateTime RangeStart, DateTime RangeEndExclusive) ResolveSalesPriceTrendDateBounds(
         TaktSalesPriceTrendQueryDto queryDto)
     {
-        var (periodStart, periodEnd) = NormalizeSalesConditionRecordPeriodBounds(
+        var (periodStart, periodEnd) = NormalizeSalesConditionPeriodBounds(
             queryDto.PeriodDateStart,
             queryDto.PeriodDateEnd);
         if (periodStart.HasValue || periodEnd.HasValue)
@@ -235,7 +241,7 @@ public class TaktSalesPriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITaktS
     /// <param name="periodDateStart">期间起</param>
     /// <param name="periodDateEnd">期间止</param>
     /// <returns>月初起止</returns>
-    private static (DateTime? Start, DateTime? End) NormalizeSalesConditionRecordPeriodBounds(
+    private static (DateTime? Start, DateTime? End) NormalizeSalesConditionPeriodBounds(
         DateTime? periodDateStart,
         DateTime? periodDateEnd)
     {
@@ -277,7 +283,7 @@ public class TaktSalesPriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITaktS
                     var currency = g.Select(x => x.Item.ConditionCurrencyCode?.Trim())
                         .FirstOrDefault(c => !string.IsNullOrWhiteSpace(c)) ?? string.Empty;
                     return (
-                        UnitPrice: RoundSalesConditionRecordUnitPrice(
+                        UnitPrice: RoundSalesConditionUnitPrice(
                             TaktPriceTrendAnalysisHelper.NormalizeUnitPrice(avgRaw, perUnit)),
                         Unit: unit,
                         Currency: currency);
@@ -313,7 +319,7 @@ public class TaktSalesPriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITaktS
                 row.Unit = point.Unit;
             }
         }
-        ApplySalesConditionRecordValidFromTrend(row);
+        ApplySalesConditionValidFromTrend(row);
         return row;
     }
 
@@ -321,7 +327,7 @@ public class TaktSalesPriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITaktS
     /// 按该行最近两次有效起始日计算涨跌
     /// </summary>
     /// <param name="row">转置行</param>
-    private static void ApplySalesConditionRecordValidFromTrend(TaktSalesPriceTrendDto row)
+    private static void ApplySalesConditionValidFromTrend(TaktSalesPriceTrendDto row)
     {
         var dates = row.PeriodUnitPrices.Keys
             .OrderBy(k => k, StringComparer.Ordinal)
@@ -341,7 +347,7 @@ public class TaktSalesPriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITaktS
             row.Trend = "none";
             return;
         }
-        row.VarianceAmount = RoundSalesConditionRecordUnitPrice(comparePrice - basePrice);
+        row.VarianceAmount = RoundSalesConditionUnitPrice(comparePrice - basePrice);
         if (basePrice != 0m)
         {
             row.VariancePercent = Math.Round(
@@ -533,7 +539,7 @@ public class TaktSalesPriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITaktS
     /// </summary>
     /// <param name="value">单价</param>
     /// <returns>四舍五入后单价</returns>
-    private static decimal RoundSalesConditionRecordUnitPrice(decimal value) =>
+    private static decimal RoundSalesConditionUnitPrice(decimal value) =>
         Math.Round(value, 5, MidpointRounding.AwayFromZero);
 
     /// <summary>
@@ -591,11 +597,11 @@ public class TaktSalesPriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITaktS
         /// <summary>
         /// 销售价格主表
         /// </summary>
-        public TaktSalesConditionRecord Master { get; init; } = null!;
+        public TaktSalesCondition Master { get; init; } = null!;
 
         /// <summary>
-        /// 销售条件记录行
+        /// 销售条件行
         /// </summary>
-        public TaktSalesConditionRecordItem Item { get; init; } = null!;
+        public TaktSalesConditionItem Item { get; init; } = null!;
     }
 }

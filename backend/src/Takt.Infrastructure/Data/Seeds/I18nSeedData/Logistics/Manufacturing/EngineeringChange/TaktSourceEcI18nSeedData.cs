@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktSourceEcI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSourceEc 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktSourceEcI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.sourceec._self", "zh-HK", "设变来源明细列表信息_hk", "实体名称"),
 
             // entity.sourceec.code
-            new TranslationSeedItem("entity.sourceec.code", "en-US", "设变号码_us", "设变号码"),
+            new TranslationSeedItem("entity.sourceec.code", "en-US", "设变号码_us", "设变号码（前端表单选择编码规则后自动通过 TaktNumbering 设变号码规则生成并展示，非手输；单据类型菜单：设变来源）"),
             // entity.sourceec.code
-            new TranslationSeedItem("entity.sourceec.code", "ja-JP", "设变号码_jp", "设变号码"),
+            new TranslationSeedItem("entity.sourceec.code", "ja-JP", "设变号码_jp", "设变号码（前端表单选择编码规则后自动通过 TaktNumbering 设变号码规则生成并展示，非手输；单据类型菜单：设变来源）"),
             // entity.sourceec.code
-            new TranslationSeedItem("entity.sourceec.code", "zh-CN", "设变号码", "设变号码"),
+            new TranslationSeedItem("entity.sourceec.code", "zh-CN", "设变号码", "设变号码（前端表单选择编码规则后自动通过 TaktNumbering 设变号码规则生成并展示，非手输；单据类型菜单：设变来源）"),
             // entity.sourceec.code
-            new TranslationSeedItem("entity.sourceec.code", "zh-HK", "设变号码_hk", "设变号码"),
+            new TranslationSeedItem("entity.sourceec.code", "zh-HK", "设变号码_hk", "设变号码（前端表单选择编码规则后自动通过 TaktNumbering 设变号码规则生成并展示，非手输；单据类型菜单：设变来源）"),
 
             // entity.sourceec.sourcemodel
             new TranslationSeedItem("entity.sourceec.sourcemodel", "en-US", "机种_us", "机种"),

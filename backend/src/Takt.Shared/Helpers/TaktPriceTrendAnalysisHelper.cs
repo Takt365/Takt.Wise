@@ -128,9 +128,14 @@ public static class TaktPriceTrendAnalysisHelper
     public const int DefaultStartYear = 2016;
 
     /// <summary>
-    /// 最大分析月数（20 年）
+    /// 最大分析月数（20 年）。价格点列、缺月回填等内部扫描用；页面可选区间见 AnalysisPeriodMaxMonths
     /// </summary>
     public const int MaxTrendMonths = 240;
+
+    /// <summary>
+    /// 推移分析页面可选区间（含起止），与前端 TAKT_ANALYSIS_PERIOD_MAX_MONTHS 一致
+    /// </summary>
+    public const int AnalysisPeriodMaxMonths = 12;
 
     /// <summary>
     /// 缺月回填时向前扫描历史月的上限（与展示列无关）

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Routine.HelpDesk
 // 文件名称：TaktTicketI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktTicket 实体字段国际化种子（已对齐前端 locales：src/locales/routine/help-desk/ticket）
 // 
@@ -91,13 +91,13 @@ public class TaktTicketI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ticket._self", "zh-HK", "服务台工单信息_hk", "实体名称"),
 
             // entity.ticket.code
-            new TranslationSeedItem("entity.ticket.code", "en-US", "工单编码_us", "工单编码（唯一）"),
+            new TranslationSeedItem("entity.ticket.code", "en-US", "工单编码_us", "工单编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 工单编码规则生成并展示，非手输；单据类型菜单：工单管理）"),
             // entity.ticket.code
-            new TranslationSeedItem("entity.ticket.code", "ja-JP", "工单编码_jp", "工单编码（唯一）"),
+            new TranslationSeedItem("entity.ticket.code", "ja-JP", "工单编码_jp", "工单编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 工单编码规则生成并展示，非手输；单据类型菜单：工单管理）"),
             // entity.ticket.code
-            new TranslationSeedItem("entity.ticket.code", "zh-CN", "工单编码", "工单编码（唯一）"),
+            new TranslationSeedItem("entity.ticket.code", "zh-CN", "工单编码", "工单编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 工单编码规则生成并展示，非手输；单据类型菜单：工单管理）"),
             // entity.ticket.code
-            new TranslationSeedItem("entity.ticket.code", "zh-HK", "工单编码_hk", "工单编码（唯一）"),
+            new TranslationSeedItem("entity.ticket.code", "zh-HK", "工单编码_hk", "工单编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 工单编码规则生成并展示，非手输；单据类型菜单：工单管理）"),
 
             // entity.ticket.title
             new TranslationSeedItem("entity.ticket.title", "en-US", "工单标题_us", "工单标题"),

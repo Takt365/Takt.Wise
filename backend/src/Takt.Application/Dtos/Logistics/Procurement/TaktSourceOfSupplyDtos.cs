@@ -290,10 +290,15 @@ public class TaktSourceOfSupplyCreateDto
     public string PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 货源清单编码（租户+公司内唯一；业务单据号）
+    /// 货源清单编码（租户+公司内唯一；业务单据号；前端表单选择编码规则后自动通过 TaktNumbering 货源清单编码规则生成并展示，非手输；单据类型菜单：货源清单）
     /// </summary>
     [Required(ErrorMessage = "货源清单编码（租户+公司内唯一；业务单据号）不能为空")]
     public string SourceOfSupplyCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 编码规则编码（新增时选择货源清单编码规则后取号；对应 TaktNumbering.RuleCode；不落库）
+    /// </summary>
+    public string? NumberingRuleCode { get; set; }
 
     /// <summary>
     /// 物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）

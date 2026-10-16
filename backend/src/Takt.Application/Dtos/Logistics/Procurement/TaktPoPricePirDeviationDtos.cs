@@ -4,7 +4,7 @@
 // 文件名称：TaktPoPricePirDeviationDtos.cs
 // 创建时间：2026-09-20
 // 创建人：Takt365(Cursor AI)
-// 功能描述：PO 价相对同生效周期采购信息记录（PIR）的差异分析 DTO（含涨跌比）
+// 功能描述：PO 价相对同生效周期采购信息（PIR）的差异分析 DTO（含涨跌比）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -61,7 +61,7 @@ public class TaktPoPricePirPeriodPriceDto
     /// <summary>
     /// 定价记录号
     /// </summary>
-    public string PurchaseInfoRecordCode { get; set; } = string.Empty;
+    public string PurchaseInfoCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 条件类型
@@ -86,7 +86,7 @@ public class TaktPoPricePirPeriodPriceDto
     /// <summary>
     /// 定价序号
     /// </summary>
-    public int PurchaseInfoRecordSeq { get; set; }
+    public int PurchaseInfoSeq { get; set; }
 
     /// <summary>
     /// 等级序号（等级行才有）
@@ -195,9 +195,9 @@ public class TaktPoPricePirDeviationDto
     public decimal PoNormalizedUnitPrice { get; set; }
 
     /// <summary>
-    /// PO 行上的采购信息记录编码
+    /// PO 行上的采购信息编码
     /// </summary>
-    public string? PurchaseInfoRecordCode { get; set; }
+    public string? PurchaseInfoCode { get; set; }
 
     /// <summary>
     /// 匹配原因：no_pir=同周期无 PIR；price_absent=偏离按数量解析的适用 PIR 价
@@ -222,7 +222,7 @@ public class TaktPoPricePirDeviationDto
     /// <summary>
     /// 代表 PIR 定价记录号（多条时用分号拼接编码）
     /// </summary>
-    public string PirPurchaseInfoRecordCodes { get; set; } = string.Empty;
+    public string PirPurchaseInfoCodes { get; set; } = string.Empty;
 
     /// <summary>
     /// 代表生效起（同周期最早 ValidFrom）

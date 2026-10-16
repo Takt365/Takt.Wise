@@ -2,7 +2,7 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/components -->
 <!-- 文件名称：EcDeptExecDetailPanel.vue -->
-<!-- 功能描述：执行部门右栏：按选中执行主表加载视图子表设变明细（EcXxxId）；defineExpose reload -->
+<!-- 功能描述：执行部门右栏明细页签：按左侧设变主表加载 TaktEcDetail；defineExpose reload -->
 <!-- 版权信息：Copyright (c) 2026 Takt All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->
@@ -18,8 +18,10 @@
     />
     <TaktToolsBar
       :show-create="false"
+      :show-create-row="false"
       :show-update="false"
       :show-delete="false"
+      :show-delete-row="false"
       :show-import="false"
       :show-export="false"
       :show-expand="false"
@@ -45,7 +47,7 @@
         table-mode="masterDetailDetail"
         scroll-layout="masterDetailLr"
         :scroll="{ y: detailTableScrollY }"
-        :data-source="pagedRows"
+        :data-source="dataSource"
         :loading="loading"
         :stripe="true"
         :virtual="true"
@@ -53,7 +55,7 @@
         :show-pagination="true"
         v-model:current="currentPage"
         v-model:page-size="pageSize"
-        :total="filteredTotal"
+        :total="total"
         @change="handleTableChange"
         @pagination-change="handlePaginationChange"
         @resize-column="handleResizeColumn"
@@ -89,12 +91,12 @@
 
 <script setup lang="ts">
 /**
- * 执行部门右栏设变明细面板（视图主从子表）
+ * 执行部门右栏设变明细页签（按设变主表分页）
  */
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { measureMasterDetailLrTableScrollY } from '@/composables/useTaktMasterDetailLrScrollY'
-import { TAKT_TABLE_SCROLL_Y_MIN } from '@/utils/tableScroll'
+import { getEcDetailList } from '@/api/logistics/manufacturing/engineering-change/ecDetail.api'
+import { measureConstrainedTableScrollY } from '@/utils/tableScroll'
 import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 import type { EcDetail } from '@/types/logistics/manufacturing/engineering-change/ecDetail.types'
 import {
@@ -102,33 +104,25 @@ import {
   buildEcDetailTableColumns,
   useEcDetailI18n,
 } from '../ec-gijutsu/composables/useEcDetailI18n'
-import { useEcDeptExecMasterContext } from '../composables/useEcDeptExecMasterContext'
 
 const props = defineProps<{
-  /** 执行行主键字段（同明细视图外键，如 ecBukanId） */
-  idField: string
-  /** 按执行主键取行（须含 ecDetails） */
-  getMasterById: (id: string) => Promise<{ ecDetails?: EcDetail[] } | null | undefined>
+  /** 左侧选中的设变主表主键 */
+  ecGijutsuId?: string
+  /** 页签内表格 scroll.y（标准左右表高度减去页签栏） */
+  scrollY: number
 }>()
 
 const { t } = useI18n()
 const pi = useEcDetailI18n()
-const { selectedMasterRow } = useEcDeptExecMasterContext()
 
-/**
- * 当前选中执行主表主键
- * @returns {string} 执行 Id
- */
-function selectedMasterId(): string {
-  return String(selectedMasterRow.value?.[props.idField] ?? '').trim()
-}
-
-/** 是否已选主表执行行 */
-const hasMasterSelection = computed(() => !!selectedMasterId())
+/** 是否已选设变主表 */
+const hasMasterSelection = computed(() => !!props.ecGijutsuId?.trim())
 /** 列表 loading */
 const loading = ref(false)
-/** 全量明细（来自 GetById.EcDetails） */
-const allRows = ref<EcDetail[]>([])
+/** 当前页明细 */
+const dataSource = ref<EcDetail[]>([])
+/** 服务端总数 */
+const total = ref(0)
 /** 当前页 */
 const currentPage = ref(getTaktDefaultPageIndex())
 /** 每页条数 */
@@ -137,11 +131,31 @@ const pageSize = ref(getTaktDefaultPageSize())
 const queryKeyword = ref('')
 /** 列设置 */
 const columnSettingVisible = ref(false)
-/** 子表滚动容器 */
+/** 明细表外壳 */
 const detailTableWrapRef = ref<HTMLElement | null>(null)
-/** 子表 scroll.y */
-const detailTableScrollY = ref(TAKT_TABLE_SCROLL_Y_MIN)
-let detailTableScrollResizeObserver: ResizeObserver | null = null
+/** 明细表按外壳实测的 scroll.y */
+const detailFittedScrollY = ref(0)
+/** 明细表高度监听 */
+let detailTableResizeObserver: ResizeObserver | null = null
+/**
+ * 明细表 scroll.y：不超过基础表减页签，且落在外壳内以保留横向滚动条
+ */
+const detailTableScrollY = computed(() => {
+  if (detailFittedScrollY.value > 0) {
+    return Math.min(props.scrollY, detailFittedScrollY.value)
+  }
+  return props.scrollY
+})
+
+/**
+ * 按明细表外壳重算 scroll.y
+ */
+function syncDetailTableScrollY(): void {
+  const fitted = measureConstrainedTableScrollY(detailTableWrapRef.value, { reservePagination: true })
+  if (fitted > 0) {
+    detailFittedScrollY.value = fitted
+  }
+}
 
 /** 列定义 */
 const columns = computed<TableColumnsType>(() =>
@@ -149,44 +163,6 @@ const columns = computed<TableColumnsType>(() =>
 )
 /** 可见列 */
 const visibleColumnKeys = ref<string[]>([...ECDETAIL_DEPT_MASTER_DEFAULT_VISIBLE_COLUMN_KEYS])
-
-/**
- * 客户端关键词过滤
- * @param rows 明细行
- * @returns {EcDetail[]} 过滤结果
- */
-function filterRows(rows: EcDetail[]): EcDetail[] {
-  const kw = queryKeyword.value.trim().toLowerCase()
-  if (!kw) {
-    return rows
-  }
-  return rows.filter((row) => {
-    const bag = [
-      row.ecCode,
-      row.ecModelCode,
-      row.ecRootMaterialCode,
-      row.ecRootMaterialDescription,
-      row.ecParentMaterialCode,
-      row.ecNewMaterialCode,
-      row.ecOldMaterialCode,
-      String(row.lineNumber ?? ''),
-    ]
-      .filter(Boolean)
-      .join(' ')
-      .toLowerCase()
-    return bag.includes(kw)
-  })
-}
-
-/** 过滤后总数 */
-const filteredTotal = computed(() => filterRows(allRows.value).length)
-
-/** 当前页数据 */
-const pagedRows = computed(() => {
-  const filtered = filterRows(allRows.value)
-  const start = (currentPage.value - 1) * pageSize.value
-  return filtered.slice(start, start + pageSize.value)
-})
 
 /**
  * 明细主键
@@ -198,32 +174,29 @@ function getEcDetailId(record: EcDetail | Record<string, unknown>) {
 }
 
 /**
- * 重算子表 scroll.y
- */
-function recalcDetailTableScrollY(): void {
-  const wrap = detailTableWrapRef.value
-  if (!wrap) {
-    return
-  }
-  detailTableScrollY.value = measureMasterDetailLrTableScrollY(wrap)
-}
-
-/**
- * 加载设变明细（视图子表）
+ * 加载设变明细（按左侧设变主表分页）
  */
 async function loadData() {
-  const masterId = selectedMasterId()
-  if (!masterId) {
-    allRows.value = []
+  const ecGijutsuId = props.ecGijutsuId?.trim()
+  if (!ecGijutsuId) {
+    dataSource.value = []
+    total.value = 0
     return
   }
   loading.value = true
   try {
-    const res = await props.getMasterById(masterId)
-    allRows.value = res?.ecDetails ?? []
+    const res = await getEcDetailList({
+      ecGijutsuId,
+      pageIndex: currentPage.value,
+      pageSize: pageSize.value,
+      keyWords: queryKeyword.value.trim() || undefined,
+    })
+    dataSource.value = res.data ?? []
+    total.value = res.total ?? 0
   } catch (error: unknown) {
     logger.error('[EcDeptExec] 加载设变明细失败', { error })
-    allRows.value = []
+    dataSource.value = []
+    total.value = 0
   } finally {
     loading.value = false
   }
@@ -238,12 +211,14 @@ function reload() {
 /** 搜索 */
 function handleSearch() {
   currentPage.value = getTaktDefaultPageIndex()
+  void loadData()
 }
 
 /** 重置 */
 function handleQueryReset() {
   queryKeyword.value = ''
   currentPage.value = getTaktDefaultPageIndex()
+  void loadData()
 }
 
 /** 刷新当前 */
@@ -252,7 +227,9 @@ function handleRefresh() {
 }
 
 /** 分页 */
-function handlePaginationChange() {}
+function handlePaginationChange() {
+  void loadData()
+}
 
 /** 表格变化 */
 function handleTableChange() {}
@@ -274,26 +251,27 @@ function handleColumnSettingReset() {
 }
 
 watch(
-  () => selectedMasterRow.value?.[props.idField],
+  () => props.ecGijutsuId,
   () => {
     reload()
   },
 )
 
 onMounted(() => {
+  reload()
   nextTick(() => {
-    recalcDetailTableScrollY()
+    syncDetailTableScrollY()
     const wrap = detailTableWrapRef.value
     if (wrap && typeof ResizeObserver !== 'undefined') {
-      detailTableScrollResizeObserver = new ResizeObserver(() => recalcDetailTableScrollY())
-      detailTableScrollResizeObserver.observe(wrap)
+      detailTableResizeObserver = new ResizeObserver(() => syncDetailTableScrollY())
+      detailTableResizeObserver.observe(wrap)
     }
   })
 })
 
 onBeforeUnmount(() => {
-  detailTableScrollResizeObserver?.disconnect()
-  detailTableScrollResizeObserver = null
+  detailTableResizeObserver?.disconnect()
+  detailTableResizeObserver = null
 })
 
 defineExpose({ reload, loadData })

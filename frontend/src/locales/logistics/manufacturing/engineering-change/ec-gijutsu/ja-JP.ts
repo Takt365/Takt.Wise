@@ -66,6 +66,8 @@ export default {
       assy: '製一',
       qa: '品管',
       te: '製技',
+      nonFert: '非FERT',
+      discontinued: '生産終了',
     },
     persist: {
       submitted: '設変 {ecCode} のバックグラウンド{action}を受付しました（明細 {detailCount} 行・部門実行派生含む）。完了後に通知します',

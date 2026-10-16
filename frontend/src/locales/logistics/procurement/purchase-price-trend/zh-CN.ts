@@ -21,7 +21,7 @@ export default {
     selectPeriodRequired: '请选择期间年月',
     selectPriceTypeRequired: '请选择条件类型',
     selectSupplierRequired: '请选择供应商',
-    summary: '物料×供应商行 {count} 条（每笔有效起始日一行；相邻比较，右侧为首笔对末笔）',
+    summary: '定价记录 {count} 行（与导出条数一致；仅所选工厂；同一物料相邻比较）',
     summaryModel: '物料×供应商行 {count} 条（机种/产品组来自 BOM；列与涨跌规则同左）',
     trendSummary: '{base} → {compare}：涨 {up} · 跌 {down} · 平 {flat}',
     trendSummaryValidFrom: '各行第 1 笔对末笔：涨 {up} · 跌 {down} · 平 {flat}',

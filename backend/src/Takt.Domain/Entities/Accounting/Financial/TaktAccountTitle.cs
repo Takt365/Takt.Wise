@@ -25,7 +25,7 @@ namespace Takt.Domain.Entities.Accounting.Financial;
 [SugarIndex("ix_account_title_parent", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(ParentId), OrderByType.Asc, false)]
 public class TaktAccountTitle : TaktCompanyEntityBase
 {    /// <summary>
-    /// 科目编码
+    /// 科目编码（前端表单选择编码规则后自动通过 TaktNumbering 科目编码规则生成并展示，非手输；单据类型菜单：会计科目）
     /// </summary>
     [SugarColumn(ColumnName = "account_title_code", ColumnDescription = "科目编码", ColumnDataType = "varchar", Length = 50, IsNullable = false)]
     public string AccountTitleCode { get; set; } = string.Empty;

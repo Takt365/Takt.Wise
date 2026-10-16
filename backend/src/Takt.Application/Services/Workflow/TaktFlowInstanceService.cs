@@ -430,12 +430,12 @@ public class TaktFlowInstanceService : TaktServiceBase, ITaktFlowInstanceService
             await _flowVariableRepository.DeleteAsync(x => x.InstanceId == entity.Id);
             foreach (var child in variables)
             {
-            var isUnique_ix_flow_variable_instance_name = await _uniqueValidator.IsUniqueAsync(
+            var isUnique_ix_flow_variable_instance_name_unique = await _uniqueValidator.IsUniqueAsync(
                 _flowVariableRepository,
                 x => x.CompanyCode == child.CompanyCode
                     && x.InstanceId == child.InstanceId
                     && x.VariableName == child.VariableName);
-            if (!isUnique_ix_flow_variable_instance_name)
+            if (!isUnique_ix_flow_variable_instance_name_unique)
             {
                 throw new TaktBusinessException("流程变量的CompanyCode、InstanceId、VariableName已存在");
             }

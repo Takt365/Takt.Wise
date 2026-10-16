@@ -51,7 +51,7 @@ export default {
     },
     tabs: {
       oldNewMaterial: '舊新物料',
-      scope: '實施範圍',
+      scope: '實施策略',
     },
     scopeDepts: {
       master: '部門實施範圍',
@@ -65,6 +65,8 @@ export default {
       assy: '製一',
       qa: '品管',
       te: '製技',
+      nonFert: '非FERT',
+      discontinued: '停產',
     },
     persist: {
       submitted: '已提交設變 {ecCode} 後台{action}（明細 {detailCount} 行，含各部門執行派生），完成後將通知您',

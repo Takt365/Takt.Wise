@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Sales
 // 文件名称：TaktSellerMaterialI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSellerMaterial 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -172,13 +172,13 @@ public class TaktSellerMaterialI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.sellermaterial.materialdescription", "zh-HK", "物料描述_hk", "物料描述（冗余：按 MaterialCode 取 TaktMaterialPlant.MaterialDescription联动）"),
 
             // entity.sellermaterial.code
-            new TranslationSeedItem("entity.sellermaterial.code", "en-US", "销售商物料编码_us", "销售商物料编码（销售商内部的物料编码）"),
+            new TranslationSeedItem("entity.sellermaterial.code", "en-US", "销售商物料编码_us", "销售商物料编码（销售商内部的物料编码；前端表单选择编码规则后自动通过 TaktNumbering 销售商物料编码规则生成并展示，非手输；单据类型菜单：销售商物料）"),
             // entity.sellermaterial.code
-            new TranslationSeedItem("entity.sellermaterial.code", "ja-JP", "销售商物料编码_jp", "销售商物料编码（销售商内部的物料编码）"),
+            new TranslationSeedItem("entity.sellermaterial.code", "ja-JP", "销售商物料编码_jp", "销售商物料编码（销售商内部的物料编码；前端表单选择编码规则后自动通过 TaktNumbering 销售商物料编码规则生成并展示，非手输；单据类型菜单：销售商物料）"),
             // entity.sellermaterial.code
-            new TranslationSeedItem("entity.sellermaterial.code", "zh-CN", "销售商物料编码", "销售商物料编码（销售商内部的物料编码）"),
+            new TranslationSeedItem("entity.sellermaterial.code", "zh-CN", "销售商物料编码", "销售商物料编码（销售商内部的物料编码；前端表单选择编码规则后自动通过 TaktNumbering 销售商物料编码规则生成并展示，非手输；单据类型菜单：销售商物料）"),
             // entity.sellermaterial.code
-            new TranslationSeedItem("entity.sellermaterial.code", "zh-HK", "销售商物料编码_hk", "销售商物料编码（销售商内部的物料编码）"),
+            new TranslationSeedItem("entity.sellermaterial.code", "zh-HK", "销售商物料编码_hk", "销售商物料编码（销售商内部的物料编码；前端表单选择编码规则后自动通过 TaktNumbering 销售商物料编码规则生成并展示，非手输；单据类型菜单：销售商物料）"),
 
             // entity.sellermaterial.description
             new TranslationSeedItem("entity.sellermaterial.description", "en-US", "销售商物料描述_us", "销售商物料描述"),

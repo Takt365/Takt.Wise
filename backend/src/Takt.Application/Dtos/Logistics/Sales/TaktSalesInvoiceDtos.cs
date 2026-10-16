@@ -514,10 +514,15 @@ public class TaktSalesInvoiceCreateDto
     public string PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 开票凭证
+    /// 开票凭证（前端表单选择编码规则后自动通过 TaktNumbering 开票凭证规则生成并展示，非手输；单据类型菜单：销售发票）
     /// </summary>
     [Required(ErrorMessage = "开票凭证不能为空")]
     public string BillingDocumentCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 编码规则编码（新增时选择销售发票编码规则后取号；对应 TaktNumbering.RuleCode；不落库）
+    /// </summary>
+    public string? NumberingRuleCode { get; set; }
 
     /// <summary>
     /// 开票类型

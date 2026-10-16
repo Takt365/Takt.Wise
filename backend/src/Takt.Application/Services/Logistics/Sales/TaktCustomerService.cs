@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Sales
 // 文件名称：TaktCustomerService.cs
-// 创建时间：2026-08-23
+// 创建时间：2026-10-14
 // 创建人：Takt365(Cursor AI)
 // 功能描述：客户信息应用服务实现
 // 
@@ -105,14 +105,23 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
     public async Task<List<TaktSelectOption>> GetCustomerOptionsAsync(string? plantCode = null, string? keyword = null)
     {
         EnsureThreeLayerContext();
+        var normalizedPlantCode = plantCode?.Trim();
+        var normalizedKeyword = keyword?.Trim();
+        var predicate = Expressionable.Create<TaktCustomer>()
+            .And(x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.CustomerStatus == 1)
+            .AndIF(!string.IsNullOrEmpty(normalizedPlantCode), x => x.PlantCode == normalizedPlantCode)
+            .AndIF(!string.IsNullOrEmpty(normalizedKeyword), x =>
+                (x.CustomerCode != null && x.CustomerCode.Contains(normalizedKeyword!))
+                || (x.CustomerName1 != null && x.CustomerName1.Contains(normalizedKeyword!)))
+            .ToExpression();
         var list = await _customerRepository.GetListAsync(
-            x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.CustomerStatus == 1,
-            x => x.CustomerShortName ?? string.Empty,
+            predicate,
+            x => x.CustomerCode ?? string.Empty,
             false);
         return list.Select(e => new TaktSelectOption
         {
             DictValue = e.CustomerCode,
-            DictLabel = e.CustomerShortName ?? e.CustomerCode,
+            DictLabel = string.IsNullOrWhiteSpace(e.CustomerName1) ? e.CustomerCode : e.CustomerName1,
         }).ToList();
     }
 
@@ -126,10 +135,11 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
         var entity = dto.Adapt<TaktCustomer>();
         var isUnique_ix_takt_logistics_sales_customer_customer_code_unique = await _uniqueValidator.IsUniqueAsync(
             _customerRepository,
-            x => x.CustomerCode == entity.CustomerCode);
+            x => x.SalesOrganization == entity.SalesOrganization
+                && x.CustomerCode == entity.CustomerCode);
         if (!isUnique_ix_takt_logistics_sales_customer_customer_code_unique)
         {
-            throw new TaktBusinessException("客户信息的CustomerCode已存在");
+            throw new TaktBusinessException("客户信息的SalesOrganization、CustomerCode已存在");
         }
         if (entity.SortOrder <= 0)
         {
@@ -158,11 +168,12 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
         dto.Adapt(entity);
         var isUnique_ix_takt_logistics_sales_customer_customer_code_unique = await _uniqueValidator.IsUniqueAsync(
             _customerRepository,
-            x => x.CustomerCode == entity.CustomerCode,
+            x => x.SalesOrganization == entity.SalesOrganization
+                && x.CustomerCode == entity.CustomerCode,
             id);
         if (!isUnique_ix_takt_logistics_sales_customer_customer_code_unique)
         {
-            throw new TaktBusinessException("客户信息的CustomerCode已存在");
+            throw new TaktBusinessException("客户信息的SalesOrganization、CustomerCode已存在");
         }
         await _customerRepository.UpdateAsync(entity);
         return await GetCustomerByIdAsync(id) ?? throw new TaktBusinessException("客户信息不存在");
@@ -273,17 +284,18 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
             try
             {
                 var entity = rows[i].Adapt<TaktCustomer>();
-                var importKey = $"{entity.CustomerCode}";
+                var importKey = $"{entity.SalesOrganization}|{entity.CustomerCode}";
                 if (!importSeenKeys.Add(importKey))
                 {
-                    throw new TaktBusinessException("与Excel中其他行重复（CustomerCode）");
+                    throw new TaktBusinessException("与Excel中其他行重复（SalesOrganization、CustomerCode）");
                 }
                 var isUnique_ix_takt_logistics_sales_customer_customer_code_unique = await _uniqueValidator.IsUniqueAsync(
                     _customerRepository,
-                    x => x.CustomerCode == entity.CustomerCode);
+                    x => x.SalesOrganization == entity.SalesOrganization
+                        && x.CustomerCode == entity.CustomerCode);
                 if (!isUnique_ix_takt_logistics_sales_customer_customer_code_unique)
                 {
-                    throw new TaktBusinessException("客户信息的CustomerCode已存在");
+                    throw new TaktBusinessException("客户信息的SalesOrganization、CustomerCode已存在");
                 }
                 if (entity.SortOrder <= 0)
                 {
@@ -355,42 +367,54 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
                 (x.CultureCode != null && x.CultureCode.Contains(keywords))
                 || (x.PlantCode != null && x.PlantCode.Contains(keywords))
                 || (x.CustomerCode != null && x.CustomerCode.Contains(keywords))
-                || (x.CustomerName1 != null && x.CustomerName1.Contains(keywords))
-                || (x.CustomerName2 != null && x.CustomerName2.Contains(keywords))
-                || (x.CustomerShortName != null && x.CustomerShortName.Contains(keywords))
-                || (x.EnterpriseNature != null && x.EnterpriseNature.Contains(keywords))
-                || (x.IndustryAttribute != null && x.IndustryAttribute.Contains(keywords))
-                || (x.CustomerTaxNumber != null && x.CustomerTaxNumber.Contains(keywords))
-                || (x.TaxCode != null && x.TaxCode.Contains(keywords))
-                || (x.RegistrationCountry != null && x.RegistrationCountry.Contains(keywords))
-                || (x.RegistrationProvince != null && x.RegistrationProvince.Contains(keywords))
-                || (x.RegistrationCity != null && x.RegistrationCity.Contains(keywords))
-                || (x.RegistrationAddress1 != null && x.RegistrationAddress1.Contains(keywords))
-                || (x.RegistrationAddress2 != null && x.RegistrationAddress2.Contains(keywords))
-                || (x.CustomerPhone != null && x.CustomerPhone.Contains(keywords))
-                || (x.CustomerFax != null && x.CustomerFax.Contains(keywords))
-                || (x.CustomerEmail != null && x.CustomerEmail.Contains(keywords))
-                || (x.CustomerWebsite != null && x.CustomerWebsite.Contains(keywords))
-                || (x.ContactPerson != null && x.ContactPerson.Contains(keywords))
-                || (x.ContactPhone != null && x.ContactPhone.Contains(keywords))
-                || (x.ContactEmail != null && x.ContactEmail.Contains(keywords))
-                || (x.CurrencyCode != null && x.CurrencyCode.Contains(keywords))
+                || (x.AccountGroup != null && x.AccountGroup.Contains(keywords))
                 || (x.SalesOrganization != null && x.SalesOrganization.Contains(keywords))
                 || (x.DistributionChannel != null && x.DistributionChannel.Contains(keywords))
                 || (x.ProductGroup != null && x.ProductGroup.Contains(keywords))
-                || (x.CustomerGroup != null && x.CustomerGroup.Contains(keywords))
-                || (x.TradingPartner != null && x.TradingPartner.Contains(keywords))
-                || (x.AccountAssignmentGroup != null && x.AccountAssignmentGroup.Contains(keywords))
+                || (x.CustomerName1 != null && x.CustomerName1.Contains(keywords))
+                || (x.CustomerName2 != null && x.CustomerName2.Contains(keywords))
+                || (x.CustomerName3 != null && x.CustomerName3.Contains(keywords))
+                || (x.CustomerName4 != null && x.CustomerName4.Contains(keywords))
+                || (x.CustomerShortName != null && x.CustomerShortName.Contains(keywords))
+                || (x.RegistrationCountry != null && x.RegistrationCountry.Contains(keywords))
+                || (x.RegistrationRegion != null && x.RegistrationRegion.Contains(keywords))
+                || (x.RegistrationCity != null && x.RegistrationCity.Contains(keywords))
+                || (x.Addr1 != null && x.Addr1.Contains(keywords))
+                || (x.Addr2 != null && x.Addr2.Contains(keywords))
+                || (x.Addr3 != null && x.Addr3.Contains(keywords))
+                || (x.Addr4 != null && x.Addr4.Contains(keywords))
+                || (x.Addr5 != null && x.Addr5.Contains(keywords))
+                || (x.PostalCode != null && x.PostalCode.Contains(keywords))
+                || (x.Phone1 != null && x.Phone1.Contains(keywords))
+                || (x.Phone2 != null && x.Phone2.Contains(keywords))
+                || (x.FaxNumber != null && x.FaxNumber.Contains(keywords))
                 || (x.SupplierCode != null && x.SupplierCode.Contains(keywords))
-                || (x.NielsenIndicator != null && x.NielsenIndicator.Contains(keywords))
+                || (x.TradingPartner != null && x.TradingPartner.Contains(keywords))
+                || (x.TaxNumber1 != null && x.TaxNumber1.Contains(keywords))
+                || (x.TaxNumber2 != null && x.TaxNumber2.Contains(keywords))
+                || (x.TaxNumber3 != null && x.TaxNumber3.Contains(keywords))
+                || (x.BankCountryCode != null && x.BankCountryCode.Contains(keywords))
+                || (x.BankCode != null && x.BankCode.Contains(keywords))
+                || (x.BankAccount != null && x.BankAccount.Contains(keywords))
+                || (x.BankAccountHolder != null && x.BankAccountHolder.Contains(keywords))
+                || (x.EnterpriseNature != null && x.EnterpriseNature.Contains(keywords))
+                || (x.IndustryAttribute != null && x.IndustryAttribute.Contains(keywords))
                 || (x.ReconciliationAccount != null && x.ReconciliationAccount.Contains(keywords))
-                || (x.Headquarters != null && x.Headquarters.Contains(keywords))
                 || (x.PaymentTerms != null && x.PaymentTerms.Contains(keywords))
+                || (x.SalesDistrict != null && x.SalesDistrict.Contains(keywords))
+                || (x.SalesDepartment != null && x.SalesDepartment.Contains(keywords))
+                || (x.SalesGroup != null && x.SalesGroup.Contains(keywords))
+                || (x.CurrencyCode != null && x.CurrencyCode.Contains(keywords))
+                || (x.CustomerPricingProcedure != null && x.CustomerPricingProcedure.Contains(keywords))
+                || (x.ShippingConditions != null && x.ShippingConditions.Contains(keywords))
                 || (x.DeliveringPlant != null && x.DeliveringPlant.Contains(keywords))
                 || (x.Incoterms1 != null && x.Incoterms1.Contains(keywords))
                 || (x.Incoterms2 != null && x.Incoterms2.Contains(keywords))
-                || (x.ShippingConditions != null && x.ShippingConditions.Contains(keywords))
-                || (x.CustomerPricingProcedure != null && x.CustomerPricingProcedure.Contains(keywords))
+                || (x.AccountAssignmentGroup != null && x.AccountAssignmentGroup.Contains(keywords))
+                || (x.TaxClassification != null && x.TaxClassification.Contains(keywords))
+                || (x.CustomerContact != null && x.CustomerContact.Contains(keywords))
+                || (x.CustomerPhone != null && x.CustomerPhone.Contains(keywords))
+                || (x.CustomerEmail != null && x.CustomerEmail.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
             );
@@ -414,136 +438,10 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
             exp = exp.And(x => x.CustomerCode != null && x.CustomerCode.Contains(customerCode));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerName1))
+        if (!string.IsNullOrWhiteSpace(queryDto?.AccountGroup))
         {
-            var customerName1 = queryDto.CustomerName1;
-            exp = exp.And(x => x.CustomerName1 != null && x.CustomerName1.Contains(customerName1));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerName2))
-        {
-            var customerName2 = queryDto.CustomerName2;
-            exp = exp.And(x => x.CustomerName2 != null && x.CustomerName2.Contains(customerName2));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerShortName))
-        {
-            var customerShortName = queryDto.CustomerShortName;
-            exp = exp.And(x => x.CustomerShortName != null && x.CustomerShortName.Contains(customerShortName));
-        }
-
-        if (queryDto?.CustomerType.HasValue == true)
-        {
-            var customerType = queryDto.CustomerType.Value;
-            exp = exp.And(x => x.CustomerType == customerType);
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.EnterpriseNature))
-        {
-            var enterpriseNature = queryDto.EnterpriseNature;
-            exp = exp.And(x => x.EnterpriseNature != null && x.EnterpriseNature.Contains(enterpriseNature));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.IndustryAttribute))
-        {
-            var industryAttribute = queryDto.IndustryAttribute;
-            exp = exp.And(x => x.IndustryAttribute != null && x.IndustryAttribute.Contains(industryAttribute));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerTaxNumber))
-        {
-            var customerTaxNumber = queryDto.CustomerTaxNumber;
-            exp = exp.And(x => x.CustomerTaxNumber != null && x.CustomerTaxNumber.Contains(customerTaxNumber));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.TaxCode))
-        {
-            var taxCode = queryDto.TaxCode;
-            exp = exp.And(x => x.TaxCode != null && x.TaxCode.Contains(taxCode));
-        }
-
-        if (queryDto?.TaxRate.HasValue == true)
-        {
-            var taxRate = queryDto.TaxRate.Value;
-            exp = exp.And(x => x.TaxRate == taxRate);
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.RegistrationCountry))
-        {
-            var registrationCountry = queryDto.RegistrationCountry;
-            exp = exp.And(x => x.RegistrationCountry != null && x.RegistrationCountry.Contains(registrationCountry));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.RegistrationProvince))
-        {
-            var registrationProvince = queryDto.RegistrationProvince;
-            exp = exp.And(x => x.RegistrationProvince != null && x.RegistrationProvince.Contains(registrationProvince));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.RegistrationCity))
-        {
-            var registrationCity = queryDto.RegistrationCity;
-            exp = exp.And(x => x.RegistrationCity != null && x.RegistrationCity.Contains(registrationCity));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.RegistrationAddress1))
-        {
-            var registrationAddress1 = queryDto.RegistrationAddress1;
-            exp = exp.And(x => x.RegistrationAddress1 != null && x.RegistrationAddress1.Contains(registrationAddress1));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.RegistrationAddress2))
-        {
-            var registrationAddress2 = queryDto.RegistrationAddress2;
-            exp = exp.And(x => x.RegistrationAddress2 != null && x.RegistrationAddress2.Contains(registrationAddress2));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerPhone))
-        {
-            var customerPhone = queryDto.CustomerPhone;
-            exp = exp.And(x => x.CustomerPhone != null && x.CustomerPhone.Contains(customerPhone));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerFax))
-        {
-            var customerFax = queryDto.CustomerFax;
-            exp = exp.And(x => x.CustomerFax != null && x.CustomerFax.Contains(customerFax));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerEmail))
-        {
-            var customerEmail = queryDto.CustomerEmail;
-            exp = exp.And(x => x.CustomerEmail != null && x.CustomerEmail.Contains(customerEmail));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerWebsite))
-        {
-            var customerWebsite = queryDto.CustomerWebsite;
-            exp = exp.And(x => x.CustomerWebsite != null && x.CustomerWebsite.Contains(customerWebsite));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.ContactPerson))
-        {
-            var contactPerson = queryDto.ContactPerson;
-            exp = exp.And(x => x.ContactPerson != null && x.ContactPerson.Contains(contactPerson));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.ContactPhone))
-        {
-            var contactPhone = queryDto.ContactPhone;
-            exp = exp.And(x => x.ContactPhone != null && x.ContactPhone.Contains(contactPhone));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.ContactEmail))
-        {
-            var contactEmail = queryDto.ContactEmail;
-            exp = exp.And(x => x.ContactEmail != null && x.ContactEmail.Contains(contactEmail));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.CurrencyCode))
-        {
-            var currencyCode = queryDto.CurrencyCode;
-            exp = exp.And(x => x.CurrencyCode != null && x.CurrencyCode.Contains(currencyCode));
+            var accountGroup = queryDto.AccountGroup;
+            exp = exp.And(x => x.AccountGroup != null && x.AccountGroup.Contains(accountGroup));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.SalesOrganization))
@@ -564,22 +462,112 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
             exp = exp.And(x => x.ProductGroup != null && x.ProductGroup.Contains(productGroup));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerGroup))
+        if (queryDto?.CustomerTitle.HasValue == true)
         {
-            var customerGroup = queryDto.CustomerGroup;
-            exp = exp.And(x => x.CustomerGroup != null && x.CustomerGroup.Contains(customerGroup));
+            var customerTitle = queryDto.CustomerTitle.Value;
+            exp = exp.And(x => x.CustomerTitle == customerTitle);
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.TradingPartner))
+        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerName1))
         {
-            var tradingPartner = queryDto.TradingPartner;
-            exp = exp.And(x => x.TradingPartner != null && x.TradingPartner.Contains(tradingPartner));
+            var customerName1 = queryDto.CustomerName1;
+            exp = exp.And(x => x.CustomerName1 != null && x.CustomerName1.Contains(customerName1));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.AccountAssignmentGroup))
+        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerName2))
         {
-            var accountAssignmentGroup = queryDto.AccountAssignmentGroup;
-            exp = exp.And(x => x.AccountAssignmentGroup != null && x.AccountAssignmentGroup.Contains(accountAssignmentGroup));
+            var customerName2 = queryDto.CustomerName2;
+            exp = exp.And(x => x.CustomerName2 != null && x.CustomerName2.Contains(customerName2));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerName3))
+        {
+            var customerName3 = queryDto.CustomerName3;
+            exp = exp.And(x => x.CustomerName3 != null && x.CustomerName3.Contains(customerName3));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerName4))
+        {
+            var customerName4 = queryDto.CustomerName4;
+            exp = exp.And(x => x.CustomerName4 != null && x.CustomerName4.Contains(customerName4));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerShortName))
+        {
+            var customerShortName = queryDto.CustomerShortName;
+            exp = exp.And(x => x.CustomerShortName != null && x.CustomerShortName.Contains(customerShortName));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.RegistrationCountry))
+        {
+            var registrationCountry = queryDto.RegistrationCountry;
+            exp = exp.And(x => x.RegistrationCountry != null && x.RegistrationCountry.Contains(registrationCountry));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.RegistrationRegion))
+        {
+            var registrationRegion = queryDto.RegistrationRegion;
+            exp = exp.And(x => x.RegistrationRegion != null && x.RegistrationRegion.Contains(registrationRegion));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.RegistrationCity))
+        {
+            var registrationCity = queryDto.RegistrationCity;
+            exp = exp.And(x => x.RegistrationCity != null && x.RegistrationCity.Contains(registrationCity));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.Addr1))
+        {
+            var addr1 = queryDto.Addr1;
+            exp = exp.And(x => x.Addr1 != null && x.Addr1.Contains(addr1));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.Addr2))
+        {
+            var addr2 = queryDto.Addr2;
+            exp = exp.And(x => x.Addr2 != null && x.Addr2.Contains(addr2));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.Addr3))
+        {
+            var addr3 = queryDto.Addr3;
+            exp = exp.And(x => x.Addr3 != null && x.Addr3.Contains(addr3));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.Addr4))
+        {
+            var addr4 = queryDto.Addr4;
+            exp = exp.And(x => x.Addr4 != null && x.Addr4.Contains(addr4));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.Addr5))
+        {
+            var addr5 = queryDto.Addr5;
+            exp = exp.And(x => x.Addr5 != null && x.Addr5.Contains(addr5));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.PostalCode))
+        {
+            var postalCode = queryDto.PostalCode;
+            exp = exp.And(x => x.PostalCode != null && x.PostalCode.Contains(postalCode));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.Phone1))
+        {
+            var phone1 = queryDto.Phone1;
+            exp = exp.And(x => x.Phone1 != null && x.Phone1.Contains(phone1));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.Phone2))
+        {
+            var phone2 = queryDto.Phone2;
+            exp = exp.And(x => x.Phone2 != null && x.Phone2.Contains(phone2));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.FaxNumber))
+        {
+            var faxNumber = queryDto.FaxNumber;
+            exp = exp.And(x => x.FaxNumber != null && x.FaxNumber.Contains(faxNumber));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.SupplierCode))
@@ -588,34 +576,76 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
             exp = exp.And(x => x.SupplierCode != null && x.SupplierCode.Contains(supplierCode));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.NielsenIndicator))
+        if (!string.IsNullOrWhiteSpace(queryDto?.TradingPartner))
         {
-            var nielsenIndicator = queryDto.NielsenIndicator;
-            exp = exp.And(x => x.NielsenIndicator != null && x.NielsenIndicator.Contains(nielsenIndicator));
+            var tradingPartner = queryDto.TradingPartner;
+            exp = exp.And(x => x.TradingPartner != null && x.TradingPartner.Contains(tradingPartner));
         }
 
-        if (queryDto?.CentralPostingBlock.HasValue == true)
+        if (!string.IsNullOrWhiteSpace(queryDto?.TaxNumber1))
         {
-            var centralPostingBlock = queryDto.CentralPostingBlock.Value;
-            exp = exp.And(x => x.CentralPostingBlock == centralPostingBlock);
+            var taxNumber1 = queryDto.TaxNumber1;
+            exp = exp.And(x => x.TaxNumber1 != null && x.TaxNumber1.Contains(taxNumber1));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.TaxNumber2))
+        {
+            var taxNumber2 = queryDto.TaxNumber2;
+            exp = exp.And(x => x.TaxNumber2 != null && x.TaxNumber2.Contains(taxNumber2));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.TaxNumber3))
+        {
+            var taxNumber3 = queryDto.TaxNumber3;
+            exp = exp.And(x => x.TaxNumber3 != null && x.TaxNumber3.Contains(taxNumber3));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.BankCountryCode))
+        {
+            var bankCountryCode = queryDto.BankCountryCode;
+            exp = exp.And(x => x.BankCountryCode != null && x.BankCountryCode.Contains(bankCountryCode));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.BankCode))
+        {
+            var bankCode = queryDto.BankCode;
+            exp = exp.And(x => x.BankCode != null && x.BankCode.Contains(bankCode));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.BankAccount))
+        {
+            var bankAccount = queryDto.BankAccount;
+            exp = exp.And(x => x.BankAccount != null && x.BankAccount.Contains(bankAccount));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.BankAccountHolder))
+        {
+            var bankAccountHolder = queryDto.BankAccountHolder;
+            exp = exp.And(x => x.BankAccountHolder != null && x.BankAccountHolder.Contains(bankAccountHolder));
+        }
+
+        if (queryDto?.CustomerCategory.HasValue == true)
+        {
+            var customerCategory = queryDto.CustomerCategory.Value;
+            exp = exp.And(x => x.CustomerCategory == customerCategory);
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.EnterpriseNature))
+        {
+            var enterpriseNature = queryDto.EnterpriseNature;
+            exp = exp.And(x => x.EnterpriseNature != null && x.EnterpriseNature.Contains(enterpriseNature));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.IndustryAttribute))
+        {
+            var industryAttribute = queryDto.IndustryAttribute;
+            exp = exp.And(x => x.IndustryAttribute != null && x.IndustryAttribute.Contains(industryAttribute));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.ReconciliationAccount))
         {
             var reconciliationAccount = queryDto.ReconciliationAccount;
             exp = exp.And(x => x.ReconciliationAccount != null && x.ReconciliationAccount.Contains(reconciliationAccount));
-        }
-
-        if (!string.IsNullOrWhiteSpace(queryDto?.Headquarters))
-        {
-            var headquarters = queryDto.Headquarters;
-            exp = exp.And(x => x.Headquarters != null && x.Headquarters.Contains(headquarters));
-        }
-
-        if (queryDto?.ClearingWithVendor.HasValue == true)
-        {
-            var clearingWithVendor = queryDto.ClearingWithVendor.Value;
-            exp = exp.And(x => x.ClearingWithVendor == clearingWithVendor);
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.PaymentTerms))
@@ -628,6 +658,42 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
         {
             var paymentMethod = queryDto.PaymentMethod.Value;
             exp = exp.And(x => x.PaymentMethod == paymentMethod);
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.SalesDistrict))
+        {
+            var salesDistrict = queryDto.SalesDistrict;
+            exp = exp.And(x => x.SalesDistrict != null && x.SalesDistrict.Contains(salesDistrict));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.SalesDepartment))
+        {
+            var salesDepartment = queryDto.SalesDepartment;
+            exp = exp.And(x => x.SalesDepartment != null && x.SalesDepartment.Contains(salesDepartment));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.SalesGroup))
+        {
+            var salesGroup = queryDto.SalesGroup;
+            exp = exp.And(x => x.SalesGroup != null && x.SalesGroup.Contains(salesGroup));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.CurrencyCode))
+        {
+            var currencyCode = queryDto.CurrencyCode;
+            exp = exp.And(x => x.CurrencyCode != null && x.CurrencyCode.Contains(currencyCode));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerPricingProcedure))
+        {
+            var customerPricingProcedure = queryDto.CustomerPricingProcedure;
+            exp = exp.And(x => x.CustomerPricingProcedure != null && x.CustomerPricingProcedure.Contains(customerPricingProcedure));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.ShippingConditions))
+        {
+            var shippingConditions = queryDto.ShippingConditions;
+            exp = exp.And(x => x.ShippingConditions != null && x.ShippingConditions.Contains(shippingConditions));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.DeliveringPlant))
@@ -648,16 +714,34 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
             exp = exp.And(x => x.Incoterms2 != null && x.Incoterms2.Contains(incoterms2));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.ShippingConditions))
+        if (!string.IsNullOrWhiteSpace(queryDto?.AccountAssignmentGroup))
         {
-            var shippingConditions = queryDto.ShippingConditions;
-            exp = exp.And(x => x.ShippingConditions != null && x.ShippingConditions.Contains(shippingConditions));
+            var accountAssignmentGroup = queryDto.AccountAssignmentGroup;
+            exp = exp.And(x => x.AccountAssignmentGroup != null && x.AccountAssignmentGroup.Contains(accountAssignmentGroup));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerPricingProcedure))
+        if (!string.IsNullOrWhiteSpace(queryDto?.TaxClassification))
         {
-            var customerPricingProcedure = queryDto.CustomerPricingProcedure;
-            exp = exp.And(x => x.CustomerPricingProcedure != null && x.CustomerPricingProcedure.Contains(customerPricingProcedure));
+            var taxClassification = queryDto.TaxClassification;
+            exp = exp.And(x => x.TaxClassification != null && x.TaxClassification.Contains(taxClassification));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerContact))
+        {
+            var customerContact = queryDto.CustomerContact;
+            exp = exp.And(x => x.CustomerContact != null && x.CustomerContact.Contains(customerContact));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerPhone))
+        {
+            var customerPhone = queryDto.CustomerPhone;
+            exp = exp.And(x => x.CustomerPhone != null && x.CustomerPhone.Contains(customerPhone));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.CustomerEmail))
+        {
+            var customerEmail = queryDto.CustomerEmail;
+            exp = exp.And(x => x.CustomerEmail != null && x.CustomerEmail.Contains(customerEmail));
         }
 
         if (queryDto?.CreditLevel.HasValue == true)
@@ -666,28 +750,10 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
             exp = exp.And(x => x.CreditLevel == creditLevel);
         }
 
-        if (queryDto?.CreditAmount.HasValue == true)
-        {
-            var creditAmount = queryDto.CreditAmount.Value;
-            exp = exp.And(x => x.CreditAmount == creditAmount);
-        }
-
-        if (queryDto?.DiscountRate.HasValue == true)
-        {
-            var discountRate = queryDto.DiscountRate.Value;
-            exp = exp.And(x => x.DiscountRate == discountRate);
-        }
-
         if (queryDto?.CustomerLevel.HasValue == true)
         {
             var customerLevel = queryDto.CustomerLevel.Value;
             exp = exp.And(x => x.CustomerLevel == customerLevel);
-        }
-
-        if (queryDto?.EvaluationScore.HasValue == true)
-        {
-            var evaluationScore = queryDto.EvaluationScore.Value;
-            exp = exp.And(x => x.EvaluationScore == evaluationScore);
         }
 
         if (queryDto?.SortOrder.HasValue == true)
@@ -756,91 +822,7 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.CustomerName1))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.CustomerName2))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.CustomerShortName))
-        {
-            return true;
-        }
-        if (queryDto.CustomerType.HasValue)
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.EnterpriseNature))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.IndustryAttribute))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.CustomerTaxNumber))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.TaxCode))
-        {
-            return true;
-        }
-        if (queryDto.TaxRate.HasValue)
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.RegistrationCountry))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.RegistrationProvince))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.RegistrationCity))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.RegistrationAddress1))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.RegistrationAddress2))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.CustomerPhone))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.CustomerFax))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.CustomerEmail))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.CustomerWebsite))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.ContactPerson))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.ContactPhone))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.ContactEmail))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.CurrencyCode))
+        if (!string.IsNullOrWhiteSpace(queryDto.AccountGroup))
         {
             return true;
         }
@@ -856,15 +838,75 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.CustomerGroup))
+        if (queryDto.CustomerTitle.HasValue)
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.TradingPartner))
+        if (!string.IsNullOrWhiteSpace(queryDto.CustomerName1))
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.AccountAssignmentGroup))
+        if (!string.IsNullOrWhiteSpace(queryDto.CustomerName2))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.CustomerName3))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.CustomerName4))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.CustomerShortName))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.RegistrationCountry))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.RegistrationRegion))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.RegistrationCity))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.Addr1))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.Addr2))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.Addr3))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.Addr4))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.Addr5))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.PostalCode))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.Phone1))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.Phone2))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.FaxNumber))
         {
             return true;
         }
@@ -872,23 +914,51 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.NielsenIndicator))
+        if (!string.IsNullOrWhiteSpace(queryDto.TradingPartner))
         {
             return true;
         }
-        if (queryDto.CentralPostingBlock.HasValue)
+        if (!string.IsNullOrWhiteSpace(queryDto.TaxNumber1))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.TaxNumber2))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.TaxNumber3))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.BankCountryCode))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.BankCode))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.BankAccount))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.BankAccountHolder))
+        {
+            return true;
+        }
+        if (queryDto.CustomerCategory.HasValue)
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.EnterpriseNature))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.IndustryAttribute))
         {
             return true;
         }
         if (!string.IsNullOrWhiteSpace(queryDto.ReconciliationAccount))
-        {
-            return true;
-        }
-        if (!string.IsNullOrWhiteSpace(queryDto.Headquarters))
-        {
-            return true;
-        }
-        if (queryDto.ClearingWithVendor.HasValue)
         {
             return true;
         }
@@ -897,6 +967,30 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
             return true;
         }
         if (queryDto.PaymentMethod.HasValue)
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.SalesDistrict))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.SalesDepartment))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.SalesGroup))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.CurrencyCode))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.CustomerPricingProcedure))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.ShippingConditions))
         {
             return true;
         }
@@ -912,11 +1006,23 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.ShippingConditions))
+        if (!string.IsNullOrWhiteSpace(queryDto.AccountAssignmentGroup))
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.CustomerPricingProcedure))
+        if (!string.IsNullOrWhiteSpace(queryDto.TaxClassification))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.CustomerContact))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.CustomerPhone))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.CustomerEmail))
         {
             return true;
         }
@@ -924,19 +1030,7 @@ public class TaktCustomerService : TaktServiceBase, ITaktCustomerService
         {
             return true;
         }
-        if (queryDto.CreditAmount.HasValue)
-        {
-            return true;
-        }
-        if (queryDto.DiscountRate.HasValue)
-        {
-            return true;
-        }
         if (queryDto.CustomerLevel.HasValue)
-        {
-            return true;
-        }
-        if (queryDto.EvaluationScore.HasValue)
         {
             return true;
         }

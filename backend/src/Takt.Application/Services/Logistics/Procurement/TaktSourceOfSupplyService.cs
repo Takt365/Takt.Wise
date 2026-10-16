@@ -32,6 +32,7 @@ public class TaktSourceOfSupplyService : TaktServiceBase, ITaktSourceOfSupplySer
     private readonly ITaktCompanyRepository<TaktSourceOfSupply> _sourceOfSupplyRepository;
     private readonly ITaktSortOrderGenerator _sortOrderGenerator;
     private readonly ITaktUniqueValidator _uniqueValidator;
+    private readonly ITaktNumberingGenerator _numberingGenerator;
 
     /// <summary>
     /// 构造函数
@@ -39,12 +40,14 @@ public class TaktSourceOfSupplyService : TaktServiceBase, ITaktSourceOfSupplySer
     /// <param name="sourceOfSupplyRepository">货源清单清单仓储</param>
     /// <param name="sortOrderGenerator">排序号生成器</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
+    /// <param name="numberingGenerator">业务编码生成器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktSourceOfSupplyService(
         ITaktCompanyRepository<TaktSourceOfSupply> sourceOfSupplyRepository,
         ITaktSortOrderGenerator sortOrderGenerator,
         ITaktUniqueValidator uniqueValidator,
+        ITaktNumberingGenerator numberingGenerator,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
@@ -52,6 +55,7 @@ public class TaktSourceOfSupplyService : TaktServiceBase, ITaktSourceOfSupplySer
         _sourceOfSupplyRepository = sourceOfSupplyRepository;
         _sortOrderGenerator = sortOrderGenerator;
         _uniqueValidator = uniqueValidator;
+        _numberingGenerator = numberingGenerator;
     }
 
     /// <summary>
@@ -116,6 +120,19 @@ public class TaktSourceOfSupplyService : TaktServiceBase, ITaktSourceOfSupplySer
     public async Task<TaktSourceOfSupplyDto> CreateSourceOfSupplyAsync(TaktSourceOfSupplyCreateDto dto)
     {
         var entity = dto.Adapt<TaktSourceOfSupply>();
+        if (!string.IsNullOrWhiteSpace(dto.NumberingRuleCode))
+        {
+            var generated = await _numberingGenerator.GenerateNextAsync(dto.NumberingRuleCode.Trim());
+            if (string.IsNullOrWhiteSpace(generated.BusinessCode))
+            {
+                throw new TaktBusinessException("业务编码生成失败");
+            }
+            entity.SourceOfSupplyCode = generated.BusinessCode;
+        }
+        else if (string.IsNullOrWhiteSpace(entity.SourceOfSupplyCode))
+        {
+            throw new TaktBusinessException("货源清单编码不能为空");
+        }
         var isUnique_ix_takt_logistics_procurement_source_of_supply_unique = await _uniqueValidator.IsUniqueAsync(
             _sourceOfSupplyRepository,
             x => x.PlantCode == entity.PlantCode

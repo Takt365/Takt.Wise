@@ -50,7 +50,7 @@ public class TaktEcKakuninService : TaktServiceBase, ITaktEcKakuninService
     /// </summary>
     /// <param name="queryDto">查询 DTO</param>
     /// <returns>分页结果</returns>
-    public async Task<TaktPagedResult<TaktEcKakuninDto>> GetEcKakuninListAsync(TaktEcKakuninQueryDto queryDto)
+    public async Task<TaktPagedResult<TaktEcDetailDto>> GetEcKakuninListAsync(TaktEcKakuninQueryDto queryDto)
     {
         EnsureThreeLayerContext();
         var predicate = QueryExpression(queryDto);
@@ -60,8 +60,8 @@ public class TaktEcKakuninService : TaktServiceBase, ITaktEcKakuninService
             queryDto.PageSize,
             x => x.EcCode,
             false);
-        return TaktPagedResult<TaktEcKakuninDto>.Create(
-            data.Adapt<List<TaktEcKakuninDto>>(),
+        return TaktPagedResult<TaktEcDetailDto>.Create(
+            data.Adapt<List<TaktEcDetailDto>>(),
             total,
             queryDto.PageIndex,
             queryDto.PageSize);
@@ -72,7 +72,7 @@ public class TaktEcKakuninService : TaktServiceBase, ITaktEcKakuninService
     /// </summary>
     /// <param name="ecDetailId">设变明细 ID</param>
     /// <returns>物料确认 DTO</returns>
-    public async Task<TaktEcKakuninDto?> GetEcKakuninByEcDetailIdAsync(long ecDetailId)
+    public async Task<TaktEcDetailDto?> GetEcKakuninByEcDetailIdAsync(long ecDetailId)
     {
         EnsureThreeLayerContext();
         var detail = await _ecDetailRepository.GetByIdAsync(ecDetailId);
@@ -80,7 +80,7 @@ public class TaktEcKakuninService : TaktServiceBase, ITaktEcKakuninService
         {
             return null;
         }
-        return detail.Adapt<TaktEcKakuninDto>();
+        return detail.Adapt<TaktEcDetailDto>();
     }
 
     /// <summary>
@@ -89,7 +89,7 @@ public class TaktEcKakuninService : TaktServiceBase, ITaktEcKakuninService
     /// <param name="ecDetailId">设变明细 ID</param>
     /// <param name="dto">更新 DTO</param>
     /// <returns>物料确认 DTO</returns>
-    public async Task<TaktEcKakuninDto> UpdateEcKakuninAsync(long ecDetailId, TaktEcKakuninUpdateDto dto)
+    public async Task<TaktEcDetailDto> UpdateEcKakuninAsync(long ecDetailId, TaktEcKakuninUpdateDto dto)
     {
         EnsureThreeLayerContext();
         var detail = await _ecDetailRepository.GetByIdAsync(ecDetailId);
@@ -102,7 +102,7 @@ public class TaktEcKakuninService : TaktServiceBase, ITaktEcKakuninService
         detail.EcNewPurchaseType = dto.EcNewPurchaseType;
         detail.EcNewRequiresInspection = dto.EcNewRequiresInspection;
         await _ecDetailRepository.UpdateAsync(detail);
-        return detail.Adapt<TaktEcKakuninDto>();
+        return detail.Adapt<TaktEcDetailDto>();
     }
 
     /// <summary>
@@ -121,7 +121,7 @@ public class TaktEcKakuninService : TaktServiceBase, ITaktEcKakuninService
         var predicate = QueryExpression(query ?? new TaktEcKakuninQueryDto());
         var list = await _ecDetailRepository.GetListForExportAsync(predicate);
         return await TaktExcelHelper.ExportAsync(
-            list.Adapt<List<TaktEcKakuninDto>>(),
+            list.Adapt<List<TaktEcDetailDto>>(),
             sheetName ?? "物料确认",
             fileName ?? "物料确认导出.xlsx");
     }
@@ -154,6 +154,18 @@ public class TaktEcKakuninService : TaktServiceBase, ITaktEcKakuninService
         if (!string.IsNullOrEmpty(queryDto?.EcNewMaterialCode))
         {
             exp = exp.And(x => x.EcNewMaterialCode != null && x.EcNewMaterialCode.Contains(queryDto.EcNewMaterialCode));
+        }
+        if (!string.IsNullOrEmpty(queryDto?.EcOldMaterialCode))
+        {
+            exp = exp.And(x => x.EcOldMaterialCode != null && x.EcOldMaterialCode.Contains(queryDto.EcOldMaterialCode));
+        }
+        if (!string.IsNullOrEmpty(queryDto?.EcOldPurchaseType))
+        {
+            exp = exp.And(x => x.EcOldPurchaseType != null && x.EcOldPurchaseType.Contains(queryDto.EcOldPurchaseType));
+        }
+        if (!string.IsNullOrEmpty(queryDto?.EcNewPurchaseType))
+        {
+            exp = exp.And(x => x.EcNewPurchaseType != null && x.EcNewPurchaseType.Contains(queryDto.EcNewPurchaseType));
         }
         if (queryDto?.EcOldRequiresInspection.HasValue == true)
         {

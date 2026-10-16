@@ -147,6 +147,7 @@ interface PurchasePriceTrendDisplayRow {
   /** 是否组内首行 */
   isFirst: boolean
   plantCode: string
+  purchaseInfoCode: string
   materialCode: string
   materialDescription: string
   supplierCode: string
@@ -226,14 +227,18 @@ const summaryText = computed(() => {
  */
 const displayRows = computed<PurchasePriceTrendDisplayRow[]>(() => {
   const result: PurchasePriceTrendDisplayRow[] = []
+  let previousMaterialKey = ''
   for (const row of rows.value) {
+    const materialKey = `${row.plantCode}|${row.materialCode}|${row.supplierCode}`
+    const isFirst = materialKey !== previousMaterialKey
+    previousMaterialKey = materialKey
     const points = row.periodPoints ?? []
     if (points.length === 0) {
-      result.push(createDisplayRow(row, null, 0, true))
+      result.push(createDisplayRow(row, null, 0, isFirst))
       continue
     }
     for (let i = 0; i < points.length; i++) {
-      result.push(createDisplayRow(row, points[i], i, i === 0))
+      result.push(createDisplayRow(row, points[i], i, isFirst && i === 0))
     }
   }
   return result
@@ -243,7 +248,23 @@ const displayRows = computed<PurchasePriceTrendDisplayRow[]>(() => {
 const columns = computed<TableColumnsType>(() => {
   const cols: TableColumnsType = [
     {
-      title: t('entity.purchaseinforecord.materialcode'),
+      title: t('common.page.entity.plantcode'),
+      dataIndex: 'plantCode',
+      key: 'plantCode',
+      width: 100,
+      ellipsis: true,
+      fixed: 'left',
+    },
+    {
+      title: t('entity.purchaseinfo.code'),
+      dataIndex: 'purchaseInfoCode',
+      key: 'purchaseInfoCode',
+      width: 120,
+      ellipsis: true,
+      fixed: 'left',
+    },
+    {
+      title: t('entity.purchaseinfo.materialcode'),
       dataIndex: 'materialCode',
       key: 'materialCode',
       width: 140,
@@ -251,34 +272,34 @@ const columns = computed<TableColumnsType>(() => {
       fixed: 'left',
     },
     {
-      title: t('entity.purchaseinforecord.materialdescription'),
+      title: t('entity.purchaseinfo.materialdescription'),
       dataIndex: 'materialDescription',
       key: 'materialDescription',
       width: 160,
       ellipsis: true,
     },
     {
-      title: t('entity.purchaseinforecord.suppliercode'),
+      title: t('entity.purchaseinfo.suppliercode'),
       dataIndex: 'supplierCode',
       key: 'supplierCode',
       width: 120,
       ellipsis: true,
     },
     {
-      title: t('entity.supplier.name1'),
+      title: t('entity.supplier.shortname'),
       dataIndex: 'supplierName',
       key: 'supplierName',
       width: 160,
       ellipsis: true,
     },
     {
-      title: t('entity.purchaseinforecorditem.conditioncurrencycode'),
+      title: t('entity.purchaseinfoitem.conditioncurrencycode'),
       dataIndex: 'currencyCode',
       key: 'currencyCode',
       width: 80,
     },
     {
-      title: t('entity.purchaseinforecorditem.unitofmeasure'),
+      title: t('entity.purchaseinfoitem.unitofmeasure'),
       dataIndex: 'unit',
       key: 'unit',
       width: 80,
@@ -345,11 +366,12 @@ function createDisplayRow(
   index: number,
   isFirst: boolean,
 ): PurchasePriceTrendDisplayRow {
-  const baseKey = `${row.plantCode}|${row.materialCode}|${row.supplierCode}`
+  const baseKey = `${row.plantCode}|${row.purchaseInfoCode ?? ''}|${row.materialCode}|${row.supplierCode}`
   return {
     rowKey: `${baseKey}|${point?.validFrom ?? 'none'}|${index}`,
     isFirst,
     plantCode: isFirst ? row.plantCode : '',
+    purchaseInfoCode: isFirst ? (row.purchaseInfoCode ?? '') : '',
     materialCode: isFirst ? row.materialCode : '',
     materialDescription: isFirst ? (row.materialDescription ?? '') : '',
     supplierCode: isFirst ? row.supplierCode : '',

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Materials
 // 文件名称：TaktModelDestinationI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktModelDestination 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -109,13 +109,13 @@ public class TaktModelDestinationI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.modeldestination.materialdescription", "zh-HK", "物料描述_hk", "物料描述（冗余：按 MaterialCode 取 TaktMaterialPlant.MaterialDescription联动）"),
 
             // entity.modeldestination.modelcode
-            new TranslationSeedItem("entity.modeldestination.modelcode", "en-US", "机种编码_us", "机种编码（40）"),
+            new TranslationSeedItem("entity.modeldestination.modelcode", "en-US", "机种编码_us", "机种编码（40；前端表单选择编码规则后自动通过 TaktNumbering 机种编码规则生成并展示，非手输；单据类型菜单：机种仕向）"),
             // entity.modeldestination.modelcode
-            new TranslationSeedItem("entity.modeldestination.modelcode", "ja-JP", "机种编码_jp", "机种编码（40）"),
+            new TranslationSeedItem("entity.modeldestination.modelcode", "ja-JP", "机种编码_jp", "机种编码（40；前端表单选择编码规则后自动通过 TaktNumbering 机种编码规则生成并展示，非手输；单据类型菜单：机种仕向）"),
             // entity.modeldestination.modelcode
-            new TranslationSeedItem("entity.modeldestination.modelcode", "zh-CN", "机种编码", "机种编码（40）"),
+            new TranslationSeedItem("entity.modeldestination.modelcode", "zh-CN", "机种编码", "机种编码（40；前端表单选择编码规则后自动通过 TaktNumbering 机种编码规则生成并展示，非手输；单据类型菜单：机种仕向）"),
             // entity.modeldestination.modelcode
-            new TranslationSeedItem("entity.modeldestination.modelcode", "zh-HK", "机种编码_hk", "机种编码（40）"),
+            new TranslationSeedItem("entity.modeldestination.modelcode", "zh-HK", "机种编码_hk", "机种编码（40；前端表单选择编码规则后自动通过 TaktNumbering 机种编码规则生成并展示，非手输；单据类型菜单：机种仕向）"),
 
             // entity.modeldestination.modelname
             new TranslationSeedItem("entity.modeldestination.modelname", "en-US", "机种名称_us", "机种名称（回填：按 ModelCode 取物料描述表 culture_code=Z1）"),
@@ -127,13 +127,13 @@ public class TaktModelDestinationI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.modeldestination.modelname", "zh-HK", "机种名称_hk", "机种名称（回填：按 ModelCode 取物料描述表 culture_code=Z1）"),
 
             // entity.modeldestination.destinationcode
-            new TranslationSeedItem("entity.modeldestination.destinationcode", "en-US", "仕向地编码_us", "仕向地编码（40）"),
+            new TranslationSeedItem("entity.modeldestination.destinationcode", "en-US", "仕向地编码_us", "仕向地编码（40；前端表单选择编码规则后自动通过 TaktNumbering 仕向地编码规则生成并展示，非手输；单据类型菜单：机种仕向）"),
             // entity.modeldestination.destinationcode
-            new TranslationSeedItem("entity.modeldestination.destinationcode", "ja-JP", "仕向地编码_jp", "仕向地编码（40）"),
+            new TranslationSeedItem("entity.modeldestination.destinationcode", "ja-JP", "仕向地编码_jp", "仕向地编码（40；前端表单选择编码规则后自动通过 TaktNumbering 仕向地编码规则生成并展示，非手输；单据类型菜单：机种仕向）"),
             // entity.modeldestination.destinationcode
-            new TranslationSeedItem("entity.modeldestination.destinationcode", "zh-CN", "仕向地编码", "仕向地编码（40）"),
+            new TranslationSeedItem("entity.modeldestination.destinationcode", "zh-CN", "仕向地编码", "仕向地编码（40；前端表单选择编码规则后自动通过 TaktNumbering 仕向地编码规则生成并展示，非手输；单据类型菜单：机种仕向）"),
             // entity.modeldestination.destinationcode
-            new TranslationSeedItem("entity.modeldestination.destinationcode", "zh-HK", "仕向地编码_hk", "仕向地编码（40）"),
+            new TranslationSeedItem("entity.modeldestination.destinationcode", "zh-HK", "仕向地编码_hk", "仕向地编码（40；前端表单选择编码规则后自动通过 TaktNumbering 仕向地编码规则生成并展示，非手输；单据类型菜单：机种仕向）"),
 
             // entity.modeldestination.destinationname
             new TranslationSeedItem("entity.modeldestination.destinationname", "en-US", "仕向地名称_us", "仕向地名称（80）"),

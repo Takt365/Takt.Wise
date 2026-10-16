@@ -50,6 +50,12 @@ public class TaktEcDetail : TaktCompanyEntityBase
     public string EcModelCode { get; set; } = string.Empty;
 
     /// <summary>
+    /// 根物料类型（字典 logistics_materials_material_type；按根物料编码查询工厂物料回填。执行内容直接读本字段）
+    /// </summary>
+    [SugarColumn(ColumnName = "ec_root_material_type", ColumnDescription = "根物料类型", Length = 4, ColumnDataType = "nvarchar", IsNullable = false, DefaultValue = "")]
+    public string EcRootMaterialType { get; set; } = string.Empty;
+
+    /// <summary>
     /// 根物料编码
     /// </summary>
     [SugarColumn(ColumnName = "ec_root_material_code", ColumnDescription = "根物料编码", Length = 20, ColumnDataType = "nvarchar", IsNullable = false)]
@@ -260,10 +266,10 @@ public class TaktEcDetail : TaktCompanyEntityBase
     public List<TaktEcSeizounika>? EcSeizounikas { get; set; }
 
     /// <summary>
-    /// SMT执行行列表（数据主从；一对多；子表外键 TaktEcSmt.EcDetailId → 本表 Id）
+    /// SMT执行行列表（数据主从；一对多；子表外键 TaktEcEmtl.EcDetailId → 本表 Id）
     /// </summary>
-    [Navigate(NavigateType.OneToMany, nameof(TaktEcSmt.EcDetailId))]
-    public List<TaktEcSmt>? EcSmts { get; set; }
+    [Navigate(NavigateType.OneToMany, nameof(TaktEcEmtl.EcDetailId))]
+    public List<TaktEcEmtl>? EcEmtls { get; set; }
 
     /// <summary>
     /// 制一执行行列表（数据主从；一对多；子表外键 TaktEcSeizouikka.EcDetailId → 本表 Id）

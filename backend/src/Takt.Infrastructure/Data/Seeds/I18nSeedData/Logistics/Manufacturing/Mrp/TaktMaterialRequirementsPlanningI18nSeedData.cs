@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Mrp
 // 文件名称：TaktMaterialRequirementsPlanningI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktMaterialRequirementsPlanning 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktMaterialRequirementsPlanningI18nSeedData : ITaktSeedDataCoordin
             new TranslationSeedItem("entity.materialrequirementsplanning._self", "zh-HK", "物料需求计划 MRP 头表信息_hk", "实体名称"),
 
             // entity.materialrequirementsplanning.code
-            new TranslationSeedItem("entity.materialrequirementsplanning.code", "en-US", "MRP编码_us", "MRP 编码（租户+公司+工厂内业务唯一）"),
+            new TranslationSeedItem("entity.materialrequirementsplanning.code", "en-US", "MRP编码_us", "MRP 编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering MRP编码规则生成并展示，非手输；单据类型菜单：MRP运算向导）"),
             // entity.materialrequirementsplanning.code
-            new TranslationSeedItem("entity.materialrequirementsplanning.code", "ja-JP", "MRP编码_jp", "MRP 编码（租户+公司+工厂内业务唯一）"),
+            new TranslationSeedItem("entity.materialrequirementsplanning.code", "ja-JP", "MRP编码_jp", "MRP 编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering MRP编码规则生成并展示，非手输；单据类型菜单：MRP运算向导）"),
             // entity.materialrequirementsplanning.code
-            new TranslationSeedItem("entity.materialrequirementsplanning.code", "zh-CN", "MRP编码", "MRP 编码（租户+公司+工厂内业务唯一）"),
+            new TranslationSeedItem("entity.materialrequirementsplanning.code", "zh-CN", "MRP编码", "MRP 编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering MRP编码规则生成并展示，非手输；单据类型菜单：MRP运算向导）"),
             // entity.materialrequirementsplanning.code
-            new TranslationSeedItem("entity.materialrequirementsplanning.code", "zh-HK", "MRP编码_hk", "MRP 编码（租户+公司+工厂内业务唯一）"),
+            new TranslationSeedItem("entity.materialrequirementsplanning.code", "zh-HK", "MRP编码_hk", "MRP 编码（租户+公司+工厂内业务唯一；前端表单选择编码规则后自动通过 TaktNumbering MRP编码规则生成并展示，非手输；单据类型菜单：MRP运算向导）"),
 
             // entity.materialrequirementsplanning.masterproductionscheduleid
             new TranslationSeedItem("entity.materialrequirementsplanning.masterproductionscheduleid", "en-US", "来源MPS头表ID_us", "来源 MPS 头表 ID（Scheduling 层上游，关联 TaktMasterProductionSchedule.Id）"),

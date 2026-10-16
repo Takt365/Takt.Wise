@@ -149,7 +149,7 @@ public class TaktEcSeizougijutsuService : TaktServiceBase, ITaktEcSeizougijutsuS
     }
 
     /// <summary>
-    /// 更新设变制技执行（同设变单号+机种+根物料编码的执行行一并写入可填字段）
+    /// 更新设变制技执行（同设变单号+机种的执行行一并写入可填字段）
     /// </summary>
     /// <param name="id">设变制技执行ID</param>
     /// <param name="dto">更新DTO</param>

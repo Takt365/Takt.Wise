@@ -24,7 +24,7 @@ namespace Takt.Domain.Entities.HumanResource.Training;
 public class TaktTrainingCourse : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 课程编码（租户+公司内唯一）
+    /// 课程编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 课程编码规则生成并展示，非手输；单据类型菜单：培训课程）
     /// </summary>
     [SugarColumn(ColumnName = "course_code", ColumnDescription = "课程编码", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]
     public string CourseCode { get; set; } = string.Empty;

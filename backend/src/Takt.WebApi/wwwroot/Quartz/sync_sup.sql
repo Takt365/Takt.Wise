@@ -31,59 +31,352 @@ DECLARE @dml_n INT;
 DECLARE @now DATETIME = GETDATE();
 DECLARE @base_id BIGINT = DATEDIFF_BIG(MICROSECOND, '1970-01-01', @now) * 1000;
 
--- 源表 / 目标表：同名 + 列与实体 TaktSupplier 业务字段一致
+-- 源表 / 目标表：同名 + 列与实体 TaktSupplier 一致
 -- {{SourceDatabase}}.dbo.takt_logistics_procurement_supplier → 当前租户库同名表
--- 业务唯一键：CompanyCode + SupplierCode（与租户库唯一索引对齐）
--- company_code / plant_code 取自源表；tenant/company/plant/culture 取自源表本列；空值丢弃，不回退任务参数；全量同步（无公司白名单）
--- 源/目标结构相同，以目标实体 TaktSupplier 为准（无 default_culture）
+-- 业务唯一键：TenantCode + CompanyCode + PurchasingOrganization + SupplierCode
+-- tenant/company/plant/culture 取自源表本列；空值丢弃，不回退任务参数
 
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'supplier_code') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [supplier_code] NVARCHAR(10) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'supplier_code') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [supplier_code] NVARCHAR(10) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'account_group') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [account_group] VARCHAR(4) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'account_group') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [account_group] VARCHAR(4) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'supplier_title') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [supplier_title] INT NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'supplier_title') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [supplier_title] INT NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'supplier_name1') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [supplier_name1] NVARCHAR(140) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'supplier_name1') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [supplier_name1] NVARCHAR(140) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'supplier_name2') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [supplier_name2] NVARCHAR(140) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'supplier_name2') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [supplier_name2] NVARCHAR(140) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'supplier_name3') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [supplier_name3] NVARCHAR(140) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'supplier_name3') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [supplier_name3] NVARCHAR(140) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'supplier_name4') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [supplier_name4] NVARCHAR(140) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'supplier_name4') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [supplier_name4] NVARCHAR(140) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'supplier_short_name') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [supplier_short_name] NVARCHAR(40) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'supplier_short_name') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [supplier_short_name] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'country_code') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [country_code] NVARCHAR(2) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'country_code') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [country_code] NVARCHAR(2) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'region_code') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [region_code] NVARCHAR(40) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'region_code') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [region_code] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'city_code') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [city_code] NVARCHAR(40) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'city_code') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [city_code] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'addr1') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [addr1] NVARCHAR(40) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'addr1') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [addr1] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'addr2') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [addr2] NVARCHAR(140) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'addr2') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [addr2] NVARCHAR(140) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'postal_code') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [postal_code] NVARCHAR(10) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'postal_code') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [postal_code] NVARCHAR(10) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'phone1') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [phone1] NVARCHAR(40) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'phone1') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [phone1] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'phone2') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [phone2] NVARCHAR(40) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'phone2') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [phone2] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'fax_number') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [fax_number] NVARCHAR(40) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'fax_number') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [fax_number] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'customer_code') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [customer_code] NVARCHAR(10) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'customer_code') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [customer_code] NVARCHAR(10) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'trading_partner') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [trading_partner] VARCHAR(6) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'trading_partner') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [trading_partner] VARCHAR(6) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'authorization_group') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [authorization_group] VARCHAR(4) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'authorization_group') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [authorization_group] VARCHAR(4) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'group_key') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [group_key] VARCHAR(10) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'group_key') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [group_key] VARCHAR(10) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'supplier_type') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [supplier_type] INT NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'supplier_type') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [supplier_type] INT NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'enterprise_nature') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [enterprise_nature] VARCHAR(4) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'enterprise_nature') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [enterprise_nature] VARCHAR(4) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'industry_attribute') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [industry_attribute] VARCHAR(4) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'industry_attribute') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [industry_attribute] VARCHAR(4) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'credit_info_number') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [credit_info_number] NVARCHAR(11) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'credit_info_number') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [credit_info_number] NVARCHAR(11) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'bank_country_code') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [bank_country_code] NVARCHAR(2) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'bank_country_code') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [bank_country_code] NVARCHAR(2) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'bank_code') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [bank_code] NVARCHAR(15) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'bank_code') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [bank_code] NVARCHAR(15) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'bank_account') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [bank_account] NVARCHAR(40) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'bank_account') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [bank_account] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'account_holder') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [account_holder] NVARCHAR(80) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'account_holder') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [account_holder] NVARCHAR(80) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'bank_charge_bearer_code') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [bank_charge_bearer_code] VARCHAR(2) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'bank_charge_bearer_code') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [bank_charge_bearer_code] VARCHAR(2) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'reconciliation_account') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [reconciliation_account] VARCHAR(40) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'reconciliation_account') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [reconciliation_account] VARCHAR(40) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'head_office_account_code') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [head_office_account_code] NVARCHAR(10) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'head_office_account_code') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [head_office_account_code] NVARCHAR(10) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'planning_group') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [planning_group] VARCHAR(10) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'planning_group') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [planning_group] VARCHAR(10) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'payment_terms') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [payment_terms] NVARCHAR(40) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'payment_terms') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [payment_terms] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'double_invoice_check') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [double_invoice_check] INT NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'double_invoice_check') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [double_invoice_check] INT NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'payment_method') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [payment_method] INT NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'payment_method') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [payment_method] INT NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'payment_block') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [payment_block] INT NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'payment_block') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [payment_block] INT NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'house_bank') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [house_bank] NVARCHAR(15) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'house_bank') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [house_bank] NVARCHAR(15) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'clearing_with_customer') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [clearing_with_customer] INT NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'clearing_with_customer') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [clearing_with_customer] INT NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'accounting_clerk') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [accounting_clerk] VARCHAR(2) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'accounting_clerk') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [accounting_clerk] VARCHAR(2) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'our_account_at_supplier') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [our_account_at_supplier] NVARCHAR(12) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'our_account_at_supplier') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [our_account_at_supplier] NVARCHAR(12) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'contact_person') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [contact_person] NVARCHAR(80) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'contact_person') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [contact_person] NVARCHAR(80) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'contact_phone') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [contact_phone] NVARCHAR(40) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'contact_phone') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [contact_phone] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'contact_email') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [contact_email] NVARCHAR(100) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'contact_email') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [contact_email] NVARCHAR(100) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'withholding_tax_country') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [withholding_tax_country] NVARCHAR(2) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'withholding_tax_country') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [withholding_tax_country] NVARCHAR(2) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'withholding_tax_type') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [withholding_tax_type] VARCHAR(2) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'withholding_tax_type') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [withholding_tax_type] VARCHAR(2) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'withholding_tax_code') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [withholding_tax_code] VARCHAR(2) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'withholding_tax_code') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [withholding_tax_code] VARCHAR(2) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'purchasing_organization') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [purchasing_organization] VARCHAR(4) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'purchasing_organization') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [purchasing_organization] VARCHAR(4) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'order_currency_code') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [order_currency_code] NVARCHAR(3) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'order_currency_code') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [order_currency_code] NVARCHAR(3) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'incoterms1') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [incoterms1] VARCHAR(3) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'incoterms1') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [incoterms1] VARCHAR(3) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'incoterms2') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [incoterms2] NVARCHAR(40) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'incoterms2') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [incoterms2] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'pricing_date_control') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [pricing_date_control] INT NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'pricing_date_control') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [pricing_date_control] INT NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'gr_based_invoice_inspection') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [gr_based_invoice_inspection] INT NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'gr_based_invoice_inspection') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [gr_based_invoice_inspection] INT NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'evaluated_receipt_settlement') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [evaluated_receipt_settlement] INT NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'evaluated_receipt_settlement') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [evaluated_receipt_settlement] INT NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'return_ers_flag') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [return_ers_flag] INT NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'return_ers_flag') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [return_ers_flag] INT NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'automatic_purchase_order') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [automatic_purchase_order] INT NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'automatic_purchase_order') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [automatic_purchase_order] INT NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'purchase_group') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [purchase_group] VARCHAR(6) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'purchase_group') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [purchase_group] VARCHAR(6) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'tax_number1') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [tax_number1] NVARCHAR(40) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'tax_number1') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [tax_number1] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'tax_number2') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [tax_number2] NVARCHAR(40) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'tax_number2') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [tax_number2] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'tax_number3') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [tax_number3] NVARCHAR(60) NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'tax_number3') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [tax_number3] NVARCHAR(60) NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'credit_level') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [credit_level] INT NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'credit_level') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [credit_level] INT NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'supplier_level') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [supplier_level] INT NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'supplier_level') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [supplier_level] INT NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'sort_order') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [sort_order] INT NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'sort_order') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [sort_order] INT NULL;
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'supplier_status') IS NULL
+  EXEC(N'ALTER TABLE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] ADD [supplier_status] INT NULL');
+IF COL_LENGTH(N'dbo.takt_logistics_procurement_supplier', N'supplier_status') IS NULL
+  ALTER TABLE [dbo].[takt_logistics_procurement_supplier] ADD [supplier_status] INT NULL;
+
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'supplier_short_name') IS NOT NULL
+  AND COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'search_term') IS NOT NULL
+  EXEC(N'UPDATE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier]
+    SET [supplier_short_name] = LEFT(LTRIM(RTRIM([search_term])), 40)
+    WHERE NULLIF(LTRIM(RTRIM([supplier_short_name])), N'''') IS NULL
+      AND NULLIF(LTRIM(RTRIM([search_term])), N'''') IS NOT NULL');
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'trading_partner') IS NOT NULL
+  AND COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'trading_partner_company_id') IS NOT NULL
+  EXEC(N'UPDATE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier]
+    SET [trading_partner] = LEFT(LTRIM(RTRIM([trading_partner_company_id])), 6)
+    WHERE NULLIF(LTRIM(RTRIM([trading_partner])), N'''') IS NULL
+      AND NULLIF(LTRIM(RTRIM([trading_partner_company_id])), N'''') IS NOT NULL');
+IF COL_LENGTH(N'{{SourceDatabase}}.dbo.takt_logistics_procurement_supplier', N'purchasing_organization') IS NOT NULL
+  EXEC(N'UPDATE [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier]
+    SET [purchasing_organization] = LEFT(LTRIM(RTRIM([company_code])), 4)
+    WHERE NULLIF(LTRIM(RTRIM([purchasing_organization])), N'''') IS NULL
+      AND NULLIF(LTRIM(RTRIM([company_code])), N'''') IS NOT NULL');
 IF OBJECT_ID('tempdb..#st_source') IS NOT NULL DROP TABLE #st_source;
 CREATE TABLE #st_source (
   [rn] INT,
   [id] BIGINT,
   [plant_code] NVARCHAR(4),
   [supplier_code] NVARCHAR(10),
+  [account_group] VARCHAR(4),
+  [supplier_title] INT,
   [supplier_name1] NVARCHAR(140),
   [supplier_name2] NVARCHAR(140),
+  [supplier_name3] NVARCHAR(140),
+  [supplier_name4] NVARCHAR(140),
   [supplier_short_name] NVARCHAR(40),
+  [country_code] NVARCHAR(2),
+  [region_code] NVARCHAR(40),
+  [city_code] NVARCHAR(40),
+  [addr1] NVARCHAR(40),
+  [addr2] NVARCHAR(140),
+  [postal_code] NVARCHAR(10),
+  [phone1] NVARCHAR(40),
+  [phone2] NVARCHAR(40),
+  [fax_number] NVARCHAR(40),
+  [customer_code] NVARCHAR(10),
+  [trading_partner] VARCHAR(6),
+  [authorization_group] VARCHAR(4),
+  [group_key] VARCHAR(10),
   [supplier_type] INT,
   [enterprise_nature] VARCHAR(4),
   [industry_attribute] VARCHAR(4),
-  [supplier_tax_number] NVARCHAR(50),
-  [tax_code] NVARCHAR(4),
-  [tax_rate] INT,
-  [registration_country] NVARCHAR(2),
-  [registration_province] NVARCHAR(70),
-  [registration_city] NVARCHAR(70),
-  [registration_address1] NVARCHAR(140),
-  [registration_address2] NVARCHAR(140),
-  [supplier_phone] NVARCHAR(50),
-  [supplier_fax] NVARCHAR(50),
-  [supplier_email] NVARCHAR(100),
-  [supplier_website] NVARCHAR(200),
-  [contact_person] NVARCHAR(50),
-  [contact_phone] NVARCHAR(50),
-  [contact_email] NVARCHAR(100),
-  [currency_code] NVARCHAR(3),
-  [reconciliation_account] VARCHAR(40),
-  [customer_code] NVARCHAR(10),
-  [clearing_with_customer] INT,
-  [payment_method] INT,
-  [payment_terms] NVARCHAR(40),
+  [credit_info_number] NVARCHAR(11),
+  [bank_country_code] NVARCHAR(2),
   [bank_code] NVARCHAR(15),
   [bank_account] NVARCHAR(40),
-  [account_holder] NVARCHAR(100),
-  [gr_based_invoice_inspection] INT,
+  [account_holder] NVARCHAR(80),
+  [bank_charge_bearer_code] VARCHAR(2),
+  [reconciliation_account] VARCHAR(40),
+  [head_office_account_code] NVARCHAR(10),
+  [planning_group] VARCHAR(10),
+  [payment_terms] NVARCHAR(40),
+  [double_invoice_check] INT,
+  [payment_method] INT,
+  [payment_block] INT,
+  [house_bank] NVARCHAR(15),
+  [clearing_with_customer] INT,
+  [accounting_clerk] VARCHAR(2),
+  [our_account_at_supplier] NVARCHAR(12),
+  [contact_person] NVARCHAR(80),
+  [contact_phone] NVARCHAR(40),
+  [contact_email] NVARCHAR(100),
+  [withholding_tax_country] NVARCHAR(2),
+  [withholding_tax_type] VARCHAR(2),
+  [withholding_tax_code] VARCHAR(2),
+  [purchasing_organization] VARCHAR(4),
+  [order_currency_code] NVARCHAR(3),
   [incoterms1] VARCHAR(3),
   [incoterms2] NVARCHAR(40),
-  [automatic_purchase_order] INT,
   [pricing_date_control] INT,
-  [purchase_group] NVARCHAR(3),
-  [planned_delivery_time_days] INT,
+  [gr_based_invoice_inspection] INT,
   [evaluated_receipt_settlement] INT,
-  [purchasing_organization] VARCHAR(4),
+  [return_ers_flag] INT,
+  [automatic_purchase_order] INT,
+  [purchase_group] VARCHAR(6),
+  [tax_number1] NVARCHAR(40),
+  [tax_number2] NVARCHAR(40),
+  [tax_number3] NVARCHAR(60),
+  [credit_level] INT,
   [supplier_level] INT,
-  [evaluation_score] DECIMAL(5,2),
   [sort_order] INT,
   [supplier_status] INT,
   [tenant_code] NVARCHAR(3),
@@ -100,47 +393,67 @@ SELECT
   @base_id + S.rn,
   S.[plant_code],
   S.[supplier_code],
+  S.[account_group],
+  S.[supplier_title],
   S.[supplier_name1],
   S.[supplier_name2],
+  S.[supplier_name3],
+  S.[supplier_name4],
   S.[supplier_short_name],
+  S.[country_code],
+  S.[region_code],
+  S.[city_code],
+  S.[addr1],
+  S.[addr2],
+  S.[postal_code],
+  S.[phone1],
+  S.[phone2],
+  S.[fax_number],
+  S.[customer_code],
+  S.[trading_partner],
+  S.[authorization_group],
+  S.[group_key],
   S.[supplier_type],
   S.[enterprise_nature],
   S.[industry_attribute],
-  S.[supplier_tax_number],
-  S.[tax_code],
-  S.[tax_rate],
-  S.[registration_country],
-  S.[registration_province],
-  S.[registration_city],
-  S.[registration_address1],
-  S.[registration_address2],
-  S.[supplier_phone],
-  S.[supplier_fax],
-  S.[supplier_email],
-  S.[supplier_website],
-  S.[contact_person],
-  S.[contact_phone],
-  S.[contact_email],
-  S.[currency_code],
-  S.[reconciliation_account],
-  S.[customer_code],
-  S.[clearing_with_customer],
-  S.[payment_method],
-  S.[payment_terms],
+  S.[credit_info_number],
+  S.[bank_country_code],
   S.[bank_code],
   S.[bank_account],
   S.[account_holder],
-  S.[gr_based_invoice_inspection],
+  S.[bank_charge_bearer_code],
+  S.[reconciliation_account],
+  S.[head_office_account_code],
+  S.[planning_group],
+  S.[payment_terms],
+  S.[double_invoice_check],
+  S.[payment_method],
+  S.[payment_block],
+  S.[house_bank],
+  S.[clearing_with_customer],
+  S.[accounting_clerk],
+  S.[our_account_at_supplier],
+  S.[contact_person],
+  S.[contact_phone],
+  S.[contact_email],
+  S.[withholding_tax_country],
+  S.[withholding_tax_type],
+  S.[withholding_tax_code],
+  S.[purchasing_organization],
+  S.[order_currency_code],
   S.[incoterms1],
   S.[incoterms2],
-  S.[automatic_purchase_order],
   S.[pricing_date_control],
-  S.[purchase_group],
-  S.[planned_delivery_time_days],
+  S.[gr_based_invoice_inspection],
   S.[evaluated_receipt_settlement],
-  S.[purchasing_organization],
+  S.[return_ers_flag],
+  S.[automatic_purchase_order],
+  S.[purchase_group],
+  S.[tax_number1],
+  S.[tax_number2],
+  S.[tax_number3],
+  S.[credit_level],
   S.[supplier_level],
-  S.[evaluation_score],
   S.[sort_order],
   S.[supplier_status],
   S.[tenant_code],
@@ -148,59 +461,79 @@ SELECT
   S.[culture_code],
   S.[ext_field],
   S.[remark],
-    S.[created_by], S.[created_at], S.[updated_by], S.[updated_at], S.[deleted_by], S.[deleted_at], S.[is_deleted]
+  S.[created_by], S.[created_at], S.[updated_by], S.[updated_at], S.[deleted_by], S.[deleted_at], S.[is_deleted]
 FROM (
   SELECT
     N.*,
-    ROW_NUMBER() OVER (ORDER BY N.[company_code], N.[supplier_code]) AS rn
+    ROW_NUMBER() OVER (ORDER BY N.[company_code], N.[purchasing_organization], N.[supplier_code]) AS rn
   FROM (
     SELECT
-      LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4) AS [company_code],
-      ISNULL(NULLIF(LTRIM(RTRIM(R.[plant_code])), N''), N'') AS [plant_code],
+      LEFT(LTRIM(RTRIM(ISNULL(R.[plant_code], N''))), 4) AS [plant_code],
       LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3) AS [tenant_code],
-      LTRIM(RTRIM(R.[supplier_code])) AS [supplier_code],
-      ISNULL(NULLIF(LTRIM(RTRIM(R.[supplier_name1])), N''), N'') AS [supplier_name1],
-      NULLIF(LTRIM(RTRIM(R.[supplier_name2])), N'') AS [supplier_name2],
-      NULLIF(LTRIM(RTRIM(R.[supplier_short_name])), N'') AS [supplier_short_name],
-      COALESCE(TRY_CAST(R.[supplier_type] AS INT), 0) AS [supplier_type],
-      ISNULL(NULLIF(LTRIM(RTRIM(R.[enterprise_nature])), N''), N'') AS [enterprise_nature],
-      ISNULL(NULLIF(LTRIM(RTRIM(R.[industry_attribute])), N''), N'') AS [industry_attribute],
-      NULLIF(LTRIM(RTRIM(R.[supplier_tax_number])), N'') AS [supplier_tax_number],
-      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[tax_code], N''))), 4), N'') AS [tax_code],
-      COALESCE(TRY_CAST(R.[tax_rate] AS INT), 0) AS [tax_rate],
+      LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4) AS [company_code],
       LTRIM(RTRIM(ISNULL(R.[culture_code], N''))) AS [culture_code],
-      NULLIF(LTRIM(RTRIM(R.[registration_country])), N'') AS [registration_country],
-      NULLIF(LTRIM(RTRIM(R.[registration_province])), N'') AS [registration_province],
-      NULLIF(LTRIM(RTRIM(R.[registration_city])), N'') AS [registration_city],
-      NULLIF(LTRIM(RTRIM(R.[registration_address1])), N'') AS [registration_address1],
-      NULLIF(LTRIM(RTRIM(R.[registration_address2])), N'') AS [registration_address2],
-      NULLIF(LTRIM(RTRIM(R.[supplier_phone])), N'') AS [supplier_phone],
-      NULLIF(LTRIM(RTRIM(R.[supplier_fax])), N'') AS [supplier_fax],
-      NULLIF(LTRIM(RTRIM(R.[supplier_email])), N'') AS [supplier_email],
-      NULLIF(LTRIM(RTRIM(R.[supplier_website])), N'') AS [supplier_website],
-      NULLIF(LTRIM(RTRIM(R.[contact_person])), N'') AS [contact_person],
-      NULLIF(LTRIM(RTRIM(R.[contact_phone])), N'') AS [contact_phone],
-      NULLIF(LTRIM(RTRIM(R.[contact_email])), N'') AS [contact_email],
-      ISNULL(NULLIF(LTRIM(RTRIM(R.[currency_code])), N''), N'') AS [currency_code],
-      ISNULL(NULLIF(LTRIM(RTRIM(R.[reconciliation_account])), N''), N'') AS [reconciliation_account],
-      ISNULL(NULLIF(LTRIM(RTRIM(R.[customer_code])), N''), N'') AS [customer_code],
+      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[supplier_code], N''))), 10), N''), N'') AS [supplier_code],
+      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[account_group], N''))), 4), N''), N'') AS [account_group],
+      COALESCE(TRY_CAST(R.[supplier_title] AS INT), 1) AS [supplier_title],
+      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[supplier_name1], N''))), 140), N''), N'') AS [supplier_name1],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[supplier_name2], N''))), 140), N'') AS [supplier_name2],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[supplier_name3], N''))), 140), N'') AS [supplier_name3],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[supplier_name4], N''))), 140), N'') AS [supplier_name4],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[supplier_short_name], N''))), 40), N'') AS [supplier_short_name],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[country_code], N''))), 2), N'') AS [country_code],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[region_code], N''))), 40), N'') AS [region_code],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[city_code], N''))), 40), N'') AS [city_code],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[addr1], N''))), 40), N'') AS [addr1],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[addr2], N''))), 140), N'') AS [addr2],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[postal_code], N''))), 10), N'') AS [postal_code],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[phone1], N''))), 40), N'') AS [phone1],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[phone2], N''))), 40), N'') AS [phone2],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[fax_number], N''))), 40), N'') AS [fax_number],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[customer_code], N''))), 10), N'') AS [customer_code],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[trading_partner], N''))), 6), N'') AS [trading_partner],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[authorization_group], N''))), 4), N'') AS [authorization_group],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[group_key], N''))), 10), N'') AS [group_key],
+      COALESCE(TRY_CAST(R.[supplier_type] AS INT), 0) AS [supplier_type],
+      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[enterprise_nature], N''))), 4), N''), N'150') AS [enterprise_nature],
+      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[industry_attribute], N''))), 4), N''), N'C') AS [industry_attribute],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[credit_info_number], N''))), 11), N'') AS [credit_info_number],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[bank_country_code], N''))), 2), N'') AS [bank_country_code],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[bank_code], N''))), 15), N'') AS [bank_code],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[bank_account], N''))), 40), N'') AS [bank_account],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[account_holder], N''))), 80), N'') AS [account_holder],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[bank_charge_bearer_code], N''))), 2), N'') AS [bank_charge_bearer_code],
+      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[reconciliation_account], N''))), 40), N''), N'') AS [reconciliation_account],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[head_office_account_code], N''))), 10), N'') AS [head_office_account_code],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[planning_group], N''))), 10), N'') AS [planning_group],
+      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[payment_terms], N''))), 40), N''), N'COD') AS [payment_terms],
+      COALESCE(TRY_CAST(R.[double_invoice_check] AS INT), 1) AS [double_invoice_check],
+      COALESCE(TRY_CAST(R.[payment_method] AS INT), 0) AS [payment_method],
+      COALESCE(TRY_CAST(R.[payment_block] AS INT), 0) AS [payment_block],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[house_bank], N''))), 15), N'') AS [house_bank],
       COALESCE(TRY_CAST(R.[clearing_with_customer] AS INT), 0) AS [clearing_with_customer],
-      COALESCE(TRY_CAST(R.[payment_method] AS INT), 1) AS [payment_method],
-      ISNULL(NULLIF(LTRIM(RTRIM(R.[payment_terms])), N''), N'') AS [payment_terms],
-      ISNULL(NULLIF(LTRIM(RTRIM(R.[bank_code])), N''), N'') AS [bank_code],
-      ISNULL(NULLIF(LTRIM(RTRIM(R.[bank_account])), N''), N'') AS [bank_account],
-      ISNULL(NULLIF(LTRIM(RTRIM(R.[account_holder])), N''), N'') AS [account_holder],
-      COALESCE(TRY_CAST(R.[gr_based_invoice_inspection] AS INT), 0) AS [gr_based_invoice_inspection],
-      ISNULL(NULLIF(LTRIM(RTRIM(R.[incoterms1])), N''), N'') AS [incoterms1],
-      ISNULL(NULLIF(LTRIM(RTRIM(R.[incoterms2])), N''), N'') AS [incoterms2],
-      COALESCE(TRY_CAST(R.[automatic_purchase_order] AS INT), 0) AS [automatic_purchase_order],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[accounting_clerk], N''))), 2), N'') AS [accounting_clerk],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[our_account_at_supplier], N''))), 12), N'') AS [our_account_at_supplier],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[contact_person], N''))), 80), N'') AS [contact_person],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[contact_phone], N''))), 40), N'') AS [contact_phone],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[contact_email], N''))), 100), N'') AS [contact_email],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[withholding_tax_country], N''))), 2), N'') AS [withholding_tax_country],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[withholding_tax_type], N''))), 2), N'') AS [withholding_tax_type],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[withholding_tax_code], N''))), 2), N'') AS [withholding_tax_code],
+      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[purchasing_organization], N''))), 4), N''), N'') AS [purchasing_organization],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[order_currency_code], N''))), 3), N'') AS [order_currency_code],
+      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[incoterms1], N''))), 3), N''), N'FOB') AS [incoterms1],
+      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[incoterms2], N''))), 40), N''), N'') AS [incoterms2],
       COALESCE(TRY_CAST(R.[pricing_date_control] AS INT), 1) AS [pricing_date_control],
-      ISNULL(NULLIF(LTRIM(RTRIM(R.[purchase_group])), N''), N'') AS [purchase_group],
-      COALESCE(TRY_CAST(R.[planned_delivery_time_days] AS INT), 0) AS [planned_delivery_time_days],
+      COALESCE(TRY_CAST(R.[gr_based_invoice_inspection] AS INT), 0) AS [gr_based_invoice_inspection],
       COALESCE(TRY_CAST(R.[evaluated_receipt_settlement] AS INT), 0) AS [evaluated_receipt_settlement],
-      ISNULL(NULLIF(LTRIM(RTRIM(R.[purchasing_organization])), N''), N'') AS [purchasing_organization],
+      COALESCE(TRY_CAST(R.[return_ers_flag] AS INT), 0) AS [return_ers_flag],
+      COALESCE(TRY_CAST(R.[automatic_purchase_order] AS INT), 0) AS [automatic_purchase_order],
+      ISNULL(NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[purchase_group], N''))), 6), N''), N'') AS [purchase_group],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[tax_number1], N''))), 40), N'') AS [tax_number1],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[tax_number2], N''))), 40), N'') AS [tax_number2],
+      NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[tax_number3], N''))), 60), N'') AS [tax_number3],
+      COALESCE(TRY_CAST(R.[credit_level] AS INT), 0) AS [credit_level],
       COALESCE(TRY_CAST(R.[supplier_level] AS INT), 0) AS [supplier_level],
-      ROUND(COALESCE(TRY_CAST(R.[evaluation_score] AS DECIMAL(18,8)), 0), 2) AS [evaluation_score],
       COALESCE(TRY_CAST(R.[sort_order] AS INT), 0) AS [sort_order],
       COALESCE(TRY_CAST(R.[supplier_status] AS INT), 1) AS [supplier_status],
       ISNULL(R.[ext_field], N'{}') AS [ext_field],
@@ -212,19 +545,21 @@ FROM (
       TRY_CAST(R.[deleted_by] AS BIGINT) AS [deleted_by],
       R.[deleted_at] AS [deleted_at],
       CASE WHEN ISNULL(R.[is_deleted], 0) = 0 THEN 0 ELSE 1 END AS [is_deleted],
-            ROW_NUMBER() OVER (
+      ROW_NUMBER() OVER (
         PARTITION BY
+          LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3),
           LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4),
-          LTRIM(RTRIM(R.[supplier_code]))
-        ORDER BY
-          LEN(ISNULL(LTRIM(RTRIM(R.[supplier_name1])), N'')) DESC,
-          LEN(ISNULL(LTRIM(RTRIM(R.[plant_code])), N'')) DESC
+          LTRIM(RTRIM(ISNULL(R.[purchasing_organization], N''))),
+          LTRIM(RTRIM(ISNULL(R.[supplier_code], N'')))
+        ORDER BY ISNULL(R.[is_deleted], 0), ISNULL(R.[updated_at], CAST('1900-01-01' AS DATETIME)) DESC
       ) AS dup_rn
     FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] R
-    WHERE LTRIM(RTRIM(ISNULL(R.[supplier_code], N''))) <> N''
+    WHERE LTRIM(RTRIM(ISNULL(R.[plant_code], N''))) <> N''
       AND LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))) <> N''
       AND LTRIM(RTRIM(ISNULL(R.[company_code], N''))) <> N''
       AND LTRIM(RTRIM(ISNULL(R.[culture_code], N''))) <> N''
+      AND LTRIM(RTRIM(ISNULL(R.[purchasing_organization], N''))) <> N''
+      AND LTRIM(RTRIM(ISNULL(R.[supplier_code], N''))) <> N''
   ) N
   WHERE N.dup_rn = 1
 ) S
@@ -247,80 +582,38 @@ SET @progress_msg = CONCAT(
   CAST((@source_count) AS NVARCHAR(20)), N'|',
   N'');
 RAISERROR(@progress_msg, 10, 1) WITH NOWAIT;
-DECLARE @sap_raw_count INT = (
-  SELECT COUNT(*)
-  FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] R
-  WHERE LTRIM(RTRIM(ISNULL(R.[supplier_code], N''))) <> N''
-);
-DECLARE @sap_key_count INT = (
-  SELECT COUNT(*)
-  FROM (
-    SELECT
-      LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4) AS [company_code],
-      LTRIM(RTRIM(R.[supplier_code])) AS [supplier_code]
-    FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_supplier] R
-    WHERE LTRIM(RTRIM(ISNULL(R.[supplier_code], N''))) <> N''
-    GROUP BY
-      LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4),
-      LTRIM(RTRIM(R.[supplier_code]))
-  ) K
-);
-DECLARE @dedupe_dropped INT = @sap_raw_count - @sap_key_count;
-
-IF @source_count <> @sap_key_count
-BEGIN
-  DECLARE @src_msg NVARCHAR(200) = CONCAT(
-    N'业务键装入不一致: keys=', @sap_key_count, N', loaded=', @source_count,
-    N', sap_raw=', @sap_raw_count, N', dedupe_dropped=', @dedupe_dropped);
-  THROW 50003, @src_msg, 1;
-END;
 
 IF EXISTS (
-  SELECT 1 FROM #st_source GROUP BY [company_code], [supplier_code] HAVING COUNT(*) > 1
+  SELECT 1 FROM #st_source
+  GROUP BY [tenant_code], [company_code], [purchasing_organization], [supplier_code]
+  HAVING COUNT(*) > 1
 )
 BEGIN
-  DECLARE @dup_key NVARCHAR(400);
-  SELECT TOP 1 @dup_key = CONCAT([company_code], N'/', [supplier_code], N' x', COUNT(*))
-  FROM #st_source
-  GROUP BY [company_code], [supplier_code]
-  HAVING COUNT(*) > 1;
-  THROW 50001, @dup_key, 1;
+  THROW 50001, N'业务键重复', 1;
 END;
-
--- 复用租户库已有 Id（含软删行；按公司+供应商码对齐唯一索引）
-UPDATE S
-SET S.[id] = COALESCE(T.[id], S.[id])
-FROM #st_source S
-LEFT JOIN [takt_logistics_procurement_supplier] T
-  ON T.[tenant_code]=S.[tenant_code]
- AND T.[company_code]=S.[company_code]
- AND LTRIM(RTRIM(T.[supplier_code])) = S.[supplier_code];
 
 IF OBJECT_ID('tempdb..#delta') IS NOT NULL DROP TABLE #delta;
 CREATE TABLE #delta (
   rn INT,
   oper_type NVARCHAR(10),
-  id BIGINT,
-  supplier_code NVARCHAR(10),
-  plant_code NVARCHAR(4),
-  tenant_code NVARCHAR(3),
-  company_code NVARCHAR(4),
-  change_by BIGINT,
-  supplier_name1_old NVARCHAR(140),
-  supplier_name1_new NVARCHAR(140),
-  supplier_status_old INT,
-  supplier_status_new INT
+  id BIGINT
 );
 
 DECLARE @target_before INT = (
   SELECT COUNT(*)
   FROM [takt_logistics_procurement_supplier] T
-  WHERE T.[tenant_code] = @tenant_code
-    AND T.[is_deleted] = 0
-    AND EXISTS (
-      SELECT 1 FROM #st_source S WHERE S.[company_code] = T.[company_code]
-    )
+  WHERE T.[is_deleted] = 0
+    AND EXISTS (SELECT 1 FROM #st_source S WHERE S.[tenant_code]=T.[tenant_code] AND S.[company_code]=T.[company_code])
 );
+
+UPDATE S
+SET S.[id] = COALESCE(T.[id], S.[id])
+FROM #st_source S
+LEFT JOIN [takt_logistics_procurement_supplier] T
+  ON T.[tenant_code] = S.[tenant_code]
+ AND T.[company_code] = S.[company_code]
+ AND LTRIM(RTRIM(T.[purchasing_organization]))=S.[purchasing_organization]
+  AND LTRIM(RTRIM(T.[supplier_code]))=S.[supplier_code];
 
 SET @merge_from_rn = 1;
 SET @merge_max_rn = ISNULL((SELECT MAX([rn]) FROM #st_source), 0);
@@ -331,114 +624,150 @@ MERGE INTO [takt_logistics_procurement_supplier] AS T
 USING (SELECT * FROM #st_source WHERE [rn] >= @merge_from_rn AND [rn] <= @merge_to_rn) AS S
 ON T.[tenant_code] = S.[tenant_code]
 AND T.[company_code] = S.[company_code]
-AND LTRIM(RTRIM(T.[supplier_code])) = S.[supplier_code]
+AND LTRIM(RTRIM(T.[purchasing_organization]))=S.[purchasing_organization]
+ AND LTRIM(RTRIM(T.[supplier_code]))=S.[supplier_code]
 WHEN MATCHED AND (
-  ISNULL(T.[is_deleted], 0) <> S.[is_deleted]
-  OR LTRIM(RTRIM(ISNULL(T.[plant_code], N''))) <> S.[plant_code]
-  OR LTRIM(RTRIM(ISNULL(T.[supplier_name1], N''))) <> S.[supplier_name1]
-  OR LTRIM(RTRIM(ISNULL(T.[supplier_name2], N''))) <> LTRIM(RTRIM(ISNULL(S.[supplier_name2], N'')))
-  OR LTRIM(RTRIM(ISNULL(T.[supplier_short_name], N''))) <> LTRIM(RTRIM(ISNULL(S.[supplier_short_name], N'')))
-  OR T.[supplier_type] <> S.[supplier_type]
-  OR LTRIM(RTRIM(ISNULL(T.[enterprise_nature], N''))) <> S.[enterprise_nature]
-  OR LTRIM(RTRIM(ISNULL(T.[industry_attribute], N''))) <> S.[industry_attribute]
-  OR LTRIM(RTRIM(ISNULL(T.[supplier_tax_number], N''))) <> LTRIM(RTRIM(ISNULL(S.[supplier_tax_number], N'')))
-  OR LTRIM(RTRIM(ISNULL(T.[tax_code], N''))) <> LTRIM(RTRIM(ISNULL(S.[tax_code], N'')))
-  OR T.[tax_rate] <> S.[tax_rate]
-  OR LTRIM(RTRIM(ISNULL(T.[culture_code], N''))) <> S.[culture_code]
-  OR LTRIM(RTRIM(ISNULL(T.[registration_country], N''))) <> LTRIM(RTRIM(ISNULL(S.[registration_country], N'')))
-  OR LTRIM(RTRIM(ISNULL(T.[registration_province], N''))) <> LTRIM(RTRIM(ISNULL(S.[registration_province], N'')))
-  OR LTRIM(RTRIM(ISNULL(T.[registration_city], N''))) <> LTRIM(RTRIM(ISNULL(S.[registration_city], N'')))
-  OR LTRIM(RTRIM(ISNULL(T.[registration_address1], N''))) <> LTRIM(RTRIM(ISNULL(S.[registration_address1], N'')))
-  OR LTRIM(RTRIM(ISNULL(T.[registration_address2], N''))) <> LTRIM(RTRIM(ISNULL(S.[registration_address2], N'')))
-  OR LTRIM(RTRIM(ISNULL(T.[supplier_phone], N''))) <> LTRIM(RTRIM(ISNULL(S.[supplier_phone], N'')))
-  OR LTRIM(RTRIM(ISNULL(T.[supplier_fax], N''))) <> LTRIM(RTRIM(ISNULL(S.[supplier_fax], N'')))
-  OR LTRIM(RTRIM(ISNULL(T.[supplier_email], N''))) <> LTRIM(RTRIM(ISNULL(S.[supplier_email], N'')))
-  OR LTRIM(RTRIM(ISNULL(T.[supplier_website], N''))) <> LTRIM(RTRIM(ISNULL(S.[supplier_website], N'')))
-  OR LTRIM(RTRIM(ISNULL(T.[contact_person], N''))) <> LTRIM(RTRIM(ISNULL(S.[contact_person], N'')))
-  OR LTRIM(RTRIM(ISNULL(T.[contact_phone], N''))) <> LTRIM(RTRIM(ISNULL(S.[contact_phone], N'')))
-  OR LTRIM(RTRIM(ISNULL(T.[contact_email], N''))) <> LTRIM(RTRIM(ISNULL(S.[contact_email], N'')))
-  OR LTRIM(RTRIM(ISNULL(T.[currency_code], N''))) <> S.[currency_code]
-  OR LTRIM(RTRIM(ISNULL(T.[reconciliation_account], N''))) <> S.[reconciliation_account]
-  OR LTRIM(RTRIM(ISNULL(T.[customer_code], N''))) <> S.[customer_code]
-  OR T.[clearing_with_customer] <> S.[clearing_with_customer]
-  OR T.[payment_method] <> S.[payment_method]
-  OR LTRIM(RTRIM(ISNULL(T.[payment_terms], N''))) <> S.[payment_terms]
-  OR LTRIM(RTRIM(ISNULL(T.[bank_code], N''))) <> S.[bank_code]
-  OR LTRIM(RTRIM(ISNULL(T.[bank_account], N''))) <> S.[bank_account]
-  OR LTRIM(RTRIM(ISNULL(T.[account_holder], N''))) <> S.[account_holder]
-  OR T.[gr_based_invoice_inspection] <> S.[gr_based_invoice_inspection]
-  OR LTRIM(RTRIM(ISNULL(T.[incoterms1], N''))) <> S.[incoterms1]
-  OR LTRIM(RTRIM(ISNULL(T.[incoterms2], N''))) <> S.[incoterms2]
-  OR T.[automatic_purchase_order] <> S.[automatic_purchase_order]
-  OR T.[pricing_date_control] <> S.[pricing_date_control]
-  OR LTRIM(RTRIM(ISNULL(T.[purchase_group], N''))) <> S.[purchase_group]
-  OR T.[planned_delivery_time_days] <> S.[planned_delivery_time_days]
-  OR T.[evaluated_receipt_settlement] <> S.[evaluated_receipt_settlement]
-  OR LTRIM(RTRIM(ISNULL(T.[purchasing_organization], N''))) <> S.[purchasing_organization]
-  OR T.[supplier_level] <> S.[supplier_level]
-  OR ROUND(T.[evaluation_score], 2) <> ROUND(S.[evaluation_score], 2)
-  OR T.[sort_order] <> S.[sort_order]
-  OR T.[supplier_status] <> S.[supplier_status]
-
-  OR ISNULL(T.[ext_field], N'') <> ISNULL(S.[ext_field], N'')
-  OR ISNULL(T.[remark], N'') <> ISNULL(S.[remark], N'')
-
-  OR ISNULL(T.[created_by], 0) <> ISNULL(S.[created_by], 0)
-  OR ISNULL(T.[updated_by], 0) <> ISNULL(S.[updated_by], 0)
-  OR ISNULL(T.[updated_at], CAST('1900-01-01' AS DATETIME)) <> ISNULL(S.[updated_at], CAST('1900-01-01' AS DATETIME))
-  OR ISNULL(T.[deleted_by], 0) <> ISNULL(S.[deleted_by], 0)
-  OR ISNULL(T.[deleted_at], CAST('1900-01-01' AS DATETIME)) <> ISNULL(S.[deleted_at], CAST('1900-01-01' AS DATETIME))
+  LTRIM(RTRIM(ISNULL(T.[plant_code], N'')))<>LTRIM(RTRIM(ISNULL(S.[plant_code], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[supplier_code], N'')))<>LTRIM(RTRIM(ISNULL(S.[supplier_code], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[account_group], N'')))<>LTRIM(RTRIM(ISNULL(S.[account_group], N'')))
+  OR T.[supplier_title]<>S.[supplier_title]
+  OR LTRIM(RTRIM(ISNULL(T.[supplier_name1], N'')))<>LTRIM(RTRIM(ISNULL(S.[supplier_name1], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[supplier_name2], N'')))<>LTRIM(RTRIM(ISNULL(S.[supplier_name2], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[supplier_name3], N'')))<>LTRIM(RTRIM(ISNULL(S.[supplier_name3], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[supplier_name4], N'')))<>LTRIM(RTRIM(ISNULL(S.[supplier_name4], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[supplier_short_name], N'')))<>LTRIM(RTRIM(ISNULL(S.[supplier_short_name], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[country_code], N'')))<>LTRIM(RTRIM(ISNULL(S.[country_code], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[region_code], N'')))<>LTRIM(RTRIM(ISNULL(S.[region_code], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[city_code], N'')))<>LTRIM(RTRIM(ISNULL(S.[city_code], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[addr1], N'')))<>LTRIM(RTRIM(ISNULL(S.[addr1], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[addr2], N'')))<>LTRIM(RTRIM(ISNULL(S.[addr2], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[postal_code], N'')))<>LTRIM(RTRIM(ISNULL(S.[postal_code], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[phone1], N'')))<>LTRIM(RTRIM(ISNULL(S.[phone1], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[phone2], N'')))<>LTRIM(RTRIM(ISNULL(S.[phone2], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[fax_number], N'')))<>LTRIM(RTRIM(ISNULL(S.[fax_number], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[customer_code], N'')))<>LTRIM(RTRIM(ISNULL(S.[customer_code], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[trading_partner], N'')))<>LTRIM(RTRIM(ISNULL(S.[trading_partner], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[authorization_group], N'')))<>LTRIM(RTRIM(ISNULL(S.[authorization_group], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[group_key], N'')))<>LTRIM(RTRIM(ISNULL(S.[group_key], N'')))
+  OR T.[supplier_type]<>S.[supplier_type]
+  OR LTRIM(RTRIM(ISNULL(T.[enterprise_nature], N'')))<>LTRIM(RTRIM(ISNULL(S.[enterprise_nature], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[industry_attribute], N'')))<>LTRIM(RTRIM(ISNULL(S.[industry_attribute], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[credit_info_number], N'')))<>LTRIM(RTRIM(ISNULL(S.[credit_info_number], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[bank_country_code], N'')))<>LTRIM(RTRIM(ISNULL(S.[bank_country_code], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[bank_code], N'')))<>LTRIM(RTRIM(ISNULL(S.[bank_code], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[bank_account], N'')))<>LTRIM(RTRIM(ISNULL(S.[bank_account], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[account_holder], N'')))<>LTRIM(RTRIM(ISNULL(S.[account_holder], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[bank_charge_bearer_code], N'')))<>LTRIM(RTRIM(ISNULL(S.[bank_charge_bearer_code], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[reconciliation_account], N'')))<>LTRIM(RTRIM(ISNULL(S.[reconciliation_account], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[head_office_account_code], N'')))<>LTRIM(RTRIM(ISNULL(S.[head_office_account_code], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[planning_group], N'')))<>LTRIM(RTRIM(ISNULL(S.[planning_group], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[payment_terms], N'')))<>LTRIM(RTRIM(ISNULL(S.[payment_terms], N'')))
+  OR T.[double_invoice_check]<>S.[double_invoice_check]
+  OR T.[payment_method]<>S.[payment_method]
+  OR T.[payment_block]<>S.[payment_block]
+  OR LTRIM(RTRIM(ISNULL(T.[house_bank], N'')))<>LTRIM(RTRIM(ISNULL(S.[house_bank], N'')))
+  OR T.[clearing_with_customer]<>S.[clearing_with_customer]
+  OR LTRIM(RTRIM(ISNULL(T.[accounting_clerk], N'')))<>LTRIM(RTRIM(ISNULL(S.[accounting_clerk], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[our_account_at_supplier], N'')))<>LTRIM(RTRIM(ISNULL(S.[our_account_at_supplier], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[contact_person], N'')))<>LTRIM(RTRIM(ISNULL(S.[contact_person], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[contact_phone], N'')))<>LTRIM(RTRIM(ISNULL(S.[contact_phone], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[contact_email], N'')))<>LTRIM(RTRIM(ISNULL(S.[contact_email], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[withholding_tax_country], N'')))<>LTRIM(RTRIM(ISNULL(S.[withholding_tax_country], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[withholding_tax_type], N'')))<>LTRIM(RTRIM(ISNULL(S.[withholding_tax_type], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[withholding_tax_code], N'')))<>LTRIM(RTRIM(ISNULL(S.[withholding_tax_code], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[purchasing_organization], N'')))<>LTRIM(RTRIM(ISNULL(S.[purchasing_organization], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[order_currency_code], N'')))<>LTRIM(RTRIM(ISNULL(S.[order_currency_code], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[incoterms1], N'')))<>LTRIM(RTRIM(ISNULL(S.[incoterms1], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[incoterms2], N'')))<>LTRIM(RTRIM(ISNULL(S.[incoterms2], N'')))
+  OR T.[pricing_date_control]<>S.[pricing_date_control]
+  OR T.[gr_based_invoice_inspection]<>S.[gr_based_invoice_inspection]
+  OR T.[evaluated_receipt_settlement]<>S.[evaluated_receipt_settlement]
+  OR T.[return_ers_flag]<>S.[return_ers_flag]
+  OR T.[automatic_purchase_order]<>S.[automatic_purchase_order]
+  OR LTRIM(RTRIM(ISNULL(T.[purchase_group], N'')))<>LTRIM(RTRIM(ISNULL(S.[purchase_group], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[tax_number1], N'')))<>LTRIM(RTRIM(ISNULL(S.[tax_number1], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[tax_number2], N'')))<>LTRIM(RTRIM(ISNULL(S.[tax_number2], N'')))
+  OR LTRIM(RTRIM(ISNULL(T.[tax_number3], N'')))<>LTRIM(RTRIM(ISNULL(S.[tax_number3], N'')))
+  OR T.[credit_level]<>S.[credit_level]
+  OR T.[supplier_level]<>S.[supplier_level]
+  OR T.[sort_order]<>S.[sort_order]
+  OR T.[supplier_status]<>S.[supplier_status]
+  OR LTRIM(RTRIM(ISNULL(T.[culture_code], N'')))<>LTRIM(RTRIM(ISNULL(S.[culture_code], N'')))
+  OR ISNULL(T.[is_deleted], 0)<>S.[is_deleted]
+  OR ISNULL(T.[ext_field], N'')<>ISNULL(S.[ext_field], N'')
+  OR ISNULL(T.[remark], N'')<>ISNULL(S.[remark], N'')
 ) THEN
   UPDATE SET
   T.[plant_code]=S.[plant_code],
+  T.[supplier_code]=S.[supplier_code],
+  T.[account_group]=S.[account_group],
+  T.[supplier_title]=S.[supplier_title],
   T.[supplier_name1]=S.[supplier_name1],
   T.[supplier_name2]=S.[supplier_name2],
+  T.[supplier_name3]=S.[supplier_name3],
+  T.[supplier_name4]=S.[supplier_name4],
   T.[supplier_short_name]=S.[supplier_short_name],
+  T.[country_code]=S.[country_code],
+  T.[region_code]=S.[region_code],
+  T.[city_code]=S.[city_code],
+  T.[addr1]=S.[addr1],
+  T.[addr2]=S.[addr2],
+  T.[postal_code]=S.[postal_code],
+  T.[phone1]=S.[phone1],
+  T.[phone2]=S.[phone2],
+  T.[fax_number]=S.[fax_number],
+  T.[customer_code]=S.[customer_code],
+  T.[trading_partner]=S.[trading_partner],
+  T.[authorization_group]=S.[authorization_group],
+  T.[group_key]=S.[group_key],
   T.[supplier_type]=S.[supplier_type],
   T.[enterprise_nature]=S.[enterprise_nature],
   T.[industry_attribute]=S.[industry_attribute],
-  T.[supplier_tax_number]=S.[supplier_tax_number],
-  T.[tax_code]=S.[tax_code],
-  T.[tax_rate]=S.[tax_rate],
-  T.[culture_code]=S.[culture_code],
-  T.[registration_country]=S.[registration_country],
-  T.[registration_province]=S.[registration_province],
-  T.[registration_city]=S.[registration_city],
-  T.[registration_address1]=S.[registration_address1],
-  T.[registration_address2]=S.[registration_address2],
-  T.[supplier_phone]=S.[supplier_phone],
-  T.[supplier_fax]=S.[supplier_fax],
-  T.[supplier_email]=S.[supplier_email],
-  T.[supplier_website]=S.[supplier_website],
-  T.[contact_person]=S.[contact_person],
-  T.[contact_phone]=S.[contact_phone],
-  T.[contact_email]=S.[contact_email],
-  T.[currency_code]=S.[currency_code],
-  T.[reconciliation_account]=S.[reconciliation_account],
-  T.[customer_code]=S.[customer_code],
-  T.[clearing_with_customer]=S.[clearing_with_customer],
-  T.[payment_method]=S.[payment_method],
-  T.[payment_terms]=S.[payment_terms],
+  T.[credit_info_number]=S.[credit_info_number],
+  T.[bank_country_code]=S.[bank_country_code],
   T.[bank_code]=S.[bank_code],
   T.[bank_account]=S.[bank_account],
   T.[account_holder]=S.[account_holder],
-  T.[gr_based_invoice_inspection]=S.[gr_based_invoice_inspection],
+  T.[bank_charge_bearer_code]=S.[bank_charge_bearer_code],
+  T.[reconciliation_account]=S.[reconciliation_account],
+  T.[head_office_account_code]=S.[head_office_account_code],
+  T.[planning_group]=S.[planning_group],
+  T.[payment_terms]=S.[payment_terms],
+  T.[double_invoice_check]=S.[double_invoice_check],
+  T.[payment_method]=S.[payment_method],
+  T.[payment_block]=S.[payment_block],
+  T.[house_bank]=S.[house_bank],
+  T.[clearing_with_customer]=S.[clearing_with_customer],
+  T.[accounting_clerk]=S.[accounting_clerk],
+  T.[our_account_at_supplier]=S.[our_account_at_supplier],
+  T.[contact_person]=S.[contact_person],
+  T.[contact_phone]=S.[contact_phone],
+  T.[contact_email]=S.[contact_email],
+  T.[withholding_tax_country]=S.[withholding_tax_country],
+  T.[withholding_tax_type]=S.[withholding_tax_type],
+  T.[withholding_tax_code]=S.[withholding_tax_code],
+  T.[purchasing_organization]=S.[purchasing_organization],
+  T.[order_currency_code]=S.[order_currency_code],
   T.[incoterms1]=S.[incoterms1],
   T.[incoterms2]=S.[incoterms2],
-  T.[automatic_purchase_order]=S.[automatic_purchase_order],
   T.[pricing_date_control]=S.[pricing_date_control],
-  T.[purchase_group]=S.[purchase_group],
-  T.[planned_delivery_time_days]=S.[planned_delivery_time_days],
+  T.[gr_based_invoice_inspection]=S.[gr_based_invoice_inspection],
   T.[evaluated_receipt_settlement]=S.[evaluated_receipt_settlement],
-  T.[purchasing_organization]=S.[purchasing_organization],
+  T.[return_ers_flag]=S.[return_ers_flag],
+  T.[automatic_purchase_order]=S.[automatic_purchase_order],
+  T.[purchase_group]=S.[purchase_group],
+  T.[tax_number1]=S.[tax_number1],
+  T.[tax_number2]=S.[tax_number2],
+  T.[tax_number3]=S.[tax_number3],
+  T.[credit_level]=S.[credit_level],
   T.[supplier_level]=S.[supplier_level],
-  T.[evaluation_score]=S.[evaluation_score],
   T.[sort_order]=S.[sort_order],
   T.[supplier_status]=S.[supplier_status],
+  T.[culture_code]=S.[culture_code],
   T.[ext_field]=S.[ext_field],
   T.[remark]=S.[remark],
   T.[created_by]=S.[created_by],
-  T.[created_at]=S.[created_at],
+  T.[created_at]=COALESCE(S.[created_at], T.[created_at], @now),
   T.[updated_by]=S.[updated_by],
   T.[updated_at]=S.[updated_at],
   T.[is_deleted]=S.[is_deleted],
@@ -446,51 +775,16 @@ WHEN MATCHED AND (
   T.[deleted_at]=S.[deleted_at]
 WHEN NOT MATCHED THEN
   INSERT (
-    [id],[plant_code],[supplier_code],[supplier_name1],[supplier_name2],[supplier_short_name],
-    [supplier_type],[enterprise_nature],[industry_attribute],
-    [supplier_tax_number],[tax_code],[tax_rate],[registration_country],[registration_province],[registration_city],
-    [registration_address1],[registration_address2],[supplier_phone],[supplier_fax],[supplier_email],
-    [supplier_website],[contact_person],[contact_phone],[contact_email],[currency_code],
-    [reconciliation_account],[customer_code],[clearing_with_customer],[payment_method],[payment_terms],
-    [bank_code],[bank_account],[account_holder],[gr_based_invoice_inspection],[incoterms1],[incoterms2],
-    [automatic_purchase_order],[pricing_date_control],[purchase_group],[planned_delivery_time_days],
-    [evaluated_receipt_settlement],[purchasing_organization],[supplier_level],[evaluation_score],
-    [sort_order],[supplier_status],[tenant_code],[company_code],[culture_code],[ext_field],[remark],
-    [created_by],[created_at],[updated_by],[updated_at],
-    [is_deleted],[deleted_by],[deleted_at]
+    [id],[plant_code],[supplier_code],[account_group],[supplier_title],[supplier_name1],[supplier_name2],[supplier_name3],[supplier_name4],[supplier_short_name],[country_code],[region_code],[city_code],[addr1],[addr2],[postal_code],[phone1],[phone2],[fax_number],[customer_code],[trading_partner],[authorization_group],[group_key],[supplier_type],[enterprise_nature],[industry_attribute],[credit_info_number],[bank_country_code],[bank_code],[bank_account],[account_holder],[bank_charge_bearer_code],[reconciliation_account],[head_office_account_code],[planning_group],[payment_terms],[double_invoice_check],[payment_method],[payment_block],[house_bank],[clearing_with_customer],[accounting_clerk],[our_account_at_supplier],[contact_person],[contact_phone],[contact_email],[withholding_tax_country],[withholding_tax_type],[withholding_tax_code],[purchasing_organization],[order_currency_code],[incoterms1],[incoterms2],[pricing_date_control],[gr_based_invoice_inspection],[evaluated_receipt_settlement],[return_ers_flag],[automatic_purchase_order],[purchase_group],[tax_number1],[tax_number2],[tax_number3],[credit_level],[supplier_level],[sort_order],[supplier_status],[tenant_code],[company_code],[culture_code],[ext_field],[remark],
+    [created_by],[created_at],[updated_by],[updated_at],[is_deleted],[deleted_by],[deleted_at]
   )
   VALUES (
-    S.[id],S.[plant_code],S.[supplier_code],S.[supplier_name1],S.[supplier_name2],S.[supplier_short_name],
-    S.[supplier_type],S.[enterprise_nature],S.[industry_attribute],
-    S.[supplier_tax_number],S.[tax_code],S.[tax_rate],S.[registration_country],S.[registration_province],S.[registration_city],
-    S.[registration_address1],S.[registration_address2],S.[supplier_phone],S.[supplier_fax],S.[supplier_email],
-    S.[supplier_website],S.[contact_person],S.[contact_phone],S.[contact_email],S.[currency_code],
-    S.[reconciliation_account],S.[customer_code],S.[clearing_with_customer],S.[payment_method],S.[payment_terms],
-    S.[bank_code],S.[bank_account],S.[account_holder],S.[gr_based_invoice_inspection],S.[incoterms1],S.[incoterms2],
-    S.[automatic_purchase_order],S.[pricing_date_control],S.[purchase_group],S.[planned_delivery_time_days],
-    S.[evaluated_receipt_settlement],S.[purchasing_organization],S.[supplier_level],S.[evaluation_score],
-    S.[sort_order],S.[supplier_status],S.[tenant_code],S.[company_code],S.[culture_code],S.[ext_field],S.[remark],
+    S.[id],S.[plant_code],S.[supplier_code],S.[account_group],S.[supplier_title],S.[supplier_name1],S.[supplier_name2],S.[supplier_name3],S.[supplier_name4],S.[supplier_short_name],S.[country_code],S.[region_code],S.[city_code],S.[addr1],S.[addr2],S.[postal_code],S.[phone1],S.[phone2],S.[fax_number],S.[customer_code],S.[trading_partner],S.[authorization_group],S.[group_key],S.[supplier_type],S.[enterprise_nature],S.[industry_attribute],S.[credit_info_number],S.[bank_country_code],S.[bank_code],S.[bank_account],S.[account_holder],S.[bank_charge_bearer_code],S.[reconciliation_account],S.[head_office_account_code],S.[planning_group],S.[payment_terms],S.[double_invoice_check],S.[payment_method],S.[payment_block],S.[house_bank],S.[clearing_with_customer],S.[accounting_clerk],S.[our_account_at_supplier],S.[contact_person],S.[contact_phone],S.[contact_email],S.[withholding_tax_country],S.[withholding_tax_type],S.[withholding_tax_code],S.[purchasing_organization],S.[order_currency_code],S.[incoterms1],S.[incoterms2],S.[pricing_date_control],S.[gr_based_invoice_inspection],S.[evaluated_receipt_settlement],S.[return_ers_flag],S.[automatic_purchase_order],S.[purchase_group],S.[tax_number1],S.[tax_number2],S.[tax_number3],S.[credit_level],S.[supplier_level],S.[sort_order],S.[supplier_status],S.[tenant_code],S.[company_code],S.[culture_code],S.[ext_field],S.[remark],
     COALESCE(S.[created_by],@sync_user_id),COALESCE(S.[created_at],@now),S.[updated_by],S.[updated_at],
-    S.[is_deleted],
-    S.[deleted_by],S.[deleted_at]
+    S.[is_deleted],S.[deleted_by],S.[deleted_at]
   )
-OUTPUT
-  S.rn,
-  $action,
-  INSERTED.[id],
-  INSERTED.[supplier_code],
-  INSERTED.[plant_code],
-  INSERTED.[tenant_code],
-  INSERTED.[company_code],
-  INSERTED.[updated_by],
-  DELETED.[supplier_name1], INSERTED.[supplier_name1],
-  DELETED.[supplier_status], INSERTED.[supplier_status]
-INTO #delta(
-  rn, oper_type, id, supplier_code, plant_code,
-  tenant_code, company_code, change_by,
-  supplier_name1_old, supplier_name1_new,
-  supplier_status_old, supplier_status_new
-);
+OUTPUT S.rn, $action, INSERTED.[id]
+INTO #delta(rn, oper_type, id);
   SET @dml_n = @@ROWCOUNT;
   SELECT
     N'QUARTZ_SYNC_PROGRESS' AS [summary_tag],
@@ -511,142 +805,56 @@ INTO #delta(
   SET @merge_from_rn = @merge_to_rn + 1;
 END
 
-IF OBJECT_ID('tempdb..#soft_deleted_rows') IS NOT NULL DROP TABLE #soft_deleted_rows;
-CREATE TABLE #soft_deleted_rows (
-  [id] BIGINT,
-  [supplier_code] NVARCHAR(10),
-  [plant_code] NVARCHAR(4)
-);
-
-
 DECLARE @delete_count INT = 0;
 SET @dml_n = 1;
 WHILE @dml_n > 0
 BEGIN
-UPDATE TOP (@apply_chunk) T
-SET
-  T.[is_deleted] = 1,
-  T.[deleted_by] = @sync_user_id,
-  T.[deleted_at] = @now,
-  T.[updated_by] = @sync_user_id,
-  T.[updated_at] = @now
-OUTPUT
-  INSERTED.[id],
-  INSERTED.[supplier_code],
-  INSERTED.[plant_code]
-INTO #soft_deleted_rows ([id], [supplier_code], [plant_code])
-FROM [takt_logistics_procurement_supplier] T
-WHERE T.[tenant_code] = @tenant_code
-  AND T.[is_deleted] = 0
-  AND EXISTS (
-    SELECT 1 FROM #st_source S0 WHERE S0.[company_code] = T.[company_code]
-  )
-  AND NOT EXISTS (
-    SELECT 1
-    FROM #st_source S
-    WHERE S.[company_code] = T.[company_code]
-      AND S.[supplier_code] = LTRIM(RTRIM(T.[supplier_code]))
-  );
+  UPDATE TOP (@apply_chunk) T
+  SET
+    T.[is_deleted] = 1,
+    T.[deleted_by] = @sync_user_id,
+    T.[deleted_at] = @now,
+    T.[updated_by] = @sync_user_id,
+    T.[updated_at] = @now
+  FROM [takt_logistics_procurement_supplier] T
+  WHERE T.[is_deleted] = 0
+    AND EXISTS (SELECT 1 FROM #st_source S0 WHERE S0.[tenant_code]=T.[tenant_code] AND S0.[company_code]=T.[company_code])
+    AND NOT EXISTS (
+      SELECT 1 FROM #st_source S
+      WHERE S.[tenant_code] = T.[tenant_code]
+        AND S.[company_code] = T.[company_code]
+        AND S.[purchasing_organization] = LTRIM(RTRIM(T.[purchasing_organization]))
+        AND S.[supplier_code] = LTRIM(RTRIM(T.[supplier_code]))
+    );
   SET @dml_n = @@ROWCOUNT;
   SET @delete_count = @delete_count + @dml_n;
 END
-SELECT
-  N'QUARTZ_SYNC_PROGRESS' AS [summary_tag],
-  N'soft' AS [phase],
-  CAST(0 AS INT) AS [from_rn],
-  @delete_count AS [to_rn],
-  CAST(0 AS INT) AS [max_rn],
-  @delete_count AS [batch_rows];
-SET @progress_msg = CONCAT(
-  N'QUARTZ_SYNC_PROGRESS|',
-  N'soft', N'|',
-  CAST((CAST(0 AS INT)) AS NVARCHAR(20)), N'|',
-  CAST((@delete_count) AS NVARCHAR(20)), N'|',
-  CAST((CAST(0 AS INT)) AS NVARCHAR(20)), N'|',
-  CAST((@delete_count) AS NVARCHAR(20)), N'|',
-  N'');
-RAISERROR(@progress_msg, 10, 1) WITH NOWAIT;
-DECLARE @soft_deleted_keys NVARCHAR(MAX) = N'';
--- STRING_AGG 默认上限 8000 字节；软删键多时须 CAST 为 NVARCHAR(MAX)
-SELECT @soft_deleted_keys = STRING_AGG(
-  CAST(
-    CONCAT(
-      CAST([id] AS NVARCHAR(30)), N'|',
-      ISNULL([supplier_code], N''), N'/',
-      ISNULL([plant_code], N'')
-    )
-  AS NVARCHAR(MAX)),
-  N'; '
-)
-FROM #soft_deleted_rows;
-SET @soft_deleted_keys = ISNULL(@soft_deleted_keys, N'');
--- 摘要/oper_log 仅保留前 2000 字符，避免 JSON 过大
-IF LEN(@soft_deleted_keys) > 2000
-BEGIN
-  SET @soft_deleted_keys = LEFT(@soft_deleted_keys, 2000) + N'...(+more)';
-END;
+
 DECLARE @target_count INT = (
   SELECT COUNT(*)
   FROM [takt_logistics_procurement_supplier] T
-  WHERE T.[tenant_code] = @tenant_code
-    AND T.[is_deleted] = 0
-    AND EXISTS (
-      SELECT 1 FROM #st_source S WHERE S.[company_code] = T.[company_code]
-    )
+  WHERE T.[is_deleted] = 0
+    AND EXISTS (SELECT 1 FROM #st_source S WHERE S.[tenant_code]=T.[tenant_code] AND S.[company_code]=T.[company_code])
 );
-DECLARE @target_physical INT = (
-  SELECT COUNT(*)
-  FROM [takt_logistics_procurement_supplier] T
-  WHERE T.[tenant_code] = @tenant_code
-    AND EXISTS (
-      SELECT 1 FROM #st_source S WHERE S.[company_code] = T.[company_code]
-    )
-);
-DECLARE @soft_deleted INT = (
-  SELECT COUNT(*)
-  FROM [takt_logistics_procurement_supplier] T
-  WHERE T.[tenant_code] = @tenant_code
-    AND T.[is_deleted] = 1
-    AND EXISTS (
-      SELECT 1 FROM #st_source S WHERE S.[company_code] = T.[company_code]
-    )
-);
-DECLARE @source_active_count INT = (
-  SELECT COUNT(*)
-  FROM #st_source
-  WHERE [is_deleted] = 0
-);
-
+DECLARE @source_active_count INT = (SELECT COUNT(*) FROM #st_source WHERE [is_deleted] = 0);
 IF @target_count <> @source_active_count
 BEGIN
-  DECLARE @count_msg NVARCHAR(200) = CONCAT(
-    N'有效行数不一致: source=', @source_active_count, N', active=', @target_count);
+  DECLARE @count_msg NVARCHAR(200) = CONCAT(N'有效行数不一致: source=', @source_active_count, N', active=', @target_count);
   THROW 50002, @count_msg, 1;
 END;
-
-
-/* per-row delta_log removed */
-
 
 DECLARE @insert_count INT = (SELECT COUNT(*) FROM #delta WHERE oper_type = 'INSERT');
 DECLARE @update_count INT = (SELECT COUNT(*) FROM #delta WHERE oper_type = 'UPDATE');
 DECLARE @unchanged_count INT = @source_count - @insert_count - @update_count;
 DECLARE @json_result NVARCHAR(MAX) =
-  N'{"sap_raw":' + CAST(@sap_raw_count AS NVARCHAR)
-  + N',"source":' + CAST(@source_count AS NVARCHAR)
-  + N',"sap_keys":' + CAST(@sap_key_count AS NVARCHAR)
-  + N',"dedupe_dropped":' + CAST(@dedupe_dropped AS NVARCHAR)
+  N'{"source":' + CAST(@source_count AS NVARCHAR)
   + N',"target_before":' + CAST(@target_before AS NVARCHAR)
   + N',"target_after":' + CAST(@target_count AS NVARCHAR)
-  + N',"target_physical":' + CAST(@target_physical AS NVARCHAR)
-  + N',"soft_deleted":' + CAST(@soft_deleted AS NVARCHAR)
   + N',"insert":' + CAST(@insert_count AS NVARCHAR)
   + N',"update":' + CAST(@update_count AS NVARCHAR)
   + N',"unchanged":' + CAST(@unchanged_count AS NVARCHAR)
-  + N',"soft_delete_this_run":' + CAST(@delete_count AS NVARCHAR)
-  + N',"soft_delete_keys":"' + REPLACE(@soft_deleted_keys, N'"', N'''') + N'"}';
+  + N',"soft_delete_this_run":' + CAST(@delete_count AS NVARCHAR) + N'}';
 
--- 批量同步：每次执行仅写 1 条摘要差异日志（非逐行）；明细变更见业务操作差异日志
 INSERT INTO [takt_statistics_logging_delta_log] (
   [id],[oper_type],[table_name],[primary_key_id],
   [before_data],[after_data],[diff_data],[sql_statement],
@@ -662,14 +870,12 @@ VALUES (
   N'{}',
   ISNULL(@json_result, N'{}'),
   N'{}',
-  N'MERGE Supplier Sync (summary)',
+  N'MERGE TaktSupplier Sync (summary)',
   N'127.0.0.1',N'Server',N'SQLCMD',N'Server',N'Windows',N'Server',
   @now,0,
   @tenant_code,@company_code,@plant_code,@culture_code,
   N'{}',N'SYNC batch summary',@sync_user_id,@now
 );
-
-
 
 INSERT INTO [takt_statistics_logging_oper_log] (
   [id],[user_name],[oper_type],[oper_module],[oper_method],
@@ -678,8 +884,8 @@ INSERT INTO [takt_statistics_logging_oper_log] (
   [oper_time],[elapsed_time],[oper_status],[error_msg],
   [tenant_code],[company_code],[plant_code],[culture_code],[created_by],[created_at]
 )
-SELECT
-  @base_id + 2000000000 + ROW_NUMBER() OVER (ORDER BY P.[company_code], P.[plant_code], P.[culture_code]),
+VALUES (
+  @base_id + 1,
   N'SYSTEM_SYNC',
   N'SYNC',
   N'供货商信息',
@@ -690,26 +896,15 @@ SELECT
   @json_result,
   '127.0.0.1','Server','SQLCMD','Server','Windows','Server',
   @now,DATEDIFF(MILLISECOND,@now,GETDATE()),1,'',
-  @tenant_code,P.[company_code],P.[plant_code],P.[culture_code],@sync_user_id,@now
-FROM (
-  SELECT DISTINCT [company_code], [plant_code], [culture_code]
-  FROM #st_source
-  WHERE LTRIM(RTRIM(ISNULL([plant_code], N''))) <> N''
-) P;
+  @tenant_code,@company_code,@plant_code,@culture_code,@sync_user_id,@now
+);
 
 SELECT
   N'QUARTZ_SYNC_SUMMARY' AS [summary_tag],
-  CAST(N'' AS NVARCHAR(40)) AS [scope],
-  @sap_raw_count AS [source_raw_count],
   @source_count AS [source_count],
-  @sap_key_count AS [sap_key_count],
-  @dedupe_dropped AS [dedupe_dropped],
   @target_before AS [target_before],
   @target_count AS [target_after],
-  @target_physical AS [target_physical],
-  @soft_deleted AS [soft_deleted],
   @insert_count AS [insert_count],
   @update_count AS [update_count],
   @unchanged_count AS [unchanged_count],
-  @delete_count AS [delete_count],
-  @soft_deleted_keys AS [soft_deleted_keys];
+  @delete_count AS [delete_count];

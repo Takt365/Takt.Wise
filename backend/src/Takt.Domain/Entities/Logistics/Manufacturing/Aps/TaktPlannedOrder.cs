@@ -27,7 +27,7 @@ public class TaktPlannedOrder : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// 计划订单编码
+    /// 计划订单编码（前端表单选择编码规则后自动通过 TaktNumbering 计划订单编码规则生成并展示，非手输；单据类型菜单：计划订单）
     /// </summary>
     [SugarColumn(ColumnName = "planned_order_code", ColumnDescription = "计划订单编码", ColumnDataType = "nvarchar", Length = 12, IsNullable = false)]
     public string PlannedOrderCode { get; set; } = string.Empty;

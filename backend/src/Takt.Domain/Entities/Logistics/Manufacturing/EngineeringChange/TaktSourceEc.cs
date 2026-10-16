@@ -27,7 +27,7 @@ public class TaktSourceEc : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// 设变号码
+    /// 设变号码（前端表单选择编码规则后自动通过 TaktNumbering 设变号码规则生成并展示，非手输；单据类型菜单：设变来源）
     /// </summary>
     [SugarColumn(ColumnName = "source_ec_code", ColumnDescription = "设变号码", Length = 6, ColumnDataType = "nvarchar", IsNullable = false)]
     public string SourceEcCode { get; set; } = string.Empty;

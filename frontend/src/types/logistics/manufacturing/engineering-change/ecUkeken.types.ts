@@ -52,6 +52,8 @@ export interface EcUkeken extends CompanyDtoBase {
    * 根物料编码组（同设变单号+新品检验+新物料，分号分隔）
    */
   ecRootMaterialCodeGroup?: string;
+  /** 根物料描述（仅全仕向且按成品时有值） */
+  ecRootMaterialDescription?: string;
 
   /**
    * 行号（项号/序号，固定步长=10）
@@ -97,6 +99,8 @@ export interface EcUkeken extends CompanyDtoBase {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 
   /**
    * 是否实施（0=否 1=是，字典 sys_yes_no）
@@ -301,6 +305,8 @@ export interface EcUkekenCreate {
    * 根物料编码组（同设变单号+新品检验+新物料，分号分隔）
    */
   ecRootMaterialCodeGroup?: string;
+  /** 根物料描述（仅全仕向且按成品时有值） */
+  ecRootMaterialDescription?: string;
 
   /**
    * 行号（项号/序号，固定步长=10）
@@ -316,6 +322,8 @@ export interface EcUkekenCreate {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 
   /**
    * 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
@@ -417,6 +425,8 @@ export interface EcUkekenDiscontinuedStatus {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 }
 
 /**
@@ -701,6 +711,8 @@ export interface EcUkekenExport {
    * 根物料编码组（同设变单号+新品检验+新物料，分号分隔）
    */
   ecRootMaterialCodeGroup?: string;
+  /** 根物料描述（仅全仕向且按成品时有值） */
+  ecRootMaterialDescription?: string;
 
   /**
    * 行号（项号/序号，固定步长=10）
@@ -716,6 +728,8 @@ export interface EcUkekenExport {
    * 实施范围（冗余：来自 TaktEcDetail.EcScope）
    */
   ecScope: number;
+  /** 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category） */
+  ecDeptScope?: number;
 
   /**
    * 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）

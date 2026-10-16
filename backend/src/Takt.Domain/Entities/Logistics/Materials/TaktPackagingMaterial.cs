@@ -27,7 +27,7 @@ public class TaktPackagingMaterial : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// 包装物料编码
+    /// 包装物料编码（前端表单选择编码规则后自动通过 TaktNumbering 包装物料编码规则生成并展示，非手输；单据类型菜单：包装物料）
     /// </summary>
     [SugarColumn(ColumnName = "packaging_material_code", ColumnDescription = "包装物料编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string PackagingMaterialCode { get; set; } = string.Empty;

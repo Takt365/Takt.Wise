@@ -33,6 +33,7 @@ public class TaktPurchaseRequestService : TaktServiceBase, ITaktPurchaseRequestS
     private readonly ITaktCompanyRepository<TaktPurchaseRequestItem> _purchaseRequestItemRepository;
     private readonly ITaktLineNumberGenerator _lineNumberGenerator;
     private readonly ITaktUniqueValidator _uniqueValidator;
+    private readonly ITaktNumberingGenerator _numberingGenerator;
 
     /// <summary>
     /// 构造函数
@@ -41,6 +42,7 @@ public class TaktPurchaseRequestService : TaktServiceBase, ITaktPurchaseRequestS
     /// <param name="purchaseRequestItemRepository">PurchaseRequestItem仓储</param>
     /// <param name="lineNumberGenerator">明细行号生成器</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
+    /// <param name="numberingGenerator">业务编码生成器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktPurchaseRequestService(
@@ -48,6 +50,7 @@ public class TaktPurchaseRequestService : TaktServiceBase, ITaktPurchaseRequestS
         ITaktCompanyRepository<TaktPurchaseRequestItem> purchaseRequestItemRepository,
         ITaktLineNumberGenerator lineNumberGenerator,
         ITaktUniqueValidator uniqueValidator,
+        ITaktNumberingGenerator numberingGenerator,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
@@ -56,6 +59,7 @@ public class TaktPurchaseRequestService : TaktServiceBase, ITaktPurchaseRequestS
         _purchaseRequestItemRepository = purchaseRequestItemRepository;
         _lineNumberGenerator = lineNumberGenerator;
         _uniqueValidator = uniqueValidator;
+        _numberingGenerator = numberingGenerator;
     }
 
     /// <summary>
@@ -130,6 +134,19 @@ public class TaktPurchaseRequestService : TaktServiceBase, ITaktPurchaseRequestS
     public async Task<TaktPurchaseRequestDto> CreatePurchaseRequestAsync(TaktPurchaseRequestCreateDto dto)
     {
         var entity = dto.Adapt<TaktPurchaseRequest>();
+        if (!string.IsNullOrWhiteSpace(dto.NumberingRuleCode))
+        {
+            var generated = await _numberingGenerator.GenerateNextAsync(dto.NumberingRuleCode.Trim());
+            if (string.IsNullOrWhiteSpace(generated.BusinessCode))
+            {
+                throw new TaktBusinessException("业务编码生成失败");
+            }
+            entity.PurchaseRequestCode = generated.BusinessCode;
+        }
+        else if (string.IsNullOrWhiteSpace(entity.PurchaseRequestCode))
+        {
+            throw new TaktBusinessException("采购申请编码不能为空");
+        }
         var isUnique_ix_takt_logistics_procurement_purchase_request_pr_unique = await _uniqueValidator.IsUniqueAsync(
             _purchaseRequestRepository,
             x => x.PlantCode == entity.PlantCode

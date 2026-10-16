@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Sales
 // 文件名称：TaktSalesQuotationItemI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSalesQuotationItem 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -199,13 +199,13 @@ public class TaktSalesQuotationItemI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.salesquotationitem.discountamount", "zh-HK", "折扣金额_hk", "折扣金额"),
 
             // entity.salesquotationitem.taxcode
-            new TranslationSeedItem("entity.salesquotationitem.taxcode", "en-US", "税码_us", "税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）"),
+            new TranslationSeedItem("entity.salesquotationitem.taxcode", "en-US", "税码_us", "税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.salesquotationitem.taxcode
-            new TranslationSeedItem("entity.salesquotationitem.taxcode", "ja-JP", "税码_jp", "税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）"),
+            new TranslationSeedItem("entity.salesquotationitem.taxcode", "ja-JP", "税码_jp", "税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.salesquotationitem.taxcode
-            new TranslationSeedItem("entity.salesquotationitem.taxcode", "zh-CN", "税码", "税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）"),
+            new TranslationSeedItem("entity.salesquotationitem.taxcode", "zh-CN", "税码", "税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）"),
             // entity.salesquotationitem.taxcode
-            new TranslationSeedItem("entity.salesquotationitem.taxcode", "zh-HK", "税码_hk", "税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）"),
+            new TranslationSeedItem("entity.salesquotationitem.taxcode", "zh-HK", "税码_hk", "税码（冗余：按 SalesQuotationId 取 TaktSalesQuotation.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）"),
 
             // entity.salesquotationitem.taxincludedamount
             new TranslationSeedItem("entity.salesquotationitem.taxincludedamount", "en-US", "含税金额_us", "含税金额"),

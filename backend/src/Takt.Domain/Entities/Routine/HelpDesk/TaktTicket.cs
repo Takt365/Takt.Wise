@@ -29,7 +29,7 @@ namespace Takt.Domain.Entities.Routine.HelpDesk;
 public class TaktTicket : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 工单编码（唯一）
+    /// 工单编码（租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 工单编码规则生成并展示，非手输；单据类型菜单：工单管理）
     /// </summary>
     [SugarColumn(ColumnName = "ticket_code", ColumnDescription = "工单编码", ColumnDataType = "nvarchar", Length = 50, IsNullable = false)]
     public string TicketCode { get; set; } = string.Empty;

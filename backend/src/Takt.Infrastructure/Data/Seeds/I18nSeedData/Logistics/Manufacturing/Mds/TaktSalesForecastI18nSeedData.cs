@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Mds
 // 文件名称：TaktSalesForecastI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSalesForecast 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktSalesForecastI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.salesforecast._self", "zh-HK", "Takt销售预测信息_hk", "实体名称"),
 
             // entity.salesforecast.code
-            new TranslationSeedItem("entity.salesforecast.code", "en-US", "销售预测编码_us", "销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一）"),
+            new TranslationSeedItem("entity.salesforecast.code", "en-US", "销售预测编码_us", "销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 销售预测编码规则生成并展示，非手输；单据类型菜单：销售预测）"),
             // entity.salesforecast.code
-            new TranslationSeedItem("entity.salesforecast.code", "ja-JP", "销售预测编码_jp", "销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一）"),
+            new TranslationSeedItem("entity.salesforecast.code", "ja-JP", "销售预测编码_jp", "销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 销售预测编码规则生成并展示，非手输；单据类型菜单：销售预测）"),
             // entity.salesforecast.code
-            new TranslationSeedItem("entity.salesforecast.code", "zh-CN", "销售预测编码", "销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一）"),
+            new TranslationSeedItem("entity.salesforecast.code", "zh-CN", "销售预测编码", "销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 销售预测编码规则生成并展示，非手输；单据类型菜单：销售预测）"),
             // entity.salesforecast.code
-            new TranslationSeedItem("entity.salesforecast.code", "zh-HK", "销售预测编码_hk", "销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一）"),
+            new TranslationSeedItem("entity.salesforecast.code", "zh-HK", "销售预测编码_hk", "销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 销售预测编码规则生成并展示，非手输；单据类型菜单：销售预测）"),
 
             // entity.salesforecast.plandate
             new TranslationSeedItem("entity.salesforecast.plandate", "en-US", "计划编制日期_us", "计划编制日期（客户侧业务计划日；与接收日期分离）"),

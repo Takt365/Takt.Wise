@@ -106,16 +106,10 @@
           />
         </template>
         <template v-else-if="column.key === 'taxCode'">
-          <TaktDictTag
-            :value="getPurchaseOrderDictValue(record, 'taxCode')"
-            dict-type="accounting_financial_tax_code"
-          />
+          {{ record.taxCode }}
         </template>
         <template v-else-if="column.key === 'taxRate'">
-          <TaktDictTag
-            :value="getPurchaseOrderDictValue(record, 'taxRate')"
-            dict-type="accounting_financial_tax_code"
-          />
+          {{ record.taxRate }}
         </template>
         <template v-else-if="column.key === 'paymentMethod'">
           <TaktDictTag
@@ -406,7 +400,7 @@
       <a-form-item :label="pi.queryLabel('taxCode')">
         <TaktSelect
           v-model:value="advancedQueryForm.taxCode"
-          dict-type="accounting_financial_tax_code"
+          api-url="TaktTaxCodes/options"
           :placeholder="pi.queryPh('taxCode', 'select')"
           allow-clear
         />
@@ -414,11 +408,10 @@
       </div>
       <div v-show="isFieldVisible('taxRate')">
       <a-form-item :label="pi.queryLabel('taxRate')">
-        <TaktSelect
+        <a-input-number
           v-model:value="advancedQueryForm.taxRate"
-          dict-type="accounting_financial_tax_code"
-          :placeholder="pi.queryPh('taxRate', 'select')"
-          allow-clear
+          :placeholder="pi.queryPh('taxRate', 'required')"
+          style="width: 100%"
         />
       </a-form-item>
       </div>

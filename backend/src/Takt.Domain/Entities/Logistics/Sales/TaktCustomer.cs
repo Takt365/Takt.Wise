@@ -23,131 +23,26 @@ namespace Takt.Domain.Entities.Logistics.Sales;
 
 /// <summary>
 /// Takt客户信息实体
-/// <para>业务唯一键：TenantCode+CompanyCode+CustomerCode（PlantCode 为业务字段，不参与唯一）。</para>
+/// <para>业务唯一键：TenantCode+CompanyCode+SalesOrganization+CustomerCode。</para>
 /// </summary>
 [SugarTable("takt_logistics_sales_customer", "客户信息表")]
 [SugarIndex("ix_customer_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
 [SugarIndex("ix_customer_is_deleted", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(IsDeleted), OrderByType.Asc, false)]
-[SugarIndex("ix_takt_logistics_sales_customer_customer_code_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(CustomerCode), OrderByType.Asc, true)]
+[SugarIndex("ix_takt_logistics_sales_customer_customer_code_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(SalesOrganization), OrderByType.Asc, nameof(CustomerCode), OrderByType.Asc, true)]
 [SugarIndex("ix_takt_logistics_sales_customer_customer_status", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(CustomerStatus), OrderByType.Asc, false)]
 [SugarIndex("ix_takt_logistics_sales_customer_plant_code", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(PlantCode), OrderByType.Asc, false)]
 public class TaktCustomer : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 客户编码（唯一索引）
+    /// 客户编码（与租户、公司、销售组织共同唯一；前端表单选择编码规则后自动通过 TaktNumbering 客户编码规则生成并展示，非手输；单据类型菜单：客户信息）
     /// </summary>
     [SugarColumn(ColumnName = "customer_code", ColumnDescription = "客户编码", ColumnDataType = "nvarchar", Length = 10, IsNullable = false)]
     public string CustomerCode { get; set; } = string.Empty;
     /// <summary>
-    /// 客户名称1
+    /// 科目组
     /// </summary>
-    [SugarColumn(ColumnName = "customer_name1", ColumnDescription = "客户名称1", ColumnDataType = "nvarchar", Length = 140, IsNullable = false)]
-    public string CustomerName1 { get; set; } = string.Empty;
-    /// <summary>
-    /// 客户名称2
-    /// </summary>
-    [SugarColumn(ColumnName = "customer_name2", ColumnDescription = "客户名称2", ColumnDataType = "nvarchar", Length = 140, IsNullable = true)]
-    public string? CustomerName2 { get; set; }
-    /// <summary>
-    /// 客户简称
-    /// </summary>
-    [SugarColumn(ColumnName = "customer_short_name", ColumnDescription = "客户简称", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
-    public string? CustomerShortName { get; set; }
-    /// <summary>
-    /// 客户类型（字典 logistics_sales_customer_category；0=企业客户 1=个人客户 2=政府机构 3=其他）
-    /// </summary>
-    [SugarColumn(ColumnName = "customer_type", ColumnDescription = "客户类型", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
-    public int CustomerType { get; set; } = 0;
-    /// <summary>
-    /// 企业性质（字典 sys_enterprise_nature）
-    /// </summary>
-    [SugarColumn(ColumnName = "enterprise_nature", ColumnDescription = "企业性质", ColumnDataType = "varchar", Length = 4, IsNullable = false, DefaultValue = "150")]
-    public string EnterpriseNature { get; set; } = "150";
-    /// <summary>
-    /// 行业属性（字典 sys_industry_attribute）
-    /// </summary>
-    [SugarColumn(ColumnName = "industry_attribute", ColumnDescription = "行业属性", ColumnDataType = "varchar", Length = 4, IsNullable = false, DefaultValue = "C")]
-    public string IndustryAttribute { get; set; } = "C";
-    /// <summary>
-    /// 客户标识（税务登记证号/统一社会信用代码）
-    /// </summary>
-    [SugarColumn(ColumnName = "customer_tax_number", ColumnDescription = "客户标识", ColumnDataType = "nvarchar", Length = 50, IsNullable = true)]
-    public string? CustomerTaxNumber { get; set; }
-    /// <summary>
-    /// 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
-    /// </summary>
-    [SugarColumn(ColumnName = "tax_code", ColumnDescription = "税码", ColumnDataType = "nvarchar", Length = 4, IsNullable = true)]
-    public string? TaxCode { get; set; }
-    /// <summary>
-    /// 税率（百分比整数；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
-    /// </summary>
-    [SugarColumn(ColumnName = "tax_rate", ColumnDescription = "税率", ColumnDataType = "int", IsNullable = false, DefaultValue = "13")]
-    public int TaxRate { get; set; } = 13;
-    /// <summary>
-    /// 注册国家（字典 sys_country_code；DictValue=ISO alpha-2）
-    /// </summary>
-    [SugarColumn(ColumnName = "registration_country", ColumnDescription = "注册国家", ColumnDataType = "nvarchar", Length = 2, IsNullable = true)]
-    public string? RegistrationCountry { get; set; }
-    /// <summary>
-    /// 注册省（选项 TaktAdminDivisions/options；DictValue=DivisionCode；建议 Level=2）
-    /// </summary>
-    [SugarColumn(ColumnName = "registration_province", ColumnDescription = "注册省", ColumnDataType = "nvarchar", Length = 70, IsNullable = true)]
-    public string? RegistrationProvince { get; set; }
-    /// <summary>
-    /// 注册市（选项 TaktAdminDivisions/options；DictValue=DivisionCode；建议 Level=3）
-    /// </summary>
-    [SugarColumn(ColumnName = "registration_city", ColumnDescription = "注册市", ColumnDataType = "nvarchar", Length = 70, IsNullable = true)]
-    public string? RegistrationCity { get; set; }
-    /// <summary>
-    /// 注册地址1
-    /// </summary>
-    [SugarColumn(ColumnName = "registration_address1", ColumnDescription = "注册地址1", ColumnDataType = "nvarchar", Length = 140, IsNullable = true)]
-    public string? RegistrationAddress1 { get; set; }
-    /// <summary>
-    /// 注册地址2
-    /// </summary>
-    [SugarColumn(ColumnName = "registration_address2", ColumnDescription = "注册地址2", ColumnDataType = "nvarchar", Length = 140, IsNullable = true)]
-    public string? RegistrationAddress2 { get; set; }
-    /// <summary>
-    /// 客户电话
-    /// </summary>
-    [SugarColumn(ColumnName = "customer_phone", ColumnDescription = "客户电话", ColumnDataType = "nvarchar", Length = 50, IsNullable = true)]
-    public string? CustomerPhone { get; set; }
-    /// <summary>
-    /// 客户传真
-    /// </summary>
-    [SugarColumn(ColumnName = "customer_fax", ColumnDescription = "客户传真", ColumnDataType = "nvarchar", Length = 50, IsNullable = true)]
-    public string? CustomerFax { get; set; }
-    /// <summary>
-    /// 客户邮箱
-    /// </summary>
-    [SugarColumn(ColumnName = "customer_email", ColumnDescription = "客户邮箱", ColumnDataType = "nvarchar", Length = 100, IsNullable = true)]
-    public string? CustomerEmail { get; set; }
-    /// <summary>
-    /// 客户网站
-    /// </summary>
-    [SugarColumn(ColumnName = "customer_website", ColumnDescription = "客户网站", ColumnDataType = "nvarchar", Length = 200, IsNullable = true)]
-    public string? CustomerWebsite { get; set; }
-    /// <summary>
-    /// 联系人
-    /// </summary>
-    [SugarColumn(ColumnName = "contact_person", ColumnDescription = "联系人", ColumnDataType = "nvarchar", Length = 50, IsNullable = true)]
-    public string? ContactPerson { get; set; }
-    /// <summary>
-    /// 联系人电话
-    /// </summary>
-    [SugarColumn(ColumnName = "contact_phone", ColumnDescription = "联系人电话", ColumnDataType = "nvarchar", Length = 50, IsNullable = true)]
-    public string? ContactPhone { get; set; }
-    /// <summary>
-    /// 联系人邮箱
-    /// </summary>
-    [SugarColumn(ColumnName = "contact_email", ColumnDescription = "联系人邮箱", ColumnDataType = "nvarchar", Length = 100, IsNullable = true)]
-    public string? ContactEmail { get; set; }
-    /// <summary>
-    /// 结算币种代码（字典 accounting_financial_currency_code；DictValue=CNY/USD 等）
-    /// </summary>
-    [SugarColumn(ColumnName = "currency_code", ColumnDescription = "结算币种代码", ColumnDataType = "nvarchar", Length = 3, IsNullable = true, DefaultValue = "CNY")]
-    public string CurrencyCode { get; set; } = "CNY";
+    [SugarColumn(ColumnName = "account_group", ColumnDescription = "科目组", ColumnDataType = "varchar", Length = 4, IsNullable = false, DefaultValue = "")]
+    public string AccountGroup { get; set; } = string.Empty;
     /// <summary>
     /// 销售组织（选项 TaktCompanies/options；DictValue=CompanyCode）
     /// </summary>
@@ -164,110 +59,250 @@ public class TaktCustomer : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "product_group", ColumnDescription = "产品组", ColumnDataType = "varchar", Length = 2, IsNullable = false, DefaultValue = "")]
     public string ProductGroup { get; set; } = string.Empty;
     /// <summary>
-    /// 客户组（字典 logistics_sales_customer_group；DictValue=Z1～Z4）
+    /// 称谓（字典 logistics_sales_customer_title；1=公司 2=先生 3=夫人 4=先生和夫人）
     /// </summary>
-    [SugarColumn(ColumnName = "customer_group", ColumnDescription = "客户组", ColumnDataType = "varchar", Length = 2, IsNullable = false, DefaultValue = "")]
-    public string CustomerGroup { get; set; } = string.Empty;
+    [SugarColumn(ColumnName = "customer_title", ColumnDescription = "称谓", ColumnDataType = "int", IsNullable = false, DefaultValue = "1")]
+    public int CustomerTitle { get; set; } = 1;
     /// <summary>
-    /// 贸易伙伴（选项 TaktPlants/options；DictValue=PlantCode）
+    /// 名称1
     /// </summary>
-    [SugarColumn(ColumnName = "trading_partner", ColumnDescription = "贸易伙伴", ColumnDataType = "varchar", Length = 4, IsNullable = false, DefaultValue = "")]
-    public string TradingPartner { get; set; } = string.Empty;
+    [SugarColumn(ColumnName = "customer_name1", ColumnDescription = "名称1", ColumnDataType = "nvarchar", Length = 140, IsNullable = false)]
+    public string CustomerName1 { get; set; } = string.Empty;
     /// <summary>
-    /// 帐户分配组（字典 logistics_sales_account_assignment_group；DictValue=01/02/03/Y1～Y4/Z0～ZD）
+    /// 名称2
     /// </summary>
-    [SugarColumn(ColumnName = "account_assignment_group", ColumnDescription = "帐户分配组", ColumnDataType = "varchar", Length = 2, IsNullable = false, DefaultValue = "")]
-    public string AccountAssignmentGroup { get; set; } = string.Empty;
+    [SugarColumn(ColumnName = "customer_name2", ColumnDescription = "名称2", ColumnDataType = "nvarchar", Length = 140, IsNullable = true)]
+    public string? CustomerName2 { get; set; }
+    /// <summary>
+    /// 名称3
+    /// </summary>
+    [SugarColumn(ColumnName = "customer_name3", ColumnDescription = "名称3", ColumnDataType = "nvarchar", Length = 140, IsNullable = true)]
+    public string? CustomerName3 { get; set; }
+    /// <summary>
+    /// 名称4
+    /// </summary>
+    [SugarColumn(ColumnName = "customer_name4", ColumnDescription = "名称4", ColumnDataType = "nvarchar", Length = 140, IsNullable = true)]
+    public string? CustomerName4 { get; set; }
+    /// <summary>
+    /// 简称
+    /// </summary>
+    [SugarColumn(ColumnName = "customer_short_name", ColumnDescription = "简称", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? CustomerShortName { get; set; }
+    /// <summary>
+    /// 注册国家（字典 sys_country_code；DictValue=ISO alpha-2）
+    /// </summary>
+    [SugarColumn(ColumnName = "registration_country", ColumnDescription = "注册国家", ColumnDataType = "nvarchar", Length = 2, IsNullable = true)]
+    public string? RegistrationCountry { get; set; }
+    /// <summary>
+    /// 注册地区（选项 TaktAdminDivisions/options；DictValue=DivisionCode；建议 Level=2）
+    /// </summary>
+    [SugarColumn(ColumnName = "registration_region", ColumnDescription = "注册地区", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? RegistrationRegion { get; set; }
+    /// <summary>
+    /// 注册城市（选项 TaktAdminDivisions/options；DictValue=DivisionCode；建议 Level=3）
+    /// </summary>
+    [SugarColumn(ColumnName = "registration_city", ColumnDescription = "注册城市", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? RegistrationCity { get; set; }
+    /// <summary>
+    /// 地址1（含门牌，短字符串 40 不够）
+    /// </summary>
+    [SugarColumn(ColumnName = "addr1", ColumnDescription = "地址1", ColumnDataType = "nvarchar", Length = 140, IsNullable = true)]
+    public string? Addr1 { get; set; }
+    /// <summary>
+    /// 地址2（含门牌，短字符串 40 不够）
+    /// </summary>
+    [SugarColumn(ColumnName = "addr2", ColumnDescription = "地址2", ColumnDataType = "nvarchar", Length = 140, IsNullable = true)]
+    public string? Addr2 { get; set; }
+    /// <summary>
+    /// 地址3（含门牌，短字符串 40 不够）
+    /// </summary>
+    [SugarColumn(ColumnName = "addr3", ColumnDescription = "地址3", ColumnDataType = "nvarchar", Length = 140, IsNullable = true)]
+    public string? Addr3 { get; set; }
+    /// <summary>
+    /// 地址4（含门牌，短字符串 40 不够）
+    /// </summary>
+    [SugarColumn(ColumnName = "addr4", ColumnDescription = "地址4", ColumnDataType = "nvarchar", Length = 140, IsNullable = true)]
+    public string? Addr4 { get; set; }
+    /// <summary>
+    /// 地址5（含门牌，短字符串 40 不够）
+    /// </summary>
+    [SugarColumn(ColumnName = "addr5", ColumnDescription = "地址5", ColumnDataType = "nvarchar", Length = 140, IsNullable = true)]
+    public string? Addr5 { get; set; }
+    /// <summary>
+    /// 邮政编码
+    /// </summary>
+    [SugarColumn(ColumnName = "postal_code", ColumnDescription = "邮政编码", ColumnDataType = "nvarchar", Length = 10, IsNullable = true)]
+    public string? PostalCode { get; set; }
+    /// <summary>
+    /// 电话1
+    /// </summary>
+    [SugarColumn(ColumnName = "phone1", ColumnDescription = "电话1", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? Phone1 { get; set; }
+    /// <summary>
+    /// 电话2
+    /// </summary>
+    [SugarColumn(ColumnName = "phone2", ColumnDescription = "电话2", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? Phone2 { get; set; }
+    /// <summary>
+    /// 传真
+    /// </summary>
+    [SugarColumn(ColumnName = "fax_number", ColumnDescription = "传真", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? FaxNumber { get; set; }
     /// <summary>
     /// 供应商（选项 TaktSuppliers/options；DictValue=SupplierCode）
     /// </summary>
     [SugarColumn(ColumnName = "supplier_code", ColumnDescription = "供应商", ColumnDataType = "nvarchar", Length = 10, IsNullable = false, DefaultValue = "")]
     public string SupplierCode { get; set; } = string.Empty;
     /// <summary>
-    /// 尼尔森标识
+    /// 贸易伙伴（选项 TaktPlants/options；DictValue=PlantCode）
     /// </summary>
-    [SugarColumn(ColumnName = "nielsen_indicator", ColumnDescription = "尼尔森标识", ColumnDataType = "varchar", Length = 2, IsNullable = false, DefaultValue = "")]
-    public string NielsenIndicator { get; set; } = string.Empty;
+    [SugarColumn(ColumnName = "trading_partner", ColumnDescription = "贸易伙伴", ColumnDataType = "varchar", Length = 4, IsNullable = false, DefaultValue = "")]
+    public string TradingPartner { get; set; } = string.Empty;
     /// <summary>
-    /// 中心记帐冻结（字典 sys_yes_no；0=否 1=是）
+    /// 税号1
     /// </summary>
-    [SugarColumn(ColumnName = "central_posting_block", ColumnDescription = "中心记帐冻结", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
-    public int CentralPostingBlock { get; set; } = 0;
+    [SugarColumn(ColumnName = "tax_number1", ColumnDescription = "税号1", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? TaxNumber1 { get; set; }
+    /// <summary>
+    /// 税号2
+    /// </summary>
+    [SugarColumn(ColumnName = "tax_number2", ColumnDescription = "税号2", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? TaxNumber2 { get; set; }
+    /// <summary>
+    /// 税号3（来源主数据最长 60）
+    /// </summary>
+    [SugarColumn(ColumnName = "tax_number3", ColumnDescription = "税号3", ColumnDataType = "nvarchar", Length = 60, IsNullable = true)]
+    public string? TaxNumber3 { get; set; }
+    /// <summary>
+    /// 银行国家（字典 sys_country_code；DictValue=ISO alpha-2）
+    /// </summary>
+    [SugarColumn(ColumnName = "bank_country_code", ColumnDescription = "银行国家", ColumnDataType = "nvarchar", Length = 2, IsNullable = true)]
+    public string? BankCountryCode { get; set; }
+    /// <summary>
+    /// 银行代码（选项 TaktBanks/options；DictValue=BankCode）
+    /// </summary>
+    [SugarColumn(ColumnName = "bank_code", ColumnDescription = "银行代码", ColumnDataType = "nvarchar", Length = 15, IsNullable = true)]
+    public string? BankCode { get; set; }
+    /// <summary>
+    /// 银行账户
+    /// </summary>
+    [SugarColumn(ColumnName = "bank_account", ColumnDescription = "银行账户", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? BankAccount { get; set; }
+    /// <summary>
+    /// 账户持有人
+    /// </summary>
+    [SugarColumn(ColumnName = "bank_account_holder", ColumnDescription = "账户持有人", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? BankAccountHolder { get; set; }
+    /// <summary>
+    /// 客户分类（字典 logistics_sales_customer_category；0=企业客户 1=个人客户 2=政府机构 3=其他）
+    /// </summary>
+    [SugarColumn(ColumnName = "customer_category", ColumnDescription = "客户分类", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
+    public int CustomerCategory { get; set; } = 0;
+    /// <summary>
+    /// 企业性质（字典 sys_enterprise_nature）
+    /// </summary>
+    [SugarColumn(ColumnName = "enterprise_nature", ColumnDescription = "企业性质", ColumnDataType = "varchar", Length = 4, IsNullable = false, DefaultValue = "150")]
+    public string EnterpriseNature { get; set; } = "150";
+    /// <summary>
+    /// 行业属性（字典 sys_industry_attribute）
+    /// </summary>
+    [SugarColumn(ColumnName = "industry_attribute", ColumnDescription = "行业属性", ColumnDataType = "varchar", Length = 4, IsNullable = false, DefaultValue = "C")]
+    public string IndustryAttribute { get; set; } = "C";
     /// <summary>
     /// 统驭科目（选项 TaktAccountTitles/options?reconciliationOnly=true&amp;auxiliaryType=D；DictValue=AccountTitleCode）
     /// </summary>
     [SugarColumn(ColumnName = "reconciliation_account", ColumnDescription = "统驭科目", ColumnDataType = "varchar", Length = 40, IsNullable = false, DefaultValue = "")]
     public string ReconciliationAccount { get; set; } = string.Empty;
     /// <summary>
-    /// 总部（选项 TaktCustomers/options；DictValue=CustomerCode）
+    /// 付款条件（字典 accounting_financial_payment_terms_param；DictValue=PREPAYSHIP/COD/NET30 等）
     /// </summary>
-    [SugarColumn(ColumnName = "headquarters", ColumnDescription = "总部", ColumnDataType = "nvarchar", Length = 20, IsNullable = false, DefaultValue = "")]
-    public string Headquarters { get; set; } = string.Empty;
+    [SugarColumn(ColumnName = "payment_terms", ColumnDescription = "付款条件", ColumnDataType = "nvarchar", Length = 40, IsNullable = false, DefaultValue = "PREPAYSHIP")]
+    public string PaymentTerms { get; set; } = "PREPAYSHIP";
     /// <summary>
-    /// 具有供应商的清算（字典 sys_yes_no；0=否 1=是）
+    /// 付款方式（字典 accounting_financial_payment_method；0=现金 1=银行转账 2=支票 3=信用证 4=其他）
     /// </summary>
-    [SugarColumn(ColumnName = "clearing_with_vendor", ColumnDescription = "具有供应商的清算", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
-    public int ClearingWithVendor { get; set; } = 0;
+    [SugarColumn(ColumnName = "payment_method", ColumnDescription = "付款方式", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
+    public int PaymentMethod { get; set; } = 0;
     /// <summary>
-    /// 付款条件（字典 accounting_financial_payment_terms_param；DictValue=prepayship/cod/net30 等）
+    /// 销售地区
     /// </summary>
-    [SugarColumn(ColumnName = "payment_terms", ColumnDescription = "付款条件", ColumnDataType = "nvarchar", Length = 40, IsNullable = false, DefaultValue = "prepayship")]
-    public string PaymentTerms { get; set; } = "prepayship";
+    [SugarColumn(ColumnName = "sales_district", ColumnDescription = "销售地区", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? SalesDistrict { get; set; }
     /// <summary>
-    /// 付款方式（字典 accounting_financial_payment_method；0=现金，1=银行转账，2=支票，3=信用证，4=其他）
+    /// 销售部门（选项 TaktDepts/options；DictValue=DeptCode）
     /// </summary>
-    [SugarColumn(ColumnName = "payment_method", ColumnDescription = "付款方式", ColumnDataType = "int", IsNullable = false, DefaultValue = "1")]
-    public int PaymentMethod { get; set; } = 1;
+    [SugarColumn(ColumnName = "sales_department", ColumnDescription = "销售部门", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? SalesDepartment { get; set; }
     /// <summary>
-    /// 交货工厂（选项 TaktPlants/options；DictValue=PlantCode）
+    /// 销售组（选项 TaktSalesGroups/options；DictValue=SalesGroupCode）
     /// </summary>
-    [SugarColumn(ColumnName = "delivering_plant", ColumnDescription = "交货工厂", ColumnDataType = "varchar", Length = 4, IsNullable = false, DefaultValue = "")]
-    public string DeliveringPlant { get; set; } = string.Empty;
+    [SugarColumn(ColumnName = "sales_group", ColumnDescription = "销售组", ColumnDataType = "varchar", Length = 6, IsNullable = true)]
+    public string? SalesGroup { get; set; }
     /// <summary>
-    /// 国际贸易条件1（字典 logistics_sales_incoterms1；CFR/CIF/…/FOB 等；默认 FOB）
+    /// 货币（字典 accounting_financial_currency_code；DictValue=CNY/USD 等）
     /// </summary>
-    [SugarColumn(ColumnName = "incoterms1", ColumnDescription = "国际贸易条件1", ColumnDataType = "varchar", Length = 3, IsNullable = false, DefaultValue = "FOB")]
-    public string Incoterms1 { get; set; } = "FOB";
-    /// <summary>
-    /// 国际贸易条件2（地点说明）
-    /// </summary>
-    [SugarColumn(ColumnName = "incoterms2", ColumnDescription = "国际贸易条件2", ColumnDataType = "nvarchar", Length = 40, IsNullable = false, DefaultValue = "")]
-    public string Incoterms2 { get; set; } = string.Empty;
-    /// <summary>
-    /// 装运条件（字典 logistics_sales_shipping_conditions；DictValue=Z1～Z3）
-    /// </summary>
-    [SugarColumn(ColumnName = "shipping_conditions", ColumnDescription = "装运条件", ColumnDataType = "varchar", Length = 2, IsNullable = false, DefaultValue = "")]
-    public string ShippingConditions { get; set; } = string.Empty;
+    [SugarColumn(ColumnName = "currency_code", ColumnDescription = "货币", ColumnDataType = "nvarchar", Length = 3, IsNullable = true, DefaultValue = "CNY")]
+    public string CurrencyCode { get; set; } = "CNY";
     /// <summary>
     /// 客户定价过程（字典 logistics_sales_customer_pricing_procedure；DictValue=1/2/3；默认 1）
     /// </summary>
     [SugarColumn(ColumnName = "customer_pricing_procedure", ColumnDescription = "客户定价过程", ColumnDataType = "varchar", Length = 2, IsNullable = false, DefaultValue = "1")]
     public string CustomerPricingProcedure { get; set; } = "1";
     /// <summary>
+    /// 装运条件（字典 logistics_sales_shipping_conditions；DictValue=Z1～Z3）
+    /// </summary>
+    [SugarColumn(ColumnName = "shipping_conditions", ColumnDescription = "装运条件", ColumnDataType = "varchar", Length = 2, IsNullable = false, DefaultValue = "")]
+    public string ShippingConditions { get; set; } = string.Empty;
+    /// <summary>
+    /// 交货工厂（选项 TaktPlants/options；DictValue=PlantCode）
+    /// </summary>
+    [SugarColumn(ColumnName = "delivering_plant", ColumnDescription = "交货工厂", ColumnDataType = "varchar", Length = 4, IsNullable = false, DefaultValue = "")]
+    public string DeliveringPlant { get; set; } = string.Empty;
+    /// <summary>
+    /// 国际贸易条款1（字典 logistics_sales_incoterms1；CFR/CIF/…/FOB 等；默认 FOB）
+    /// </summary>
+    [SugarColumn(ColumnName = "incoterms1", ColumnDescription = "国际贸易条款1", ColumnDataType = "varchar", Length = 3, IsNullable = false, DefaultValue = "FOB")]
+    public string Incoterms1 { get; set; } = "FOB";
+    /// <summary>
+    /// 国际贸易条款2（地点说明）
+    /// </summary>
+    [SugarColumn(ColumnName = "incoterms2", ColumnDescription = "国际贸易条款2", ColumnDataType = "nvarchar", Length = 40, IsNullable = false, DefaultValue = "")]
+    public string Incoterms2 { get; set; } = string.Empty;
+    /// <summary>
+    /// 帐户分配组（字典 logistics_sales_account_assignment_group；DictValue=01/02/03/Y1～Y4/Z0～ZD）
+    /// </summary>
+    [SugarColumn(ColumnName = "account_assignment_group", ColumnDescription = "帐户分配组", ColumnDataType = "varchar", Length = 2, IsNullable = false, DefaultValue = "")]
+    public string AccountAssignmentGroup { get; set; } = string.Empty;
+    /// <summary>
+    /// 税分类（选项 TaktTaxCodes/options；DictValue=TaxCode）
+    /// </summary>
+    [SugarColumn(ColumnName = "tax_classification", ColumnDescription = "税分类", ColumnDataType = "nvarchar", Length = 4, IsNullable = true)]
+    public string? TaxClassification { get; set; }
+    /// <summary>
+    /// 客户联系人
+    /// </summary>
+    [SugarColumn(ColumnName = "customer_contact", ColumnDescription = "客户联系人", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    public string? CustomerContact { get; set; }
+    /// <summary>
+    /// 客户联系电话
+    /// </summary>
+    [SugarColumn(ColumnName = "customer_phone", ColumnDescription = "客户联系电话", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? CustomerPhone { get; set; }
+    /// <summary>
+    /// 客户联系邮件（邮箱地址短字符串 40 不够）
+    /// </summary>
+    [SugarColumn(ColumnName = "customer_email", ColumnDescription = "客户联系邮件", ColumnDataType = "nvarchar", Length = 100, IsNullable = true)]
+    public string? CustomerEmail { get; set; }
+    /// <summary>
     /// 信用等级（字典 logistics_sales_credit_rating；0=无 1=A级 2=AA级 3=AAA级 4=B级 5=C级）
     /// </summary>
     [SugarColumn(ColumnName = "credit_level", ColumnDescription = "信用等级", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
     public int CreditLevel { get; set; } = 0;
     /// <summary>
-    /// 信用额度（精确到分，存储为整数，单位为分）
-    /// </summary>
-    [SugarColumn(ColumnName = "credit_amount", ColumnDescription = "信用额度", ColumnDataType = "decimal", Length = 18, DecimalDigits = 2, IsNullable = false, DefaultValue = "0")]
-    public decimal CreditAmount { get; set; } = 0;
-    /// <summary>
-    /// 折扣率（百分比；可选字典 logistics_sales_discount_rate_param 预设）
-    /// </summary>
-    [SugarColumn(ColumnName = "discount_rate", ColumnDescription = "折扣率", ColumnDataType = "decimal", Length = 5, DecimalDigits = 2, IsNullable = false, DefaultValue = "0")]
-    public decimal DiscountRate { get; set; } = 0;
-    /// <summary>
     /// 客户等级（字典 logistics_sales_customer_level；0=普通 1=重要 2=VIP 3=战略）
     /// </summary>
     [SugarColumn(ColumnName = "customer_level", ColumnDescription = "客户等级", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
     public int CustomerLevel { get; set; } = 0;
-    /// <summary>
-    /// 评价分数（0-100分）
-    /// </summary>
-    [SugarColumn(ColumnName = "evaluation_score", ColumnDescription = "评价分数", ColumnDataType = "decimal", Length = 5, DecimalDigits = 2, IsNullable = false, DefaultValue = "0")]
-    public decimal EvaluationScore { get; set; } = 0;
     /// <summary>
     /// 排序号（回填）（越小越靠前）
     /// </summary>

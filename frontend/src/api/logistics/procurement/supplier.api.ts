@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/api/logistics/procurement
 // 文件名称：supplier.api.ts
-// 创建时间：2026-08-23
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：logistics/procurement 模块 API（自动生成，请勿手改路由常量）
 // 
@@ -53,8 +53,11 @@ export function getSupplierList(queryDto: any): Promise<TaktPagedResult<Supplier
  */
 export function getSupplierById(id: string): Promise<Supplier> {
   return request<Supplier>({
-    url: `${SUPPLIER_API_BASE}/${id}`,
+    url: `${SUPPLIER_API_BASE}/{id:long}`,
     method: 'get',
+    params: {
+      id
+    },
   });
 }
 
@@ -142,21 +145,17 @@ export function updateSupplierSort(dto: SupplierSort): Promise<Supplier> {
 
 /**
  * 获取供货商信息选项列表
+ * @param {string} plantCode 工厂代码（可选，用于按工厂过滤）
+ * @param {string} keyword 搜索关键字（可选，模糊匹配）
  * @returns {Promise<TaktSelectOption[]>} 下拉选项
  */
-export function getSupplierOptions(
-  plantCode?: string,
-  keyword?: string
-): Promise<TaktSelectOption[]> {
-  const plant = plantCode?.trim()
-  const kw = keyword?.trim()
+export function getSupplierOptions(plantCode?: string, keyword?: string): Promise<TaktSelectOption[]> {
   return request<TaktSelectOption[]>({
     url: `${SUPPLIER_API_BASE}/options`,
     method: 'get',
     params: {
-      
-      ...(plant ? { plantCode: plant } : {}),
-      ...(kw ? { keyword: kw } : {}),
+      plantCode,
+      keyword
     },
   });
 }

@@ -132,12 +132,12 @@ public class TaktPurchaseOrderDto : TaktCompanyDtoBase
     public decimal ExchangeRate { get; set; }
 
     /// <summary>
-    /// 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+    /// 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
     /// </summary>
     public int TaxRate { get; set; } = 0;
 
@@ -336,12 +336,12 @@ public class TaktPurchaseOrderQueryDto : TaktPagedQuery
     public decimal? ExchangeRate { get; set; }
 
     /// <summary>
-    /// 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+    /// 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
     /// </summary>
     public int? TaxRate { get; set; }
 
@@ -446,10 +446,15 @@ public class TaktPurchaseOrderCreateDto
     public string PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购订单编码（唯一索引）
+    /// 采购订单编码（唯一索引；前端表单选择编码规则后自动通过 TaktNumbering 采购订单编码规则生成并展示，非手输；单据类型菜单：采购订单）
     /// </summary>
     [Required(ErrorMessage = "采购订单编码（唯一索引）不能为空")]
     public string PurchaseOrderCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 编码规则编码（新增时选择采购订单编码规则后取号；对应 TaktNumbering.RuleCode；不落库）
+    /// </summary>
+    public string? NumberingRuleCode { get; set; }
 
     /// <summary>
     /// 来源采购申请 ID（选项 TaktPurchaseRequests/options；DictValue=Id）
@@ -541,12 +546,12 @@ public class TaktPurchaseOrderCreateDto
     public decimal ExchangeRate { get; set; }
 
     /// <summary>
-    /// 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+    /// 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
     /// </summary>
     public int TaxRate { get; set; } = 0;
 
@@ -787,12 +792,12 @@ public class TaktPurchaseOrderTemplateDto
     public decimal? ExchangeRate { get; set; }
 
     /// <summary>
-    /// 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+    /// 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
     /// </summary>
     public int? TaxRate { get; set; }
 
@@ -980,12 +985,12 @@ public class TaktPurchaseOrderImportDto
     public decimal? ExchangeRate { get; set; }
 
     /// <summary>
-    /// 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+    /// 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
     /// </summary>
     public int? TaxRate { get; set; }
 
@@ -1179,12 +1184,12 @@ public class TaktPurchaseOrderExportDto
     public decimal ExchangeRate { get; set; }
 
     /// <summary>
-    /// 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+    /// 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
     /// </summary>
     public string? TaxCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+    /// 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
     /// </summary>
     public int TaxRate { get; set; } = 0;
 

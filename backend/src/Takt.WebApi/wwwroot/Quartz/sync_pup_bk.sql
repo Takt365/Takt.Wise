@@ -28,11 +28,11 @@ DECLARE @dml_n INT;
 DECLARE @desc_updated INT = 0;
 
 -- =============================================================================
--- QT_SYNC_PUP_BK：采购信息记录主表物料描述回填（❌ 仅空字段，禁止全局覆盖）
--- 唯一写入目标：takt_logistics_procurement_purchase_info_record.material_description
---   （实体 TaktPurchaseInfoRecord.MaterialDescription；Length=40）
+-- QT_SYNC_PUP_BK：采购信息主表物料描述回填（❌ 仅空字段，禁止全局覆盖）
+-- 唯一写入目标：takt_logistics_procurement_purchase_info.material_description
+--   （实体 TaktPurchaseInfo.MaterialDescription；Length=40）
 -- 来源只读：takt_logistics_materials_material_description（culture_code 固定 ja-JP）
--- ❌ 不回填：purchase_info_record_item / scale_* / 销售条件记录 / 机种目的地 / 物料规格型号长描述等
+-- ❌ 不回填：purchase_info_item / scale_* / 销售条件 / 机种目的地 / 物料规格型号长描述等
 -- ❌ 不改写：material_code、price_type、供应商及其它业务列（仅顺带写 updated_by/updated_at）
 -- 规则：仅当目标 material_description 为空时写入；已有描述一律保留
 -- 本次写入合并到 ext_field：$._bk.pup = { at, material_description }
@@ -43,7 +43,7 @@ DECLARE @desc_updated INT = 0;
 IF OBJECT_ID('tempdb..#mat_key') IS NOT NULL DROP TABLE #mat_key;
 IF OBJECT_ID('tempdb..#mat_desc_ja') IS NOT NULL DROP TABLE #mat_desc_ja;
 
--- 仅收集「描述为空」的采购信息记录物料键（非全表）
+-- 仅收集「描述为空」的采购信息物料键（非全表）
 ;WITH keys AS (
   SELECT DISTINCT
     CASE
@@ -52,7 +52,7 @@ IF OBJECT_ID('tempdb..#mat_desc_ja') IS NOT NULL DROP TABLE #mat_desc_ja;
       THEN RIGHT(LTRIM(RTRIM(t.[material_code])), 10)
       ELSE LTRIM(RTRIM(t.[material_code]))
     END AS [mat_key]
-  FROM [dbo].[takt_logistics_procurement_purchase_info_record] AS t
+  FROM [dbo].[takt_logistics_procurement_purchase_info] AS t
   WHERE t.[tenant_code] = @tenant_code
     AND t.[company_code] = @company_code
     AND t.[is_deleted] = 0
@@ -106,7 +106,7 @@ SET
   t.[ext_field] = LEFT(x.[new_ext], 4000),
   t.[updated_by] = @sync_user_id,
   t.[updated_at] = @now
-FROM [dbo].[takt_logistics_procurement_purchase_info_record] AS t
+FROM [dbo].[takt_logistics_procurement_purchase_info] AS t
 INNER JOIN #mat_desc_ja AS m
   ON m.[mat_key] = CASE
     WHEN LEN(LTRIM(RTRIM(t.[material_code]))) = 18

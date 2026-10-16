@@ -144,18 +144,20 @@ public class TaktEcKanbanService : TaktServiceBase, ITaktEcKanbanService
         var dto = ecEng.Adapt<TaktEcKanbanDto>();
         var details = await _ecDetailRepository.GetListAsync(x => x.EcGijutsuId == ecEng.Id);
         dto.DetailCount = details.Count;
+        var detailById = details.ToDictionary(x => x.Id);
         var detailIds = details.Select(x => x.Id).ToList();
         var depts = detailIds.Count == 0
             ? []
             : await _ecExecDeptAccess.ListBaseByEcDetailIdsAsync(detailIds);
+        var liveExec = depts.Where(d => d.IsObsolete != 1).ToList();
         dto.DeptStages = TaktEcDeptCodes.KanbanOrder.Select(code =>
         {
-            var matched = depts.Where(d => d.DeptCode == code).ToList();
+            var matched = liveExec.Where(d => d.DeptCode == code).ToList();
             return new TaktEcKanbanDeptStageDto
             {
                 DeptCode = code,
-                TotalCount = details.Count,
-                ImplementedCount = matched.Count(d => d.IsImplemented == 1),
+                TotalCount = matched.Count,
+                ImplementedCount = matched.Count(row => IsImplementedByScenario(row, detailById)),
             };
         }).ToList();
         var path = TaktEcImplementationPathHelper.Resolve(
@@ -165,10 +167,40 @@ public class TaktEcKanbanService : TaktServiceBase, ITaktEcKanbanService
                 s.ImplementedCount,
                 s.TotalCount)).ToList());
         dto.CurrentDeptCode = path.CurrentDeptCode;
-        dto.PendingAtCurrentDeptCount = path.PendingAtCurrentDeptCount;
+        dto.PendingAtCurrentDeptCount = dto.DeptStages.Sum(s => s.TotalCount);
         dto.ImplementationStatus = path.ImplementationStatus;
         dto.IsOfficiallyCompleted = path.IsOfficiallyCompleted ? 1 : 0;
         return dto;
+    }
+
+    /// <summary>
+    /// 按该明细的实施范围判断是否计入实施。内部、技术，以及部管里自动完成的部门、停产 EOL，系统会把是否实施写成是，这些不计入。待人工填写的部门以是否实施为准。
+    /// </summary>
+    /// <param name="row">部门执行行</param>
+    /// <param name="detailById">设变明细</param>
+    /// <returns>计入实施时 true</returns>
+    private static bool IsImplementedByScenario(
+        TaktEcExecBaseRow row,
+        IReadOnlyDictionary<long, TaktEcDetail> detailById)
+    {
+        if (row.IsImplemented != 1 || !detailById.TryGetValue(row.EcDetailId, out var detail))
+        {
+            return false;
+        }
+        if (TaktEcScopeConstants.IsEolDiscontinued(detail.DiscontinuedStatus))
+        {
+            return false;
+        }
+        if (detail.EcScope == TaktEcScopeConstants.Internal
+            || detail.EcScope == TaktEcScopeConstants.Technical)
+        {
+            return false;
+        }
+        return !TaktEcScopeConstants.ShouldAutoCompleteExec(
+            detail.EcScope,
+            row.DeptCode,
+            detail.EcNewPurchaseType,
+            detail.EcNewWarehouse);
     }
 
     /// <summary>

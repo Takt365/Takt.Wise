@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Maintenance
 // 文件名称：TaktMaintenanceGroupI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktMaintenanceGroup 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktMaintenanceGroupI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.maintenancegroup._self", "zh-HK", "设备维护组主数据信息_hk", "实体名称"),
 
             // entity.maintenancegroup.code
-            new TranslationSeedItem("entity.maintenancegroup.code", "en-US", "设备维护组编码_us", "设备维护组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.maintenancegroup.code", "en-US", "设备维护组编码_us", "设备维护组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 设备维护组编码规则生成并展示，非手输；单据类型菜单：设备维护组）"),
             // entity.maintenancegroup.code
-            new TranslationSeedItem("entity.maintenancegroup.code", "ja-JP", "设备维护组编码_jp", "设备维护组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.maintenancegroup.code", "ja-JP", "设备维护组编码_jp", "设备维护组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 设备维护组编码规则生成并展示，非手输；单据类型菜单：设备维护组）"),
             // entity.maintenancegroup.code
-            new TranslationSeedItem("entity.maintenancegroup.code", "zh-CN", "设备维护组编码", "设备维护组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.maintenancegroup.code", "zh-CN", "设备维护组编码", "设备维护组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 设备维护组编码规则生成并展示，非手输；单据类型菜单：设备维护组）"),
             // entity.maintenancegroup.code
-            new TranslationSeedItem("entity.maintenancegroup.code", "zh-HK", "设备维护组编码_hk", "设备维护组编码（与员工编码同长 6）"),
+            new TranslationSeedItem("entity.maintenancegroup.code", "zh-HK", "设备维护组编码_hk", "设备维护组编码（与员工编码同长 6；前端表单选择编码规则后自动通过 TaktNumbering 设备维护组编码规则生成并展示，非手输；单据类型菜单：设备维护组）"),
 
             // entity.maintenancegroup.name
             new TranslationSeedItem("entity.maintenancegroup.name", "en-US", "设备维护组名称_us", "设备维护组名称"),

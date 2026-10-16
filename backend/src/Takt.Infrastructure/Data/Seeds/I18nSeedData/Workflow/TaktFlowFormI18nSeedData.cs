@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Workflow
 // 文件名称：TaktFlowFormI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktFlowForm 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktFlowFormI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.flowform._self", "zh-HK", "流程表单定义信息_hk", "实体名称"),
 
             // entity.flowform.formcode
-            new TranslationSeedItem("entity.flowform.formcode", "en-US", "表单编码_us", "表单编码（公司内唯一；前端表单按表单分类选择编码规则后自动通过 TaktNumbering 表单编码规则生成并展示，非手输；单据类型菜单：表单管理）"),
+            new TranslationSeedItem("entity.flowform.formcode", "en-US", "表单编码_us", "表单编码（租户+公司内唯一；前端表单按表单分类选择编码规则后自动通过 TaktNumbering 表单编码规则生成并展示，非手输；单据类型菜单：表单管理）"),
             // entity.flowform.formcode
-            new TranslationSeedItem("entity.flowform.formcode", "ja-JP", "表单编码_jp", "表单编码（公司内唯一；前端表单按表单分类选择编码规则后自动通过 TaktNumbering 表单编码规则生成并展示，非手输；单据类型菜单：表单管理）"),
+            new TranslationSeedItem("entity.flowform.formcode", "ja-JP", "表单编码_jp", "表单编码（租户+公司内唯一；前端表单按表单分类选择编码规则后自动通过 TaktNumbering 表单编码规则生成并展示，非手输；单据类型菜单：表单管理）"),
             // entity.flowform.formcode
-            new TranslationSeedItem("entity.flowform.formcode", "zh-CN", "表单编码", "表单编码（公司内唯一；前端表单按表单分类选择编码规则后自动通过 TaktNumbering 表单编码规则生成并展示，非手输；单据类型菜单：表单管理）"),
+            new TranslationSeedItem("entity.flowform.formcode", "zh-CN", "表单编码", "表单编码（租户+公司内唯一；前端表单按表单分类选择编码规则后自动通过 TaktNumbering 表单编码规则生成并展示，非手输；单据类型菜单：表单管理）"),
             // entity.flowform.formcode
-            new TranslationSeedItem("entity.flowform.formcode", "zh-HK", "表单编码_hk", "表单编码（公司内唯一；前端表单按表单分类选择编码规则后自动通过 TaktNumbering 表单编码规则生成并展示，非手输；单据类型菜单：表单管理）"),
+            new TranslationSeedItem("entity.flowform.formcode", "zh-HK", "表单编码_hk", "表单编码（租户+公司内唯一；前端表单按表单分类选择编码规则后自动通过 TaktNumbering 表单编码规则生成并展示，非手输；单据类型菜单：表单管理）"),
 
             // entity.flowform.formname
             new TranslationSeedItem("entity.flowform.formname", "en-US", "表单名称_us", "表单名称"),

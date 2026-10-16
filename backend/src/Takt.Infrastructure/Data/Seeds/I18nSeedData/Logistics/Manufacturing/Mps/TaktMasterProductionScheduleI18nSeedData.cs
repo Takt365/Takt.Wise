@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Mps
 // 文件名称：TaktMasterProductionScheduleI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktMasterProductionSchedule 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktMasterProductionScheduleI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.masterproductionschedule._self", "zh-HK", "主生产计划 MPS 头表信息_hk", "实体名称"),
 
             // entity.masterproductionschedule.mpscode
-            new TranslationSeedItem("entity.masterproductionschedule.mpscode", "en-US", "MPS编码_us", "MPS 编码"),
+            new TranslationSeedItem("entity.masterproductionschedule.mpscode", "en-US", "MPS编码_us", "MPS 编码（前端表单选择编码规则后自动通过 TaktNumbering MPS编码规则生成并展示，非手输；单据类型菜单：MPS 计划维护）"),
             // entity.masterproductionschedule.mpscode
-            new TranslationSeedItem("entity.masterproductionschedule.mpscode", "ja-JP", "MPS编码_jp", "MPS 编码"),
+            new TranslationSeedItem("entity.masterproductionschedule.mpscode", "ja-JP", "MPS编码_jp", "MPS 编码（前端表单选择编码规则后自动通过 TaktNumbering MPS编码规则生成并展示，非手输；单据类型菜单：MPS 计划维护）"),
             // entity.masterproductionschedule.mpscode
-            new TranslationSeedItem("entity.masterproductionschedule.mpscode", "zh-CN", "MPS编码", "MPS 编码"),
+            new TranslationSeedItem("entity.masterproductionschedule.mpscode", "zh-CN", "MPS编码", "MPS 编码（前端表单选择编码规则后自动通过 TaktNumbering MPS编码规则生成并展示，非手输；单据类型菜单：MPS 计划维护）"),
             // entity.masterproductionschedule.mpscode
-            new TranslationSeedItem("entity.masterproductionschedule.mpscode", "zh-HK", "MPS编码_hk", "MPS 编码"),
+            new TranslationSeedItem("entity.masterproductionschedule.mpscode", "zh-HK", "MPS编码_hk", "MPS 编码（前端表单选择编码规则后自动通过 TaktNumbering MPS编码规则生成并展示，非手输；单据类型菜单：MPS 计划维护）"),
 
             // entity.masterproductionschedule.masterdemandscheduleid
             new TranslationSeedItem("entity.masterproductionschedule.masterdemandscheduleid", "en-US", "来源MDS头表ID_us", "来源 MDS 头表 ID（Demand 层上游，关联 TaktMasterDemandSchedule.Id）"),

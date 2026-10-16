@@ -31,7 +31,7 @@ public class TaktProductionEquipment : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "equip_category", ColumnDescription = "设备类别", ColumnDataType = "int", IsNullable = false, DefaultValue = "1")]
     public int EquipCategory { get; set; } = 1;
     /// <summary>
-    /// 生产设备编码（同一工厂+存放位置内不可重复；EquipCode / 资产MES编码）
+    /// 生产设备编码（同一工厂+存放位置内不可重复；EquipCode / 资产MES编码；前端表单选择编码规则后自动通过 TaktNumbering 生产设备编码规则生成并展示，非手输；单据类型菜单：生产设备）
     /// </summary>
     [SugarColumn(ColumnName = "prod_equip_code", ColumnDescription = "生产设备编码", ColumnDataType = "nvarchar", Length = 18, IsNullable = false)]
     public string ProdEquipCode { get; set; } = string.Empty;

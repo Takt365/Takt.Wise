@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Complaint
 // 文件名称：TaktCustomerComplaintHandlingI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktCustomerComplaintHandling 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktCustomerComplaintHandlingI18nSeedData : ITaktSeedDataCoordinato
             new TranslationSeedItem("entity.customercomplainthandling._self", "zh-HK", "客诉处理记录信息_hk", "实体名称"),
 
             // entity.customercomplainthandling.complainthandlingcode
-            new TranslationSeedItem("entity.customercomplainthandling.complainthandlingcode", "en-US", "客诉处理记录编码_us", "客诉处理记录编码（唯一索引）"),
+            new TranslationSeedItem("entity.customercomplainthandling.complainthandlingcode", "en-US", "客诉处理记录编码_us", "客诉处理记录编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 客诉处理记录编码规则生成并展示，非手输；单据类型菜单：客诉处理）"),
             // entity.customercomplainthandling.complainthandlingcode
-            new TranslationSeedItem("entity.customercomplainthandling.complainthandlingcode", "ja-JP", "客诉处理记录编码_jp", "客诉处理记录编码（唯一索引）"),
+            new TranslationSeedItem("entity.customercomplainthandling.complainthandlingcode", "ja-JP", "客诉处理记录编码_jp", "客诉处理记录编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 客诉处理记录编码规则生成并展示，非手输；单据类型菜单：客诉处理）"),
             // entity.customercomplainthandling.complainthandlingcode
-            new TranslationSeedItem("entity.customercomplainthandling.complainthandlingcode", "zh-CN", "客诉处理记录编码", "客诉处理记录编码（唯一索引）"),
+            new TranslationSeedItem("entity.customercomplainthandling.complainthandlingcode", "zh-CN", "客诉处理记录编码", "客诉处理记录编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 客诉处理记录编码规则生成并展示，非手输；单据类型菜单：客诉处理）"),
             // entity.customercomplainthandling.complainthandlingcode
-            new TranslationSeedItem("entity.customercomplainthandling.complainthandlingcode", "zh-HK", "客诉处理记录编码_hk", "客诉处理记录编码（唯一索引）"),
+            new TranslationSeedItem("entity.customercomplainthandling.complainthandlingcode", "zh-HK", "客诉处理记录编码_hk", "客诉处理记录编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 客诉处理记录编码规则生成并展示，非手输；单据类型菜单：客诉处理）"),
 
             // entity.customercomplainthandling.complaintid
             new TranslationSeedItem("entity.customercomplainthandling.complaintid", "en-US", "客诉ID_us", "客诉 ID（选项 TaktCustomerComplaints/options；DictValue=Id）"),

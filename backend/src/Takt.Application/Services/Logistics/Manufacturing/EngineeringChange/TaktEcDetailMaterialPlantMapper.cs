@@ -61,6 +61,7 @@ public static class TaktEcDetailMaterialPlantMapper
         if (TryGetMaterial(materialsByCode, dto.EcRootMaterialCode, out var rootMaterial))
         {
             dto.EcRootMaterialDescription = ResolveMaterialText(rootMaterial);
+            dto.EcRootMaterialType = rootMaterial.MaterialType?.Trim() ?? string.Empty;
             dto.DiscontinuedStatus = ResolveDiscontinuedStatus(rootMaterial);
         }
         if (TryGetMaterial(materialsByCode, dto.EcParentMaterialCode, out var parentMaterial))

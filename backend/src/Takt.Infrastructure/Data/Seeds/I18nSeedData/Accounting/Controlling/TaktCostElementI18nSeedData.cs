@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Accounting.Controlling
 // 文件名称：TaktCostElementI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktCostElement 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktCostElementI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.costelement._self", "zh-HK", "成本要素信息_hk", "实体名称"),
 
             // entity.costelement.code
-            new TranslationSeedItem("entity.costelement.code", "en-US", "成本要素编码_us", "成本要素编码（4位，租户+公司内唯一）"),
+            new TranslationSeedItem("entity.costelement.code", "en-US", "成本要素编码_us", "成本要素编码（4位，租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 成本要素编码规则生成并展示，非手输；单据类型菜单：成本要素）"),
             // entity.costelement.code
-            new TranslationSeedItem("entity.costelement.code", "ja-JP", "成本要素编码_jp", "成本要素编码（4位，租户+公司内唯一）"),
+            new TranslationSeedItem("entity.costelement.code", "ja-JP", "成本要素编码_jp", "成本要素编码（4位，租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 成本要素编码规则生成并展示，非手输；单据类型菜单：成本要素）"),
             // entity.costelement.code
-            new TranslationSeedItem("entity.costelement.code", "zh-CN", "成本要素编码", "成本要素编码（4位，租户+公司内唯一）"),
+            new TranslationSeedItem("entity.costelement.code", "zh-CN", "成本要素编码", "成本要素编码（4位，租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 成本要素编码规则生成并展示，非手输；单据类型菜单：成本要素）"),
             // entity.costelement.code
-            new TranslationSeedItem("entity.costelement.code", "zh-HK", "成本要素编码_hk", "成本要素编码（4位，租户+公司内唯一）"),
+            new TranslationSeedItem("entity.costelement.code", "zh-HK", "成本要素编码_hk", "成本要素编码（4位，租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 成本要素编码规则生成并展示，非手输；单据类型菜单：成本要素）"),
 
             // entity.costelement.name
             new TranslationSeedItem("entity.costelement.name", "en-US", "成本要素名称_us", "成本要素名称"),

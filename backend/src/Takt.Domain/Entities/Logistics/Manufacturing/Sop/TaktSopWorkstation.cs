@@ -28,7 +28,7 @@ public class TaktSopWorkstation : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// 工位编码（工厂内唯一）
+    /// 工位编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 工位编码规则生成并展示，非手输；单据类型菜单：工位管理）
     /// </summary>
     [SugarColumn(ColumnName = "workstation_code", ColumnDescription = "工位编码", ColumnDataType = "nvarchar", Length = 50, IsNullable = false)]
     public string WorkstationCode { get; set; } = string.Empty;

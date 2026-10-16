@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.HumanResource.Compensation
 // 文件名称：TaktSalaryFormulaI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSalaryFormula 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktSalaryFormulaI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.salaryformula._self", "zh-HK", "薪资计算公式信息_hk", "实体名称"),
 
             // entity.salaryformula.setcode
-            new TranslationSeedItem("entity.salaryformula.setcode", "en-US", "公式方案编码_us", "公式方案编码（同编码多行=一套完整核算步骤，租户+公司内业务唯一标识）"),
+            new TranslationSeedItem("entity.salaryformula.setcode", "en-US", "公式方案编码_us", "公式方案编码（同编码多行=一套完整核算步骤，租户+公司内业务唯一标识；前端表单选择编码规则后自动通过 TaktNumbering 公式方案编码规则生成并展示，非手输；单据类型菜单：薪资计算公式）"),
             // entity.salaryformula.setcode
-            new TranslationSeedItem("entity.salaryformula.setcode", "ja-JP", "公式方案编码_jp", "公式方案编码（同编码多行=一套完整核算步骤，租户+公司内业务唯一标识）"),
+            new TranslationSeedItem("entity.salaryformula.setcode", "ja-JP", "公式方案编码_jp", "公式方案编码（同编码多行=一套完整核算步骤，租户+公司内业务唯一标识；前端表单选择编码规则后自动通过 TaktNumbering 公式方案编码规则生成并展示，非手输；单据类型菜单：薪资计算公式）"),
             // entity.salaryformula.setcode
-            new TranslationSeedItem("entity.salaryformula.setcode", "zh-CN", "公式方案编码", "公式方案编码（同编码多行=一套完整核算步骤，租户+公司内业务唯一标识）"),
+            new TranslationSeedItem("entity.salaryformula.setcode", "zh-CN", "公式方案编码", "公式方案编码（同编码多行=一套完整核算步骤，租户+公司内业务唯一标识；前端表单选择编码规则后自动通过 TaktNumbering 公式方案编码规则生成并展示，非手输；单据类型菜单：薪资计算公式）"),
             // entity.salaryformula.setcode
-            new TranslationSeedItem("entity.salaryformula.setcode", "zh-HK", "公式方案编码_hk", "公式方案编码（同编码多行=一套完整核算步骤，租户+公司内业务唯一标识）"),
+            new TranslationSeedItem("entity.salaryformula.setcode", "zh-HK", "公式方案编码_hk", "公式方案编码（同编码多行=一套完整核算步骤，租户+公司内业务唯一标识；前端表单选择编码规则后自动通过 TaktNumbering 公式方案编码规则生成并展示，非手输；单据类型菜单：薪资计算公式）"),
 
             // entity.salaryformula.setname
             new TranslationSeedItem("entity.salaryformula.setname", "en-US", "公式方案名称_us", "公式方案名称"),
@@ -118,13 +118,13 @@ public class TaktSalaryFormulaI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.salaryformula.payrollid", "zh-HK", "薪酬体系ID_hk", "薪酬体系（选项 TaktPayrolls/options；同 set_code 各行取值应一致，DictValue=Id）"),
 
             // entity.salaryformula.formulacode
-            new TranslationSeedItem("entity.salaryformula.formulacode", "en-US", "步骤编码_us", "步骤编码（同方案内唯一，如 GROSS、SS_EMP、HF_EMP、TAX、NET）"),
+            new TranslationSeedItem("entity.salaryformula.formulacode", "en-US", "步骤编码_us", "步骤编码（同方案内唯一，如 GROSS、SS_EMP、HF_EMP、TAX、NET；前端表单选择编码规则后自动通过 TaktNumbering 步骤编码规则生成并展示，非手输；单据类型菜单：薪资计算公式）"),
             // entity.salaryformula.formulacode
-            new TranslationSeedItem("entity.salaryformula.formulacode", "ja-JP", "步骤编码_jp", "步骤编码（同方案内唯一，如 GROSS、SS_EMP、HF_EMP、TAX、NET）"),
+            new TranslationSeedItem("entity.salaryformula.formulacode", "ja-JP", "步骤编码_jp", "步骤编码（同方案内唯一，如 GROSS、SS_EMP、HF_EMP、TAX、NET；前端表单选择编码规则后自动通过 TaktNumbering 步骤编码规则生成并展示，非手输；单据类型菜单：薪资计算公式）"),
             // entity.salaryformula.formulacode
-            new TranslationSeedItem("entity.salaryformula.formulacode", "zh-CN", "步骤编码", "步骤编码（同方案内唯一，如 GROSS、SS_EMP、HF_EMP、TAX、NET）"),
+            new TranslationSeedItem("entity.salaryformula.formulacode", "zh-CN", "步骤编码", "步骤编码（同方案内唯一，如 GROSS、SS_EMP、HF_EMP、TAX、NET；前端表单选择编码规则后自动通过 TaktNumbering 步骤编码规则生成并展示，非手输；单据类型菜单：薪资计算公式）"),
             // entity.salaryformula.formulacode
-            new TranslationSeedItem("entity.salaryformula.formulacode", "zh-HK", "步骤编码_hk", "步骤编码（同方案内唯一，如 GROSS、SS_EMP、HF_EMP、TAX、NET）"),
+            new TranslationSeedItem("entity.salaryformula.formulacode", "zh-HK", "步骤编码_hk", "步骤编码（同方案内唯一，如 GROSS、SS_EMP、HF_EMP、TAX、NET；前端表单选择编码规则后自动通过 TaktNumbering 步骤编码规则生成并展示，非手输；单据类型菜单：薪资计算公式）"),
 
             // entity.salaryformula.formulaname
             new TranslationSeedItem("entity.salaryformula.formulaname", "en-US", "步骤名称_us", "步骤名称（如：应发合计、社保个人、公积金个人、个税、实发）"),

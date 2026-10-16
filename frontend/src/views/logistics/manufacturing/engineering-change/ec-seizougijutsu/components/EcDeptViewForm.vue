@@ -33,10 +33,20 @@
       </a-col>
       <a-col :span="12"><a-form-item :label="pi.label('ecModelCode')"><a-input v-model:value="formState.ecModelCode" disabled /></a-form-item></a-col>
       <a-col :span="24"><a-form-item :label="pi.label('ecRootMaterialCodeGroup')"><a-textarea v-model:value="formState.ecRootMaterialCodeGroup" :rows="2" disabled /></a-form-item></a-col>
-      <a-col :span="12"><a-form-item :label="pi.label('ecRootMaterialDescription')"><a-input v-model:value="formState.ecRootMaterialDescription" disabled /></a-form-item></a-col>
+      <a-col v-if="showRootMaterialDescription" :span="12"><a-form-item :label="pi.label('ecRootMaterialDescription')"><a-input v-model:value="formState.ecRootMaterialDescription" disabled /></a-form-item></a-col>
       <a-col :span="12"><a-form-item name="isSopUpdated" :label="pi.label('isSopUpdated')"><TaktSelect v-model:value="formState.isSopUpdated" dict-type="sys_yes_no" /></a-form-item></a-col>
       <a-col :span="12"><a-form-item name="isImplemented" :label="pi.label('isImplemented')"><TaktSelect v-model:value="formState.isImplemented" dict-type="sys_yes_no" /></a-form-item></a-col>
+      <a-col :span="12">
+        <a-form-item name="sopLeader" :label="pi.label('sopLeader')">
+          <TaktSelect v-model:value="formState.sopLeader" api-url="TaktEcGroups/options" :api-params="{ ecGroupCategory: 2 }" allow-clear />
+        </a-form-item>
+      </a-col>
       <a-col :span="12"><a-form-item name="sopDate" :label="pi.label('sopDate')"><a-date-picker v-model:value="formState.sopDate" value-format="YYYY-MM-DD" class="w-full" /></a-form-item></a-col>
+      <a-col :span="12">
+        <a-form-item name="techLeader" :label="pi.label('techLeader')">
+          <TaktSelect v-model:value="formState.techLeader" api-url="TaktEcGroups/options" :api-params="{ ecGroupCategory: 1 }" allow-clear />
+        </a-form-item>
+      </a-col>
       <a-col :span="24">
         <a-form-item name="execContent" :label="pi.label('execContent')">
           <a-textarea v-model:value="formState.execContent" :rows="3" />
@@ -58,6 +68,11 @@
           <TaktSelect v-model:value="formState.ecScope" dict-type="logistics_manufacturing_ec_scope_category" disabled />
         </a-form-item>
       </a-col>
+      <a-col :span="12">
+        <a-form-item :label="pi.label('ecDeptScope')">
+          <TaktSelect v-model:value="formState.ecDeptScope" dict-type="logistics_manufacturing_ec_dept_scope_category" disabled />
+        </a-form-item>
+      </a-col>
       <a-col :span="12"><a-form-item :label="pi.label('ecDetailId')"><a-input v-model:value="formState.ecDetailId" disabled /></a-form-item></a-col>
       <a-col :span="12">
         <a-form-item :label="pi.label('isObsolete')">
@@ -72,6 +87,7 @@
 
 <script setup lang="ts">
 import type { EcSeizougijutsu, EcSeizougijutsuUpdate } from '@/types/logistics/manufacturing/engineering-change/ecSeizougijutsu.types'
+import { taktShowEcRootMaterialDescription } from '@/constants/logistics/ecScope.constants'
 import { useEcDeptViewI18n } from '../../composables/useEcDeptViewI18n'
 import { useEcDeptViewFormRules } from '../../composables/useEcDeptViewFormRules'
 
@@ -95,14 +111,20 @@ const formState = reactive<{
   isImplemented: number;
   execContent?: string;
   sopDate?: string;
+  sopLeader?: string;
+  techLeader?: string;
   isSopUpdated: number;
   ecDetailId?: string;
   deptCode?: string;
   deptName?: string;
   ecScope?: number;
+  ecDeptScope?: number;
   isObsolete: number;
   remark?: string;
 }>({ isImplemented: 1, isSopUpdated: 0, execContent: '', discontinuedStatus: 'Z0', isObsolete: 0 });
+
+/** 仅全仕向且按成品显示根物料描述 */
+const showRootMaterialDescription = computed(() => taktShowEcRootMaterialDescription(formState.ecScope, formState.ecDeptScope))
 
 watch(() => props.formData, (val) => {
   if (!val) { resetFields(); return; }
@@ -121,11 +143,14 @@ watch(() => props.formData, (val) => {
     isImplemented: val.isImplemented ?? 1,
     execContent: val.execContent ?? '',
     sopDate: val.sopDate,
+    sopLeader: val.sopLeader,
+    techLeader: val.techLeader,
     isSopUpdated: val.isSopUpdated ?? 0,
     ecDetailId: val.ecDetailId,
     deptCode: val.deptCode,
     deptName: val.deptName,
     ecScope: val.ecScope,
+    ecDeptScope: val.ecDeptScope,
     isObsolete: val.isObsolete ?? 0,
     remark: val.remark,
   });
@@ -143,9 +168,9 @@ function resetFields() {
     ecCode: '', lineNumber: undefined, ecModelCode: '',
     ecRootMaterialCodeGroup: '', ecRootMaterialDescription: '',
     discontinuedStatus: 'Z0', isImplemented: 1, execContent: '',
-    sopDate: undefined, isSopUpdated: 0,
+    sopDate: undefined, sopLeader: undefined, techLeader: undefined, isSopUpdated: 0,
     ecDetailId: '', deptCode: '', deptName: '',
-    ecScope: undefined, isObsolete: 0, remark: undefined,
+    ecScope: undefined, ecDeptScope: undefined, isObsolete: 0, remark: undefined,
   });
 }
 defineExpose({ validate, getValues, resetFields });

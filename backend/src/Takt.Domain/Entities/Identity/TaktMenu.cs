@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Identity;
 [SugarIndex("ix_menu_parent", nameof(TenantCode), OrderByType.Asc, nameof(ParentId), OrderByType.Asc, false)]
 public class TaktMenu : TaktTenantCoreEntityBase
 {    /// <summary>
-    /// 菜单编码（唯一索引：租户内唯一，见 ix_menu_code_unique）
+    /// 菜单编码（唯一索引：租户内唯一，见 ix_menu_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 菜单编码规则生成并展示，非手输；单据类型菜单：菜单管理）
     /// </summary>
     [SugarColumn(ColumnName = "menu_code", ColumnDescription = "菜单编码", ColumnDataType = "varchar", Length = 120, IsNullable = false)]
     public string MenuCode { get; set; } = string.Empty;

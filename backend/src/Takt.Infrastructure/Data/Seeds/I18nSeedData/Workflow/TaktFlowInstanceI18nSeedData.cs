@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Workflow
 // 文件名称：TaktFlowInstanceI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktFlowInstance 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktFlowInstanceI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.flowinstance._self", "zh-HK", "流程实例信息_hk", "实体名称"),
 
             // entity.flowinstance.instancecode
-            new TranslationSeedItem("entity.flowinstance.instancecode", "en-US", "实例编码_us", "实例编码（对外业务单号）"),
+            new TranslationSeedItem("entity.flowinstance.instancecode", "en-US", "实例编码_us", "实例编码（对外业务单号；前端表单选择编码规则后自动通过 TaktNumbering 实例编码规则生成并展示，非手输；单据类型菜单：流程实例）"),
             // entity.flowinstance.instancecode
-            new TranslationSeedItem("entity.flowinstance.instancecode", "ja-JP", "实例编码_jp", "实例编码（对外业务单号）"),
+            new TranslationSeedItem("entity.flowinstance.instancecode", "ja-JP", "实例编码_jp", "实例编码（对外业务单号；前端表单选择编码规则后自动通过 TaktNumbering 实例编码规则生成并展示，非手输；单据类型菜单：流程实例）"),
             // entity.flowinstance.instancecode
-            new TranslationSeedItem("entity.flowinstance.instancecode", "zh-CN", "实例编码", "实例编码（对外业务单号）"),
+            new TranslationSeedItem("entity.flowinstance.instancecode", "zh-CN", "实例编码", "实例编码（对外业务单号；前端表单选择编码规则后自动通过 TaktNumbering 实例编码规则生成并展示，非手输；单据类型菜单：流程实例）"),
             // entity.flowinstance.instancecode
-            new TranslationSeedItem("entity.flowinstance.instancecode", "zh-HK", "实例编码_hk", "实例编码（对外业务单号）"),
+            new TranslationSeedItem("entity.flowinstance.instancecode", "zh-HK", "实例编码_hk", "实例编码（对外业务单号；前端表单选择编码规则后自动通过 TaktNumbering 实例编码规则生成并展示，非手输；单据类型菜单：流程实例）"),
 
             // entity.flowinstance.processdefinitionid
             new TranslationSeedItem("entity.flowinstance.processdefinitionid", "en-US", "流程定义ID_us", "流程定义 ID（选项 TaktFlowSchemes/options；DictValue=Id）"),

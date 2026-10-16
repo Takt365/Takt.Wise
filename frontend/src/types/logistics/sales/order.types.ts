@@ -129,12 +129,12 @@ export interface SalesOrder extends CompanyDtoBase {
   exchangeRate: number;
 
   /**
-   * 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
   /**
-   * 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+   * 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
    */
   taxRate: number;
 
@@ -344,12 +344,12 @@ export interface SalesOrderQuery extends TaktPagedQuery {
   exchangeRate?: number;
 
   /**
-   * 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
   /**
-   * 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+   * 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
    */
   taxRate?: number;
 
@@ -453,9 +453,14 @@ export interface SalesOrderCreate {
   plantCode: string;
 
   /**
-   * 销售订单编码（唯一索引）
+   * 销售订单编码（唯一索引；前端表单选择编码规则后自动通过 TaktNumbering 销售订单编码规则生成并展示，非手输；单据类型菜单：销售订单）
    */
   salesOrderCode: string;
+
+  /**
+   * 编码规则编码（新增时选择销售订单编码规则后取号；不落库）
+   */
+  numberingRuleCode?: string;
 
   /**
    * 客户编码（选项 TaktCustomers/options；DictValue=CustomerCode）
@@ -553,12 +558,12 @@ export interface SalesOrderCreate {
   exchangeRate: number;
 
   /**
-   * 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
   /**
-   * 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+   * 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
    */
   taxRate: number;
 
@@ -796,12 +801,12 @@ export interface SalesOrderTemplate {
   exchangeRate?: number;
 
   /**
-   * 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
   /**
-   * 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+   * 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
    */
   taxRate?: number;
 
@@ -1000,12 +1005,12 @@ export interface SalesOrderImport {
   exchangeRate?: number;
 
   /**
-   * 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
   /**
-   * 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+   * 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
    */
   taxRate?: number;
 
@@ -1204,12 +1209,12 @@ export interface SalesOrderExport {
   exchangeRate: number;
 
   /**
-   * 税码（字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
   /**
-   * 税率（百分比整数；一单一税率；由税码 TaxCode / 字典 accounting_financial_tax_code.ExtValue 回填，如 J2→13）
+   * 税率（百分比整数；一单一税率；由税码 TaxCode 回填，如 J2→13）
    */
   taxRate: number;
 

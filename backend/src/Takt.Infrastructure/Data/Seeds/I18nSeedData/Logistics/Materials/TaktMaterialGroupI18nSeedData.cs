@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Materials
 // 文件名称：TaktMaterialGroupI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktMaterialGroup 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -91,13 +91,13 @@ public class TaktMaterialGroupI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.materialgroup._self", "zh-HK", "Takt物料组主数据信息_hk", "实体名称"),
 
             // entity.materialgroup.code
-            new TranslationSeedItem("entity.materialgroup.code", "en-US", "物料组编码_us", "物料组编码（与员工编码同长 6；租户内唯一）"),
+            new TranslationSeedItem("entity.materialgroup.code", "en-US", "物料组编码_us", "物料组编码（与员工编码同长 6；租户内唯一；前端表单选择编码规则后自动通过 TaktNumbering 物料组编码规则生成并展示，非手输；单据类型菜单：物料组）"),
             // entity.materialgroup.code
-            new TranslationSeedItem("entity.materialgroup.code", "ja-JP", "物料组编码_jp", "物料组编码（与员工编码同长 6；租户内唯一）"),
+            new TranslationSeedItem("entity.materialgroup.code", "ja-JP", "物料组编码_jp", "物料组编码（与员工编码同长 6；租户内唯一；前端表单选择编码规则后自动通过 TaktNumbering 物料组编码规则生成并展示，非手输；单据类型菜单：物料组）"),
             // entity.materialgroup.code
-            new TranslationSeedItem("entity.materialgroup.code", "zh-CN", "物料组编码", "物料组编码（与员工编码同长 6；租户内唯一）"),
+            new TranslationSeedItem("entity.materialgroup.code", "zh-CN", "物料组编码", "物料组编码（与员工编码同长 6；租户内唯一；前端表单选择编码规则后自动通过 TaktNumbering 物料组编码规则生成并展示，非手输；单据类型菜单：物料组）"),
             // entity.materialgroup.code
-            new TranslationSeedItem("entity.materialgroup.code", "zh-HK", "物料组编码_hk", "物料组编码（与员工编码同长 6；租户内唯一）"),
+            new TranslationSeedItem("entity.materialgroup.code", "zh-HK", "物料组编码_hk", "物料组编码（与员工编码同长 6；租户内唯一；前端表单选择编码规则后自动通过 TaktNumbering 物料组编码规则生成并展示，非手输；单据类型菜单：物料组）"),
 
             // entity.materialgroup.name
             new TranslationSeedItem("entity.materialgroup.name", "en-US", "物料组名称_us", "物料组名称（group_name）"),

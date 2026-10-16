@@ -21,7 +21,6 @@ export const SOURCE_EC_INPUT_SOURCE_FIELDS = [
   'sourceTitle',
   'sourceStatus',
   'sourceIssueDate',
-  'sourceTcjOwner',
 ] as const satisfies readonly SourceEcField[]
 
 /** 录入列表扩展列（列表 DTO 聚合字段，非 TaktSourceEc 实体列） */

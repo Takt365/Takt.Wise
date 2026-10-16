@@ -238,6 +238,39 @@ export const TAKT_TABLE_HEADER_FALLBACK_PX = 56;
 /** Ant Design Table 汇总行高度回退（size=middle，含 fixed summary） */
 export const TAKT_TABLE_SUMMARY_ROW_HEIGHT_PX = 48;
 
+/** 虚拟表横向滚动条高度（px）；scroll.y 须留出，避免被外壳 overflow:hidden 裁掉 */
+export const TAKT_TABLE_HORIZONTAL_SCROLLBAR_PX = 12;
+
+/**
+ * 按已限高的表格外壳计算 scroll.y，扣掉表头、分页和横向滚动条
+ * @param wrapEl 包住 TaktSingleTable 的容器
+ * @param options.reservePagination 外壳内有分页但尚未渲染时仍预留分页高度
+ * @returns 可放入容器的 scroll.y；容器尚未布局时为 0
+ */
+export function measureConstrainedTableScrollY(
+  wrapEl: HTMLElement | null | undefined,
+  options: { reservePagination?: boolean } = {},
+): number {
+  if (wrapEl == null || wrapEl.clientHeight <= 0) {
+    return 0;
+  }
+  const headerEl = wrapEl.querySelector('.ant-table-header') as HTMLElement | null;
+  const paginationEl = wrapEl.querySelector('.takt-pagination') as HTMLElement | null;
+  const headerHeight =
+    headerEl != null && headerEl.offsetHeight > 0
+      ? headerEl.offsetHeight
+      : TAKT_TABLE_HEADER_FALLBACK_PX;
+  const paginationHeight =
+    paginationEl != null && paginationEl.offsetHeight > 0
+      ? paginationEl.offsetHeight
+      : options.reservePagination
+        ? TAKT_TABLE_PAGINATION_HEIGHT_PX
+        : 0;
+  const raw =
+    wrapEl.clientHeight - headerHeight - paginationHeight - TAKT_TABLE_HORIZONTAL_SCROLLBAR_PX;
+  return Math.max(1, Math.floor(raw));
+}
+
 /**
  * 左右主子表共享 scroll.y（以组件 pane 高度与两侧 chrome 实测为准，保证左右表体默认等高）
  * @param paneHeight 组件根或 pane 可用高度（px）

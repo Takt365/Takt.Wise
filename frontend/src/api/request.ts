@@ -24,6 +24,12 @@ import { resolveRequestLocale } from '@/stores/foundation/useLocaleStore';
 import type { TaktApiResult, TaktBinaryDownload } from '@/types/common.types';
 import { TaktResultCode } from '@/utils/common';
 import { createLogger } from '@/utils/logger';
+import { savePayloadContainsFullWidth } from '@/utils/regex';
+import {
+  consumeReadonlySaveFieldNames,
+  installReadonlySaveFieldCapture,
+  TAKT_READONLY_FIELDS_HEADER,
+} from '@/utils/taktReadonlySaveFields';
 import { resolveHttpErrorMessage } from '@/utils/taktHttpErrorMessage';
 import { translateLocaleMessage } from '@/utils/taktI18nMessage';
 import { EventBus, emitNotification } from '@/utils/eventBus';
@@ -42,6 +48,8 @@ import {
 } from '@/utils/taktDemoMode';
 
 const requestLogger = createLogger('request');
+
+installReadonlySaveFieldCapture();
 
 /** Axios 配置扩展：无感刷新重试标记 */
 declare module 'axios' {
@@ -419,6 +427,28 @@ export interface TaktHttpClient {
 }
 
 /**
+ * 是否为创建或更新：POST 资源集合、POST import、PUT 主键、PUT status/sort/built-in/public
+ * @param method HTTP 方法
+ * @param url 请求地址
+ * @returns {boolean} 是创建或更新时为 true
+ */
+function isCreateOrUpdateRequest(method?: string, url?: string): boolean {
+  const httpMethod = (method || '').toLowerCase()
+  const parts = String(url ?? '')
+    .split('?')[0]
+    .split('/')
+    .filter((segment) => segment && segment.toLowerCase() !== 'api')
+  const action = (parts[parts.length - 1] || '').toLowerCase()
+  if (httpMethod === 'post') {
+    return parts.length === 1 || (parts.length === 2 && action === 'import')
+  }
+  if (httpMethod !== 'put' || parts.length !== 2) {
+    return false
+  }
+  return /^\d+$/.test(action) || action === 'status' || action === 'sort' || action === 'built-in' || action === 'public'
+}
+
+/**
  * Axios 底层实例（挂载请求/响应拦截器）
  */
 const axiosInstance: AxiosInstance = axios.create({
@@ -434,6 +464,21 @@ axiosInstance.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     if (isLogoutInProgress() && !isSignOutSessionRequest(config)) {
       return Promise.reject(new Error('logout in progress'));
+    }
+
+    if (isCreateOrUpdateRequest(config.method, config.url)) {
+      const readonlyFieldNames = consumeReadonlySaveFieldNames();
+      if (readonlyFieldNames.size > 0) {
+        config.headers.set(TAKT_READONLY_FIELDS_HEADER, [...readonlyFieldNames].join(','));
+      }
+      if (savePayloadContainsFullWidth(config.data, undefined, readonlyFieldNames)) {
+        const translated = translateLocaleMessage('common.validation.fullwidth.forbidden');
+        const msg = translated === 'common.validation.fullwidth.forbidden' || translated.includes('{field}')
+          ? '不能包含全角字符'
+          : translated;
+        emitNotification('warning', msg);
+        return Promise.reject(new TaktApiError(msg, TaktResultCode.BadRequest));
+      }
     }
 
     // Demo 只读：拦截写请求（鉴权/SignalR 等豁免）

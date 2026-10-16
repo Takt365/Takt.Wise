@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Foundation
 // 文件名称：TaktAdminDivisionI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktAdminDivision 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -100,13 +100,13 @@ public class TaktAdminDivisionI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.admindivision.countrycode", "zh-HK", "国家代码_hk", "国家代码（字典 sys_country_code；DictValue=ISO alpha-2）"),
 
             // entity.admindivision.divisioncode
-            new TranslationSeedItem("entity.admindivision.divisioncode", "en-US", "区划编码_us", "区划编码（唯一索引：租户内唯一；即标准代码，如 CN、CN-44、440100、440106）"),
+            new TranslationSeedItem("entity.admindivision.divisioncode", "en-US", "区划编码_us", "区划编码（唯一索引：租户内唯一；即标准代码，如 CN、CN-44、440100、440106；前端表单选择编码规则后自动通过 TaktNumbering 区划编码规则生成并展示，非手输；单据类型菜单：行政区划）"),
             // entity.admindivision.divisioncode
-            new TranslationSeedItem("entity.admindivision.divisioncode", "ja-JP", "区划编码_jp", "区划编码（唯一索引：租户内唯一；即标准代码，如 CN、CN-44、440100、440106）"),
+            new TranslationSeedItem("entity.admindivision.divisioncode", "ja-JP", "区划编码_jp", "区划编码（唯一索引：租户内唯一；即标准代码，如 CN、CN-44、440100、440106；前端表单选择编码规则后自动通过 TaktNumbering 区划编码规则生成并展示，非手输；单据类型菜单：行政区划）"),
             // entity.admindivision.divisioncode
-            new TranslationSeedItem("entity.admindivision.divisioncode", "zh-CN", "区划编码", "区划编码（唯一索引：租户内唯一；即标准代码，如 CN、CN-44、440100、440106）"),
+            new TranslationSeedItem("entity.admindivision.divisioncode", "zh-CN", "区划编码", "区划编码（唯一索引：租户内唯一；即标准代码，如 CN、CN-44、440100、440106；前端表单选择编码规则后自动通过 TaktNumbering 区划编码规则生成并展示，非手输；单据类型菜单：行政区划）"),
             // entity.admindivision.divisioncode
-            new TranslationSeedItem("entity.admindivision.divisioncode", "zh-HK", "区划编码_hk", "区划编码（唯一索引：租户内唯一；即标准代码，如 CN、CN-44、440100、440106）"),
+            new TranslationSeedItem("entity.admindivision.divisioncode", "zh-HK", "区划编码_hk", "区划编码（唯一索引：租户内唯一；即标准代码，如 CN、CN-44、440100、440106；前端表单选择编码规则后自动通过 TaktNumbering 区划编码规则生成并展示，非手输；单据类型菜单：行政区划）"),
 
             // entity.admindivision.divisionname
             new TranslationSeedItem("entity.admindivision.divisionname", "en-US", "区划名称_us", "区划名称（本国语言官方/本地显示名）"),

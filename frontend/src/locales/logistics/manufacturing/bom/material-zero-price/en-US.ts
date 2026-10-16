@@ -30,10 +30,10 @@ export default {
     costSum: 'Calculate cost',
     costRecalculate: 'Recalculate cost',
     costAverage: 'Calculate average cost',
-    purchaseInfoRecordBackfill: 'Backfill purchase price',
-    purchaseInfoRecordBackfillSuccess:
+    purchaseInfoBackfill: 'Backfill purchase price',
+    purchaseInfoBackfillSuccess:
       '{month} purchase-price backfill done: scanned {scanned}, updated {updated}, no price {skipped}, unchanged {unchanged}',
-    purchaseInfoRecordBackfillFailed: 'Failed to backfill purchase price',
+    purchaseInfoBackfillFailed: 'Failed to backfill purchase price',
     movingPriceBackfill: 'Backfill moving price',
     movingPriceBackfillBatch: 'Batch backfill moving price',
     movingPriceBackfillRow: 'Backfill moving price',

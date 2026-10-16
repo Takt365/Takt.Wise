@@ -29,7 +29,7 @@ public class TaktCustomerServiceTicket : TaktCompanyEntityBase
 {
 
     /// <summary>
-    /// 服务工单编码（组合唯一索引）
+    /// 服务工单编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 服务工单编码规则生成并展示，非手输；单据类型菜单：服务工单）
     /// </summary>
     [SugarColumn(ColumnName = "service_ticket_code", ColumnDescription = "服务工单编码", ColumnDataType = "nvarchar", Length = 50, IsNullable = false)]
     public string ServiceTicketCode { get; set; } = string.Empty;

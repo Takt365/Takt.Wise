@@ -4,7 +4,7 @@
 // 文件名称：TaktEcSeizouikka.cs
 // 创建时间：2026-06-29
 // 创建人：Takt365(Cursor AI)
-// 功能描述：设变制造1课部门执行表（按设变明细ID+根物料编码唯一）
+// 功能描述：设变制造1课部门执行表（部门 D0610；未作废明细均落行。按成品：设变单号+根物料，机种写入编码组；按机种：设变单号+机种，根物料写入编码组；按设变：仅设变单号，机种与根物料写入编码组）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -17,13 +17,13 @@ using Takt.Domain.Interfaces;
 namespace Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange;
 
 /// <summary>
-/// 设变制造1课（D0610）部门执行表（按设变明细 + 根物料编码唯一）
+/// 设变制造1课（部门 D0610）执行表。未作废明细均落行。按成品去重键为设变单号+根物料（机种写入编码组）；按机种为设变单号+机种（根物料写入编码组）；按设变为仅设变单号（机种与根物料写入编码组）
 /// </summary>
 [SugarTable("takt_logistics_manufacturing_ec_seizouikka", "设变制一执行表")]
 [SugarIndex("ix_ec_seizouikka_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
 [SugarIndex("ix_takt_logistics_manufacturing_ec_seizouikka_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcDetailId), OrderByType.Asc, true)]
 [SugarIndex("ix_takt_logistics_manufacturing_ec_seizouikka_plant_code", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(PlantCode), OrderByType.Asc, false)]
-public class TaktEcSeizouikka : TaktCompanyEntityBase, ITaktEcDeptExecEntity, ITaktEcExecModelRootMaterialRow
+public class TaktEcSeizouikka : TaktCompanyEntityBase, ITaktEcDeptExecEntity
 {
     /// <summary>
     /// 行号（项号/序号，固定步长=10）
@@ -41,12 +41,7 @@ public class TaktEcSeizouikka : TaktCompanyEntityBase, ITaktEcDeptExecEntity, IT
     [SugarColumn(ColumnName = "discontinued_status", ColumnDescription = "停产状态", ColumnDataType = "nvarchar", Length = 4, IsNullable = false)]
     public string DiscontinuedStatus { get; set; } = string.Empty;
     /// <summary>
-    /// 机种编码（冗余：来自 TaktEcDetail.EcModelCode）
-    /// </summary>
-    [SugarColumn(ColumnName = "ec_model_code", ColumnDescription = "机种编码", Length = 40, ColumnDataType = "nvarchar", IsNullable = false)]
-    public string EcModelCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 机种编码组（按设变时同设变单号下的机种编码，分号分隔；ntext）
+    /// 机种编码组（单个或多个机种，分号分隔；ntext）
     /// </summary>
     [SugarColumn(ColumnName = "ec_model_code_group", ColumnDescription = "机种编码组", ColumnDataType = "ntext", IsNullable = false)]
     public string EcModelCodeGroup { get; set; } = string.Empty;
@@ -92,7 +87,7 @@ public class TaktEcSeizouikka : TaktCompanyEntityBase, ITaktEcDeptExecEntity, IT
     [SugarColumn(ColumnName = "implementation_batch", ColumnDescription = "实施批次", ColumnDataType = "nvarchar", Length = 100, IsNullable = true)]
     public string? ImplementationBatch { get; set; }
     /// <summary>
-    /// 根物料描述（冗余：来自 TaktEcDetail.EcRootMaterialDescription）
+    /// 根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）
     /// </summary>
     [SugarColumn(ColumnName = "ec_root_material_description", ColumnDescription = "根物料描述", Length = 40, ColumnDataType = "nvarchar", IsNullable = false)]
     public string EcRootMaterialDescription { get; set; } = string.Empty;

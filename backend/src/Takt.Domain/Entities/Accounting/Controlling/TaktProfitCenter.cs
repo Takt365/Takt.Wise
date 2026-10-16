@@ -25,7 +25,7 @@ namespace Takt.Domain.Entities.Accounting.Controlling;
 [SugarIndex("ix_profit_center_parent", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(ParentId), OrderByType.Asc, false)]
 public class TaktProfitCenter : TaktCompanyEntityBase
 {    /// <summary>
-    /// 利润中心编码（4位，租户+公司内唯一）
+    /// 利润中心编码（4位，租户+公司内唯一；前端表单选择编码规则后自动通过 TaktNumbering 利润中心编码规则生成并展示，非手输；单据类型菜单：利润中心）
     /// </summary>
     [SugarColumn(ColumnName = "profit_center_code", ColumnDescription = "利润中心编码", ColumnDataType = "varchar", Length = 4, IsNullable = false)]
     public string ProfitCenterCode { get; set; } = string.Empty;

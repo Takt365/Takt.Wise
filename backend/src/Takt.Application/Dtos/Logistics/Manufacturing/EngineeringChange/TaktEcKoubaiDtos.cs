@@ -58,6 +58,10 @@ public class TaktEcKoubaiDto : TaktCompanyDtoBase
     /// 根物料编码组（同设变单号+新采购类型+新物料下的根物料编码，分号分隔；ntext）
     /// </summary>
     public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
+    /// <summary>
+    /// 根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）
+    /// </summary>
+    public string EcRootMaterialDescription { get; set; } = string.Empty;
 
     /// <summary>
     /// 行号（项号/序号，固定步长=10）
@@ -333,6 +337,10 @@ public class TaktEcKoubaiCreateDto
     /// 根物料编码组（同设变单号+新采购类型+新物料下的根物料编码，分号分隔；ntext）
     /// </summary>
     public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
+    /// <summary>
+    /// 根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）
+    /// </summary>
+    public string EcRootMaterialDescription { get; set; } = string.Empty;
 
     /// <summary>
     /// 行号（项号/序号，固定步长=10）
@@ -788,6 +796,10 @@ public class TaktEcKoubaiExportDto
     /// 根物料编码组（同设变单号+新采购类型+新物料下的根物料编码，分号分隔；ntext）
     /// </summary>
     public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
+    /// <summary>
+    /// 根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）
+    /// </summary>
+    public string EcRootMaterialDescription { get; set; } = string.Empty;
 
     /// <summary>
     /// 行号（项号/序号，固定步长=10）

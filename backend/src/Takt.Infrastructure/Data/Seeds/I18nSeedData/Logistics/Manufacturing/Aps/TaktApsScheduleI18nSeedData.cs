@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Aps
 // 文件名称：TaktApsScheduleI18nSeedData.cs
-// 创建时间：2026-10-11
+// 创建时间：2026-10-14
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktApsSchedule 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -109,13 +109,13 @@ public class TaktApsScheduleI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.apsschedule.materialrequirementsplanningcode", "zh-HK", "来源MRP编码_hk", "来源 MRP 编码（冗余）"),
 
             // entity.apsschedule.schedulecode
-            new TranslationSeedItem("entity.apsschedule.schedulecode", "en-US", "排程编码_us", "排程编码（唯一索引）"),
+            new TranslationSeedItem("entity.apsschedule.schedulecode", "en-US", "排程编码_us", "排程编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 排程编码规则生成并展示，非手输；单据类型菜单：高级排程）"),
             // entity.apsschedule.schedulecode
-            new TranslationSeedItem("entity.apsschedule.schedulecode", "ja-JP", "排程编码_jp", "排程编码（唯一索引）"),
+            new TranslationSeedItem("entity.apsschedule.schedulecode", "ja-JP", "排程编码_jp", "排程编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 排程编码规则生成并展示，非手输；单据类型菜单：高级排程）"),
             // entity.apsschedule.schedulecode
-            new TranslationSeedItem("entity.apsschedule.schedulecode", "zh-CN", "排程编码", "排程编码（唯一索引）"),
+            new TranslationSeedItem("entity.apsschedule.schedulecode", "zh-CN", "排程编码", "排程编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 排程编码规则生成并展示，非手输；单据类型菜单：高级排程）"),
             // entity.apsschedule.schedulecode
-            new TranslationSeedItem("entity.apsschedule.schedulecode", "zh-HK", "排程编码_hk", "排程编码（唯一索引）"),
+            new TranslationSeedItem("entity.apsschedule.schedulecode", "zh-HK", "排程编码_hk", "排程编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 排程编码规则生成并展示，非手输；单据类型菜单：高级排程）"),
 
             // entity.apsschedule.schedulename
             new TranslationSeedItem("entity.apsschedule.schedulename", "en-US", "排程名称_us", "排程名称"),

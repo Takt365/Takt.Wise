@@ -258,6 +258,9 @@ export const RegexPatterns = {
   /** 权限标识（模块:资源:操作，格式如：identity:user:create，小写字母、数字、冒号，3-100位） */
   PERMISSION: /^[a-z][a-z0-9]*:[a-z0-9]+:[a-z0-9]+$/,
   
+  /** 全角字符（全角空格、全角英数与标点、全角货币符；与 TaktRegexHelper.FullWidth 对齐。汉字与假名不在此列） */
+  FULL_WIDTH: /[\u3000\uFF01-\uFF60\uFFE0-\uFFE6]/,
+
   /** 空白字符 */
   WHITESPACE: /^\s*$/,
   
@@ -1274,6 +1277,89 @@ export class RegexHelper {
  * 便捷导出：直接使用函数形式
  * 注意：这些是静态方法的引用，可以直接调用
  */
+/**
+ * 文本是否包含全角字符（空值视为不含）
+ * @param value 待检查文本
+ * @returns 含全角空格、全角英数或全角标点时为 true
+ */
+export function containsFullWidth(value: string | null | undefined): boolean {
+  if (value == null || value === '') {
+    return false
+  }
+  return RegexPatterns.FULL_WIDTH.test(value)
+}
+
+/**
+ * 是否为正文类字段（设变内容、邮件内容、会议内容等），不参与全角检查
+ * @param name 属性名
+ * @returns 正文类字段时为 true
+ */
+function isRichContentField(name: string): boolean {
+  const key = name.trim().toLowerCase()
+  return key === 'content' || key.endsWith('content') || key.endsWith('agenda') || key.endsWith('minutes')
+}
+
+/**
+ * 保存请求体是否含全角字符。文件、二进制、正文类字段与表单只读项不检查。
+ * @param value 请求体
+ * @param fieldName 当前字段名
+ * @param readonlyFieldNames 提交时处于禁用状态的表单项名称
+ * @returns 含全角字符时为 true
+ */
+export function savePayloadContainsFullWidth(
+  value: unknown,
+  fieldName?: string,
+  readonlyFieldNames?: ReadonlySet<string>,
+): boolean {
+  if (fieldName && (isRichContentField(fieldName) || isReadonlySaveField(fieldName, readonlyFieldNames))) {
+    return false
+  }
+  if (value == null || typeof value === 'number' || typeof value === 'boolean') {
+    return false
+  }
+  if (typeof value === 'string') {
+    return containsFullWidth(value)
+  }
+  if (typeof FormData !== 'undefined' && value instanceof FormData) {
+    for (const [key, entry] of value.entries()) {
+      if (typeof entry === 'string' && savePayloadContainsFullWidth(entry, key, readonlyFieldNames)) {
+        return true
+      }
+    }
+    return false
+  }
+  if (Array.isArray(value)) {
+    return value.some((item) => savePayloadContainsFullWidth(item, undefined, readonlyFieldNames))
+  }
+  if (typeof value === 'object') {
+    return Object.entries(value as Record<string, unknown>).some(([key, item]) =>
+      savePayloadContainsFullWidth(item, key, readonlyFieldNames))
+  }
+  return false
+}
+
+/**
+ * 字段是否为本次提交的表单只读项
+ * @param name 属性名
+ * @param readonlyFieldNames 只读项名称
+ * @returns 只读项时为 true
+ */
+function isReadonlySaveField(name: string, readonlyFieldNames?: ReadonlySet<string>): boolean {
+  if (!readonlyFieldNames || readonlyFieldNames.size === 0) {
+    return false
+  }
+  const key = name.trim()
+  if (readonlyFieldNames.has(key)) {
+    return true
+  }
+  for (const item of readonlyFieldNames) {
+    if (item.localeCompare(key, undefined, { sensitivity: 'accent' }) === 0) {
+      return true
+    }
+  }
+  return false
+}
+
 export const regexTest = RegexHelper.test.bind(RegexHelper)
 export const regexMatch = RegexHelper.match.bind(RegexHelper)
 export const regexMatchAll = RegexHelper.matchAll.bind(RegexHelper)

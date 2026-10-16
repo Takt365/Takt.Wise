@@ -37,7 +37,7 @@ public class TaktRouting : TaktApprovalEntityBase
     public string WorkCenter { get; set; } = string.Empty;
 
     /// <summary>
-    /// 工艺路线编码
+    /// 工艺路线编码（前端表单选择编码规则后自动通过 TaktNumbering 工艺路线编码规则生成并展示，非手输；单据类型菜单：工艺路线）
     /// </summary>
     [SugarColumn(ColumnName = "routing_code", ColumnDescription = "工艺路线编码", ColumnDataType = "nvarchar", Length = 8, IsNullable = false)]
     public string RoutingCode { get; set; } = string.Empty;

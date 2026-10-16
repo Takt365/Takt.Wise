@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 /**
- * 采购发票金额：近三个自然月（TaktPurchaseInvoices/invoice-stat）
+ * 采购发票金额：近三个自然月（TaktPurchaseActualTrends/invoice-stat）
  */
 import { useI18n } from 'vue-i18n'
 import StatsMetricGrid from '../components/StatsMetricGrid.vue'

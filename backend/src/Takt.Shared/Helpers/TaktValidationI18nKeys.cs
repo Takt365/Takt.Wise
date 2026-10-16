@@ -33,6 +33,11 @@ public static class TaktValidationI18nKeys
     public const string InvalidFormat = "common.validation.format.invalid";
 
     /// <summary>
+    /// 不能包含全角字符
+    /// </summary>
+    public const string FullWidthForbidden = "common.validation.fullwidth.forbidden";
+
+    /// <summary>
     /// 已存在
     /// </summary>
     public const string Duplicate = "common.validation.duplicate";

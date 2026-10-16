@@ -63,4 +63,11 @@ public interface ITaktPurchaseActualTrendService
         TaktPurchasePriceTrendQueryDto query,
         string? sheetName = null,
         string? fileName = null);
+
+    /// <summary>
+    /// 采购发票金额统计（数据看板；按过帐日期）
+    /// </summary>
+    /// <param name="queryDto">查询 DTO</param>
+    /// <returns>采购发票统计</returns>
+    Task<TaktPurchaseInvoiceStatDto> GetPurchaseActualTrendInvoiceStatAsync(TaktProcurementStatQueryDto queryDto);
 }

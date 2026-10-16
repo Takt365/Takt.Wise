@@ -40,7 +40,7 @@ public class TaktApsSchedule : TaktCompanyEntityBase
     public string? MaterialRequirementsPlanningCode { get; set; }
 
     /// <summary>
-    /// 排程编码（唯一索引）
+    /// 排程编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 排程编码规则生成并展示，非手输；单据类型菜单：高级排程）
     /// </summary>
     [SugarColumn(ColumnName = "schedule_code", ColumnDescription = "排程编码", ColumnDataType = "nvarchar", Length = 50, IsNullable = false)]
     public string ScheduleCode { get; set; } = string.Empty;

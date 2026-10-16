@@ -74,9 +74,9 @@ export interface PurchaseOrderItem extends CompanyDtoBase {
   materialSpecification?: string;
 
   /**
-   * 采购信息记录编码
+   * 采购信息编码
    */
-  purchaseInfoRecordCode?: string;
+  purchaseInfoCode?: string;
 
   /**
    * 供应商物料编码
@@ -119,7 +119,7 @@ export interface PurchaseOrderItem extends CompanyDtoBase {
   discountAmount: number;
 
   /**
-   * 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -259,9 +259,9 @@ export interface PurchaseOrderItemQuery extends TaktPagedQuery {
   materialSpecification?: string;
 
   /**
-   * 采购信息记录编码
+   * 采购信息编码
    */
-  purchaseInfoRecordCode?: string;
+  purchaseInfoCode?: string;
 
   /**
    * 供应商物料编码
@@ -304,7 +304,7 @@ export interface PurchaseOrderItemQuery extends TaktPagedQuery {
   discountAmount?: number;
 
   /**
-   * 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -468,9 +468,9 @@ export interface PurchaseOrderItemCreate {
   materialSpecification?: string;
 
   /**
-   * 采购信息记录编码
+   * 采购信息编码
    */
-  purchaseInfoRecordCode?: string;
+  purchaseInfoCode?: string;
 
   /**
    * 供应商物料编码
@@ -513,7 +513,7 @@ export interface PurchaseOrderItemCreate {
   discountAmount: number;
 
   /**
-   * 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -715,9 +715,9 @@ export interface PurchaseOrderItemTemplate {
   materialSpecification?: string;
 
   /**
-   * 采购信息记录编码
+   * 采购信息编码
    */
-  purchaseInfoRecordCode?: string;
+  purchaseInfoCode?: string;
 
   /**
    * 供应商物料编码
@@ -760,7 +760,7 @@ export interface PurchaseOrderItemTemplate {
   discountAmount?: number;
 
   /**
-   * 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -909,9 +909,9 @@ export interface PurchaseOrderItemImport {
   materialSpecification?: string;
 
   /**
-   * 采购信息记录编码
+   * 采购信息编码
    */
-  purchaseInfoRecordCode?: string;
+  purchaseInfoCode?: string;
 
   /**
    * 供应商物料编码
@@ -954,7 +954,7 @@ export interface PurchaseOrderItemImport {
   discountAmount?: number;
 
   /**
-   * 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 
@@ -1103,9 +1103,9 @@ export interface PurchaseOrderItemExport {
   materialSpecification?: string;
 
   /**
-   * 采购信息记录编码
+   * 采购信息编码
    */
-  purchaseInfoRecordCode?: string;
+  purchaseInfoCode?: string;
 
   /**
    * 供应商物料编码
@@ -1148,7 +1148,7 @@ export interface PurchaseOrderItemExport {
   discountAmount: number;
 
   /**
-   * 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；字典 accounting_financial_tax_code；按 CultureCode 匹配 TaktDictData.CultureCode；DictValue 随区域变化）
+   * 税码（冗余：按 PurchaseOrderId 取 TaktPurchaseOrder.TaxCode 联动；选项 TaktTaxCodes/options；DictValue=TaxCode）
    */
   taxCode?: string;
 

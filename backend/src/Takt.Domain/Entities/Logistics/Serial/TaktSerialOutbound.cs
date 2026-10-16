@@ -27,7 +27,7 @@ namespace Takt.Domain.Entities.Logistics.Serial;
 public class TaktSerialOutbound : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 出库单号（租户+公司+工厂内唯一）
+    /// 出库单号（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 出库单号规则生成并展示，非手输；单据类型菜单：序列号出库）
     /// </summary>
     [SugarColumn(ColumnName = "outbound_code", ColumnDescription = "出库单号", ColumnDataType = "nvarchar", Length = 10, IsNullable = false)]
     public string OutboundCode { get; set; } = string.Empty;

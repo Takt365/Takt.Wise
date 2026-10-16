@@ -147,7 +147,7 @@ export interface BomCalculateAverageResult {
 /**
  * 回填 BOM 明细采购价结果
  */
-export interface BomCalculatePurchaseInfoRecordBackfillResult {
+export interface BomCalculatePurchaseInfoBackfillResult {
   /**
    * 扫描明细行数
    */

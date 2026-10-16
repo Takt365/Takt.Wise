@@ -545,7 +545,7 @@
               >
                 <TaktSelect
                   v-model:value="formState.inputTaxCode"
-                  dict-type="accounting_financial_tax_code"
+                  api-url="TaktTaxCodes/options"
                   :placeholder="pi.ph('inputTaxCode')"
                   :disabled="!!formData?.companyId"
                 />
@@ -558,7 +558,7 @@
               >
                 <TaktSelect
                   v-model:value="formState.outputTaxCode"
-                  dict-type="accounting_financial_tax_code"
+                  api-url="TaktTaxCodes/options"
                   :placeholder="pi.ph('outputTaxCode')"
                   :disabled="!!formData?.companyId"
                 />

@@ -29,7 +29,7 @@ namespace Takt.Domain.Entities.Logistics.Quality.Complaint;
 public class TaktSupplierEvaluation : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 评价表编码（组合唯一索引）
+    /// 评价表编码（租户+公司+工厂内唯一；前端表单选择编码规则后自动通过 TaktNumbering 评价表编码规则生成并展示，非手输；单据类型菜单：供应商评价考核）
     /// </summary>
     [SugarColumn(ColumnName = "supplier_evaluation_code", ColumnDescription = "评价表编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string SupplierEvaluationCode { get; set; } = string.Empty;

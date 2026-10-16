@@ -25,22 +25,22 @@ public interface ITaktEcKakuninService
     /// </summary>
     /// <param name="queryDto">查询 DTO</param>
     /// <returns>分页结果</returns>
-    Task<TaktPagedResult<TaktEcKakuninDto>> GetEcKakuninListAsync(TaktEcKakuninQueryDto queryDto);
+    Task<TaktPagedResult<TaktEcDetailDto>> GetEcKakuninListAsync(TaktEcKakuninQueryDto queryDto);
 
     /// <summary>
     /// 根据设变明细 ID 获取物料确认行
     /// </summary>
     /// <param name="ecDetailId">设变明细 ID</param>
-    /// <returns>物料确认 DTO</returns>
-    Task<TaktEcKakuninDto?> GetEcKakuninByEcDetailIdAsync(long ecDetailId);
+    /// <returns>设变明细 DTO</returns>
+    Task<TaktEcDetailDto?> GetEcKakuninByEcDetailIdAsync(long ecDetailId);
 
     /// <summary>
     /// 更新物料确认
     /// </summary>
     /// <param name="ecDetailId">设变明细 ID</param>
     /// <param name="dto">更新 DTO</param>
-    /// <returns>物料确认 DTO</returns>
-    Task<TaktEcKakuninDto> UpdateEcKakuninAsync(long ecDetailId, TaktEcKakuninUpdateDto dto);
+    /// <returns>设变明细 DTO</returns>
+    Task<TaktEcDetailDto> UpdateEcKakuninAsync(long ecDetailId, TaktEcKakuninUpdateDto dto);
 
     /// <summary>
     /// 导出物料确认

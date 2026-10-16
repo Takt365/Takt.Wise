@@ -39,11 +39,12 @@ public static class TaktEcDeptCodes
     /// </summary>
     public const string Mc = "D0430";
     /// <summary>
-    /// 制造2课-物料 / SMT（D0625；TaktEcSmt，F+C003）
+    /// 电子物料（D0625，简称 MTL；TaktEcEmtl。采购类型 F 且仓库 C003 才落行）。
+    /// D0621 SMT、D0622 自插、D0623 修正、D0624 手插、D0626 制造2课-间接不是设变执行部门。
     /// </summary>
     public const string Smt = "D0625";
     /// <summary>
-    /// 制造2课（D0620；TaktEcSeizounika 非 F；看板/派生「制二」桶）
+    /// 制造2课（D0620，简称 MFG；TaktEcSeizounika。非 F 落本表；F 且 C003 落电子物料 D0625）
     /// </summary>
     public const string Pcba = "D0620";
     /// <summary>
@@ -71,7 +72,7 @@ public static class TaktEcDeptCodes
     /// </summary>
     public static readonly string[] KanbanOrder =
     [
-        Pmc, Mp, Iqc, Mc, Pcba, Assy, Qa, Te
+        Pmc, Mp, Iqc, Mc, Smt, Pcba, Assy, Qa, Te
     ];
     /// <summary>
     /// 转置表格列顺序（采购→生管→受检→部管→制二→制一→品管；不含技术课与制技）
@@ -106,7 +107,7 @@ public static class TaktEcDeptCodes
             Mp => "采购课",
             Iqc => "受检课",
             Mc => "部管课",
-            Smt => "制造2课-物料",
+            Smt => "电子物料",
             Pcba => "制造2课",
             Assy => "制造一课",
             Qa => "品管课",

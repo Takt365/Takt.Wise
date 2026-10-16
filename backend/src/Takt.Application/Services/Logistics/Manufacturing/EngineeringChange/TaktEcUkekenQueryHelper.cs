@@ -4,7 +4,7 @@
 // 文件名称：TaktEcUkekenQueryHelper.cs
 // 创建时间：2026-08-27
 // 创建人：Takt365(Cursor AI)
-// 功能描述：受检课主表/子表可见明细：任何范围按设变单号+新品检验+新物料去重（保留最大 Id）
+// 功能描述：受检课主表/子表可见明细：新品检验为 1 按设变去重（设变单号+新物料，保留最大 Id）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -46,7 +46,7 @@ internal static class TaktEcUkekenQueryHelper
     }
 
     /// <summary>
-    /// 受检执行列表可见：任何范围按设变单号+新品检验+新物料去重，保留最大 EcDetailId
+    /// 受检执行列表可见：新品检验为 1，按设变单号+新物料去重，保留最大 Id
     /// </summary>
     /// <returns>执行表过滤表达式</returns>
     internal static Expression<Func<TaktEcUkeken, bool>> VisibleExecExpression()
@@ -59,10 +59,10 @@ internal static class TaktEcUkekenQueryHelper
                     && s.CompanyCode == x.CompanyCode
                     && s.IsDeleted == 0
                     && s.IsObsolete == 0
+                    && s.EcNewRequiresInspection == 1
                     && s.EcCode == x.EcCode
-                    && s.EcNewRequiresInspection == x.EcNewRequiresInspection
                     && s.EcNewMaterialCode == x.EcNewMaterialCode
-                    && s.EcDetailId > x.EcDetailId)
+                    && s.Id > x.Id)
                 .Any();
     }
 }

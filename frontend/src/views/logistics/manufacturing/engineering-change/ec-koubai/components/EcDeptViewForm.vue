@@ -33,6 +33,7 @@
       </a-col>
       <a-col :span="24"><a-form-item :label="pi.label('ecModelCodeGroup')"><a-textarea v-model:value="formState.ecModelCodeGroup" :rows="2" disabled /></a-form-item></a-col>
       <a-col :span="24"><a-form-item :label="pi.label('ecRootMaterialCodeGroup')"><a-textarea v-model:value="formState.ecRootMaterialCodeGroup" :rows="2" disabled /></a-form-item></a-col>
+      <a-col v-if="showRootMaterialDescription" :span="12"><a-form-item :label="pi.label('ecRootMaterialDescription')"><a-input v-model:value="formState.ecRootMaterialDescription" disabled /></a-form-item></a-col>
       <a-col :span="12"><a-form-item :label="pi.label('ecNewMaterialCode')"><a-input v-model:value="formState.ecNewMaterialCode" disabled /></a-form-item></a-col>
       <a-col :span="12"><a-form-item :label="pi.label('ecNewMaterialDescription')"><a-input v-model:value="formState.ecNewMaterialDescription" disabled /></a-form-item></a-col>
       <a-col :span="12">
@@ -80,6 +81,11 @@
           <TaktSelect v-model:value="formState.ecScope" dict-type="logistics_manufacturing_ec_scope_category" disabled />
         </a-form-item>
       </a-col>
+      <a-col :span="12">
+        <a-form-item :label="pi.label('ecDeptScope')">
+          <TaktSelect v-model:value="formState.ecDeptScope" dict-type="logistics_manufacturing_ec_dept_scope_category" disabled />
+        </a-form-item>
+      </a-col>
       <a-col :span="12"><a-form-item :label="pi.label('ecDetailId')"><a-input v-model:value="formState.ecDetailId" disabled /></a-form-item></a-col>
       <a-col :span="12">
         <a-form-item :label="pi.label('isObsolete')">
@@ -94,6 +100,7 @@
 
 <script setup lang="ts">
 import type { EcKoubai, EcKoubaiUpdate } from '@/types/logistics/manufacturing/engineering-change/ecKoubai.types'
+import { taktShowEcRootMaterialDescription } from '@/constants/logistics/ecScope.constants'
 import { useEcDeptViewI18n } from '../../composables/useEcDeptViewI18n'
 import { useEcDeptViewFormRules } from '../../composables/useEcDeptViewFormRules'
 
@@ -113,6 +120,7 @@ const formState = reactive<{
   discontinuedStatus?: string;
   ecModelCodeGroup?: string;
   ecRootMaterialCodeGroup?: string;
+  ecRootMaterialDescription?: string;
   ecNewMaterialCode?: string;
   ecNewMaterialDescription?: string;
   ecNewWarehouse?: string;
@@ -127,9 +135,13 @@ const formState = reactive<{
   deptCode?: string;
   deptName?: string;
   ecScope?: number;
+  ecDeptScope?: number;
   isObsolete: number;
   remark?: string;
 }>({ isImplemented: 1, execContent: '', discontinuedStatus: 'Z0', isObsolete: 0 });
+
+/** 仅全仕向且按成品时显示根物料描述 */
+const showRootMaterialDescription = computed(() => taktShowEcRootMaterialDescription(formState.ecScope, formState.ecDeptScope))
 
 watch(() => props.formData, (val) => {
   if (!val) { resetFields(); return; }
@@ -144,6 +156,7 @@ watch(() => props.formData, (val) => {
     discontinuedStatus: val.discontinuedStatus ?? 'Z0',
     ecModelCodeGroup: val.ecModelCodeGroup,
     ecRootMaterialCodeGroup: val.ecRootMaterialCodeGroup,
+    ecRootMaterialDescription: val.ecRootMaterialDescription,
     ecNewMaterialCode: val.ecNewMaterialCode,
     ecNewMaterialDescription: val.ecNewMaterialDescription,
     ecNewWarehouse: val.ecNewWarehouse,
@@ -160,6 +173,7 @@ watch(() => props.formData, (val) => {
     deptCode: val.deptCode,
     deptName: val.deptName,
     ecScope: val.ecScope,
+    ecDeptScope: val.ecDeptScope,
     isObsolete: val.isObsolete ?? 0,
     remark: val.remark,
   });
@@ -175,12 +189,12 @@ function resetFields() {
     ecKoubaiId: '',
     tenantCode: '', companyCode: '', cultureCode: '', plantCode: '',
     ecCode: '', lineNumber: undefined, discontinuedStatus: 'Z0',
-    ecModelCodeGroup: '', ecRootMaterialCodeGroup: '',
+    ecModelCodeGroup: '', ecRootMaterialCodeGroup: '', ecRootMaterialDescription: '',
     ecNewMaterialCode: '', ecNewMaterialDescription: '',
     ecNewWarehouse: undefined, ecNewPurchaseType: undefined, isImplemented: 1, execContent: '',
     purchaseOrderIssueDate: undefined, supplier: undefined, purchaseOrderCode: undefined,
     ecOldPartDisposition: undefined, ecDetailId: '', deptCode: '', deptName: '',
-    ecScope: undefined, isObsolete: 0, remark: undefined,
+    ecScope: undefined, ecDeptScope: undefined, isObsolete: 0, remark: undefined,
   });
 }
 defineExpose({ validate, getValues, resetFields });

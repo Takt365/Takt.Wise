@@ -1043,17 +1043,17 @@ public class TaktMenuLevel4SeedData
             insertCount += insertECN8;
             updateCount += updateECN8;
 
-            var (insertECN9Pcba, updateECN9Pcba) = await CreateOrUpdateMenuAsync(menuRepository, sqlSugarContext, tenantCode, "LOGISTICS_MANUFACTURING_ENGINEERING_CHANGE_SMT", menu =>
+            var (insertECN9Pcba, updateECN9Pcba) = await CreateOrUpdateMenuAsync(menuRepository, sqlSugarContext, tenantCode, "LOGISTICS_MANUFACTURING_ENGINEERING_CHANGE_EMTL", menu =>
             {
-                menu.MenuName = "SMT仓库";
-                menu.MenuCode = "LOGISTICS_MANUFACTURING_ENGINEERING_CHANGE_SMT";
-                menu.I18nKey = "menu.logistics.manufacturing.engineering.change.smt";
+                menu.MenuName = "电子物料";
+                menu.MenuCode = "LOGISTICS_MANUFACTURING_ENGINEERING_CHANGE_EMTL";
+                menu.I18nKey = "menu.logistics.manufacturing.engineering.change.emtl";
                 menu.Icon = "RiCpuLine";
                 menu.ParentId = manufacturingEngineeringChangeMenu.Id;
                 menu.MenuType = 1;
                 menu.Permission = "logistics:manufacturing:engineering:change:smt:list";
-                menu.RoutePath = "/logistics/manufacturing/engineering-change/ec-smt";
-                menu.ComponentPath = "logistics/manufacturing/engineering-change/ec-smt/index";
+                menu.RoutePath = "/logistics/manufacturing/engineering-change/ec-emtl";
+                menu.ComponentPath = "logistics/manufacturing/engineering-change/ec-emtl/index";
                 menu.SortOrder = 9;
                 menu.MenuStatus = 1;
                 menu.IsVisible = 1;

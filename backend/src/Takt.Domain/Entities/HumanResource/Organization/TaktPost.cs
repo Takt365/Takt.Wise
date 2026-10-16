@@ -25,7 +25,7 @@ namespace Takt.Domain.Entities.HumanResource.Organization;
 public class TaktPost : TaktCompanyEntityBase
 {
     /// <summary>
-    /// 岗位编码（唯一索引：租户+公司内唯一，见 ix_post_code_unique）
+    /// 岗位编码（唯一索引：租户+公司内唯一，见 ix_post_code_unique；前端表单选择编码规则后自动通过 TaktNumbering 岗位编码规则生成并展示，非手输；单据类型菜单：岗位管理）
     /// </summary>
     [SugarColumn(ColumnName = "post_code", ColumnDescription = "岗位编码", ColumnDataType = "varchar", Length = 50, IsNullable = false)]
     public string PostCode { get; set; } = string.Empty;
