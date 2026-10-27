@@ -88,7 +88,7 @@
           </a-radio-group>
           <div class="mt-2 flex flex-wrap items-center gap-2">
             <a-typography-text type="secondary">
-              {{ pathSummary || t('code.database.database-backup.page.dialog.notselected') }}
+              {{ pathSummary || t('code.database.database-backup.page.dialog.notselecmed') }}
             </a-typography-text>
             <a-button type="link" class="!px-0" @click="reopenPathDialog">
               {{ t('code.database.database-backup.page.dialog.reselect') }}

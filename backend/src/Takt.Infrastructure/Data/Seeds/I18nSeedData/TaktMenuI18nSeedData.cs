@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData
 // 文件名称：TaktMenuI18nSeedData.cs
-// 创建时间：2026-10-14
+// 创建时间：2026-10-27
 // 创建人：Takt365(Cursor AI)
 // 功能描述：菜单导航国际化翻译种子（menu.* 键，与 TaktMenuLevel1~4SeedData I18nKey 对齐）
 // 
@@ -1992,49 +1992,31 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             ("menu.logistics.manufacturing.bom.routing", "zh-HK", "工艺路线_hk", "菜单导航"),
 
             // menu.logistics.manufacturing.bom.standard.operation.time
-            ("menu.logistics.manufacturing.bom.standard.operation.time", "en-US", "标准工序时间_us", "菜单导航"),
+            ("menu.logistics.manufacturing.bom.standard.operation.time", "en-US", "标准工时_us", "菜单导航"),
             // menu.logistics.manufacturing.bom.standard.operation.time
-            ("menu.logistics.manufacturing.bom.standard.operation.time", "ja-JP", "标准工序时间_jp", "菜单导航"),
+            ("menu.logistics.manufacturing.bom.standard.operation.time", "ja-JP", "标准工时_jp", "菜单导航"),
             // menu.logistics.manufacturing.bom.standard.operation.time
-            ("menu.logistics.manufacturing.bom.standard.operation.time", "zh-CN", "标准工序时间", "菜单导航"),
+            ("menu.logistics.manufacturing.bom.standard.operation.time", "zh-CN", "标准工时", "菜单导航"),
             // menu.logistics.manufacturing.bom.standard.operation.time
-            ("menu.logistics.manufacturing.bom.standard.operation.time", "zh-HK", "标准工序时间_hk", "菜单导航"),
+            ("menu.logistics.manufacturing.bom.standard.operation.time", "zh-HK", "标准工时_hk", "菜单导航"),
 
             // menu.logistics.manufacturing.bom.material.cost
-            ("menu.logistics.manufacturing.bom.material.cost", "en-US", "BOM物料成本_us", "菜单导航"),
+            ("menu.logistics.manufacturing.bom.material.cost", "en-US", "材料成本_us", "菜单导航"),
             // menu.logistics.manufacturing.bom.material.cost
-            ("menu.logistics.manufacturing.bom.material.cost", "ja-JP", "BOM物料成本_jp", "菜单导航"),
+            ("menu.logistics.manufacturing.bom.material.cost", "ja-JP", "材料成本_jp", "菜单导航"),
             // menu.logistics.manufacturing.bom.material.cost
-            ("menu.logistics.manufacturing.bom.material.cost", "zh-CN", "BOM物料成本", "菜单导航"),
+            ("menu.logistics.manufacturing.bom.material.cost", "zh-CN", "材料成本", "菜单导航"),
             // menu.logistics.manufacturing.bom.material.cost
-            ("menu.logistics.manufacturing.bom.material.cost", "zh-HK", "BOM物料成本_hk", "菜单导航"),
+            ("menu.logistics.manufacturing.bom.material.cost", "zh-HK", "材料成本_hk", "菜单导航"),
 
             // menu.logistics.manufacturing.bom.material.zeroprice
-            ("menu.logistics.manufacturing.bom.material.zeroprice", "en-US", "BOM零价格_us", "菜单导航"),
+            ("menu.logistics.manufacturing.bom.material.zeroprice", "en-US", "零材料成本_us", "菜单导航"),
             // menu.logistics.manufacturing.bom.material.zeroprice
-            ("menu.logistics.manufacturing.bom.material.zeroprice", "ja-JP", "BOM零价格_jp", "菜单导航"),
+            ("menu.logistics.manufacturing.bom.material.zeroprice", "ja-JP", "零材料成本_jp", "菜单导航"),
             // menu.logistics.manufacturing.bom.material.zeroprice
-            ("menu.logistics.manufacturing.bom.material.zeroprice", "zh-CN", "BOM零价格", "菜单导航"),
+            ("menu.logistics.manufacturing.bom.material.zeroprice", "zh-CN", "零材料成本", "菜单导航"),
             // menu.logistics.manufacturing.bom.material.zeroprice
-            ("menu.logistics.manufacturing.bom.material.zeroprice", "zh-HK", "BOM零价格_hk", "菜单导航"),
-
-            // menu.logistics.manufacturing.bom.material.cost.analysis
-            ("menu.logistics.manufacturing.bom.material.cost.analysis", "en-US", "BOM成本分析_us", "菜单导航"),
-            // menu.logistics.manufacturing.bom.material.cost.analysis
-            ("menu.logistics.manufacturing.bom.material.cost.analysis", "ja-JP", "BOM成本分析_jp", "菜单导航"),
-            // menu.logistics.manufacturing.bom.material.cost.analysis
-            ("menu.logistics.manufacturing.bom.material.cost.analysis", "zh-CN", "BOM成本分析", "菜单导航"),
-            // menu.logistics.manufacturing.bom.material.cost.analysis
-            ("menu.logistics.manufacturing.bom.material.cost.analysis", "zh-HK", "BOM成本分析_hk", "菜单导航"),
-
-            // menu.logistics.manufacturing.bom.material.cost.trend
-            ("menu.logistics.manufacturing.bom.material.cost.trend", "en-US", "产品成本推移_us", "菜单导航"),
-            // menu.logistics.manufacturing.bom.material.cost.trend
-            ("menu.logistics.manufacturing.bom.material.cost.trend", "ja-JP", "产品成本推移_jp", "菜单导航"),
-            // menu.logistics.manufacturing.bom.material.cost.trend
-            ("menu.logistics.manufacturing.bom.material.cost.trend", "zh-CN", "产品成本推移", "菜单导航"),
-            // menu.logistics.manufacturing.bom.material.cost.trend
-            ("menu.logistics.manufacturing.bom.material.cost.trend", "zh-HK", "产品成本推移_hk", "菜单导航"),
+            ("menu.logistics.manufacturing.bom.material.zeroprice", "zh-HK", "零材料成本_hk", "菜单导航"),
 
             // menu.logistics.manufacturing.bom.model.cost.trend
             ("menu.logistics.manufacturing.bom.model.cost.trend", "en-US", "机种成本推移_us", "菜单导航"),
@@ -2053,6 +2035,24 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             ("menu.logistics.manufacturing.bom.pricedelta.trend", "zh-CN", "成本差异推移", "菜单导航"),
             // menu.logistics.manufacturing.bom.pricedelta.trend
             ("menu.logistics.manufacturing.bom.pricedelta.trend", "zh-HK", "成本差异推移_hk", "菜单导航"),
+
+            // menu.logistics.manufacturing.bom.common.material
+            ("menu.logistics.manufacturing.bom.common.material", "en-US", "通用物料_us", "菜单导航"),
+            // menu.logistics.manufacturing.bom.common.material
+            ("menu.logistics.manufacturing.bom.common.material", "ja-JP", "通用物料_jp", "菜单导航"),
+            // menu.logistics.manufacturing.bom.common.material
+            ("menu.logistics.manufacturing.bom.common.material", "zh-CN", "通用物料", "菜单导航"),
+            // menu.logistics.manufacturing.bom.common.material
+            ("menu.logistics.manufacturing.bom.common.material", "zh-HK", "通用物料_hk", "菜单导航"),
+
+            // menu.logistics.manufacturing.bom.dedicated.material
+            ("menu.logistics.manufacturing.bom.dedicated.material", "en-US", "专用物料_us", "菜单导航"),
+            // menu.logistics.manufacturing.bom.dedicated.material
+            ("menu.logistics.manufacturing.bom.dedicated.material", "ja-JP", "专用物料_jp", "菜单导航"),
+            // menu.logistics.manufacturing.bom.dedicated.material
+            ("menu.logistics.manufacturing.bom.dedicated.material", "zh-CN", "专用物料", "菜单导航"),
+            // menu.logistics.manufacturing.bom.dedicated.material
+            ("menu.logistics.manufacturing.bom.dedicated.material", "zh-HK", "专用物料_hk", "菜单导航"),
 
             // menu.logistics.manufacturing.bom.group
             ("menu.logistics.manufacturing.bom.group", "en-US", "BOM组_us", "菜单导航"),
@@ -2333,113 +2333,104 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.manufacturing.engineering.change.kanban
             ("menu.logistics.manufacturing.engineering.change.kanban", "zh-HK", "设变看板_hk", "菜单导航"),
 
-            // menu.logistics.manufacturing.engineering.change.batch
-            ("menu.logistics.manufacturing.engineering.change.batch", "en-US", "投入批次_us", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.batch
-            ("menu.logistics.manufacturing.engineering.change.batch", "ja-JP", "投入批次_jp", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.batch
-            ("menu.logistics.manufacturing.engineering.change.batch", "zh-CN", "投入批次", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.batch
-            ("menu.logistics.manufacturing.engineering.change.batch", "zh-HK", "投入批次_hk", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.implctrl
+            ("menu.logistics.manufacturing.engineering.change.implctrl", "en-US", "实施管控_us", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.implctrl
+            ("menu.logistics.manufacturing.engineering.change.implctrl", "ja-JP", "实施管控_jp", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.implctrl
+            ("menu.logistics.manufacturing.engineering.change.implctrl", "zh-CN", "实施管控", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.implctrl
+            ("menu.logistics.manufacturing.engineering.change.implctrl", "zh-HK", "实施管控_hk", "菜单导航"),
 
-            // menu.logistics.manufacturing.engineering.change.kakunin
-            ("menu.logistics.manufacturing.engineering.change.kakunin", "en-US", "物料确认_us", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.kakunin
-            ("menu.logistics.manufacturing.engineering.change.kakunin", "ja-JP", "物料确认_jp", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.kakunin
-            ("menu.logistics.manufacturing.engineering.change.kakunin", "zh-CN", "物料确认", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.kakunin
-            ("menu.logistics.manufacturing.engineering.change.kakunin", "zh-HK", "物料确认_hk", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.te
+            ("menu.logistics.manufacturing.engineering.change.te", "en-US", "技术部门_us", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.te
+            ("menu.logistics.manufacturing.engineering.change.te", "ja-JP", "技术部门_jp", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.te
+            ("menu.logistics.manufacturing.engineering.change.te", "zh-CN", "技术部门", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.te
+            ("menu.logistics.manufacturing.engineering.change.te", "zh-HK", "技术部门_hk", "菜单导航"),
 
-            // menu.logistics.manufacturing.engineering.change.gijutsu
-            ("menu.logistics.manufacturing.engineering.change.gijutsu", "en-US", "技术部门_us", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.gijutsu
-            ("menu.logistics.manufacturing.engineering.change.gijutsu", "ja-JP", "技术部门_jp", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.gijutsu
-            ("menu.logistics.manufacturing.engineering.change.gijutsu", "zh-CN", "技术部门", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.gijutsu
-            ("menu.logistics.manufacturing.engineering.change.gijutsu", "zh-HK", "技术部门_hk", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.mp
+            ("menu.logistics.manufacturing.engineering.change.mp", "en-US", "采购部门_us", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.mp
+            ("menu.logistics.manufacturing.engineering.change.mp", "ja-JP", "采购部门_jp", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.mp
+            ("menu.logistics.manufacturing.engineering.change.mp", "zh-CN", "采购部门", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.mp
+            ("menu.logistics.manufacturing.engineering.change.mp", "zh-HK", "采购部门_hk", "菜单导航"),
 
-            // menu.logistics.manufacturing.engineering.change.koubai
-            ("menu.logistics.manufacturing.engineering.change.koubai", "en-US", "采购部门_us", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.koubai
-            ("menu.logistics.manufacturing.engineering.change.koubai", "ja-JP", "采购部门_jp", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.koubai
-            ("menu.logistics.manufacturing.engineering.change.koubai", "zh-CN", "采购部门", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.koubai
-            ("menu.logistics.manufacturing.engineering.change.koubai", "zh-HK", "采购部门_hk", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.pc
+            ("menu.logistics.manufacturing.engineering.change.pc", "en-US", "生管部门_us", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.pc
+            ("menu.logistics.manufacturing.engineering.change.pc", "ja-JP", "生管部门_jp", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.pc
+            ("menu.logistics.manufacturing.engineering.change.pc", "zh-CN", "生管部门", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.pc
+            ("menu.logistics.manufacturing.engineering.change.pc", "zh-HK", "生管部门_hk", "菜单导航"),
 
-            // menu.logistics.manufacturing.engineering.change.seikan
-            ("menu.logistics.manufacturing.engineering.change.seikan", "en-US", "生管部门_us", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.seikan
-            ("menu.logistics.manufacturing.engineering.change.seikan", "ja-JP", "生管部门_jp", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.seikan
-            ("menu.logistics.manufacturing.engineering.change.seikan", "zh-CN", "生管部门", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.seikan
-            ("menu.logistics.manufacturing.engineering.change.seikan", "zh-HK", "生管部门_hk", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.iqc
+            ("menu.logistics.manufacturing.engineering.change.iqc", "en-US", "受检部门_us", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.iqc
+            ("menu.logistics.manufacturing.engineering.change.iqc", "ja-JP", "受检部门_jp", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.iqc
+            ("menu.logistics.manufacturing.engineering.change.iqc", "zh-CN", "受检部门", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.iqc
+            ("menu.logistics.manufacturing.engineering.change.iqc", "zh-HK", "受检部门_hk", "菜单导航"),
 
-            // menu.logistics.manufacturing.engineering.change.ukeken
-            ("menu.logistics.manufacturing.engineering.change.ukeken", "en-US", "受检部门_us", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.ukeken
-            ("menu.logistics.manufacturing.engineering.change.ukeken", "ja-JP", "受检部门_jp", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.ukeken
-            ("menu.logistics.manufacturing.engineering.change.ukeken", "zh-CN", "受检部门", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.ukeken
-            ("menu.logistics.manufacturing.engineering.change.ukeken", "zh-HK", "受检部门_hk", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.mc
+            ("menu.logistics.manufacturing.engineering.change.mc", "en-US", "部管部门_us", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.mc
+            ("menu.logistics.manufacturing.engineering.change.mc", "ja-JP", "部管部门_jp", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.mc
+            ("menu.logistics.manufacturing.engineering.change.mc", "zh-CN", "部管部门", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.mc
+            ("menu.logistics.manufacturing.engineering.change.mc", "zh-HK", "部管部门_hk", "菜单导航"),
 
-            // menu.logistics.manufacturing.engineering.change.bukan
-            ("menu.logistics.manufacturing.engineering.change.bukan", "en-US", "部管部门_us", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.bukan
-            ("menu.logistics.manufacturing.engineering.change.bukan", "ja-JP", "部管部门_jp", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.bukan
-            ("menu.logistics.manufacturing.engineering.change.bukan", "zh-CN", "部管部门", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.bukan
-            ("menu.logistics.manufacturing.engineering.change.bukan", "zh-HK", "部管部门_hk", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.mtl
+            ("menu.logistics.manufacturing.engineering.change.mtl", "en-US", "电子物料_us", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.mtl
+            ("menu.logistics.manufacturing.engineering.change.mtl", "ja-JP", "电子物料_jp", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.mtl
+            ("menu.logistics.manufacturing.engineering.change.mtl", "zh-CN", "电子物料", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.mtl
+            ("menu.logistics.manufacturing.engineering.change.mtl", "zh-HK", "电子物料_hk", "菜单导航"),
 
-            // menu.logistics.manufacturing.engineering.change.emtl
-            ("menu.logistics.manufacturing.engineering.change.emtl", "en-US", "电子物料_us", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.emtl
-            ("menu.logistics.manufacturing.engineering.change.emtl", "ja-JP", "电子物料_jp", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.emtl
-            ("menu.logistics.manufacturing.engineering.change.emtl", "zh-CN", "电子物料", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.emtl
-            ("menu.logistics.manufacturing.engineering.change.emtl", "zh-HK", "电子物料_hk", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.pcba
+            ("menu.logistics.manufacturing.engineering.change.pcba", "en-US", "制造二课_us", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.pcba
+            ("menu.logistics.manufacturing.engineering.change.pcba", "ja-JP", "制造二课_jp", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.pcba
+            ("menu.logistics.manufacturing.engineering.change.pcba", "zh-CN", "制造二课", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.pcba
+            ("menu.logistics.manufacturing.engineering.change.pcba", "zh-HK", "制造二课_hk", "菜单导航"),
 
-            // menu.logistics.manufacturing.engineering.change.seizounika
-            ("menu.logistics.manufacturing.engineering.change.seizounika", "en-US", "制造二课_us", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.seizounika
-            ("menu.logistics.manufacturing.engineering.change.seizounika", "ja-JP", "制造二课_jp", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.seizounika
-            ("menu.logistics.manufacturing.engineering.change.seizounika", "zh-CN", "制造二课", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.seizounika
-            ("menu.logistics.manufacturing.engineering.change.seizounika", "zh-HK", "制造二课_hk", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.assy
+            ("menu.logistics.manufacturing.engineering.change.assy", "en-US", "制造一课_us", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.assy
+            ("menu.logistics.manufacturing.engineering.change.assy", "ja-JP", "制造一课_jp", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.assy
+            ("menu.logistics.manufacturing.engineering.change.assy", "zh-CN", "制造一课", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.assy
+            ("menu.logistics.manufacturing.engineering.change.assy", "zh-HK", "制造一课_hk", "菜单导航"),
 
-            // menu.logistics.manufacturing.engineering.change.seizouikka
-            ("menu.logistics.manufacturing.engineering.change.seizouikka", "en-US", "制造一课_us", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.seizouikka
-            ("menu.logistics.manufacturing.engineering.change.seizouikka", "ja-JP", "制造一课_jp", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.seizouikka
-            ("menu.logistics.manufacturing.engineering.change.seizouikka", "zh-CN", "制造一课", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.seizouikka
-            ("menu.logistics.manufacturing.engineering.change.seizouikka", "zh-HK", "制造一课_hk", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.qa
+            ("menu.logistics.manufacturing.engineering.change.qa", "en-US", "品管部门_us", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.qa
+            ("menu.logistics.manufacturing.engineering.change.qa", "ja-JP", "品管部门_jp", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.qa
+            ("menu.logistics.manufacturing.engineering.change.qa", "zh-CN", "品管部门", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.qa
+            ("menu.logistics.manufacturing.engineering.change.qa", "zh-HK", "品管部门_hk", "菜单导航"),
 
-            // menu.logistics.manufacturing.engineering.change.hinkan
-            ("menu.logistics.manufacturing.engineering.change.hinkan", "en-US", "品管部门_us", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.hinkan
-            ("menu.logistics.manufacturing.engineering.change.hinkan", "ja-JP", "品管部门_jp", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.hinkan
-            ("menu.logistics.manufacturing.engineering.change.hinkan", "zh-CN", "品管部门", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.hinkan
-            ("menu.logistics.manufacturing.engineering.change.hinkan", "zh-HK", "品管部门_hk", "菜单导航"),
-
-            // menu.logistics.manufacturing.engineering.change.seizougijutsu
-            ("menu.logistics.manufacturing.engineering.change.seizougijutsu", "en-US", "制造技术课_us", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.seizougijutsu
-            ("menu.logistics.manufacturing.engineering.change.seizougijutsu", "ja-JP", "制造技术课_jp", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.seizougijutsu
-            ("menu.logistics.manufacturing.engineering.change.seizougijutsu", "zh-CN", "制造技术课", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.seizougijutsu
-            ("menu.logistics.manufacturing.engineering.change.seizougijutsu", "zh-HK", "制造技术课_hk", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.me
+            ("menu.logistics.manufacturing.engineering.change.me", "en-US", "制造技术课_us", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.me
+            ("menu.logistics.manufacturing.engineering.change.me", "ja-JP", "制造技术课_jp", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.me
+            ("menu.logistics.manufacturing.engineering.change.me", "zh-CN", "制造技术课", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.me
+            ("menu.logistics.manufacturing.engineering.change.me", "zh-HK", "制造技术课_hk", "菜单导航"),
 
             // menu.logistics.manufacturing.engineering.change.notification
             ("menu.logistics.manufacturing.engineering.change.notification", "en-US", "设变通知_us", "菜单导航"),
@@ -2469,13 +2460,22 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             ("menu.logistics.manufacturing.engineering.change.source.ec", "zh-HK", "设变来源_hk", "菜单导航"),
 
             // menu.logistics.manufacturing.engineering.change.monthly.trend
-            ("menu.logistics.manufacturing.engineering.change.monthly.trend", "en-US", "月设变推移_us", "菜单导航"),
+            ("menu.logistics.manufacturing.engineering.change.monthly.trend", "en-US", "设变推移_us", "菜单导航"),
             // menu.logistics.manufacturing.engineering.change.monthly.trend
-            ("menu.logistics.manufacturing.engineering.change.monthly.trend", "ja-JP", "月设变推移_jp", "菜单导航"),
+            ("menu.logistics.manufacturing.engineering.change.monthly.trend", "ja-JP", "设变推移_jp", "菜单导航"),
             // menu.logistics.manufacturing.engineering.change.monthly.trend
-            ("menu.logistics.manufacturing.engineering.change.monthly.trend", "zh-CN", "月设变推移", "菜单导航"),
+            ("menu.logistics.manufacturing.engineering.change.monthly.trend", "zh-CN", "设变推移", "菜单导航"),
             // menu.logistics.manufacturing.engineering.change.monthly.trend
-            ("menu.logistics.manufacturing.engineering.change.monthly.trend", "zh-HK", "月设变推移_hk", "菜单导航"),
+            ("menu.logistics.manufacturing.engineering.change.monthly.trend", "zh-HK", "设变推移_hk", "菜单导航"),
+
+            // menu.logistics.manufacturing.engineering.change.stat
+            ("menu.logistics.manufacturing.engineering.change.stat", "en-US", "设变统计_us", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.stat
+            ("menu.logistics.manufacturing.engineering.change.stat", "ja-JP", "设变统计_jp", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.stat
+            ("menu.logistics.manufacturing.engineering.change.stat", "zh-CN", "设变统计", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.stat
+            ("menu.logistics.manufacturing.engineering.change.stat", "zh-HK", "设变统计_hk", "菜单导航"),
 
             // menu.logistics.manufacturing.engineering.change.ec.group
             ("menu.logistics.manufacturing.engineering.change.ec.group", "en-US", "设变组_us", "菜单导航"),
@@ -2513,14 +2513,32 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.manufacturing.output.production.changeover
             ("menu.logistics.manufacturing.output.production.changeover", "zh-HK", "生产切换_hk", "菜单导航"),
 
+            // menu.logistics.manufacturing.output.changeover.stat
+            ("menu.logistics.manufacturing.output.changeover.stat", "en-US", "切换统计_us", "菜单导航"),
+            // menu.logistics.manufacturing.output.changeover.stat
+            ("menu.logistics.manufacturing.output.changeover.stat", "ja-JP", "切换统计_jp", "菜单导航"),
+            // menu.logistics.manufacturing.output.changeover.stat
+            ("menu.logistics.manufacturing.output.changeover.stat", "zh-CN", "切换统计", "菜单导航"),
+            // menu.logistics.manufacturing.output.changeover.stat
+            ("menu.logistics.manufacturing.output.changeover.stat", "zh-HK", "切换统计_hk", "菜单导航"),
+
             // menu.logistics.manufacturing.output.production.monthly
-            ("menu.logistics.manufacturing.output.production.monthly", "en-US", "月生产推移_us", "菜单导航"),
+            ("menu.logistics.manufacturing.output.production.monthly", "en-US", "生产统计_us", "菜单导航"),
             // menu.logistics.manufacturing.output.production.monthly
-            ("menu.logistics.manufacturing.output.production.monthly", "ja-JP", "月生产推移_jp", "菜单导航"),
+            ("menu.logistics.manufacturing.output.production.monthly", "ja-JP", "生产统计_jp", "菜单导航"),
             // menu.logistics.manufacturing.output.production.monthly
-            ("menu.logistics.manufacturing.output.production.monthly", "zh-CN", "月生产推移", "菜单导航"),
+            ("menu.logistics.manufacturing.output.production.monthly", "zh-CN", "生产统计", "菜单导航"),
             // menu.logistics.manufacturing.output.production.monthly
-            ("menu.logistics.manufacturing.output.production.monthly", "zh-HK", "月生产推移_hk", "菜单导航"),
+            ("menu.logistics.manufacturing.output.production.monthly", "zh-HK", "生产统计_hk", "菜单导航"),
+
+            // menu.logistics.manufacturing.output.production.trend
+            ("menu.logistics.manufacturing.output.production.trend", "en-US", "生产推移_us", "菜单导航"),
+            // menu.logistics.manufacturing.output.production.trend
+            ("menu.logistics.manufacturing.output.production.trend", "ja-JP", "生产推移_jp", "菜单导航"),
+            // menu.logistics.manufacturing.output.production.trend
+            ("menu.logistics.manufacturing.output.production.trend", "zh-CN", "生产推移", "菜单导航"),
+            // menu.logistics.manufacturing.output.production.trend
+            ("menu.logistics.manufacturing.output.production.trend", "zh-HK", "生产推移_hk", "菜单导航"),
 
             // menu.logistics.manufacturing.labor.hour.assy
             ("menu.logistics.manufacturing.labor.hour.assy", "en-US", "组立工数_us", "菜单导航"),
@@ -2604,13 +2622,22 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             ("menu.logistics.manufacturing.defect.assy", "zh-HK", "组立不良_hk", "菜单导航"),
 
             // menu.logistics.manufacturing.defect.monthly
-            ("menu.logistics.manufacturing.defect.monthly", "en-US", "月生产不良推移_us", "菜单导航"),
+            ("menu.logistics.manufacturing.defect.monthly", "en-US", "不良推移_us", "菜单导航"),
             // menu.logistics.manufacturing.defect.monthly
-            ("menu.logistics.manufacturing.defect.monthly", "ja-JP", "月生产不良推移_jp", "菜单导航"),
+            ("menu.logistics.manufacturing.defect.monthly", "ja-JP", "不良推移_jp", "菜单导航"),
             // menu.logistics.manufacturing.defect.monthly
-            ("menu.logistics.manufacturing.defect.monthly", "zh-CN", "月生产不良推移", "菜单导航"),
+            ("menu.logistics.manufacturing.defect.monthly", "zh-CN", "不良推移", "菜单导航"),
             // menu.logistics.manufacturing.defect.monthly
-            ("menu.logistics.manufacturing.defect.monthly", "zh-HK", "月生产不良推移_hk", "菜单导航"),
+            ("menu.logistics.manufacturing.defect.monthly", "zh-HK", "不良推移_hk", "菜单导航"),
+
+            // menu.logistics.manufacturing.defect.stat
+            ("menu.logistics.manufacturing.defect.stat", "en-US", "不良统计_us", "菜单导航"),
+            // menu.logistics.manufacturing.defect.stat
+            ("menu.logistics.manufacturing.defect.stat", "ja-JP", "不良统计_jp", "菜单导航"),
+            // menu.logistics.manufacturing.defect.stat
+            ("menu.logistics.manufacturing.defect.stat", "zh-CN", "不良统计", "菜单导航"),
+            // menu.logistics.manufacturing.defect.stat
+            ("menu.logistics.manufacturing.defect.stat", "zh-HK", "不良统计_hk", "菜单导航"),
 
             // menu.logistics.manufacturing.sop.workstation
             ("menu.logistics.manufacturing.sop.workstation", "en-US", "工位管理_us", "菜单导航"),
@@ -2738,6 +2765,15 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.quality.cost.group
             ("menu.logistics.quality.cost.group", "zh-HK", "成本组_hk", "菜单导航"),
 
+            // menu.logistics.quality.cost.report
+            ("menu.logistics.quality.cost.report", "en-US", "品质成本报告_us", "菜单导航"),
+            // menu.logistics.quality.cost.report
+            ("menu.logistics.quality.cost.report", "ja-JP", "品质成本报告_jp", "菜单导航"),
+            // menu.logistics.quality.cost.report
+            ("menu.logistics.quality.cost.report", "zh-CN", "品质成本报告", "菜单导航"),
+            // menu.logistics.quality.cost.report
+            ("menu.logistics.quality.cost.report", "zh-HK", "品质成本报告_hk", "菜单导航"),
+
             // menu.logistics.quality.operation.group
             ("menu.logistics.quality.operation.group", "en-US", "质量组_us", "菜单导航"),
             // menu.logistics.quality.operation.group
@@ -2827,6 +2863,15 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             ("menu.logistics.quality.operation.monthly", "zh-CN", "品质月报", "菜单导航"),
             // menu.logistics.quality.operation.monthly
             ("menu.logistics.quality.operation.monthly", "zh-HK", "品质月报_hk", "菜单导航"),
+
+            // menu.logistics.quality.operation.stat
+            ("menu.logistics.quality.operation.stat", "en-US", "质量统计_us", "菜单导航"),
+            // menu.logistics.quality.operation.stat
+            ("menu.logistics.quality.operation.stat", "ja-JP", "质量统计_jp", "菜单导航"),
+            // menu.logistics.quality.operation.stat
+            ("menu.logistics.quality.operation.stat", "zh-CN", "质量统计", "菜单导航"),
+            // menu.logistics.quality.operation.stat
+            ("menu.logistics.quality.operation.stat", "zh-HK", "质量统计_hk", "菜单导航"),
 
             // menu.logistics.quality.complaint.customer
             ("menu.logistics.quality.complaint.customer", "en-US", "客诉登记_us", "菜单导航"),

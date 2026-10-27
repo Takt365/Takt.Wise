@@ -16,7 +16,7 @@ import type {
 } from '@/types/common.types';
 
 /**
- * 设变明细（技术阶段一 ③，外键 EcGijutsuId 隶属 TaktEcGijutsu；含各部门执行视图外键 EcXxxId）。对应前端 TaktEcDetailDto。
+ * 设变明细（技术阶段一 ③，外键 EcTeId 隶属 TaktEcTe；含各部门执行视图外键 EcXxxId）。对应前端 TaktEcDetailDto。
  * 对应前端 EcDetail
  * @description 对应后端 TaktEcDetailDto
  */
@@ -29,7 +29,7 @@ export interface EcDetail extends CompanyDtoBase {
   /**
    * 设变主表ID（主表主键,序列化为string以避免Javascript精度问题）
    */
-  ecGijutsuId: string;
+  ecTeId: string;
 
   /**
    * 设变主表名称（填充字段）
@@ -86,9 +86,9 @@ export interface EcDetail extends CompanyDtoBase {
    */
   discontinuedStatus: string;
   /**
-   * 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
+   * 实施范围（冗余：来自 TaktEcTe.EcImplScope）
    */
-  ecScope: number;
+  ecImplScope: number;
 
   /**
    * 旧物料编码
@@ -233,7 +233,7 @@ export interface EcDetailQuery extends TaktPagedQuery {
   /**
    * 设变主表ID（主表主键,序列化为string以避免Javascript精度问题）
    */
-  ecGijutsuId?: string;
+  ecTeId?: string;
 
   /**
    * 设变单号（冗余字段,便于查询）
@@ -285,9 +285,9 @@ export interface EcDetailQuery extends TaktPagedQuery {
    */
   discontinuedStatus?: string;
   /**
-   * 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
+   * 实施范围（冗余：来自 TaktEcTe.EcImplScope）
    */
-  ecScope?: number;
+  ecImplScope?: number;
 
   /**
    * 旧物料编码
@@ -456,7 +456,7 @@ export interface EcDetailCreate {
   /**
    * 设变主表ID（主表主键,序列化为string以避免Javascript精度问题）
    */
-  ecGijutsuId: string;
+  ecTeId: string;
 
   /**
    * 设变单号（冗余字段,便于查询）
@@ -508,9 +508,9 @@ export interface EcDetailCreate {
    */
   discontinuedStatus: string;
   /**
-   * 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
+   * 实施范围（冗余：来自 TaktEcTe.EcImplScope）
    */
-  ecScope: number;
+  ecImplScope: number;
 
   /**
    * 旧物料编码
@@ -698,7 +698,7 @@ export interface EcDetailTemplate {
   /**
    * 设变主表ID（主表主键,序列化为string以避免Javascript精度问题）
    */
-  ecGijutsuId?: string;
+  ecTeId?: string;
 
   /**
    * 设变单号（冗余字段,便于查询）
@@ -750,9 +750,9 @@ export interface EcDetailTemplate {
    */
   discontinuedStatus?: string;
   /**
-   * 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
+   * 实施范围（冗余：来自 TaktEcTe.EcImplScope）
    */
-  ecScope?: number;
+  ecImplScope?: number;
 
   /**
    * 旧物料编码
@@ -906,7 +906,7 @@ export interface EcDetailImport {
   /**
    * 设变主表ID（主表主键,序列化为string以避免Javascript精度问题）
    */
-  ecGijutsuId?: string;
+  ecTeId?: string;
 
   /**
    * 设变单号（冗余字段,便于查询）
@@ -958,9 +958,9 @@ export interface EcDetailImport {
    */
   discontinuedStatus?: string;
   /**
-   * 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
+   * 实施范围（冗余：来自 TaktEcTe.EcImplScope）
    */
-  ecScope?: number;
+  ecImplScope?: number;
 
   /**
    * 旧物料编码
@@ -1114,7 +1114,7 @@ export interface EcDetailExport {
   /**
    * 设变主表ID（主表主键,序列化为string以避免Javascript精度问题）
    */
-  ecGijutsuId: string;
+  ecTeId: string;
 
   /**
    * 设变单号（冗余字段,便于查询）
@@ -1166,9 +1166,9 @@ export interface EcDetailExport {
    */
   discontinuedStatus: string;
   /**
-   * 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
+   * 实施范围（冗余：来自 TaktEcTe.EcImplScope）
    */
-  ecScope: number;
+  ecImplScope: number;
 
   /**
    * 旧物料编码

@@ -147,16 +147,6 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('plantCode')">
-      <a-form-item :label="pi.queryLabel('plantCode')">
-        <TaktSelect
-          v-model:value="advancedQueryForm.plantCode"
-          api-url="TaktPlants/options"
-          :placeholder="pi.queryPh('plantCode', 'select')"
-          allow-clear
-        />
-      </a-form-item>
-      </div>
       <div v-show="isFieldVisible('valuationPeriod')">
       <a-form-item :label="pi.queryLabel('valuationPeriod')">
         <a-input
@@ -401,11 +391,11 @@ const pageSize = ref(getTaktDefaultPageSize())
 /** 分页 total */
 const total = ref(0)
 /** 工具栏单选时当前行 */
-const selectedRow = ref<MaterialMovingPriceRowRecord | null>(null)
+const selecmedRow = ref<MaterialMovingPriceRowRecord | null>(null)
 /** 表格多选行 */
-const selectedRows = ref<MaterialMovingPriceRowRecord[]>([])
+const selecmedRows = ref<MaterialMovingPriceRowRecord[]>([])
 /** 表格多选 row-key 集合 */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 
 /** 新增/编辑弹窗是否打开 */
 const formVisible = ref(false)
@@ -485,9 +475,9 @@ const visibleColumnKeys = ref<string[]>([])
 /** 实体主键字段名（row-key、API 路径参数） */
 const entityIdName = 'materialMovingPriceId'
 /** 工具栏「编辑」是否禁用（须恰好选中一行） */
-const updateDisabled = computed(() => selectedRows.value.length !== 1)
+const updateDisabled = computed(() => selecmedRows.value.length !== 1)
 /** 工具栏「删除」是否禁用（未选中任何行） */
-const deleteDisabled = computed(() => selectedRows.value.length === 0)
+const deleteDisabled = computed(() => selecmedRows.value.length === 0)
 
 /** Pinia：字典缓存（列表/查询 dict-type 渲染前预热） */
 const dictDataStore = useDictDataStore()
@@ -608,21 +598,21 @@ const getMaterialMovingPriceDictValue = (
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: MaterialMovingPriceRowRecord[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: MaterialMovingPriceRowRecord, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (selectedRow.value && getMaterialMovingPriceId(selectedRow.value) === getMaterialMovingPriceId(record)) {
-      selectedRow.value = null
+  onSelect: (record: MaterialMovingPriceRowRecord, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (selecmedRow.value && getMaterialMovingPriceId(selecmedRow.value) === getMaterialMovingPriceId(record)) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: MaterialMovingPriceRowRecord[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: MaterialMovingPriceRowRecord[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   }
 }))
 
@@ -630,16 +620,16 @@ const rowSelection = computed(() => ({
 const onClickRow = (record: MaterialMovingPriceRowRecord) => ({
   onClick: () => {
     const key = getMaterialMovingPriceId(record)
-    const index = selectedRowKeys.value.indexOf(key)
+    const index = selecmedRowKeys.value.indexOf(key)
     if (index > -1) {
-      selectedRowKeys.value.splice(index, 1)
+      selecmedRowKeys.value.splice(index, 1)
     } else {
-      selectedRowKeys.value.push(key)
+      selecmedRowKeys.value.push(key)
     }
-    selectedRows.value = dataSource.value.filter((item) => selectedRowKeys.value.includes(getMaterialMovingPriceId(item)))
-    selectedRow.value = selectedRowKeys.value.length === 1 ? (selectedRows.value[0] ?? null) : null
+    selecmedRows.value = dataSource.value.filter((item) => selecmedRowKeys.value.includes(getMaterialMovingPriceId(item)))
+    selecmedRow.value = selecmedRowKeys.value.length === 1 ? (selecmedRows.value[0] ?? null) : null
     if (rowSelection.value.onChange) {
-      rowSelection.value.onChange(selectedRowKeys.value, selectedRows.value)
+      rowSelection.value.onChange(selecmedRowKeys.value, selecmedRows.value)
     }
   }
 })
@@ -711,8 +701,8 @@ async function handleEdit(record: MaterialMovingPriceRowRecord) {
 
 /** 工具栏编辑：打开当前单选行 */
 function handleUpdate() {
-  if (selectedRow.value) {
-    void handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    void handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: pi.self() }))
   }
@@ -835,17 +825,17 @@ async function handleDeleteOne(record: MaterialMovingPriceRowRecord) {
 }
 /** 批量删除选中行 */
 async function handleDelete() {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: pi.self() }))
     return
   }
   Modal.confirm({
     title: t('common.tip.confirm.delete.title'),
-    content: t('common.tip.confirm.delete.count', { entity: pi.self(), count: selectedRows.value.length }),
+    content: t('common.tip.confirm.delete.count', { entity: pi.self(), count: selecmedRows.value.length }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
+      const ids = selecmedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
       await deleteMaterialMovingPriceBatch(ids)
       message.success(t('common.feedback.deleted', { target: pi.self() }))
       loadData()

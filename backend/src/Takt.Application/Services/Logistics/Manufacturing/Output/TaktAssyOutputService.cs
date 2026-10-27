@@ -58,7 +58,7 @@ public class TaktAssyOutputService : TaktServiceBase, ITaktAssyOutputService
     /// <param name="assyOrderDefectRepository">工单不良统计仓储</param>
     /// <param name="assyBatchDefectRepository">批量不良统计仓储</param>
     /// <param name="standardOperationRateRepository">标准生产稼动率仓储</param>
-    /// <param name="standardOperationTimeRepository">标准工序时间仓储</param>
+    /// <param name="standardOperationTimeRepository">标准工时仓储</param>
     /// <param name="productionOrderRepository">生产工单仓储</param>
     /// <param name="productionChangeoverRepository">生产切换记录仓储</param>
     /// <param name="lineNumberGenerator">明细行号生成器</param>

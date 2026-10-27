@@ -19,12 +19,13 @@ using Takt.Domain.Interfaces;
 using Takt.Domain.Repositories;
 using Takt.Shared.Constants;
 using Takt.Shared.Helpers;
+using Takt.Shared.Models;
 using Takt.Shared.Options;
 
 namespace Takt.Infrastructure.Data.Seeds.EntitySeedData;
 
 /// <summary>
-/// 内置编码规则种子（按 Database:CompanyCodes 各公司写入；幂等：存在则更新配置，保留 CurrentSequence/ExampleCode）
+/// 内置编码规则种子（按 Database:CompanyCodes 各公司写入；幂等：更新段配置并刷新 StartingNumber 为首号样例）
 /// </summary>
 public class TaktNumberingSeedData : ITaktSeedDataCoordinator
 {
@@ -147,6 +148,7 @@ public class TaktNumberingSeedData : ITaktSeedDataCoordinator
                     repository,
                     tenantCode,
                     company.CompanyCode,
+                    company.CompanyShortName,
                     database.GetPlantCodeForCompanyCode(company.CompanyCode),
                     company.CultureCode,
                     template,
@@ -770,11 +772,12 @@ public class TaktNumberingSeedData : ITaktSeedDataCoordinator
     }
 
     /// <summary>
-    /// 创建或更新编码规则（更新时保留 CurrentSequence，按最新段配置重算 ExampleCode）
+    /// 创建或更新编码规则（按最新段配置重算 StartingNumber 为首号样例；实际流水以业务表为准）
     /// </summary>
     /// <param name="repository">编码规则仓储</param>
     /// <param name="tenantCode">租户编码</param>
     /// <param name="companyCode">公司编码</param>
+    /// <param name="companyShortName">公司简称（写入业务编码公司段）</param>
     /// <param name="plantCode">工厂编码</param>
     /// <param name="cultureCode">区域文化</param>
     /// <param name="template">规则模板</param>
@@ -784,6 +787,7 @@ public class TaktNumberingSeedData : ITaktSeedDataCoordinator
         ITaktCompanySeedRepository<TaktNumbering> repository,
         string tenantCode,
         string companyCode,
+        string companyShortName,
         string plantCode,
         string cultureCode,
         NumberingSeedTemplate template,
@@ -818,9 +822,7 @@ public class TaktNumberingSeedData : ITaktSeedDataCoordinator
                 CultureCode = cultureCode
             };
             ApplyDateFormatResetPeriodAlignment(entity);
-            var (exampleCode, currentSequence) = BuildInitialExampleCode(entity, DateTime.Now);
-            entity.ExampleCode = exampleCode;
-            entity.CurrentSequence = currentSequence;
+            entity.StartingNumber = BuildInitialStartingNumber(entity, companyShortName, DateTime.Now);
             entity = await repository.CreateAsync(entity);
             return (entity, 1, 0);
         }
@@ -841,27 +843,43 @@ public class TaktNumberingSeedData : ITaktSeedDataCoordinator
         entity.PlantCode = plantCode;
         entity.CultureCode = cultureCode;
         ApplyDateFormatResetPeriodAlignment(entity);
-        var sequenceForExample = entity.CurrentSequence <= 0
-            ? (entity.SequenceStep <= 0 ? 1 : entity.SequenceStep)
-            : entity.CurrentSequence;
-        entity.ExampleCode = FormatBusinessCode(entity, sequenceForExample, DateTime.Now);
+        entity.StartingNumber = BuildInitialStartingNumber(entity, companyShortName, DateTime.Now);
         await repository.UpdateAsync(entity);
         return (entity, 0, 1);
     }
 
     /// <summary>
-    /// 按默认段顺序生成初始起始编码（与 TaktNumberingService 创建逻辑一致）
+    /// 按默认段顺序生成初始起始编码样例（公司段用 CompanyShortName；与 TaktNumberingHelper 一致）
     /// </summary>
-    /// <param name="rule">编码规则（须含 TenantCode、CompanyCode 等段字段）</param>
+    /// <param name="rule">编码规则</param>
+    /// <param name="companyShortName">公司简称</param>
     /// <param name="referenceTime">参考时间</param>
-    /// <returns>起始编码与当前流水号</returns>
-    private static (string ExampleCode, int CurrentSequence) BuildInitialExampleCode(
+    /// <returns>起始编码样例</returns>
+    private static string BuildInitialStartingNumber(
         TaktNumbering rule,
+        string companyShortName,
         DateTime referenceTime)
     {
         var step = rule.SequenceStep <= 0 ? 1 : rule.SequenceStep;
-        var code = FormatBusinessCode(rule, step, referenceTime);
-        return (code, step);
+        var model = new TaktNumberingModel
+        {
+            RuleCode = rule.RuleCode,
+            BusinessCode = rule.StartingNumber,
+            CompanyCode = rule.CompanyCode,
+            CompanyShortName = string.IsNullOrWhiteSpace(companyShortName) ? rule.CompanyCode : companyShortName.Trim(),
+            DeptCode = rule.DeptCode,
+            PrefixCode = rule.PrefixCode,
+            DateFormat = rule.DateFormat,
+            SequenceLength = rule.SequenceLength,
+            SequenceStep = rule.SequenceStep,
+            SuffixCode = rule.SuffixCode,
+            ResetPeriod = rule.ResetPeriod,
+            Separator = rule.Separator,
+            Description = rule.NumberingDescription,
+            DocumentType = rule.DocumentType,
+            UpdatedAt = rule.UpdatedAt,
+        };
+        return TaktNumberingHelper.FormatBusinessCode(model, step, referenceTime);
     }
 
     /// <summary>

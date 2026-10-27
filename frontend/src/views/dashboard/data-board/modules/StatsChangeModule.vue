@@ -27,13 +27,13 @@
 
 <script setup lang="ts">
 /**
- * 设变统计：TaktEcGijutsus/stat 当月摘要；Kanban 实施中；部门行未实施/已实施
+ * 设变统计：TaktEcTes/stat 当月摘要；Kanban 实施中；部门行未实施/已实施
  */
 import { useI18n } from 'vue-i18n'
 import StatsMetricGrid from '../components/StatsMetricGrid.vue'
 import { usePermissionStore } from '@/stores/identity/usePermissionStore'
 import { TaktEcImplementationStatus } from '@/constants/logistics/ecImplementationStatus.constants'
-import type { EcGijutsuStat } from '@/types/logistics/manufacturing/engineering-change/ecGijutsu.types'
+import type { EcTeStat } from '@/types/logistics/manufacturing/engineering-change/ecTe.types'
 import { enrichDashboardMetricItems } from '../utils/statsMetricDashboard'
 import {
   DASHBOARD_STATS_API,
@@ -52,7 +52,7 @@ const EC_DEPT_NOT_IMPLEMENTED = 0
 const EC_DEPT_IMPLEMENTED = 1
 
 /** 空设变主统计 */
-const EMPTY_EC_STAT: EcGijutsuStat = {
+const EMPTY_EC_STAT: EcTeStat = {
   statMonth: '',
   ecCount: 0,
   ecDetailCount: 0,
@@ -64,7 +64,7 @@ const permissionStore = usePermissionStore()
 /** 列表 loading */
 const loading = ref(false)
 /** 设变主表统计 */
-const ecStat = ref<EcGijutsuStat>({ ...EMPTY_EC_STAT })
+const ecStat = ref<EcTeStat>({ ...EMPTY_EC_STAT })
 /** 设变实施统计（未实施 / 实施中 / 已实施） */
 const changeData = ref({
   notImplemented: 0,
@@ -91,11 +91,11 @@ const metricItems = computed(() =>
 
 /**
  * 加载设变主表统计（当月录入日期范围）
- * @returns {Promise<EcGijutsuStat>} 设变统计
+ * @returns {Promise<EcTeStat>} 设变统计
  */
-async function loadEcGijutsuStat(): Promise<EcGijutsuStat> {
+async function loadEcTeStat(): Promise<EcTeStat> {
   const monthRange = getCurrentMonthRange()
-  const data = await fetchDashboardGet<EcGijutsuStat>(DASHBOARD_STATS_API.ecStat, {
+  const data = await fetchDashboardGet<EcTeStat>(DASHBOARD_STATS_API.ecStat, {
     ecEntryDateStart: monthRange.start,
     ecEntryDateEnd: monthRange.end,
   })
@@ -116,7 +116,7 @@ async function loadData(): Promise<void> {
       fetchDashboardMetricIfPermitted(
         canListEc,
         'ecStat',
-        () => loadEcGijutsuStat(),
+        () => loadEcTeStat(),
         { ...EMPTY_EC_STAT },
       ),
       fetchDashboardMetricIfPermitted(

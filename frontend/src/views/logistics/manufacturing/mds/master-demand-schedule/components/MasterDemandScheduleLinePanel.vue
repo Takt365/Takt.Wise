@@ -108,7 +108,7 @@
         ref="formRef"
         :form-data="formData"
         :master-id="masterMasterDemandScheduleId"
-        :master-row="selectedMasterRow"
+        :master-row="selecmedMasterRow"
         :loading="formLoading"
       />
     </TaktModal>
@@ -201,7 +201,7 @@ import {
 const pi = useMasterDemandScheduleLineI18n()
 
 const { t } = useI18n()
-const { selectedMasterRow } = useMasterDemandScheduleMasterContext()
+const { selecmedMasterRow } = useMasterDemandScheduleMasterContext()
 
 /** Excel 导入/导出默认 sheet 名与文件名前缀 */
 const excelNames = taktExcelEntityNames('TaktMasterDemandScheduleLine')
@@ -251,9 +251,9 @@ const currentPage = ref(getTaktDefaultPageIndex())
 const pageSize = ref(getTaktDefaultPageSize())
 const total = ref(0)
 const queryKeyword = ref('')
-const selectedRow = ref<MasterDemandScheduleLine | null>(null)
-const selectedRows = ref<MasterDemandScheduleLine[]>([])
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRow = ref<MasterDemandScheduleLine | null>(null)
+const selecmedRows = ref<MasterDemandScheduleLine[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 const formVisible = ref(false)
 const formTitle = ref('')
 const formData = ref<Partial<MasterDemandScheduleLine>>({})
@@ -281,12 +281,12 @@ const importVisible = ref(false)
 
 const entityIdName = 'masterDemandScheduleLineId'
 const masterMasterDemandScheduleId = computed((): string => {
-  const id = (selectedMasterRow.value as Record<string, unknown> | null)?.['masterDemandScheduleId']
+  const id = (selecmedMasterRow.value as Record<string, unknown> | null)?.['masterDemandScheduleId']
   return id != null ? String(id) : ''
 })
 const hasMasterSelection = computed(() => masterMasterDemandScheduleId.value !== '')
-const updateDisabled = computed(() => !hasMasterSelection.value || selectedRows.value.length !== 1)
-const deleteDisabled = computed(() => !hasMasterSelection.value || selectedRows.value.length === 0)
+const updateDisabled = computed(() => !hasMasterSelection.value || selecmedRows.value.length !== 1)
+const deleteDisabled = computed(() => !hasMasterSelection.value || selecmedRows.value.length === 0)
 
 function getMasterDemandScheduleLineId(record: MasterDemandScheduleLine | Record<string, unknown>): string {
   return String((record as MasterDemandScheduleLine)?.[entityIdName] ?? '')
@@ -520,21 +520,21 @@ function formatSummaryFieldTotal(field: string): string {
   return formatSummaryValue(summaryFieldTotals.value[field as keyof typeof summaryFieldTotals.value])
 }
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: MasterDemandScheduleLine[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: MasterDemandScheduleLine, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (selectedRow.value && getMasterDemandScheduleLineId(selectedRow.value) === getMasterDemandScheduleLineId(record)) {
-      selectedRow.value = null
+  onSelect: (record: MasterDemandScheduleLine, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (selecmedRow.value && getMasterDemandScheduleLineId(selecmedRow.value) === getMasterDemandScheduleLineId(record)) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: MasterDemandScheduleLine[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: MasterDemandScheduleLine[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   },
 }))
 
@@ -546,12 +546,12 @@ function onClickRow(record: MasterDemandScheduleLine) {
   const key = getMasterDemandScheduleLineId(record)
   return {
     onClick: () => {
-      selectedRowKeys.value = [key]
-      selectedRows.value = [record]
-      selectedRow.value = record
+      selecmedRowKeys.value = [key]
+      selecmedRows.value = [record]
+      selecmedRow.value = record
     },
-    class: selectedRowKeys.value.includes(key)
-      ? 'takt-master-detail-table-row-selected cursor-pointer'
+    class: selecmedRowKeys.value.includes(key)
+      ? 'takt-master-detail-table-row-selecmed cursor-pointer'
       : 'cursor-pointer',
   }
 }
@@ -589,9 +589,9 @@ async function loadData() {
   if (!hasMasterSelection.value) {
     dataSource.value = []
     total.value = 0
-    selectedRowKeys.value = []
-    selectedRows.value = []
-    selectedRow.value = null
+    selecmedRowKeys.value = []
+    selecmedRows.value = []
+    selecmedRow.value = null
     return
   }
   loading.value = true
@@ -646,8 +646,8 @@ watch(
   },
 )
 
-watch(hasMasterSelection, (selected) => {
-  if (selected) {
+watch(hasMasterSelection, (selecmed) => {
+  if (selecmed) {
     void nextTick(() => startDetailTableScrollObserve())
   }
 })
@@ -686,8 +686,8 @@ async function handleEdit(record: MasterDemandScheduleLine) {
 }
 
 function handleUpdate() {
-  if (selectedRow.value) {
-    void handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    void handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', {
       action: t('common.page.button.edit'),
@@ -744,7 +744,7 @@ async function handleDeleteOne(record: MasterDemandScheduleLine) {
 }
 
 async function handleDelete() {
-  if (!hasMasterSelection.value || selectedRows.value.length === 0) {
+  if (!hasMasterSelection.value || selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', {
       action: t('common.page.button.delete'),
       entity: pi.self(),
@@ -755,12 +755,12 @@ async function handleDelete() {
     title: t('common.tip.confirm.delete.title'),
     content: t('common.tip.confirm.delete.count', {
       entity: pi.self(),
-      count: selectedRows.value.length,
+      count: selecmedRows.value.length,
     }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value.map((r) => getMasterDemandScheduleLineId(r)).filter(Boolean)
+      const ids = selecmedRows.value.map((r) => getMasterDemandScheduleLineId(r)).filter(Boolean)
       await deleteMasterDemandScheduleLineBatch(ids)
       message.success(t('common.feedback.deleted', { target: pi.self() }))
       await loadData()

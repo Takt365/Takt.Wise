@@ -82,7 +82,6 @@ export type InventoryReserveField = keyof typeof INVENTORYRESERVE_PLACEHOLDER
 
 /** 高级查询可 trim 的字符串字段 */
 export const INVENTORYRESERVE_QUERY_STRING_FIELDS = [
-  'plantCode',
   'periodDateStart',
   'periodDateEnd',
   'materialCode',

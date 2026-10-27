@@ -118,13 +118,13 @@ public class TaktEcDeptI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecdept.linenumber", "zh-HK", "行号_hk", "行号（项号/序号，固定步长=10）"),
 
             // entity.ecdept.deptcode
-            new TranslationSeedItem("entity.ecdept.deptcode", "en-US", "部门编码_us", "部门编码。顺序严格为：Eng=技术, Pmc=生管, Mp=采购, Iqc=受检, Mc=部管, Pcba=制二, Assy=制一, Qa=品管, Te=制技。"),
+            new TranslationSeedItem("entity.ecdept.deptcode", "en-US", "部门编码_us", "部门编码。顺序严格为：Te=技术, Pc=生管, Mp=采购, Iqc=受检, Mc=部管, Pcba=制二, Assy=制一, Qa=品管, Te=制技。"),
             // entity.ecdept.deptcode
-            new TranslationSeedItem("entity.ecdept.deptcode", "ja-JP", "部门编码_jp", "部门编码。顺序严格为：Eng=技术, Pmc=生管, Mp=采购, Iqc=受检, Mc=部管, Pcba=制二, Assy=制一, Qa=品管, Te=制技。"),
+            new TranslationSeedItem("entity.ecdept.deptcode", "ja-JP", "部门编码_jp", "部门编码。顺序严格为：Te=技术, Pc=生管, Mp=采购, Iqc=受检, Mc=部管, Pcba=制二, Assy=制一, Qa=品管, Te=制技。"),
             // entity.ecdept.deptcode
-            new TranslationSeedItem("entity.ecdept.deptcode", "zh-CN", "部门编码", "部门编码。顺序严格为：Eng=技术, Pmc=生管, Mp=采购, Iqc=受检, Mc=部管, Pcba=制二, Assy=制一, Qa=品管, Te=制技。"),
+            new TranslationSeedItem("entity.ecdept.deptcode", "zh-CN", "部门编码", "部门编码。顺序严格为：Te=技术, Pc=生管, Mp=采购, Iqc=受检, Mc=部管, Pcba=制二, Assy=制一, Qa=品管, Te=制技。"),
             // entity.ecdept.deptcode
-            new TranslationSeedItem("entity.ecdept.deptcode", "zh-HK", "部门编码_hk", "部门编码。顺序严格为：Eng=技术, Pmc=生管, Mp=采购, Iqc=受检, Mc=部管, Pcba=制二, Assy=制一, Qa=品管, Te=制技。"),
+            new TranslationSeedItem("entity.ecdept.deptcode", "zh-HK", "部门编码_hk", "部门编码。顺序严格为：Te=技术, Pc=生管, Mp=采购, Iqc=受检, Mc=部管, Pcba=制二, Assy=制一, Qa=品管, Te=制技。"),
 
             // entity.ecdept.isimplemented
             new TranslationSeedItem("entity.ecdept.isimplemented", "en-US", "实施_us", "是否实施（0=否 1=是）"),
@@ -189,14 +189,14 @@ public class TaktEcDeptI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecdept.poremainder
             new TranslationSeedItem("entity.ecdept.poremainder", "zh-HK", "Po残_hk", "Po残（采购订单残）"),
 
-            // entity.ecdept.balance
-            new TranslationSeedItem("entity.ecdept.balance", "en-US", "结余_us", "结余"),
-            // entity.ecdept.balance
-            new TranslationSeedItem("entity.ecdept.balance", "ja-JP", "结余_jp", "结余"),
-            // entity.ecdept.balance
-            new TranslationSeedItem("entity.ecdept.balance", "zh-CN", "结余", "结余"),
-            // entity.ecdept.balance
-            new TranslationSeedItem("entity.ecdept.balance", "zh-HK", "结余_hk", "结余"),
+            // entity.ecdept.balancequantity
+            new TranslationSeedItem("entity.ecdept.balancequantity", "en-US", "结余数量_us", "结余数量"),
+            // entity.ecdept.balancequantity
+            new TranslationSeedItem("entity.ecdept.balancequantity", "ja-JP", "结余数量_jp", "结余数量"),
+            // entity.ecdept.balancequantity
+            new TranslationSeedItem("entity.ecdept.balancequantity", "zh-CN", "结余数量", "结余数量"),
+            // entity.ecdept.balancequantity
+            new TranslationSeedItem("entity.ecdept.balancequantity", "zh-HK", "结余数量_hk", "结余数量"),
 
             // entity.ecdept.oldproducthandling
             new TranslationSeedItem("entity.ecdept.oldproducthandling", "en-US", "旧品处理_us", "旧品处理"),

@@ -117,7 +117,6 @@ export type PcbaInspectionDetailField = keyof typeof PCBAINSPECTIONDETAIL_PLACEH
 
 /** 高级查询可 trim 的字符串字段 */
 export const PCBAINSPECTIONDETAIL_QUERY_STRING_FIELDS = [
-  'plantCode',
   'prodOrderCode',
   'pcbaBoardType',
   'visualInspectionLine',

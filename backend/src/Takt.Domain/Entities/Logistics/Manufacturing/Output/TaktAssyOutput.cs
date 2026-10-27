@@ -6,7 +6,7 @@
 // 创建人：Takt365(Cursor AI)
 // 功能描述：组立日报（产出）主表实体，按工厂、生产日期、生产线等记录生产订单与标准产能
 // 计算公式：达成率(%) = 明细实际生产数量合计 ÷ 主表标准产能合计 × 100%（见 TaktProductionStatHelper.CalculateAchievementRatePercent）
-// 标准产能：小时产能 = DirectLabor×60÷StdMinutes×标准生产稼动率(%)；StdMinutes 取自标准工序时间；稼动率取自 TaktStandardOperationRate
+// 标准产能：小时产能 = DirectLabor×60÷StdMinutes×标准生产稼动率(%)；StdMinutes 取自标准工时；稼动率取自 TaktStandardOperationRate
 // 明细参考：明细标准产能无产量无报工为 0；有产量无报工为表头小时产能；有报工为报工工时÷标准工时×稼动率；明细达成率(%) = 实际生产数量 ÷ 明细标准产能 × 100%
 //
 // 版权信息：Copyright (c) 2025 Takt  All rights reserved.

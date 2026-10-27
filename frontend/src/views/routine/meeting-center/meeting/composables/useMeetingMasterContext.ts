@@ -15,7 +15,7 @@ export type MeetingRowRecord = Meeting | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface MeetingMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<MeetingRowRecord | null>
+  selecmedMasterRow: Ref<MeetingRowRecord | null>
 }
 
 const meetingMasterContextKey: InjectionKey<MeetingMasterContext> = Symbol('meetingMasterContext')
@@ -25,8 +25,8 @@ const meetingMasterContextKey: InjectionKey<MeetingMasterContext> = Symbol('meet
  * @returns {MeetingMasterContext} 主表上下文
  */
 export function provideMeetingMasterContext(): MeetingMasterContext {
-  const selectedMasterRow = ref<MeetingRowRecord | null>(null)
-  const ctx: MeetingMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<MeetingRowRecord | null>(null)
+  const ctx: MeetingMasterContext = { selecmedMasterRow }
   provide(meetingMasterContextKey, ctx)
   return ctx
 }

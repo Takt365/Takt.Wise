@@ -34,7 +34,7 @@ public class TaktEcHandoffMailService
     private static string BomAfterPrompt(string ecCode) => $"【逾期】设计变更{ecCode}生效已逾期30天，请尽快补填实施内容";
     private const string MailFooter = "本邮件由系统自动发送，无需回复。如需帮助，请联系管理员。";
 
-    private readonly ITaktCompanyRepository<TaktEcGijutsu> _gijutsuRepository;
+    private readonly ITaktCompanyRepository<TaktEcTe> _teRepository;
     private readonly ITaktCompanyRepository<TaktEcDetail> _detailRepository;
     private readonly ITaktCompanyRepository<TaktEcGroup> _groupRepository;
     private readonly ITaktApprovalRepository<TaktEcNotification> _notificationRepository;
@@ -46,7 +46,7 @@ public class TaktEcHandoffMailService
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="gijutsuRepository">设变技术课主仓储</param>
+    /// <param name="teRepository">设变技术课主仓储</param>
     /// <param name="detailRepository">设变明细仓储</param>
     /// <param name="groupRepository">设变组仓储</param>
     /// <param name="notificationRepository">工程变更通知单仓储</param>
@@ -55,7 +55,7 @@ public class TaktEcHandoffMailService
     /// <param name="deptAccess">部门执行跨表访问</param>
     /// <param name="configuration">邮件配置</param>
     public TaktEcHandoffMailService(
-        ITaktCompanyRepository<TaktEcGijutsu> gijutsuRepository,
+        ITaktCompanyRepository<TaktEcTe> teRepository,
         ITaktCompanyRepository<TaktEcDetail> detailRepository,
         ITaktCompanyRepository<TaktEcGroup> groupRepository,
         ITaktApprovalRepository<TaktEcNotification> notificationRepository,
@@ -64,7 +64,7 @@ public class TaktEcHandoffMailService
         TaktEcExecDeptAccess deptAccess,
         IConfiguration configuration)
     {
-        _gijutsuRepository = gijutsuRepository;
+        _teRepository = teRepository;
         _detailRepository = detailRepository;
         _groupRepository = groupRepository;
         _notificationRepository = notificationRepository;
@@ -77,19 +77,19 @@ public class TaktEcHandoffMailService
     /// <summary>
     /// 按设变单号加载明细与执行行后派发尚未发送的环节邮件
     /// </summary>
-    /// <param name="gijutsu">设变主表</param>
+    /// <param name="te">设变主表</param>
     /// <returns>任务</returns>
-    public async Task TryDispatchAsync(TaktEcGijutsu gijutsu)
+    public async Task TryDispatchAsync(TaktEcTe te)
     {
-        ArgumentNullException.ThrowIfNull(gijutsu);
-        if (string.IsNullOrWhiteSpace(gijutsu.EcCode))
+        ArgumentNullException.ThrowIfNull(te);
+        if (string.IsNullOrWhiteSpace(te.EcCode))
         {
             return;
         }
-        var code = gijutsu.EcCode.Trim();
+        var code = te.EcCode.Trim();
         var details = await _detailRepository.GetListAsync(x => x.EcCode == code && x.IsObsolete == 0);
         var execRows = await _deptAccess.ListBaseByEcCodeAsync(code);
-        await TryDispatchAsync(gijutsu, details, execRows);
+        await TryDispatchAsync(te, details, execRows);
     }
 
     /// <summary>
@@ -129,17 +129,17 @@ public class TaktEcHandoffMailService
             {
                 continue;
             }
-            var gijutsu = await _gijutsuRepository.FirstAsync(x =>
+            var te = await _teRepository.FirstAsync(x =>
                 x.TenantCode == tenantCode
                 && x.CompanyCode == companyCode
                 && x.EcCode == group.Key);
-            if (gijutsu == null)
+            if (te == null)
             {
                 continue;
             }
             var execRows = await _deptAccess.ListBaseByEcCodeAsync(group.Key);
-            var notification = await EnsureNotificationAsync(gijutsu);
-            var sent = ReadMergedTokens(notification, gijutsu);
+            var notification = await EnsureNotificationAsync(te);
+            var sent = ReadMergedTokens(notification, te);
             var changed = false;
             foreach (var phase in new[] { (Token: "bomb", Day: before, After: false), (Token: "boma", Day: after, After: true) })
             {
@@ -148,9 +148,8 @@ public class TaktEcHandoffMailService
                 {
                     continue;
                 }
-                var detailIds = phaseDetails.Select(x => x.Id).ToHashSet();
                 var openDepts = execRows
-                    .Where(x => x.IsObsolete == 0 && x.IsImplemented != 1 && detailIds.Contains(x.EcDetailId))
+                    .Where(x => x.IsObsolete == 0 && x.IsImplemented != 1)
                     .Select(x => x.DeptCode)
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -167,7 +166,7 @@ public class TaktEcHandoffMailService
                     {
                         continue;
                     }
-                    var emails = await ResolveEmailsAsync(gijutsu.PlantCode, [category]);
+                    var emails = await ResolveEmailsAsync(te.PlantCode, [category]);
                     if (emails.Count == 0)
                     {
                         TaktLogger.Warning(
@@ -219,15 +218,15 @@ public class TaktEcHandoffMailService
     {
         category = deptCode switch
         {
-            TaktEcDeptCodes.Pmc => TaktEcGroupCategoryConstants.Pmc,
-            TaktEcDeptCodes.Te => TaktEcGroupCategoryConstants.Sop,
-            TaktEcDeptCodes.Mp => TaktEcGroupCategoryConstants.Mp,
+            TaktEcDeptCodes.Pc => TaktEcGroupCategoryConstants.Pc,
+            TaktEcDeptCodes.Me => TaktEcGroupCategoryConstants.Sop,
+            TaktEcDeptCodes.Pur => TaktEcGroupCategoryConstants.Pur,
             TaktEcDeptCodes.Mc => TaktEcGroupCategoryConstants.Mc,
             TaktEcDeptCodes.Iqc => TaktEcGroupCategoryConstants.Iqc,
-            TaktEcDeptCodes.Smt => TaktEcGroupCategoryConstants.Smt,
-            TaktEcDeptCodes.Pcba => TaktEcGroupCategoryConstants.Pcba,
-            TaktEcDeptCodes.Assy => TaktEcGroupCategoryConstants.Assy,
-            TaktEcDeptCodes.Qa => TaktEcGroupCategoryConstants.Qa,
+            TaktEcDeptCodes.Mtl => TaktEcGroupCategoryConstants.Mtl,
+            TaktEcDeptCodes.Mfg2 => TaktEcGroupCategoryConstants.Mfg2,
+            TaktEcDeptCodes.Mfg1 => TaktEcGroupCategoryConstants.Mfg1,
+            TaktEcDeptCodes.Qc => TaktEcGroupCategoryConstants.Qc,
             _ => 0,
         };
         return category > 0;
@@ -236,37 +235,37 @@ public class TaktEcHandoffMailService
     /// <summary>
     /// 用已加载的明细与执行行派发尚未发送的环节邮件
     /// </summary>
-    /// <param name="gijutsu">设变主表</param>
+    /// <param name="te">设变主表</param>
     /// <param name="details">未作废明细</param>
     /// <param name="execRows">部门执行行</param>
     /// <returns>任务</returns>
     public async Task TryDispatchAsync(
-        TaktEcGijutsu gijutsu,
+        TaktEcTe te,
         IReadOnlyList<TaktEcDetail> details,
         IReadOnlyList<TaktEcExecBaseRow> execRows)
     {
-        ArgumentNullException.ThrowIfNull(gijutsu);
+        ArgumentNullException.ThrowIfNull(te);
         ArgumentNullException.ThrowIfNull(details);
         ArgumentNullException.ThrowIfNull(execRows);
-        if (string.IsNullOrWhiteSpace(gijutsu.EcCode))
+        if (string.IsNullOrWhiteSpace(te.EcCode))
         {
             return;
         }
-        var notification = await EnsureNotificationAsync(gijutsu);
-        var sent = ReadMergedTokens(notification, gijutsu);
+        var notification = await EnsureNotificationAsync(te);
+        var sent = ReadMergedTokens(notification, te);
         var changed = false;
-        foreach (var step in BuildSteps(gijutsu, details, execRows))
+        foreach (var step in BuildSteps(te, details, execRows))
         {
             if (sent.Contains(step.Token))
             {
                 continue;
             }
-            var emails = await ResolveEmailsAsync(gijutsu.PlantCode, step.Categories);
+            var emails = await ResolveEmailsAsync(te.PlantCode, step.Categories);
             if (emails.Count == 0)
             {
                 TaktLogger.Warning(
                     "[EcHandoff] 无收件邮箱，本步留待下次重试 EcCode={EcCode} Step={Step}",
-                    gijutsu.EcCode,
+                    te.EcCode,
                     step.Token);
                 continue;
             }
@@ -280,7 +279,7 @@ public class TaktEcHandoffMailService
                 catch (Exception ex)
                 {
                     failed = true;
-                    TaktLogger.Error(ex, "[EcHandoff] 发送失败 EcCode={EcCode} Step={Step} Email={Email}", gijutsu.EcCode, step.Token, email);
+                    TaktLogger.Error(ex, "[EcHandoff] 发送失败 EcCode={EcCode} Step={Step} Email={Email}", te.EcCode, step.Token, email);
                 }
             }
             if (failed)
@@ -292,7 +291,7 @@ public class TaktEcHandoffMailService
             changed = true;
             TaktLogger.Information(
                 "[EcHandoff] 已发送 EcCode={EcCode} Step={Step} Count={Count}",
-                gijutsu.EcCode,
+                te.EcCode,
                 step.Token,
                 emails.Count);
         }
@@ -307,31 +306,31 @@ public class TaktEcHandoffMailService
     /// 当前应发送、且前置部门已全部实施的步骤
     /// </summary>
     private static List<HandoffStep> BuildSteps(
-        TaktEcGijutsu gijutsu,
+        TaktEcTe te,
         IReadOnlyList<TaktEcDetail> details,
         IReadOnlyList<TaktEcExecBaseRow> execRows)
     {
-        var code = gijutsu.EcCode.Trim();
-        var title = string.IsNullOrWhiteSpace(gijutsu.EcTitle) ? code : $"{code} {gijutsu.EcTitle.Trim()}";
+        var code = te.EcCode.Trim();
+        var title = string.IsNullOrWhiteSpace(te.EcTitle) ? code : $"{code} {te.EcTitle.Trim()}";
         var steps = new List<HandoffStep>
         {
             Step(
                 "tech",
-                [TaktEcGroupCategoryConstants.Pmc, TaktEcGroupCategoryConstants.Sop],
+                [TaktEcGroupCategoryConstants.Pc, TaktEcGroupCategoryConstants.Sop],
                 FillPrompt(code),
                 WithFooter(FillPrompt(code))),
         };
-        if (IsDeptImplemented(execRows, TaktEcDeptCodes.Pmc))
+        if (IsDeptImplemented(execRows, TaktEcDeptCodes.Pc))
         {
             steps.Add(Step(
-                "pmc",
-                [TaktEcGroupCategoryConstants.Mp],
+                "pc",
+                [TaktEcGroupCategoryConstants.Pur],
                 FillPrompt(code),
                 WithFooter(FillPrompt(code))));
         }
-        if (IsDeptImplemented(execRows, TaktEcDeptCodes.Mp))
+        if (IsDeptImplemented(execRows, TaktEcDeptCodes.Pur))
         {
-            AddRouteSteps(steps, details, code, "mp");
+            AddRouteSteps(steps, details, code, "pur");
         }
         if (IsDeptImplemented(execRows, TaktEcDeptCodes.Iqc))
         {
@@ -342,49 +341,49 @@ public class TaktEcHandoffMailService
         {
             steps.Add(Step(
                 "mc",
-                [TaktEcGroupCategoryConstants.Assy, TaktEcGroupCategoryConstants.Pcba],
+                [TaktEcGroupCategoryConstants.Mfg1, TaktEcGroupCategoryConstants.Mfg2],
                 FillPrompt(code),
                 WithFooter(FillPrompt(code))));
         }
-        if (IsDeptImplemented(execRows, TaktEcDeptCodes.Smt))
+        if (IsDeptImplemented(execRows, TaktEcDeptCodes.Mtl))
         {
             steps.Add(Step(
-                "smt",
-                [TaktEcGroupCategoryConstants.Pcba],
+                "mtl",
+                [TaktEcGroupCategoryConstants.Mfg2],
                 FillPrompt(code),
                 WithFooter(FillPrompt(code))));
         }
-        if (IsDeptImplemented(execRows, TaktEcDeptCodes.Pcba))
+        if (IsDeptImplemented(execRows, TaktEcDeptCodes.Mfg2))
         {
             steps.Add(Step(
-                "pcba",
-                [TaktEcGroupCategoryConstants.Assy],
+                "mfg2",
+                [TaktEcGroupCategoryConstants.Mfg1],
                 FillPrompt(code),
                 WithFooter(FillPrompt(code))));
         }
-        if (IsDeptImplemented(execRows, TaktEcDeptCodes.Assy))
+        if (IsDeptImplemented(execRows, TaktEcDeptCodes.Mfg1))
         {
             steps.Add(Step(
-                "assy",
-                [TaktEcGroupCategoryConstants.Qa],
+                "mfg1",
+                [TaktEcGroupCategoryConstants.Qc],
                 FillPrompt(code),
                 WithFooter(FillPrompt(code))));
         }
-        if (IsDeptImplemented(execRows, TaktEcDeptCodes.Qa))
+        if (IsDeptImplemented(execRows, TaktEcDeptCodes.Qc))
         {
             steps.Add(Step(
-                "qa",
+                "qc",
                 [
                     TaktEcGroupCategoryConstants.EcOwner,
                     TaktEcGroupCategoryConstants.Sop,
-                    TaktEcGroupCategoryConstants.Pmc,
-                    TaktEcGroupCategoryConstants.Mp,
+                    TaktEcGroupCategoryConstants.Pc,
+                    TaktEcGroupCategoryConstants.Pur,
                     TaktEcGroupCategoryConstants.Mc,
                     TaktEcGroupCategoryConstants.Iqc,
-                    TaktEcGroupCategoryConstants.Smt,
-                    TaktEcGroupCategoryConstants.Pcba,
-                    TaktEcGroupCategoryConstants.Assy,
-                    TaktEcGroupCategoryConstants.Qa,
+                    TaktEcGroupCategoryConstants.Mtl,
+                    TaktEcGroupCategoryConstants.Mfg2,
+                    TaktEcGroupCategoryConstants.Mfg1,
+                    TaktEcGroupCategoryConstants.Qc,
                 ],
                 $"设变 {code}：实施完成",
                 WithFooter($"设变 {title} 品管已实施，实施完成。")));
@@ -401,7 +400,7 @@ public class TaktEcHandoffMailService
         string code,
         string tokenPrefix)
     {
-        if (details.Any(x => TaktEcScopeConstants.IsBukanVisible(x.EcNewPurchaseType, x.EcNewWarehouse)))
+        if (details.Any(x => TaktEcScopeConstants.IsMcVisible(x.EcNewPurchaseType, x.EcNewWarehouse)))
         {
             steps.Add(Step(
                 tokenPrefix + "-mc",
@@ -413,7 +412,7 @@ public class TaktEcHandoffMailService
         {
             steps.Add(Step(
                 tokenPrefix + "-smt",
-                [TaktEcGroupCategoryConstants.Smt],
+                [TaktEcGroupCategoryConstants.Mtl],
                 FillPrompt(code),
                 WithFooter(FillPrompt(code))));
         }
@@ -449,28 +448,32 @@ public class TaktEcHandoffMailService
     /// <summary>
     /// 取已有通知单；没有则按邮件通知编码规则创建一笔
     /// </summary>
-    private async Task<TaktEcNotification> EnsureNotificationAsync(TaktEcGijutsu gijutsu)
+    private async Task<TaktEcNotification> EnsureNotificationAsync(TaktEcTe te)
     {
         var existing = await _notificationRepository.FirstAsync(x =>
-            x.EcGijutsuId == gijutsu.Id && x.IsDeleted == 0);
+            x.EcTeId == te.Id && x.IsDeleted == 0);
         if (existing != null)
         {
             return existing;
         }
-        var generated = await _numberingGenerator.GenerateNextAsync(TaktEcFlowConstants.NotificationRuleEmail);
+        var existingRows = await _notificationRepository.GetListAsync(
+            x => x.TenantCode == te.TenantCode && x.CompanyCode == te.CompanyCode);
+        var generated = await _numberingGenerator.GenerateNextAsync(
+            TaktEcFlowConstants.NotificationRuleEmail,
+            existingRows.Select(x => (string?)x.EcNotificationCode).ToList());
         if (string.IsNullOrWhiteSpace(generated.BusinessCode))
         {
             throw new TaktBusinessException("工程变更通知单号生成失败");
         }
         var notification = new TaktEcNotification
         {
-            TenantCode = gijutsu.TenantCode,
-            CompanyCode = gijutsu.CompanyCode,
-            PlantCode = gijutsu.PlantCode,
+            TenantCode = te.TenantCode,
+            CompanyCode = te.CompanyCode,
+            PlantCode = te.PlantCode,
             EcNotificationCode = generated.BusinessCode.Trim(),
-            EcGijutsuId = gijutsu.Id,
-            EcCode = gijutsu.EcCode.Trim(),
-            EcTitle = gijutsu.EcTitle,
+            EcTeId = te.Id,
+            EcCode = te.EcCode.Trim(),
+            EcTitle = te.EcTitle,
             EcNotificationDate = DateTime.Today,
             EcNotificationMethod = NotificationMethodEmail,
             EcNotificationStatus = 0,
@@ -481,10 +484,10 @@ public class TaktEcHandoffMailService
     /// <summary>
     /// 已发送步骤：通知单 ExtField，并合并主表上的历史标记
     /// </summary>
-    private static HashSet<string> ReadMergedTokens(TaktEcNotification notification, TaktEcGijutsu gijutsu)
+    private static HashSet<string> ReadMergedTokens(TaktEcNotification notification, TaktEcTe te)
     {
         var sent = ReadTokens(notification.ExtField);
-        foreach (var token in ReadTokens(gijutsu.ExtField))
+        foreach (var token in ReadTokens(te.ExtField))
         {
             sent.Add(token);
         }
@@ -510,16 +513,16 @@ public class TaktEcHandoffMailService
     /// </summary>
     private static string? CategoryToDeptCode(int category) => category switch
     {
-        TaktEcGroupCategoryConstants.EcOwner => TaktEcDeptCodes.Eng,
-        TaktEcGroupCategoryConstants.Sop => TaktEcDeptCodes.Te,
-        TaktEcGroupCategoryConstants.Pmc => TaktEcDeptCodes.Pmc,
-        TaktEcGroupCategoryConstants.Mp => TaktEcDeptCodes.Mp,
+        TaktEcGroupCategoryConstants.EcOwner => TaktEcDeptCodes.Te,
+        TaktEcGroupCategoryConstants.Sop => TaktEcDeptCodes.Me,
+        TaktEcGroupCategoryConstants.Pc => TaktEcDeptCodes.Pc,
+        TaktEcGroupCategoryConstants.Pur => TaktEcDeptCodes.Pur,
         TaktEcGroupCategoryConstants.Mc => TaktEcDeptCodes.Mc,
         TaktEcGroupCategoryConstants.Iqc => TaktEcDeptCodes.Iqc,
-        TaktEcGroupCategoryConstants.Smt => TaktEcDeptCodes.Smt,
-        TaktEcGroupCategoryConstants.Pcba => TaktEcDeptCodes.Pcba,
-        TaktEcGroupCategoryConstants.Assy => TaktEcDeptCodes.Assy,
-        TaktEcGroupCategoryConstants.Qa => TaktEcDeptCodes.Qa,
+        TaktEcGroupCategoryConstants.Mtl => TaktEcDeptCodes.Mtl,
+        TaktEcGroupCategoryConstants.Mfg2 => TaktEcDeptCodes.Mfg2,
+        TaktEcGroupCategoryConstants.Mfg1 => TaktEcDeptCodes.Mfg1,
+        TaktEcGroupCategoryConstants.Qc => TaktEcDeptCodes.Qc,
         _ => null,
     };
 
@@ -561,7 +564,7 @@ public class TaktEcHandoffMailService
                 PlantCode = notification.PlantCode,
                 EcNotificationId = notification.Id,
                 EcNotificationCode = notification.EcNotificationCode,
-                EcGijutsuId = notification.EcGijutsuId,
+                EcTeId = notification.EcTeId,
                 EcCode = notification.EcCode,
                 EcDeptGroupCode = code,
                 EcDeptGroupName = name,

@@ -4,7 +4,7 @@
 // 文件名称：TaktPcbaOutputDetailSeedHelper.cs
 // 创建时间：2026-07-06
 // 创建人：Takt365(Cursor AI)
-// 功能描述：PCBA日报新增时按物料标准工序时间生成子表明细（生产时段=工作中心）
+// 功能描述：PCBA日报新增时按物料标准工时生成子表明细（生产时段=工作中心）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -21,9 +21,9 @@ namespace Takt.Application.Services.Logistics.Manufacturing.Output;
 internal static class TaktPcbaOutputDetailSeedHelper
 {
     /// <summary>
-    /// 按标准工序时间工作中心构建默认明细预览列表
+    /// 按标准工时工作中心构建默认明细预览列表
     /// </summary>
-    /// <param name="operationTimes">标准工序时间列表</param>
+    /// <param name="operationTimes">标准工时列表</param>
     /// <returns>默认明细预览</returns>
     public static List<TaktPcbaOutputDefaultDetailDto> BuildDefaultDetailPreview(
         IReadOnlyList<TaktStandardOperationTime> operationTimes)
@@ -61,7 +61,7 @@ internal static class TaktPcbaOutputDetailSeedHelper
     /// 新增 PCBA 日报时确保按工作中心生成子表明细（与客户端已填写的工作中心行合并）
     /// </summary>
     /// <param name="dto">创建 DTO</param>
-    /// <param name="operationTimes">标准工序时间列表</param>
+    /// <param name="operationTimes">标准工时列表</param>
     public static void EnsureDefaultDetailsOnCreate(
         TaktPcbaOutputCreateDto dto,
         IReadOnlyList<TaktStandardOperationTime> operationTimes)

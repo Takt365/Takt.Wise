@@ -82,7 +82,6 @@ export type CustomerServiceOrderField = keyof typeof CUSTOMERSERVICEORDER_PLACEH
 /** 高级查询可 trim 的字符串字段 */
 export const CUSTOMERSERVICEORDER_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'serviceOrderCode',
   'clientId',
   'clientCode',

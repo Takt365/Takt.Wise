@@ -5,7 +5,7 @@
 // 文件名称：TaktStandardOperationTime.cs
 // 创建时间：2025-02-02
 // 创建人：Takt365(Cursor AI)
-// 功能描述：标准工序时间实体
+// 功能描述：标准工时实体
 //
 // 版权信息：Copyright (c) 2025 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -17,9 +17,9 @@ using Takt.Domain.Entities;
 namespace Takt.Domain.Entities.Logistics.Manufacturing.Bom;
 
 /// <summary>
-/// 标准工序时间实体（基于标准工时）
+/// 标准工时实体（基于标准工时）
 /// </summary>
-[SugarTable("takt_logistics_manufacturing_bom_standard_operation_time", "标准工序时间表")]
+[SugarTable("takt_logistics_manufacturing_bom_standard_operation_time", "标准工时表")]
 [SugarIndex("ix_standard_operation_time_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
 [SugarIndex("ix_standard_operation_time_is_deleted", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(IsDeleted), OrderByType.Asc, false)]
 [SugarIndex("ix_takt_logistics_manufacturing_bom_standard_operation_time_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(PlantCode), OrderByType.Asc, nameof(MaterialCode), OrderByType.Asc, nameof(WorkCenter), OrderByType.Asc, true)]

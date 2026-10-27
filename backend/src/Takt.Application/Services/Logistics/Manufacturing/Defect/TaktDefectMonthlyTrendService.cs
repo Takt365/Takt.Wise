@@ -57,22 +57,34 @@ public class TaktDefectMonthlyTrendService : TaktServiceBase, ITaktDefectMonthly
   /// </summary>
   /// <param name="plantCode">工厂代码（可选，用于按工厂过滤）</param>
   /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
+  /// <param name="statTab">页签 assy 或 pcba；空则两类工厂都返回</param>
   /// <returns>下拉选项</returns>
-  public async Task<List<TaktSelectOption>> GetDefectMonthlyTrendPlantOptionsAsync(string? plantCode = null, string? keyword = null)
+  public async Task<List<TaktSelectOption>> GetDefectMonthlyTrendPlantOptionsAsync(string? plantCode = null, string? keyword = null, string? statTab = null)
   {
     EnsureThreeLayerContext();
-    var assyList = await _assyDefectRepository.GetListAsync(
-        x => x.TenantCode == CurrentTenantCode
-            && x.CompanyCode == CurrentCompanyCode
-            && x.PlantCode != null
-            && x.PlantCode != string.Empty);
-    var pcbaList = await _pcbaInspectionRepository.GetListAsync(
-        x => x.TenantCode == CurrentTenantCode
-            && x.CompanyCode == CurrentCompanyCode
-            && x.PlantCode != null
-            && x.PlantCode != string.Empty);
-    return assyList.Select(e => e.PlantCode.Trim())
-        .Concat(pcbaList.Select(e => e.PlantCode.Trim()))
+    var tab = statTab?.Trim().ToLowerInvariant() ?? string.Empty;
+    var includeAssy = tab.Length == 0 || tab == CategoryAssy;
+    var includePcba = tab.Length == 0 || tab == CategoryPcba;
+    var codes = new List<string>();
+    if (includeAssy)
+    {
+      var assyList = await _assyDefectRepository.GetListAsync(
+          x => x.TenantCode == CurrentTenantCode
+              && x.CompanyCode == CurrentCompanyCode
+              && x.PlantCode != null
+              && x.PlantCode != string.Empty);
+      codes.AddRange(assyList.Select(e => e.PlantCode.Trim()));
+    }
+    if (includePcba)
+    {
+      var pcbaList = await _pcbaInspectionRepository.GetListAsync(
+          x => x.TenantCode == CurrentTenantCode
+              && x.CompanyCode == CurrentCompanyCode
+              && x.PlantCode != null
+              && x.PlantCode != string.Empty);
+      codes.AddRange(pcbaList.Select(e => e.PlantCode.Trim()));
+    }
+    return codes
         .Where(c => !string.IsNullOrWhiteSpace(c))
         .GroupBy(c => c, StringComparer.OrdinalIgnoreCase)
         .OrderBy(g => g.Key, StringComparer.Ordinal)

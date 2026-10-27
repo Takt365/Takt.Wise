@@ -50,7 +50,7 @@ public class TaktEcExecutionTaskDto : TaktCompanyDtoBase
     /// 设变 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
 
     /// <summary>
     /// 设变 名称（填充字段）
@@ -63,7 +63,7 @@ public class TaktEcExecutionTaskDto : TaktCompanyDtoBase
     public string EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 关联设变部门行 ID（TaktEcSeikan/Mp 等 8 张部门执行表主键）
+    /// 关联设变部门行 ID（TaktEcPc/Mp 等 8 张部门执行表主键）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
     public long? EcExecId { get; set; }
@@ -161,7 +161,7 @@ public class TaktEcExecutionTaskQueryDto : TaktPagedQuery
     /// 设变 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcGijutsuId { get; set; }
+    public long? EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余）
@@ -169,7 +169,7 @@ public class TaktEcExecutionTaskQueryDto : TaktPagedQuery
     public string? EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 关联设变部门行 ID（TaktEcSeikan/Mp 等 8 张部门执行表主键）
+    /// 关联设变部门行 ID（TaktEcPc/Mp 等 8 张部门执行表主键）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
     public long? EcExecId { get; set; }
@@ -285,7 +285,7 @@ public class TaktEcExecutionTaskCreateDto
     /// 设变 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余）
@@ -294,7 +294,7 @@ public class TaktEcExecutionTaskCreateDto
     public string EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 关联设变部门行 ID（TaktEcSeikan/Mp 等 8 张部门执行表主键）
+    /// 关联设变部门行 ID（TaktEcPc/Mp 等 8 张部门执行表主键）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
     public long? EcExecId { get; set; }
@@ -437,7 +437,7 @@ public class TaktEcExecutionTaskTemplateDto
     /// 设变 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcGijutsuId { get; set; }
+    public long? EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余）
@@ -445,7 +445,7 @@ public class TaktEcExecutionTaskTemplateDto
     public string? EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 关联设变部门行 ID（TaktEcSeikan/Mp 等 8 张部门执行表主键）
+    /// 关联设变部门行 ID（TaktEcPc/Mp 等 8 张部门执行表主键）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
     public long? EcExecId { get; set; }
@@ -538,7 +538,7 @@ public class TaktEcExecutionTaskImportDto
     /// 设变 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcGijutsuId { get; set; }
+    public long? EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余）
@@ -546,7 +546,7 @@ public class TaktEcExecutionTaskImportDto
     public string? EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 关联设变部门行 ID（TaktEcSeikan/Mp 等 8 张部门执行表主键）
+    /// 关联设变部门行 ID（TaktEcPc/Mp 等 8 张部门执行表主键）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
     public long? EcExecId { get; set; }
@@ -635,7 +635,7 @@ public class TaktEcExecutionTaskExportDto
     /// 设变 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余）
@@ -643,7 +643,7 @@ public class TaktEcExecutionTaskExportDto
     public string EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 关联设变部门行 ID（TaktEcSeikan/Mp 等 8 张部门执行表主键）
+    /// 关联设变部门行 ID（TaktEcPc/Mp 等 8 张部门执行表主键）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
     public long? EcExecId { get; set; }

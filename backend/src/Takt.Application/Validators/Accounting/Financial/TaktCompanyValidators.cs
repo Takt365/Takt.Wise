@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Validators.Accounting.Financial
 // 文件名称：TaktCompanyValidators.cs
-// 创建时间：2026-10-14
+// 创建时间：2026-10-27
 // 创建人：Takt365(Auto Generated)
 // 功能描述：Company 模块 FluentValidation 验证器（由 generate-validators-from-entity.cjs 根据 TaktCompany 生成，请按需审阅）
 // 
@@ -43,7 +43,7 @@ public class TaktCompanyCreateValidator : AbstractValidator<TaktCompanyCreateDto
             .MaximumLength(140).WithMessage("公司名称1长度不能超过140个字符");
         RuleFor(x => x.CompanyShortName)
             .NotEmpty().WithMessage("公司简称不能为空")
-            .MaximumLength(50).WithMessage("公司简称长度不能超过50个字符");
+            .MaximumLength(20).WithMessage("公司简称长度不能超过20个字符");
         RuleFor(x => x.EnterpriseNature)
             .NotEmpty().WithMessage("企业性质不能为空")
             .MaximumLength(4).WithMessage("企业性质长度不能超过4个字符");
@@ -177,7 +177,7 @@ public class TaktCompanyUpdateValidator : AbstractValidator<TaktCompanyUpdateDto
             .MaximumLength(140).WithMessage("公司名称1长度不能超过140个字符");
         RuleFor(x => x.CompanyShortName)
             .NotEmpty().WithMessage("公司简称不能为空")
-            .MaximumLength(50).WithMessage("公司简称长度不能超过50个字符");
+            .MaximumLength(20).WithMessage("公司简称长度不能超过20个字符");
         RuleFor(x => x.EnterpriseNature)
             .NotEmpty().WithMessage("企业性质不能为空")
             .MaximumLength(4).WithMessage("企业性质长度不能超过4个字符");
@@ -306,7 +306,7 @@ public class TaktCompanyImportValidator : AbstractValidator<TaktCompanyImportDto
             .MaximumLength(140).WithMessage("公司名称1长度不能超过140个字符");
         RuleFor(x => x.CompanyShortName)
             .NotEmpty().WithMessage("公司简称不能为空")
-            .MaximumLength(50).WithMessage("公司简称长度不能超过50个字符");
+            .MaximumLength(20).WithMessage("公司简称长度不能超过20个字符");
         RuleFor(x => x.EnterpriseNature)
             .NotEmpty().WithMessage("企业性质不能为空")
             .MaximumLength(4).WithMessage("企业性质长度不能超过4个字符");

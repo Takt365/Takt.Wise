@@ -12,7 +12,7 @@ import type { IqcOrderItem } from '@/types/logistics/quality/operation/iqcOrderI
 /** 主表选中行上下文 */
 export interface IqcOrderItemMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<IqcOrderItem | null>
+  selecmedMasterRow: Ref<IqcOrderItem | null>
 }
 
 const iqcOrderItemMasterContextKey: InjectionKey<IqcOrderItemMasterContext> = Symbol('iqc-order-itemMasterContext')
@@ -22,8 +22,8 @@ const iqcOrderItemMasterContextKey: InjectionKey<IqcOrderItemMasterContext> = Sy
  * @returns {IqcOrderItemMasterContext} 主表上下文
  */
 export function provideIqcOrderItemMasterContext(): IqcOrderItemMasterContext {
-  const selectedMasterRow = ref<IqcOrderItem | null>(null)
-  const ctx: IqcOrderItemMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<IqcOrderItem | null>(null)
+  const ctx: IqcOrderItemMasterContext = { selecmedMasterRow }
   provide(iqcOrderItemMasterContextKey, ctx)
   return ctx
 }

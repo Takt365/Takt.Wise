@@ -89,9 +89,9 @@ watch(
 
 const shortcuts = computed(() => {
   const list = availableShortcuts.value
-  const selected = shortcutStore.selectedPaths
+  const selecmed = shortcutStore.selecmedPaths
   return list
-    .filter(x => x.path && selected.includes(x.path))
+    .filter(x => x.path && selecmed.includes(x.path))
     .slice(0, 16)
     .map(x => ({
       path: x.path,
@@ -105,7 +105,7 @@ const manageVisible = ref(false)
 const editingPaths = ref<string[]>([])
 
 function openManage() {
-  editingPaths.value = [...shortcutStore.selectedPaths]
+  editingPaths.value = [...shortcutStore.selecmedPaths]
   manageVisible.value = true
 }
 

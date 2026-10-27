@@ -26,7 +26,7 @@ using Takt.Shared.Validation;
 namespace Takt.Application.Services.Logistics.Manufacturing.Bom;
 
 /// <summary>
-/// BOM 成本查询栏共用选项（成本分析 / 产品推移 / 机种推移 / 差异推移 / 零价格）
+/// BOM 成本查询栏共用选项（机种推移 / 差异推移 / 零价格）
 /// </summary>
 public class TaktBomCostOptionService : TaktServiceBase, ITaktBomCostOptionService
 {

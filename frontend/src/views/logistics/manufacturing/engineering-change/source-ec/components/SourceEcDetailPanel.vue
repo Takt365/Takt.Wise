@@ -101,16 +101,6 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('plantCode')">
-      <a-form-item :label="pi.queryLabel('plantCode')">
-        <TaktSelect
-          v-model:value="advancedQueryForm.plantCode"
-          api-url="TaktPlants/options"
-          :placeholder="pi.queryPh('plantCode', 'select')"
-          allow-clear
-        />
-      </a-form-item>
-      </div>
       <div v-show="isFieldVisible('sourceEcCode')">
       <a-form-item :label="pi.queryLabel('sourceEcCode')">
         <a-input
@@ -435,7 +425,7 @@ import {
 const pi = useSourceEcDetailI18n()
 
 const { t } = useI18n()
-const { selectedMasterRow } = useSourceEcMasterContext()
+const { selecmedMasterRow } = useSourceEcMasterContext()
 
 /** Excel 导入/导出默认 sheet 名与文件名前缀 */
 const excelNames = taktExcelEntityNames('TaktSourceEcDetail')
@@ -485,9 +475,9 @@ const currentPage = ref(getTaktDefaultPageIndex())
 const pageSize = ref(getTaktDefaultPageSize())
 const total = ref(0)
 const queryKeyword = ref('')
-const selectedRow = ref<SourceEcDetail | null>(null)
-const selectedRows = ref<SourceEcDetail[]>([])
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRow = ref<SourceEcDetail | null>(null)
+const selecmedRows = ref<SourceEcDetail[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 
 const advancedQueryVisible = ref(false)
 /**
@@ -575,7 +565,7 @@ function handleColumnSettingReset() {
 
 const entityIdName = 'sourceEcDetailId'
 const masterSourceEcId = computed((): string => {
-  const id = (selectedMasterRow.value as Record<string, unknown> | null)?.['sourceEcId']
+  const id = (selecmedMasterRow.value as Record<string, unknown> | null)?.['sourceEcId']
   return id != null ? String(id) : ''
 })
 const hasMasterSelection = computed(() => masterSourceEcId.value !== '')
@@ -872,21 +862,21 @@ function formatSummaryFieldTotal(field: string): string {
   return formatSummaryValue(summaryFieldTotals.value[field as keyof typeof summaryFieldTotals.value])
 }
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: SourceEcDetail[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: SourceEcDetail, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (selectedRow.value && getSourceEcDetailId(selectedRow.value) === getSourceEcDetailId(record)) {
-      selectedRow.value = null
+  onSelect: (record: SourceEcDetail, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (selecmedRow.value && getSourceEcDetailId(selecmedRow.value) === getSourceEcDetailId(record)) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: SourceEcDetail[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: SourceEcDetail[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   },
 }))
 
@@ -898,12 +888,12 @@ function onClickRow(record: SourceEcDetail) {
   const key = getSourceEcDetailId(record)
   return {
     onClick: () => {
-      selectedRowKeys.value = [key]
-      selectedRows.value = [record]
-      selectedRow.value = record
+      selecmedRowKeys.value = [key]
+      selecmedRows.value = [record]
+      selecmedRow.value = record
     },
-    class: selectedRowKeys.value.includes(key)
-      ? 'takt-master-detail-table-row-selected cursor-pointer'
+    class: selecmedRowKeys.value.includes(key)
+      ? 'takt-master-detail-table-row-selecmed cursor-pointer'
       : 'cursor-pointer',
   }
 }
@@ -953,9 +943,9 @@ async function loadData() {
   if (!hasMasterSelection.value) {
     dataSource.value = []
     total.value = 0
-    selectedRowKeys.value = []
-    selectedRows.value = []
-    selectedRow.value = null
+    selecmedRowKeys.value = []
+    selecmedRows.value = []
+    selecmedRow.value = null
     return
   }
   loading.value = true
@@ -1010,8 +1000,8 @@ watch(
   },
 )
 
-watch(hasMasterSelection, (selected) => {
-  if (selected) {
+watch(hasMasterSelection, (selecmed) => {
+  if (selecmed) {
     void nextTick(() => startDetailTableScrollObserve())
   }
 })

@@ -39,6 +39,20 @@ export function buildDefaultCostingPeriodRange(monthCount = 3): [string, string]
 }
 
 /**
+ * 设变统计默认年月区间（截止本月共 monthCount 个月，含当月）
+ * @param monthCount 月数（≥1）
+ * @returns {[string, string]} [起 yyyy-MM, 止 yyyy-MM]
+ */
+export function buildDefaultThroughCurrentPeriodRange(monthCount = 3): [string, string] {
+  const count = Math.max(1, Math.floor(monthCount))
+  const now = new Date()
+  const end = new Date(now.getFullYear(), now.getMonth(), 1)
+  const start = new Date(end.getFullYear(), end.getMonth() - (count - 1), 1)
+  const fmt = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+  return [fmt(start), fmt(end)]
+}
+
+/**
  * 将核算月 yyyy-MM 平移指定月数
  * @param month 核算月
  * @param deltaMonths 平移月数（负=往前）
@@ -111,6 +125,23 @@ export function isPriceDeltaMonthDisabled(
   }
   const key = `${current.year()}-${String(current.month() + 1).padStart(2, '0')}`
   return key < range[0] || key > range[1]
+}
+
+/**
+ * 年月选择禁用：下月及以后。当月可选
+ * @param current Ant Design month picker 当前格（dayjs 兼容：year/month）
+ * @returns {boolean} true=禁用
+ */
+export function isMonthAfterCurrentDisabled(
+  current: { year: () => number; month: () => number } | null | undefined,
+): boolean {
+  if (!current) {
+    return false
+  }
+  const now = new Date()
+  const y = current.year()
+  const m = current.month()
+  return y > now.getFullYear() || (y === now.getFullYear() && m > now.getMonth())
 }
 
 /**
@@ -191,19 +222,22 @@ export function toCostingMonthKey(
 }
 
 /**
- * 分析期间 RangePicker：禁用当月及以后；已选一端时，另一端须落在「锚点 ±(maxMonths-1)」内
+ * 分析期间 RangePicker：默认禁用当月及以后；allowCurrentMonth 时只禁用下月及以后。
+ * 已选一端时，另一端须落在「锚点 ±(maxMonths-1)」内
  *（允许先点较晚月再点较早月，由 RangePicker 交换起止；闭区间仍 ≤ maxMonths）
  * @param current 当前格
  * @param pickingRange calendarChange 暂存的起止（可能只有一端）
  * @param maxMonths 最大月数（含起止）
+ * @param allowCurrentMonth true 时本月可选
  * @returns {boolean} true=禁用
  */
 export function isAnalysisPeriodMonthDisabled(
   current: { year: () => number; month: () => number } | null | undefined,
   pickingRange: [string | null, string | null] | null | undefined,
   maxMonths: number = TAKT_ANALYSIS_PERIOD_MAX_MONTHS,
+  allowCurrentMonth = false,
 ): boolean {
-  if (isCostingPeriodMonthDisabled(current)) {
+  if (allowCurrentMonth ? isMonthAfterCurrentDisabled(current) : isCostingPeriodMonthDisabled(current)) {
     return true
   }
   const key = toCostingMonthKey(current)

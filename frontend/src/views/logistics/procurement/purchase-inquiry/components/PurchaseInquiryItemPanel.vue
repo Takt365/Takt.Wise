@@ -109,7 +109,7 @@
         ref="formRef"
         :form-data="formData"
         :master-id="masterPurchaseInquiryId"
-        :master-row="selectedMasterRow"
+        :master-row="selecmedMasterRow"
         :loading="formLoading"
       />
     </TaktModal>
@@ -130,16 +130,6 @@
           v-model:value="advancedQueryForm.cultureCode"
           dict-type="sys_culture_code"
           :placeholder="pi.queryPh('cultureCode', 'select')"
-          allow-clear
-        />
-      </a-form-item>
-      </div>
-      <div v-show="isFieldVisible('plantCode')">
-      <a-form-item :label="pi.queryLabel('plantCode')">
-        <TaktSelect
-          v-model:value="advancedQueryForm.plantCode"
-          api-url="TaktPlants/options"
-          :placeholder="pi.queryPh('plantCode', 'select')"
           allow-clear
         />
       </a-form-item>
@@ -529,7 +519,7 @@ import {
 const pi = usePurchaseInquiryItemI18n()
 
 const { t } = useI18n()
-const { selectedMasterRow } = usePurchaseInquiryMasterContext()
+const { selecmedMasterRow } = usePurchaseInquiryMasterContext()
 
 /** Excel 导入/导出默认 sheet 名与文件名前缀 */
 const excelNames = taktExcelEntityNames('TaktPurchaseInquiryItem')
@@ -579,9 +569,9 @@ const currentPage = ref(getTaktDefaultPageIndex())
 const pageSize = ref(getTaktDefaultPageSize())
 const total = ref(0)
 const queryKeyword = ref('')
-const selectedRow = ref<PurchaseInquiryItem | null>(null)
-const selectedRows = ref<PurchaseInquiryItem[]>([])
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRow = ref<PurchaseInquiryItem | null>(null)
+const selecmedRows = ref<PurchaseInquiryItem[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 const formVisible = ref(false)
 const formTitle = ref('')
 const formData = ref<Partial<PurchaseInquiryItem>>({})
@@ -709,12 +699,12 @@ const importVisible = ref(false)
 
 const entityIdName = 'purchaseInquiryItemId'
 const masterPurchaseInquiryId = computed((): string => {
-  const id = (selectedMasterRow.value as Record<string, unknown> | null)?.['purchaseInquiryId']
+  const id = (selecmedMasterRow.value as Record<string, unknown> | null)?.['purchaseInquiryId']
   return id != null ? String(id) : ''
 })
 const hasMasterSelection = computed(() => masterPurchaseInquiryId.value !== '')
-const updateDisabled = computed(() => !hasMasterSelection.value || selectedRows.value.length !== 1)
-const deleteDisabled = computed(() => !hasMasterSelection.value || selectedRows.value.length === 0)
+const updateDisabled = computed(() => !hasMasterSelection.value || selecmedRows.value.length !== 1)
+const deleteDisabled = computed(() => !hasMasterSelection.value || selecmedRows.value.length === 0)
 
 function getPurchaseInquiryItemId(record: PurchaseInquiryItem | Record<string, unknown>): string {
   return String((record as PurchaseInquiryItem)?.[entityIdName] ?? '')
@@ -1068,21 +1058,21 @@ function formatSummaryFieldTotal(field: string): string {
   return formatSummaryValue(summaryFieldTotals.value[field as keyof typeof summaryFieldTotals.value])
 }
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: PurchaseInquiryItem[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: PurchaseInquiryItem, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (selectedRow.value && getPurchaseInquiryItemId(selectedRow.value) === getPurchaseInquiryItemId(record)) {
-      selectedRow.value = null
+  onSelect: (record: PurchaseInquiryItem, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (selecmedRow.value && getPurchaseInquiryItemId(selecmedRow.value) === getPurchaseInquiryItemId(record)) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: PurchaseInquiryItem[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: PurchaseInquiryItem[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   },
 }))
 
@@ -1094,12 +1084,12 @@ function onClickRow(record: PurchaseInquiryItem) {
   const key = getPurchaseInquiryItemId(record)
   return {
     onClick: () => {
-      selectedRowKeys.value = [key]
-      selectedRows.value = [record]
-      selectedRow.value = record
+      selecmedRowKeys.value = [key]
+      selecmedRows.value = [record]
+      selecmedRow.value = record
     },
-    class: selectedRowKeys.value.includes(key)
-      ? 'takt-master-detail-table-row-selected cursor-pointer'
+    class: selecmedRowKeys.value.includes(key)
+      ? 'takt-master-detail-table-row-selecmed cursor-pointer'
       : 'cursor-pointer',
   }
 }
@@ -1173,9 +1163,9 @@ async function loadData() {
   if (!hasMasterSelection.value) {
     dataSource.value = []
     total.value = 0
-    selectedRowKeys.value = []
-    selectedRows.value = []
-    selectedRow.value = null
+    selecmedRowKeys.value = []
+    selecmedRows.value = []
+    selecmedRow.value = null
     return
   }
   loading.value = true
@@ -1230,8 +1220,8 @@ watch(
   },
 )
 
-watch(hasMasterSelection, (selected) => {
-  if (selected) {
+watch(hasMasterSelection, (selecmed) => {
+  if (selecmed) {
     void nextTick(() => startDetailTableScrollObserve())
   }
 })
@@ -1270,8 +1260,8 @@ async function handleEdit(record: PurchaseInquiryItem) {
 }
 
 function handleUpdate() {
-  if (selectedRow.value) {
-    void handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    void handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', {
       action: t('common.page.button.edit'),
@@ -1328,7 +1318,7 @@ async function handleDeleteOne(record: PurchaseInquiryItem) {
 }
 
 async function handleDelete() {
-  if (!hasMasterSelection.value || selectedRows.value.length === 0) {
+  if (!hasMasterSelection.value || selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', {
       action: t('common.page.button.delete'),
       entity: pi.self(),
@@ -1339,12 +1329,12 @@ async function handleDelete() {
     title: t('common.tip.confirm.delete.title'),
     content: t('common.tip.confirm.delete.count', {
       entity: pi.self(),
-      count: selectedRows.value.length,
+      count: selecmedRows.value.length,
     }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value.map((r) => getPurchaseInquiryItemId(r)).filter(Boolean)
+      const ids = selecmedRows.value.map((r) => getPurchaseInquiryItemId(r)).filter(Boolean)
       await deletePurchaseInquiryItemBatch(ids)
       message.success(t('common.feedback.deleted', { target: pi.self() }))
       await loadData()

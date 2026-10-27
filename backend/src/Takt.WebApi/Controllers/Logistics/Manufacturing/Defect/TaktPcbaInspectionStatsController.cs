@@ -40,7 +40,7 @@ public class TaktPcbaInspectionStatsController : TaktControllerBase
     /// </summary>
     /// <param name="queryDto">查询 DTO</param>
     /// <returns>PCBA 检查统计</returns>
-    [TaktPermission("logistics:manufacturing:defect:pcba:inspection:list", "PCBA检查不良统计")]
+    [TaktPermission("logistics:manufacturing:defect:mfg2:inspection:list", "PCBA检查不良统计")]
     [HttpGet("defect-stat")]
     public async Task<IActionResult> GetPcbaInspectionStatAsync([FromQuery] TaktDefectStatQueryDto queryDto)
     {

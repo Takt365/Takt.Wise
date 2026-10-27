@@ -516,7 +516,7 @@ VALUES (
   @base_id + 1,
   N'SYSTEM_SYNC',
   N'SYNC',
-  N'BOM物料成本明细',
+  N'材料成本明细',
   N'exec_sql_merge_eq',
   'SQL',
   N'/sync/bom-material-cost-item',

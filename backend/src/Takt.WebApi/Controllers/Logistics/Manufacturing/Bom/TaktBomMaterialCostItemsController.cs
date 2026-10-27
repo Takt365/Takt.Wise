@@ -4,7 +4,7 @@
 // 文件名称：TaktBomMaterialCostItemsController.cs
 // 创建时间：2026-08-11
 // 创建人：Takt365(Cursor AI)
-// 功能描述：BOM物料成本明细控制器
+// 功能描述：材料成本明细控制器
 // 
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -18,11 +18,11 @@ using Takt.Shared.Constants;
 namespace Takt.WebApi.Controllers.Logistics.Manufacturing.Bom;
 
 /// <summary>
-/// BOM物料成本明细控制器
-/// 提供BOM物料成本明细的 REST API
+/// 材料成本明细控制器
+/// 提供材料成本明细的 REST API
 /// </summary>
 [ApiModule(4, "后勤管理")]
-[Route("api/[controller]", Name = "BOM物料成本明细")]
+[Route("api/[controller]", Name = "材料成本明细")]
 public class TaktBomMaterialCostItemsController : TaktControllerBase
 {
     private readonly ITaktBomMaterialCostItemService _bomMaterialCostItemService;
@@ -30,18 +30,18 @@ public class TaktBomMaterialCostItemsController : TaktControllerBase
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="bomMaterialCostItemService">BOM物料成本明细服务</param>
+    /// <param name="bomMaterialCostItemService">材料成本明细服务</param>
     public TaktBomMaterialCostItemsController(ITaktBomMaterialCostItemService bomMaterialCostItemService)
     {
         _bomMaterialCostItemService = bomMaterialCostItemService;
     }
 
     /// <summary>
-    /// 获取BOM物料成本明细列表（分页）
+    /// 获取材料成本明细列表（分页）
     /// </summary>
     /// <param name="queryDto">查询DTO</param>
     /// <returns>分页结果</returns>
-    [TaktPermission("logistics:manufacturing:bom:material:cost:item:list", "BOM物料成本明细列表")]
+    [TaktPermission("logistics:manufacturing:bom:material:cost:item:list", "材料成本明细列表")]
     [HttpGet("list")]
     public async Task<IActionResult> GetBomMaterialCostItemListAsync([FromQuery] TaktBomMaterialCostItemQueryDto queryDto)
     {
@@ -57,11 +57,11 @@ public class TaktBomMaterialCostItemsController : TaktControllerBase
     }
 
     /// <summary>
-    /// 根据ID获取BOM物料成本明细
+    /// 根据ID获取材料成本明细
     /// </summary>
-    /// <param name="id">BOM物料成本明细ID</param>
-    /// <returns>BOM物料成本明细DTO</returns>
-    [TaktPermission("logistics:manufacturing:bom:material:cost:item:query", "BOM物料成本明细详情")]
+    /// <param name="id">材料成本明细ID</param>
+    /// <returns>材料成本明细DTO</returns>
+    [TaktPermission("logistics:manufacturing:bom:material:cost:item:query", "材料成本明细详情")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetBomMaterialCostItemByIdAsync(long id)
     {
@@ -70,7 +70,7 @@ public class TaktBomMaterialCostItemsController : TaktControllerBase
             var result = await _bomMaterialCostItemService.GetBomMaterialCostItemByIdAsync(id);
             if (result == null)
             {
-                return NotFound("BOM物料成本明细不存在");
+                return NotFound("材料成本明细不存在");
             }
             return Success(result, "查询成功");
         }
@@ -81,10 +81,10 @@ public class TaktBomMaterialCostItemsController : TaktControllerBase
     }
 
     /// <summary>
-    /// 获取BOM物料成本选项列表（按产品编码去重，可选按工厂过滤）
+    /// 获取材料成本选项列表（按产品编码去重，可选按工厂过滤）
     /// </summary>
     /// <returns>下拉选项</returns>
-    [TaktPermission("logistics:manufacturing:bom:material:cost:item:query", "BOM物料成本明细选项")]
+    [TaktPermission("logistics:manufacturing:bom:material:cost:item:query", "材料成本明细选项")]
     [HttpGet("options")]
     public async Task<IActionResult> GetBomMaterialCostItemOptionsAsync([FromQuery] string? plantCode = null, [FromQuery] string? keyword = null)
     {
@@ -100,11 +100,11 @@ public class TaktBomMaterialCostItemsController : TaktControllerBase
     }
 
     /// <summary>
-    /// 创建BOM物料成本明细
+    /// 创建材料成本明细
     /// </summary>
     /// <param name="dto">创建DTO</param>
-    /// <returns>BOM物料成本明细DTO</returns>
-    [TaktPermission("logistics:manufacturing:bom:material:cost:item:create", "创建BOM物料成本明细")]
+    /// <returns>材料成本明细DTO</returns>
+    [TaktPermission("logistics:manufacturing:bom:material:cost:item:create", "创建材料成本明细")]
     [HttpPost]
     public async Task<IActionResult> CreateBomMaterialCostItemAsync([FromBody] TaktBomMaterialCostItemCreateDto dto)
     {
@@ -120,12 +120,12 @@ public class TaktBomMaterialCostItemsController : TaktControllerBase
     }
 
     /// <summary>
-    /// 更新BOM物料成本明细
+    /// 更新材料成本明细
     /// </summary>
-    /// <param name="id">BOM物料成本明细ID</param>
+    /// <param name="id">材料成本明细ID</param>
     /// <param name="dto">更新DTO</param>
-    /// <returns>BOM物料成本明细DTO</returns>
-    [TaktPermission("logistics:manufacturing:bom:material:cost:item:update", "更新BOM物料成本明细")]
+    /// <returns>材料成本明细DTO</returns>
+    [TaktPermission("logistics:manufacturing:bom:material:cost:item:update", "更新材料成本明细")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateBomMaterialCostItemAsync(long id, [FromBody] TaktBomMaterialCostItemUpdateDto dto)
     {
@@ -141,11 +141,11 @@ public class TaktBomMaterialCostItemsController : TaktControllerBase
     }
 
     /// <summary>
-    /// 删除BOM物料成本明细
+    /// 删除材料成本明细
     /// </summary>
-    /// <param name="id">BOM物料成本明细ID</param>
+    /// <param name="id">材料成本明细ID</param>
     /// <returns>操作结果</returns>
-    [TaktPermission("logistics:manufacturing:bom:material:cost:item:delete", "删除BOM物料成本明细")]
+    [TaktPermission("logistics:manufacturing:bom:material:cost:item:delete", "删除材料成本明细")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteBomMaterialCostItemByIdAsync(long id)
     {
@@ -161,11 +161,11 @@ public class TaktBomMaterialCostItemsController : TaktControllerBase
     }
 
     /// <summary>
-    /// 批量删除BOM物料成本明细
+    /// 批量删除材料成本明细
     /// </summary>
     /// <param name="ids">ID列表</param>
     /// <returns>操作结果</returns>
-    [TaktPermission("logistics:manufacturing:bom:material:cost:item:delete", "批量删除BOM物料成本明细")]
+    [TaktPermission("logistics:manufacturing:bom:material:cost:item:delete", "批量删除材料成本明细")]
     [HttpDelete("batch")]
     public async Task<IActionResult> DeleteBomMaterialCostItemBatchAsync([FromBody] IEnumerable<long> ids)
     {
@@ -184,7 +184,7 @@ public class TaktBomMaterialCostItemsController : TaktControllerBase
     /// 获取导入模板
     /// </summary>
     /// <returns>Excel文件</returns>
-    [TaktPermission("logistics:manufacturing:bom:material:cost:item:import", "获取BOM物料成本明细导入模板")]
+    [TaktPermission("logistics:manufacturing:bom:material:cost:item:import", "获取材料成本明细导入模板")]
     [HttpGet("template")]
     public async Task<IActionResult> GetBomMaterialCostItemTemplateAsync([FromQuery] string? sheetName = null, [FromQuery] string? templateName = null)
     {
@@ -200,11 +200,11 @@ public class TaktBomMaterialCostItemsController : TaktControllerBase
     }
 
     /// <summary>
-    /// 导入BOM物料成本明细
+    /// 导入材料成本明细
     /// </summary>
     /// <param name="file">Excel文件</param>
     /// <returns>导入结果</returns>
-    [TaktPermission("logistics:manufacturing:bom:material:cost:item:import", "导入BOM物料成本明细")]
+    [TaktPermission("logistics:manufacturing:bom:material:cost:item:import", "导入材料成本明细")]
     [HttpPost("import")]
     public async Task<IActionResult> ImportBomMaterialCostItemAsync(IFormFile file, [FromQuery] string? sheetName = null)
     {
@@ -231,10 +231,10 @@ public class TaktBomMaterialCostItemsController : TaktControllerBase
     }
 
     /// <summary>
-    /// 导出BOM物料成本明细
+    /// 导出材料成本明细
     /// </summary>
     /// <returns>Excel文件</returns>
-    [TaktPermission("logistics:manufacturing:bom:material:cost:item:export", "导出BOM物料成本明细")]
+    [TaktPermission("logistics:manufacturing:bom:material:cost:item:export", "导出材料成本明细")]
     [HttpGet("export")]
     public async Task<IActionResult> ExportBomMaterialCostItemAsync([FromQuery] TaktBomMaterialCostItemQueryDto? query = null, [FromQuery] string? sheetName = null, [FromQuery] string? exportName = null)
     {

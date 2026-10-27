@@ -32,8 +32,8 @@
       :show-fullscreen="true"
       :show-advanced-query="true"
       :show-column-setting="true"
-      :update-disabled="!selectedRow || selectedRows.length !== 1"
-      :delete-disabled="selectedRows.length === 0"
+      :update-disabled="!selecmedRow || selecmedRows.length !== 1"
+      :delete-disabled="selecmedRows.length === 0"
       :refresh-loading="loading"
       @update="handleUpdate"
       @delete="handleDelete"
@@ -231,9 +231,9 @@ const dataSource = ref<FlowInstanceTableRow[]>([])
 const currentPage = ref(getTaktDefaultPageIndex())
 const pageSize = ref(getTaktDefaultPageSize())
 const total = ref(0)
-const selectedRow = ref<FlowInstanceTableRow | null>(null)
-const selectedRows = ref<FlowInstanceTableRow[]>([])
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRow = ref<FlowInstanceTableRow | null>(null)
+const selecmedRows = ref<FlowInstanceTableRow[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 const detailVisible = ref(false)
 const detail = ref<FlowInstanceDetail | null>(null)
 const advancedQueryVisible = ref(false)
@@ -443,30 +443,30 @@ const columns = computed<TableColumnsType>(() => [
 
 
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: FlowInstanceTableRow[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: FlowInstanceTableRow, selected: boolean) => {
-    if (selected) selectedRow.value = record
-    else if (selectedRow.value && getInstanceId(selectedRow.value) === getInstanceId(record)) selectedRow.value = null
+  onSelect: (record: FlowInstanceTableRow, selecmed: boolean) => {
+    if (selecmed) selecmedRow.value = record
+    else if (selecmedRow.value && getInstanceId(selecmedRow.value) === getInstanceId(record)) selecmedRow.value = null
   },
-  onSelectAll: (selected: boolean, selectedRowsData: FlowInstanceTableRow[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: FlowInstanceTableRow[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   }
 }))
 
 const onClickRow = (record: FlowInstanceTableRow) => ({
   onClick: () => {
     const key = getInstanceId(record)
-    const index = selectedRowKeys.value.indexOf(key)
-    if (index > -1) selectedRowKeys.value.splice(index, 1)
-    else selectedRowKeys.value.push(key)
-    selectedRows.value = dataSource.value.filter(item => selectedRowKeys.value.includes(getInstanceId(item)))
-    selectedRow.value = selectedRowKeys.value.length === 1 ? (selectedRows.value[0] ?? null) : null
-    if (rowSelection.value.onChange) rowSelection.value.onChange(selectedRowKeys.value, selectedRows.value)
+    const index = selecmedRowKeys.value.indexOf(key)
+    if (index > -1) selecmedRowKeys.value.splice(index, 1)
+    else selecmedRowKeys.value.push(key)
+    selecmedRows.value = dataSource.value.filter(item => selecmedRowKeys.value.includes(getInstanceId(item)))
+    selecmedRow.value = selecmedRowKeys.value.length === 1 ? (selecmedRows.value[0] ?? null) : null
+    if (rowSelection.value.onChange) rowSelection.value.onChange(selecmedRowKeys.value, selecmedRows.value)
   }
 })
 
@@ -745,7 +745,7 @@ function handleWithdraw(record: FlowInstanceTableRow) {
 
 /** 更新：若有选中行则打编辑弹窗，否则提示请选择 */
 function handleUpdate() {
-  if (selectedRow.value) handleEditInstance(selectedRow.value)
+  if (selecmedRow.value) handleEditInstance(selecmedRow.value)
   else message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: t('entity.flowinstance._self') }))
 }
 
@@ -815,24 +815,24 @@ function handleDeleteOne(record: FlowInstanceTableRow) {
 
 /** 批量删除：无选中则提示；有选中则二次确认后 deleteBatch 并刷新 */
 function handleDelete() {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: t('entity.flowinstance._self') }))
     return
   }
   Modal.confirm({
     centered: true,
     title: t('common.tip.confirm.delete.title'),
-    content: t('common.tip.confirm.delete.count', { entity: t('entity.flowinstance._self'), count: selectedRows.value.length }),
+    content: t('common.tip.confirm.delete.count', { entity: t('entity.flowinstance._self'), count: selecmedRows.value.length }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
       try {
         loading.value = true
-        await deleteFlowInstanceBatch(selectedRows.value.map(r => r.instanceId))
+        await deleteFlowInstanceBatch(selecmedRows.value.map(r => r.instanceId))
         message.success(t('common.feedback.deleted'))
-        selectedRows.value = []
-        selectedRowKeys.value = []
-        selectedRow.value = null
+        selecmedRows.value = []
+        selecmedRowKeys.value = []
+        selecmedRow.value = null
         loadData()
       } catch (error: unknown) {
         message.error(getErrorMessage(error, t('common.feedback.delete.failed')))

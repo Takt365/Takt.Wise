@@ -55,7 +55,7 @@ public class TaktCustomerComplaintItem : TaktCompanyEntityBase
     /// <summary>
     /// 批次号
     /// </summary>
-    [SugarColumn(ColumnName = "batch_code", ColumnDescription = "批次号", ColumnDataType = "nvarchar", Length = 50, IsNullable = true)]
+    [SugarColumn(ColumnName = "batch_code", ColumnDescription = "批次号", ColumnDataType = "nvarchar", Length = 20, IsNullable = true)]
     public string? BatchCode { get; set; }
     /// <summary>
     /// 不良项目类型（字典 logistics_quality_complaint_item_type）

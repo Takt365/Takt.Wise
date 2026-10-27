@@ -15,7 +15,7 @@ export type MasterDemandScheduleRowRecord = MasterDemandSchedule | Record<string
 /** 主表选中行上下文 */
 export interface MasterDemandScheduleMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<MasterDemandScheduleRowRecord | null>
+  selecmedMasterRow: Ref<MasterDemandScheduleRowRecord | null>
 }
 
 const masterDemandScheduleMasterContextKey: InjectionKey<MasterDemandScheduleMasterContext> = Symbol('master-demand-scheduleMasterContext')
@@ -25,8 +25,8 @@ const masterDemandScheduleMasterContextKey: InjectionKey<MasterDemandScheduleMas
  * @returns {MasterDemandScheduleMasterContext} 主表上下文
  */
 export function provideMasterDemandScheduleMasterContext(): MasterDemandScheduleMasterContext {
-  const selectedMasterRow = ref<MasterDemandScheduleRowRecord | null>(null)
-  const ctx: MasterDemandScheduleMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<MasterDemandScheduleRowRecord | null>(null)
+  const ctx: MasterDemandScheduleMasterContext = { selecmedMasterRow }
   provide(masterDemandScheduleMasterContextKey, ctx)
   return ctx
 }

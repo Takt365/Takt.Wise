@@ -329,11 +329,11 @@ const pageSize = ref(getTaktDefaultPageSize())
 /** 分页 total */
 const total = ref(0)
 /** 工具栏单选行 */
-const selectedRow = ref<DatabaseBackupRowRecord | null>(null)
+const selecmedRow = ref<DatabaseBackupRowRecord | null>(null)
 /** 表格多选行 */
-const selectedRows = ref<DatabaseBackupRowRecord[]>([])
+const selecmedRows = ref<DatabaseBackupRowRecord[]>([])
 /** 表格多选 row-key */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 /** 新增/编辑弹窗 */
 const formVisible = ref(false)
 /** 弹窗标题 */
@@ -388,9 +388,9 @@ const queryFieldsMeta = computed(() =>
   DATABASEBACKUP_QUERY_FIELDS.map((key) => ({ key, label: pi.queryLabel(key) }))
 )
 /** 工具栏编辑禁用 */
-const updateDisabled = computed(() => selectedRows.value.length !== 1)
+const updateDisabled = computed(() => selecmedRows.value.length !== 1)
 /** 工具栏删除禁用 */
-const deleteDisabled = computed(() => selectedRows.value.length === 0)
+const deleteDisabled = computed(() => selecmedRows.value.length === 0)
 
 /**
  * 构建列表/导出查询
@@ -561,24 +561,24 @@ function formatBackupStatus(value: unknown): string {
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: DatabaseBackupRowRecord[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: DatabaseBackupRowRecord, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
+  onSelect: (record: DatabaseBackupRowRecord, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
     } else if (
-      selectedRow.value &&
-      getDatabaseBackupId(selectedRow.value) === getDatabaseBackupId(record)
+      selecmedRow.value &&
+      getDatabaseBackupId(selecmedRow.value) === getDatabaseBackupId(record)
     ) {
-      selectedRow.value = null
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: DatabaseBackupRowRecord[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: DatabaseBackupRowRecord[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   },
 }))
 
@@ -586,18 +586,18 @@ const rowSelection = computed(() => ({
 const onClickRow = (record: DatabaseBackupRowRecord) => ({
   onClick: () => {
     const key = getDatabaseBackupId(record)
-    const index = selectedRowKeys.value.indexOf(key)
+    const index = selecmedRowKeys.value.indexOf(key)
     if (index > -1) {
-      selectedRowKeys.value.splice(index, 1)
+      selecmedRowKeys.value.splice(index, 1)
     } else {
-      selectedRowKeys.value.push(key)
+      selecmedRowKeys.value.push(key)
     }
-    selectedRows.value = dataSource.value.filter((item) =>
-      selectedRowKeys.value.includes(getDatabaseBackupId(item))
+    selecmedRows.value = dataSource.value.filter((item) =>
+      selecmedRowKeys.value.includes(getDatabaseBackupId(item))
     )
-    selectedRow.value = selectedRowKeys.value.length === 1 ? (selectedRows.value[0] ?? null) : null
+    selecmedRow.value = selecmedRowKeys.value.length === 1 ? (selecmedRows.value[0] ?? null) : null
     if (rowSelection.value.onChange) {
-      rowSelection.value.onChange(selectedRowKeys.value, selectedRows.value)
+      rowSelection.value.onChange(selecmedRowKeys.value, selecmedRows.value)
     }
   },
 })
@@ -667,8 +667,8 @@ async function handleEdit(record: DatabaseBackupRowRecord) {
 
 /** 工具栏编辑 */
 function handleUpdate() {
-  if (selectedRow.value) {
-    void handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    void handleEdit(selecmedRow.value)
   } else {
     message.warning(
       t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: pi.self() })
@@ -752,7 +752,7 @@ async function handleExport() {
 
 /** 批量删除 */
 async function handleDelete() {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(
       t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: pi.self() })
     )
@@ -762,12 +762,12 @@ async function handleDelete() {
     title: t('common.tip.confirm.delete.title'),
     content: t('common.tip.confirm.delete.count', {
       entity: pi.self(),
-      count: selectedRows.value.length,
+      count: selecmedRows.value.length,
     }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value
+      const ids = selecmedRows.value
         .map((row) => getDatabaseBackupId(row))
         .filter(Boolean)
       await deleteDatabaseBackupBatch(ids)

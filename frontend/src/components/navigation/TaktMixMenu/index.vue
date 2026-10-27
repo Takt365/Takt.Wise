@@ -11,7 +11,7 @@
 ======================================== -->
 <template>
   <a-menu
-    v-model:selected-keys="selectedKeys"
+    v-model:selecmed-keys="selecmedKeys"
     v-model:open-keys="openKeys"
     mode="inline"
     :theme="theme"
@@ -62,7 +62,7 @@ const menuStyleClass = computed(() => {
   return `menu-style-${style}`
 })
 
-const selectedKeys = ref<string[]>([])
+const selecmedKeys = ref<string[]>([])
 const openKeys = ref<string[]>([])
 
 const menuItems = computed(() => menuStore.menuItems ?? [])
@@ -92,7 +92,7 @@ const handleOpenChange = (keys: string[]) => {
 watch(
   () => [route.path, menuItems.value] as const,
   ([path]) => {
-    selectedKeys.value = [path]
+    selecmedKeys.value = [path]
     openKeys.value = resolveMenuOpenKeysForPath(menuItems.value, path)
   },
   { immediate: true }

@@ -15,7 +15,7 @@ export type FqcOrderItemRowRecord = FqcOrderItem | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface FqcOrderItemMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<FqcOrderItemRowRecord | null>
+  selecmedMasterRow: Ref<FqcOrderItemRowRecord | null>
 }
 
 const fqcOrderItemMasterContextKey: InjectionKey<FqcOrderItemMasterContext> = Symbol('fqc-order-itemMasterContext')
@@ -25,8 +25,8 @@ const fqcOrderItemMasterContextKey: InjectionKey<FqcOrderItemMasterContext> = Sy
  * @returns {FqcOrderItemMasterContext} 主表上下文
  */
 export function provideFqcOrderItemMasterContext(): FqcOrderItemMasterContext {
-  const selectedMasterRow = ref<FqcOrderItemRowRecord | null>(null)
-  const ctx: FqcOrderItemMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<FqcOrderItemRowRecord | null>(null)
+  const ctx: FqcOrderItemMasterContext = { selecmedMasterRow }
   provide(fqcOrderItemMasterContextKey, ctx)
   return ctx
 }

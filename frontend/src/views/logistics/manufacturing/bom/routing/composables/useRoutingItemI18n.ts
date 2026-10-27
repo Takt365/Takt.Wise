@@ -107,7 +107,6 @@ export type RoutingItemField = keyof typeof ROUTINGITEM_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const ROUTINGITEM_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'routingCode',
   'baseUnit',
   'timeUnit',

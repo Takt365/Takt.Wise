@@ -58,7 +58,6 @@ export type SystemPropertyField = keyof typeof SYSTEMPROPERTY_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const SYSTEMPROPERTY_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'systemPropertyKey',
   'systemPropertyValue',
   'systemPropertyName',

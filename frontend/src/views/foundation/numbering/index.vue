@@ -180,6 +180,7 @@
           v-model:value="advancedQueryForm.deptCode"
           api-url="TaktDepts/iso-tree-options"
           :lazy="true"
+          :api-params="deptIsoTreeApiParams"
           :placeholder="t('common.page.form.placeholder.select', { field: t('entity.numbering.deptcode') })"
           allow-clear
           :field-names="{ label: 'dictLabel', value: 'dictValue' }"
@@ -246,20 +247,11 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('currentSequence')">
-      <a-form-item :label="t('entity.numbering.currentsequence')">
-        <a-input-number
-          v-model:value="advancedQueryForm.currentSequence"
-          :placeholder="t('common.page.form.placeholder.required', { field: t('entity.numbering.currentsequence') })"
-          style="width: 100%"
-        />
-      </a-form-item>
-      </div>
-      <div v-show="isFieldVisible('exampleCode')">
-      <a-form-item :label="t('entity.numbering.examplecode')">
+      <div v-show="isFieldVisible('startingNumber')">
+      <a-form-item :label="t('entity.numbering.startingnumber')">
         <a-input
-          v-model:value="advancedQueryForm.exampleCode"
-          :placeholder="t('common.page.form.placeholder.required', { field: t('entity.numbering.examplecode') })"
+          v-model:value="advancedQueryForm.startingNumber"
+          :placeholder="t('common.page.form.placeholder.required', { field: t('entity.numbering.startingnumber') })"
           show-count
           :maxlength="100"
           allow-clear
@@ -423,12 +415,22 @@ import NumberingForm from './components/NumberingForm.vue'
 import { getNumberingList, getNumberingById, createNumbering, updateNumbering, deleteNumberingById, deleteNumberingBatch, getNumberingTemplate, importNumbering, exportNumbering, updateNumberingStatus } from '@/api/foundation/numbering.api'
 import type { Numbering, NumberingQuery } from '@/types/foundation/numbering.types'
 import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
+import { useTenantStore } from '@/stores/identity/useTenantStore'
 import { taktExcelEntityNames } from '@/utils/naming'
 import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 /** i18n 翻译函数 */
 const { t } = useI18n()
+/** 当前登录公司上下文（部门 ISO 树按关联工厂过滤） */
+const tenantStore = useTenantStore()
+/**
+ * 高级查询部门树：附加当前公司关联工厂（公司隔离由请求头保证）
+ */
+const deptIsoTreeApiParams = computed(() => {
+  const plant = tenantStore.currentCompanyRelatedPlant
+  return plant ? { plantCode: plant } : undefined
+})
 /** Excel 导入/导出默认 sheet 名与文件名前缀 */
 const excelNames = taktExcelEntityNames('TaktNumbering')
 /** 列表快捷查询占位文案 */
@@ -449,11 +451,11 @@ const pageSize = ref(getTaktDefaultPageSize())
 /** 分页 total */
 const total = ref(0)
 /** 工具栏单选时当前行 */
-const selectedRow = ref<Numbering | null>(null)
+const selecmedRow = ref<Numbering | null>(null)
 /** 表格多选行 */
-const selectedRows = ref<Numbering[]>([])
+const selecmedRows = ref<Numbering[]>([])
 /** 表格多选 row-key 集合 */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 
 /** 新增/编辑弹窗是否打开 */
 const formVisible = ref(false)
@@ -482,8 +484,7 @@ const advancedQueryForm = ref({
   sequenceStep: undefined as number | undefined,
   suffixCode: '',
   resetPeriod: '',
-  currentSequence: undefined as number | undefined,
-  exampleCode: '',
+  startingNumber: '',
   separator: '',
   isBuiltIn: undefined as number | undefined,
   status: undefined as number | undefined,
@@ -505,8 +506,7 @@ const queryFieldsMeta = computed(() => [
   { key: 'sequenceStep', label: t('entity.numbering.sequencestep') },
   { key: 'suffixCode', label: t('entity.numbering.suffixcode') },
   { key: 'resetPeriod', label: t('entity.numbering.resetperiod') },
-  { key: 'currentSequence', label: t('entity.numbering.currentsequence') },
-  { key: 'exampleCode', label: t('entity.numbering.examplecode') },
+  { key: 'startingNumber', label: t('entity.numbering.startingnumber') },
   { key: 'separator', label: t('entity.numbering.separator') },
   { key: 'isBuiltIn', label: t('entity.numbering.isbuiltin') },
   { key: 'status', label: t('entity.numbering.status') },
@@ -526,9 +526,9 @@ const visibleColumnKeys = ref<string[]>([])
 /** 实体主键字段名（row-key、API 路径参数） */
 const entityIdName = 'numberingId'
 /** 工具栏「编辑」是否禁用（须恰好选中一行） */
-const updateDisabled = computed(() => selectedRows.value.length !== 1)
+const updateDisabled = computed(() => selecmedRows.value.length !== 1)
 /** 工具栏「删除」是否禁用（未选中任何行） */
-const deleteDisabled = computed(() => selectedRows.value.length === 0)
+const deleteDisabled = computed(() => selecmedRows.value.length === 0)
 
 /** Pinia：字典缓存（列表/查询 dict-type 渲染前预热） */
 const dictDataStore = useDictDataStore()
@@ -569,10 +569,7 @@ function buildListQuery(overrides?: Partial<NumberingQuery>): NumberingQuery {
   }
   assignTrimmed('suffixCode', form.suffixCode)
   assignTrimmed('resetPeriod', form.resetPeriod)
-  if (form.currentSequence !== undefined && form.currentSequence !== null) {
-    query.currentSequence = form.currentSequence
-  }
-  assignTrimmed('exampleCode', form.exampleCode)
+  assignTrimmed('startingNumber', form.startingNumber)
   assignTrimmed('separator', form.separator)
   if (form.isBuiltIn !== undefined && form.isBuiltIn !== null) {
     query.isBuiltIn = form.isBuiltIn
@@ -695,22 +692,13 @@ const columns = computed<TableColumnsType>(() => [
     ellipsis: true,
   },
   {
-    title: t('entity.numbering.currentsequence'),
-    dataIndex: 'currentSequence',
-    key: 'currentSequence',
+    title: t('entity.numbering.startingnumber'),
+    dataIndex: 'startingNumber',
+    key: 'startingNumber',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getNumberingField(record, 'currentSequence') ?? ''
-  },
-  {
-    title: t('entity.numbering.examplecode'),
-    dataIndex: 'exampleCode',
-    key: 'exampleCode',
-    width: 120,
-    resizable: true,
-    ellipsis: true,
-    customRender: ({ record }: { record: any }) => getNumberingField(record, 'exampleCode') ?? ''
+    customRender: ({ record }: { record: any }) => getNumberingField(record, 'startingNumber') ?? ''
   },
   {
     title: t('entity.numbering.separator'),
@@ -799,21 +787,21 @@ function mapResetPeriodDictValue(value?: string | number | null): string {
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: Numbering[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: Numbering, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (selectedRow.value && getNumberingId(selectedRow.value) === getNumberingId(record)) {
-      selectedRow.value = null
+  onSelect: (record: Numbering, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (selecmedRow.value && getNumberingId(selecmedRow.value) === getNumberingId(record)) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: Numbering[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: Numbering[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   }
 }))
 
@@ -821,16 +809,16 @@ const rowSelection = computed(() => ({
 const onClickRow = (record: Numbering) => ({
   onClick: () => {
     const key = getNumberingId(record)
-    const index = selectedRowKeys.value.indexOf(key)
+    const index = selecmedRowKeys.value.indexOf(key)
     if (index > -1) {
-      selectedRowKeys.value.splice(index, 1)
+      selecmedRowKeys.value.splice(index, 1)
     } else {
-      selectedRowKeys.value.push(key)
+      selecmedRowKeys.value.push(key)
     }
-    selectedRows.value = dataSource.value.filter((item) => selectedRowKeys.value.includes(getNumberingId(item)))
-    selectedRow.value = selectedRowKeys.value.length === 1 ? (selectedRows.value[0] ?? null) : null
+    selecmedRows.value = dataSource.value.filter((item) => selecmedRowKeys.value.includes(getNumberingId(item)))
+    selecmedRow.value = selecmedRowKeys.value.length === 1 ? (selecmedRows.value[0] ?? null) : null
     if (rowSelection.value.onChange) {
-      rowSelection.value.onChange(selectedRowKeys.value, selectedRows.value)
+      rowSelection.value.onChange(selecmedRowKeys.value, selecmedRows.value)
     }
   }
 })
@@ -875,8 +863,7 @@ function handleReset() {
   sequenceStep: undefined as number | undefined,
   suffixCode: '',
   resetPeriod: '',
-  currentSequence: undefined as number | undefined,
-  exampleCode: '',
+  startingNumber: '',
   separator: '',
   isBuiltIn: undefined as number | undefined,
   status: undefined as number | undefined,
@@ -906,8 +893,8 @@ function handleEdit(record: Numbering) {
 
 /** 工具栏编辑：打开当前单选行 */
 function handleUpdate() {
-  if (selectedRow.value) {
-    handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: t('entity.numbering._self') }))
   }
@@ -1024,17 +1011,17 @@ async function handleDeleteOne(record: Numbering) {
 }
 /** 批量删除选中行 */
 async function handleDelete() {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: t('entity.numbering._self') }))
     return
   }
   Modal.confirm({
     title: t('common.tip.confirm.delete.title'),
-    content: t('common.tip.confirm.delete.count', { entity: t('entity.numbering._self'), count: selectedRows.value.length }),
+    content: t('common.tip.confirm.delete.count', { entity: t('entity.numbering._self'), count: selecmedRows.value.length }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
+      const ids = selecmedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
       await deleteNumberingBatch(ids)
       message.success(t('common.feedback.deleted', { target: t('entity.numbering._self') }))
       loadData()
@@ -1089,8 +1076,7 @@ function handleAdvancedQueryReset() {
   sequenceStep: undefined as number | undefined,
   suffixCode: '',
   resetPeriod: '',
-  currentSequence: undefined as number | undefined,
-  exampleCode: '',
+  startingNumber: '',
   separator: '',
   isBuiltIn: undefined as number | undefined,
   status: undefined as number | undefined,

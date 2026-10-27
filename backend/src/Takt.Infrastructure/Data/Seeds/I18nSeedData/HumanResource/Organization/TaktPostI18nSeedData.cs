@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.HumanResource.Organization
 // 文件名称：TaktPostI18nSeedData.cs
-// 创建时间：2026-10-14
+// 创建时间：2026-10-27
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPost 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -127,13 +127,13 @@ public class TaktPostI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.post.deptname", "zh-HK", "所属部门名称_hk", "所属部门名称（冗余：按 DeptId 取 TaktDept.DeptName联动）"),
 
             // entity.post.category
-            new TranslationSeedItem("entity.post.category", "en-US", "岗位类别_us", "岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）"),
+            new TranslationSeedItem("entity.post.category", "en-US", "岗位类别_us", "岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）"),
             // entity.post.category
-            new TranslationSeedItem("entity.post.category", "ja-JP", "岗位类别_jp", "岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）"),
+            new TranslationSeedItem("entity.post.category", "ja-JP", "岗位类别_jp", "岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）"),
             // entity.post.category
-            new TranslationSeedItem("entity.post.category", "zh-CN", "岗位类别", "岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）"),
+            new TranslationSeedItem("entity.post.category", "zh-CN", "岗位类别", "岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）"),
             // entity.post.category
-            new TranslationSeedItem("entity.post.category", "zh-HK", "岗位类别_hk", "岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）"),
+            new TranslationSeedItem("entity.post.category", "zh-HK", "岗位类别_hk", "岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）"),
 
             // entity.post.level
             new TranslationSeedItem("entity.post.level", "en-US", "岗位职级_us", "岗位职级（字典 sys_post_level；列存 DictValue：P1~P4 专业序列 M1~M5 管理序列）"),

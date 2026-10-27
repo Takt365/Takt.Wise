@@ -54,7 +54,6 @@ export type ComplaintGroupField = keyof typeof COMPLAINTGROUP_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const COMPLAINTGROUP_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'complaintGroupCode',
   'complaintGroupName',
   'complaintGroupDescription',

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Validators.Logistics.Quality.Cost
 // 文件名称：TaktQualityIssueValidators.cs
-// 创建时间：2026-10-14
+// 创建时间：2026-10-27
 // 创建人：Takt365(Auto Generated)
 // 功能描述：QualityIssue 模块 FluentValidation 验证器（由 generate-validators-from-entity.cjs 根据 TaktQualityIssue 生成，请按需审阅）
 // 
@@ -49,7 +49,7 @@ public class TaktQualityIssueCreateValidator : AbstractValidator<TaktQualityIssu
             .MaximumLength(40).WithMessage("机种/产品型号长度不能超过40个字符");
         RuleFor(x => x.Lot)
             .NotEmpty().WithMessage("批次号/Lot No不能为空")
-            .MaximumLength(30).WithMessage("批次号/Lot No长度不能超过30个字符");
+            .MaximumLength(20).WithMessage("批次号/Lot No长度不能超过20个字符");
         RuleFor(x => x.CurrencyCode)
             .NotEmpty().WithMessage("成本币种不能为空")
             .MaximumLength(3).WithMessage("成本币种长度不能超过3个字符");
@@ -96,7 +96,7 @@ public class TaktQualityIssueUpdateValidator : AbstractValidator<TaktQualityIssu
             .MaximumLength(40).WithMessage("机种/产品型号长度不能超过40个字符");
         RuleFor(x => x.Lot)
             .NotEmpty().WithMessage("批次号/Lot No不能为空")
-            .MaximumLength(30).WithMessage("批次号/Lot No长度不能超过30个字符");
+            .MaximumLength(20).WithMessage("批次号/Lot No长度不能超过20个字符");
         RuleFor(x => x.CurrencyCode)
             .NotEmpty().WithMessage("成本币种不能为空")
             .MaximumLength(3).WithMessage("成本币种长度不能超过3个字符");
@@ -137,7 +137,7 @@ public class TaktQualityIssueImportValidator : AbstractValidator<TaktQualityIssu
             .MaximumLength(40).WithMessage("机种/产品型号长度不能超过40个字符");
         RuleFor(x => x.Lot)
             .NotEmpty().WithMessage("批次号/Lot No不能为空")
-            .MaximumLength(30).WithMessage("批次号/Lot No长度不能超过30个字符");
+            .MaximumLength(20).WithMessage("批次号/Lot No长度不能超过20个字符");
         RuleFor(x => x.CurrencyCode)
             .NotEmpty().WithMessage("成本币种不能为空")
             .MaximumLength(3).WithMessage("成本币种长度不能超过3个字符");

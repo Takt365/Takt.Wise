@@ -54,7 +54,6 @@ export type CustomerServiceGroupField = keyof typeof CUSTOMERSERVICEGROUP_PLACEH
 /** 高级查询可 trim 的字符串字段 */
 export const CUSTOMERSERVICEGROUP_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'customerServiceGroupCode',
   'customerServiceGroupName',
   'customerServiceGroupDescription',

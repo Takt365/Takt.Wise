@@ -15,7 +15,7 @@ export type CustomerComplaintRowRecord = CustomerComplaint | Record<string, unkn
 /** 主表选中行上下文 */
 export interface CustomerComplaintMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<CustomerComplaintRowRecord | null>
+  selecmedMasterRow: Ref<CustomerComplaintRowRecord | null>
 }
 
 const customerComplaintMasterContextKey: InjectionKey<CustomerComplaintMasterContext> = Symbol('customer-complaintMasterContext')
@@ -25,8 +25,8 @@ const customerComplaintMasterContextKey: InjectionKey<CustomerComplaintMasterCon
  * @returns {CustomerComplaintMasterContext} 主表上下文
  */
 export function provideCustomerComplaintMasterContext(): CustomerComplaintMasterContext {
-  const selectedMasterRow = ref<CustomerComplaintRowRecord | null>(null)
-  const ctx: CustomerComplaintMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<CustomerComplaintRowRecord | null>(null)
+  const ctx: CustomerComplaintMasterContext = { selecmedMasterRow }
   provide(customerComplaintMasterContextKey, ctx)
   return ctx
 }

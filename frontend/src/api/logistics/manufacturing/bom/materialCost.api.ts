@@ -32,7 +32,7 @@ const BOM_MATERIAL_COST_API_BASE = 'TaktBomMaterialCosts';
 // ========================================
 
 /**
- * 获取BOM物料成本列表（分页）
+ * 获取材料成本列表（分页）
  * @param {any} queryDto 查询DTO
  * @returns {Promise<TaktPagedResult<BomMaterialCost>>} 分页结果
  */
@@ -45,9 +45,9 @@ export function getBomMaterialCostList(queryDto: any): Promise<TaktPagedResult<B
 }
 
 /**
- * 根据ID获取BOM物料成本
- * @param {string} id BOM物料成本ID
- * @returns {Promise<BomMaterialCost>} BOM物料成本DTO
+ * 根据ID获取材料成本
+ * @param {string} id 材料成本ID
+ * @returns {Promise<BomMaterialCost>} 材料成本DTO
  */
 export function getBomMaterialCostById(id: string): Promise<BomMaterialCost> {
   return request<BomMaterialCost>({
@@ -57,9 +57,9 @@ export function getBomMaterialCostById(id: string): Promise<BomMaterialCost> {
 }
 
 /**
- * 创建BOM物料成本
+ * 创建材料成本
  * @param {BomMaterialCostCreate} dto 创建DTO
- * @returns {Promise<BomMaterialCost>} BOM物料成本DTO
+ * @returns {Promise<BomMaterialCost>} 材料成本DTO
  */
 export function createBomMaterialCost(dto: BomMaterialCostCreate): Promise<BomMaterialCost> {
   return request<BomMaterialCost>({
@@ -70,10 +70,10 @@ export function createBomMaterialCost(dto: BomMaterialCostCreate): Promise<BomMa
 }
 
 /**
- * 更新BOM物料成本
- * @param {string} id BOM物料成本ID
+ * 更新材料成本
+ * @param {string} id 材料成本ID
  * @param {BomMaterialCostUpdate} dto 更新DTO
- * @returns {Promise<BomMaterialCost>} BOM物料成本DTO
+ * @returns {Promise<BomMaterialCost>} 材料成本DTO
  */
 export function updateBomMaterialCost(id: string, dto: BomMaterialCostUpdate): Promise<BomMaterialCost> {
   return request<BomMaterialCost>({
@@ -84,8 +84,8 @@ export function updateBomMaterialCost(id: string, dto: BomMaterialCostUpdate): P
 }
 
 /**
- * 删除BOM物料成本
- * @param {string} id BOM物料成本ID
+ * 删除材料成本
+ * @param {string} id 材料成本ID
  * @returns {Promise<void>} 操作结果
  */
 export function deleteBomMaterialCostById(id: string): Promise<void> {
@@ -96,7 +96,7 @@ export function deleteBomMaterialCostById(id: string): Promise<void> {
 }
 
 /**
- * 批量删除BOM物料成本
+ * 批量删除材料成本
  * @param {string[]} ids ID列表
  * @returns {Promise<void>} 操作结果
  */
@@ -113,7 +113,7 @@ export function deleteBomMaterialCostBatch(ids: string[]): Promise<void> {
 // ========================================
 
 /**
- * 获取BOM物料成本选项列表
+ * 获取材料成本选项列表
  * @returns {Promise<TaktSelectOption[]>} 下拉选项
  */
 export function getBomMaterialCostOptions(
@@ -156,7 +156,7 @@ export function getBomMaterialCostTemplate(sheetName?: string, templateName?: st
 }
 
 /**
- * 导入BOM物料成本
+ * 导入材料成本
  * @param {globalThis.File} file Excel文件
  * @param {string} sheetName sheetName
  * @returns {Promise<{ success: number; fail: number; errors: string[] }>} 导入结果
@@ -179,7 +179,7 @@ export function importBomMaterialCost(file: globalThis.File, sheetName?: string)
 }
 
 /**
- * 导出BOM物料成本
+ * 导出材料成本
  * @param {any} query query
  * @param {string} sheetName sheetName
  * @param {string} exportName exportName

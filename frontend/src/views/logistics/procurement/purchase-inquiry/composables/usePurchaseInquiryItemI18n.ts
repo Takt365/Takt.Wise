@@ -126,7 +126,6 @@ export type PurchaseInquiryItemField = keyof typeof PURCHASEINQUIRYITEM_PLACEHOL
 /** 高级查询可 trim 的字符串字段 */
 export const PURCHASEINQUIRYITEM_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'purchaseInquiryCode',
   'allocationCategory',
   'materialCode',

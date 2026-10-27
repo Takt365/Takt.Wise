@@ -2,7 +2,7 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/ec-kanban/components -->
 <!-- 文件名称：EcKanbanStageStrip.vue -->
-<!-- 功能描述：设变看板各部门实施路径条（Pmc→…→Qa→Te） -->
+<!-- 功能描述：设变看板各部门实施路径条（Pc→…→Qa→Te） -->
 <!-- 版权信息：Copyright (c) 2026 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->

@@ -47,8 +47,8 @@
         :show-fullscreen="true"
         :show-refresh="true"
         :show-expand="true"
-        :update-disabled="!selectedRow"
-        :delete-disabled="!selectedRow && selectedRows.length === 0"
+        :update-disabled="!selecmedRow"
+        :delete-disabled="!selecmedRow && selecmedRows.length === 0"
         :create-loading="loading"
         :update-loading="loading"
         :delete-loading="loading"
@@ -70,7 +70,7 @@
     <div class="accounting-financial-account-title-tree-table-wrap">
       <TaktTreeLeftTable
         v-model:expanded-keys="treeExpandedKeys"
-        v-model:selected-keys="selectedTreeKeys"
+        v-model:selecmed-keys="selecmedTreeKeys"
         :tree-data="filteredTreeData"
         :tree-field-names="{ title: 'title', key: 'key', children: 'children' }"
         :tree-width-ratio="0.2"
@@ -197,16 +197,6 @@
           v-model:value="advancedQueryForm.cultureCode"
           dict-type="sys_culture_code"
           :placeholder="pi.queryPh('cultureCode', 'select')"
-          allow-clear
-        />
-      </a-form-item>
-      </div>
-      <div v-show="isFieldVisible('plantCode')">
-      <a-form-item :label="pi.queryLabel('plantCode')">
-        <TaktSelect
-          v-model:value="advancedQueryForm.plantCode"
-          api-url="TaktPlants/options"
-          :placeholder="pi.queryPh('plantCode', 'select')"
           allow-clear
         />
       </a-form-item>
@@ -577,13 +567,13 @@ const entityTreeData = ref<TaktLazyTreeNode[]>([])
 /** 右侧树表数据源（带 children / _hasChildren，组件内拍平 virtual） */
 const tableTreeData = ref<Record<string, unknown>[]>([])
 /** 左侧树当前选中的节点 key 列表 */
-const selectedTreeKeys = ref<(string | number)[]>([])
+const selecmedTreeKeys = ref<(string | number)[]>([])
 /** 工具栏单选时当前行（编辑/删除） */
-const selectedRow = ref<AccountTitleRowRecord | null>(null)
+const selecmedRow = ref<AccountTitleRowRecord | null>(null)
 /** 表格多选行 */
-const selectedRows = ref<AccountTitleRowRecord[]>([])
+const selecmedRows = ref<AccountTitleRowRecord[]>([])
 /** 表格多选 row-key 集合 */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 
 /** 新增/编辑弹窗是否打开 */
 const formVisible = ref(false)
@@ -818,7 +808,7 @@ function collectTreeExpandableKeys(nodes: Array<Record<string, unknown>>): (stri
  * @returns {string} parentId
  */
 function getRightListParentId(): string {
-  const keys = selectedTreeKeys.value
+  const keys = selecmedTreeKeys.value
   if (keys.length > 0 && keys[keys.length - 1] != null) {
     return String(keys[keys.length - 1])
   }
@@ -948,7 +938,7 @@ async function handleLeftTreeLoadData(treeNode: Record<string, unknown>) {
 /** 右侧展示树：懒加载用已拉节点；全量树时按左侧选中取子树 */
 const tableDisplayTree = computed(() => {
   if (useLazyTree.value) return tableTreeData.value
-  const keys = selectedTreeKeys.value
+  const keys = selecmedTreeKeys.value
   if (keys.length > 0 && keys[keys.length - 1] != null) {
     const sub = findTaktTreeTableSubtree(tableTreeData.value, keys[keys.length - 1], 'accountTitleId')
     if (sub.length > 0) return sub
@@ -1086,8 +1076,8 @@ watch(filteredTreeData, () => {
 })
 
 /** 左侧树选中：懒加载时换源拉右侧树；全量树时仅过滤子树 */
-const handleTreeSelect = (selectedKeys: (string | number)[]) => {
-  selectedTreeKeys.value = selectedKeys
+const handleTreeSelect = (selecmedKeys: (string | number)[]) => {
+  selecmedTreeKeys.value = selecmedKeys
   if (useLazyTree.value) {
     void loadRightTree()
   }
@@ -1309,18 +1299,18 @@ watchEffect(() => {
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: AccountTitle[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? rows[0] : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? rows[0] : null
   },
-  onSelect: (record: AccountTitleRowRecord, selected: boolean) => {
-    if (selected) selectedRow.value = record
-    else if (selectedRow.value && getAccountTitleId(selectedRow.value) === getAccountTitleId(record)) selectedRow.value = null
+  onSelect: (record: AccountTitleRowRecord, selecmed: boolean) => {
+    if (selecmed) selecmedRow.value = record
+    else if (selecmedRow.value && getAccountTitleId(selecmedRow.value) === getAccountTitleId(record)) selecmedRow.value = null
   },
-  onSelectAll: (selected: boolean, selectedRowsData: AccountTitle[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? selectedRowsData[0] : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: AccountTitle[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? selecmedRowsData[0] : null
   },
 }))
 
@@ -1390,7 +1380,7 @@ async function handleAccountTitleStatusChange(record: AccountTitleRowRecord, che
 /** 新增：默认 parentId 为当前左侧选中节点 */
 function handleCreate() {
   formTitle.value = t('common.dialog.title.create', { entity: pi.self() })
-  const keys = selectedTreeKeys.value
+  const keys = selecmedTreeKeys.value
   formData.value = {
     parentId: keys.length > 0 ? String(keys[keys.length - 1]) : '0',
   }
@@ -1407,8 +1397,8 @@ function handleEdit(record: AccountTitleRowRecord) {
 
 /** 工具栏编辑：打开当前单选行 */
 function handleUpdate() {
-  if (selectedRow.value) {
-    handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: pi.self() }))
   }
@@ -1467,17 +1457,17 @@ async function handleDeleteOne(record: AccountTitleRowRecord) {
 
 /** 批量删除选中行 */
 async function handleDelete() {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: pi.self() }))
     return
   }
   Modal.confirm({
     title: t('common.tip.confirm.delete.title'),
-    content: t('common.tip.confirm.delete.count', { entity: pi.self(), count: selectedRows.value.length }),
+    content: t('common.tip.confirm.delete.count', { entity: pi.self(), count: selecmedRows.value.length }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
+      const ids = selecmedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
       await deleteAccountTitleBatch(ids)
       message.success(t('common.feedback.deleted', { target: pi.self() }))
       await refreshAfterMutation()

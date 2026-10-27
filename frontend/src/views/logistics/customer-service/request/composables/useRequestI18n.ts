@@ -82,7 +82,6 @@ export type CustomerServiceRequestField = keyof typeof CUSTOMERSERVICEREQUEST_PL
 /** 高级查询可 trim 的字符串字段 */
 export const CUSTOMERSERVICEREQUEST_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'serviceRequestCode',
   'clientId',
   'clientCode',

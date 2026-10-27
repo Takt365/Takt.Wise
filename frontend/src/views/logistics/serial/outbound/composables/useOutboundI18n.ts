@@ -55,7 +55,6 @@ export type SerialOutboundField = keyof typeof SERIALOUTBOUND_PLACEHOLDER
 
 /** 高级查询可 trim 的字符串字段 */
 export const SERIALOUTBOUND_QUERY_STRING_FIELDS = [
-  'plantCode',
   'outboundCode',
   'shippingInvoiceCode',
   'outboundDateStart',

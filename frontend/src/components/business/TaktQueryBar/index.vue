@@ -4,7 +4,7 @@
 文件名称:index.vue
 创建时间:2025-01-20
 创建人:Takt365(Cursor AI)
-功能描述:查询栏组件；默认关键字占满剩余宽；有 #fields 时关键字 50%，扩展条件+查询/重置共 50%
+功能描述:查询栏组件；#leading 在关键字前、按内容宽度；关键字占剩余宽；有 #fields 时关键字 50%，扩展条件+查询/重置共 50%
 
 版权信息:Copyright (c) 2025 Takt  All rights reserved.
 免责声明:此软件使用 MIT License,作者不承担任何使用风险。
@@ -15,6 +15,9 @@
     class="takt-query-bar"
     :class="{ 'takt-query-bar--custom-fields': hasFieldsSlot }"
   >
+    <div v-if="hasLeadingSlot" class="takt-query-bar__leading">
+      <slot name="leading" />
+    </div>
     <a-input
       v-if="showKeyword"
       v-model:value="keyword"
@@ -67,7 +70,10 @@ import { useSlots } from 'vue'
 const { t } = useI18n()
 const slots = useSlots()
 
-/** 是否使用了 #fields 自定义条件 */
+/** 是否使用了 #leading（关键字之前，按内容宽度，如期间、实施） */
+const hasLeadingSlot = computed(() => Boolean(slots.leading))
+
+/** 是否使用了 #fields 自定义条件（关键字之后，与查询/重置平分后半宽） */
 const hasFieldsSlot = computed(() => Boolean(slots.fields))
 
 /** 默认占位：search + common.page.form.keyword */
@@ -156,6 +162,14 @@ defineExpose({
   gap: 8px;
   width: 100%;
   box-sizing: border-box;
+}
+
+.takt-query-bar__leading {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 
 .takt-query-bar__keyword {

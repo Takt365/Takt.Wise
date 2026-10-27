@@ -41,7 +41,7 @@ public class TaktEcAttachmentsController : TaktControllerBase
     /// </summary>
     /// <param name="queryDto">查询DTO</param>
     /// <returns>分页结果</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:list", "设变附件列表")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:list", "设变附件列表")]
     [HttpGet("list")]
     public async Task<IActionResult> GetEcAttachmentListAsync([FromQuery] TaktEcAttachmentQueryDto queryDto)
     {
@@ -61,7 +61,7 @@ public class TaktEcAttachmentsController : TaktControllerBase
     /// </summary>
     /// <param name="id">设变附件ID</param>
     /// <returns>设变附件DTO</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:query", "设变附件详情")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:query", "设变附件详情")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetEcAttachmentByIdAsync(long id)
     {
@@ -86,7 +86,7 @@ public class TaktEcAttachmentsController : TaktControllerBase
     /// <param name="id">设变附件ID</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>文件流</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:preview", "预览设变附件")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:preview", "预览设变附件")]
     [HttpGet("{id}/preview")]
     public async Task<IActionResult> PreviewEcAttachmentAsync(long id, CancellationToken cancellationToken)
     {
@@ -108,7 +108,7 @@ public class TaktEcAttachmentsController : TaktControllerBase
     /// 获取设变附件选项列表
     /// </summary>
     /// <returns>下拉选项</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:query", "设变附件选项")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:query", "设变附件选项")]
     [HttpGet("options")]
     public async Task<IActionResult> GetEcAttachmentOptionsAsync([FromQuery] string? plantCode = null, [FromQuery] string? keyword = null)
     {
@@ -128,7 +128,7 @@ public class TaktEcAttachmentsController : TaktControllerBase
     /// </summary>
     /// <param name="dto">创建DTO</param>
     /// <returns>设变附件DTO</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:create", "创建设变附件")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:create", "创建设变附件")]
     [HttpPost]
     public async Task<IActionResult> CreateEcAttachmentAsync([FromBody] TaktEcAttachmentCreateDto dto)
     {
@@ -149,7 +149,7 @@ public class TaktEcAttachmentsController : TaktControllerBase
     /// <param name="id">设变附件ID</param>
     /// <param name="dto">更新DTO</param>
     /// <returns>设变附件DTO</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:update", "更新设变附件")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:update", "更新设变附件")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateEcAttachmentAsync(long id, [FromBody] TaktEcAttachmentUpdateDto dto)
     {
@@ -169,7 +169,7 @@ public class TaktEcAttachmentsController : TaktControllerBase
     /// </summary>
     /// <param name="id">设变附件ID</param>
     /// <returns>操作结果</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:delete", "删除设变附件")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:delete", "删除设变附件")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteEcAttachmentByIdAsync(long id)
     {
@@ -189,7 +189,7 @@ public class TaktEcAttachmentsController : TaktControllerBase
     /// </summary>
     /// <param name="ids">ID列表</param>
     /// <returns>操作结果</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:delete", "批量删除设变附件")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:delete", "批量删除设变附件")]
     [HttpDelete("batch")]
     public async Task<IActionResult> DeleteEcAttachmentBatchAsync([FromBody] IEnumerable<long> ids)
     {
@@ -209,7 +209,7 @@ public class TaktEcAttachmentsController : TaktControllerBase
     /// </summary>
     /// <param name="dto">作废 DTO</param>
     /// <returns>设变附件DTO</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:update", "更新设变附件作废状态")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:update", "更新设变附件作废状态")]
     [HttpPut("obsolete")]
     public async Task<IActionResult> UpdateEcAttachmentObsoleteAsync([FromBody] TaktEcAttachmentObsoleteDto dto)
     {
@@ -228,7 +228,7 @@ public class TaktEcAttachmentsController : TaktControllerBase
     /// 获取导入模板
     /// </summary>
     /// <returns>Excel文件</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:import", "获取设变附件导入模板")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:import", "获取设变附件导入模板")]
     [HttpGet("template")]
     public async Task<IActionResult> GetEcAttachmentTemplateAsync([FromQuery] string? sheetName = null, [FromQuery] string? templateName = null)
     {
@@ -248,7 +248,7 @@ public class TaktEcAttachmentsController : TaktControllerBase
     /// </summary>
     /// <param name="file">Excel文件</param>
     /// <returns>导入结果</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:import", "导入设变附件")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:import", "导入设变附件")]
     [HttpPost("import")]
     public async Task<IActionResult> ImportEcAttachmentAsync(IFormFile file, [FromQuery] string? sheetName = null)
     {
@@ -278,7 +278,7 @@ public class TaktEcAttachmentsController : TaktControllerBase
     /// 导出设变附件
     /// </summary>
     /// <returns>Excel文件</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:export", "导出设变附件")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:export", "导出设变附件")]
     [HttpGet("export")]
     public async Task<IActionResult> ExportEcAttachmentAsync([FromQuery] TaktEcAttachmentQueryDto? query = null, [FromQuery] string? sheetName = null, [FromQuery] string? exportName = null)
     {

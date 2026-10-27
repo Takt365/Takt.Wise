@@ -122,9 +122,11 @@ public class TaktDeptsController : TaktControllerBase
     }
 
     /// <summary>
-    /// 获取部门 ISO 编码树形选项列表（懒加载：DictValue=IsoCode）
+    /// 获取部门 ISO 编码树形选项列表（懒加载：DictValue=IsoCode；ExtValue=实体 Id；当前登录公司隔离）
     /// </summary>
     /// <param name="parentId">父级ID（0=根；懒加载仅返回直接子级一层）</param>
+    /// <param name="plantCode">工厂代码（可选）</param>
+    /// <param name="keyword">搜索关键字（可选）</param>
     /// <returns>树形选项</returns>
     [TaktPermission("human:resource:organization:dept:query", "部门ISO树形选项")]
     [HttpGet("iso-tree-options")]

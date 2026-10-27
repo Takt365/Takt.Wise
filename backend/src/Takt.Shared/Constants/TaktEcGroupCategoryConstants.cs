@@ -30,12 +30,12 @@ public static class TaktEcGroupCategoryConstants
     /// <summary>
     /// EC生管担当
     /// </summary>
-    public const int Pmc = 3;
+    public const int Pc = 3;
 
     /// <summary>
     /// EC采购担当
     /// </summary>
-    public const int Mp = 4;
+    public const int Pur = 4;
 
     /// <summary>
     /// EC部管担当
@@ -48,24 +48,24 @@ public static class TaktEcGroupCategoryConstants
     public const int Iqc = 6;
 
     /// <summary>
-    /// EC SMT担当
+    /// EC物料担当
     /// </summary>
-    public const int Smt = 7;
+    public const int Mtl = 7;
 
     /// <summary>
     /// EC制二担当
     /// </summary>
-    public const int Pcba = 8;
+    public const int Mfg2 = 8;
 
     /// <summary>
     /// EC制一担当
     /// </summary>
-    public const int Assy = 9;
+    public const int Mfg1 = 9;
 
     /// <summary>
     /// EC品管担当
     /// </summary>
-    public const int Qa = 10;
+    public const int Qc = 10;
 
     /// <summary>
     /// 类别对应的执行部门编码
@@ -74,16 +74,16 @@ public static class TaktEcGroupCategoryConstants
     /// <returns>部门编码；未知类别为空</returns>
     public static string? ToDeptCode(int category) => category switch
     {
-        EcOwner => TaktEcDeptCodes.Eng,
-        Sop => TaktEcDeptCodes.Te,
-        Pmc => TaktEcDeptCodes.Pmc,
-        Mp => TaktEcDeptCodes.Mp,
+        EcOwner => TaktEcDeptCodes.Te,
+        Sop => TaktEcDeptCodes.Me,
+        Pc => TaktEcDeptCodes.Pc,
+        Pur => TaktEcDeptCodes.Pur,
         Mc => TaktEcDeptCodes.Mc,
         Iqc => TaktEcDeptCodes.Iqc,
-        Smt => TaktEcDeptCodes.Smt,
-        Pcba => TaktEcDeptCodes.Pcba,
-        Assy => TaktEcDeptCodes.Assy,
-        Qa => TaktEcDeptCodes.Qa,
+        Mtl => TaktEcDeptCodes.Mtl,
+        Mfg2 => TaktEcDeptCodes.Mfg2,
+        Mfg1 => TaktEcDeptCodes.Mfg1,
+        Qc => TaktEcDeptCodes.Qc,
         _ => null,
     };
 }

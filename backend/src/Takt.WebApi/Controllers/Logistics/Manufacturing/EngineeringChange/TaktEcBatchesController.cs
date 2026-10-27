@@ -4,7 +4,7 @@
 // 文件名称：TaktEcBatchesController.cs
 // 创建时间：2026-06-22
 // 创建人：Takt365(Cursor AI)
-// 功能描述：投入批次控制器
+// 功能描述：设变看板批次页签 API（权限归看板 kanban）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -18,10 +18,10 @@ using Takt.Shared.Constants;
 namespace Takt.WebApi.Controllers.Logistics.Manufacturing.EngineeringChange;
 
 /// <summary>
-/// 投入批次控制器
+/// 设变看板批次页签控制器（权限与看板一致）
 /// </summary>
 [ApiModule(4, "后勤管理")]
-[Route("api/[controller]", Name = "投入批次")]
+[Route("api/[controller]", Name = "设变看板批次")]
 public class TaktEcBatchesController : TaktControllerBase
 {
     private readonly ITaktEcBatchService _service;
@@ -39,7 +39,7 @@ public class TaktEcBatchesController : TaktControllerBase
     /// <summary>
     /// 获取投入批次列表（分页）
     /// </summary>
-    [TaktPermission("logistics:manufacturing:engineering:change:batch:list", "投入批次列表")]
+    [TaktPermission("logistics:manufacturing:engineering:change:kanban:list", "设变看板批次列表")]
     [HttpGet("list")]
     public async Task<IActionResult> GetEcBatchListAsync([FromQuery] TaktEcBatchQueryDto queryDto)
     {
@@ -50,7 +50,7 @@ public class TaktEcBatchesController : TaktControllerBase
     /// <summary>
     /// 获取投入批次详情
     /// </summary>
-    [TaktPermission("logistics:manufacturing:engineering:change:batch:query", "投入批次详情")]
+    [TaktPermission("logistics:manufacturing:engineering:change:kanban:query", "设变看板批次详情")]
     [HttpGet("detail/{ecDetailId}")]
     public async Task<IActionResult> GetEcBatchByEcDetailIdAsync(long ecDetailId)
     {
@@ -61,7 +61,7 @@ public class TaktEcBatchesController : TaktControllerBase
     /// <summary>
     /// 更新投入批次
     /// </summary>
-    [TaktPermission("logistics:manufacturing:engineering:change:batch:update", "更新投入批次")]
+    [TaktPermission("logistics:manufacturing:engineering:change:kanban:update", "更新设变看板批次")]
     [HttpPut("detail/{ecDetailId}")]
     public async Task<IActionResult> UpdateEcBatchAsync(long ecDetailId, [FromBody] TaktEcBatchUpdateDto dto)
     {
@@ -72,7 +72,7 @@ public class TaktEcBatchesController : TaktControllerBase
     /// <summary>
     /// 导出投入批次
     /// </summary>
-    [TaktPermission("logistics:manufacturing:engineering:change:batch:export", "导出投入批次")]
+    [TaktPermission("logistics:manufacturing:engineering:change:kanban:export", "导出设变看板批次")]
     [HttpGet("export")]
     public async Task<IActionResult> ExportEcBatchAsync([FromQuery] TaktEcBatchQueryDto? query)
     {
@@ -83,7 +83,7 @@ public class TaktEcBatchesController : TaktControllerBase
     /// <summary>
     /// 获取投入批次转置列表（分页；行=设变明细，列=各阶段日期+批次）
     /// </summary>
-    [TaktPermission("logistics:manufacturing:engineering:change:batch:list", "投入批次转置列表")]
+    [TaktPermission("logistics:manufacturing:engineering:change:kanban:list", "设变看板批次转置列表")]
     [HttpGet("transposed")]
     public async Task<IActionResult> GetEcBatchTransposedListAsync([FromQuery] TaktEcExecBatchTransposedQueryDto queryDto)
     {

@@ -8,7 +8,7 @@
 <!-- ======================================== -->
 
 <template>
-  <div class="p-4">
+  <div class="ec-list-layout p-4">
     <!-- 查询栏 -->
     <TaktQueryBar
       v-model="queryKeyword"
@@ -58,38 +58,41 @@
       @change="handleTableChange"
       @resize-column="handleResizeColumn"
     >
-      <template #bodyCell="{ column, record, text }">
-        <template v-if="isLegacyProductColumn(column, 'discontinuedStatus')">
+      <template #bodyCell="slotData">
+        <template v-if="isLegacyProductColumn(slotData.column, 'discontinuedStatus')">
           <TaktDictTag
             dict-type="logistics_materials_material_discontinued_status"
-            :value="legacyProductDictCellValue(record, 'discontinuedStatus', text)"
+            :value="legacyProductDictCellValue(slotData.record, 'discontinuedStatus', slotData.text)"
           />
         </template>
-        <template v-else-if="isLegacyProductColumn(column, 'ec2ndVendor')">
+        <template v-else-if="isLegacyProductColumn(slotData.column, 'ec2ndVendor')">
           <TaktDictTag
             dict-type="logistics_manufacturing_ec_2nd_vendor"
-            :value="legacyProductDictCellValue(record, 'ec2ndVendor', text)"
+            :value="legacyProductDictCellValue(slotData.record, 'ec2ndVendor', slotData.text)"
           />
         </template>
-        <template v-else-if="isLegacyProductColumn(column, 'ecInstruction')">
+        <template v-else-if="isLegacyProductColumn(slotData.column, 'ecInstruction')">
           <TaktDictTag
             dict-type="logistics_manufacturing_ec_source_instruction"
-            :value="legacyProductDictCellValue(record, 'ecInstruction', text)"
+            :value="legacyProductDictCellValue(slotData.record, 'ecInstruction', slotData.text)"
           />
         </template>
-        <template v-else-if="isLegacyProductColumn(column, 'ecOldPartDisposition')">
+        <template v-else-if="isLegacyProductColumn(slotData.column, 'oldProductHandling')">
           <TaktDictTag
             dict-type="logistics_manufacturing_ec_old_part_disposition"
-            :value="legacyProductDictCellValue(record, 'ecOldPartDisposition', text)"
+            :value="legacyProductDictCellValue(slotData.record, 'oldProductHandling', slotData.text)"
           />
         </template>
-        <template v-else-if="isLegacyProductColumn(column, 'oldProductHandling')">
+        <template v-else-if="isLegacyProductColumn(slotData.column, 'ecOldPartDisposition')">
           <TaktDictTag
             dict-type="logistics_manufacturing_ec_old_part_disposition"
-            :value="legacyProductDictCellValue(record, 'oldProductHandling', text)"
+            :value="legacyProductDictCellValue(slotData.record, 'ecOldPartDisposition', slotData.text)"
           />
         </template>
-        <template v-else>{{ text }}</template>
+        <TaktTableBodyCellFallback
+          v-else
+          :slot-data="slotData"
+        />
       </template>
     </TaktSingleTable>
 
@@ -131,16 +134,6 @@
       @reset="handleAdvancedQueryReset"
     >
       <template #default="{ isFieldVisible }">
-        <div v-show="isFieldVisible('plantCode')">
-          <a-form-item :label="pi.queryLabel('plantCode')">
-            <TaktSelect
-              v-model:value="advancedQueryForm.plantCode"
-              api-url="TaktPlants/options"
-              :placeholder="pi.queryPh('plantCode', 'select')"
-              allow-clear
-            />
-          </a-form-item>
-        </div>
         <div v-show="isFieldVisible('cultureCode')">
           <a-form-item :label="pi.queryLabel('cultureCode')">
             <TaktSelect
@@ -207,9 +200,11 @@
  * 设变旧品管制列表页（编辑 + 导出）
  * @module views/logistics/manufacturing/engineering-change/legacy-product
  */
+import '../ec-list-layout.css'
 import { message } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
+import TaktTableBodyCellFallback from '@/components/business/TaktTableBodyCellFallback/index'
 import { useI18n } from 'vue-i18n'
 import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
 import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
@@ -259,11 +254,11 @@ const pageSize = ref(getTaktDefaultPageSize())
 /** 分页 total */
 const total = ref(0)
 /** 工具栏单选时当前行 */
-const selectedRow = ref<EcLegacyProductRowRecord | null>(null)
+const selecmedRow = ref<EcLegacyProductRowRecord | null>(null)
 /** 表格多选行 */
-const selectedRows = ref<EcLegacyProductRowRecord[]>([])
+const selecmedRows = ref<EcLegacyProductRowRecord[]>([])
 /** 表格多选 row-key 集合 */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 /** 编辑弹窗是否打开 */
 const formVisible = ref(false)
 /** 弹窗标题 */
@@ -305,7 +300,7 @@ const visibleColumnKeys = ref<string[]>([...ECLEGACYPRODUCT_DEFAULT_VISIBLE_COLU
 /** 实体主键字段名（row-key、详情路径） */
 const entityIdName = 'ecDetailId'
 /** 工具栏「编辑」是否禁用（须恰好选中一行） */
-const updateDisabled = computed(() => selectedRows.value.length !== 1)
+const updateDisabled = computed(() => selecmedRows.value.length !== 1)
 /** Pinia：字典缓存 */
 const dictDataStore = useDictDataStore()
 
@@ -448,21 +443,21 @@ function isLegacyProductColumn(
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: EcLegacyProductRowRecord[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: EcLegacyProductRowRecord, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (selectedRow.value && getEcLegacyProductId(selectedRow.value) === getEcLegacyProductId(record)) {
-      selectedRow.value = null
+  onSelect: (record: EcLegacyProductRowRecord, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (selecmedRow.value && getEcLegacyProductId(selecmedRow.value) === getEcLegacyProductId(record)) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: EcLegacyProductRowRecord[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: EcLegacyProductRowRecord[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   },
 }))
 
@@ -473,16 +468,16 @@ const rowSelection = computed(() => ({
 const onClickRow = (record: EcLegacyProductRowRecord) => ({
   onClick: () => {
     const key = getEcLegacyProductId(record)
-    const index = selectedRowKeys.value.indexOf(key)
+    const index = selecmedRowKeys.value.indexOf(key)
     if (index > -1) {
-      selectedRowKeys.value.splice(index, 1)
+      selecmedRowKeys.value.splice(index, 1)
     } else {
-      selectedRowKeys.value.push(key)
+      selecmedRowKeys.value.push(key)
     }
-    selectedRows.value = dataSource.value.filter((item) => selectedRowKeys.value.includes(getEcLegacyProductId(item)))
-    selectedRow.value = selectedRowKeys.value.length === 1 ? (selectedRows.value[0] ?? null) : null
+    selecmedRows.value = dataSource.value.filter((item) => selecmedRowKeys.value.includes(getEcLegacyProductId(item)))
+    selecmedRow.value = selecmedRowKeys.value.length === 1 ? (selecmedRows.value[0] ?? null) : null
     if (rowSelection.value.onChange) {
-      rowSelection.value.onChange(selectedRowKeys.value, selectedRows.value)
+      rowSelection.value.onChange(selecmedRowKeys.value, selecmedRows.value)
     }
   },
 })
@@ -546,8 +541,8 @@ async function handleEdit(record: EcLegacyProductRowRecord) {
 
 /** 工具栏编辑：打开当前单选行 */
 function handleUpdate() {
-  if (selectedRow.value) {
-    void handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    void handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: pi.self() }))
   }

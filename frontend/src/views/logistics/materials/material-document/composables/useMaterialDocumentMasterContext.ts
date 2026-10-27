@@ -15,7 +15,7 @@ export type MaterialDocumentRowRecord = MaterialDocument | Record<string, unknow
 /** 主表选中行上下文 */
 export interface MaterialDocumentMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<MaterialDocumentRowRecord | null>
+  selecmedMasterRow: Ref<MaterialDocumentRowRecord | null>
 }
 
 const materialDocumentMasterContextKey: InjectionKey<MaterialDocumentMasterContext> = Symbol('material-documentMasterContext')
@@ -25,8 +25,8 @@ const materialDocumentMasterContextKey: InjectionKey<MaterialDocumentMasterConte
  * @returns {MaterialDocumentMasterContext} 主表上下文
  */
 export function provideMaterialDocumentMasterContext(): MaterialDocumentMasterContext {
-  const selectedMasterRow = ref<MaterialDocumentRowRecord | null>(null)
-  const ctx: MaterialDocumentMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<MaterialDocumentRowRecord | null>(null)
+  const ctx: MaterialDocumentMasterContext = { selecmedMasterRow }
   provide(materialDocumentMasterContextKey, ctx)
   return ctx
 }

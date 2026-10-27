@@ -93,6 +93,7 @@
                   v-model:value="formState.deptCode"
                   api-url="TaktDepts/iso-tree-options"
                   :lazy="true"
+                  :api-params="deptIsoTreeApiParams"
                   :placeholder="t('common.page.form.placeholder.select', { field: t('entity.numbering.deptcode') })"
                   allow-clear
                   :disabled="props.loading"
@@ -190,24 +191,12 @@
             </a-col>
             <a-col :span="12">
               <a-form-item
-                :label="t('entity.numbering.currentsequence')"
-                name="currentSequence"
-              >
-                <a-input-number
-                  v-model:value="formState.currentSequence"
-                  :placeholder="t('common.page.form.placeholder.required', { field: t('entity.numbering.currentsequence') })"
-                  style="width: 100%"
-                />
-              </a-form-item>
-            </a-col>
-            <a-col :span="12">
-              <a-form-item
-                :label="t('entity.numbering.examplecode')"
-                name="exampleCode"
+                :label="t('entity.numbering.startingnumber')"
+                name="startingNumber"
               >
                 <a-input
-                  v-model:value="formState.exampleCode"
-                  :placeholder="t('common.page.form.placeholder.required', { field: t('entity.numbering.examplecode') })"
+                  v-model:value="formState.startingNumber"
+                  :placeholder="t('common.page.form.placeholder.required', { field: t('entity.numbering.startingnumber') })"
                   show-count
                   :maxlength="100"
                   allow-clear
@@ -343,6 +332,13 @@ const { t } = useI18n()
 const tenantStore = useTenantStore()
 /** Pinia：用户上下文 */
 const userStore = useUserStore()
+/**
+ * 部门 ISO 树附加参数：按当前登录公司关联工厂过滤（公司隔离由请求头 X-Company-Code 保证）
+ */
+const deptIsoTreeApiParams = computed(() => {
+  const plant = tenantStore.currentCompanyRelatedPlant
+  return plant ? { plantCode: plant } : undefined
+})
 
 /**
  * 上下文隔离字段：租户 / 公司 / 公司默认语言（登录或公司切换注入，表单只读）
@@ -369,7 +365,7 @@ const formContentClass = computed(() => (formFields.length > 10 ? 'takt-form-con
 /** 当前激活的 Tab key */
 const activeTab = ref('tab-0')
 /** CreateDto 字段名列表（与 formState 键对齐） */
-const formFields = ["tenantCode","companyCode","cultureCode","ruleCode","ruleName","documentType","deptCode","prefixCode","dateFormat","sequenceLength","sequenceStep","suffixCode","resetPeriod","currentSequence","exampleCode","separator","isBuiltIn","status","description","extField","remark"]
+const formFields = ["tenantCode","companyCode","cultureCode","ruleCode","ruleName","documentType","deptCode","prefixCode","dateFormat","sequenceLength","sequenceStep","suffixCode","resetPeriod","startingNumber","separator","isBuiltIn","status","description","extField","remark"]
 
 /** 父级传入的编辑 DTO；新增时为 undefined 或空对象 */
 interface Props {
@@ -534,23 +530,10 @@ const rules = computed<Record<string, Rule[]>>(() => ({
       trigger: 'change'
     }
   ],
-  currentSequence: [{
-    validator: async (_rule, value) => {
-      if (value === undefined || value === null || value === '') {
-        return Promise.reject(t('common.page.form.placeholder.select', { field: t('entity.numbering.currentsequence') }))
-      }
-      const num = typeof value === 'number' ? value : Number(value)
-      if (!Number.isFinite(num)) {
-        return Promise.reject(t('common.page.form.placeholder.select', { field: t('entity.numbering.currentsequence') }))
-      }
-      return Promise.resolve()
-    },
-    trigger: 'change'
-  }],
-  exampleCode: [
+  startingNumber: [
     {
       required: true,
-      message: t('common.page.form.placeholder.required', { field: t('entity.numbering.examplecode') }),
+      message: t('common.page.form.placeholder.required', { field: t('entity.numbering.startingnumber') }),
       trigger: 'blur'
     }
   ],
@@ -599,10 +582,6 @@ function getValues(): Record<string, any> {
   if ('sequenceStep' in payload) {
     const rawsequenceStep = payload.sequenceStep
     payload.sequenceStep = typeof rawsequenceStep === 'number' ? rawsequenceStep : Number(rawsequenceStep)
-  }
-  if ('currentSequence' in payload) {
-    const rawcurrentSequence = payload.currentSequence
-    payload.currentSequence = typeof rawcurrentSequence === 'number' ? rawcurrentSequence : Number(rawcurrentSequence)
   }
   if ('isBuiltIn' in payload) {
     const rawisBuiltIn = payload.isBuiltIn

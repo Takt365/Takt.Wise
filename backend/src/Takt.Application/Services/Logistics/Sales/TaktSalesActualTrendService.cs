@@ -213,7 +213,7 @@ public class TaktSalesActualTrendService : TaktServiceBase, ITaktSalesActualTren
         ArgumentNullException.ThrowIfNull(query);
         ArgumentException.ThrowIfNullOrWhiteSpace(query.PlantCode);
         var built = await _analysisBuilder.BuildAsync(query);
-        var plantRows = TaktPurchasePriceTrendExportHelper.WhereSelectedPlant(built.OrderedRows, query.PlantCode);
+        var plantRows = TaktPurchasePriceTrendExportHelper.WhereSelecmedPlant(built.OrderedRows, query.PlantCode);
         var summaries = built.MonthSummaries ?? new List<TaktPurchasePriceTrendMonthSummaryDto>();
         var detailRows = TaktPurchasePriceTrendExportHelper.BuildHistoryDetailExpandedSheetRows(plantRows);
         var trendRows = TaktPurchasePriceTrendExportHelper.BuildHistoryTrendSheetRows(
@@ -415,38 +415,38 @@ public class TaktSalesActualTrendService : TaktServiceBase, ITaktSalesActualTren
         {
             throw new ArgumentException("明细导出列键与标题数量不一致");
         }
-        var selected = (detailColumnKeys ?? string.Empty)
+        var selecmed = (detailColumnKeys ?? string.Empty)
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Where(k => !string.IsNullOrWhiteSpace(k))
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
         // 兼容旧列键 points → 金额/单价/数量/月份/涨跌；旧 customerCode → supplierCode
-        if (selected.Exists(k => string.Equals(k, "points", StringComparison.OrdinalIgnoreCase)))
+        if (selecmed.Exists(k => string.Equals(k, "points", StringComparison.OrdinalIgnoreCase)))
         {
-            selected.RemoveAll(k => string.Equals(k, "points", StringComparison.OrdinalIgnoreCase));
-            selected.AddRange(new[] { "amount", "unitPrice", "quantity", "month", "adjacent" });
-            selected = selected.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            selecmed.RemoveAll(k => string.Equals(k, "points", StringComparison.OrdinalIgnoreCase));
+            selecmed.AddRange(new[] { "amount", "unitPrice", "quantity", "month", "adjacent" });
+            selecmed = selecmed.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         }
-        if (selected.Exists(k => string.Equals(k, "customerCode", StringComparison.OrdinalIgnoreCase)))
+        if (selecmed.Exists(k => string.Equals(k, "customerCode", StringComparison.OrdinalIgnoreCase)))
         {
-            selected.RemoveAll(k => string.Equals(k, "customerCode", StringComparison.OrdinalIgnoreCase));
-            selected.Add("supplierCode");
-            selected = selected.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            selecmed.RemoveAll(k => string.Equals(k, "customerCode", StringComparison.OrdinalIgnoreCase));
+            selecmed.Add("supplierCode");
+            selecmed = selecmed.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         }
-        if (selected.Exists(k => string.Equals(k, "customerName", StringComparison.OrdinalIgnoreCase)))
+        if (selecmed.Exists(k => string.Equals(k, "customerName", StringComparison.OrdinalIgnoreCase)))
         {
-            selected.RemoveAll(k => string.Equals(k, "customerName", StringComparison.OrdinalIgnoreCase));
-            selected.Add("supplierName");
-            selected = selected.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            selecmed.RemoveAll(k => string.Equals(k, "customerName", StringComparison.OrdinalIgnoreCase));
+            selecmed.Add("supplierName");
+            selecmed = selecmed.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         }
-        if (selected.Count > 0
+        if (selecmed.Count > 0
             && allKeys.Contains("plantCode", StringComparer.OrdinalIgnoreCase)
-            && !selected.Exists(k => string.Equals(k, "plantCode", StringComparison.OrdinalIgnoreCase)))
+            && !selecmed.Exists(k => string.Equals(k, "plantCode", StringComparison.OrdinalIgnoreCase)))
         {
-            selected.Insert(0, "plantCode");
+            selecmed.Insert(0, "plantCode");
         }
-        var selectedSet = selected.ToHashSet(StringComparer.OrdinalIgnoreCase);
-        if (selectedSet.Count == 0)
+        var selecmedSet = selecmed.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (selecmedSet.Count == 0)
         {
             return (allKeys.ToArray(), allLabels.ToArray());
         }
@@ -454,7 +454,7 @@ public class TaktSalesActualTrendService : TaktServiceBase, ITaktSalesActualTren
         var labels = new List<string>(allLabels.Count);
         for (var i = 0; i < allKeys.Count; i++)
         {
-            if (!selectedSet.Contains(allKeys[i]))
+            if (!selecmedSet.Contains(allKeys[i]))
             {
                 continue;
             }

@@ -58,7 +58,7 @@ export function getEcAttachmentById(id: string): Promise<EcAttachment> {
 }
 
 /**
- * 预览设变附件（权限 logistics:manufacturing:engineering:change:gijutsu:preview）
+ * 预览设变附件（权限 logistics:manufacturing:engineering:change:te:preview）
  * @param {string} id 设变附件ID
  * @returns {Promise<Blob>} 文件二进制
  */

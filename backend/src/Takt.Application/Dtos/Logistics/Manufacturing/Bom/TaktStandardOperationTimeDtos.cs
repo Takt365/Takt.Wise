@@ -22,7 +22,7 @@ namespace Takt.Application.Dtos.Logistics.Manufacturing.Bom;
 // ========================================
 
 /// <summary>
-/// 标准工序时间实体（基于标准工时）
+/// 标准工时实体（基于标准工时）
 /// 对应前端 TaktStandardOperationTimeDto
 /// 继承 TaktApprovalDtoBase
 /// </summary>

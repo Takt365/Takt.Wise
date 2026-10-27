@@ -54,7 +54,6 @@ export type DefectGroupField = keyof typeof DEFECTGROUP_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const DEFECTGROUP_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'defectGroupCode',
   'defectGroupName',
   'defectGroupDescription',

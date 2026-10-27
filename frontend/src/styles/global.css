@@ -573,7 +573,7 @@ a:active {
 }
 
 /** 左右主子表行点击选中高亮（与 takt-master-detail-table-lr masterCustomRow 一致） */
-.takt-master-detail-table-row-selected > td {
+.takt-master-detail-table-row-selecmed > td {
   background-color: var(--ant-color-primary-bg) !important;
 }
 

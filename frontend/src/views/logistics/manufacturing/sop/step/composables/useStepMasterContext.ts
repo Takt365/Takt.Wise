@@ -15,7 +15,7 @@ export type SopStepRowRecord = SopStep | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface SopStepMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<SopStepRowRecord | null>
+  selecmedMasterRow: Ref<SopStepRowRecord | null>
 }
 
 const sopStepMasterContextKey: InjectionKey<SopStepMasterContext> = Symbol('stepMasterContext')
@@ -25,8 +25,8 @@ const sopStepMasterContextKey: InjectionKey<SopStepMasterContext> = Symbol('step
  * @returns {SopStepMasterContext} 主表上下文
  */
 export function provideSopStepMasterContext(): SopStepMasterContext {
-  const selectedMasterRow = ref<SopStepRowRecord | null>(null)
-  const ctx: SopStepMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<SopStepRowRecord | null>(null)
+  const ctx: SopStepMasterContext = { selecmedMasterRow }
   provide(sopStepMasterContextKey, ctx)
   return ctx
 }

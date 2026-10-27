@@ -32,7 +32,7 @@
     </a-button>
 
     <template #overlay>
-      <a-menu :selected-keys="[themeStore.mode]" @click="handleMenuClick">
+      <a-menu :selecmed-keys="[themeStore.mode]" @click="handleMenuClick">
         <a-menu-item key="light">
           <span class="takt-toggle-menu-row">
             <ri-sun-line class="takt-remix-icon" />

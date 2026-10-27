@@ -365,11 +365,11 @@ function coerceStorageType(value: unknown): number | undefined {
 }
 
 /** 当前存储类型 */
-const selectedStorageType = computed(() => coerceStorageType(detailState.value?.storageType))
+const selecmedStorageType = computed(() => coerceStorageType(detailState.value?.storageType))
 /** 是否展示 OSS 提供商 */
-const showOssProviderField = computed(() => selectedStorageType.value === 1)
+const showOssProviderField = computed(() => selecmedStorageType.value === 1)
 /** 是否展示 FTP 提供商 */
-const showFtpProviderField = computed(() => selectedStorageType.value === 2)
+const showFtpProviderField = computed(() => selecmedStorageType.value === 2)
 
 /**
  * 文件大小展示

@@ -15,7 +15,7 @@ export type InspectionStandardRowRecord = InspectionStandard | Record<string, un
 /** 主表选中行上下文 */
 export interface InspectionStandardMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<InspectionStandardRowRecord | null>
+  selecmedMasterRow: Ref<InspectionStandardRowRecord | null>
 }
 
 const inspectionStandardMasterContextKey: InjectionKey<InspectionStandardMasterContext> = Symbol('inspection-standardMasterContext')
@@ -25,8 +25,8 @@ const inspectionStandardMasterContextKey: InjectionKey<InspectionStandardMasterC
  * @returns {InspectionStandardMasterContext} 主表上下文
  */
 export function provideInspectionStandardMasterContext(): InspectionStandardMasterContext {
-  const selectedMasterRow = ref<InspectionStandardRowRecord | null>(null)
-  const ctx: InspectionStandardMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<InspectionStandardRowRecord | null>(null)
+  const ctx: InspectionStandardMasterContext = { selecmedMasterRow }
   provide(inspectionStandardMasterContextKey, ctx)
   return ctx
 }

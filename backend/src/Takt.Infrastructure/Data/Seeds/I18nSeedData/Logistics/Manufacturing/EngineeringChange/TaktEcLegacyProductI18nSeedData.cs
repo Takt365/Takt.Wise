@@ -66,7 +66,7 @@ public class TaktEcLegacyProductI18nSeedData : ITaktSeedDataCoordinator
     }
 
     /// <summary>
-    /// 旧品管制自称 + 生管旧品处理（与明细字典旧品处理区分；其余字段走 ecdetail 种子）
+    /// 旧品管制自称，以及生管、采购、明细三列旧品处理（其余字段走 ecdetail 种子）
     /// </summary>
     private static List<TranslationSeedItem> GetEcLegacyProductTranslations()
     {
@@ -76,10 +76,18 @@ public class TaktEcLegacyProductI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.eclegacyproduct._self", "ja-JP", "旧品管制_jp", "实体名称"),
             new TranslationSeedItem("entity.eclegacyproduct._self", "zh-CN", "旧品管制", "实体名称"),
             new TranslationSeedItem("entity.eclegacyproduct._self", "zh-HK", "旧品管制_hk", "实体名称"),
-            new TranslationSeedItem("entity.eclegacyproduct.oldproducthandling", "en-US", "生管旧品处理_us", "生管课执行行旧品处理（TaktEcSeikan.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）"),
-            new TranslationSeedItem("entity.eclegacyproduct.oldproducthandling", "ja-JP", "生管旧品处理_jp", "生管课执行行旧品处理（TaktEcSeikan.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）"),
-            new TranslationSeedItem("entity.eclegacyproduct.oldproducthandling", "zh-CN", "生管旧品处理", "生管课执行行旧品处理（TaktEcSeikan.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）"),
-            new TranslationSeedItem("entity.eclegacyproduct.oldproducthandling", "zh-HK", "生管旧品处理_hk", "生管课执行行旧品处理（TaktEcSeikan.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）"),
+            new TranslationSeedItem("entity.eclegacyproduct.oldproducthandling", "en-US", "生管旧品处理_us", "生管课执行行旧品处理（TaktEcPc.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）"),
+            new TranslationSeedItem("entity.eclegacyproduct.oldproducthandling", "ja-JP", "生管旧品处理_jp", "生管课执行行旧品处理（TaktEcPc.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）"),
+            new TranslationSeedItem("entity.eclegacyproduct.oldproducthandling", "zh-CN", "生管旧品处理", "生管课执行行旧品处理（TaktEcPc.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）"),
+            new TranslationSeedItem("entity.eclegacyproduct.oldproducthandling", "zh-HK", "生管旧品处理_hk", "生管课执行行旧品处理（TaktEcPc.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）"),
+            new TranslationSeedItem("entity.eclegacyproduct.mpoldpartdisposition", "en-US", "采购旧品处理_us", "采购课执行行旧品处理（TaktEcPur.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）"),
+            new TranslationSeedItem("entity.eclegacyproduct.mpoldpartdisposition", "ja-JP", "采购旧品处理_jp", "采购课执行行旧品处理（TaktEcPur.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）"),
+            new TranslationSeedItem("entity.eclegacyproduct.mpoldpartdisposition", "zh-CN", "采购旧品处理", "采购课执行行旧品处理（TaktEcPur.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）"),
+            new TranslationSeedItem("entity.eclegacyproduct.mpoldpartdisposition", "zh-HK", "采购旧品处理_hk", "采购课执行行旧品处理（TaktEcPur.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）"),
+            new TranslationSeedItem("entity.eclegacyproduct.ecoldpartdisposition", "en-US", "明细旧品处理_us", "设变明细旧品处理（TaktEcDetail.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）"),
+            new TranslationSeedItem("entity.eclegacyproduct.ecoldpartdisposition", "ja-JP", "明细旧品处理_jp", "设变明细旧品处理（TaktEcDetail.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）"),
+            new TranslationSeedItem("entity.eclegacyproduct.ecoldpartdisposition", "zh-CN", "明细旧品处理", "设变明细旧品处理（TaktEcDetail.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）"),
+            new TranslationSeedItem("entity.eclegacyproduct.ecoldpartdisposition", "zh-HK", "明细旧品处理_hk", "设变明细旧品处理（TaktEcDetail.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）"),
         };
     }
 

@@ -2,40 +2,58 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/components -->
 <!-- 文件名称：EcDeptExecLrPage.vue -->
-<!-- 功能描述：执行部门左右主子表壳：左栏设变主表 TaktEcGijutsu，右栏页签为本部门执行表与设变明细 -->
+<!-- 功能描述：执行部门左右主子表壳：左栏设变主表，右栏为本部门未实施、已实施与设变明细三个页签 -->
 <!-- 版权信息：Copyright (c) 2026 Takt All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->
 
 <template>
-  <div class="p-4 flex flex-col min-h-0 h-full">
+  <div class="ec-list-layout p-4 flex flex-col min-h-0 h-full">
     <TaktMasterDetailTableLr
       ref="lrRef"
-      v-model:master-current="gijutsuPage"
-      v-model:master-page-size="gijutsuPageSize"
-      v-model:selected-master-key="selectedGijutsuKey"
+      v-model:master-current="tePage"
+      v-model:master-page-size="tePageSize"
+      v-model:selecmed-master-key="selecmedTeKey"
       class="min-h-0 flex-1"
-      :master-columns="gijutsuColumns"
-      :master-data-source="gijutsuRows"
-      :master-loading="gijutsuLoading"
-      :master-row-key="getGijutsuId"
-      master-id-column-key="ecGijutsuId"
-      :master-visible-column-keys="gijutsuVisibleColumnKeys"
+      :master-columns="teColumns"
+      :master-data-source="teRows"
+      :master-loading="teLoading"
+      :master-row-key="getTeId"
+      master-id-column-key="ecTeId"
+      :master-visible-column-keys="teVisibleColumnKeys"
       master-table-mode="masterDetailMaster"
       master-scroll-layout="masterDetailLr"
-      :master-total="gijutsuTotal"
+      :master-total="teTotal"
       master-entity-scope="company"
-      @master-pagination-change="loadGijutsu"
-      @master-select="handleGijutsuSelect"
+      @master-pagination-change="loadTe"
+      @master-select="handleTeSelect"
     >
       <template #master-toolbar>
         <TaktQueryBar
-          v-model="gijutsuKeyword"
+          v-model="teKeyword"
           :placeholder="t('common.page.form.placeholder.search')"
-          :loading="gijutsuLoading"
-          @search="handleGijutsuSearch"
-          @reset="handleGijutsuReset"
-        />
+          :loading="teLoading"
+          @search="handleTeSearch"
+          @reset="handleTeReset"
+        >
+          <template #leading>
+            <span class="whitespace-nowrap text-sm text-text-secondary">{{ t('logistics.manufacturing.engineering-change.ec-stat.page.entryPeriodRange') }}</span>
+            <a-range-picker
+              v-model:value="teEntryPeriod"
+              picker="month"
+              format="YYYY-MM"
+              value-format="YYYY-MM"
+              class="w-64 min-w-56"
+              :placeholder="[
+                t('logistics.manufacturing.engineering-change.ec-stat.page.entryPeriodRange'),
+                t('logistics.manufacturing.engineering-change.ec-stat.page.entryPeriodRange'),
+              ]"
+              :disabled-date="entryPeriodLimit.disabledDate"
+              @calendar-change="entryPeriodLimit.onCalendarChange"
+              @open-change="entryPeriodLimit.onOpenChange"
+            />
+          </template>
+        </TaktQueryBar>
         <TaktToolsBar
           :show-create="false"
           :show-create-row="false"
@@ -49,32 +67,48 @@
           :show-column-setting="true"
           :show-fullscreen="true"
           :show-refresh="true"
-          :refresh-loading="gijutsuLoading"
-          @column-setting="gijutsuColumnSettingVisible = true"
-          @refresh="loadGijutsu"
+          :refresh-loading="teLoading"
+          @column-setting="teColumnSettingVisible = true"
+          @refresh="loadTe"
         />
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'changeStatus'">
           <TaktDictTag dict-type="logistics_manufacturing_ec_status" :value="record.changeStatus" />
         </template>
-        <template v-else-if="column.key === 'ecScope'">
-          <TaktDictTag dict-type="logistics_manufacturing_ec_scope_category" :value="record.ecScope" />
+        <template v-else-if="column.key === 'ecImplScope'">
+          <TaktDictTag dict-type="logistics_manufacturing_ec_impl_scope_category" :value="record.ecImplScope" />
         </template>
-        <template v-else-if="column.key === 'ecDeptScope'">
-          <TaktDictTag dict-type="logistics_manufacturing_ec_dept_scope_category" :value="record.ecDeptScope" />
+        <template v-else-if="column.key === 'ecControlScope'">
+          <TaktDictTag dict-type="logistics_manufacturing_ec_control_scope_category" :value="record.ecControlScope" />
         </template>
         <template v-else-if="column.key === 'ecStatus'">
-          <TaktDictTag dict-type="logistics_manufacturing_ec_gijutsu_status" :value="record.ecStatus" />
+          <TaktDictTag dict-type="logistics_manufacturing_ec_te_status" :value="record.ecStatus" />
+        </template>
+        <template v-else-if="column.key === 'ecLeader'">
+          <TaktDictTag
+            v-if="record.ecLeader"
+            :value="record.ecLeader"
+            :option="ecGroupOption(record.ecLeader)"
+          />
+        </template>
+        <template v-else-if="isCalendarDateColumn(column.key)">
+          {{ formatCalendarDate(record[String(column.key)]) }}
         </template>
       </template>
       <template #detail>
-        <a-tabs
+        <TaktPaneTabs
           ref="tabsRef"
           v-model:active-key="rightTab"
           class="flex h-full min-h-0 flex-col overflow-hidden [&_.ant-tabs-content]:h-full [&_.ant-tabs-content-holder]:flex [&_.ant-tabs-content-holder]:min-h-0 [&_.ant-tabs-content-holder]:flex-1 [&_.ant-tabs-tabpane]:h-full"
+          :items="rightTabItems"
+          destroy-inactive-tab-pane
         >
-          <a-tab-pane key="exec" :tab="t(menuI18nKey)" class="h-full min-h-0" :force-render="true">
+          <template
+            v-for="pane in execPanes"
+            :key="pane.key"
+            #[pane.key]
+          >
             <div class="flex h-full min-h-0 flex-col overflow-hidden">
               <TaktQueryBar
                 v-model="queryKeyword"
@@ -140,29 +174,39 @@
                     <template v-else-if="column.key === 'ecOldPartDisposition'">
                       <TaktDictTag dict-type="logistics_manufacturing_ec_old_part_disposition" :value="record.ecOldPartDisposition" />
                     </template>
-                    <template v-else-if="column.key === 'ecScope'">
-                      <TaktDictTag dict-type="logistics_manufacturing_ec_scope_category" :value="record.ecScope" />
+                    <template v-else-if="column.key === 'ecImplScope'">
+                      <TaktDictTag dict-type="logistics_manufacturing_ec_impl_scope_category" :value="record.ecImplScope" />
                     </template>
-                    <template v-else-if="column.key === 'ecDeptScope'">
-                      <TaktDictTag dict-type="logistics_manufacturing_ec_dept_scope_category" :value="record.ecDeptScope" />
+                    <template v-else-if="column.key === 'ecControlScope'">
+                      <TaktDictTag dict-type="logistics_manufacturing_ec_control_scope_category" :value="record.ecControlScope" />
+                    </template>
+                    <template v-else-if="column.key === 'techLeader' || column.key === 'sopLeader'">
+                      <TaktDictTag
+                        v-if="record[String(column.key)]"
+                        :value="record[String(column.key)]"
+                        :option="ecGroupOption(record[String(column.key)])"
+                      />
                     </template>
                     <template v-else-if="isYesNoField(String(column.key))">
                       <TaktDictTag dict-type="sys_yes_no" :value="record[String(column.key)]" />
+                    </template>
+                    <template v-else-if="isCalendarDateColumn(column.key)">
+                      {{ formatCalendarDate(record[String(column.key)]) }}
                     </template>
                   </template>
                 </TaktSingleTable>
               </div>
             </div>
-          </a-tab-pane>
-          <a-tab-pane key="detail" :tab="t(detailSelfKey)" class="h-full min-h-0" :force-render="true">
+          </template>
+          <template #detail>
             <EcDeptExecDetailPanel
               ref="detailPanelRef"
               class="h-full min-h-0"
-              :ec-gijutsu-id="selectedGijutsuKey"
+              :ec-te-id="selecmedTeKey"
               :scroll-y="tabTableScrollCap"
             />
-          </a-tab-pane>
-        </a-tabs>
+          </template>
+        </TaktPaneTabs>
       </template>
     </TaktMasterDetailTableLr>
     <TaktModal
@@ -180,14 +224,14 @@
       />
     </TaktModal>
     <TaktColumnDrawer
-      v-model:open="gijutsuColumnSettingVisible"
-      :columns="gijutsuColumns"
-      :checked-keys="gijutsuVisibleColumnKeys"
-      id-column-key="ecGijutsuId"
+      v-model:open="teColumnSettingVisible"
+      :columns="teColumns"
+      :checked-keys="teVisibleColumnKeys"
+      id-column-key="ecTeId"
       entity-scope="company"
       table-mode="masterDetailMaster"
-      @update:checked-keys="handleGijutsuColumnKeysChange"
-      @reset="handleGijutsuColumnReset"
+      @update:checked-keys="handleTeColumnKeysChange"
+      @reset="handleTeColumnReset"
     />
     <TaktColumnDrawer
       v-model:open="columnSettingVisible"
@@ -204,21 +248,30 @@
 
 <script setup lang="ts">
 /**
- * 执行部门左右主子表页面壳（左栏设变主表，右栏执行表与明细页签）
+ * 执行部门左右主子表页面壳（左栏设变主表，右栏未实施、已实施与设变明细）
  */
+import '../ec-list-layout.css'
 import type { Component } from 'vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { message, Modal } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
 import { RiEditLine, RiPlayCircleLine, RiStopCircleLine } from '@remixicon/vue'
-import { getEcGijutsuList } from '@/api/logistics/manufacturing/engineering-change/ecGijutsu.api'
+import type { TaktPaneTabItem } from '@/components/business/TaktPaneTabs/index.vue'
+import { getEcTeList } from '@/api/logistics/manufacturing/engineering-change/ecTe.api'
+import { getEcGroupOptions } from '@/api/logistics/manufacturing/engineering-change/ecGroup.api'
 import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
+import { useAnalysisPeriodRangeLimit } from '@/composables/useAnalysisPeriodRangeLimit'
 import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import {
+  TAKT_ANALYSIS_PERIOD_MAX_MONTHS,
+  buildDefaultThroughCurrentPeriodRange,
+} from '@/views/logistics/manufacturing/bom/material-cost/utils/bomMaterialCostPeriod'
 import { useTaktTableViewportScrollY } from '@/composables/useTaktTableViewportScrollY'
+import { formatCalendarDate } from '@/utils/datetime'
 import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 import { TAKT_TABLE_INNER_TABS_CHROME_PX, measureConstrainedTableScrollY } from '@/utils/tableScroll'
-import type { TaktPagedResult } from '@/types/common.types'
-import type { EcGijutsu } from '@/types/logistics/manufacturing/engineering-change/ecGijutsu.types'
+import type { TaktPagedResult, TaktSelectOption } from '@/types/common.types'
+import type { EcTe } from '@/types/logistics/manufacturing/engineering-change/ecTe.types'
 import type { TaktEcExecCode } from '@/constants/logistics/ecExecCodes.constants'
 import { getEcDeptExecLineFields } from '@/constants/logistics/ecDeptExecLineFields.constants'
 import {
@@ -228,16 +281,72 @@ import {
 import { useEcExecSignalRGroup } from '@/composables/useEcDeptSignalrGroup'
 import { taktShowEcRootMaterialDescription } from '@/constants/logistics/ecScope.constants'
 import { useEcDeptViewI18n } from '../composables/useEcDeptViewI18n'
-import { ECGIJUTSU_LIST_FIELDS, useEcGijutsuI18n } from '../ec-gijutsu/composables/useEcGijutsuI18n'
-import { ECDETAIL_SELF_I18N_KEY } from '../ec-gijutsu/composables/useEcDetailI18n'
+import { ECENG_LIST_FIELDS, useEcTeI18n } from '../ec-te/composables/useEcTeI18n'
+import { ECDETAIL_SELF_I18N_KEY } from '../ec-te/composables/useEcDetailI18n'
 import type { EcDeptExecMasterRow } from '../composables/useEcDeptExecMasterContext'
 import EcDeptExecDetailPanel from './EcDeptExecDetailPanel.vue'
 
 /** 主表用字典 sys_yes_no 渲染的字段 */
 const YES_NO_FIELDS = new Set(['isImplemented', 'isSopUpdated', 'ecNewRequiresInspection'])
+/** 设变组编码 → 选项（设变担当 / 制技担当） */
+const ecGroupOptionByCode = ref<Record<string, TaktSelectOption>>({})
+
+/**
+ * 担当编码对应的设变组选项
+ * @param value 设变组编码
+ * @returns 选项；无映射时 undefined，标签回退编码
+ */
+function ecGroupOption(value: unknown): TaktSelectOption | undefined {
+  if (value == null || value === '') {
+    return undefined
+  }
+  return ecGroupOptionByCode.value[String(value)]
+}
+
+/** 预加载设变组选项，供担当列编码转名称 */
+async function loadEcGroupLabelMap(): Promise<void> {
+  try {
+    const list = await getEcGroupOptions()
+    const map: Record<string, TaktSelectOption> = {}
+    for (const item of list ?? []) {
+      if (item.dictValue != null && String(item.dictValue) !== '') {
+        map[String(item.dictValue)] = item
+      }
+    }
+    ecGroupOptionByCode.value = map
+  } catch {
+    ecGroupOptionByCode.value = {}
+  }
+}
+
+/**
+ * 列是否为日历日（字段名以 Date 结尾）
+ * @param key 列 key
+ * @returns {boolean} 是否按 yyyy-MM-dd 展示
+ */
+function isCalendarDateColumn(key: unknown): boolean {
+  return String(key ?? '').endsWith('Date')
+}
+
+/**
+ * 把行上的日期字段收成 yyyy-MM-dd，供表格与日期控件使用
+ * @param row 列表或详情行
+ * @returns {T} 日期已裁剪的新对象
+ */
+function applyCalendarDates<T extends Record<string, unknown>>(row: T): T {
+  const next = { ...row }
+  for (const key of Object.keys(next)) {
+    if (!key.endsWith('Date')) {
+      continue
+    }
+    const formatted = formatCalendarDate(next[key] as string | null | undefined)
+    ;(next as Record<string, unknown>)[key] = formatted || undefined
+  }
+  return next
+}
 
 /** 左侧设变主表默认可见列：工厂、设变号、发行日期、标题、担当 */
-const GIJUTSU_DEFAULT_VISIBLE_COLUMN_KEYS = [
+const ENG_DEFAULT_VISIBLE_COLUMN_KEYS = [
   'plantCode',
   'ecCode',
   'ecIssueDate',
@@ -257,9 +366,9 @@ const props = defineProps<{
   exportPermission: string
   /** 菜单 i18n 键 */
   menuI18nKey: string
-  /** 执行行主键字段（同明细上视图外键，如 ecBukanId） */
+  /** 执行行主键字段（同明细上视图外键，如 ecMcId） */
   idField: string
-  /** 部门实体 slug（eckoubai / echinkan 等） */
+  /** 部门实体 slug（ecpur / ecqc 等） */
   deptSlug: string
   /** SignalR 部门编码 */
   execCode: TaktEcExecCode
@@ -285,33 +394,79 @@ const props = defineProps<{
 
 const { t } = useI18n()
 const pi = useEcDeptViewI18n(props.deptSlug)
-const gijutsuI18n = useEcGijutsuI18n()
+const teI18n = useEcTeI18n()
 const formModalWidthPx = useTaktContentModalWidth()
+/** 未实施 */
+const EXEC_NOT_IMPLEMENTED = 0
+/** 已实施 */
+const EXEC_IMPLEMENTED = 1
+/** 未实施页签 */
+const EXEC_TAB_PENDING = 'pending'
+/** 已实施页签 */
+const EXEC_TAB_DONE = 'done'
+/** 页签文案键前缀 */
+const DEPT_EXEC_TAB_I18N = 'logistics.manufacturing.engineering-change.dept-exec.page.tab'
 /** 明细页签标题键 */
 const detailSelfKey = ECDETAIL_SELF_I18N_KEY
 /** 右栏页签 */
-const rightTab = ref('exec')
+const rightTab = ref(EXEC_TAB_PENDING)
+/** 当前页签的 0/1；制技对应是否更新，其余部门对应是否实施。停留在明细页签时保持上一次 */
+const execImplemented = ref(EXEC_NOT_IMPLEMENTED)
+/** 制造技术课按是否更新拆分 */
+const usesSopUpdated = computed(() => props.deptSlug === 'ecme')
+/** 未实施 / 已实施，或制技的未更新 / 已更新 */
+const execPanes = computed(() => {
+  const pendingLabel = usesSopUpdated.value ? 'notUpdated' : 'notImplemented'
+  const doneLabel = usesSopUpdated.value ? 'updated' : 'implemented'
+  return [
+    {
+      key: EXEC_TAB_PENDING,
+      tab: `${t(props.menuI18nKey)}-${t(`${DEPT_EXEC_TAB_I18N}.${pendingLabel}`)}`,
+    },
+    {
+      key: EXEC_TAB_DONE,
+      tab: `${t(props.menuI18nKey)}-${t(`${DEPT_EXEC_TAB_I18N}.${doneLabel}`)}`,
+    },
+  ]
+})
+/** 右栏页签（执行态 + 明细；可按 show/permission 删减） */
+const rightTabItems = computed<TaktPaneTabItem[]>(() => [
+  ...execPanes.value.map((pane) => ({
+    key: pane.key,
+    label: pane.tab,
+    paneClass: 'h-full min-h-0',
+  })),
+  {
+    key: 'detail',
+    label: t(detailSelfKey),
+    paneClass: 'h-full min-h-0',
+  },
+])
 
+/** 设变主表录入期间，截止本月 */
+const teEntryPeriod = ref<[string, string] | null>(null)
+/** 录入期间可选到本月，最多 12 个月 */
+const entryPeriodLimit = useAnalysisPeriodRangeLimit(TAKT_ANALYSIS_PERIOD_MAX_MONTHS, { allowCurrentMonth: true })
 /** 设变主表关键词 */
-const gijutsuKeyword = ref('')
+const teKeyword = ref('')
 /** 设变主表 loading */
-const gijutsuLoading = ref(false)
+const teLoading = ref(false)
 /** 设变主表行 */
-const gijutsuRows = ref<EcGijutsu[]>([])
+const teRows = ref<EcTe[]>([])
 /** 设变主表页码 */
-const gijutsuPage = ref(getTaktDefaultPageIndex())
+const tePage = ref(getTaktDefaultPageIndex())
 /** 设变主表页大小 */
-const gijutsuPageSize = ref(getTaktDefaultPageSize())
+const tePageSize = ref(getTaktDefaultPageSize())
 /** 设变主表总数 */
-const gijutsuTotal = ref(0)
+const teTotal = ref(0)
 /** 选中设变主表主键 */
-const selectedGijutsuKey = ref('')
+const selecmedTeKey = ref('')
 /** 选中设变单号 */
-const selectedEcCode = ref('')
+const selecmedEcCode = ref('')
 /** 设变主表列设置 */
-const gijutsuColumnSettingVisible = ref(false)
+const teColumnSettingVisible = ref(false)
 /** 设变主表可见列 */
-const gijutsuVisibleColumnKeys = ref<string[]>([...GIJUTSU_DEFAULT_VISIBLE_COLUMN_KEYS])
+const teVisibleColumnKeys = ref<string[]>([...ENG_DEFAULT_VISIBLE_COLUMN_KEYS])
 
 /** 查询关键词 */
 const queryKeyword = ref('')
@@ -326,9 +481,9 @@ const pageSize = ref(getTaktDefaultPageSize())
 /** 总数 */
 const total = ref(0)
 /** 选中行 */
-const selectedRows = ref<EcDeptExecMasterRow[]>([])
+const selecmedRows = ref<EcDeptExecMasterRow[]>([])
 /** 选中 keys */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 /** 页签组件（测量页签栏高度） */
 const tabsRef = ref<{ $el?: HTMLElement } | null>(null)
 /** 左右布局根（读取左侧基础表 scroll.y） */
@@ -339,8 +494,8 @@ const viewportBaseScrollY = useTaktTableViewportScrollY('masterDetailLr')
 const measuredBaseScrollY = ref(0)
 /** 页签栏高度（未测到时用内嵌页签预留） */
 const tabNavHeightPx = ref(TAKT_TABLE_INNER_TABS_CHROME_PX)
-/** 执行表外壳（按剩余高度留出横向滚动条） */
-const execTableWrapRef = ref<HTMLElement | null>(null)
+/** 执行表外壳（按剩余高度留出横向滚动条；页签内 ref 可能是节点或节点列表） */
+const execTableWrapRef = ref<HTMLElement | HTMLElement[] | null>(null)
 /** 执行表按外壳实测的 scroll.y */
 const execFittedScrollY = ref(0)
 /**
@@ -400,7 +555,7 @@ function masterColumnWidth(field: string): number {
   if (YES_NO_FIELDS.has(field) || field === 'productionTeam' || field === 'lineNumber' || field === 'deptCode') {
     return 100
   }
-  if (field === 'ecRootMaterialCodeGroup') {
+  if (field === 'ecRootMaterialCodeGroup' || field === 'ecModelCodeGroup') {
     return 220
   }
   if (field.endsWith('Date') || field.endsWith('Code') || field.endsWith('Batch') || field === 'ecRootMaterialCode') {
@@ -438,7 +593,7 @@ function isZ0Row(record: EcDeptExecMasterRow): boolean {
  * @returns {boolean} 是否可更新
  */
 function canUpdateRow(record: EcDeptExecMasterRow): boolean {
-  const scope = Number(record.ecScope ?? 0)
+  const scope = Number(record.ecImplScope ?? 0)
   if (scope === TaktEcScope.Internal || scope === TaktEcScope.Technical) {
     return false
   }
@@ -460,7 +615,7 @@ function canUpdateRow(record: EcDeptExecMasterRow): boolean {
  * @returns {boolean} 是否显示停产/在产
  */
 function canShowDiscontinuedActions(record: EcDeptExecMasterRow): boolean {
-  const scope = Number(record.ecScope ?? 0)
+  const scope = Number(record.ecImplScope ?? 0)
   if (scope === TaktEcScope.Internal || scope === TaktEcScope.Technical) {
     return false
   }
@@ -501,10 +656,10 @@ function confirmDiscontinuedStatus(
           }
           return { ...row, discontinuedStatus }
         })
-        if (selectedRowKeys.value.length === 1 && String(selectedRowKeys.value[0]) === id) {
+        if (selecmedRowKeys.value.length === 1 && String(selecmedRowKeys.value[0]) === id) {
           const refreshed = dataSource.value.find((row) => getMasterId(row) === id)
           if (refreshed) {
-            selectedRows.value = [refreshed]
+            selecmedRows.value = [refreshed]
             syncMasterSelection(refreshed)
           }
         }
@@ -517,17 +672,17 @@ function confirmDiscontinuedStatus(
   })
 }
 
-/** 左侧设变主表列（TaktEcGijutsu） */
-const gijutsuColumns = computed<TableColumnsType>(() => [
+/** 左侧设变主表列（TaktEcTe） */
+const teColumns = computed<TableColumnsType>(() => [
   {
-    title: gijutsuI18n.label('plantCode'),
+    title: teI18n.label('plantCode'),
     dataIndex: 'plantCode',
     key: 'plantCode',
     width: 100,
     ellipsis: true,
   },
-  ...ECGIJUTSU_LIST_FIELDS.map((field) => ({
-    title: gijutsuI18n.label(field),
+  ...ECENG_LIST_FIELDS.map((field) => ({
+    title: teI18n.label(field),
     dataIndex: field,
     key: field,
     width: field === 'ecContent' || field === 'ecTitle' ? 180 : 120,
@@ -539,7 +694,7 @@ const gijutsuColumns = computed<TableColumnsType>(() => [
 const columns = computed<TableColumnsType>(() => {
   const fieldCols = getEcDeptExecLineFields(props.deptSlug)
     .filter((field) => field !== 'ecRootMaterialDescription'
-      || dataSource.value.some((row) => taktShowEcRootMaterialDescription(row.ecScope, row.ecDeptScope)))
+      || dataSource.value.some((row) => taktShowEcRootMaterialDescription(row.ecImplScope, row.ecControlScope)))
     .map((field) => ({
     title: pi.label(field),
     dataIndex: field,
@@ -603,21 +758,21 @@ const visibleColumnKeys = ref<string[]>([])
 
 /** 行选择 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: EcDeptExecMasterRow[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
   },
 }))
 
 /** 更新按钮禁用：须单选且当前行允许更新（以 dataSource 最新停产状态为准） */
 const updateDisabled = computed(() => {
-  if (selectedRowKeys.value.length !== 1) {
+  if (selecmedRowKeys.value.length !== 1) {
     return true
   }
-  const key = String(selectedRowKeys.value[0] ?? '')
+  const key = String(selecmedRowKeys.value[0] ?? '')
   const row =
-    dataSource.value.find((r) => getMasterId(r) === key) ?? selectedRows.value[0]
+    dataSource.value.find((r) => getMasterId(r) === key) ?? selecmedRows.value[0]
   return !row || !canUpdateRow(row)
 })
 
@@ -636,13 +791,13 @@ function getMasterId(record: EcDeptExecMasterRow | Record<string, unknown>) {
  */
 function syncMasterSelection(record: EcDeptExecMasterRow | null) {
   if (!record) {
-    selectedRowKeys.value = []
-    selectedRows.value = []
+    selecmedRowKeys.value = []
+    selecmedRows.value = []
     return
   }
   const key = getMasterId(record)
-  selectedRowKeys.value = key ? [key] : []
-  selectedRows.value = key ? [record] : []
+  selecmedRowKeys.value = key ? [key] : []
+  selecmedRows.value = key ? [record] : []
 }
 
 /**
@@ -650,22 +805,22 @@ function syncMasterSelection(record: EcDeptExecMasterRow | null) {
  * @param record 设变主表行
  * @returns {string} 主键
  */
-function getGijutsuId(record: EcGijutsu | Record<string, unknown>) {
-  const row = record as EcGijutsu & { id?: string }
-  return String(row.ecGijutsuId || row.id || '')
+function getTeId(record: EcTe | Record<string, unknown>) {
+  const row = record as EcTe & { id?: string }
+  return String(row.ecTeId || row.id || '')
 }
 
 /**
  * 选中左侧设变后加载本部门执行行
  * @param record 设变主表行
  */
-function handleGijutsuSelect(record: Record<string, unknown>) {
-  const row = record as EcGijutsu
-  selectedGijutsuKey.value = getGijutsuId(row)
-  selectedEcCode.value = String(row.ecCode ?? '').trim()
+function handleTeSelect(record: Record<string, unknown>) {
+  const row = record as EcTe
+  selecmedTeKey.value = getTeId(row)
+  selecmedEcCode.value = String(row.ecCode ?? '').trim()
   currentPage.value = getTaktDefaultPageIndex()
-  selectedRowKeys.value = []
-  selectedRows.value = []
+  selecmedRowKeys.value = []
+  selecmedRows.value = []
   void loadData()
   nextTick(() => detailPanelRef.value?.reload?.())
 }
@@ -673,65 +828,106 @@ function handleGijutsuSelect(record: Record<string, unknown>) {
 /**
  * 加载左侧设变主表
  */
-async function loadGijutsu() {
-  gijutsuLoading.value = true
+async function loadTe() {
+  teLoading.value = true
   try {
-    const res = await getEcGijutsuList({
-      pageIndex: gijutsuPage.value,
-      pageSize: gijutsuPageSize.value,
-      keyWords: gijutsuKeyword.value.trim() || undefined,
+    const entryDates = entryPeriodToQuery(teEntryPeriod.value)
+    const res = await getEcTeList({
+      pageIndex: tePage.value,
+      pageSize: tePageSize.value,
+      ecEntryDateStart: entryDates.start,
+      ecEntryDateEnd: entryDates.end,
+      keyWords: teKeyword.value.trim() || undefined,
       execDeptCode: props.execCode,
     })
-    gijutsuRows.value = res.data ?? []
-    gijutsuTotal.value = res.total ?? 0
-    const found = gijutsuRows.value.find((row) => getGijutsuId(row) === selectedGijutsuKey.value)
+    teRows.value = (res.data ?? []).map((row) => applyCalendarDates(row as Record<string, unknown>)) as EcTe[]
+    teTotal.value = res.total ?? 0
+    const found = teRows.value.find((row) => getTeId(row) === selecmedTeKey.value)
     if (!found) {
-      selectedGijutsuKey.value = ''
-      selectedEcCode.value = ''
+      selecmedTeKey.value = ''
+      selecmedEcCode.value = ''
       dataSource.value = []
       total.value = 0
     } else {
-      selectedEcCode.value = String(found.ecCode ?? '').trim()
+      selecmedEcCode.value = String(found.ecCode ?? '').trim()
     }
   } catch (error: unknown) {
     logger.error('[EcDeptExec] 加载设变主表失败', { error })
     message.error(t('common.feedback.load.data.failed'))
-    gijutsuRows.value = []
-    gijutsuTotal.value = 0
+    teRows.value = []
+    teTotal.value = 0
   } finally {
-    gijutsuLoading.value = false
+    teLoading.value = false
   }
 }
 
 /** 搜索设变主表 */
-function handleGijutsuSearch() {
-  gijutsuPage.value = getTaktDefaultPageIndex()
-  void loadGijutsu()
+function handleTeSearch() {
+  tePage.value = getTaktDefaultPageIndex()
+  void loadTe()
 }
 
-/** 重置设变主表查询 */
-function handleGijutsuReset() {
-  gijutsuKeyword.value = ''
-  gijutsuPage.value = getTaktDefaultPageIndex()
-  void loadGijutsu()
+/**
+ * 录入期间转成技术主表的日期起止。结束日取该月最后一天
+ * @param range 年月区间
+ * @returns 录入日期起止
+ */
+function entryPeriodToQuery(range: [string, string] | null): { start?: string; end?: string } {
+  if (!range?.[0] || !range?.[1]) {
+    return {}
+  }
+  const parts = range[1].split('-').map(Number)
+  const year = parts[0]
+  const month = parts[1]
+  if (!year || !month) {
+    return { start: `${range[0]}-01` }
+  }
+  const lastDay = new Date(year, month, 0).getDate()
+  return {
+    start: `${range[0]}-01`,
+    end: `${range[1]}-${String(lastDay).padStart(2, '0')}`,
+  }
+}
+
+/** 左栏默认：录入期间截止本月共 3 个月 */
+function applyTeQueryDefaults(): void {
+  teEntryPeriod.value = buildDefaultThroughCurrentPeriodRange(3)
+}
+
+/** 重置设变主表查询（关键字由 TaktQueryBar 清空） */
+async function handleTeReset() {
+  tePage.value = getTaktDefaultPageIndex()
+  await applyTeQueryDefaults()
+  void loadTe()
 }
 
 /**
  * 设变主表列显隐
  * @param keys 可见列
  */
-function handleGijutsuColumnKeysChange(keys: string[]) {
-  gijutsuVisibleColumnKeys.value = keys
+function handleTeColumnKeysChange(keys: string[]) {
+  teVisibleColumnKeys.value = keys
 }
 
 /** 设变主表列重置 */
-function handleGijutsuColumnReset() {
-  gijutsuVisibleColumnKeys.value = [...GIJUTSU_DEFAULT_VISIBLE_COLUMN_KEYS]
+function handleTeColumnReset() {
+  teVisibleColumnKeys.value = [...ENG_DEFAULT_VISIBLE_COLUMN_KEYS]
+}
+
+/**
+ * 当前页签的过滤条件。制技用 isSopUpdated（0=未更新，1=已更新），其余部门用 isImplemented。
+ * @returns {Record<string, number>} 查询字段
+ */
+function implementationQuery(): Record<string, number> {
+  if (props.deptSlug === 'ecme') {
+    return { isSopUpdated: execImplemented.value }
+  }
+  return { isImplemented: execImplemented.value }
 }
 
 /** 加载本部门执行表 */
 async function loadData() {
-  if (!selectedEcCode.value) {
+  if (!selecmedEcCode.value) {
     dataSource.value = []
     total.value = 0
     return
@@ -740,24 +936,25 @@ async function loadData() {
   try {
     const res = await props.getMasterList({
       ...(props.extraQuery ?? {}),
-      ecCode: selectedEcCode.value,
+      ecCode: selecmedEcCode.value,
+      ...implementationQuery(),
       pageIndex: currentPage.value,
       pageSize: pageSize.value,
       keyWords: queryKeyword.value || undefined,
     })
-    dataSource.value = (res.data ?? []) as EcDeptExecMasterRow[]
+    dataSource.value = (res.data ?? []).map((row) => applyCalendarDates(row as Record<string, unknown>)) as EcDeptExecMasterRow[]
     total.value = res.total ?? 0
-    const currentKey = String(selectedRowKeys.value[0] ?? '')
+    const currentKey = String(selecmedRowKeys.value[0] ?? '')
     if (currentKey) {
       const found = dataSource.value.find((row) => getMasterId(row) === currentKey)
       syncMasterSelection(found ?? null)
       // 停产/在产切换后须用新行刷新选中，否则工具栏更新显隐仍按旧 discontinuedStatus
       if (found) {
-        selectedRowKeys.value = [currentKey]
-        selectedRows.value = [found]
+        selecmedRowKeys.value = [currentKey]
+        selecmedRows.value = [found]
       } else {
-        selectedRowKeys.value = []
-        selectedRows.value = []
+        selecmedRowKeys.value = []
+        selecmedRows.value = []
       }
     }
   } catch (error: unknown) {
@@ -766,8 +963,8 @@ async function loadData() {
     dataSource.value = []
     total.value = 0
     syncMasterSelection(null)
-    selectedRowKeys.value = []
-    selectedRows.value = []
+    selecmedRowKeys.value = []
+    selecmedRows.value = []
   } finally {
     loading.value = false
   }
@@ -831,13 +1028,14 @@ async function openEditForm(record: EcDeptExecMasterRow) {
     message.error(t('common.feedback.failed'))
     return
   }
-  selectedRowKeys.value = [key]
-  selectedRows.value = [record]
+  selecmedRowKeys.value = [key]
+  selecmedRows.value = [record]
   syncMasterSelection(record)
   loading.value = true
   try {
     const detail = await props.getMasterById(key)
-    formData.value = detail ? { ...detail } : { ...record }
+    const source = (detail ?? record) as Record<string, unknown>
+    formData.value = applyCalendarDates({ ...source }) as EcDeptExecMasterRow
     formVisible.value = true
   } finally {
     loading.value = false
@@ -846,12 +1044,12 @@ async function openEditForm(record: EcDeptExecMasterRow) {
 
 /** 工具栏编辑 */
 function handleUpdate() {
-  if (selectedRowKeys.value.length !== 1) {
+  if (selecmedRowKeys.value.length !== 1) {
     return
   }
-  const key = String(selectedRowKeys.value[0] ?? '')
+  const key = String(selecmedRowKeys.value[0] ?? '')
   const row =
-    dataSource.value.find((r) => getMasterId(r) === key) ?? selectedRows.value[0]
+    dataSource.value.find((r) => getMasterId(r) === key) ?? selecmedRows.value[0]
   if (!row || !canUpdateRow(row)) {
     return
   }
@@ -883,7 +1081,8 @@ async function handleExport() {
     loading.value = true
     const blob = await props.exportMaster({
       ...(props.extraQuery ?? {}),
-      ecCode: selectedEcCode.value || undefined,
+      ecCode: selecmedEcCode.value || undefined,
+      ...implementationQuery(),
       pageIndex: currentPage.value,
       pageSize: pageSize.value,
       keyWords: queryKeyword.value || undefined,
@@ -910,15 +1109,46 @@ watch(
   { immediate: true },
 )
 
-useTableRefresh(loadGijutsu)
+useTableRefresh(loadTe)
 useEcExecSignalRGroup(props.execCode)
 
-watch(rightTab, () => {
-  nextTick(() => syncTabTableScroll())
+watch(rightTab, (tab) => {
+  if (tab === EXEC_TAB_PENDING || tab === EXEC_TAB_DONE) {
+    const nextImplemented = tab === EXEC_TAB_DONE ? EXEC_IMPLEMENTED : EXEC_NOT_IMPLEMENTED
+    if (execImplemented.value !== nextImplemented) {
+      execImplemented.value = nextImplemented
+      currentPage.value = getTaktDefaultPageIndex()
+      selecmedRowKeys.value = []
+      selecmedRows.value = []
+      void loadData()
+    }
+  }
+  nextTick(() => {
+    syncTabTableScroll()
+    const wrap = resolveExecTableWrap()
+    if (wrap && layoutResizeObserver) {
+      layoutResizeObserver.observe(wrap)
+    }
+  })
 })
 
 /** 左右布局高度监听 */
 let layoutResizeObserver: ResizeObserver | null = null
+
+/**
+ * 当前执行表外壳。页签内的 ref 可能收成数组。
+ * @returns {HTMLElement | null} 外壳节点
+ */
+function resolveExecTableWrap(): HTMLElement | null {
+  const raw = execTableWrapRef.value
+  if (raw instanceof HTMLElement) {
+    return raw
+  }
+  if (Array.isArray(raw)) {
+    return raw.find((node) => node instanceof HTMLElement) ?? null
+  }
+  return null
+}
 
 /**
  * 读取左侧基础表高度、页签栏和执行表外壳，页签内表格既不超过基础表减页签，也不把横向滚动条裁出外壳
@@ -937,7 +1167,7 @@ function syncTabTableScroll(): void {
       measuredBaseScrollY.value = measured
     }
   }
-  const fitted = measureConstrainedTableScrollY(execTableWrapRef.value, { reservePagination: true })
+  const fitted = measureConstrainedTableScrollY(resolveExecTableWrap(), { reservePagination: true })
   if (fitted > 0) {
     execFittedScrollY.value = fitted
   }
@@ -945,7 +1175,9 @@ function syncTabTableScroll(): void {
 
 onMounted(async () => {
   await ensureTaktPaginationConfigAsync()
-  await loadGijutsu()
+  await loadEcGroupLabelMap()
+  await applyTeQueryDefaults()
+  await loadTe()
   nextTick(() => {
     syncTabTableScroll()
     if (typeof ResizeObserver === 'undefined') {
@@ -956,8 +1188,9 @@ onMounted(async () => {
     if (lrRoot) {
       layoutResizeObserver.observe(lrRoot)
     }
-    if (execTableWrapRef.value) {
-      layoutResizeObserver.observe(execTableWrapRef.value)
+    const wrap = resolveExecTableWrap()
+    if (wrap) {
+      layoutResizeObserver.observe(wrap)
     }
   })
 })

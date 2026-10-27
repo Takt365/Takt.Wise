@@ -90,6 +90,15 @@
       :total="total"
       @change="handlePageChange"
     />
+    <TaktColumnDrawer
+      v-model:open="columnSettingOpen"
+      :columns="columns"
+      :checked-keys="visibleColumnKeys"
+      entity-scope="company"
+      table-mode="single"
+      id-column-key="costCategory"
+      @update:checked-keys="handleColumnKeysChange"
+    />
   </div>
 </template>
 
@@ -127,7 +136,16 @@ const props = defineProps<{
   costCategory?: string
   /** 成本币种 */
   currencyCode?: string
+  /** 用户隐藏的列。空表示当前全部列可见，月份列随查询出现 */
+  hiddenColumnKeys?: string[]
 }>()
+
+const emit = defineEmits<{
+  'update:hiddenColumnKeys': [keys: string[]]
+}>()
+
+/** 列设置抽屉 */
+const columnSettingOpen = defineModel<boolean>('columnSettingOpen', { default: false })
 
 const loading = defineModel<boolean>('loading', { default: false })
 const hasRows = defineModel<boolean>('hasRows', { default: false })
@@ -232,7 +250,30 @@ const columns = computed<TableColumnsType>(() => {
   return cols
 })
 
-const visibleColumnKeys = computed(() => columns.value.map((c) => String(c.key)))
+/** 当前列键 */
+function currentColumnKeys(): string[] {
+  return columns.value.map((col) => String(col.key ?? '')).filter((key) => key.length > 0)
+}
+
+/** 可见列。隐藏名单之外的列都显示，新的月份列默认可见 */
+const visibleColumnKeys = computed(() => {
+  const all = currentColumnKeys()
+  const hidden = new Set(props.hiddenColumnKeys ?? [])
+  if (hidden.size === 0) {
+    return all
+  }
+  const next = all.filter((key) => !hidden.has(key))
+  return next.length > 0 ? next : all
+})
+
+/**
+ * 列设置保存为隐藏名单，避免月份列变化后把勾选弹回
+ * @param {string[]} keys 抽屉选中的列
+ */
+function handleColumnKeysChange(keys: string[]) {
+  const selecmed = new Set(keys.map((key) => String(key)))
+  emit('update:hiddenColumnKeys', currentColumnKeys().filter((key) => !selecmed.has(key)))
+}
 
 /**
  * 行主键

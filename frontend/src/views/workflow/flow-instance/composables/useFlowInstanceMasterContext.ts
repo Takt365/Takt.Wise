@@ -15,7 +15,7 @@ export type FlowInstanceRowRecord = FlowInstance | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface FlowInstanceMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<FlowInstanceRowRecord | null>
+  selecmedMasterRow: Ref<FlowInstanceRowRecord | null>
 }
 
 const flowInstanceMasterContextKey: InjectionKey<FlowInstanceMasterContext> = Symbol('flow-instanceMasterContext')
@@ -25,8 +25,8 @@ const flowInstanceMasterContextKey: InjectionKey<FlowInstanceMasterContext> = Sy
  * @returns {FlowInstanceMasterContext} 主表上下文
  */
 export function provideFlowInstanceMasterContext(): FlowInstanceMasterContext {
-  const selectedMasterRow = ref<FlowInstanceRowRecord | null>(null)
-  const ctx: FlowInstanceMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<FlowInstanceRowRecord | null>(null)
+  const ctx: FlowInstanceMasterContext = { selecmedMasterRow }
   provide(flowInstanceMasterContextKey, ctx)
   return ctx
 }

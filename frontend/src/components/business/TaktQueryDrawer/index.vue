@@ -37,7 +37,7 @@
         {{ t('components.business.page.querydrawer.fieldsetting') }}
       </div>
       <a-checkbox-group
-        v-model:value="selectedFieldKeys"
+        v-model:value="selecmedFieldKeys"
         class="flex w-full flex-col gap-2"
       >
         <a-checkbox
@@ -272,7 +272,7 @@ const internalOpen = computed({
 const drawerProps = computed(() => attrs)
 
 /** checkbox-group 双向绑定 */
-const selectedFieldKeys = computed({
+const selecmedFieldKeys = computed({
   get: () => internalVisibleFieldKeys.value,
   set: (val: string[]) => {
     applyVisibleFieldKeys(val.map(String))

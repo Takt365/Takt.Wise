@@ -20,13 +20,13 @@ export {
 
 /** 看板列顺序（与后端 TaktEcDeptCodes.KanbanOrder 一致；不含技术课） */
 export const TaktEcKanbanOrder: readonly string[] = [
-  TaktEcDeptCodes.Pmc,
-  TaktEcDeptCodes.Mp,
+  TaktEcDeptCodes.Pc,
+  TaktEcDeptCodes.Pur,
   TaktEcDeptCodes.Iqc,
   TaktEcDeptCodes.Mc,
-  TaktEcDeptCodes.Smt,
-  TaktEcDeptCodes.Pcba,
-  TaktEcDeptCodes.Assy,
-  TaktEcDeptCodes.Qa,
-  TaktEcDeptCodes.Te,
+  TaktEcDeptCodes.Mtl,
+  TaktEcDeptCodes.Mfg2,
+  TaktEcDeptCodes.Mfg1,
+  TaktEcDeptCodes.Qc,
+  TaktEcDeptCodes.Me,
 ];

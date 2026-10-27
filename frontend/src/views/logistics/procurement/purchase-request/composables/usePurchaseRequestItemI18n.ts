@@ -133,7 +133,6 @@ export type PurchaseRequestItemField = keyof typeof PURCHASEREQUESTITEM_PLACEHOL
 /** 高级查询可 trim 的字符串字段 */
 export const PURCHASEREQUESTITEM_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'purchaseRequestCode',
   'purchasePlanItemId',
   'allocationCategory',

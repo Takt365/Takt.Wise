@@ -255,17 +255,6 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('plantCode')">
-      <a-form-item :label="t('entity.perfscheme.relatedplant')">
-        <a-input
-          v-model:value="advancedQueryForm.plantCode"
-          :placeholder="t('common.page.form.placeholder.required', { field: t('entity.perfscheme.relatedplant') })"
-          show-count
-          :maxlength="4"
-          allow-clear
-        />
-      </a-form-item>
-      </div>
       <div v-show="isFieldVisible('createdAtStart')">
       <a-form-item :label="t('common.page.entity.createdatstart')">
         <a-date-picker
@@ -407,11 +396,11 @@ const pageSize = ref(getTaktDefaultPageSize())
 /** 分页 total */
 const total = ref(0)
 /** 工具栏单选时当前行 */
-const selectedRow = ref<PerfScheme | null>(null)
+const selecmedRow = ref<PerfScheme | null>(null)
 /** 表格多选行 */
-const selectedRows = ref<PerfScheme[]>([])
+const selecmedRows = ref<PerfScheme[]>([])
 /** 表格多选 row-key 集合 */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 
 /** 新增/编辑弹窗是否打开 */
 const formVisible = ref(false)
@@ -466,7 +455,6 @@ const queryFieldsMeta = computed(() => [
   { key: 'scoringCriteria', label: t('entity.perfscheme.scoringcriteria') },
   { key: 'standardWeight', label: t('entity.perfscheme.standardweight') },
   { key: 'schemeMetricStatus', label: t('entity.perfscheme.schememetricstatus') },
-  { key: 'plantCode', label: t('entity.perfscheme.relatedplant') },
   { key: 'createdAtStart', label: t('common.page.entity.createdatstart') },
   { key: 'createdAtEnd', label: t('common.page.entity.createdatend') },
   { key: 'extField', label: t('common.page.entity.extfield') },
@@ -482,9 +470,9 @@ const visibleColumnKeys = ref<string[]>([])
 /** 实体主键字段名（row-key、API 路径参数） */
 const entityIdName = 'perfSchemeId'
 /** 工具栏「编辑」是否禁用（须恰好选中一行） */
-const updateDisabled = computed(() => selectedRows.value.length !== 1)
+const updateDisabled = computed(() => selecmedRows.value.length !== 1)
 /** 工具栏「删除」是否禁用（未选中任何行） */
-const deleteDisabled = computed(() => selectedRows.value.length === 0)
+const deleteDisabled = computed(() => selecmedRows.value.length === 0)
 
 /**
  * 构建列表/导出查询参数（空字符串与未填数值/日期不下发，避免后端 DateTime? 模型绑定 400）
@@ -723,21 +711,21 @@ const getPerfSchemeField = (record: any, field: string): any => record?.[field]
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: PerfScheme[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: PerfScheme, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (selectedRow.value && getPerfSchemeId(selectedRow.value) === getPerfSchemeId(record)) {
-      selectedRow.value = null
+  onSelect: (record: PerfScheme, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (selecmedRow.value && getPerfSchemeId(selecmedRow.value) === getPerfSchemeId(record)) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: PerfScheme[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: PerfScheme[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   }
 }))
 
@@ -745,16 +733,16 @@ const rowSelection = computed(() => ({
 const onClickRow = (record: PerfScheme) => ({
   onClick: () => {
     const key = getPerfSchemeId(record)
-    const index = selectedRowKeys.value.indexOf(key)
+    const index = selecmedRowKeys.value.indexOf(key)
     if (index > -1) {
-      selectedRowKeys.value.splice(index, 1)
+      selecmedRowKeys.value.splice(index, 1)
     } else {
-      selectedRowKeys.value.push(key)
+      selecmedRowKeys.value.push(key)
     }
-    selectedRows.value = dataSource.value.filter((item) => selectedRowKeys.value.includes(getPerfSchemeId(item)))
-    selectedRow.value = selectedRowKeys.value.length === 1 ? (selectedRows.value[0] ?? null) : null
+    selecmedRows.value = dataSource.value.filter((item) => selecmedRowKeys.value.includes(getPerfSchemeId(item)))
+    selecmedRow.value = selecmedRowKeys.value.length === 1 ? (selecmedRows.value[0] ?? null) : null
     if (rowSelection.value.onChange) {
-      rowSelection.value.onChange(selectedRowKeys.value, selectedRows.value)
+      rowSelection.value.onChange(selecmedRowKeys.value, selecmedRows.value)
     }
   }
 })
@@ -829,8 +817,8 @@ function handleEdit(record: PerfScheme) {
 
 /** 工具栏编辑：打开当前单选行 */
 function handleUpdate() {
-  if (selectedRow.value) {
-    handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: t('entity.perfscheme._self') }))
   }
@@ -947,17 +935,17 @@ async function handleDeleteOne(record: PerfScheme) {
 }
 /** 批量删除选中行 */
 async function handleDelete() {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: t('entity.perfscheme._self') }))
     return
   }
   Modal.confirm({
     title: t('common.tip.confirm.delete.title'),
-    content: t('common.tip.confirm.delete.count', { entity: t('entity.perfscheme._self'), count: selectedRows.value.length }),
+    content: t('common.tip.confirm.delete.count', { entity: t('entity.perfscheme._self'), count: selecmedRows.value.length }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
+      const ids = selecmedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
       await deletePerfSchemeBatch(ids)
       message.success(t('common.feedback.deleted', { target: t('entity.perfscheme._self') }))
       loadData()

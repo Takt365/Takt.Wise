@@ -4,7 +4,7 @@
 // 文件名称：TaktStandardOperationTimesController.cs
 // 创建时间：2026-06-23
 // 创建人：Takt365(Cursor AI)
-// 功能描述：标准工序时间控制器
+// 功能描述：标准工时控制器
 // 
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -18,11 +18,11 @@ using Takt.Shared.Constants;
 namespace Takt.WebApi.Controllers.Logistics.Manufacturing.Bom;
 
 /// <summary>
-/// 标准工序时间控制器
-/// 提供标准工序时间的 REST API
+/// 标准工时控制器
+/// 提供标准工时的 REST API
 /// </summary>
 [ApiModule(4, "后勤管理")]
-[Route("api/[controller]", Name = "标准工序时间")]
+[Route("api/[controller]", Name = "标准工时")]
 public class TaktStandardOperationTimesController : TaktControllerBase
 {
     private readonly ITaktStandardOperationTimeService _standardOperationTimeService;
@@ -30,18 +30,18 @@ public class TaktStandardOperationTimesController : TaktControllerBase
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="standardOperationTimeService">标准工序时间服务</param>
+    /// <param name="standardOperationTimeService">标准工时服务</param>
     public TaktStandardOperationTimesController(ITaktStandardOperationTimeService standardOperationTimeService)
     {
         _standardOperationTimeService = standardOperationTimeService;
     }
 
     /// <summary>
-    /// 获取标准工序时间列表（分页）
+    /// 获取标准工时列表（分页）
     /// </summary>
     /// <param name="queryDto">查询DTO</param>
     /// <returns>分页结果</returns>
-    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:list", "标准工序时间列表")]
+    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:list", "标准工时列表")]
     [HttpGet("list")]
     public async Task<IActionResult> GetStandardOperationTimeListAsync([FromQuery] TaktStandardOperationTimeQueryDto queryDto)
     {
@@ -57,11 +57,11 @@ public class TaktStandardOperationTimesController : TaktControllerBase
     }
 
     /// <summary>
-    /// 根据ID获取标准工序时间
+    /// 根据ID获取标准工时
     /// </summary>
-    /// <param name="id">标准工序时间ID</param>
-    /// <returns>标准工序时间DTO</returns>
-    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:query", "标准工序时间详情")]
+    /// <param name="id">标准工时ID</param>
+    /// <returns>标准工时DTO</returns>
+    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:query", "标准工时详情")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetStandardOperationTimeByIdAsync(long id)
     {
@@ -70,7 +70,7 @@ public class TaktStandardOperationTimesController : TaktControllerBase
             var result = await _standardOperationTimeService.GetStandardOperationTimeByIdAsync(id);
             if (result == null)
             {
-                return NotFound("标准工序时间不存在");
+                return NotFound("标准工时不存在");
             }
             return Success(result, "查询成功");
         }
@@ -81,10 +81,10 @@ public class TaktStandardOperationTimesController : TaktControllerBase
     }
 
     /// <summary>
-    /// 获取标准工序时间选项列表
+    /// 获取标准工时选项列表
     /// </summary>
     /// <returns>下拉选项</returns>
-    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:query", "标准工序时间选项")]
+    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:query", "标准工时选项")]
     [HttpGet("options")]
     public async Task<IActionResult> GetStandardOperationTimeOptionsAsync([FromQuery] string? plantCode = null, [FromQuery] string? keyword = null)
     {
@@ -100,13 +100,13 @@ public class TaktStandardOperationTimesController : TaktControllerBase
     }
 
     /// <summary>
-    /// 根据物料编码获取当前有效的标准工序时间列表
+    /// 根据物料编码获取当前有效的标准工时列表
     /// </summary>
     /// <param name="materialCode">物料编码</param>
     /// <param name="plantCode">工厂代码（可选）</param>
     /// <param name="prodDate">生产日期（可选；未传时按当天解析有效期）</param>
-    /// <returns>标准工序时间 DTO 列表</returns>
-    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:query", "按物料查询标准工序时间")]
+    /// <returns>标准工时 DTO 列表</returns>
+    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:query", "按物料查询标准工时")]
     [HttpGet("by-material")]
     public async Task<IActionResult> GetStandardOperationTimeByMaterialAsync([FromQuery] string materialCode, [FromQuery] string? plantCode = null, [FromQuery] DateTime? prodDate = null)
     {
@@ -152,11 +152,11 @@ public class TaktStandardOperationTimesController : TaktControllerBase
     }
 
     /// <summary>
-    /// 创建标准工序时间
+    /// 创建标准工时
     /// </summary>
     /// <param name="dto">创建DTO</param>
-    /// <returns>标准工序时间DTO</returns>
-    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:create", "创建标准工序时间")]
+    /// <returns>标准工时DTO</returns>
+    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:create", "创建标准工时")]
     [HttpPost]
     public async Task<IActionResult> CreateStandardOperationTimeAsync([FromBody] TaktStandardOperationTimeCreateDto dto)
     {
@@ -172,12 +172,12 @@ public class TaktStandardOperationTimesController : TaktControllerBase
     }
 
     /// <summary>
-    /// 更新标准工序时间
+    /// 更新标准工时
     /// </summary>
-    /// <param name="id">标准工序时间ID</param>
+    /// <param name="id">标准工时ID</param>
     /// <param name="dto">更新DTO</param>
-    /// <returns>标准工序时间DTO</returns>
-    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:update", "更新标准工序时间")]
+    /// <returns>标准工时DTO</returns>
+    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:update", "更新标准工时")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateStandardOperationTimeAsync(long id, [FromBody] TaktStandardOperationTimeUpdateDto dto)
     {
@@ -193,11 +193,11 @@ public class TaktStandardOperationTimesController : TaktControllerBase
     }
 
     /// <summary>
-    /// 删除标准工序时间
+    /// 删除标准工时
     /// </summary>
-    /// <param name="id">标准工序时间ID</param>
+    /// <param name="id">标准工时ID</param>
     /// <returns>操作结果</returns>
-    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:delete", "删除标准工序时间")]
+    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:delete", "删除标准工时")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteStandardOperationTimeByIdAsync(long id)
     {
@@ -213,11 +213,11 @@ public class TaktStandardOperationTimesController : TaktControllerBase
     }
 
     /// <summary>
-    /// 批量删除标准工序时间
+    /// 批量删除标准工时
     /// </summary>
     /// <param name="ids">ID列表</param>
     /// <returns>操作结果</returns>
-    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:delete", "批量删除标准工序时间")]
+    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:delete", "批量删除标准工时")]
     [HttpDelete("batch")]
     public async Task<IActionResult> DeleteStandardOperationTimeBatchAsync([FromBody] IEnumerable<long> ids)
     {
@@ -236,7 +236,7 @@ public class TaktStandardOperationTimesController : TaktControllerBase
     /// 获取导入模板
     /// </summary>
     /// <returns>Excel文件</returns>
-    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:import", "获取标准工序时间导入模板")]
+    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:import", "获取标准工时导入模板")]
     [HttpGet("template")]
     public async Task<IActionResult> GetStandardOperationTimeTemplateAsync([FromQuery] string? sheetName = null, [FromQuery] string? templateName = null)
     {
@@ -252,11 +252,11 @@ public class TaktStandardOperationTimesController : TaktControllerBase
     }
 
     /// <summary>
-    /// 导入标准工序时间
+    /// 导入标准工时
     /// </summary>
     /// <param name="file">Excel文件</param>
     /// <returns>导入结果</returns>
-    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:import", "导入标准工序时间")]
+    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:import", "导入标准工时")]
     [HttpPost("import")]
     public async Task<IActionResult> ImportStandardOperationTimeAsync(IFormFile file, [FromQuery] string? sheetName = null)
     {
@@ -283,10 +283,10 @@ public class TaktStandardOperationTimesController : TaktControllerBase
     }
 
     /// <summary>
-    /// 导出标准工序时间
+    /// 导出标准工时
     /// </summary>
     /// <returns>Excel文件</returns>
-    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:export", "导出标准工序时间")]
+    [TaktPermission("logistics:manufacturing:bom:standard:operation:time:export", "导出标准工时")]
     [HttpGet("export")]
     public async Task<IActionResult> ExportStandardOperationTimeAsync([FromQuery] TaktStandardOperationTimeQueryDto? query = null, [FromQuery] string? sheetName = null, [FromQuery] string? exportName = null)
     {

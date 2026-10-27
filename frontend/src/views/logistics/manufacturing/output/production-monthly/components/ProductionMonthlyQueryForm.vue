@@ -2,7 +2,7 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/output/production-monthly/components -->
 <!-- 文件名称：ProductionMonthlyQueryForm.vue -->
-<!-- 功能描述：月生产推移查询栏（工厂→产出类别→机种 + 期间） -->
+<!-- 功能描述：生产统计查询栏（工厂、期间必填；班组、机种、物料取自当前页签产出表） -->
 <!-- 版权信息：Copyright (c) 2026 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->
@@ -10,17 +10,6 @@
 <template>
   <div class="takt-query-bar production-monthly-query-bar">
     <div class="production-monthly-query-bar__fields min-w-0 flex flex-1 flex-wrap items-center gap-x-3 gap-y-2">
-      <div class="flex items-center gap-1">
-        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('common.page.entity.plantcode') }}</span>
-        <TaktSelect
-          v-model:value="plantCode"
-          :api-url="plantOptionsUrl"
-          class="production-monthly-query-bar__control production-monthly-query-bar__control--plant"
-          allow-clear
-          show-search
-          :placeholder="t('common.page.form.placeholder.selectonly')"
-        />
-      </div>
       <div class="flex items-center gap-1">
         <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.periodRange`) }}</span>
         <a-range-picker
@@ -38,25 +27,62 @@
           @open-change="onOpenChange"
         />
       </div>
-      <div class="flex items-center gap-1">
-        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.outputCategory`) }}</span>
+      <div
+        v-if="!trendMode"
+        class="flex items-center gap-1"
+      >
+        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.prodCategory`) }}</span>
         <TaktSelect
-          v-model:value="outputCategory"
-          :api-url="outputCategoryOptionsUrl"
-          :api-params="outputCategoryApiParams"
-          :disabled="!plantCode?.trim()"
-          class="production-monthly-query-bar__control production-monthly-query-bar__control--category"
+          :key="`${props.statTab}-category`"
+          v-model:value="prodCategory"
+          dict-type="logistics_manufacturing_prod_category"
+          class="production-monthly-query-bar__control production-monthly-query-bar__control--model"
           allow-clear
+          show-search
+          :placeholder="t('common.page.form.placeholder.selectonly')"
+        />
+      </div>
+      <div
+        v-if="!trendMode"
+        class="flex items-center gap-1"
+      >
+        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.teamCode`) }}</span>
+        <TaktSelect
+          :key="`${props.statTab}-team`"
+          v-model:value="teamCode"
+          :api-url="teamOptionsUrl"
+          :api-params="scopedApiParams"
+          :disabled="!plantCode?.trim()"
+          class="production-monthly-query-bar__control production-monthly-query-bar__control--model"
+          allow-clear
+          show-search
           :placeholder="t('common.page.form.placeholder.selectonly')"
         />
       </div>
       <div class="flex items-center gap-1">
         <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.modelCode`) }}</span>
         <TaktSelect
-          :key="modelSelectKey"
+          :key="`${props.statTab}-model`"
           v-model:value="modelCode"
           :api-url="modelOptionsUrl"
-          :api-params="modelApiParams"
+          :api-params="scopedApiParams"
+          :disabled="!plantCode?.trim()"
+          class="production-monthly-query-bar__control production-monthly-query-bar__control--model"
+          allow-clear
+          show-search
+          :placeholder="t('common.page.form.placeholder.selectonly')"
+        />
+      </div>
+      <div
+        v-if="!trendMode"
+        class="flex items-center gap-1"
+      >
+        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.materialCode`) }}</span>
+        <TaktSelect
+          :key="`${props.statTab}-material`"
+          v-model:value="materialCode"
+          :api-url="materialOptionsUrl"
+          :api-params="scopedApiParams"
           :disabled="!plantCode?.trim()"
           class="production-monthly-query-bar__control production-monthly-query-bar__control--model"
           allow-clear
@@ -92,17 +118,20 @@
 
 <script setup lang="ts">
 /**
- * 月生产推移查询栏：工厂 → 产出类别 → 机种（机种可空）
+ * 生产统计查询栏：工厂、期间必填；班组、机种、物料按当前页签取自产出表
  */
 import { RiSearchLine, RiRefreshLine } from '@remixicon/vue'
 import { useI18n } from 'vue-i18n'
 import {
+  getProductionMonthlyTrendMaterialOptionsUrl,
   getProductionMonthlyTrendModelOptionsUrl,
-  getProductionMonthlyTrendOutputCategoryOptionsUrl,
   getProductionMonthlyTrendPlantOptionsUrl,
+  getProductionMonthlyTrendTeamOptionsUrl,
 } from '@/api/logistics/manufacturing/output/productionMonthly.api'
-
-/** 工厂代码（第 1 级，必选） */
+import {
+  getProductionTrendModelOptionsUrl,
+  getProductionTrendPlantOptionsUrl,
+} from '@/api/logistics/manufacturing/output/productionTrend.api'
 
 /** 期间最多 12 个月 */
 const { disabledDate, onCalendarChange, onOpenChange } = useAnalysisPeriodRangeLimit()
@@ -110,11 +139,19 @@ const { disabledDate, onCalendarChange, onOpenChange } = useAnalysisPeriodRangeL
 const plantCode = defineModel<string | undefined>('plantCode')
 /** 年月区间 */
 const periodRange = defineModel<[string, string] | null>('periodRange')
-/** 机种（第 3 级，可空） */
+/** 班组（可空） */
+const teamCode = defineModel<string | undefined>('teamCode')
+/** 机种（可空） */
 const modelCode = defineModel<string | undefined>('modelCode')
-/** 产出类别（第 2 级，可空） */
-const outputCategory = defineModel<string | undefined>('outputCategory')
+/** 物料（可空） */
+const materialCode = defineModel<string | undefined>('materialCode')
+/** 生产类别（可空） */
+const prodCategory = defineModel<string | undefined>('prodCategory')
 const props = defineProps<{
+  /** 当前页签 */
+  statTab: string
+  /** 生产推移只保留工厂、期间、机种 */
+  trendMode?: boolean
   /** 查询 loading */
   loading?: boolean
 }>()
@@ -126,51 +163,36 @@ const emit = defineEmits<{
 const { t } = useI18n()
 /** 静态 locales 前缀 */
 const localePrefix = 'logistics.manufacturing.output.production-monthly.page'
-/** 机种下拉刷新键 */
-const modelSelectKey = ref(0)
-/** 推移本表级联选项 URL（TaktProductionMonthlyTrends） */
-const plantOptionsUrl = getProductionMonthlyTrendPlantOptionsUrl()
-const outputCategoryOptionsUrl = getProductionMonthlyTrendOutputCategoryOptionsUrl()
-const modelOptionsUrl = getProductionMonthlyTrendModelOptionsUrl()
+/** 当前页签产出表选项 URL */
+const plantOptionsUrl = computed(() => props.trendMode
+  ? getProductionTrendPlantOptionsUrl()
+  : getProductionMonthlyTrendPlantOptionsUrl())
+const teamOptionsUrl = getProductionMonthlyTrendTeamOptionsUrl()
+const modelOptionsUrl = computed(() => props.trendMode
+  ? getProductionTrendModelOptionsUrl()
+  : getProductionMonthlyTrendModelOptionsUrl())
+const materialOptionsUrl = getProductionMonthlyTrendMaterialOptionsUrl()
 
-/** 第 2 级：工厂 → 产出类别 */
-const outputCategoryApiParams = computed(() => {
+/** 工厂选项：只取当前页签的产出表 */
+const plantApiParams = computed(() => ({ statTab: props.statTab }))
+
+/** 班组 / 机种 / 物料：当前页签 + 工厂 */
+const scopedApiParams = computed(() => {
   const plant = plantCode.value?.trim()
   if (!plant) {
     return undefined
   }
-  return { plantCode: plant }
+  return { statTab: props.statTab, plantCode: plant }
 })
 
-/** 第 3 级：工厂 + 产出类别 → 机种（类别可空并集） */
-const modelApiParams = computed(() => {
-  const plant = plantCode.value?.trim()
-  if (!plant) {
-    return undefined
-  }
-  const category = outputCategory.value?.trim()
-  return {
-    plantCode: plant,
-    ...(category ? { outputCategory: category } : {}),
-  }
-})
-
-/** 工厂变更：清空第 2～3 级 */
+/** 工厂变更：清空选填项 */
 watch(
   () => plantCode.value,
   () => {
-    outputCategory.value = undefined
+    teamCode.value = undefined
     modelCode.value = undefined
-    modelSelectKey.value += 1
-  },
-)
-
-/** 产出类别变更：清空第 3 级 */
-watch(
-  () => outputCategory.value,
-  () => {
-    modelCode.value = undefined
-    modelSelectKey.value += 1
+    materialCode.value = undefined
+    prodCategory.value = undefined
   },
 )
 </script>
@@ -197,11 +219,6 @@ watch(
 }
 
 .production-monthly-query-bar__control--model {
-  width: 12rem;
-  min-width: 9rem;
-}
-
-.production-monthly-query-bar__control--category {
   width: 12rem;
   min-width: 9rem;
 }

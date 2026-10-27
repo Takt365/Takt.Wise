@@ -12,7 +12,7 @@ import type { Equipment } from '@/types/logistics/maintenance/equipment.types'
 /** 主表选中行上下文 */
 export interface EquipmentMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<Equipment | null>
+  selecmedMasterRow: Ref<Equipment | null>
 }
 
 const equipmentMasterContextKey: InjectionKey<EquipmentMasterContext> = Symbol('equipmentMasterContext')
@@ -22,8 +22,8 @@ const equipmentMasterContextKey: InjectionKey<EquipmentMasterContext> = Symbol('
  * @returns {EquipmentMasterContext} 主表上下文
  */
 export function provideEquipmentMasterContext(): EquipmentMasterContext {
-  const selectedMasterRow = ref<Equipment | null>(null)
-  const ctx: EquipmentMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<Equipment | null>(null)
+  const ctx: EquipmentMasterContext = { selecmedMasterRow }
   provide(equipmentMasterContextKey, ctx)
   return ctx
 }

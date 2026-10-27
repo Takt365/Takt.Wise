@@ -15,7 +15,7 @@ export type TalentOfferRowRecord = TalentOffer | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface TalentOfferMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<TalentOfferRowRecord | null>
+  selecmedMasterRow: Ref<TalentOfferRowRecord | null>
 }
 
 const talentOfferMasterContextKey: InjectionKey<TalentOfferMasterContext> = Symbol('offerMasterContext')
@@ -25,8 +25,8 @@ const talentOfferMasterContextKey: InjectionKey<TalentOfferMasterContext> = Symb
  * @returns {TalentOfferMasterContext} 主表上下文
  */
 export function provideTalentOfferMasterContext(): TalentOfferMasterContext {
-  const selectedMasterRow = ref<TalentOfferRowRecord | null>(null)
-  const ctx: TalentOfferMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<TalentOfferRowRecord | null>(null)
+  const ctx: TalentOfferMasterContext = { selecmedMasterRow }
   provide(talentOfferMasterContextKey, ctx)
   return ctx
 }

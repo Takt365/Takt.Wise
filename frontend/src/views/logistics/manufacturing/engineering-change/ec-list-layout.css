@@ -1,0 +1,17 @@
+/* 仅 .ec-list-layout 内：查询栏、工具栏、表格垂直间隔 2pt。不改 TaktQueryBar / TaktToolsBar 的全局间距。 */
+.ec-list-layout .takt-query-bar:has(+ .takt-tools-bar) {
+  margin-bottom: 2pt !important;
+}
+
+.ec-list-layout .takt-query-bar + .takt-tools-bar {
+  margin-top: 0 !important;
+}
+
+.ec-list-layout .takt-tools-bar {
+  margin-bottom: 2pt !important;
+}
+
+.ec-list-layout .takt-tools-bar + .takt-single-table,
+.ec-list-layout .takt-tools-bar + * > .takt-single-table {
+  margin-top: 0 !important;
+}

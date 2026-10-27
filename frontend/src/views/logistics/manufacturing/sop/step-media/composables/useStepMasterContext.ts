@@ -12,7 +12,7 @@ import type { SopStep } from '@/types/logistics/manufacturing/sop/step.types'
 /** 主表选中行上下文 */
 export interface SopStepMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<SopStep | null>
+  selecmedMasterRow: Ref<SopStep | null>
 }
 
 const sopStepMasterContextKey: InjectionKey<SopStepMasterContext> = Symbol('stepMasterContext')
@@ -22,8 +22,8 @@ const sopStepMasterContextKey: InjectionKey<SopStepMasterContext> = Symbol('step
  * @returns {SopStepMasterContext} 主表上下文
  */
 export function provideSopStepMasterContext(): SopStepMasterContext {
-  const selectedMasterRow = ref<SopStep | null>(null)
-  const ctx: SopStepMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<SopStep | null>(null)
+  const ctx: SopStepMasterContext = { selecmedMasterRow }
   provide(sopStepMasterContextKey, ctx)
   return ctx
 }

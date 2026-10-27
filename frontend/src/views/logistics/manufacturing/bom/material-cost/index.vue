@@ -109,16 +109,6 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('plantCode')">
-      <a-form-item :label="pi.queryLabel('plantCode')">
-        <TaktSelect
-          v-model:value="advancedQueryForm.plantCode"
-          api-url="TaktPlants/options"
-          :placeholder="pi.queryPh('plantCode', 'select')"
-          allow-clear
-        />
-      </a-form-item>
-      </div>
       <div v-show="isFieldVisible('modelCode')">
       <a-form-item :label="pi.queryLabel('modelCode')">
         <a-input
@@ -389,11 +379,11 @@ const pageSize = ref(getTaktDefaultPageSize())
 /** 分页 total */
 const total = ref(0)
 /** 工具栏单选时当前行 */
-const selectedRow = ref<BomMaterialCostRowRecord | null>(null)
+const selecmedRow = ref<BomMaterialCostRowRecord | null>(null)
 /** 表格多选行 */
-const selectedRows = ref<BomMaterialCostRowRecord[]>([])
+const selecmedRows = ref<BomMaterialCostRowRecord[]>([])
 /** 表格多选 row-key 集合 */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 
 /** 高级查询抽屉是否打开 */
 const advancedQueryVisible = ref(false)
@@ -559,21 +549,21 @@ const getBomMaterialCostDictValue = (
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: BomMaterialCostRowRecord[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: BomMaterialCostRowRecord, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (selectedRow.value && getBomMaterialCostId(selectedRow.value) === getBomMaterialCostId(record)) {
-      selectedRow.value = null
+  onSelect: (record: BomMaterialCostRowRecord, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (selecmedRow.value && getBomMaterialCostId(selecmedRow.value) === getBomMaterialCostId(record)) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: BomMaterialCostRowRecord[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: BomMaterialCostRowRecord[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   }
 }))
 
@@ -581,16 +571,16 @@ const rowSelection = computed(() => ({
 const onClickRow = (record: BomMaterialCostRowRecord) => ({
   onClick: () => {
     const key = getBomMaterialCostId(record)
-    const index = selectedRowKeys.value.indexOf(key)
+    const index = selecmedRowKeys.value.indexOf(key)
     if (index > -1) {
-      selectedRowKeys.value.splice(index, 1)
+      selecmedRowKeys.value.splice(index, 1)
     } else {
-      selectedRowKeys.value.push(key)
+      selecmedRowKeys.value.push(key)
     }
-    selectedRows.value = dataSource.value.filter((item) => selectedRowKeys.value.includes(getBomMaterialCostId(item)))
-    selectedRow.value = selectedRowKeys.value.length === 1 ? (selectedRows.value[0] ?? null) : null
+    selecmedRows.value = dataSource.value.filter((item) => selecmedRowKeys.value.includes(getBomMaterialCostId(item)))
+    selecmedRow.value = selecmedRowKeys.value.length === 1 ? (selecmedRows.value[0] ?? null) : null
     if (rowSelection.value.onChange) {
-      rowSelection.value.onChange(selectedRowKeys.value, selectedRows.value)
+      rowSelection.value.onChange(selecmedRowKeys.value, selecmedRows.value)
     }
   }
 })

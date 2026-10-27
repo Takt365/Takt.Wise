@@ -9,8 +9,8 @@
 export {}
 declare global {
   const BOM_MATERIAL_COST_ITEM_TABLE_NAME: typeof import('./composables/useBomMaterialCostItemRecalculateSignalr').BOM_MATERIAL_COST_ITEM_TABLE_NAME
-  const EC_GIJUTSU_TABLE_NAME: typeof import('./composables/useEcGijutsuPersistSignalr').EC_GIJUTSU_TABLE_NAME
   const EC_NOTIFICATION_TABLE_NAME: typeof import('./composables/useEcChangeSignalrRefresh').EC_NOTIFICATION_TABLE_NAME
+  const EC_TE_TABLE_NAME: typeof import('./composables/useEcTePersistSignalr').EC_TE_TABLE_NAME
   const EffectScope: typeof import('vue').EffectScope
   const Modal: typeof import('ant-design-vue').Modal
   const QUARTZ_TABLE_NAME: typeof import('./composables/useQuartzSignalrRefresh').QUARTZ_TABLE_NAME
@@ -29,7 +29,7 @@ declare global {
   const defineStore: typeof import('pinia').defineStore
   const effectScope: typeof import('vue').effectScope
   const formatBomMaterialCostItemRecalculateDuration: typeof import('./composables/useBomMaterialCostItemRecalculateSignalr').formatBomMaterialCostItemRecalculateDuration
-  const formatEcGijutsuPersistDuration: typeof import('./composables/useEcGijutsuPersistSignalr').formatEcGijutsuPersistDuration
+  const formatEcTePersistDuration: typeof import('./composables/useEcTePersistSignalr').formatEcTePersistDuration
   const getActivePinia: typeof import('pinia').getActivePinia
   const getCurrentInstance: typeof import('vue').getCurrentInstance
   const getCurrentScope: typeof import('vue').getCurrentScope
@@ -104,7 +104,7 @@ declare global {
   const useDatabaseInfoCatalog: typeof import('./composables/useDatabaseInfoCatalog').useDatabaseInfoCatalog
   const useEcChangeSignalRRefresh: typeof import('./composables/useEcChangeSignalrRefresh').useEcChangeSignalRRefresh
   const useEcExecSignalRGroup: typeof import('./composables/useEcDeptSignalrGroup').useEcExecSignalRGroup
-  const useEcGijutsuPersistSignalR: typeof import('./composables/useEcGijutsuPersistSignalr').useEcGijutsuPersistSignalR
+  const useEcTePersistSignalR: typeof import('./composables/useEcTePersistSignalr').useEcTePersistSignalR
   const useEntityFieldI18n: typeof import('./composables/useEntityFieldI18n').useEntityFieldI18n
   const useGsap: typeof import('./composables/useGsap').useGsap
   const useId: typeof import('vue').useId
@@ -172,8 +172,8 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly BOM_MATERIAL_COST_ITEM_TABLE_NAME: UnwrapRef<typeof import('./composables/useBomMaterialCostItemRecalculateSignalr')['BOM_MATERIAL_COST_ITEM_TABLE_NAME']>
-    readonly EC_GIJUTSU_TABLE_NAME: UnwrapRef<typeof import('./composables/useEcGijutsuPersistSignalr')['EC_GIJUTSU_TABLE_NAME']>
     readonly EC_NOTIFICATION_TABLE_NAME: UnwrapRef<typeof import('./composables/useEcChangeSignalrRefresh')['EC_NOTIFICATION_TABLE_NAME']>
+    readonly EC_TE_TABLE_NAME: UnwrapRef<typeof import('./composables/useEcTePersistSignalr')['EC_TE_TABLE_NAME']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly Modal: UnwrapRef<typeof import('ant-design-vue')['Modal']>
     readonly QUARTZ_TABLE_NAME: UnwrapRef<typeof import('./composables/useQuartzSignalrRefresh')['QUARTZ_TABLE_NAME']>
@@ -192,7 +192,7 @@ declare module 'vue' {
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly formatBomMaterialCostItemRecalculateDuration: UnwrapRef<typeof import('./composables/useBomMaterialCostItemRecalculateSignalr')['formatBomMaterialCostItemRecalculateDuration']>
-    readonly formatEcGijutsuPersistDuration: UnwrapRef<typeof import('./composables/useEcGijutsuPersistSignalr')['formatEcGijutsuPersistDuration']>
+    readonly formatEcTePersistDuration: UnwrapRef<typeof import('./composables/useEcTePersistSignalr')['formatEcTePersistDuration']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
@@ -267,7 +267,7 @@ declare module 'vue' {
     readonly useDatabaseInfoCatalog: UnwrapRef<typeof import('./composables/useDatabaseInfoCatalog')['useDatabaseInfoCatalog']>
     readonly useEcChangeSignalRRefresh: UnwrapRef<typeof import('./composables/useEcChangeSignalrRefresh')['useEcChangeSignalRRefresh']>
     readonly useEcExecSignalRGroup: UnwrapRef<typeof import('./composables/useEcDeptSignalrGroup')['useEcExecSignalRGroup']>
-    readonly useEcGijutsuPersistSignalR: UnwrapRef<typeof import('./composables/useEcGijutsuPersistSignalr')['useEcGijutsuPersistSignalR']>
+    readonly useEcTePersistSignalR: UnwrapRef<typeof import('./composables/useEcTePersistSignalr')['useEcTePersistSignalR']>
     readonly useEntityFieldI18n: UnwrapRef<typeof import('./composables/useEntityFieldI18n')['useEntityFieldI18n']>
     readonly useGsap: UnwrapRef<typeof import('./composables/useGsap')['useGsap']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>

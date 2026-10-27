@@ -15,7 +15,7 @@ export type NewsRowRecord = News | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface NewsMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<NewsRowRecord | null>
+  selecmedMasterRow: Ref<NewsRowRecord | null>
 }
 
 const newsMasterContextKey: InjectionKey<NewsMasterContext> = Symbol('newsMasterContext')
@@ -25,8 +25,8 @@ const newsMasterContextKey: InjectionKey<NewsMasterContext> = Symbol('newsMaster
  * @returns {NewsMasterContext} 主表上下文
  */
 export function provideNewsMasterContext(): NewsMasterContext {
-  const selectedMasterRow = ref<NewsRowRecord | null>(null)
-  const ctx: NewsMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<NewsRowRecord | null>(null)
+  const ctx: NewsMasterContext = { selecmedMasterRow }
   provide(newsMasterContextKey, ctx)
   return ctx
 }

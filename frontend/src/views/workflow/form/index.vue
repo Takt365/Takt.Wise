@@ -35,8 +35,8 @@
       :show-fullscreen="true"
       :show-advanced-query="true"
       :show-column-setting="true"
-      :update-disabled="!selectedRow"
-      :delete-disabled="selectedRows.length === 0"
+      :update-disabled="!selecmedRow"
+      :delete-disabled="selecmedRows.length === 0"
       :create-loading="loading"
       :update-loading="loading"
       :delete-loading="loading"
@@ -224,9 +224,9 @@ const dataSource = ref<FlowForm[]>([])
 const currentPage = ref(getTaktDefaultPageIndex())
 const pageSize = ref(getTaktDefaultPageSize())
 const total = ref(0)
-const selectedRow = ref<FlowForm | null>(null)
-const selectedRows = ref<FlowForm[]>([])
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRow = ref<FlowForm | null>(null)
+const selecmedRows = ref<FlowForm[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 const formVisible = ref(false)
 const formTitle = ref('')
 const formLoading = ref(false)
@@ -426,30 +426,30 @@ const columns = computed<TableColumnsType>(() => [
 
 
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: FlowForm[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: FlowForm, selected: boolean) => {
-    if (selected) selectedRow.value = record
-    else if (selectedRow.value && getFormId(selectedRow.value) === getFormId(record)) selectedRow.value = null
+  onSelect: (record: FlowForm, selecmed: boolean) => {
+    if (selecmed) selecmedRow.value = record
+    else if (selecmedRow.value && getFormId(selecmedRow.value) === getFormId(record)) selecmedRow.value = null
   },
-  onSelectAll: (selected: boolean, selectedRowsData: FlowForm[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: FlowForm[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   }
 }))
 
 const onClickRow = (record: FlowForm) => ({
   onClick: () => {
     const key = getFormId(record)
-    const index = selectedRowKeys.value.indexOf(key)
-    if (index > -1) selectedRowKeys.value.splice(index, 1)
-    else selectedRowKeys.value.push(key)
-    selectedRows.value = dataSource.value.filter(item => selectedRowKeys.value.includes(getFormId(item)))
-    selectedRow.value = selectedRowKeys.value.length === 1 ? (selectedRows.value[0] ?? null) : null
-    if (rowSelection.value.onChange) rowSelection.value.onChange(selectedRowKeys.value, selectedRows.value)
+    const index = selecmedRowKeys.value.indexOf(key)
+    if (index > -1) selecmedRowKeys.value.splice(index, 1)
+    else selecmedRowKeys.value.push(key)
+    selecmedRows.value = dataSource.value.filter(item => selecmedRowKeys.value.includes(getFormId(item)))
+    selecmedRow.value = selecmedRowKeys.value.length === 1 ? (selecmedRows.value[0] ?? null) : null
+    if (rowSelection.value.onChange) rowSelection.value.onChange(selecmedRowKeys.value, selecmedRows.value)
   }
 })
 
@@ -701,7 +701,7 @@ function handleDesign(record: FlowForm) {
 
 /** 更新：若有选中行则编辑该行，否则提示请选择 */
 function handleUpdate() {
-  if (selectedRow.value) handleEdit(selectedRow.value)
+  if (selecmedRow.value) handleEdit(selecmedRow.value)
   else message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: t('entity.flowform._self') }))
 }
 
@@ -731,24 +731,24 @@ function handleDeleteOne(record: FlowForm) {
 
 /** 批量删除：无选中则提示；有选中则二次确认后 deleteBatch 并刷新 */
 function handleDelete() {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: t('entity.flowform._self') }))
     return
   }
   Modal.confirm({
     centered: true,
     title: t('common.tip.confirm.delete.title'),
-    content: t('common.tip.confirm.delete.count', { count: selectedRows.value.length, entity: t('entity.flowform._self') }),
+    content: t('common.tip.confirm.delete.count', { count: selecmedRows.value.length, entity: t('entity.flowform._self') }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
       try {
         loading.value = true
-        await deleteFlowFormBatch(selectedRowKeys.value.map(k => String(k)))
+        await deleteFlowFormBatch(selecmedRowKeys.value.map(k => String(k)))
         message.success(t('common.feedback.deleted'))
-        selectedRowKeys.value = []
-        selectedRows.value = []
-        selectedRow.value = null
+        selecmedRowKeys.value = []
+        selecmedRows.value = []
+        selecmedRow.value = null
         loadData()
       } catch (error: unknown) {
         message.error(getErrorMessage(error, t('common.feedback.delete.failed')))

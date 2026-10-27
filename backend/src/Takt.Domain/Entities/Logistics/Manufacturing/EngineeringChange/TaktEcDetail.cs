@@ -15,13 +15,13 @@ using SqlSugar;
 namespace Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange;
 
 /// <summary>
-/// 设变明细实体（技术阶段一 ③，隶属 TaktEcGijutsu，外键 EcGijutsuId）。技术维护 BOM/料号变更行；存在明细时保存主表后系统自动生成 TaktEcNotification。
-/// 数据主从：本表为主，各部门执行表为子（子表外键 EcDetailId → 本表 Id）。视图侧「执行→明细」按业务键手工查询填充 DTO，不在实体上伪造反向 OneToMany。
+/// 设变明细实体（技术阶段一 ③，隶属 TaktEcTe，外键 EcTeId）。技术维护 BOM/料号变更行；存在明细时保存主表后系统自动生成 TaktEcNotification。
+/// 多条明细按执行去重键共用一条部门执行行，明细不保存执行行外键。
 /// </summary>
 [SugarTable("takt_logistics_manufacturing_ec_detail", "设变明细表")]
 [SugarIndex("ix_ec_detail_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
 [SugarIndex("ix_ec_detail_is_deleted", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(IsDeleted), OrderByType.Asc, false)]
-[SugarIndex("ix_takt_logistics_manufacturing_ec_detail_line_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcGijutsuId), OrderByType.Asc, nameof(EcRootMaterialCode), OrderByType.Asc, nameof(LineNumber), OrderByType.Asc, true)]
+[SugarIndex("ix_takt_logistics_manufacturing_ec_detail_line_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcTeId), OrderByType.Asc, nameof(EcRootMaterialCode), OrderByType.Asc, nameof(LineNumber), OrderByType.Asc, true)]
 [SugarIndex("ix_takt_logistics_manufacturing_ec_detail_plant_code", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(PlantCode), OrderByType.Asc, false)]
 public class TaktEcDetail : TaktCompanyEntityBase
 {
@@ -212,22 +212,17 @@ public class TaktEcDetail : TaktCompanyEntityBase
     public string? EcOldPartDisposition { get; set; }
 
     /// <summary>
-    /// 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
+    /// 实施范围（冗余：来自 TaktEcTe.EcImplScope）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_scope", ColumnDescription = "实施范围", ColumnDataType = "int", IsNullable = false)]
-    public int EcScope { get; set; }
-    /// <summary>
-    /// 制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）。只记录这三课的选择，执行行再按部门固定规则解析
-    /// </summary>
-    [SugarColumn(ColumnName = "ec_dept_scope", ColumnDescription = "部门范围", ColumnDataType = "int", IsNullable = false, DefaultValue = "2")]
-    public int EcDeptScope { get; set; } = 2;
+    [SugarColumn(ColumnName = "ec_impl_scope", ColumnDescription = "实施范围", ColumnDataType = "int", IsNullable = false)]
+    public int EcImplScope { get; set; }
 
     /// <summary>
-    /// 技术课主表 ID（TaktEcGijutsu 主键；序列化为 string 避免 Javascript 精度问题）
+    /// 技术课主表 ID（TaktEcTe 主键；序列化为 string 避免 Javascript 精度问题）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_gijutsu_id", ColumnDescription = "技术课主表ID", ColumnDataType = "bigint", IsNullable = false)]
+    [SugarColumn(ColumnName = "ec_te_id", ColumnDescription = "技术课主表ID", ColumnDataType = "bigint", IsNullable = false)]
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
 
     /// <summary>
     /// 是否作废
@@ -235,57 +230,4 @@ public class TaktEcDetail : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "is_obsolete", ColumnDescription = "是否作废", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
     public int IsObsolete { get; set; } = 0;
 
-    /// <summary>
-    /// 生管执行行列表（数据主从；一对多；子表外键 TaktEcSeikan.EcDetailId → 本表 Id）
-    /// </summary>
-    [Navigate(NavigateType.OneToMany, nameof(TaktEcSeikan.EcDetailId))]
-    public List<TaktEcSeikan>? EcSeikans { get; set; }
-
-    /// <summary>
-    /// 采购执行行列表（数据主从；一对多；子表外键 TaktEcKoubai.EcDetailId → 本表 Id）
-    /// </summary>
-    [Navigate(NavigateType.OneToMany, nameof(TaktEcKoubai.EcDetailId))]
-    public List<TaktEcKoubai>? EcKoubais { get; set; }
-
-    /// <summary>
-    /// 受检执行行列表（数据主从；一对多；子表外键 TaktEcUkeken.EcDetailId → 本表 Id）
-    /// </summary>
-    [Navigate(NavigateType.OneToMany, nameof(TaktEcUkeken.EcDetailId))]
-    public List<TaktEcUkeken>? EcUkekens { get; set; }
-
-    /// <summary>
-    /// 部管执行行列表（数据主从；一对多；子表外键 TaktEcBukan.EcDetailId → 本表 Id）
-    /// </summary>
-    [Navigate(NavigateType.OneToMany, nameof(TaktEcBukan.EcDetailId))]
-    public List<TaktEcBukan>? EcBukans { get; set; }
-
-    /// <summary>
-    /// 制二执行行列表（数据主从；一对多；子表外键 TaktEcSeizounika.EcDetailId → 本表 Id）
-    /// </summary>
-    [Navigate(NavigateType.OneToMany, nameof(TaktEcSeizounika.EcDetailId))]
-    public List<TaktEcSeizounika>? EcSeizounikas { get; set; }
-
-    /// <summary>
-    /// SMT执行行列表（数据主从；一对多；子表外键 TaktEcEmtl.EcDetailId → 本表 Id）
-    /// </summary>
-    [Navigate(NavigateType.OneToMany, nameof(TaktEcEmtl.EcDetailId))]
-    public List<TaktEcEmtl>? EcEmtls { get; set; }
-
-    /// <summary>
-    /// 制一执行行列表（数据主从；一对多；子表外键 TaktEcSeizouikka.EcDetailId → 本表 Id）
-    /// </summary>
-    [Navigate(NavigateType.OneToMany, nameof(TaktEcSeizouikka.EcDetailId))]
-    public List<TaktEcSeizouikka>? EcSeizouikkas { get; set; }
-
-    /// <summary>
-    /// 品管执行行列表（数据主从；一对多；子表外键 TaktEcHinkan.EcDetailId → 本表 Id）
-    /// </summary>
-    [Navigate(NavigateType.OneToMany, nameof(TaktEcHinkan.EcDetailId))]
-    public List<TaktEcHinkan>? EcHinkans { get; set; }
-
-    /// <summary>
-    /// 制技执行行列表（数据主从；一对多；子表外键 TaktEcSeizougijutsu.EcDetailId → 本表 Id）
-    /// </summary>
-    [Navigate(NavigateType.OneToMany, nameof(TaktEcSeizougijutsu.EcDetailId))]
-    public List<TaktEcSeizougijutsu>? EcSeizougijutsus { get; set; }
 }

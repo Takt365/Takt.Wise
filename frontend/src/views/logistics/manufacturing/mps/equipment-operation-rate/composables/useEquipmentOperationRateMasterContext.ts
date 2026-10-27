@@ -12,7 +12,7 @@ import type { EquipmentOperationRate } from '@/types/logistics/manufacturing/out
 /** 主表选中行上下文 */
 export interface EquipmentOperationRateMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<EquipmentOperationRate | null>
+  selecmedMasterRow: Ref<EquipmentOperationRate | null>
 }
 
 const equipmentOperationRateMasterContextKey: InjectionKey<EquipmentOperationRateMasterContext> = Symbol('equipment-operation-rateMasterContext')
@@ -22,8 +22,8 @@ const equipmentOperationRateMasterContextKey: InjectionKey<EquipmentOperationRat
  * @returns {EquipmentOperationRateMasterContext} 主表上下文
  */
 export function provideEquipmentOperationRateMasterContext(): EquipmentOperationRateMasterContext {
-  const selectedMasterRow = ref<EquipmentOperationRate | null>(null)
-  const ctx: EquipmentOperationRateMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<EquipmentOperationRate | null>(null)
+  const ctx: EquipmentOperationRateMasterContext = { selecmedMasterRow }
   provide(equipmentOperationRateMasterContextKey, ctx)
   return ctx
 }

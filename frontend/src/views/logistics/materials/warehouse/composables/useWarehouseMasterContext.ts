@@ -15,7 +15,7 @@ export type WarehouseRowRecord = Warehouse | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface WarehouseMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<WarehouseRowRecord | null>
+  selecmedMasterRow: Ref<WarehouseRowRecord | null>
 }
 
 const warehouseMasterContextKey: InjectionKey<WarehouseMasterContext> = Symbol('warehouseMasterContext')
@@ -25,8 +25,8 @@ const warehouseMasterContextKey: InjectionKey<WarehouseMasterContext> = Symbol('
  * @returns {WarehouseMasterContext} 主表上下文
  */
 export function provideWarehouseMasterContext(): WarehouseMasterContext {
-  const selectedMasterRow = ref<WarehouseRowRecord | null>(null)
-  const ctx: WarehouseMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<WarehouseRowRecord | null>(null)
+  const ctx: WarehouseMasterContext = { selecmedMasterRow }
   provide(warehouseMasterContextKey, ctx)
   return ctx
 }

@@ -16,7 +16,7 @@ namespace Takt.Application.Services.Logistics.Manufacturing.Bom;
 
 /// <summary>
 /// 成本差异推移（产品月成本 + 0价格组 + PriceDeltaTrend）
-/// 查询栏工厂/机种/产品选项统一走 ITaktBomMaterialCostAnalysisService。
+/// 查询栏工厂/机种/产品选项统一走 ITaktBomCostOptionService。
 /// </summary>
 public interface ITaktBomPriceDeltaTrendService
 {

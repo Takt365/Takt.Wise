@@ -101,7 +101,7 @@ Takt.Domain → Takt.Shared
 - 需登录/鉴权：按 OpenIddict / `[Authorize]` 配置
 - 公开端点：`[AllowAnonymous]`
 - **权限码**：`领域:目录[:子目录…]:实体:操作` — 小写，**冒号** `:` 分隔；中间目录段数随菜单层级（非固定四段）；末段为操作；菜单种子 `Permission`、控制器特性、`v-permission` 三者一致
-  - ✅ `identity:user:list`、`logistics:material:purchasing:supplier:list`、`manufacturing:output:pcba:production:list`
+  - ✅ `identity:user:list`、`logistics:material:purchasing:supplier:list`、`manufacturing:output:mfg2:production:list`
   - ❌ `identity:user:list_view`（段内下划线）、`identity.user.list`（误用点号）、`identity:user`（缺少末段操作）
 
 **请求头**：`X-Tenant-Code`、`X-Company-Code`（基类已读）。

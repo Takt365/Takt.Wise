@@ -50,7 +50,6 @@ export type StandardOperationRateField = keyof typeof STANDARDOPERATIONRATE_PLAC
 
 /** 高级查询可 trim 的字符串字段 */
 export const STANDARDOPERATIONRATE_QUERY_STRING_FIELDS = [
-  'plantCode',
   'financialYear',
   'effectiveDateStart',
   'effectiveDateEnd',

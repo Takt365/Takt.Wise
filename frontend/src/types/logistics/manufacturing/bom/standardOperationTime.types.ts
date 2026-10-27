@@ -16,7 +16,7 @@ import type {
 } from '@/types/common.types';
 
 /**
- * 标准工序时间实体
+ * 标准工时实体
  * 对应前端 TaktStandardOperationTimeDto
  * 继承 TaktApprovalDtoBase
  * 对应前端 StandardOperationTime

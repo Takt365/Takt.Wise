@@ -154,13 +154,13 @@ public class TaktEcI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ec.lossamount", "zh-HK", "损失金额_hk", "损失金额"),
 
             // entity.ec.scope
-            new TranslationSeedItem("entity.ec.scope", "en-US", "Scope", "实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）"),
+            new TranslationSeedItem("entity.ec.scope", "en-US", "Scope", "实施范围（字典 logistics_manufacturing_ec_impl_scope_category；1=全仕向，2=部管，3=内部，4=技术）"),
             // entity.ec.scope
-            new TranslationSeedItem("entity.ec.scope", "ja-JP", "実施範囲", "实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）"),
+            new TranslationSeedItem("entity.ec.scope", "ja-JP", "実施範囲", "实施范围（字典 logistics_manufacturing_ec_impl_scope_category；1=全仕向，2=部管，3=内部，4=技术）"),
             // entity.ec.scope
-            new TranslationSeedItem("entity.ec.scope", "zh-CN", "实施范围", "实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）"),
+            new TranslationSeedItem("entity.ec.scope", "zh-CN", "实施范围", "实施范围（字典 logistics_manufacturing_ec_impl_scope_category；1=全仕向，2=部管，3=内部，4=技术）"),
             // entity.ec.scope
-            new TranslationSeedItem("entity.ec.scope", "zh-HK", "實施範圍", "实施范围（字典 logistics_manufacturing_ec_scope_category；1=全仕向，2=部管，3=内部，4=技术）"),
+            new TranslationSeedItem("entity.ec.scope", "zh-HK", "實施範圍", "实施范围（字典 logistics_manufacturing_ec_impl_scope_category；1=全仕向，2=部管，3=内部，4=技术）"),
 
             // entity.ec.effectivedate
             new TranslationSeedItem("entity.ec.effectivedate", "en-US", "生效日期_us", "生效日期"),
@@ -190,13 +190,13 @@ public class TaktEcI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ec.changestatus", "zh-HK", "变更状态_hk", "变更状态(1=工作的 2=取消的 3=发行的 4=P.P中变更的 5=固定的 6=挂起的 7=拒绝的)"),
 
             // entity.ec.status
-            new TranslationSeedItem("entity.ec.status", "en-US", "设变状态_us", "设变状态（字典 logistics_manufacturing_ec_gijutsu_status；1=发行，2=执行中，3=完成）"),
+            new TranslationSeedItem("entity.ec.status", "en-US", "设变状态_us", "设变状态（字典 logistics_manufacturing_ec_te_status；1=发行，2=执行中，3=完成）"),
             // entity.ec.status
-            new TranslationSeedItem("entity.ec.status", "ja-JP", "设变状态_jp", "设变状态（字典 logistics_manufacturing_ec_gijutsu_status；1=发行，2=执行中，3=完成）"),
+            new TranslationSeedItem("entity.ec.status", "ja-JP", "设变状态_jp", "设变状态（字典 logistics_manufacturing_ec_te_status；1=发行，2=执行中，3=完成）"),
             // entity.ec.status
-            new TranslationSeedItem("entity.ec.status", "zh-CN", "设变状态", "设变状态（字典 logistics_manufacturing_ec_gijutsu_status；1=发行，2=执行中，3=完成）"),
+            new TranslationSeedItem("entity.ec.status", "zh-CN", "设变状态", "设变状态（字典 logistics_manufacturing_ec_te_status；1=发行，2=执行中，3=完成）"),
             // entity.ec.status
-            new TranslationSeedItem("entity.ec.status", "zh-HK", "设变状态_hk", "设变状态（字典 logistics_manufacturing_ec_gijutsu_status；1=发行，2=执行中，3=完成）"),
+            new TranslationSeedItem("entity.ec.status", "zh-HK", "设变状态_hk", "设变状态（字典 logistics_manufacturing_ec_te_status；1=发行，2=执行中，3=完成）"),
 
             // entity.ec.details
             new TranslationSeedItem("entity.ec.details", "en-US", "设变明细列表_us", "设变明细列表"),

@@ -15,7 +15,7 @@ export type SopExecRowRecord = SopExec | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface SopExecMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<SopExecRowRecord | null>
+  selecmedMasterRow: Ref<SopExecRowRecord | null>
 }
 
 const sopExecMasterContextKey: InjectionKey<SopExecMasterContext> = Symbol('execMasterContext')
@@ -25,8 +25,8 @@ const sopExecMasterContextKey: InjectionKey<SopExecMasterContext> = Symbol('exec
  * @returns {SopExecMasterContext} 主表上下文
  */
 export function provideSopExecMasterContext(): SopExecMasterContext {
-  const selectedMasterRow = ref<SopExecRowRecord | null>(null)
-  const ctx: SopExecMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<SopExecRowRecord | null>(null)
+  const ctx: SopExecMasterContext = { selecmedMasterRow }
   provide(sopExecMasterContextKey, ctx)
   return ctx
 }

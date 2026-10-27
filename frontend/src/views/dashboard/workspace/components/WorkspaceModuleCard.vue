@@ -52,7 +52,7 @@
               </a-button>
               <template #overlay>
                 <a-menu
-                  :selected-keys="currentLayoutKey ? [currentLayoutKey] : []"
+                  :selecmed-keys="currentLayoutKey ? [currentLayoutKey] : []"
                   @click="onLayoutMenuClick"
                 >
                   <a-menu-item

@@ -316,108 +316,151 @@ public static class TaktNumberingHelper
     }
 
     /// <summary>
-    /// 计算预览用下一个流水号（不持久化）
+    /// 从业务表已有编码解析最大已占用流水（可按当前日期段过滤；无数据返回 0）
     /// </summary>
-    /// <param name="rule">编码规则快照</param>
-    /// <param name="now">当前时间</param>
-    /// <returns>预览流水号</returns>
-    public static int ComputePreviewSequence(TaktNumberingModel rule, DateTime now)
+    /// <param name="codes">业务表编码集合</param>
+    /// <param name="sequenceLength">流水位数</param>
+    /// <param name="separator">分隔符</param>
+    /// <param name="dateFormat">日期格式（有值时只统计含当前日期段的编码）</param>
+    /// <param name="referenceTime">参考时间</param>
+    /// <returns>最大已占用流水；无有效编码为 0</returns>
+    public static int ResolveMaxSequenceFromBusinessCodes(
+        IEnumerable<string?>? codes,
+        int sequenceLength,
+        string? separator,
+        string? dateFormat = null,
+        DateTime? referenceTime = null)
     {
-        if (ShouldResetSequence(rule.ResetPeriod, rule.UpdatedAt, now))
+        if (codes == null)
         {
-            return rule.SequenceStep <= 0 ? 1 : rule.SequenceStep;
+            return 0;
         }
-        var step = rule.SequenceStep <= 0 ? 1 : rule.SequenceStep;
-        return rule.CurrentSequence <= 0 ? step : rule.CurrentSequence + step;
+        var datePart = string.IsNullOrWhiteSpace(dateFormat)
+            ? null
+            : FormatDateSegment(dateFormat, referenceTime ?? DateTime.Now);
+        var max = 0;
+        foreach (var raw in codes)
+        {
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                continue;
+            }
+            var code = raw.Trim();
+            if (!string.IsNullOrEmpty(datePart)
+                && code.IndexOf(datePart, StringComparison.Ordinal) < 0)
+            {
+                continue;
+            }
+            if (TryParseSequenceFromBusinessCode(code, sequenceLength, separator, out var seq)
+                && seq > max)
+            {
+                max = seq;
+            }
+        }
+        return max;
     }
 
     /// <summary>
-    /// 解析创建/导入时的起始编码与当前流水
+    /// 计算预览用下一个流水号（不持久化；仅业务表 max，空则为 SequenceStep）
     /// </summary>
     /// <param name="rule">编码规则快照</param>
-    /// <param name="exampleCodeInput">起始编码输入</param>
-    /// <param name="autoGenerateWhenEmpty">为空时是否自动生成</param>
-    /// <returns>起始编码与当前流水</returns>
-    public static (string ExampleCode, int CurrentSequence) ResolveExampleCodeOnCreate(
+    /// <param name="now">当前时间</param>
+    /// <param name="businessMaxSequence">业务表最大已占用流水；空/0 → 下一号为 SequenceStep（通常 1）</param>
+    /// <returns>预览流水号</returns>
+    public static int ComputePreviewSequence(
         TaktNumberingModel rule,
-        string? exampleCodeInput,
+        DateTime now,
+        int businessMaxSequence = 0)
+    {
+        var step = rule.SequenceStep <= 0 ? 1 : rule.SequenceStep;
+        return checked(Math.Max(0, businessMaxSequence) + step);
+    }
+
+    /// <summary>
+    /// 解析创建/导入时的起始编码样例
+    /// </summary>
+    /// <param name="rule">编码规则快照</param>
+    /// <param name="startingNumberInput">起始编码输入</param>
+    /// <param name="autoGenerateWhenEmpty">为空时是否自动生成</param>
+    /// <returns>起始编码样例</returns>
+    public static string ResolveStartingNumberOnCreate(
+        TaktNumberingModel rule,
+        string? startingNumberInput,
         bool autoGenerateWhenEmpty)
     {
         var now = DateTime.Now;
-        if (string.IsNullOrWhiteSpace(exampleCodeInput))
+        if (string.IsNullOrWhiteSpace(startingNumberInput))
         {
             if (!autoGenerateWhenEmpty)
             {
                 throw new TaktBusinessException("起始编码不能为空");
             }
-            return BuildInitialExampleCode(rule, now);
+            return BuildInitialStartingNumber(rule, now);
         }
-        var exampleCode = exampleCodeInput.Trim();
-        if (!TryParseCurrentSequenceFromExampleCode(
-                exampleCode,
+        var startingNumber = startingNumberInput.Trim();
+        if (!TryParseSequenceFromBusinessCode(
+                startingNumber,
                 rule.SequenceLength,
                 rule.Separator,
-                out var currentSequence))
+                out _))
         {
             throw new TaktBusinessException("起始编码末段须为有效流水号");
         }
-        return (exampleCode, currentSequence);
+        return startingNumber;
     }
 
     /// <summary>
-    /// 按规则生成初始业务编码
+    /// 按规则生成初始起始编码样例（业务表为空时的首号，流水=SequenceStep）
     /// </summary>
     /// <param name="rule">编码规则快照</param>
     /// <param name="referenceTime">参考时间</param>
-    /// <returns>起始编码与当前流水号</returns>
-    public static (string ExampleCode, int CurrentSequence) BuildInitialExampleCode(
+    /// <returns>起始编码样例</returns>
+    public static string BuildInitialStartingNumber(
         TaktNumberingModel rule,
         DateTime referenceTime)
     {
         var step = rule.SequenceStep <= 0 ? 1 : rule.SequenceStep;
-        var initialSequence = step;
-        var code = FormatBusinessCode(rule, initialSequence, referenceTime);
-        return (code, initialSequence);
+        return FormatBusinessCode(rule, step, referenceTime);
     }
 
     /// <summary>
-    /// 按规则生成下一个业务编码（含重置周期判断）
+    /// 按业务表最大已占用流水生成下一编码（max=0 → 发出 SequenceStep，通常为 1）
     /// </summary>
-    /// <param name="rule">编码规则快照（会临时修改 CurrentSequence 以应用重置）</param>
+    /// <param name="rule">编码规则快照（段配置/步长）</param>
     /// <param name="now">当前时间</param>
-    /// <returns>业务编码与下一流水号</returns>
-    public static (string BusinessCode, int NextSequence) BuildNextBusinessCode(TaktNumberingModel rule, DateTime now)
+    /// <param name="businessMaxSequence">业务表最大已占用流水；无数据传 0</param>
+    /// <returns>业务编码与本次发出流水</returns>
+    public static (string BusinessCode, int IssuedSequence) BuildNextBusinessCode(
+        TaktNumberingModel rule,
+        DateTime now,
+        int businessMaxSequence = 0)
     {
-        if (ShouldResetSequence(rule.ResetPeriod, rule.UpdatedAt, now))
-        {
-            rule.CurrentSequence = 0;
-        }
         var step = rule.SequenceStep <= 0 ? 1 : rule.SequenceStep;
-        var nextSequence = checked(rule.CurrentSequence + step);
-        var code = FormatBusinessCode(rule, nextSequence, now);
-        return (code, nextSequence);
+        var issueSequence = checked(Math.Max(0, businessMaxSequence) + step);
+        var code = FormatBusinessCode(rule, issueSequence, now);
+        return (code, issueSequence);
     }
 
     /// <summary>
-    /// 从起始编码末段解析当前流水号
+    /// 从业务编码解析流水号（取分隔后末段；若日期与流水粘连如 2026000001，则取末 SequenceLength 位）
     /// </summary>
-    /// <param name="exampleCode">起始编码</param>
+    /// <param name="businessCode">业务编码</param>
     /// <param name="sequenceLength">流水位数</param>
     /// <param name="separator">分隔符</param>
-    /// <param name="currentSequence">解析出的流水号</param>
+    /// <param name="sequence">解析出的流水号</param>
     /// <returns>是否解析成功</returns>
-    public static bool TryParseCurrentSequenceFromExampleCode(
-        string exampleCode,
+    public static bool TryParseSequenceFromBusinessCode(
+        string businessCode,
         int sequenceLength,
         string? separator,
-        out int currentSequence)
+        out int sequence)
     {
-        currentSequence = 0;
-        if (string.IsNullOrWhiteSpace(exampleCode))
+        sequence = 0;
+        if (string.IsNullOrWhiteSpace(businessCode))
         {
             return false;
         }
-        var trimmed = exampleCode.Trim();
+        var trimmed = businessCode.Trim();
         var lastSegment = trimmed;
         var sep = separator?.Trim();
         if (!string.IsNullOrEmpty(sep) && sep.Length == 1)
@@ -433,7 +476,7 @@ public static class TaktNumberingHelper
             var lastSeparator = Math.Max(trimmed.LastIndexOf('-'), trimmed.LastIndexOf('_'));
             lastSegment = lastSeparator >= 0 ? trimmed[(lastSeparator + 1)..] : trimmed;
         }
-        if (string.IsNullOrWhiteSpace(lastSegment) || lastSegment.Length > 18)
+        if (string.IsNullOrWhiteSpace(lastSegment))
         {
             return false;
         }
@@ -444,16 +487,22 @@ public static class TaktNumberingHelper
                 return false;
             }
         }
-        if (!int.TryParse(lastSegment, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var parsed)
+        // 日期+流水粘连（如 yyyy + 000001 → 2026000001）：只取末尾流水位数
+        var digits = lastSegment;
+        if (sequenceLength > 0 && digits.Length > sequenceLength)
+        {
+            digits = digits[^sequenceLength..];
+        }
+        if (digits.Length > 18)
+        {
+            return false;
+        }
+        if (!int.TryParse(digits, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var parsed)
             || parsed < 0)
         {
             return false;
         }
-        if (sequenceLength > 0 && lastSegment.Length > sequenceLength)
-        {
-            return false;
-        }
-        currentSequence = parsed;
+        sequence = parsed;
         return true;
     }
 
@@ -508,9 +557,13 @@ public static class TaktNumberingHelper
         {
             return FormatDateSegment(rule.DateFormat, time);
         }
-        if (segmentKey.Equals("CompanyCode", StringComparison.OrdinalIgnoreCase))
+        if (segmentKey.Equals("CompanyCode", StringComparison.OrdinalIgnoreCase)
+            || segmentKey.Equals("CompanyShortName", StringComparison.OrdinalIgnoreCase))
         {
-            var text = rule.CompanyCode?.Trim();
+            // 业务编码公司段：优先当前公司简称，无简称时回退公司代码
+            var text = !string.IsNullOrWhiteSpace(rule.CompanyShortName)
+                ? rule.CompanyShortName.Trim()
+                : rule.CompanyCode?.Trim();
             return string.IsNullOrWhiteSpace(text) ? null : text;
         }
         if (segmentKey.Equals("DeptCode", StringComparison.OrdinalIgnoreCase)

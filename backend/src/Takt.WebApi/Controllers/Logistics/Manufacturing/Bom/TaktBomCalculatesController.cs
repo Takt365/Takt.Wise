@@ -20,7 +20,7 @@ using Takt.Shared.Options;
 namespace Takt.WebApi.Controllers.Logistics.Manufacturing.Bom;
 
 /// <summary>
-/// BOM 计算控制器（API 保留；页面已并入 BOM零价格；权限对齐 zeroprice）
+/// BOM 计算控制器（API 保留；页面已并入 零材料成本；权限对齐 zeroprice）
 /// </summary>
 [ApiModule(4, "后勤管理")]
 [Route("api/[controller]", Name = "BOM计算")]
@@ -59,7 +59,7 @@ public class TaktBomCalculatesController : TaktControllerBase
     /// 工厂选项（查询栏）
     /// </summary>
     /// <returns>下拉选项</returns>
-    [TaktPermission("logistics:manufacturing:bom:material:zeroprice:query", "查询BOM零价格工厂")]
+    [TaktPermission("logistics:manufacturing:bom:material:zeroprice:query", "查询零材料成本工厂")]
     [HttpGet("plant-options")]
     public async Task<IActionResult> GetBomCalculatePlantOptionsAsync([FromQuery] string? plantCode = null, [FromQuery] string? keyword = null)
     {

@@ -56,7 +56,7 @@ import { getBomCostOptionPlantOptions } from '@/api/logistics/manufacturing/bom/
 import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/useCompanyRelatedPlant'
 import { useTenantStore } from '@/stores/identity/useTenantStore'
 import ModelCostTrendQueryForm from './components/ModelCostTrendQueryForm.vue'
-import { provideBomMaterialCostAnalysisMasterContext } from '@/views/logistics/manufacturing/bom/material-cost-trend/composables/useMaterialCostAnalysisMasterContext'
+import { provideModelCostTrendQueryContext } from './composables/useModelCostTrendQueryContext'
 import { buildDefaultCostingPeriodRange } from '@/views/logistics/manufacturing/bom/material-cost/utils/bomMaterialCostPeriod'
 import ModelCostTrendPanel from './components/ModelCostTrendPanel.vue'
 import { useAnalysisPeriodRangeLimit } from '@/composables/useAnalysisPeriodRangeLimit'
@@ -73,7 +73,7 @@ const {
   queryMaterialType,
   queryModelCode,
   periodRange,
-} = provideBomMaterialCostAnalysisMasterContext()
+} = provideModelCostTrendQueryContext()
 
 /** 明细面板 loading */
 const panelLoading = ref(false)

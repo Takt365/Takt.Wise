@@ -15,7 +15,7 @@ export type PcbaOutputRowRecord = PcbaOutput | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface PcbaOutputMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<PcbaOutputRowRecord | null>
+  selecmedMasterRow: Ref<PcbaOutputRowRecord | null>
 }
 
 const pcbaOutputMasterContextKey: InjectionKey<PcbaOutputMasterContext> = Symbol('pcba-outputMasterContext')
@@ -25,8 +25,8 @@ const pcbaOutputMasterContextKey: InjectionKey<PcbaOutputMasterContext> = Symbol
  * @returns {PcbaOutputMasterContext} 主表上下文
  */
 export function providePcbaOutputMasterContext(): PcbaOutputMasterContext {
-  const selectedMasterRow = ref<PcbaOutputRowRecord | null>(null)
-  const ctx: PcbaOutputMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<PcbaOutputRowRecord | null>(null)
+  const ctx: PcbaOutputMasterContext = { selecmedMasterRow }
   provide(pcbaOutputMasterContextKey, ctx)
   return ctx
 }

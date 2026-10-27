@@ -14,15 +14,15 @@
  * 各部门执行主键字段（主表首列 / row-key；与 index.vue id-field 一致）
  */
 export const EC_DEPT_EXEC_ID_FIELD: Readonly<Record<string, string>> = {
-  eckoubai: 'ecKoubaiId',
-  ecukeken: 'ecUkekenId',
-  ecbukan: 'ecBukanId',
-  ecemtl: 'ecEmtlId',
-  ecseikan: 'ecSeikanId',
-  ecseizouikka: 'ecSeizouikkaId',
-  ecseizounika: 'ecSeizounikaId',
-  echinkan: 'ecHinkanId',
-  ecseizougijutsu: 'ecSeizougijutsuId',
+  ecpur: 'ecPurId',
+  eciqc: 'ecIqcId',
+  ecmc: 'ecMcId',
+  ecmtl: 'ecMtlId',
+  ecpc: 'ecPcId',
+  ecmfg1: 'ecMfg1Id',
+  ecmfg2: 'ecMfg2Id',
+  ecqc: 'ecQcId',
+  ecme: 'ecMeId',
 }
 
 /**
@@ -31,11 +31,11 @@ export const EC_DEPT_EXEC_ID_FIELD: Readonly<Record<string, string>> = {
 const EC_DEPT_EXEC_LINE_IDENTITY = ['lineNumber', 'ecCode'] as const
 
 /**
- * 含机种/根物料编码课别的头段：停产状态 → 机种 → 根物料编码（描述在业务字段之后）
+ * 生管/制技头段：停产状态 → 机种编码组 → 根物料编码组（描述在业务字段之后）
  */
 const EC_DEPT_EXEC_LINE_HEAD_DISC_MODEL = [
   'discontinuedStatus',
-  'ecModelCode',
+  'ecModelCodeGroup',
   'ecRootMaterialCodeGroup',
 ] as const
 
@@ -61,11 +61,11 @@ const EC_DEPT_EXEC_LINE_SCHEDULED_REDUNDANT = ['scheduledDate', 'scheduledBatch'
 
 /** 含生管 scheduled 冗余展示字段的部门 slug（除采购/受检） */
 const EC_DEPT_EXEC_HAS_SCHEDULED_REDUNDANT = new Set([
-  'ecbukan',
-  'ecemtl',
-  'ecseizouikka',
-  'ecseizounika',
-  'echinkan',
+  'ecmc',
+  'ecmtl',
+  'ecmfg1',
+  'ecmfg2',
+  'ecqc',
 ])
 
 /**
@@ -81,7 +81,7 @@ const EC_DEPT_EXEC_LINE_ROOT_DESC = ['ecRootMaterialDescription'] as const
 /**
  * 实施范围、部门实施范围（各部门执行表都有）
  */
-const EC_DEPT_EXEC_LINE_SCOPE = ['ecScope', 'ecDeptScope'] as const
+const EC_DEPT_EXEC_LINE_SCOPE = ['ecImplScope', 'ecControlScope'] as const
 
 /**
  * 尾段：部门编码、部门名称
@@ -90,24 +90,24 @@ const EC_DEPT_EXEC_LINE_TAIL_DEPT = ['deptCode', 'deptName'] as const
 
 /** 各课实施/业务字段（实体 ExecContent 之后、根物料描述之前） */
 const EC_DEPT_EXEC_LINE_IMPL = {
-  /** TaktEcKoubai：采购订单发行日期、供应商、采购订单号码（旧品处理为明细冗余，见下方展示段） */
-  eckoubai: ['purchaseOrderIssueDate', 'supplier', 'purchaseOrderCode'],
-  /** TaktEcSeikan：Po残、结余（scheduled 在实施头段；旧品处理为明细冗余） */
-  ecseikan: ['poRemainder', 'balance'],
-  /** TaktEcUkeken：受检单号、检验日期 */
-  ecukeken: ['iqcOrderCode', 'inspectionDate'],
-  /** TaktEcBukan：出库批次、出库日期 */
-  ecbukan: ['outboundBatch', 'outboundDate'],
-  /** TaktEcEmtl：出库批次、出库日期 */
-  ecemtl: ['outboundBatch', 'outboundDate'],
-  /** TaktEcSeizounika：生产班组、生产日期、实施批次 */
-  ecseizounika: ['productionTeam', 'productionDate', 'implementationBatch'],
-  /** TaktEcSeizouikka：生产班组、生产日期、实施批次 */
-  ecseizouikka: ['productionTeam', 'productionDate', 'implementationBatch'],
-  /** TaktEcHinkan：生产班组、检验日期、检验批次、抽样号码 */
-  echinkan: ['productionTeam', 'inspectionDate', 'inspectionBatch', 'samplingCode'],
-  /** TaktEcSeizougijutsu：更新SOP、SOP日期（担当在列上单独展示，可空） */
-  ecseizougijutsu: ['isSopUpdated', 'sopDate'],
+  /** TaktEcPur：采购订单发行日期、供应商、采购订单号码（旧品处理本表可改，见下方展示段） */
+  ecpur: ['purchaseOrderIssueDate', 'supplier', 'purchaseOrderCode'],
+  /** TaktEcPc：Po残（可空，有值须正则）、结余数量（scheduled 在实施头段；旧品处理本表可改） */
+  ecpc: ['poRemainder', 'balanceQuantity'],
+  /** TaktEcIqc：受检单号、检验日期 */
+  eciqc: ['iqcOrderCode', 'inspectionDate'],
+  /** TaktEcMc：出库批次、出库日期 */
+  ecmc: ['outboundBatch', 'outboundDate'],
+  /** TaktEcMtl：出库批次、出库日期 */
+  ecmtl: ['outboundBatch', 'outboundDate'],
+  /** TaktEcMfg2：生产班组、生产日期、实施批次 */
+  ecmfg2: ['productionTeam', 'productionDate', 'implementationBatch'],
+  /** TaktEcMfg1：生产班组、生产日期、实施批次 */
+  ecmfg1: ['productionTeam', 'productionDate', 'implementationBatch'],
+  /** TaktEcQc：生产班组、检验日期、检验批次、抽样号码 */
+  ecqc: ['productionTeam', 'inspectionDate', 'inspectionBatch', 'samplingCode'],
+  /** TaktEcMe：更新SOP、SOP日期（担当在列上单独展示，可空） */
+  ecme: ['isSopUpdated', 'sopDate'],
 } as const
 
 /**
@@ -121,22 +121,25 @@ export function getEcDeptExecFillRequiredFields(slug: string): readonly string[]
     slug in EC_DEPT_EXEC_LINE_IMPL
       ? EC_DEPT_EXEC_LINE_IMPL[slug as keyof typeof EC_DEPT_EXEC_LINE_IMPL]
       : []
-  const seikanSchedule = slug === 'ecseikan' ? (['scheduledDate', 'scheduledBatch'] as const) : []
-  return ['isImplemented', 'execContent', ...seikanSchedule, ...impl]
+  const pcSchedule = slug === 'ecpc' ? (['scheduledDate', 'scheduledBatch'] as const) : []
+  const implemented = slug === 'ecme' ? [] : (['isImplemented'] as const)
+  // Po残可空，有值时由正则校验；不列入必填
+  const fillImpl = impl.filter((field) => field !== 'poRemainder')
+  return [...implemented, 'execContent', ...pcSchedule, ...fillImpl]
 }
 
 /**
- * 明细旧品处理冗余展示（生管/采购只读）
+ * 旧品处理列：生管、采购各自可改（去重粒不同，互不带入）
  */
 const EC_DEPT_EXEC_LINE_OLD_PART_REDUNDANT = ['ecOldPartDisposition'] as const
 
-/** 含旧品处理冗余展示的部门 slug */
-const EC_DEPT_EXEC_HAS_OLD_PART_REDUNDANT = new Set(['eckoubai', 'ecseikan'])
+/** 含旧品处理本表字段的部门 slug */
+const EC_DEPT_EXEC_HAS_OLD_PART_REDUNDANT = new Set(['ecpur', 'ecpc'])
 
 /**
  * 采购：停产状态 + 新物料、新品仓库、新采购类型（无机种/根物料编码）
  */
-const EC_DEPT_EXEC_LINE_MID_KOUBAI = [
+const EC_DEPT_EXEC_LINE_MID_MP = [
   'discontinuedStatus',
   'ecModelCodeGroup',
   'ecRootMaterialCodeGroup',
@@ -150,7 +153,7 @@ const EC_DEPT_EXEC_LINE_MID_KOUBAI = [
 /**
  * 受检：停产状态 + 新物料、新品仓库、新品检验
  */
-const EC_DEPT_EXEC_LINE_MID_UKEKEN = [
+const EC_DEPT_EXEC_LINE_MID_IQC = [
   'discontinuedStatus',
   'ecModelCodeGroup',
   'ecRootMaterialCodeGroup',
@@ -164,7 +167,7 @@ const EC_DEPT_EXEC_LINE_MID_UKEKEN = [
 /**
  * 部管：新物料 / 新采购类型 / 新品仓库（停产与机种/根物料编码已在头段）
  */
-const EC_DEPT_EXEC_LINE_MID_BUKAN = [
+const EC_DEPT_EXEC_LINE_MID_MC = [
   'ecNewMaterialCode',
   'ecNewMaterialDescription',
   'ecNewPurchaseType',
@@ -186,7 +189,7 @@ const EC_DEPT_EXEC_LINE_MID_SMT = [
 /**
  * 制二：停产 + 机种编码组 + 根物料编码组 + 新物料/上阶（无机种单码）
  */
-const EC_DEPT_EXEC_LINE_MID_SEIZOUNIKA = [
+const EC_DEPT_EXEC_LINE_MID_PCBA = [
   'discontinuedStatus',
   'ecModelCodeGroup',
   'ecRootMaterialCodeGroup',
@@ -201,7 +204,7 @@ const EC_DEPT_EXEC_LINE_MID_SEIZOUNIKA = [
 /**
  * 品管/制一：停产 + 机种编码组 + 根物料编码组（无机种单码）
  */
-const EC_DEPT_EXEC_LINE_MID_HINKAN = [
+const EC_DEPT_EXEC_LINE_MID_QA = [
   'discontinuedStatus',
   'ecModelCodeGroup',
   'ecRootMaterialCodeGroup',
@@ -213,25 +216,49 @@ const EC_DEPT_EXEC_LINE_MID_HINKAN = [
 const EC_DEPT_EXEC_LINE_MID_EMPTY = [] as const
 
 const EC_DEPT_EXEC_LINE_MID_BY_SLUG: Record<string, readonly string[]> = {
-  eckoubai: EC_DEPT_EXEC_LINE_MID_KOUBAI,
-  ecukeken: EC_DEPT_EXEC_LINE_MID_UKEKEN,
-  ecbukan: EC_DEPT_EXEC_LINE_MID_BUKAN,
-  ecemtl: EC_DEPT_EXEC_LINE_MID_SMT,
-  ecseizounika: EC_DEPT_EXEC_LINE_MID_SEIZOUNIKA,
-  ecseizouikka: EC_DEPT_EXEC_LINE_MID_HINKAN,
-  echinkan: EC_DEPT_EXEC_LINE_MID_HINKAN,
-  ecseizougijutsu: EC_DEPT_EXEC_LINE_MID_EMPTY,
-  ecseikan: EC_DEPT_EXEC_LINE_MID_EMPTY,
+  ecpur: EC_DEPT_EXEC_LINE_MID_MP,
+  eciqc: EC_DEPT_EXEC_LINE_MID_IQC,
+  ecmc: EC_DEPT_EXEC_LINE_MID_MC,
+  ecmtl: EC_DEPT_EXEC_LINE_MID_SMT,
+  ecmfg2: EC_DEPT_EXEC_LINE_MID_PCBA,
+  ecmfg1: EC_DEPT_EXEC_LINE_MID_QA,
+  ecqc: EC_DEPT_EXEC_LINE_MID_QA,
+  ecme: EC_DEPT_EXEC_LINE_MID_EMPTY,
+  ecpc: EC_DEPT_EXEC_LINE_MID_EMPTY,
 }
 
 /** 含机种/根物料编码/停产头段的部门（采购/受检、部管/SMT 除外） */
 const EC_DEPT_EXEC_HAS_DISC_MODEL = new Set([
-  'ecseikan',
-  'ecseizougijutsu',
+  'ecpc',
+  'ecme',
 ])
 
 /** 部管/SMT：机种 + 根物料编码组，无根物料描述 */
-const EC_DEPT_EXEC_HAS_ROOT_GROUP = new Set(['ecbukan', 'ecemtl'])
+const EC_DEPT_EXEC_HAS_ROOT_GROUP = new Set(['ecmc', 'ecmtl'])
+
+/**
+ * 编辑表单的实施值。字典 sys_yes_no：1=是。行上 0 是列默认否，打开表单时显示是。
+ * @param value 行上的实施值
+ * @returns {number} 表单绑定值
+ */
+/** 部门批次输入上限（与实体批次列 Length 一致） */
+export const EC_DEPT_BATCH_MAX_LENGTH = 20
+
+/**
+ * 部门批次输入：只保留大写字母，并截断到 20 位
+ * @param value 输入值
+ * @returns {string} 规范化后的批次
+ */
+export function taktDeptBatchInput(value: string | null | undefined): string {
+  return String(value ?? '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, EC_DEPT_BATCH_MAX_LENGTH)
+}
+
+export function ecDeptImplementedFormValue(value: number | null | undefined): number {
+  if (value == null || value === 0) {
+    return 1
+  }
+  return value
+}
 
 /** 执行部门实体 slug */
 export type EcDeptExecSlug = keyof typeof EC_DEPT_EXEC_LINE_IMPL
@@ -239,7 +266,7 @@ export type EcDeptExecSlug = keyof typeof EC_DEPT_EXEC_LINE_IMPL
 /**
  * 取指定部门执行主表字段
  * 顺序：主键 → 行号/单号 → [停产/机种/根物料编码] → 物料上下文 → 实施/执行内容 → 本课业务 → [根物料描述] → 部门
- * @param slug 实体 slug（eckoubai 对应 TaktEcKoubai）
+ * @param slug 实体 slug（ecpur 对应 TaktEcPur）
  * @returns {readonly string[]} 主表列字段
  */
 export function getEcDeptExecLineFields(slug: string): readonly string[] {
@@ -257,14 +284,14 @@ export function getEcDeptExecLineFields(slug: string): readonly string[] {
     ...(hasRootGroup ? EC_DEPT_EXEC_LINE_HEAD_DISC_MODEL_GROUP : []),
     ...(hasDiscModel ? EC_DEPT_EXEC_LINE_HEAD_DISC_MODEL : []),
     ...mid,
-    ...EC_DEPT_EXEC_LINE_EXEC_HEAD,
+    ...(slug === 'ecme' ? [] : EC_DEPT_EXEC_LINE_EXEC_HEAD),
     ...(EC_DEPT_EXEC_HAS_SCHEDULED_REDUNDANT.has(slug) ? EC_DEPT_EXEC_LINE_SCHEDULED_REDUNDANT : []),
-    ...(slug === 'ecseikan' ? EC_DEPT_EXEC_LINE_SCHEDULED_REDUNDANT : []),
+    ...(slug === 'ecpc' ? EC_DEPT_EXEC_LINE_SCHEDULED_REDUNDANT : []),
     ...EC_DEPT_EXEC_LINE_EXEC_CONTENT,
     ...impl,
-    ...(slug === 'ecseizougijutsu' ? (['sopLeader', 'techLeader'] as const) : []),
+    ...(slug === 'ecme' ? (['sopLeader', 'techLeader'] as const) : []),
     ...(EC_DEPT_EXEC_HAS_OLD_PART_REDUNDANT.has(slug) ? EC_DEPT_EXEC_LINE_OLD_PART_REDUNDANT : []),
-    ...(hasDiscModel || slug === 'echinkan' || slug === 'ecseizouikka' || slug === 'ecseizounika' ? EC_DEPT_EXEC_LINE_ROOT_DESC : []),
+    ...(hasDiscModel || slug === 'ecqc' || slug === 'ecmfg1' || slug === 'ecmfg2' ? EC_DEPT_EXEC_LINE_ROOT_DESC : []),
     ...EC_DEPT_EXEC_LINE_SCOPE,
     ...EC_DEPT_EXEC_LINE_TAIL_DEPT,
   ]

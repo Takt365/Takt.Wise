@@ -11,17 +11,6 @@
   <div class="takt-query-bar purchase-price-trend-query-bar">
     <div class="purchase-price-trend-query-bar__fields min-w-0 flex flex-1 flex-wrap items-center gap-x-3 gap-y-2">
       <div class="flex items-center gap-1">
-        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('common.page.entity.plantcode') }}</span>
-        <TaktSelect
-          v-model:value="plantCode"
-          :api-url="plantOptionsUrl"
-          class="purchase-price-trend-query-bar__control purchase-price-trend-query-bar__control--plant"
-          allow-clear
-          show-search
-          :placeholder="t('common.page.form.placeholder.selectonly')"
-        />
-      </div>
-      <div class="flex items-center gap-1">
         <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.periodRange`) }}</span>
         <a-range-picker
           v-model:value="periodRange"

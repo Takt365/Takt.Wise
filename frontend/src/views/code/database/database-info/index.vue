@@ -98,11 +98,11 @@ const pageSize = ref(getTaktDefaultPageSize())
 /** 分页 total */
 const total = ref(0)
 /** 工具栏单选时当前行 */
-const selectedRow = ref<DatabaseTableInfo | null>(null)
+const selecmedRow = ref<DatabaseTableInfo | null>(null)
 /** 表格多选行 */
-const selectedRows = ref<DatabaseTableInfo[]>([])
+const selecmedRows = ref<DatabaseTableInfo[]>([])
 /** 表格多选 row-key 集合 */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 /** 表格纵向滚动（与 identity/user 及 TaktSingleTable 分页列表一致） */
 const tableScroll = { y: 'calc(100vh - 300px)' }
 
@@ -149,21 +149,21 @@ function getTableRowKey(record: unknown): string {
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: DatabaseTableInfo[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: DatabaseTableInfo, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (getTableRowKey(selectedRow.value as DatabaseTableInfo) === getTableRowKey(record)) {
-      selectedRow.value = null
+  onSelect: (record: DatabaseTableInfo, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (getTableRowKey(selecmedRow.value as DatabaseTableInfo) === getTableRowKey(record)) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: DatabaseTableInfo[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: DatabaseTableInfo[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   }
 }))
 
@@ -174,16 +174,16 @@ const rowSelection = computed(() => ({
 const onClickRow = (record: DatabaseTableInfo) => ({
   onClick: () => {
     const key = getTableRowKey(record)
-    const index = selectedRowKeys.value.indexOf(key)
+    const index = selecmedRowKeys.value.indexOf(key)
     if (index > -1) {
-      selectedRowKeys.value.splice(index, 1)
+      selecmedRowKeys.value.splice(index, 1)
     } else {
-      selectedRowKeys.value.push(key)
+      selecmedRowKeys.value.push(key)
     }
-    selectedRows.value = dataSource.value.filter((item) => selectedRowKeys.value.includes(getTableRowKey(item)))
-    selectedRow.value = selectedRowKeys.value.length === 1 ? (selectedRows.value[0] ?? null) : null
+    selecmedRows.value = dataSource.value.filter((item) => selecmedRowKeys.value.includes(getTableRowKey(item)))
+    selecmedRow.value = selecmedRowKeys.value.length === 1 ? (selecmedRows.value[0] ?? null) : null
     if (rowSelection.value.onChange) {
-      rowSelection.value.onChange(selectedRowKeys.value, selectedRows.value)
+      rowSelection.value.onChange(selecmedRowKeys.value, selecmedRows.value)
     }
   }
 })
@@ -206,9 +206,9 @@ async function loadData() {
     const totalCount = response?.total ?? responseAny?.Total ?? 0
     dataSource.value = items
     total.value = totalCount
-    selectedRowKeys.value = []
-    selectedRows.value = []
-    selectedRow.value = null
+    selecmedRowKeys.value = []
+    selecmedRows.value = []
+    selecmedRow.value = null
   } catch (error: unknown) {
     logger.error('[DatabaseInfo] 加载表信息失败', { error })
     const errMsg = error instanceof Error ? error.message : ''

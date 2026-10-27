@@ -37,7 +37,7 @@ public class TaktProductionOrderFormFillService : TaktServiceBase, ITaktProducti
     /// </summary>
     /// <param name="productionOrderRepository">生产工单仓储</param>
     /// <param name="modelDestinationRepository">型号目的地仓储</param>
-    /// <param name="standardOperationTimeRepository">标准工序时间仓储</param>
+    /// <param name="standardOperationTimeRepository">标准工时仓储</param>
     /// <param name="standardOperationRateRepository">标准生产稼动率仓储</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>

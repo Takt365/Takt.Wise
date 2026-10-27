@@ -155,12 +155,12 @@ public class TaktDictDataSeedData : ITaktSeedDataCoordinator
                 softDeletedPublishScopes);
         }
 
-        var softDeletedEcScopes = await SoftDeleteObsoleteEcScopeCategoriesAsync(seedContext, tenantCode);
-        if (softDeletedEcScopes > 0)
+        var softDeletedEcImplScopes = await SoftDeleteObsoleteEcImplScopeCategoriesAsync(seedContext, tenantCode);
+        if (softDeletedEcImplScopes > 0)
         {
             TaktLogger.Information(
-                "logistics_manufacturing_ec_scope_category 非标准项已软删除 {Count} 条（仅保留 1=全仕向 2=部管 3=内部 4=技术）",
-                softDeletedEcScopes);
+                "logistics_manufacturing_ec_impl_scope_category 非标准项已软删除 {Count} 条（仅保留 1=全仕向 2=部管 3=内部 4=技术）",
+                softDeletedEcImplScopes);
         }
 
         TaktLogger.Information("字典数据种子数据初始化完成: 插入 {InsertCount} 条，更新 {UpdateCount} 条", insertCount, updateCount);
@@ -662,7 +662,7 @@ public class TaktDictDataSeedData : ITaktSeedDataCoordinator
             ("sys_oss_provider","AWS S3","AWS","dict.sys.oss.provider.aws",4,4,0,"oss提供商类型.aws s3",4,"mul","",""),
             ("sys_post_category","管理岗","MGT","dict.sys.post.category.mgt",1,1,0,"岗位类别.管理岗",1,"mul","",""),
             ("sys_post_category","专业岗","PRO","dict.sys.post.category.pro",2,2,0,"岗位类别.专业岗（财/人/法/市 专家层）",2,"mul","",""),
-            ("sys_post_category","技术岗","TEC","dict.sys.post.category.tec",3,3,0,"岗位类别.技术岗（研发/工程/IT高阶）",3,"mul","",""),
+            ("sys_post_category","技术岗","ENG","dict.sys.post.category.te",3,3,0,"岗位类别.技术岗（研发/工程/IT高阶）",3,"mul","",""),
             ("sys_post_category","支持岗","SUP","dict.sys.post.category.sup",4,4,0,"岗位类别.支持岗（事务/保障/辅助）",4,"mul","",""),
             ("sys_post_category","操作岗","OPS","dict.sys.post.category.ops",5,5,0,"岗位类别.操作岗（产线/直接作业）",5,"mul","",""),
             ("sys_post_level","助理","P1","dict.sys.post.level.p1",1,1,0,"P序列.助理",1,"mul","",""),
@@ -2513,22 +2513,23 @@ public class TaktDictDataSeedData : ITaktSeedDataCoordinator
             ("logistics_manufacturing_ec_attachment_type","外部联络","EL","dict.logistics.manufacturing.ec.attachment.type.el",4,4,0,"设变附件文件类别.外部联络",4,"mul","",""),
             ("logistics_manufacturing_ec_attachment_type","TCJ","TCJ","dict.logistics.manufacturing.ec.attachment.type.tcj",5,5,0,"设变附件文件类别.TCJ",5,"mul","",""),
             ("logistics_manufacturing_ec_attachment_type","设变","EC","dict.logistics.manufacturing.ec.attachment.type.ec",6,6,0,"设变附件文件类别.设变文件",6,"mul","",""),
-            ("logistics_manufacturing_ec_scope_category","全仕向","1","dict.logistics.manufacturing.ec.scope.category.1",1,1,0,"设变实施范围.全仕向",1,"mul","",""),
-            ("logistics_manufacturing_ec_scope_category","部管","2","dict.logistics.manufacturing.ec.scope.category.2",2,2,0,"设变实施范围.部管",2,"mul","",""),
-            ("logistics_manufacturing_ec_scope_category","内部","3","dict.logistics.manufacturing.ec.scope.category.3",3,3,0,"设变实施范围.内部",3,"mul","",""),
-            ("logistics_manufacturing_ec_scope_category","技术","4","dict.logistics.manufacturing.ec.scope.category.4",4,4,0,"设变实施范围.技术",4,"mul","",""),
-            ("logistics_manufacturing_ec_dept_scope_category","按成品","1","dict.logistics.manufacturing.ec.dept.scope.category.1",1,1,0,"设变部门实施范围.按成品",1,"mul","",""),
-            ("logistics_manufacturing_ec_dept_scope_category","按机种","2","dict.logistics.manufacturing.ec.dept.scope.category.2",2,2,0,"设变部门实施范围.按机种",2,"mul","",""),
-            ("logistics_manufacturing_ec_dept_scope_category","按设变","3","dict.logistics.manufacturing.ec.dept.scope.category.3",3,3,0,"设变部门实施范围.按设变",3,"mul","",""),
-            ("logistics_manufacturing_ec_gijutsu_status","发行","1","dict.logistics.manufacturing.ec.gijutsu.status.1",1,1,1,"设变技术课状态.发行",1,"mul","",""),
-            ("logistics_manufacturing_ec_gijutsu_status","执行中","2","dict.logistics.manufacturing.ec.gijutsu.status.2",2,2,0,"设变技术课状态.执行中",2,"mul","",""),
-            ("logistics_manufacturing_ec_gijutsu_status","完成","3","dict.logistics.manufacturing.ec.gijutsu.status.3",3,3,0,"设变技术课状态.完成",3,"mul","",""),
+            ("logistics_manufacturing_ec_impl_scope_category","全仕向","1","dict.logistics.manufacturing.ec.impl.scope.category.1",1,1,0,"实施范围.全仕向",1,"mul","",""),
+            ("logistics_manufacturing_ec_impl_scope_category","部管","2","dict.logistics.manufacturing.ec.impl.scope.category.2",2,2,0,"实施范围.部管",2,"mul","",""),
+            ("logistics_manufacturing_ec_impl_scope_category","内部","3","dict.logistics.manufacturing.ec.impl.scope.category.3",3,3,0,"实施范围.内部",3,"mul","",""),
+            ("logistics_manufacturing_ec_impl_scope_category","技术","4","dict.logistics.manufacturing.ec.impl.scope.category.4",4,4,0,"实施范围.技术",4,"mul","",""),
+            ("logistics_manufacturing_ec_control_scope_category","按成品","1","dict.logistics.manufacturing.ec.control.scope.category.1",1,1,0,"控制范围.按成品",1,"mul","",""),
+            ("logistics_manufacturing_ec_control_scope_category","按机种","2","dict.logistics.manufacturing.ec.control.scope.category.2",2,2,0,"控制范围.按机种",2,"mul","",""),
+            ("logistics_manufacturing_ec_control_scope_category","按设变","3","dict.logistics.manufacturing.ec.control.scope.category.3",3,3,0,"控制范围.按设变",3,"mul","",""),
+            ("logistics_manufacturing_ec_control_scope_category","不管理","4","dict.logistics.manufacturing.ec.control.scope.category.4",4,4,0,"控制范围.不管理",4,"mul","",""),
+            ("logistics_manufacturing_ec_te_status","发行","1","dict.logistics.manufacturing.ec.te.status.1",1,1,1,"设变技术课状态.发行",1,"mul","",""),
+            ("logistics_manufacturing_ec_te_status","执行中","2","dict.logistics.manufacturing.ec.te.status.2",2,2,0,"设变技术课状态.执行中",2,"mul","",""),
+            ("logistics_manufacturing_ec_te_status","完成","3","dict.logistics.manufacturing.ec.te.status.3",3,3,0,"设变技术课状态.完成",3,"mul","",""),
             ("logistics_manufacturing_ec_group_category","SOP制技担当","2","dict.logistics.manufacturing.ec.group.category.2",2,2,1,"设变组类别.SOP制技担当",2,"mul","",""),
             ("logistics_manufacturing_ec_group_category","EC生管担当","3","dict.logistics.manufacturing.ec.group.category.3",3,3,0,"设变组类别.EC生管担当",3,"mul","",""),
             ("logistics_manufacturing_ec_group_category","EC采购担当","4","dict.logistics.manufacturing.ec.group.category.4",4,4,0,"设变组类别.EC采购担当",4,"mul","",""),
             ("logistics_manufacturing_ec_group_category","EC部管担当","5","dict.logistics.manufacturing.ec.group.category.5",5,5,0,"设变组类别.EC部管担当",5,"mul","",""),
             ("logistics_manufacturing_ec_group_category","EC受检担当","6","dict.logistics.manufacturing.ec.group.category.6",6,6,0,"设变组类别.EC受检担当",6,"mul","",""),
-            ("logistics_manufacturing_ec_group_category","EC SMT担当","7","dict.logistics.manufacturing.ec.group.category.7",7,7,0,"设变组类别.EC SMT担当",7,"mul","",""),
+            ("logistics_manufacturing_ec_group_category","EC物料担当","7","dict.logistics.manufacturing.ec.group.category.7",7,7,0,"设变组类别.EC物料担当",7,"mul","",""),
             ("logistics_manufacturing_ec_group_category","EC制二担当","8","dict.logistics.manufacturing.ec.group.category.8",8,8,0,"设变组类别.EC制二担当",8,"mul","",""),
             ("logistics_manufacturing_ec_group_category","EC制一担当","9","dict.logistics.manufacturing.ec.group.category.9",9,9,0,"设变组类别.EC制一担当",9,"mul","",""),
             ("logistics_manufacturing_ec_group_category","EC品管担当","10","dict.logistics.manufacturing.ec.group.category.10",10,10,0,"设变组类别.EC品管担当",10,"mul","",""),
@@ -4222,12 +4223,12 @@ public class TaktDictDataSeedData : ITaktSeedDataCoordinator
     }
 
     /// <summary>
-    /// 软删除设变实施范围中已不在字典定义内的项（仅保留 1=全仕向 2=部管 3=内部 4=技术；按成品/按机种属于部门实施范围）
+    /// 软删除实施范围中已不在字典定义内的项（仅保留 1=全仕向 2=部管 3=内部 4=技术；按成品/按机种属于部门实施范围）
     /// </summary>
     /// <param name="seedContext">种子上下文</param>
     /// <param name="tenantCode">租户编码</param>
     /// <returns>软删除条数</returns>
-    private static async Task<int> SoftDeleteObsoleteEcScopeCategoriesAsync(
+    private static async Task<int> SoftDeleteObsoleteEcImplScopeCategoriesAsync(
         TaktSeedContext seedContext,
         string tenantCode)
     {
@@ -4242,7 +4243,7 @@ public class TaktDictDataSeedData : ITaktSeedDataCoordinator
             })
             .Where(d =>
                 d.TenantCode == tenantCode &&
-                d.DictTypeCode == "logistics_manufacturing_ec_scope_category" &&
+                d.DictTypeCode == "logistics_manufacturing_ec_impl_scope_category" &&
                 d.IsDeleted == 0 &&
                 !supported.Contains(d.DictValue))
             .ExecuteCommandAsync();

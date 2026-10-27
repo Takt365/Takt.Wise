@@ -41,7 +41,7 @@ public class TaktEcDetailsController : TaktControllerBase
     /// </summary>
     /// <param name="queryDto">查询DTO</param>
     /// <returns>分页结果</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:list", "设变明细列表")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:list", "设变明细列表")]
     [HttpGet("list")]
     public async Task<IActionResult> GetEcDetailListAsync([FromQuery] TaktEcDetailQueryDto queryDto)
     {
@@ -61,7 +61,7 @@ public class TaktEcDetailsController : TaktControllerBase
     /// </summary>
     /// <param name="id">设变明细ID</param>
     /// <returns>设变明细DTO</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:query", "设变明细详情")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:query", "设变明细详情")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetEcDetailByIdAsync(long id)
     {
@@ -84,7 +84,7 @@ public class TaktEcDetailsController : TaktControllerBase
     /// 获取设变明细选项列表
     /// </summary>
     /// <returns>下拉选项</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:query", "设变明细选项")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:query", "设变明细选项")]
     [HttpGet("options")]
     public async Task<IActionResult> GetEcDetailOptionsAsync([FromQuery] string? plantCode = null, [FromQuery] string? keyword = null)
     {
@@ -104,7 +104,7 @@ public class TaktEcDetailsController : TaktControllerBase
     /// </summary>
     /// <param name="dto">创建DTO</param>
     /// <returns>设变明细DTO</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:create", "创建设变明细")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:create", "创建设变明细")]
     [HttpPost]
     public async Task<IActionResult> CreateEcDetailAsync([FromBody] TaktEcDetailCreateDto dto)
     {
@@ -125,7 +125,7 @@ public class TaktEcDetailsController : TaktControllerBase
     /// <param name="id">设变明细ID</param>
     /// <param name="dto">更新DTO</param>
     /// <returns>设变明细DTO</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:update", "更新设变明细")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:update", "更新设变明细")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateEcDetailAsync(long id, [FromBody] TaktEcDetailUpdateDto dto)
     {
@@ -145,7 +145,7 @@ public class TaktEcDetailsController : TaktControllerBase
     /// </summary>
     /// <param name="id">设变明细ID</param>
     /// <returns>操作结果</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:delete", "删除设变明细")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:delete", "删除设变明细")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteEcDetailByIdAsync(long id)
     {
@@ -165,7 +165,7 @@ public class TaktEcDetailsController : TaktControllerBase
     /// </summary>
     /// <param name="ids">ID列表</param>
     /// <returns>操作结果</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:delete", "批量删除设变明细")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:delete", "批量删除设变明细")]
     [HttpDelete("batch")]
     public async Task<IActionResult> DeleteEcDetailBatchAsync([FromBody] IEnumerable<long> ids)
     {
@@ -185,7 +185,7 @@ public class TaktEcDetailsController : TaktControllerBase
     /// </summary>
     /// <param name="dto">作废 DTO</param>
     /// <returns>设变明细DTO</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:update", "更新设变明细作废状态")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:update", "更新设变明细作废状态")]
     [HttpPut("obsolete")]
     public async Task<IActionResult> UpdateEcDetailObsoleteAsync([FromBody] TaktEcDetailObsoleteDto dto)
     {
@@ -204,7 +204,7 @@ public class TaktEcDetailsController : TaktControllerBase
     /// 获取导入模板
     /// </summary>
     /// <returns>Excel文件</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:import", "获取设变明细导入模板")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:import", "获取设变明细导入模板")]
     [HttpGet("template")]
     public async Task<IActionResult> GetEcDetailTemplateAsync([FromQuery] string? sheetName = null, [FromQuery] string? templateName = null)
     {
@@ -224,7 +224,7 @@ public class TaktEcDetailsController : TaktControllerBase
     /// </summary>
     /// <param name="file">Excel文件</param>
     /// <returns>导入结果</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:import", "导入设变明细")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:import", "导入设变明细")]
     [HttpPost("import")]
     public async Task<IActionResult> ImportEcDetailAsync(IFormFile file, [FromQuery] string? sheetName = null)
     {
@@ -254,7 +254,7 @@ public class TaktEcDetailsController : TaktControllerBase
     /// 导出设变明细
     /// </summary>
     /// <returns>Excel文件</returns>
-    [TaktPermission("logistics:manufacturing:engineering:change:gijutsu:export", "导出设变明细")]
+    [TaktPermission("logistics:manufacturing:engineering:change:te:export", "导出设变明细")]
     [HttpGet("export")]
     public async Task<IActionResult> ExportEcDetailAsync([FromQuery] TaktEcDetailQueryDto? query = null, [FromQuery] string? sheetName = null, [FromQuery] string? exportName = null)
     {

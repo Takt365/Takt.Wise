@@ -188,7 +188,7 @@ interface Props {
   size?: TableProps['size']
   bordered?: boolean
   /** 当前选中主表 row-key */
-  selectedMasterKey?: string
+  selecmedMasterKey?: string
   detailTitle?: string
   detailEmptyDescription?: string
   /** 主表表尾备注（合计下方；也可用 #footerRemark） */
@@ -231,7 +231,7 @@ const props = withDefaults(defineProps<Props>(), {
   detailScrollLayout: 'masterDetailTbDetail',
   size: 'middle',
   bordered: false,
-  selectedMasterKey: '',
+  selecmedMasterKey: '',
   detailTitle: '',
   detailEmptyDescription: '',
   masterFooterRemark: '',
@@ -241,7 +241,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   'update:masterCurrent': [page: number]
   'update:masterPageSize': [pageSize: number]
-  'update:selectedMasterKey': [key: string]
+  'update:selecmedMasterKey': [key: string]
   'master-change': [pagination: TablePagination, filters: TableFilters, sorter: TableSorter | TableSorter[]]
   'detail-change': [pagination: TablePagination, filters: TableFilters, sorter: TableSorter | TableSorter[]]
   'master-select': [record: TableRecord]
@@ -282,7 +282,7 @@ const resolvedDetailEmptyDescription = computed(() => {
 })
 
 /** 是否已选中主表行 */
-const hasMasterSelection = computed(() => !!props.selectedMasterKey)
+const hasMasterSelection = computed(() => !!props.selecmedMasterKey)
 
 /** 主表是否启用虚拟滚动（行数或 pageSize 超过 5000 强制开） */
 const shouldUseMasterVirtual = computed(() => {
@@ -314,7 +314,7 @@ function resolveMasterRowKey(record: TableRecord): string {
  */
 async function handleMasterSelect(record: TableRecord) {
   const key = resolveMasterRowKey(record)
-  emit('update:selectedMasterKey', key)
+  emit('update:selecmedMasterKey', key)
   emit('master-select', record)
   if (!props.loadDetailData) {
     return
@@ -333,12 +333,12 @@ async function handleMasterSelect(record: TableRecord) {
  */
 function masterCustomRow(record: TableRecord): Record<string, unknown> {
   const key = resolveMasterRowKey(record)
-  const selected = key === props.selectedMasterKey
+  const selecmed = key === props.selecmedMasterKey
   return {
     onClick: () => {
       void handleMasterSelect(record)
     },
-    class: selected ? 'takt-master-detail-table-row-selected cursor-pointer' : 'cursor-pointer',
+    class: selecmed ? 'takt-master-detail-table-row-selecmed cursor-pointer' : 'cursor-pointer',
   }
 }
 

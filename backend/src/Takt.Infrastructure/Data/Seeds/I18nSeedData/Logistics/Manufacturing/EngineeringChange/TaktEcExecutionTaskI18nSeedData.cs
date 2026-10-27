@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcExecutionTaskI18nSeedData.cs
-// 创建时间：2026-10-14
+// 创建时间：2026-10-27
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEcExecutionTask 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -99,14 +99,14 @@ public class TaktEcExecutionTaskI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecexecutiontask.ecnotificationid
             new TranslationSeedItem("entity.ecexecutiontask.ecnotificationid", "zh-HK", "通知单ID_hk", "通知单 ID"),
 
-            // entity.ecexecutiontask.ecgijutsuid
-            new TranslationSeedItem("entity.ecexecutiontask.ecgijutsuid", "en-US", "技术课主表ID_us", "技术课主表 ID（TaktEcGijutsu 主键）"),
-            // entity.ecexecutiontask.ecgijutsuid
-            new TranslationSeedItem("entity.ecexecutiontask.ecgijutsuid", "ja-JP", "技术课主表ID_jp", "技术课主表 ID（TaktEcGijutsu 主键）"),
-            // entity.ecexecutiontask.ecgijutsuid
-            new TranslationSeedItem("entity.ecexecutiontask.ecgijutsuid", "zh-CN", "技术课主表ID", "技术课主表 ID（TaktEcGijutsu 主键）"),
-            // entity.ecexecutiontask.ecgijutsuid
-            new TranslationSeedItem("entity.ecexecutiontask.ecgijutsuid", "zh-HK", "技术课主表ID_hk", "技术课主表 ID（TaktEcGijutsu 主键）"),
+            // entity.ecexecutiontask.ecteid
+            new TranslationSeedItem("entity.ecexecutiontask.ecteid", "en-US", "技术课主表ID_us", "技术课主表 ID（TaktEcTe 主键）"),
+            // entity.ecexecutiontask.ecteid
+            new TranslationSeedItem("entity.ecexecutiontask.ecteid", "ja-JP", "技术课主表ID_jp", "技术课主表 ID（TaktEcTe 主键）"),
+            // entity.ecexecutiontask.ecteid
+            new TranslationSeedItem("entity.ecexecutiontask.ecteid", "zh-CN", "技术课主表ID", "技术课主表 ID（TaktEcTe 主键）"),
+            // entity.ecexecutiontask.ecteid
+            new TranslationSeedItem("entity.ecexecutiontask.ecteid", "zh-HK", "技术课主表ID_hk", "技术课主表 ID（TaktEcTe 主键）"),
 
             // entity.ecexecutiontask.eccode
             new TranslationSeedItem("entity.ecexecutiontask.eccode", "en-US", "设变单号_us", "设变单号（冗余）"),
@@ -118,13 +118,13 @@ public class TaktEcExecutionTaskI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecexecutiontask.eccode", "zh-HK", "设变单号_hk", "设变单号（冗余）"),
 
             // entity.ecexecutiontask.ecexecid
-            new TranslationSeedItem("entity.ecexecutiontask.ecexecid", "en-US", "设变部门行ID_us", "关联设变部门行 ID（TaktEcSeikan/Mp 等 8 张部门执行表主键）"),
+            new TranslationSeedItem("entity.ecexecutiontask.ecexecid", "en-US", "设变部门行ID_us", "关联设变部门行 ID（TaktEcPc/Mp 等 8 张部门执行表主键）"),
             // entity.ecexecutiontask.ecexecid
-            new TranslationSeedItem("entity.ecexecutiontask.ecexecid", "ja-JP", "设变部门行ID_jp", "关联设变部门行 ID（TaktEcSeikan/Mp 等 8 张部门执行表主键）"),
+            new TranslationSeedItem("entity.ecexecutiontask.ecexecid", "ja-JP", "设变部门行ID_jp", "关联设变部门行 ID（TaktEcPc/Mp 等 8 张部门执行表主键）"),
             // entity.ecexecutiontask.ecexecid
-            new TranslationSeedItem("entity.ecexecutiontask.ecexecid", "zh-CN", "设变部门行ID", "关联设变部门行 ID（TaktEcSeikan/Mp 等 8 张部门执行表主键）"),
+            new TranslationSeedItem("entity.ecexecutiontask.ecexecid", "zh-CN", "设变部门行ID", "关联设变部门行 ID（TaktEcPc/Mp 等 8 张部门执行表主键）"),
             // entity.ecexecutiontask.ecexecid
-            new TranslationSeedItem("entity.ecexecutiontask.ecexecid", "zh-HK", "设变部门行ID_hk", "关联设变部门行 ID（TaktEcSeikan/Mp 等 8 张部门执行表主键）"),
+            new TranslationSeedItem("entity.ecexecutiontask.ecexecid", "zh-HK", "设变部门行ID_hk", "关联设变部门行 ID（TaktEcPc/Mp 等 8 张部门执行表主键）"),
 
             // entity.ecexecutiontask.ecdetailid
             new TranslationSeedItem("entity.ecexecutiontask.ecdetailid", "en-US", "设变明细ID_us", "设变明细 ID（可选）"),

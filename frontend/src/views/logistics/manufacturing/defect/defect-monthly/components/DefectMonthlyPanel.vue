@@ -35,9 +35,6 @@
               {{ formatPeriodRate(record as DefectMonthlyTrend, String(column.key)) }}
             </span>
           </template>
-          <template v-else-if="column.key === 'defectCategory'">
-            {{ resolveCategoryLabel(record as DefectMonthlyTrend) }}
-          </template>
           <template v-else-if="column.key === 'trend'">
             <span :class="trendClass((record as DefectMonthlyTrend).trend || 'none')">
               {{ trendLabel((record as DefectMonthlyTrend).trend || 'none') }}
@@ -186,13 +183,7 @@ const columns = computed<TableColumnsType>(() => {
       ellipsis: true,
       fixed: 'left',
     },
-    {
-      title: t(`${localePrefix}.defectCategory`),
-      dataIndex: 'defectCategory',
-      key: 'defectCategory',
-      width: 100,
-      ellipsis: true,
-    }]
+  ]
   for (const period of periodOrder.value) {
     cols.push({
       title: period,
@@ -239,22 +230,6 @@ const visibleColumnKeys = computed(() => columns.value.map((c) => String(c.key))
  */
 function getRowKey(record: DefectMonthlyTrend): string {
   return `${record.plantCode}|${record.modelCode}|${record.defectCategory}`
-}
-
-/**
- * 不良类别显示名
- * @param {DefectMonthlyTrend} record 行
- * @returns {string} 文案
- */
-function resolveCategoryLabel(record: DefectMonthlyTrend): string {
-  if (record.defectCategoryName?.trim()) {
-    return record.defectCategoryName.trim()
-  }
-  const key = record.defectCategory as 'assy' | 'pcba'
-  if (key === 'assy' || key === 'pcba') {
-    return t(`${localePrefix}.defectCategoryOptions.${key}`)
-  }
-  return record.defectCategory
 }
 
 /**

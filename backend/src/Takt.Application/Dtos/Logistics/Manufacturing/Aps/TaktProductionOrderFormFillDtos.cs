@@ -38,7 +38,7 @@ public class TaktProductionOrderFormFillQueryDto
     public int? DirectLabor { get; set; }
 
     /// <summary>
-    /// 是否附带按标准工序时间生成的默认明细预览（PCBA 日报子表）
+    /// 是否附带按标准工时生成的默认明细预览（PCBA 日报子表）
     /// </summary>
     public bool IncludeDefaultDetails { get; set; }
 }
@@ -89,7 +89,7 @@ public class TaktProductionOrderFormFillDto
     public string? SerialCode { get; set; }
 
     /// <summary>
-    /// 标准工时（分钟；按物料标准工序时间汇总）
+    /// 标准工时（分钟；按物料标准工时汇总）
     /// </summary>
     public decimal StdMinutes { get; set; }
 
@@ -110,7 +110,7 @@ public class TaktProductionOrderFormFillDto
 }
 
 /// <summary>
-/// 按标准工序时间生成的默认明细预览行（通用；PCBA 子表 timePeriod=WorkCenter）
+/// 按标准工时生成的默认明细预览行（通用；PCBA 子表 timePeriod=WorkCenter）
 /// </summary>
 public class TaktProductionOrderFormFillDefaultDetailDto
 {

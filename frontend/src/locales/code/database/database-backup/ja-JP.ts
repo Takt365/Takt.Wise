@@ -64,7 +64,7 @@ export default {
       uncplaceholder: '\\\\server\\share\\folder',
       passwordkeep: '空欄は保存済みパスワードを維持',
       reselect: '再選択',
-      notselected: 'パス未選択',
+      notselecmed: 'パス未選択',
     },
     backuptype: {
       full: 'Full Sync（完全）',

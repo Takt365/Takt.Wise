@@ -11,7 +11,7 @@
 ======================================== -->
 <template>
   <a-menu
-    v-model:selected-keys="selectedKeys"
+    v-model:selecmed-keys="selecmedKeys"
     mode="horizontal"
     :theme="theme"
     :items="menuItems"
@@ -42,7 +42,7 @@ const router = useRouter()
 const themeStore = useThemeStore()
 const menuStore = useMenuStore()
 
-const selectedKeys = ref<string[]>([])
+const selecmedKeys = ref<string[]>([])
 
 const menuItems = computed(() => menuStore.menuItems ?? [])
 
@@ -60,7 +60,7 @@ const handleMenuClick: MenuClickEventHandler = (info) => {
 watch(
   () => route.path,
   (path) => {
-    selectedKeys.value = [path]
+    selecmedKeys.value = [path]
   },
   { immediate: true }
 )

@@ -15,7 +15,7 @@ export type VisitorRowRecord = Visitor | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface VisitorMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<VisitorRowRecord | null>
+  selecmedMasterRow: Ref<VisitorRowRecord | null>
 }
 
 const visitorMasterContextKey: InjectionKey<VisitorMasterContext> = Symbol('visitorMasterContext')
@@ -25,8 +25,8 @@ const visitorMasterContextKey: InjectionKey<VisitorMasterContext> = Symbol('visi
  * @returns {VisitorMasterContext} 主表上下文
  */
 export function provideVisitorMasterContext(): VisitorMasterContext {
-  const selectedMasterRow = ref<VisitorRowRecord | null>(null)
-  const ctx: VisitorMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<VisitorRowRecord | null>(null)
+  const ctx: VisitorMasterContext = { selecmedMasterRow }
   provide(visitorMasterContextKey, ctx)
   return ctx
 }

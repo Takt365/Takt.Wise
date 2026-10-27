@@ -99,14 +99,14 @@ public class TaktEcExecDto : TaktCompanyDtoBase
     public string? ScheduledBatch { get; set; } = string.Empty;
 
     /// <summary>
-    /// Po残（采购订单残）
+    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
     /// </summary>
     public string? PoRemainder { get; set; } = string.Empty;
 
     /// <summary>
-    /// 结余
+    /// 结余数量
     /// </summary>
-    public string? Balance { get; set; } = string.Empty;
+    public decimal? BalanceQuantity { get; set; }
 
     /// <summary>
     /// 旧品处理（字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
@@ -293,14 +293,14 @@ public class TaktEcExecQueryDto : TaktPagedQuery
     public string? ScheduledBatch { get; set; } = string.Empty;
 
     /// <summary>
-    /// Po残（采购订单残）
+    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
     /// </summary>
     public string? PoRemainder { get; set; } = string.Empty;
 
     /// <summary>
-    /// 结余
+    /// 结余数量
     /// </summary>
-    public string? Balance { get; set; } = string.Empty;
+    public decimal? BalanceQuantity { get; set; }
 
     /// <summary>
     /// 旧品处理（字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
@@ -488,7 +488,7 @@ public class TaktEcExecCreateDto
     /// <summary>
     /// 部门编码（TaktDept.DeptCode，5 位；如 D0710 技术课、D0420 生管课、D0810 受检课、D0620 制造2课）
     /// </summary>
-    [Required(ErrorMessage = "部门编码。顺序严格为：Eng=技术, Pmc=生管, Mp=采购, Iqc=受检, Mc=部管, Pcba=制二, Assy=制一, Qa=品管, Te=制技。不能为空")]
+    [Required(ErrorMessage = "部门编码。顺序严格为：Te=技术, Pc=生管, Mp=采购, Iqc=受检, Mc=部管, Pcba=制二, Assy=制一, Qa=品管, Te=制技。不能为空")]
     public string DeptCode { get; set; } = string.Empty;
 
     /// <summary>
@@ -522,14 +522,14 @@ public class TaktEcExecCreateDto
     public string? ScheduledBatch { get; set; } = string.Empty;
 
     /// <summary>
-    /// Po残（采购订单残）
+    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
     /// </summary>
     public string? PoRemainder { get; set; } = string.Empty;
 
     /// <summary>
-    /// 结余
+    /// 结余数量
     /// </summary>
-    public string? Balance { get; set; } = string.Empty;
+    public decimal? BalanceQuantity { get; set; }
 
     /// <summary>
     /// 旧品处理（字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
@@ -666,7 +666,7 @@ public class TaktEcExecUpdateDto : TaktEcExecCreateDto
 /// <summary>
 /// EcDept 导入模板行 DTO
 /// </summary>
-public class TaktEcSeizougijutsumplateDto
+public class TaktEcTemplateDto
 {
     /// <summary>
     /// 租户编码（登录上下文注入，对应请求头 X-Tenant-Code）
@@ -730,14 +730,14 @@ public class TaktEcSeizougijutsumplateDto
     public string? ScheduledBatch { get; set; } = string.Empty;
 
     /// <summary>
-    /// Po残（采购订单残）
+    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
     /// </summary>
     public string? PoRemainder { get; set; } = string.Empty;
 
     /// <summary>
-    /// 结余
+    /// 结余数量
     /// </summary>
-    public string? Balance { get; set; } = string.Empty;
+    public decimal? BalanceQuantity { get; set; }
 
     /// <summary>
     /// 旧品处理（字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
@@ -919,14 +919,14 @@ public class TaktEcExecImportDto
     public string? ScheduledBatch { get; set; } = string.Empty;
 
     /// <summary>
-    /// Po残（采购订单残）
+    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
     /// </summary>
     public string? PoRemainder { get; set; } = string.Empty;
 
     /// <summary>
-    /// 结余
+    /// 结余数量
     /// </summary>
-    public string? Balance { get; set; } = string.Empty;
+    public decimal? BalanceQuantity { get; set; }
 
     /// <summary>
     /// 旧品处理（字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
@@ -1114,14 +1114,14 @@ public class TaktEcExecExportDto
     public string? ScheduledBatch { get; set; } = string.Empty;
 
     /// <summary>
-    /// Po残（采购订单残）
+    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
     /// </summary>
     public string? PoRemainder { get; set; } = string.Empty;
 
     /// <summary>
-    /// 结余
+    /// 结余数量
     /// </summary>
-    public string? Balance { get; set; } = string.Empty;
+    public decimal? BalanceQuantity { get; set; }
 
     /// <summary>
     /// 旧品处理（字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
@@ -1270,7 +1270,7 @@ public class TaktEcExecTransposedDto
     /// 设变主表 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
     /// <summary>
     /// 明细行号
     /// </summary>
@@ -1371,7 +1371,7 @@ public class TaktEcExecTransposedResultDto
 }
 
 // ========================================
-// 设变部门批次转置（行=设变明细，列=各阶段日期+批次）
+// 设变部门批次转置（一行一个设变号，各部门列列出该部门每一行日期和批次）
 // ========================================
 
 /// <summary>
@@ -1383,6 +1383,10 @@ public class TaktEcExecBatchTransposedStageDto
     /// 阶段编码（TaktEcBatchStageCodes）
     /// </summary>
     public string StageCode { get; set; } = string.Empty;
+    /// <summary>
+    /// 该部门每一行的日期和批次。行数即列表长度
+    /// </summary>
+    public List<TaktEcExecBatchTransposedStageLineDto> Lines { get; set; } = [];
     /// <summary>
     /// 阶段日期
     /// </summary>
@@ -1403,7 +1407,26 @@ public class TaktEcExecBatchTransposedStageDto
 }
 
 /// <summary>
-/// 设变批次转置行 DTO（一行=一条设变明细 + 各阶段批次列）
+/// 投入批次阶段中的一行
+/// </summary>
+public class TaktEcExecBatchTransposedStageLineDto
+{
+    /// <summary>
+    /// 阶段日期
+    /// </summary>
+    public DateTime? StageDate { get; set; }
+    /// <summary>
+    /// 日期展示文本（yyyyMMdd）
+    /// </summary>
+    public string? DateDisplayText { get; set; }
+    /// <summary>
+    /// 批次
+    /// </summary>
+    public string BatchCode { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// 设变批次转置行 DTO（一行=一个设变号，各部门列是该部门全部执行行）
 /// </summary>
 public class TaktEcExecBatchTransposedDto
 {
@@ -1416,7 +1439,7 @@ public class TaktEcExecBatchTransposedDto
     /// 设变主表 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
     /// <summary>
     /// 明细行号
     /// </summary>
@@ -1442,11 +1465,11 @@ public class TaktEcExecBatchTransposedDto
     /// </summary>
     public DateTime EcIssueDate { get; set; }
     /// <summary>
-    /// 机种（EcModelCode）
+    /// 机种（同一设变号去重后用顿号连接）
     /// </summary>
     public string EcModelCode { get; set; } = string.Empty;
     /// <summary>
-    /// 成品（EcNewMaterialCode）
+    /// 成品（根物料，同一设变号去重后用顿号连接）
     /// </summary>
     public string? EcNewMaterialCode { get; set; }
     /// <summary>
@@ -1489,6 +1512,17 @@ public class TaktEcExecBatchTransposedQueryDto : TaktPagedQuery
     /// 发行日期（范围-结束）
     /// </summary>
     public DateTime? EcIssueDateEnd { get; set; }
+
+    /// <summary>
+    /// 录入日期起（含当天，按技术主表 EcEntryDate）
+    /// </summary>
+    public DateTime? EcEntryDateStart { get; set; }
+
+    /// <summary>
+    /// 录入日期止（含当天，按技术主表 EcEntryDate）
+    /// </summary>
+    public DateTime? EcEntryDateEnd { get; set; }
+
     /// <summary>
     /// 批次号（预定/出库/生产批次模糊）
     /// </summary>

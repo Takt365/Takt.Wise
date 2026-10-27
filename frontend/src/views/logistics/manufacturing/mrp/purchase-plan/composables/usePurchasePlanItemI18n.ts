@@ -118,7 +118,6 @@ export type PurchasePlanItemField = keyof typeof PURCHASEPLANITEM_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const PURCHASEPLANITEM_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'purchasePlanCode',
   'productionPlanId',
   'productionPlanCode',

@@ -3,7 +3,7 @@
 // 命名空间：Takt.Domain
 // 文件名称：GlobalUsings.cs
 // 创建时间：2024-01-15 10:00:00
-// 创建人：Davis.Cheng
+// 创建人：Davis.Chte
 // 功能描述：Takt.Domain 项目全局 using 声明
 // 
 // 版权所有 (C) TaktWise. 保留所有权利。

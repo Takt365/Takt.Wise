@@ -122,7 +122,6 @@ export type CompanyField = keyof typeof COMPANY_PLACEHOLDER
 
 /** 高级查询可 trim 的字符串字段 */
 export const COMPANY_QUERY_STRING_FIELDS = [
-  'relatedPlant',
   'cultureCode',
   'companyName1',
   'companyName2',

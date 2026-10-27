@@ -443,8 +443,8 @@ async function handleEdit(record: ${rowRecordType}) {
 
 /** 工具栏编辑：打开当前单选行 */
 function handleUpdate() {
-  if (selectedRow.value) {
-    void handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    void handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: pi.self() }))
   }
@@ -458,8 +458,8 @@ function handleEdit(record: ${rowRecordType}) {
 
 /** 工具栏编辑：打开当前单选行 */
 function handleUpdate() {
-  if (selectedRow.value) {
-    handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: pi.self() }))
   }
@@ -554,17 +554,17 @@ ${mdParts.deleteClearSelection}
   const deleteBatchHandler = caps.hasDeleteBatch ? `
 /** 批量删除选中行 */
 async function handleDelete() {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: pi.self() }))
     return
   }
   Modal.confirm({
     title: t('common.tip.confirm.delete.title'),
-    content: t('common.tip.confirm.delete.count', { entity: pi.self(), count: selectedRows.value.length }),
+    content: t('common.tip.confirm.delete.count', { entity: pi.self(), count: selecmedRows.value.length }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
+      const ids = selecmedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
       await ${caps.apiDeleteBatch}(ids)
       message.success(t('common.feedback.deleted', { target: pi.self() }))
 ${mdParts.deleteClearSelection}
@@ -594,7 +594,7 @@ ${mdParts.deleteClearSelection}
     <TaktMasterDetailTableLr
       v-model:master-current="currentPage"
       v-model:master-page-size="pageSize"
-      v-model:selected-master-key="selectedMasterKey"
+      v-model:selecmed-master-key="selecmedMasterKey"
       class="min-h-0 flex-1"
       :master-columns="columns"
       :master-data-source="dataSource"
@@ -741,25 +741,25 @@ ${resetPeriodListMapperBlock}
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: ${rowRecordType}[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
 ${mdParts.rowSelectionPatch}
   },
-  onSelect: (record: ${rowRecordType}, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
+  onSelect: (record: ${rowRecordType}, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
       syncMasterSelection(record)
-    } else if (selectedRow.value && get${entityPascal}Id(selectedRow.value) === get${entityPascal}Id(record)) {
-      selectedRow.value = null
+    } else if (selecmedRow.value && get${entityPascal}Id(selecmedRow.value) === get${entityPascal}Id(record)) {
+      selecmedRow.value = null
       syncMasterSelection(null)
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: ${rowRecordType}[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
-    syncMasterSelection(selectedRow.value)
+  onSelectAll: (selecmed: boolean, selecmedRowsData: ${rowRecordType}[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
+    syncMasterSelection(selecmedRow.value)
   }
 }))
 

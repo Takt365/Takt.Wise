@@ -15,7 +15,7 @@ export type GenTableRowRecord = GenTable | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface GenTableMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<GenTableRowRecord | null>
+  selecmedMasterRow: Ref<GenTableRowRecord | null>
 }
 
 const genTableMasterContextKey: InjectionKey<GenTableMasterContext> = Symbol('gen-tableMasterContext')
@@ -25,8 +25,8 @@ const genTableMasterContextKey: InjectionKey<GenTableMasterContext> = Symbol('ge
  * @returns {GenTableMasterContext} 主表上下文
  */
 export function provideGenTableMasterContext(): GenTableMasterContext {
-  const selectedMasterRow = ref<GenTableRowRecord | null>(null)
-  const ctx: GenTableMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<GenTableRowRecord | null>(null)
+  const ctx: GenTableMasterContext = { selecmedMasterRow }
   provide(genTableMasterContextKey, ctx)
   return ctx
 }

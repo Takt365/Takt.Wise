@@ -164,7 +164,6 @@ export type SupplierField = keyof typeof SUPPLIER_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const SUPPLIER_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'supplierCode',
   'accountGroup',
   'supplierName1',

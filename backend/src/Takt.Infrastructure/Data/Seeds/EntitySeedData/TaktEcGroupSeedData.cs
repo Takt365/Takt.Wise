@@ -146,14 +146,14 @@ public class TaktEcGroupSeedData : ITaktSeedDataCoordinator
         [
             (TaktEcGroupCategoryConstants.EcOwner, 1001, 1005),
             (TaktEcGroupCategoryConstants.Sop, 1006, 1010),
-            (TaktEcGroupCategoryConstants.Pmc, 1011, 1015),
-            (TaktEcGroupCategoryConstants.Mp, 1016, 1020),
+            (TaktEcGroupCategoryConstants.Pc, 1011, 1015),
+            (TaktEcGroupCategoryConstants.Pur, 1016, 1020),
             (TaktEcGroupCategoryConstants.Mc, 1021, 1025),
             (TaktEcGroupCategoryConstants.Iqc, 1026, 1030),
-            (TaktEcGroupCategoryConstants.Smt, 1031, 1035),
-            (TaktEcGroupCategoryConstants.Pcba, 1036, 1040),
-            (TaktEcGroupCategoryConstants.Assy, 1041, 1045),
-            (TaktEcGroupCategoryConstants.Qa, 1046, 1050),
+            (TaktEcGroupCategoryConstants.Mtl, 1031, 1035),
+            (TaktEcGroupCategoryConstants.Mfg2, 1036, 1040),
+            (TaktEcGroupCategoryConstants.Mfg1, 1041, 1045),
+            (TaktEcGroupCategoryConstants.Qc, 1046, 1050),
         ];
         var list = new List<EcGroupSeedItem>();
         foreach (var block in blocks)

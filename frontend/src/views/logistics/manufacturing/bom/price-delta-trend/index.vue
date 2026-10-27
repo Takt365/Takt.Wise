@@ -18,6 +18,7 @@
       v-model:base-period="basePeriod"
       v-model:compare-period="comparePeriod"
       v-model:price-delta-option="priceDeltaOption"
+      v-model:impact-line-option="impactLineOption"
       :loading="loading"
       @search="handleSearch"
       @reset="handleReset"
@@ -44,7 +45,7 @@
       v-if="hintBasePeriod && hintComparePeriod"
       class="mb-2 text-sm text-text-secondary"
     >
-      {{ t(`${localePrefix}.compareHint`, { base: hintBasePeriod, compare: hintComparePeriod, delta: hintPriceDeltaLabel }) }}
+      {{ t(`${localePrefix}.compareHint`, { base: hintBasePeriod, compare: hintComparePeriod, delta: hintPriceDeltaLabel, impact: hintImpactLineLabel }) }}
     </div>
     <div
       ref="tableWrapRef"
@@ -179,6 +180,8 @@ const basePeriod = ref<string | undefined>(defaultDeltaMonths.basePeriod)
 const comparePeriod = ref<string | undefined>(defaultDeltaMonths.comparePeriod)
 /** 差异选项：all=全部（默认）；gt1/gt5/gt10/gt50/gt100 界面为 >=N，按 |差异| 过滤产品行 */
 const priceDeltaOption = ref('all')
+/** 价格差异组涨跌：up3down3（默认）/ up5down5 / all */
+const impactLineOption = ref('up3down3')
 /** 行 */
 const rows = ref<BomPriceDeltaTrend[]>([])
 /** 期间列 */
@@ -189,11 +192,18 @@ const hintBasePeriod = ref('')
 const hintComparePeriod = ref('')
 /** 上次查询生效的差异选项码 all / gt1 / gt5 / gt10 / gt50 / gt100 */
 const hintPriceDeltaOption = ref('')
+/** 上次查询生效的价格差异组涨跌码 up3down3 / up5down5 / all */
+const hintImpactLineOption = ref('')
 /**
  * 提示用差异选项展示：全部走 i18n；阈值四语同一符号 >=N
  * @returns 展示文案
  */
 const hintPriceDeltaLabel = computed(() => formatPriceDeltaOptionLabel(hintPriceDeltaOption.value))
+/**
+ * 提示用价格差异组涨跌文案
+ * @returns 展示文案
+ */
+const hintImpactLineLabel = computed(() => formatImpactLineOptionLabel(hintImpactLineOption.value))
 const loading = ref(false)
 const exportLoading = ref(false)
 const pageIndex = ref(getTaktDefaultPageIndex())
@@ -396,6 +406,22 @@ function formatPriceDeltaOptionLabel(option: string): string {
   return key
 }
 
+/**
+ * 价格差异组涨跌展示文案
+ * @param option 选项码
+ * @returns 提示用文案
+ */
+function formatImpactLineOptionLabel(option: string): string {
+  const key = option.trim() || 'up3down3'
+  if (key === 'up5down5') {
+    return t(`${localePrefix}.impactLineUp5Down5`)
+  }
+  if (key === 'all') {
+    return t(`${localePrefix}.impactLineAll`)
+  }
+  return t(`${localePrefix}.impactLineUp3Down3`)
+}
+
 /** 构建查询 */
 function buildQuery(overrides?: Record<string, unknown>) {
   const plant = plantCode.value?.trim() ?? ''
@@ -412,6 +438,7 @@ function buildQuery(overrides?: Record<string, unknown>) {
     basePeriod: basePeriod.value?.trim() || undefined,
     comparePeriod: comparePeriod.value?.trim() || undefined,
     priceDeltaOption: priceDeltaOption.value?.trim() || 'all',
+    impactLineOption: impactLineOption.value?.trim() || 'up3down3',
     ...overrides,
   }
 }
@@ -433,6 +460,7 @@ async function loadData() {
     hintBasePeriod.value = res.basePeriod ?? ''
     hintComparePeriod.value = res.comparePeriod ?? ''
     hintPriceDeltaOption.value = priceDeltaOption.value?.trim() || 'all'
+    hintImpactLineOption.value = impactLineOption.value?.trim() || 'up3down3'
   } catch (error: unknown) {
     const err = error as { message?: string }
     message.error(err?.message || t(`${localePrefix}.queryFailed`))
@@ -491,6 +519,7 @@ async function handleReset() {
   basePeriod.value = deltaMonths.basePeriod
   comparePeriod.value = deltaMonths.comparePeriod
   priceDeltaOption.value = 'all'
+  impactLineOption.value = 'up3down3'
   pageIndex.value = getTaktDefaultPageIndex()
   rows.value = []
   total.value = 0
@@ -498,6 +527,7 @@ async function handleReset() {
   hintBasePeriod.value = ''
   hintComparePeriod.value = ''
   hintPriceDeltaOption.value = ''
+  hintImpactLineOption.value = ''
   await applyDefaultPlant()
 }
 

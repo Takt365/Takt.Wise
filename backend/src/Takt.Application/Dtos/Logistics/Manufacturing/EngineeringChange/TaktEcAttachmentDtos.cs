@@ -22,7 +22,7 @@ namespace Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange;
 // ========================================
 
 /// <summary>
-/// 设变附件实体（技术阶段一 ②，隶属 TaktEcGijutsu）。文件类别见字典 logistics_manufacturing_ec_attachment_type；与主表、明细保存后由系统生成 TaktEcNotification。
+/// 设变附件实体（技术阶段一 ②，隶属 TaktEcTe）。文件类别见字典 logistics_manufacturing_ec_attachment_type；与主表、明细保存后由系统生成 TaktEcNotification。
 /// 对应前端 TaktEcAttachmentDto
 /// 继承 TaktCompanyDtoBase
 /// </summary>
@@ -39,7 +39,7 @@ public class TaktEcAttachmentDto : TaktCompanyDtoBase
     /// 设变主表ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
 
     /// <summary>
     /// 设变主表名称（填充字段）
@@ -83,9 +83,9 @@ public class TaktEcAttachmentDto : TaktCompanyDtoBase
 
     /// <summary>
     /// 设变主表（多对一）
-    /// （主表：TaktEcGijutsu）
+    /// （主表：TaktEcTe）
     /// </summary>
-    public TaktEcGijutsuDto? EcGijutsu { get; set; }
+    public TaktEcTeDto? EcTe { get; set; }
 
 }
 
@@ -123,7 +123,7 @@ public class TaktEcAttachmentQueryDto : TaktPagedQuery
     /// 设变主表ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcGijutsuId { get; set; }
+    public long? EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余字段,便于查询）
@@ -214,7 +214,7 @@ public class TaktEcAttachmentCreateDto
     /// 设变主表ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余字段,便于查询）
@@ -343,7 +343,7 @@ public class TaktEcAttachmentTemplateDto
     /// 设变主表ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcGijutsuId { get; set; }
+    public long? EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余字段,便于查询）
@@ -421,7 +421,7 @@ public class TaktEcAttachmentImportDto
     /// 设变主表ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcGijutsuId { get; set; }
+    public long? EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余字段,便于查询）
@@ -505,7 +505,7 @@ public class TaktEcAttachmentExportDto
     /// 设变主表ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余字段,便于查询）

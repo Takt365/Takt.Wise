@@ -18,9 +18,9 @@ export type BomMaterialCostModelGroupRecord = BomMaterialCostModelGroup | Record
 /** 三层关联选中上下文 */
 export interface BomMaterialCostMasterContext {
   /** 机种维度主表选中（工厂+机种+核算期间） */
-  selectedModelGroup: Ref<BomMaterialCostModelGroupRecord | null>
+  selecmedModelGroup: Ref<BomMaterialCostModelGroupRecord | null>
   /** 产品子表选中（产品月成本行） */
-  selectedProductRow: Ref<BomMaterialCostRowRecord | null>
+  selecmedProductRow: Ref<BomMaterialCostRowRecord | null>
 }
 
 const bomMaterialCostMasterContextKey: InjectionKey<BomMaterialCostMasterContext> = Symbol('material-costMasterContext')
@@ -30,9 +30,9 @@ const bomMaterialCostMasterContextKey: InjectionKey<BomMaterialCostMasterContext
  * @returns {BomMaterialCostMasterContext} 上下文
  */
 export function provideBomMaterialCostMasterContext(): BomMaterialCostMasterContext {
-  const selectedModelGroup = ref<BomMaterialCostModelGroupRecord | null>(null)
-  const selectedProductRow = ref<BomMaterialCostRowRecord | null>(null)
-  const ctx: BomMaterialCostMasterContext = { selectedModelGroup, selectedProductRow }
+  const selecmedModelGroup = ref<BomMaterialCostModelGroupRecord | null>(null)
+  const selecmedProductRow = ref<BomMaterialCostRowRecord | null>(null)
+  const ctx: BomMaterialCostMasterContext = { selecmedModelGroup, selecmedProductRow }
   provide(bomMaterialCostMasterContextKey, ctx)
   return ctx
 }

@@ -602,6 +602,8 @@ public static class TaktExcelHelper
     /// <param name="fileName">文件名（不含扩展名）</param>
     /// <param name="excelOptions">工作簿元数据</param>
     /// <param name="columnWidths">按列键覆盖标准列宽；为空则全部标准宽</param>
+    /// <param name="autoFitUnspecifiedColumns">未指定宽度的列按内容自适应；指定宽度的列保持给定宽度</param>
+    /// <param name="keepNaturalRowHeight">true 时不按换行抬高行高，全部保持 Excel 默认行高</param>
     /// <returns>文件名与内容</returns>
     public static async Task<(string fileName, byte[] content)> ExportDictionaryRowsAsync(
         IReadOnlyList<IReadOnlyDictionary<string, object?>> rows,
@@ -610,7 +612,9 @@ public static class TaktExcelHelper
         string sheetName = "Data",
         string? fileName = null,
         TaktExcelOptions? excelOptions = null,
-        IReadOnlyDictionary<string, double>? columnWidths = null)
+        IReadOnlyDictionary<string, double>? columnWidths = null,
+        bool autoFitUnspecifiedColumns = false,
+        bool keepNaturalRowHeight = false)
     {
         ArgumentNullException.ThrowIfNull(rows);
         ArgumentNullException.ThrowIfNull(columnKeys);
@@ -621,7 +625,15 @@ public static class TaktExcelHelper
         using var package = new ExcelPackage();
         var actualFileName = GenerateTimestampFileName(fileName ?? sheetName);
         SetWorkbookProperties(package.Workbook, workbookOptions, actualFileName, sheetName);
-        WriteDictionarySheet(package, sheetName, rows, columnKeys, columnLabels, columnWidths);
+        WriteDictionarySheet(
+            package,
+            sheetName,
+            rows,
+            columnKeys,
+            columnLabels,
+            columnWidths,
+            autoFitUnspecifiedColumns,
+            keepNaturalRowHeight);
         var content = await package.GetAsByteArrayAsync();
         TaktLogger.Information("[TaktExcelHelper] 导出动态报表成功，Sheet: {SheetName}, 文件名: {FileName}, 行数: {RowCount}", sheetName, actualFileName, rows.Count);
         return (actualFileName, content);
@@ -787,7 +799,32 @@ public static class TaktExcelHelper
     }
 
     /// <summary>
-    /// 按列键覆盖指定列宽（未给出的列保持标准宽）
+    /// 未给出固定宽度的列按表头与单元格内容自适应
+    /// </summary>
+    /// <param name="worksheet">工作表</param>
+    /// <param name="columnKeys">列键顺序</param>
+    /// <param name="columnWidths">已指定固定宽度的列键</param>
+    private static void ApplyAutoFitUnspecifiedColumns(
+        ExcelWorksheet worksheet,
+        IReadOnlyList<string> columnKeys,
+        IReadOnlyDictionary<string, double>? columnWidths)
+    {
+        ArgumentNullException.ThrowIfNull(worksheet);
+        ArgumentNullException.ThrowIfNull(columnKeys);
+        for (var i = 0; i < columnKeys.Count; i++)
+        {
+            if (columnWidths != null
+                && columnWidths.TryGetValue(columnKeys[i], out var width)
+                && width > 0)
+            {
+                continue;
+            }
+            worksheet.Column(i + 1).AutoFit();
+        }
+    }
+
+    /// <summary>
+    /// 按列键覆盖指定列宽（未给出的列保持标准宽或自适应宽）
     /// </summary>
     /// <param name="worksheet">工作表</param>
     /// <param name="columnKeys">列键顺序</param>
@@ -1525,13 +1562,17 @@ public static class TaktExcelHelper
     /// <param name="columnKeys">列键</param>
     /// <param name="columnLabels">列标题</param>
     /// <param name="columnWidths">按列键覆盖列宽</param>
+    /// <param name="autoFitUnspecifiedColumns">未指定宽度的列按内容自适应</param>
+    /// <param name="keepNaturalRowHeight">true 时不按换行抬高行高</param>
     private static void WriteDictionarySheet(
         ExcelPackage package,
         string sheetName,
         IReadOnlyList<IReadOnlyDictionary<string, object?>> rows,
         IReadOnlyList<string> columnKeys,
         IReadOnlyList<string> columnLabels,
-        IReadOnlyDictionary<string, double>? columnWidths)
+        IReadOnlyDictionary<string, double>? columnWidths,
+        bool autoFitUnspecifiedColumns = false,
+        bool keepNaturalRowHeight = false)
     {
         ArgumentNullException.ThrowIfNull(package);
         ArgumentException.ThrowIfNullOrEmpty(sheetName);
@@ -1556,8 +1597,15 @@ public static class TaktExcelHelper
             worksheet.Cells[2, 1].LoadFromArrays(dataArray);
         }
         ApplyFixedStandardColumnWidths(worksheet, columnKeys.Count);
+        if (autoFitUnspecifiedColumns)
+        {
+            ApplyAutoFitUnspecifiedColumns(worksheet, columnKeys, columnWidths);
+        }
         ApplyNamedColumnWidths(worksheet, columnKeys, columnWidths);
-        ApplyWrapTextForMultilineCells(worksheet);
+        if (!keepNaturalRowHeight)
+        {
+            ApplyWrapTextForMultilineCells(worksheet);
+        }
         ApplyDictionaryRichTextCells(worksheet, rows, columnKeys);
         ApplyDictionaryTypedColumnFormats(worksheet, rows, columnKeys);
         ApplyDictionaryTrendValueFontColors(worksheet, rows, columnKeys);

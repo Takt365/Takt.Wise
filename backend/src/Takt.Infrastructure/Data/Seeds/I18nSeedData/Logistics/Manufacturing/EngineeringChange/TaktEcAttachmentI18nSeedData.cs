@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcAttachmentI18nSeedData.cs
-// 创建时间：2026-10-14
+// 创建时间：2026-10-27
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEcAttachment 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -100,13 +100,13 @@ public class TaktEcAttachmentI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecattachment.eccode", "zh-HK", "设变单号_hk", "设变单号（冗余字段,便于查询）"),
 
             // entity.ecattachment.linenumber
-            new TranslationSeedItem("entity.ecattachment.linenumber", "en-US", "行号_us", "行号（项号/序号，固定步长=10；与租户、EcGijutsuId、DocCode 组成唯一键）"),
+            new TranslationSeedItem("entity.ecattachment.linenumber", "en-US", "行号_us", "行号（项号/序号，固定步长=10；与租户、EcTeId、DocCode 组成唯一键）"),
             // entity.ecattachment.linenumber
-            new TranslationSeedItem("entity.ecattachment.linenumber", "ja-JP", "行号_jp", "行号（项号/序号，固定步长=10；与租户、EcGijutsuId、DocCode 组成唯一键）"),
+            new TranslationSeedItem("entity.ecattachment.linenumber", "ja-JP", "行号_jp", "行号（项号/序号，固定步长=10；与租户、EcTeId、DocCode 组成唯一键）"),
             // entity.ecattachment.linenumber
-            new TranslationSeedItem("entity.ecattachment.linenumber", "zh-CN", "行号", "行号（项号/序号，固定步长=10；与租户、EcGijutsuId、DocCode 组成唯一键）"),
+            new TranslationSeedItem("entity.ecattachment.linenumber", "zh-CN", "行号", "行号（项号/序号，固定步长=10；与租户、EcTeId、DocCode 组成唯一键）"),
             // entity.ecattachment.linenumber
-            new TranslationSeedItem("entity.ecattachment.linenumber", "zh-HK", "行号_hk", "行号（项号/序号，固定步长=10；与租户、EcGijutsuId、DocCode 组成唯一键）"),
+            new TranslationSeedItem("entity.ecattachment.linenumber", "zh-HK", "行号_hk", "行号（项号/序号，固定步长=10；与租户、EcTeId、DocCode 组成唯一键）"),
 
             // entity.ecattachment.attachmenttype
             new TranslationSeedItem("entity.ecattachment.attachmenttype", "en-US", "文件类别_us", "文件类别（字典 logistics_manufacturing_ec_attachment_type；TL=联络，EPP=EPP，FPP=FPP，EL=外部联络，TCJ=TCJ，源PDF=源PDF，EC=EC）"),
@@ -118,13 +118,13 @@ public class TaktEcAttachmentI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecattachment.attachmenttype", "zh-HK", "文件类别_hk", "文件类别（字典 logistics_manufacturing_ec_attachment_type；TL=联络，EPP=EPP，FPP=FPP，EL=外部联络，TCJ=TCJ，源PDF=源PDF，EC=EC）"),
 
             // entity.ecattachment.doccode
-            new TranslationSeedItem("entity.ecattachment.doccode", "en-US", "文件编码_us", "文件编码（按 AttachmentType：EC=与设变单号一致；EPP/FPP=P-四位数字；TL=DTS-四位数字；TCJ/EL=四位-四位数字；与租户、EcGijutsuId、LineNumber 组成唯一键；前端表单选择编码规则后自动通过 TaktNumbering 文件编码规则生成并展示，非手输；单据类型菜单：设变附件）"),
+            new TranslationSeedItem("entity.ecattachment.doccode", "en-US", "文件编码_us", "文件编码（按 AttachmentType：EC=与设变单号一致；EPP/FPP=P-四位数字；TL=DTS-四位数字；TCJ/EL=四位-四位数字；与租户、EcTeId、LineNumber 组成唯一键；前端表单选择编码规则后自动通过 TaktNumbering 文件编码规则生成并展示，非手输；单据类型菜单：设变附件）"),
             // entity.ecattachment.doccode
-            new TranslationSeedItem("entity.ecattachment.doccode", "ja-JP", "文件编码_jp", "文件编码（按 AttachmentType：EC=与设变单号一致；EPP/FPP=P-四位数字；TL=DTS-四位数字；TCJ/EL=四位-四位数字；与租户、EcGijutsuId、LineNumber 组成唯一键；前端表单选择编码规则后自动通过 TaktNumbering 文件编码规则生成并展示，非手输；单据类型菜单：设变附件）"),
+            new TranslationSeedItem("entity.ecattachment.doccode", "ja-JP", "文件编码_jp", "文件编码（按 AttachmentType：EC=与设变单号一致；EPP/FPP=P-四位数字；TL=DTS-四位数字；TCJ/EL=四位-四位数字；与租户、EcTeId、LineNumber 组成唯一键；前端表单选择编码规则后自动通过 TaktNumbering 文件编码规则生成并展示，非手输；单据类型菜单：设变附件）"),
             // entity.ecattachment.doccode
-            new TranslationSeedItem("entity.ecattachment.doccode", "zh-CN", "文件编码", "文件编码（按 AttachmentType：EC=与设变单号一致；EPP/FPP=P-四位数字；TL=DTS-四位数字；TCJ/EL=四位-四位数字；与租户、EcGijutsuId、LineNumber 组成唯一键；前端表单选择编码规则后自动通过 TaktNumbering 文件编码规则生成并展示，非手输；单据类型菜单：设变附件）"),
+            new TranslationSeedItem("entity.ecattachment.doccode", "zh-CN", "文件编码", "文件编码（按 AttachmentType：EC=与设变单号一致；EPP/FPP=P-四位数字；TL=DTS-四位数字；TCJ/EL=四位-四位数字；与租户、EcTeId、LineNumber 组成唯一键；前端表单选择编码规则后自动通过 TaktNumbering 文件编码规则生成并展示，非手输；单据类型菜单：设变附件）"),
             // entity.ecattachment.doccode
-            new TranslationSeedItem("entity.ecattachment.doccode", "zh-HK", "文件编码_hk", "文件编码（按 AttachmentType：EC=与设变单号一致；EPP/FPP=P-四位数字；TL=DTS-四位数字；TCJ/EL=四位-四位数字；与租户、EcGijutsuId、LineNumber 组成唯一键；前端表单选择编码规则后自动通过 TaktNumbering 文件编码规则生成并展示，非手输；单据类型菜单：设变附件）"),
+            new TranslationSeedItem("entity.ecattachment.doccode", "zh-HK", "文件编码_hk", "文件编码（按 AttachmentType：EC=与设变单号一致；EPP/FPP=P-四位数字；TL=DTS-四位数字；TCJ/EL=四位-四位数字；与租户、EcTeId、LineNumber 组成唯一键；前端表单选择编码规则后自动通过 TaktNumbering 文件编码规则生成并展示，非手输；单据类型菜单：设变附件）"),
 
             // entity.ecattachment.filename
             new TranslationSeedItem("entity.ecattachment.filename", "en-US", "文件名称_us", "文件名称（上传后强制等于文件编码 DocCode + 原扩展名，与源文件名无关；含扩展名故 Length=200）"),
@@ -144,14 +144,14 @@ public class TaktEcAttachmentI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecattachment.accessurl
             new TranslationSeedItem("entity.ecattachment.accessurl", "zh-HK", "访问地址_hk", "访问地址（URL）"),
 
-            // entity.ecattachment.ecgijutsuid
-            new TranslationSeedItem("entity.ecattachment.ecgijutsuid", "en-US", "技术课主表ID_us", "技术课主表 ID（TaktEcGijutsu 主键；与租户、DocCode、LineNumber 组成唯一键）"),
-            // entity.ecattachment.ecgijutsuid
-            new TranslationSeedItem("entity.ecattachment.ecgijutsuid", "ja-JP", "技术课主表ID_jp", "技术课主表 ID（TaktEcGijutsu 主键；与租户、DocCode、LineNumber 组成唯一键）"),
-            // entity.ecattachment.ecgijutsuid
-            new TranslationSeedItem("entity.ecattachment.ecgijutsuid", "zh-CN", "技术课主表ID", "技术课主表 ID（TaktEcGijutsu 主键；与租户、DocCode、LineNumber 组成唯一键）"),
-            // entity.ecattachment.ecgijutsuid
-            new TranslationSeedItem("entity.ecattachment.ecgijutsuid", "zh-HK", "技术课主表ID_hk", "技术课主表 ID（TaktEcGijutsu 主键；与租户、DocCode、LineNumber 组成唯一键）"),
+            // entity.ecattachment.ecteid
+            new TranslationSeedItem("entity.ecattachment.ecteid", "en-US", "技术课主表ID_us", "技术课主表 ID（TaktEcTe 主键；与租户、DocCode、LineNumber 组成唯一键）"),
+            // entity.ecattachment.ecteid
+            new TranslationSeedItem("entity.ecattachment.ecteid", "ja-JP", "技术课主表ID_jp", "技术课主表 ID（TaktEcTe 主键；与租户、DocCode、LineNumber 组成唯一键）"),
+            // entity.ecattachment.ecteid
+            new TranslationSeedItem("entity.ecattachment.ecteid", "zh-CN", "技术课主表ID", "技术课主表 ID（TaktEcTe 主键；与租户、DocCode、LineNumber 组成唯一键）"),
+            // entity.ecattachment.ecteid
+            new TranslationSeedItem("entity.ecattachment.ecteid", "zh-HK", "技术课主表ID_hk", "技术课主表 ID（TaktEcTe 主键；与租户、DocCode、LineNumber 组成唯一键）"),
 
             // entity.ecattachment.isobsolete
             new TranslationSeedItem("entity.ecattachment.isobsolete", "en-US", "是否作废_us", "是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）"),
@@ -162,14 +162,14 @@ public class TaktEcAttachmentI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecattachment.isobsolete
             new TranslationSeedItem("entity.ecattachment.isobsolete", "zh-HK", "是否作废_hk", "是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）"),
 
-            // entity.ecattachment.ecgijutsu
-            new TranslationSeedItem("entity.ecattachment.ecgijutsu", "en-US", "设变主表_us", "设变主表（多对一）"),
-            // entity.ecattachment.ecgijutsu
-            new TranslationSeedItem("entity.ecattachment.ecgijutsu", "ja-JP", "设变主表_jp", "设变主表（多对一）"),
-            // entity.ecattachment.ecgijutsu
-            new TranslationSeedItem("entity.ecattachment.ecgijutsu", "zh-CN", "设变主表", "设变主表（多对一）"),
-            // entity.ecattachment.ecgijutsu
-            new TranslationSeedItem("entity.ecattachment.ecgijutsu", "zh-HK", "设变主表_hk", "设变主表（多对一）"),
+            // entity.ecattachment.ecte
+            new TranslationSeedItem("entity.ecattachment.ecte", "en-US", "设变主表_us", "设变主表（多对一）"),
+            // entity.ecattachment.ecte
+            new TranslationSeedItem("entity.ecattachment.ecte", "ja-JP", "设变主表_jp", "设变主表（多对一）"),
+            // entity.ecattachment.ecte
+            new TranslationSeedItem("entity.ecattachment.ecte", "zh-CN", "设变主表", "设变主表（多对一）"),
+            // entity.ecattachment.ecte
+            new TranslationSeedItem("entity.ecattachment.ecte", "zh-HK", "设变主表_hk", "设变主表（多对一）"),
         };
     }
 

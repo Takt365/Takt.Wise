@@ -32,7 +32,7 @@ const STANDARD_OPERATION_TIME_API_BASE = 'TaktStandardOperationTimes';
 // ========================================
 
 /**
- * 获取标准工序时间列表（分页）
+ * 获取标准工时列表（分页）
  * @param {any} queryDto 查询DTO
  * @returns {Promise<TaktPagedResult<StandardOperationTime>>} 分页结果
  */
@@ -45,9 +45,9 @@ export function getStandardOperationTimeList(queryDto: any): Promise<TaktPagedRe
 }
 
 /**
- * 根据ID获取标准工序时间
- * @param {string} id 标准工序时间ID
- * @returns {Promise<StandardOperationTime>} 标准工序时间DTO
+ * 根据ID获取标准工时
+ * @param {string} id 标准工时ID
+ * @returns {Promise<StandardOperationTime>} 标准工时DTO
  */
 export function getStandardOperationTimeById(id: string): Promise<StandardOperationTime> {
   return request<StandardOperationTime>({
@@ -57,11 +57,11 @@ export function getStandardOperationTimeById(id: string): Promise<StandardOperat
 }
 
 /**
- * 根据物料编码获取当前有效的标准工序时间列表
+ * 根据物料编码获取当前有效的标准工时列表
  * @param {string} materialCode 物料编码
  * @param {string} plantCode 工厂代码（可选）
  * @param {string} prodDate 生产日期（可选；未传时按当天解析有效期）
- * @returns {Promise<StandardOperationTime[]>} 标准工序时间 DTO 列表
+ * @returns {Promise<StandardOperationTime[]>} 标准工时 DTO 列表
  */
 export function getStandardOperationTimeByMaterial(
   materialCode: string,
@@ -80,9 +80,9 @@ export function getStandardOperationTimeByMaterial(
 }
 
 /**
- * 创建标准工序时间
+ * 创建标准工时
  * @param {StandardOperationTimeCreate} dto 创建DTO
- * @returns {Promise<StandardOperationTime>} 标准工序时间DTO
+ * @returns {Promise<StandardOperationTime>} 标准工时DTO
  */
 export function createStandardOperationTime(dto: StandardOperationTimeCreate): Promise<StandardOperationTime> {
   return request<StandardOperationTime>({
@@ -93,10 +93,10 @@ export function createStandardOperationTime(dto: StandardOperationTimeCreate): P
 }
 
 /**
- * 更新标准工序时间
- * @param {string} id 标准工序时间ID
+ * 更新标准工时
+ * @param {string} id 标准工时ID
  * @param {StandardOperationTimeUpdate} dto 更新DTO
- * @returns {Promise<StandardOperationTime>} 标准工序时间DTO
+ * @returns {Promise<StandardOperationTime>} 标准工时DTO
  */
 export function updateStandardOperationTime(id: string, dto: StandardOperationTimeUpdate): Promise<StandardOperationTime> {
   return request<StandardOperationTime>({
@@ -107,8 +107,8 @@ export function updateStandardOperationTime(id: string, dto: StandardOperationTi
 }
 
 /**
- * 删除标准工序时间
- * @param {string} id 标准工序时间ID
+ * 删除标准工时
+ * @param {string} id 标准工时ID
  * @returns {Promise<void>} 操作结果
  */
 export function deleteStandardOperationTimeById(id: string): Promise<void> {
@@ -119,7 +119,7 @@ export function deleteStandardOperationTimeById(id: string): Promise<void> {
 }
 
 /**
- * 批量删除标准工序时间
+ * 批量删除标准工时
  * @param {string[]} ids ID列表
  * @returns {Promise<void>} 操作结果
  */
@@ -136,7 +136,7 @@ export function deleteStandardOperationTimeBatch(ids: string[]): Promise<void> {
 // ========================================
 
 /**
- * 获取标准工序时间选项列表
+ * 获取标准工时选项列表
  * @returns {Promise<TaktSelectOption[]>} 下拉选项
  */
 export function getStandardOperationTimeOptions(
@@ -202,7 +202,7 @@ export function getStandardOperationTimeTemplate(sheetName?: string, templateNam
 }
 
 /**
- * 导入标准工序时间
+ * 导入标准工时
  * @param {globalThis.File} file Excel文件
  * @param {string} sheetName sheetName
  * @returns {Promise<{ success: number; fail: number; errors: string[] }>} 导入结果
@@ -225,7 +225,7 @@ export function importStandardOperationTime(file: globalThis.File, sheetName?: s
 }
 
 /**
- * 导出标准工序时间
+ * 导出标准工时
  * @param {any} query query
  * @param {string} sheetName sheetName
  * @param {string} exportName exportName

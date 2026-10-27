@@ -12,7 +12,7 @@ import type { SopExec } from '@/types/logistics/manufacturing/sop/exec.types'
 /** 主表选中行上下文 */
 export interface SopExecMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<SopExec | null>
+  selecmedMasterRow: Ref<SopExec | null>
 }
 
 const sopExecMasterContextKey: InjectionKey<SopExecMasterContext> = Symbol('execMasterContext')
@@ -22,8 +22,8 @@ const sopExecMasterContextKey: InjectionKey<SopExecMasterContext> = Symbol('exec
  * @returns {SopExecMasterContext} 主表上下文
  */
 export function provideSopExecMasterContext(): SopExecMasterContext {
-  const selectedMasterRow = ref<SopExec | null>(null)
-  const ctx: SopExecMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<SopExec | null>(null)
+  const ctx: SopExecMasterContext = { selecmedMasterRow }
   provide(sopExecMasterContextKey, ctx)
   return ctx
 }

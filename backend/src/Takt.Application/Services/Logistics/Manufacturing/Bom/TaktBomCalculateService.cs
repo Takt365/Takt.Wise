@@ -536,7 +536,7 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
         foreach (var key in groupedKeys)
         {
             var (headerType, headerModel) = ResolveBomHeaderScope(headerScope, key.PlantCode, key.ProductCode);
-            if (!MatchesSelectedMaterialType(headerType, filterMaterialType))
+            if (!MatchesSelecmedMaterialType(headerType, filterMaterialType))
             {
                 skippedCount = checked(skippedCount + 1);
                 continue;
@@ -1468,7 +1468,7 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
     /// <param name="resolvedType">从通用物料/工厂物料解析出的类型</param>
     /// <param name="filterType">查询所选类型；空则不过滤</param>
     /// <returns>是否纳入本次计算</returns>
-    private static bool MatchesSelectedMaterialType(string? resolvedType, string? filterType)
+    private static bool MatchesSelecmedMaterialType(string? resolvedType, string? filterType)
     {
         if (string.IsNullOrWhiteSpace(filterType))
         {
@@ -1671,7 +1671,7 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
                 .First(r => TaktBomMaterialCostItemLineCostHelper.ProductCodeMatches(r.ProductCode, product))
                 .PlantCode?.Trim() ?? string.Empty;
             var (headerType, headerModel) = ResolveBomHeaderScope(headerScope, plant, product);
-            if (!MatchesSelectedMaterialType(headerType, filterMaterialType))
+            if (!MatchesSelecmedMaterialType(headerType, filterMaterialType))
             {
                 continue;
             }

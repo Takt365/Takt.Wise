@@ -12,7 +12,7 @@ import type { StandardOperationRate } from '@/types/logistics/manufacturing/mps/
 /** 主表选中行上下文 */
 export interface StandardOperationRateMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<StandardOperationRate | null>
+  selecmedMasterRow: Ref<StandardOperationRate | null>
 }
 
 const standardOperationRateMasterContextKey: InjectionKey<StandardOperationRateMasterContext> = Symbol('standard-operation-rateMasterContext')
@@ -22,8 +22,8 @@ const standardOperationRateMasterContextKey: InjectionKey<StandardOperationRateM
  * @returns {StandardOperationRateMasterContext} 主表上下文
  */
 export function provideStandardOperationRateMasterContext(): StandardOperationRateMasterContext {
-  const selectedMasterRow = ref<StandardOperationRate | null>(null)
-  const ctx: StandardOperationRateMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<StandardOperationRate | null>(null)
+  const ctx: StandardOperationRateMasterContext = { selecmedMasterRow }
   provide(standardOperationRateMasterContextKey, ctx)
   return ctx
 }

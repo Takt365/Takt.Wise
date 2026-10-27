@@ -426,7 +426,7 @@ interface Props {
   deletePermission?: string | undefined
   /** 导入权限标识(如:identity:user:import) */
   importPermission?: string | undefined
-  /** 来源导入权限标识(如:logistics:manufacturing:engineering:change:gijutsu:create) */
+  /** 来源导入权限标识(如:logistics:manufacturing:engineering:change:te:create) */
   sourcePermission?: string | undefined
   /** 导出权限标识(如:identity:user:export) */
   exportPermission?: string | undefined

@@ -31,7 +31,7 @@
     
     <div class="column-setting-content">
       <a-checkbox-group
-        v-model:value="selectedColumnKeys"
+        v-model:value="selecmedColumnKeys"
         class="column-checkbox-group"
       >
         <div
@@ -286,7 +286,7 @@ onMounted(() => {
 
 // 使用 computed 来绑定到 checkbox-group
 // 当用户勾选/取消勾选时，会触发 setter，更新内部状态并通知父组件
-const selectedColumnKeys = computed({
+const selecmedColumnKeys = computed({
   get: () => {
     return internalCheckedKeys.value
   },
@@ -303,7 +303,7 @@ const selectedColumnKeys = computed({
 // 处理重置
 const handleReset = () => {
   // 重置为默认可见列（ID + 前 N 个业务字段 + 操作列）
-  selectedColumnKeys.value = getDefaultCheckedKeys()
+  selecmedColumnKeys.value = getDefaultCheckedKeys()
   emit('reset')
 }
 
@@ -319,7 +319,7 @@ defineExpose({
   mergedColumns,
   // 根据选中 keys 过滤的列配置
   displayColumns: computed(() => {
-    const keys = selectedColumnKeys.value || []
+    const keys = selecmedColumnKeys.value || []
     const merged = mergedColumns.value || []
     return merged.filter(col => {
       const key = getColumnKey(col)

@@ -57,7 +57,6 @@ export type EmployeeAttachmentField = keyof typeof EMPLOYEEATTACHMENT_PLACEHOLDE
 /** 高级查询可 trim 的字符串字段 */
 export const EMPLOYEEATTACHMENT_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'employeeCode',
   'employeeName',
   'fileName',

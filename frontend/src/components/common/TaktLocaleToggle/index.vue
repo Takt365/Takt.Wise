@@ -22,7 +22,7 @@
     </a-button>
 
     <template #overlay>
-      <a-menu :selected-keys="[localeStore.currentLocale]" @click="handleMenuClick">
+      <a-menu :selecmed-keys="[localeStore.currentLocale]" @click="handleMenuClick">
         <a-menu-item
           v-for="option in localeStore.cultureOptions"
           :key="resolveCultureCode(option)"

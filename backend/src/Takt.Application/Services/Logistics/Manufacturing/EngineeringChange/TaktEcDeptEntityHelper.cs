@@ -44,26 +44,26 @@ public static class TaktEcDeptEntityHelper
     public static object? FindByDeptCode(IReadOnlyList<object> deptList, string deptCode)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(deptCode);
-        if (deptCode == TaktEcDeptCodes.Pcba)
+        if (deptCode == TaktEcDeptCodes.Mfg2)
         {
-            // 看板「制二」桶：SMT(D0625) 与 制造2课(D0620/Seizounika) 按表类型择优，不依赖行上 DeptCode 字面量
-            var activeElectronic = deptList.OfType<TaktEcEmtl>().FirstOrDefault(x => x.IsObsolete == 0);
+            // 看板「制二」桶：SMT(D0625) 与 制造2课(D0620/Pcba) 按表类型择优，不依赖行上 DeptCode 字面量
+            var activeElectronic = deptList.OfType<TaktEcMtl>().FirstOrDefault(x => x.IsObsolete == 0);
             if (activeElectronic != null)
             {
                 return activeElectronic;
             }
-            var activeSeizounika = deptList.OfType<TaktEcSeizounika>().FirstOrDefault(x => x.IsObsolete == 0);
-            if (activeSeizounika != null)
+            var activePcba = deptList.OfType<TaktEcMfg2>().FirstOrDefault(x => x.IsObsolete == 0);
+            if (activePcba != null)
             {
-                return activeSeizounika;
+                return activePcba;
             }
-            return (object?)deptList.OfType<TaktEcEmtl>().FirstOrDefault()
-                ?? deptList.OfType<TaktEcSeizounika>().FirstOrDefault();
+            return (object?)deptList.OfType<TaktEcMtl>().FirstOrDefault()
+                ?? deptList.OfType<TaktEcMfg2>().FirstOrDefault();
         }
-        if (deptCode == TaktEcDeptCodes.Smt)
+        if (deptCode == TaktEcDeptCodes.Mtl)
         {
-            return deptList.OfType<TaktEcEmtl>().FirstOrDefault(x => x.IsObsolete == 0)
-                ?? deptList.OfType<TaktEcEmtl>().FirstOrDefault();
+            return deptList.OfType<TaktEcMtl>().FirstOrDefault(x => x.IsObsolete == 0)
+                ?? deptList.OfType<TaktEcMtl>().FirstOrDefault();
         }
         return deptList.FirstOrDefault(x => GetDeptCode(x) == deptCode);
     }
@@ -89,7 +89,7 @@ public static class TaktEcDeptEntityHelper
     /// <param name="isImplemented">是否实施</param>
     public static void SetIsImplemented(object exec, int isImplemented)
     {
-        if (exec is TaktEcSeizougijutsu)
+        if (exec is TaktEcMe)
         {
             return;
         }
@@ -104,7 +104,7 @@ public static class TaktEcDeptEntityHelper
     /// <param name="overwrite">是否覆盖已有内容</param>
     public static void SetExecContent(object exec, string? content, bool overwrite = false)
     {
-        if (exec is TaktEcSeizougijutsu)
+        if (exec is TaktEcMe)
         {
             return;
         }
@@ -121,7 +121,7 @@ public static class TaktEcDeptEntityHelper
     /// <param name="exec">部门执行实体</param>
     /// <returns>执行内容</returns>
     public static string? GetExecContent(object exec) =>
-        exec is TaktEcSeizougijutsu ? null : AsExec(exec).ExecContent;
+        exec is TaktEcMe ? null : AsExec(exec).ExecContent;
 
     /// <summary>
     /// 读取是否作废
@@ -141,7 +141,7 @@ public static class TaktEcDeptEntityHelper
         {
             return false;
         }
-        if (exec is TaktEcSeizougijutsu te)
+        if (exec is TaktEcMe te)
         {
             return te.SopDate.HasValue
                 || te.IsSopUpdated == 1
@@ -172,47 +172,47 @@ public static class TaktEcDeptEntityHelper
         var createdAt = DateTime.MinValue;
         switch (exec)
         {
-            case TaktEcSeikan e:
+            case TaktEcPc e:
                 scheduledDate = e.ScheduledDate;
                 updatedAt = e.UpdatedAt;
                 createdAt = e.CreatedAt;
                 break;
-            case TaktEcKoubai e:
+            case TaktEcPur e:
                 purchaseOrderIssueDate = e.PurchaseOrderIssueDate;
                 updatedAt = e.UpdatedAt;
                 createdAt = e.CreatedAt;
                 break;
-            case TaktEcUkeken e:
+            case TaktEcIqc e:
                 inspectionDate = e.InspectionDate;
                 updatedAt = e.UpdatedAt;
                 createdAt = e.CreatedAt;
                 break;
-            case TaktEcBukan e:
+            case TaktEcMc e:
                 outboundDate = e.OutboundDate;
                 updatedAt = e.UpdatedAt;
                 createdAt = e.CreatedAt;
                 break;
-            case TaktEcEmtl e:
+            case TaktEcMtl e:
                 outboundDate = e.OutboundDate;
                 updatedAt = e.UpdatedAt;
                 createdAt = e.CreatedAt;
                 break;
-            case TaktEcSeizounika e:
+            case TaktEcMfg2 e:
                 productionDate = e.ProductionDate;
                 updatedAt = e.UpdatedAt;
                 createdAt = e.CreatedAt;
                 break;
-            case TaktEcSeizouikka e:
+            case TaktEcMfg1 e:
                 productionDate = e.ProductionDate;
                 updatedAt = e.UpdatedAt;
                 createdAt = e.CreatedAt;
                 break;
-            case TaktEcHinkan e:
+            case TaktEcQc e:
                 inspectionDate = e.InspectionDate;
                 updatedAt = e.UpdatedAt;
                 createdAt = e.CreatedAt;
                 break;
-            case TaktEcSeizougijutsu e:
+            case TaktEcMe e:
                 updatedAt = e.UpdatedAt;
                 createdAt = e.CreatedAt;
                 break;
@@ -235,7 +235,7 @@ public static class TaktEcDeptEntityHelper
     /// <returns>检样日期</returns>
     public static DateTime? ResolveSampleInspectionDate(object? qaDept)
     {
-        if (qaDept is not TaktEcHinkan qa || qa.IsImplemented != 1)
+        if (qaDept is not TaktEcQc qa || qa.IsImplemented != 1)
         {
             return null;
         }
@@ -253,12 +253,6 @@ public static class TaktEcDeptEntityHelper
     /// <returns>设变单号</returns>
     public static string GetEcCode(object exec) => AsExec(exec).EcCode;
 
-    /// <summary>
-    /// 读取明细 ID
-    /// </summary>
-    /// <param name="exec">部门执行实体</param>
-    /// <returns>设变明细 ID</returns>
-    public static long GetEcDetailId(object exec) => AsExec(exec).EcDetailId;
 
     /// <summary>
     /// 判断是否匹配是否实施筛选

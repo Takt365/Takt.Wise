@@ -155,7 +155,7 @@ public interface ITaktSignalRDispatchService
     /// </summary>
     /// <param name="push">推送模型</param>
     /// <returns>任务</returns>
-    Task PushEcGijutsuPersistCompletedToUserAsync(TaktSignalREcGijutsuPersistPush push);
+    Task PushEcTePersistCompletedToUserAsync(TaktSignalREcTePersistPush push);
 
     /// <summary>
     /// 向发起人推送部门确认通知

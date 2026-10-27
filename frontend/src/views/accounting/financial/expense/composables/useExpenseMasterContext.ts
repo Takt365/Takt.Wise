@@ -15,7 +15,7 @@ export type ExpenseRowRecord = Expense | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface ExpenseMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<ExpenseRowRecord | null>
+  selecmedMasterRow: Ref<ExpenseRowRecord | null>
 }
 
 const expenseMasterContextKey: InjectionKey<ExpenseMasterContext> = Symbol('expenseMasterContext')
@@ -25,8 +25,8 @@ const expenseMasterContextKey: InjectionKey<ExpenseMasterContext> = Symbol('expe
  * @returns {ExpenseMasterContext} 主表上下文
  */
 export function provideExpenseMasterContext(): ExpenseMasterContext {
-  const selectedMasterRow = ref<ExpenseRowRecord | null>(null)
-  const ctx: ExpenseMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<ExpenseRowRecord | null>(null)
+  const ctx: ExpenseMasterContext = { selecmedMasterRow }
   provide(expenseMasterContextKey, ctx)
   return ctx
 }

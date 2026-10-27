@@ -17,14 +17,14 @@ using Takt.Domain.Entities;
 namespace Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange;
 
 /// <summary>
-/// 工程变更通知单（技术阶段一 ④，隶属 TaktEcGijutsu）。技术完成 ①主表 ②附件 ③明细 保存后由 TaktEcGijutsuService 自动生成并派发；
+/// 工程变更通知单（技术阶段一 ④，隶属 TaktEcTe）。技术完成 ①主表 ②附件 ③明细 保存后由 TaktEcTeService 自动生成并派发；
 /// 各部门确认后在 TaktEcExec* 执行，技术通过看板/批次监控。FlowInstanceId 由通知审批流程写入（可选）。
 /// </summary>
 [SugarTable("takt_logistics_manufacturing_ec_notification", "工程变更通知单表")]
 [SugarIndex("ix_ec_notification_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
 [SugarIndex("ix_ec_notification_is_deleted", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(IsDeleted), OrderByType.Asc, false)]
 [SugarIndex("ix_takt_logistics_manufacturing_ec_notification_code_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcNotificationCode), OrderByType.Asc, true)]
-[SugarIndex("ix_takt_logistics_manufacturing_ec_notification_id", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcGijutsuId), OrderByType.Asc, false)]
+[SugarIndex("ix_takt_logistics_manufacturing_ec_notification_id", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcTeId), OrderByType.Asc, false)]
 [SugarIndex("ix_takt_logistics_manufacturing_ec_notification_date", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcNotificationDate), OrderByType.Desc, false)]
 [SugarIndex("ix_takt_logistics_manufacturing_ec_notification_status", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcNotificationStatus), OrderByType.Asc, false)]
 [SugarIndex("ix_takt_logistics_manufacturing_ec_notification_flow_instance_id", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(FlowInstanceId), OrderByType.Asc, false)]
@@ -38,11 +38,11 @@ public class TaktEcNotification : TaktApprovalEntityBase
     public string EcNotificationCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 技术课主表 ID（TaktEcGijutsu 主键；序列化为 string 避免 Javascript 精度问题）
+    /// 技术课主表 ID（TaktEcTe 主键；序列化为 string 避免 Javascript 精度问题）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_gijutsu_id", ColumnDescription = "技术课主表ID", ColumnDataType = "bigint", IsNullable = false)]
+    [SugarColumn(ColumnName = "ec_te_id", ColumnDescription = "技术课主表ID", ColumnDataType = "bigint", IsNullable = false)]
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余：按对应 Id 取主数据名称联动）
@@ -101,6 +101,6 @@ public class TaktEcNotification : TaktApprovalEntityBase
     /// <summary>
     /// 关联的设变主表
     /// </summary>
-    [Navigate(NavigateType.ManyToOne, nameof(EcGijutsuId))]
-    public TaktEcGijutsu? EcGijutsu { get; set; }
+    [Navigate(NavigateType.ManyToOne, nameof(EcTeId))]
+    public TaktEcTe? EcTe { get; set; }
 }

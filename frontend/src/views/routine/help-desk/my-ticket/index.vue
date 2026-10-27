@@ -28,7 +28,7 @@
       <a-button
         v-permission="'routine:help:desk:my:ticket:list'"
         class="ml-2 takt-button-query"
-        :disabled="!selectedRow"
+        :disabled="!selecmedRow"
         @click="handleOpenWorkflow"
       >
         {{ t('routine.help-desk.ticket.page.workflow.title') }}
@@ -165,9 +165,9 @@ const pageSize = ref(getTaktDefaultPageSize())
 /** 总数 */
 const total = ref(0)
 /** 选中行 */
-const selectedRow = ref<Ticket | null>(null)
+const selecmedRow = ref<Ticket | null>(null)
 /** 选中 keys */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 /** 新建弹窗 */
 const formVisible = ref(false)
 /** 表单 loading */
@@ -212,23 +212,23 @@ const columns = computed<TableColumnsType>(() => [
 const getTicketId = (record: Ticket): string => record.ticketId ?? ''
 /** 行选择 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: Ticket[]) => {
-    selectedRowKeys.value = keys
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
 }))
 /** 行点击 */
 const onClickRow = (record: Ticket) => ({
   onClick: () => {
     const key = getTicketId(record)
-    const index = selectedRowKeys.value.indexOf(key)
+    const index = selecmedRowKeys.value.indexOf(key)
     if (index > -1) {
-      selectedRowKeys.value.splice(index, 1)
+      selecmedRowKeys.value.splice(index, 1)
     } else {
-      selectedRowKeys.value = [key]
+      selecmedRowKeys.value = [key]
     }
-    selectedRow.value = selectedRowKeys.value.length === 1 ? record : null
+    selecmedRow.value = selecmedRowKeys.value.length === 1 ? record : null
   },
 })
 /** 加载我的工单列表 */
@@ -322,10 +322,10 @@ async function handleFormSubmit() {
 }
 /** 打开工作流抽屉 */
 function handleOpenWorkflow() {
-  if (!selectedRow.value) {
+  if (!selecmedRow.value) {
     return
   }
-  workflowTicketId.value = getTicketId(selectedRow.value)
+  workflowTicketId.value = getTicketId(selecmedRow.value)
   workflowVisible.value = true
 }
 

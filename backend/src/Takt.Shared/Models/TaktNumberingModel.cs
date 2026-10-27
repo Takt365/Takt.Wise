@@ -28,9 +28,14 @@ public sealed class TaktNumberingModel
     public string BusinessCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 公司编码
+    /// 公司编码（隔离键；段拼接优先用 CompanyShortName）
     /// </summary>
     public string CompanyCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 公司简称（当前登录公司 TaktCompany.CompanyShortName；写入业务编码的公司段）
+    /// </summary>
+    public string? CompanyShortName { get; set; }
 
     /// <summary>
     /// 部门编码
@@ -68,9 +73,9 @@ public sealed class TaktNumberingModel
     public string ResetPeriod { get; set; } = "None";
 
     /// <summary>
-    /// 当前流水
+    /// 本次取号/预览发出的流水号（非持久化字段；仅 GenerateNext/Preview 结果使用）
     /// </summary>
-    public int CurrentSequence { get; set; }
+    public int IssuedSequence { get; set; }
 
     /// <summary>
     /// 分隔符

@@ -26,15 +26,15 @@ internal static class TaktAssyOutputDerivedFieldsHelper
     private const int MaxStandardOperationTimeRows = 50;
 
     /// <summary>
-    /// 按物料编码解析生产日期有效的标准工序时间列表
+    /// 按物料编码解析生产日期有效的标准工时列表
     /// </summary>
-    /// <param name="standardOperationTimeRepository">标准工序时间仓储</param>
+    /// <param name="standardOperationTimeRepository">标准工时仓储</param>
     /// <param name="tenantCode">租户编码</param>
     /// <param name="companyCode">公司编码</param>
     /// <param name="materialCode">物料编码</param>
     /// <param name="plantCode">工厂代码</param>
     /// <param name="prodDate">生产日期</param>
-    /// <returns>标准工序时间列表</returns>
+    /// <returns>标准工时列表</returns>
     public static async Task<List<TaktStandardOperationTime>> ResolveStandardOperationTimesByMaterialAsync(
         ITaktApprovalRepository<TaktStandardOperationTime> standardOperationTimeRepository,
         string tenantCode,
@@ -75,13 +75,13 @@ internal static class TaktAssyOutputDerivedFieldsHelper
     /// <summary>
     /// 按工作中心取最新有效版本后汇总标准工时
     /// </summary>
-    /// <param name="standardOperationTimeRepository">标准工序时间仓储</param>
+    /// <param name="standardOperationTimeRepository">标准工时仓储</param>
     /// <param name="tenantCode">租户编码</param>
     /// <param name="companyCode">公司编码</param>
     /// <param name="materialCode">物料编码（已 trim）</param>
     /// <param name="plantCode">工厂代码（可选，已 trim）</param>
     /// <param name="prodDateOnly">生产日期（仅日期部分）</param>
-    /// <returns>标准工序时间列表</returns>
+    /// <returns>标准工时列表</returns>
     private static async Task<List<TaktStandardOperationTime>> GetEffectiveStandardOperationTimesCoreAsync(
         ITaktApprovalRepository<TaktStandardOperationTime> standardOperationTimeRepository,
         string tenantCode,
@@ -105,7 +105,7 @@ internal static class TaktAssyOutputDerivedFieldsHelper
     /// <summary>
     /// 按工作中心取最新有效版本后汇总标准工时
     /// </summary>
-    /// <param name="operationTimes">候选标准工序时间</param>
+    /// <param name="operationTimes">候选标准工时</param>
     /// <returns>标准工时(分钟)</returns>
     public static decimal CalculateStdMinutesFromOperationTimes(IReadOnlyList<TaktStandardOperationTime> operationTimes)
     {
@@ -117,7 +117,7 @@ internal static class TaktAssyOutputDerivedFieldsHelper
     /// <summary>
     /// 按物料编码回填组立日报主表标准工时(分钟)
     /// </summary>
-    /// <param name="standardOperationTimeRepository">标准工序时间仓储</param>
+    /// <param name="standardOperationTimeRepository">标准工时仓储</param>
     /// <param name="entity">组立日报主表</param>
     /// <param name="tenantCode">租户编码</param>
     /// <param name="companyCode">公司编码</param>
@@ -188,7 +188,7 @@ internal static class TaktAssyOutputDerivedFieldsHelper
     /// <summary>
     /// 回填标准工时并计算标准产能
     /// </summary>
-    /// <param name="standardOperationTimeRepository">标准工序时间仓储</param>
+    /// <param name="standardOperationTimeRepository">标准工时仓储</param>
     /// <param name="standardOperationRateRepository">标准生产稼动率仓储</param>
     /// <param name="entity">组立日报主表</param>
     /// <param name="tenantCode">租户编码</param>

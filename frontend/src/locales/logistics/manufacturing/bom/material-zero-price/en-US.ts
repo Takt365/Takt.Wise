@@ -20,7 +20,7 @@ export default {
     modelCode: 'Model',
     modelCodesOptional: 'Models (optional, multi-select; empty = all)',
     modelCodePlaceholder: 'Optional; empty = all models',
-    hint: '{month} · {productCount} products · {componentCount} zero-price components (FERT only · IsDeleted=0 · ProductionRelated=X · PcbSectIndicator empty · PurchaseType=F · moving avg = 0; suggested substitute = reverse trailing letter e.g. E02597400C→B→A from material_moving_price same/nearest period ÷ PriceUnit)',
+    hint: '{month} · {productCount} products · {componentCount} zero-price components (FERT only · IsDeleted=0 · ProductionRelated=X · PcbSectIndicator empty · PurchaseType=F · moving avg = 0; suggested moving price = this component latest moving price > 0, walking back from the costing month (a month with no purchase is not price 0; if none, reverse trailing letter e.g. E02597400C to B to A) / PriceUnit)',
     productCodes: 'Shared products',
     productCount: 'Products',
     suggestedComponentCode: 'Suggested component',
@@ -29,25 +29,25 @@ export default {
     exportFailed: 'Failed to export Bom0 price',
     costSum: 'Calculate cost',
     costRecalculate: 'Recalculate cost',
-    costAverage: 'Calculate average cost',
+    costAverage: 'Calculate model average cost',
     purchaseInfoBackfill: 'Backfill purchase price',
     purchaseInfoBackfillSuccess:
       '{month} purchase-price backfill done: scanned {scanned}, updated {updated}, no price {skipped}, unchanged {unchanged}',
     purchaseInfoBackfillFailed: 'Failed to backfill purchase price',
     movingPriceBackfill: 'Backfill moving price',
-    movingPriceBackfillBatch: 'Batch backfill moving price',
+    movingPriceBackfillBatch: 'Batch backfill substitute price',
     movingPriceBackfillRow: 'Backfill moving price',
     movingPriceBackfillNoSuggested: 'No suggested component; cannot backfill moving price',
     movingPriceBackfillConfirmTitle: 'Backfill moving price?',
     movingPriceBackfillConfirmContent:
       'For current plant/month, backfill zero-price lines of {component} from suggested {suggested} (moving avg / unit / currency), write ExtField history, and refresh product/model monthly costs.',
-    movingPriceBackfillBatchConfirmTitle: 'Batch backfill moving price?',
+    movingPriceBackfillBatchConfirmTitle: 'Batch backfill substitute price?',
     movingPriceBackfillBatchConfirmContent:
       'For current plant/month {month} (and model filter), backfill all zero-price components that have a suggested substitute, write ExtField history, and refresh product/model monthly costs.',
     movingPriceBackfillSuccess:
       '{month} moving-price backfill done: items scanned {scanned}, updated {updated}, no price {skipped}, unchanged {unchanged}; product monthly cost {productCost}, model monthly cost {modelAverage}; {priceInfo}',
     movingPriceBackfillBatchSuccess:
-      '{month} batch moving-price backfill done: components {components}, items scanned {scanned}, updated {updated}, no price {skipped}, unchanged {unchanged}; product monthly cost {productCost}, model monthly cost {modelAverage}',
+      '{month} batch substitute-price backfill done: components {components}, items scanned {scanned}, updated {updated}, no price {skipped}, unchanged {unchanged}; product monthly cost {productCost}, model monthly cost {modelAverage}',
     movingPriceBackfillFailed: 'Failed to backfill moving price',
     movingPriceManualRow: 'Manual update price',
     movingPriceManualTitle: 'Manual replace moving price',
@@ -77,14 +77,14 @@ export default {
     costAverageSuccess:
       '{month} average done: scanned {scanned} (product cost>0: {positiveCostRows}), model updated {modelUpdated}, type updated {typeUpdated}, average updated {averageUpdated} (with cost {groupsWithCost}/{groups}, no cost {groupsNoCost})',
     costAverageFailed: 'Failed to calculate average cost',
-    pcbSectMark: 'Mark PCB SECT',
+    pcbSectMark: 'PCB SECT mark',
     pcbSectMarkConfirmTitle: 'Mark entire PCB SECT trees?',
     pcbSectMarkConfirmContent:
       'For plant/month {month} (and model filter), find nodes whose description contains "PCB SECT" and all descendants, then write pcb_sect_indicator=X (skip if already marked).',
     pcbSectMarkSuccess:
       '{month} PCB SECT mark done: scanned {scanned}, tree rows {pcbSect}, newly marked {updated}, already marked {unchanged}',
     pcbSectMarkFailed: 'Failed to mark PCB SECT',
-    stripLeadingZeros: 'Strip leading zeros',
+    stripLeadingZeros: 'Leading zeros',
     stripLeadingZerosConfirmTitle: 'Strip leading zeros?',
     stripLeadingZerosConfirmContent:
       'For plant {plant}, strip leading zeros from pure-numeric product codes on the cost header, and from product and component codes on cost items (including yearly tables). 000000001918610130 becomes 1918610130. Codes with letters, such as 0919MH8G93, stay unchanged. Rows that would collide on a unique key are skipped.',

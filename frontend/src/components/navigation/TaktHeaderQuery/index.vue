@@ -47,7 +47,7 @@
     </template>
     <div class="takt-query-content">
       <TaktSelect
-        v-model="selectedPath"
+        v-model="selecmedPath"
         :options="selectOptions"
         :placeholder="$t('components.navigation.page.headerquery.placeholder')"
         show-search
@@ -70,7 +70,7 @@ const menuStore = useMenuStore()
 const shortcutStore = useWorkspaceShortcutStore()
 
 const visible = ref(false)
-const selectedPath = ref<string | undefined>(undefined)
+const selecmedPath = ref<string | undefined>(undefined)
 
 // 仅 menuType=1 的扁平列表，转为 TaktSelect 的 options（label / value）
 const selectOptions = computed(() =>
@@ -82,7 +82,7 @@ const selectOptions = computed(() =>
 
 watch(visible, (isOpen) => {
   if (!isOpen) {
-    selectedPath.value = undefined
+    selecmedPath.value = undefined
   }
 })
 
@@ -98,7 +98,7 @@ function onSelectChange(value: string | number | (string | number)[] | undefined
   const path = value == null ? undefined : String(value)
   if (path) {
     shortcutStore.addOrReplace(path)
-    selectedPath.value = undefined
+    selecmedPath.value = undefined
     handleClose()
   }
 }

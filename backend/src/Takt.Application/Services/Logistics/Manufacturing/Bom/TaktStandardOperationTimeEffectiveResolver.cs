@@ -4,7 +4,7 @@
 // 文件名称：TaktStandardOperationTimeEffectiveResolver.cs
 // 创建时间：2026-07-09
 // 创建人：Takt365(Cursor AI)
-// 功能描述：按生产日期解析物料有效标准工序时间（每工作中心取最新生效版本，汇总标准工时/标准点数）
+// 功能描述：按生产日期解析物料有效标准工时（每工作中心取最新生效版本，汇总标准工时/标准点数）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -15,7 +15,7 @@ using Takt.Domain.Entities.Logistics.Manufacturing.Bom;
 namespace Takt.Application.Services.Logistics.Manufacturing.Bom;
 
 /// <summary>
-/// 标准工序时间有效期解析（组立/PCBA 日报派生计算共用）
+/// 标准工时有效期解析（组立/PCBA 日报派生计算共用）
 /// </summary>
 internal static class TaktStandardOperationTimeEffectiveResolver
 {
@@ -34,9 +34,9 @@ internal static class TaktStandardOperationTimeEffectiveResolver
     }
 
     /// <summary>
-    /// 汇总标准工序时间得到标准工时（分钟）；单行优先 ConvertedMinutes，为 0 时取 StandardMinutes
+    /// 汇总标准工时得到标准工时（分钟）；单行优先 ConvertedMinutes，为 0 时取 StandardMinutes
     /// </summary>
-    /// <param name="operationTimes">标准工序时间列表</param>
+    /// <param name="operationTimes">标准工时列表</param>
     /// <returns>标准工时(分钟)</returns>
     public static decimal CalculateStdMinutes(IReadOnlyList<TaktStandardOperationTime> operationTimes)
     {
@@ -54,9 +54,9 @@ internal static class TaktStandardOperationTimeEffectiveResolver
     }
 
     /// <summary>
-    /// 汇总标准工序时间得到标准点数；每行取 StandardShorts 累加
+    /// 汇总标准工时得到标准点数；每行取 StandardShorts 累加
     /// </summary>
-    /// <param name="operationTimes">标准工序时间列表（通常为每工作中心最新有效版本）</param>
+    /// <param name="operationTimes">标准工时列表（通常为每工作中心最新有效版本）</param>
     /// <returns>标准点数</returns>
     public static int CalculateStdShorts(IReadOnlyList<TaktStandardOperationTime> operationTimes)
     {

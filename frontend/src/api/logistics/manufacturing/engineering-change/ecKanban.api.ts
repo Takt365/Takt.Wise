@@ -12,7 +12,11 @@
 
 import request from '@/api/request';
 import type { TaktPagedResult } from '@/types/common.types';
-import type { EcKanban, EcKanbanQuery } from '@/types/logistics/manufacturing/engineering-change/ecKanban.types';
+import type {
+  EcKanban,
+  EcKanbanBoardStat,
+  EcKanbanQuery,
+} from '@/types/logistics/manufacturing/engineering-change/ecKanban.types';
 
 const TAKTECKANBANS_API_BASE = 'TaktEcKanbans';
 
@@ -24,10 +28,19 @@ export function getEcKanbanList(queryDto: EcKanbanQuery) {
 }
 
 /**
+ * 获取设变看板统计（看板页签）
+ * @param queryDto 查询条件
+ * @returns {Promise<EcKanbanBoardStat>} 统计结果
+ */
+export function getEcKanbanBoardStat(queryDto: EcKanbanQuery) {
+  return request.get<EcKanbanBoardStat>(`/${TAKTECKANBANS_API_BASE}/board-stat`, { params: queryDto });
+}
+
+/**
  * 获取设变看板详情
  */
-export function getEcKanbanByEcId(ecGijutsuId: string) {
-  return request.get<EcKanban>(`/${TAKTECKANBANS_API_BASE}/${ecGijutsuId}`);
+export function getEcKanbanByEcId(ecTeId: string) {
+  return request.get<EcKanban>(`/${TAKTECKANBANS_API_BASE}/${ecTeId}`);
 }
 
 

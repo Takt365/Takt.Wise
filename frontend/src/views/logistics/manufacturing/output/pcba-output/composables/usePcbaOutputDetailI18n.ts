@@ -158,7 +158,6 @@ export type PcbaOutputDetailField = keyof typeof PCBAOUTPUTDETAIL_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const PCBAOUTPUTDETAIL_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'prodOrderCode',
   'timePeriod',
   'teamCode',

@@ -57,7 +57,7 @@ public class TaktPostDto : TaktCompanyDtoBase
     public string DeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）
+    /// 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）
     /// </summary>
     public string PostCategory { get; set; } = string.Empty;
 
@@ -180,7 +180,7 @@ public class TaktPostQueryDto : TaktPagedQuery
     public string? DeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）
+    /// 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）
     /// </summary>
     public string? PostCategory { get; set; } = string.Empty;
 
@@ -324,9 +324,9 @@ public class TaktPostCreateDto
     public string DeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）
+    /// 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）
     /// </summary>
-    [Required(ErrorMessage = "岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）不能为空")]
+    [Required(ErrorMessage = "岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）不能为空")]
     public string PostCategory { get; set; } = string.Empty;
 
     /// <summary>
@@ -528,7 +528,7 @@ public class TaktPostTemplateDto
     public string? DeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）
+    /// 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）
     /// </summary>
     public string? PostCategory { get; set; } = string.Empty;
 
@@ -656,7 +656,7 @@ public class TaktPostImportDto
     public string? DeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）
+    /// 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）
     /// </summary>
     public string? PostCategory { get; set; } = string.Empty;
 
@@ -790,7 +790,7 @@ public class TaktPostExportDto
     public string DeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）
+    /// 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）
     /// </summary>
     public string PostCategory { get; set; } = string.Empty;
 

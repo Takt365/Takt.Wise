@@ -8,12 +8,12 @@
 <!-- ======================================== -->
 
 <template>
-  <div class="p-4 flex flex-col min-h-0 h-full">
+  <div class="ec-list-layout p-4 flex flex-col min-h-0 h-full">
     <!-- 左主右从 -->
     <TaktMasterDetailTableLr
       v-model:master-current="currentPage"
       v-model:master-page-size="pageSize"
-      v-model:selected-master-key="selectedMasterKey"
+      v-model:selecmed-master-key="selecmedMasterKey"
       class="min-h-0 flex-1"
       :master-columns="columns"
       :master-data-source="dataSource"
@@ -80,16 +80,6 @@
           v-model:value="advancedQueryForm.cultureCode"
           dict-type="sys_culture_code"
           :placeholder="pi.queryPh('cultureCode', 'select')"
-          allow-clear
-        />
-      </a-form-item>
-      </div>
-      <div v-show="isFieldVisible('plantCode')">
-      <a-form-item :label="pi.queryLabel('plantCode')">
-        <TaktSelect
-          v-model:value="advancedQueryForm.plantCode"
-          api-url="TaktPlants/options"
-          :placeholder="pi.queryPh('plantCode', 'select')"
           allow-clear
         />
       </a-form-item>
@@ -479,6 +469,7 @@
  * 设变来源只读列表页（查询/导出）
  * @module views/logistics/manufacturing/engineering-change/source-ec
  */
+import '../ec-list-layout.css'
 import { message } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
@@ -523,11 +514,11 @@ const pageSize = ref(getTaktDefaultPageSize())
 /** 分页 total */
 const total = ref(0)
 /** 工具栏单选时当前行 */
-const selectedRow = ref<SourceEcRowRecord | null>(null)
+const selecmedRow = ref<SourceEcRowRecord | null>(null)
 /** 表格多选行 */
-const selectedRows = ref<SourceEcRowRecord[]>([])
+const selecmedRows = ref<SourceEcRowRecord[]>([])
 /** 表格多选 row-key 集合 */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 
 /** 高级查询抽屉是否打开 */
 const advancedQueryVisible = ref(false)
@@ -587,7 +578,7 @@ const entityIdName = 'sourceEcId'
 /** Pinia：字典缓存（列表/查询 dict-type 渲染前预热） */
 const dictDataStore = useDictDataStore()
 /** 主表选中行上下文（右侧明细面板读取） */
-const { selectedMasterRow } = provideSourceEcMasterContext()
+const { selecmedMasterRow } = provideSourceEcMasterContext()
 
 /**
  * 构建列表/导出查询参数（空字符串与未填数值/日期不下发，避免后端 DateTime? 模型绑定 400；无参不补默认）
@@ -630,12 +621,12 @@ onMounted(async () => {
 })
 
 /** 主表行点击选中 key（左右主子表高亮） */
-const selectedMasterKey = ref('')
+const selecmedMasterKey = ref('')
 
 /** 同步主表选中行到右侧明细（子表由 *-panel watch 自动 reload） */
 function syncMasterSelection(record: SourceEcRowRecord | null) {
-  selectedMasterRow.value = record
-  selectedMasterKey.value = record ? getSourceEcId(record) : ''
+  selecmedMasterRow.value = record
+  selecmedMasterKey.value = record ? getSourceEcId(record) : ''
 }
 
 /**
@@ -645,9 +636,9 @@ function syncMasterSelection(record: SourceEcRowRecord | null) {
 function handleMasterSelect(record: Record<string, unknown>) {
   const row = record as unknown as SourceEcRowRecord
   const key = getSourceEcId(row)
-  selectedRowKeys.value = [key]
-  selectedRows.value = [row]
-  selectedRow.value = row
+  selecmedRowKeys.value = [key]
+  selecmedRows.value = [row]
+  selecmedRow.value = row
   syncMasterSelection(row)
 }
 
@@ -931,29 +922,29 @@ const getSourceEcField = (record: any, field: string): any => record?.[field]
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: SourceEcRowRecord[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
     if (rows.length === 1 && rows[0]) {
       syncMasterSelection(rows[0])
     } else if (rows.length === 0) {
       syncMasterSelection(null)
     }
   },
-  onSelect: (record: SourceEcRowRecord, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
+  onSelect: (record: SourceEcRowRecord, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
       syncMasterSelection(record)
-    } else if (selectedRow.value && getSourceEcId(selectedRow.value) === getSourceEcId(record)) {
-      selectedRow.value = null
+    } else if (selecmedRow.value && getSourceEcId(selecmedRow.value) === getSourceEcId(record)) {
+      selecmedRow.value = null
       syncMasterSelection(null)
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: SourceEcRowRecord[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
-    syncMasterSelection(selectedRow.value)
+  onSelectAll: (selecmed: boolean, selecmedRowsData: SourceEcRowRecord[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
+    syncMasterSelection(selecmedRow.value)
   }
 }))
 

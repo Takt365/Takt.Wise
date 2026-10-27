@@ -275,6 +275,9 @@ const SKIP_QUERY_FIELDS = new Set([
   'tenantCode',
   'companyCode',
   'sortOrder',
+  /** 工厂由仓储按当前公司 RelatedPlant / PlantCode 注入并过滤，查询栏不再重复 */
+  'plantCode',
+  'relatedPlant',
 ]);
 
 /** 多行文本字段名片段（不含 content：xxx内容走富文本，见 isRichTextContentField） */
@@ -283,7 +286,10 @@ const TEXTAREA_NAME_HINTS = ['remark', 'extfield', 'quote', 'description', 'note
 /** 非正文 Content 字段：类型/长度/哈希、目录、流程定义 JSON 快照 */
 const RICH_TEXT_CONTENT_NAME_EXCLUDE = /^(contentType|contentLength|contentHash|tableOfContents)$/i;
 
-/** 表单 Tabs 分页标准：每 Tab 最多字段数（满 Tab 时 2 列 × 5 行 = 10 项；不足 10 项时单列） */
+/**
+ * 表单 Tabs 分页标准：每 Tab 最多字段数（满 Tab 时 2 列 × 5 行 = 10 项；不足 10 项时单列）
+ * 必须与 frontend/src/utils/taktFormTabs.ts → TAKT_FORM_TAB_FIELDS_PER_TAB / TaktFormTabs 对齐
+ */
 const FORM_TAB_FIELDS_PER_TAB = 10;
 
 /**
@@ -1259,7 +1265,7 @@ const columns = computed<TableColumnsType>(() => [
 }
 
 /**
- * 单表 CRUD 是否使用 a-tabs 包裹（多 Tab 或主子表须保留）
+ * 单表 CRUD 是否使用 TaktFormTabs 包裹（多 Tab 或主子表须保留）
  * @param {number} tabCount
  * @param {boolean} hasMasterDetail
  * @param {boolean} hasExtraTabPanes
@@ -1310,7 +1316,7 @@ ${control}
 }
 
 /**
- * 生成表单 a-tab-pane 块列表（首 Tab：工厂+区域文化；末 Tab：公司/扩展/备注）
+ * 生成表单 a-tab-pane 块（包在 TaktFormTabs 内透传；分区与 taktFormTabs.ts 对齐）
  * @param {object} options
  * @param {object[]} options.formFields
  * @param {object} [options.formCodeControlOptions]
@@ -1378,17 +1384,17 @@ function buildGeneratedFormTemplateBody(options) {
   const extraTabs = extraTabPanes ? `\n${extraTabPanes}` : '';
   return {
     useFormTabs: true,
-    body: `    <a-tabs
+    body: `    <TaktFormTabs
       v-model:active-key="activeTab"
       class="${entityKebab}-form-tabs"
     >
 ${tabsHtml}${extraTabs}
-    </a-tabs>`,
+    </TaktFormTabs>`,
   };
 }
 
 /**
- * 表单使用 a-tabs 时的 scoped 样式块
+ * 表单使用 TaktFormTabs 时的 scoped 样式块
  * @param {boolean} useFormTabs
  * @returns {string}
  */
@@ -2073,6 +2079,7 @@ function resolveNumberingDocumentType(field, entityPascal) {
 
 /**
  * 表单插入 numberingRuleCode + 将业务编码标为 numberingCode（只读预览）
+ * @description CreateDto 若已含 NumberingRuleCode，须跳过，避免与注入项重复（重复项会走 entity.*.numberingrulecode 无翻译）
  * @param {object[]} fields
  * @param {string} [entityPascal]
  * @returns {object[]}
@@ -2085,6 +2092,10 @@ function applyTaktNumberingFormMeta(fields, entityPascal) {
   /** @type {object[]} */
   const out = [];
   for (const f of list) {
+    // Create/Update Dto 上的 NumberingRuleCode：由下方注入的 numberingRule 控件统一渲染
+    if (f.name === 'numberingRuleCode') {
+      continue;
+    }
     if (!isTaktNumberingAutoFormField(f)) {
       out.push(f);
       continue;
@@ -4934,7 +4945,7 @@ function buildVueImportResultUtilImportLine() {
   return "import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'\n";
 }
 
-/** 表单弹窗宽度 import（与 ec-gijutsu 来源导入/主表/附件弹窗一致） */
+/** 表单弹窗宽度 import（与 ec-te 来源导入/主表/附件弹窗一致） */
 const TAKT_FORM_MODAL_WIDTH_IMPORT =
   "import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'\n";
 

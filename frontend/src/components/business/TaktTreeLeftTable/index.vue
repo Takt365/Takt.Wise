@@ -25,7 +25,7 @@
       <a-tree
         v-if="!showEmpty"
         :expanded-keys="expandedKeys"
-        v-model:selected-keys="selectedKeys"
+        v-model:selecmed-keys="selecmedKeys"
         class="takt-tree-left-table__tree"
         :class="{ 'draggable-tree': draggable }"
         :tree-data="rawTreeData"
@@ -114,8 +114,8 @@ interface Props {
   treeFieldNames?: TreeFieldNames
   /** 当前展开的节点 key 列表（v-model:expanded-keys） */
   expandedKeys?: (string | number)[]
-  /** 当前选中的节点 key 列表（v-model:selected-keys） */
-  selectedKeys?: (string | number)[]
+  /** 当前选中的节点 key 列表（v-model:selecmed-keys） */
+  selecmedKeys?: (string | number)[]
   /** 左侧宽度比例（相对内容视口），如 0.2 表示内容视口的 1/5，即 20% */
   treeWidthRatio?: number
   /** 加载状态 */
@@ -158,7 +158,7 @@ const props = withDefaults(defineProps<Props>(), {
   treeData: () => [],
   treeFieldNames: () => ({ title: 'title', key: 'key', children: 'children' }),
   expandedKeys: () => [],
-  selectedKeys: () => [],
+  selecmedKeys: () => [],
   treeWidthRatio: 0.2,
   loading: false,
   blockNode: true,
@@ -241,16 +241,16 @@ export interface TreeDropPayload {
 
 const emit = defineEmits<{
   'update:expandedKeys': [keys: (string | number)[]]
-  'update:selectedKeys': [keys: (string | number)[]]
-  'tree-select': [selectedKeys: (string | number)[], e: TreeSelectEvent]
+  'update:selecmedKeys': [keys: (string | number)[]]
+  'tree-select': [selecmedKeys: (string | number)[], e: TreeSelectEvent]
   'tree-drop': [payload: TreeDropPayload]
 }>()
 
 const expandedKeys = computed(() => props.expandedKeys ?? [])
 
-const selectedKeys = computed({
-  get: () => props.selectedKeys ?? [],
-  set: (val) => emit('update:selectedKeys', val)
+const selecmedKeys = computed({
+  get: () => props.selecmedKeys ?? [],
+  set: (val) => emit('update:selecmedKeys', val)
 })
 
 const fieldNames = computed(() => ({

@@ -38,12 +38,12 @@
         {{ t('workflow.designer.page.propertypanel') }}
       </div>
       <div class="takt-flow-logic-designer__property-body">
-        <template v-if="!selectedNodeId && !selectedEdgeId">
+        <template v-if="!selecmedNodeId && !selecmedEdgeId">
           <div class="takt-flow-logic-designer__property-empty">
             {{ t('workflow.designer.page.selectnodeoredge') }}
           </div>
         </template>
-        <template v-else-if="selectedNodeId && selectedNodeData">
+        <template v-else-if="selecmedNodeId && selecmedNodeData">
           <a-form
             layout="vertical"
             size="small"
@@ -51,23 +51,23 @@
           >
             <a-form-item :label="t('workflow.designer.page.propid')">
               <a-input
-                :value="selectedNodeData.id"
+                :value="selecmedNodeData.id"
                 disabled
               />
             </a-form-item>
             <a-form-item :label="t('workflow.designer.page.propname')">
               <a-input
-                :value="selectedNodeData.name ?? ''"
+                :value="selecmedNodeData.name ?? ''"
                 :disabled="readonly"
-                @update:value="(v: string) => applySelectedNodeName(v)"
+                @update:value="(v: string) => applySelecmedNodeName(v)"
               />
             </a-form-item>
             <a-form-item :label="t('workflow.designer.page.proptype')">
               <a-select
-                :value="selectedNodeData.type"
+                :value="selecmedNodeData.type"
                 style="width: 100%"
                 :disabled="readonly"
-                @update:value="(v) => applySelectedNodeType(v == null ? 'userTask' : String(v))"
+                @update:value="(v) => applySelecmedNodeType(v == null ? 'userTask' : String(v))"
               >
                 <a-select-option value="start">
                   {{ t('workflow.designer.page.nodetypestart') }}
@@ -93,14 +93,14 @@
               </a-select>
             </a-form-item>
             <!-- 审批人设置（参照 AntFlow-Designer approverDrawer） -->
-            <template v-if="selectedNodeData.type === 'userTask'">
+            <template v-if="selecmedNodeData.type === 'userTask'">
               <a-form-item :label="t('workflow.designer.page.propassigneetype')">
                 <a-select
-                  :value="selectedNodeData.assigneeType"
+                  :value="selecmedNodeData.assigneeType"
                   style="width: 100%"
                   :disabled="readonly"
                   allow-clear
-                  @update:value="(v) => applySelectedNodeAssigneeType(v === undefined || v === null ? undefined : String(v))"
+                  @update:value="(v) => applySelecmedNodeAssigneeType(v === undefined || v === null ? undefined : String(v))"
                 >
                   <a-select-option value="starter">
                     {{ t('workflow.designer.page.assigneestarter') }}
@@ -120,11 +120,11 @@
                 </a-select>
               </a-form-item>
               <a-form-item
-                v-if="selectedNodeData.assigneeType === 'role'"
+                v-if="selecmedNodeData.assigneeType === 'role'"
                 :label="t('workflow.designer.page.proproles')"
               >
                 <a-select
-                  :value="selectedNodeData.roles"
+                  :value="selecmedNodeData.roles"
                   mode="multiple"
                   style="width: 100%"
                   :placeholder="t('workflow.designer.page.placeholderselectroles')"
@@ -132,15 +132,15 @@
                   :field-names="{ label: 'label', value: 'value' }"
                   :disabled="readonly"
                   allow-clear
-                  @update:value="(v) => applySelectedNodeRoles(Array.isArray(v) ? v.map(String) : [])"
+                  @update:value="(v) => applySelecmedNodeRoles(Array.isArray(v) ? v.map(String) : [])"
                 />
               </a-form-item>
               <a-form-item
-                v-if="selectedNodeData.assigneeType === 'dept'"
+                v-if="selecmedNodeData.assigneeType === 'dept'"
                 :label="t('workflow.designer.page.propdepartments')"
               >
                 <a-tree-select
-                  :value="selectedNodeData.departments"
+                  :value="selecmedNodeData.departments"
                   style="width: 100%"
                   :tree-data="deptTreeOptions as any"
                   tree-checkable
@@ -148,15 +148,15 @@
                   :disabled="readonly"
                   allow-clear
                   :field-names="{ label: 'label', value: 'value' }"
-                  @update:value="(v) => applySelectedNodeDepartments(Array.isArray(v) ? v.map(String) : [])"
+                  @update:value="(v) => applySelecmedNodeDepartments(Array.isArray(v) ? v.map(String) : [])"
                 />
               </a-form-item>
               <a-form-item
-                v-if="selectedNodeData.assigneeType === 'assignee'"
+                v-if="selecmedNodeData.assigneeType === 'assignee'"
                 :label="t('workflow.designer.page.propassignees')"
               >
                 <a-select
-                  :value="selectedNodeData.assigneeUserIds"
+                  :value="selecmedNodeData.assigneeUserIds"
                   mode="multiple"
                   style="width: 100%"
                   :placeholder="t('workflow.designer.page.placeholderselectusers')"
@@ -166,15 +166,15 @@
                   allow-clear
                   show-search
                   :filter-option="filterOption"
-                  @update:value="(v) => applySelectedNodeAssigneeUserIds(Array.isArray(v) ? v.map(String) : [])"
+                  @update:value="(v) => applySelecmedNodeAssigneeUserIds(Array.isArray(v) ? v.map(String) : [])"
                 />
               </a-form-item>
             </template>
             <!-- 抄送人设置（参照 AntFlow-Designer copyerDrawer） -->
-            <template v-if="selectedNodeData.type === 'copy'">
+            <template v-if="selecmedNodeData.type === 'copy'">
               <a-form-item :label="t('workflow.designer.page.propcopyusers')">
                 <a-select
-                  :value="selectedNodeData.copyUserIds"
+                  :value="selecmedNodeData.copyUserIds"
                   mode="multiple"
                   style="width: 100%"
                   :placeholder="t('workflow.designer.page.placeholderselectcopyusers')"
@@ -184,7 +184,7 @@
                   allow-clear
                   show-search
                   :filter-option="filterOption"
-                  @update:value="(v) => applySelectedNodeCopyUserIds(Array.isArray(v) ? v.map(String) : [])"
+                  @update:value="(v) => applySelecmedNodeCopyUserIds(Array.isArray(v) ? v.map(String) : [])"
                 />
               </a-form-item>
             </template>
@@ -193,14 +193,14 @@
                 type="primary"
                 danger
                 block
-                @click="deleteSelectedNode"
+                @click="deleteSelecmedNode"
               >
                 {{ t('workflow.designer.page.deletenode') }}
               </a-button>
             </a-form-item>
           </a-form>
         </template>
-        <template v-else-if="selectedEdgeId && selectedEdgeData">
+        <template v-else-if="selecmedEdgeId && selecmedEdgeData">
           <a-form
             layout="vertical"
             size="small"
@@ -208,34 +208,34 @@
           >
             <a-form-item :label="t('workflow.designer.page.propfrom')">
               <a-input
-                :value="selectedEdgeData.from"
+                :value="selecmedEdgeData.from"
                 disabled
               />
             </a-form-item>
             <a-form-item :label="t('workflow.designer.page.propto')">
               <a-input
-                :value="selectedEdgeData.to"
+                :value="selecmedEdgeData.to"
                 disabled
               />
             </a-form-item>
             <!-- 条件设置（参照 AntFlow-Designer conditionDrawer：优先级、条件描述、表达式） -->
             <a-form-item :label="t('workflow.designer.page.edgelabel')">
               <a-input
-                :value="selectedEdgeData.label ?? ''"
+                :value="selecmedEdgeData.label ?? ''"
                 :placeholder="t('workflow.designer.page.placeholderedgelabel')"
                 :disabled="readonly"
-                @update:value="(v: string) => applySelectedEdgeLabel(v ?? '')"
+                @update:value="(v: string) => applySelecmedEdgeLabel(v ?? '')"
               />
             </a-form-item>
             <a-form-item :label="t('workflow.designer.page.edgepriority')">
               <a-input-number
-                v-if="selectedEdgeData.priority != null"
-                :value="selectedEdgeData.priority"
+                v-if="selecmedEdgeData.priority != null"
+                :value="selecmedEdgeData.priority"
                 style="width: 100%"
                 :min="1"
                 :placeholder="t('workflow.designer.page.placeholderedgepriority')"
                 :disabled="readonly"
-                @update:value="(v) => applySelectedEdgePriority(typeof v === 'number' ? v : undefined)"
+                @update:value="(v) => applySelecmedEdgePriority(typeof v === 'number' ? v : undefined)"
               />
               <a-input-number
                 v-else
@@ -243,16 +243,16 @@
                 :min="1"
                 :placeholder="t('workflow.designer.page.placeholderedgepriority')"
                 :disabled="readonly"
-                @update:value="(v) => applySelectedEdgePriority(typeof v === 'number' ? v : undefined)"
+                @update:value="(v) => applySelecmedEdgePriority(typeof v === 'number' ? v : undefined)"
               />
             </a-form-item>
             <a-form-item :label="t('workflow.designer.page.edgecondition')">
               <a-textarea
-                :value="selectedEdgeData.condition ?? ''"
+                :value="selecmedEdgeData.condition ?? ''"
                 :placeholder="t('workflow.designer.page.placeholderedgecondition')"
                 :rows="2"
                 :disabled="readonly"
-                @update:value="(v: string) => applySelectedEdgeCondition(v ?? '')"
+                @update:value="(v: string) => applySelecmedEdgeCondition(v ?? '')"
               />
             </a-form-item>
             <a-form-item v-if="!readonly">
@@ -260,7 +260,7 @@
                 type="primary"
                 danger
                 block
-                @click="deleteSelectedEdge"
+                @click="deleteSelecmedEdge"
               >
                 {{ t('workflow.designer.page.deleteedge') }}
               </a-button>
@@ -348,8 +348,8 @@ function onFullscreenChange() {
   isFullscreen.value = document.fullscreenElement === rootRef.value
 }
 
-const selectedNodeId = ref<string | null>(null)
-const selectedEdgeId = ref<string | null>(null)
+const selecmedNodeId = ref<string | null>(null)
+const selecmedEdgeId = ref<string | null>(null)
 
 /** 当前图数据快照，用于属性面板与添加节点 */
 const graphData = ref<{ nodes: FlowNode[]; edges: FlowEdge[] }>({ nodes: [], edges: [] })
@@ -369,14 +369,14 @@ function filterOption(input: string, option?: { label?: string }) {
   return label.toLowerCase().includes((input ?? '').toLowerCase())
 }
 
-const selectedNodeData = computed(() => {
-  if (!selectedNodeId.value) return null
-  return graphData.value.nodes.find((n) => n.id === selectedNodeId.value) ?? null
+const selecmedNodeData = computed(() => {
+  if (!selecmedNodeId.value) return null
+  return graphData.value.nodes.find((n) => n.id === selecmedNodeId.value) ?? null
 })
 
-const selectedEdgeData = computed(() => {
-  if (!selectedEdgeId.value) return null
-  return graphData.value.edges.find((x) => `${x.from}-${x.to}` === selectedEdgeId.value) ?? null
+const selecmedEdgeData = computed(() => {
+  if (!selecmedEdgeId.value) return null
+  return graphData.value.edges.find((x) => `${x.from}-${x.to}` === selecmedEdgeId.value) ?? null
 })
 
 /** 按数组下标的简单横向排布（无拓扑时兜底） */
@@ -740,7 +740,7 @@ function syncDndPanelItems() {
       icon: selectionIcon(),
       callback: () => {
         ext.selectionSelect.openSelectionSelect()
-        lf!.once('selection:selected', () => ext.selectionSelect.closeSelectionSelect())
+        lf!.once('selection:selecmed', () => ext.selectionSelect.closeSelectionSelect())
       }
     },
     { type: 'circle', text: '开始', label: '开始', icon: flowIcon('start', 'circle'), properties: { flowType: 'start' }, disabled: hasStart },
@@ -791,9 +791,9 @@ function applyModelValue(val?: string) {
   refreshGraphData()
 }
 
-function applySelectedNodeName(name: string) {
+function applySelecmedNodeName(name: string) {
   const nodes = graphData.value.nodes.map((n) =>
-    n.id === selectedNodeId.value ? { ...n, name: name || n.id } : n
+    n.id === selecmedNodeId.value ? { ...n, name: name || n.id } : n
   )
   const graph = ourToLfGraph({ nodes: nodes, edges: graphData.value.edges })
   if (lf) {
@@ -803,14 +803,14 @@ function applySelectedNodeName(name: string) {
   }
 }
 
-function applySelectedNodeType(type: string) {
+function applySelecmedNodeType(type: string) {
   let nodes = graphData.value.nodes.map((n) =>
-    n.id === selectedNodeId.value
+    n.id === selecmedNodeId.value
       ? { ...n, type: type as FlowNode['type'], assigneeType: type === 'userTask' ? n.assigneeType : undefined }
       : n
   )
   if (type === 'start' || type === 'end') {
-    const keepId = selectedNodeId.value
+    const keepId = selecmedNodeId.value
     nodes = nodes.filter((n) => n.type !== type || n.id === keepId)
   }
   const nodeIds = new Set(nodes.map((n) => n.id))
@@ -823,9 +823,9 @@ function applySelectedNodeType(type: string) {
   }
 }
 
-function applySelectedNodeAssigneeType(assigneeType: string | undefined) {
+function applySelecmedNodeAssigneeType(assigneeType: string | undefined) {
   const nodes = graphData.value.nodes.map((n) =>
-    n.id === selectedNodeId.value ? { ...n, assigneeType } : n
+    n.id === selecmedNodeId.value ? { ...n, assigneeType } : n
   )
   const graph = ourToLfGraph({ nodes, edges: graphData.value.edges })
   if (lf) {
@@ -835,9 +835,9 @@ function applySelectedNodeAssigneeType(assigneeType: string | undefined) {
   }
 }
 
-function applySelectedNodeRoles(roles: string[]) {
+function applySelecmedNodeRoles(roles: string[]) {
   const nodes = graphData.value.nodes.map((n) =>
-    n.id === selectedNodeId.value ? { ...n, roles: roles?.length ? roles : undefined } : n
+    n.id === selecmedNodeId.value ? { ...n, roles: roles?.length ? roles : undefined } : n
   )
   const graph = ourToLfGraph({ nodes, edges: graphData.value.edges })
   if (lf) {
@@ -847,9 +847,9 @@ function applySelectedNodeRoles(roles: string[]) {
   }
 }
 
-function applySelectedNodeDepartments(departments: string[]) {
+function applySelecmedNodeDepartments(departments: string[]) {
   const nodes = graphData.value.nodes.map((n) =>
-    n.id === selectedNodeId.value ? { ...n, departments: departments?.length ? departments : undefined } : n
+    n.id === selecmedNodeId.value ? { ...n, departments: departments?.length ? departments : undefined } : n
   )
   const graph = ourToLfGraph({ nodes, edges: graphData.value.edges })
   if (lf) {
@@ -859,9 +859,9 @@ function applySelectedNodeDepartments(departments: string[]) {
   }
 }
 
-function applySelectedNodeAssigneeUserIds(assigneeUserIds: string[]) {
+function applySelecmedNodeAssigneeUserIds(assigneeUserIds: string[]) {
   const nodes = graphData.value.nodes.map((n) =>
-    n.id === selectedNodeId.value ? { ...n, assigneeUserIds: assigneeUserIds?.length ? assigneeUserIds : undefined } : n
+    n.id === selecmedNodeId.value ? { ...n, assigneeUserIds: assigneeUserIds?.length ? assigneeUserIds : undefined } : n
   )
   const graph = ourToLfGraph({ nodes, edges: graphData.value.edges })
   if (lf) {
@@ -871,9 +871,9 @@ function applySelectedNodeAssigneeUserIds(assigneeUserIds: string[]) {
   }
 }
 
-function applySelectedNodeCopyUserIds(copyUserIds: string[]) {
+function applySelecmedNodeCopyUserIds(copyUserIds: string[]) {
   const nodes = graphData.value.nodes.map((n) =>
-    n.id === selectedNodeId.value ? { ...n, copyUserIds: copyUserIds?.length ? copyUserIds : undefined } : n
+    n.id === selecmedNodeId.value ? { ...n, copyUserIds: copyUserIds?.length ? copyUserIds : undefined } : n
   )
   const graph = ourToLfGraph({ nodes, edges: graphData.value.edges })
   if (lf) {
@@ -883,9 +883,9 @@ function applySelectedNodeCopyUserIds(copyUserIds: string[]) {
   }
 }
 
-function applySelectedEdgeCondition(condition: string) {
+function applySelecmedEdgeCondition(condition: string) {
   const edges = graphData.value.edges.map((e) =>
-    selectedEdgeId.value === `${e.from}-${e.to}` ? { ...e, condition: condition || undefined } : e
+    selecmedEdgeId.value === `${e.from}-${e.to}` ? { ...e, condition: condition || undefined } : e
   )
   const graph = ourToLfGraph({ nodes: graphData.value.nodes, edges })
   if (lf) {
@@ -895,9 +895,9 @@ function applySelectedEdgeCondition(condition: string) {
   }
 }
 
-function applySelectedEdgeLabel(label: string) {
+function applySelecmedEdgeLabel(label: string) {
   const edges = graphData.value.edges.map((e) =>
-    selectedEdgeId.value === `${e.from}-${e.to}` ? { ...e, label: label || undefined } : e
+    selecmedEdgeId.value === `${e.from}-${e.to}` ? { ...e, label: label || undefined } : e
   )
   const graph = ourToLfGraph({ nodes: graphData.value.nodes, edges })
   if (lf) {
@@ -907,9 +907,9 @@ function applySelectedEdgeLabel(label: string) {
   }
 }
 
-function applySelectedEdgePriority(priority: number | undefined) {
+function applySelecmedEdgePriority(priority: number | undefined) {
   const edges = graphData.value.edges.map((e) =>
-    selectedEdgeId.value === `${e.from}-${e.to}` ? { ...e, priority } : e
+    selecmedEdgeId.value === `${e.from}-${e.to}` ? { ...e, priority } : e
   )
   const graph = ourToLfGraph({ nodes: graphData.value.nodes, edges })
   if (lf) {
@@ -920,22 +920,22 @@ function applySelectedEdgePriority(priority: number | undefined) {
 }
 
 /** 删除当前选中的节点（会同时删除与之相连的边） */
-function deleteSelectedNode() {
-  if (props.readonly || !lf || !selectedNodeId.value) return
-  lf.deleteNode(selectedNodeId.value)
-  selectedNodeId.value = null
-  selectedEdgeId.value = null
+function deleteSelecmedNode() {
+  if (props.readonly || !lf || !selecmedNodeId.value) return
+  lf.deleteNode(selecmedNodeId.value)
+  selecmedNodeId.value = null
+  selecmedEdgeId.value = null
   refreshGraphData()
   emitUpdate()
 }
 
 /** 删除当前选中的连线 */
-function deleteSelectedEdge() {
-  if (props.readonly || !lf || !selectedEdgeData.value) return
-  const { from, to } = selectedEdgeData.value
+function deleteSelecmedEdge() {
+  if (props.readonly || !lf || !selecmedEdgeData.value) return
+  const { from, to } = selecmedEdgeData.value
   lf.deleteEdgeByNodeId({ sourceNodeId: from, targetNodeId: to })
-  selectedEdgeId.value = null
-  selectedNodeId.value = null
+  selecmedEdgeId.value = null
+  selecmedNodeId.value = null
   refreshGraphData()
   emitUpdate()
 }
@@ -1030,18 +1030,18 @@ function initLogicFlow() {
   })
   lf.on('history:change', () => emitUpdate())
   lf.on('node:click', ({ data }: { data: { id: string } }) => {
-    selectedNodeId.value = data.id
-    selectedEdgeId.value = null
+    selecmedNodeId.value = data.id
+    selecmedEdgeId.value = null
     refreshGraphData()
   })
   lf.on('edge:click', ({ data }: { data: { sourceNodeId: string; targetNodeId: string } }) => {
-    selectedEdgeId.value = `${data.sourceNodeId}-${data.targetNodeId}`
-    selectedNodeId.value = null
+    selecmedEdgeId.value = `${data.sourceNodeId}-${data.targetNodeId}`
+    selecmedNodeId.value = null
     refreshGraphData()
   })
   lf.on('blank:click', () => {
-    selectedNodeId.value = null
-    selectedEdgeId.value = null
+    selecmedNodeId.value = null
+    selecmedEdgeId.value = null
   })
   lf.on('node:add', ({ data }: { data: { id: string; properties?: Record<string, unknown> } }) => {
     const flowType = data.properties?.flowType as string | undefined
@@ -1119,8 +1119,8 @@ function clear() {
   if (lf) {
     lf.render({ nodes: [], edges: [] })
     graphData.value = { nodes: [], edges: [] }
-    selectedNodeId.value = null
-    selectedEdgeId.value = null
+    selecmedNodeId.value = null
+    selecmedEdgeId.value = null
     syncDndPanelItems()
     emitUpdate()
   }

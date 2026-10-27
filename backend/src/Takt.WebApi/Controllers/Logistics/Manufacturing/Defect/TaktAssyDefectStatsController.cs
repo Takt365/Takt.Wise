@@ -40,7 +40,7 @@ public class TaktAssyDefectStatsController : TaktControllerBase
     /// </summary>
     /// <param name="queryDto">查询 DTO</param>
     /// <returns>组立不良统计</returns>
-    [TaktPermission("logistics:manufacturing:defect:assy:list", "组立不良统计")]
+    [TaktPermission("logistics:manufacturing:defect:mfg1:list", "组立不良统计")]
     [HttpGet("defect-stat")]
     public async Task<IActionResult> GetAssyDefectStatAsync([FromQuery] TaktDefectStatQueryDto queryDto)
     {

@@ -82,7 +82,6 @@ export type QuartzTaskField = keyof typeof QUARTZTASK_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const QUARTZTASK_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'taskCode',
   'taskName',
   'jobName',

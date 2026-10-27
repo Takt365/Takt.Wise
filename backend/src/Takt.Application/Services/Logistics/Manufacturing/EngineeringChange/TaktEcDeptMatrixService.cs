@@ -29,7 +29,7 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
     private readonly TaktEcExecPersistence _ecExecPersistence;
     private readonly TaktEcExecDeptAccess _ecExecDeptAccess;
     private readonly ITaktCompanyRepository<TaktEcDetail> _ecDetailRepository;
-    private readonly ITaktCompanyRepository<TaktEcGijutsu> _ecEngRepository;
+    private readonly ITaktCompanyRepository<TaktEcTe> _ecTeRepository;
     private readonly ITaktCompanyRepository<TaktEcAttachment> _ecAttachmentRepository;
 
     /// <summary>
@@ -38,7 +38,7 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
     /// <param name="ecExecPersistence">设变部门执行持久化</param>
     /// <param name="ecExecDeptAccess">设变部门执行跨表访问</param>
     /// <param name="ecDetailRepository">设变明细仓储</param>
-    /// <param name="ecEngRepository">设变技术课主表仓储</param>
+    /// <param name="ecTeRepository">设变技术课主表仓储</param>
     /// <param name="ecAttachmentRepository">设变附件仓储</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
@@ -46,7 +46,7 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
         TaktEcExecPersistence ecExecPersistence,
         TaktEcExecDeptAccess ecExecDeptAccess,
         ITaktCompanyRepository<TaktEcDetail> ecDetailRepository,
-        ITaktCompanyRepository<TaktEcGijutsu> ecEngRepository,
+        ITaktCompanyRepository<TaktEcTe> ecTeRepository,
         ITaktCompanyRepository<TaktEcAttachment> ecAttachmentRepository,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
@@ -55,7 +55,7 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
         _ecExecPersistence = ecExecPersistence;
         _ecExecDeptAccess = ecExecDeptAccess;
         _ecDetailRepository = ecDetailRepository;
-        _ecEngRepository = ecEngRepository;
+        _ecTeRepository = ecTeRepository;
         _ecAttachmentRepository = ecAttachmentRepository;
     }
 
@@ -84,7 +84,7 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
         var (start, end, statMonth) = TaktStatMonthRangeHelper.ResolveMonthRange(
             queryDto.EcEntryDateStart,
             queryDto.EcEntryDateEnd);
-        var ecIdsInRange = (await _ecEngRepository.GetListAsync(x =>
+        var ecIdsInRange = (await _ecTeRepository.GetListAsync(x =>
             x.TenantCode == CurrentTenantCode
             && x.CompanyCode == CurrentCompanyCode
             && x.EcEntryDate >= start
@@ -96,7 +96,7 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
             : await _ecDetailRepository.GetListAsync(x =>
                 x.TenantCode == CurrentTenantCode
                 && x.CompanyCode == CurrentCompanyCode
-                && ecIdsInRange.Contains(x.EcGijutsuId));
+                && ecIdsInRange.Contains(x.EcTeId));
         var detailIds = ecDetails.Select(x => x.Id).ToList();
         var ecDeptCount = 0;
         if (detailIds.Count > 0)
@@ -109,7 +109,7 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
         return new TaktEcExecStatDto
         {
             StatMonth = statMonth,
-            EcCount = ecDetails.Select(x => x.EcGijutsuId).Distinct().Count(),
+            EcCount = ecDetails.Select(x => x.EcTeId).Distinct().Count(),
             EcDetailCount = ecDetails.Count,
             EcExecCount = ecDeptCount,
             DeptCode = queryDto.DeptCode,
@@ -136,7 +136,7 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
             x => x.EcCode,
             false);
         var detailIds = details.Select(x => x.Id).ToList();
-        var ecIds = details.Select(x => x.EcGijutsuId).Distinct().ToList();
+        var ecIds = details.Select(x => x.EcTeId).Distinct().ToList();
         var deptGroups = await LoadTransposedDeptGroupsAsync(detailIds);
         var ecMap = await LoadEcMapAsync(ecIds);
         var rows = details.Select(detail => BuildTransposedRow(detail, ecMap, deptGroups)).ToList();
@@ -156,13 +156,13 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
     /// </summary>
     /// <param name="ecIds">设变主表 ID 列表</param>
     /// <returns>主表 ID 映射</returns>
-    private async Task<Dictionary<long, TaktEcGijutsu>> LoadEcMapAsync(IReadOnlyList<long> ecIds)
+    private async Task<Dictionary<long, TaktEcTe>> LoadEcMapAsync(IReadOnlyList<long> ecIds)
     {
         if (ecIds.Count == 0)
         {
-            return new Dictionary<long, TaktEcGijutsu>();
+            return new Dictionary<long, TaktEcTe>();
         }
-        var ecs = await _ecEngRepository.GetListAsync(x => ecIds.Contains(x.Id));
+        var ecs = await _ecTeRepository.GetListAsync(x => ecIds.Contains(x.Id));
         return ecs.ToDictionary(x => x.Id);
     }
 
@@ -189,10 +189,10 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
     /// <returns>转置行 DTO</returns>
     private static TaktEcExecTransposedDto BuildTransposedRow(
         TaktEcDetail detail,
-        IReadOnlyDictionary<long, TaktEcGijutsu> ecMap,
+        IReadOnlyDictionary<long, TaktEcTe> ecMap,
         IReadOnlyDictionary<long, List<object>> deptGroups)
     {
-        ecMap.TryGetValue(detail.EcGijutsuId, out var ec);
+        ecMap.TryGetValue(detail.EcTeId, out var ec);
         deptGroups.TryGetValue(detail.Id, out var deptList);
         deptList ??= [];
         var deptByCode = deptList.ToDictionary(TaktEcDeptEntityHelper.GetDeptCode, StringComparer.Ordinal);
@@ -205,7 +205,7 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
         return new TaktEcExecTransposedDto
         {
             EcDetailId = detail.Id,
-            EcGijutsuId = detail.EcGijutsuId,
+            EcTeId = detail.EcTeId,
             LineNumber = detail.LineNumber,
             EcIssueDate = ec?.EcIssueDate ?? default,
             EcLeader = ec?.EcLeader ?? string.Empty,
@@ -281,22 +281,22 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
         if (queryDto.EcIssueDateStart.HasValue)
         {
             var start = queryDto.EcIssueDateStart.Value;
-            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcGijutsu>()
-                .Where(ec => ec.Id == x.EcGijutsuId && ec.EcIssueDate >= start)
+            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcTe>()
+                .Where(ec => ec.Id == x.EcTeId && ec.EcIssueDate >= start)
                 .Any());
         }
         if (queryDto.EcIssueDateEnd.HasValue)
         {
             var end = queryDto.EcIssueDateEnd.Value;
-            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcGijutsu>()
-                .Where(ec => ec.Id == x.EcGijutsuId && ec.EcIssueDate <= end)
+            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcTe>()
+                .Where(ec => ec.Id == x.EcTeId && ec.EcIssueDate <= end)
                 .Any());
         }
         if (!string.IsNullOrEmpty(queryDto.EcLeader))
         {
             var leader = queryDto.EcLeader;
-            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcGijutsu>()
-                .Where(ec => ec.Id == x.EcGijutsuId && ec.EcLeader != null && ec.EcLeader.Contains(leader))
+            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcTe>()
+                .Where(ec => ec.Id == x.EcTeId && ec.EcLeader != null && ec.EcLeader.Contains(leader))
                 .Any());
         }
         if (!string.IsNullOrEmpty(queryDto.DeptCode) && queryDto.IsImplemented.HasValue)
@@ -305,16 +305,16 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
             var flag = queryDto.IsImplemented.Value;
             exp = deptCode switch
             {
-                TaktEcDeptCodes.Pmc => exp.And(x => SqlFunc.Subqueryable<TaktEcSeikan>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
-                TaktEcDeptCodes.Mp => exp.And(x => SqlFunc.Subqueryable<TaktEcKoubai>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
-                TaktEcDeptCodes.Iqc => exp.And(x => SqlFunc.Subqueryable<TaktEcUkeken>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
-                TaktEcDeptCodes.Mc => exp.And(x => SqlFunc.Subqueryable<TaktEcBukan>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
-                TaktEcDeptCodes.Pcba => exp.And(x =>
-                    SqlFunc.Subqueryable<TaktEcEmtl>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()
-                    || SqlFunc.Subqueryable<TaktEcSeizounika>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
-                TaktEcDeptCodes.Assy => exp.And(x => SqlFunc.Subqueryable<TaktEcSeizouikka>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
-                TaktEcDeptCodes.Qa => exp.And(x => SqlFunc.Subqueryable<TaktEcHinkan>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
-                TaktEcDeptCodes.Te => exp.And(x => SqlFunc.Subqueryable<TaktEcSeizougijutsu>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
+                TaktEcDeptCodes.Pc => exp.And(x => SqlFunc.Subqueryable<TaktEcPc>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()),
+                TaktEcDeptCodes.Pur => exp.And(x => SqlFunc.Subqueryable<TaktEcPur>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()),
+                TaktEcDeptCodes.Iqc => exp.And(x => SqlFunc.Subqueryable<TaktEcIqc>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()),
+                TaktEcDeptCodes.Mc => exp.And(x => SqlFunc.Subqueryable<TaktEcMc>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()),
+                TaktEcDeptCodes.Mfg2 => exp.And(x =>
+                    SqlFunc.Subqueryable<TaktEcMtl>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()
+                    || SqlFunc.Subqueryable<TaktEcMfg2>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()),
+                TaktEcDeptCodes.Mfg1 => exp.And(x => SqlFunc.Subqueryable<TaktEcMfg1>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()),
+                TaktEcDeptCodes.Qc => exp.And(x => SqlFunc.Subqueryable<TaktEcQc>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()),
+                TaktEcDeptCodes.Me => exp.And(x => SqlFunc.Subqueryable<TaktEcMe>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()),
                 _ => exp
             };
         }
@@ -332,36 +332,89 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
     // ========================================
 
     /// <summary>
-    /// 获取设变批次转置列表（分页）。先取生管/部管/SMT/制二/制一/品管执行记录指向的明细，再反查明细表展示
+    /// 获取设变批次转置列表（分页）。一行一个设变号，各部门列出自己的全部执行行
     /// </summary>
     /// <param name="queryDto">查询 DTO</param>
     /// <returns>批次转置分页结果</returns>
     public async Task<TaktEcExecBatchTransposedResultDto> GetEcBatchTransposedListAsync(TaktEcExecBatchTransposedQueryDto queryDto)
     {
         EnsureThreeLayerContext();
-        var predicate = BatchTransposedQueryExpression(queryDto);
-        var (details, total) = await _ecDetailRepository.GetPagedAsync(
-            predicate,
-            queryDto.PageIndex,
-            queryDto.PageSize,
-            x => x.EcCode,
-            false);
-        var detailIds = details.Select(x => x.Id).ToList();
-        var ecIds = details.Select(x => x.EcGijutsuId).Distinct().ToList();
-        var deptGroups = await LoadTransposedDeptGroupsAsync(detailIds);
+        var matched = await _ecDetailRepository.GetListAsync(BatchTransposedQueryExpression(queryDto));
+        var ecIds = matched.Select(x => x.EcTeId).Distinct().ToList();
+        var codes = matched
+            .Select(x => x.EcCode)
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        var pageIndex = Math.Max(1, queryDto.PageIndex);
+        var pageSize = Math.Max(1, queryDto.PageSize);
+        if (codes.Count == 0)
+        {
+            return new TaktEcExecBatchTransposedResultDto
+            {
+                Paged = TaktPagedResult<TaktEcExecBatchTransposedDto>.Create([], 0, pageIndex, pageSize),
+                StageCodeOrder = TaktEcBatchStageCodes.TransposedOrder,
+            };
+        }
         var ecMap = await LoadEcMapAsync(ecIds);
+        var details = await ListBatchDetailsAsync(ecIds);
         var attachmentGroups = await LoadAttachmentGroupsAsync(ecIds);
-        var rows = details.Select(detail =>
-            BuildBatchTransposedRow(detail, ecMap, deptGroups, attachmentGroups)).ToList();
+        var stageLines = await _ecExecDeptAccess.ListBatchStageLinesByEcCodesAsync(codes);
+        var linesByCode = stageLines
+            .Where(x => !string.IsNullOrWhiteSpace(x.EcCode))
+            .GroupBy(x => x.EcCode, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(x => x.Key, x => x.ToList(), StringComparer.OrdinalIgnoreCase);
+        var rows = new List<TaktEcExecBatchTransposedDto>();
+        foreach (var group in details
+            .Where(x => x.IsObsolete == 0 && !string.IsNullOrWhiteSpace(x.EcCode))
+            .GroupBy(x => x.EcCode, StringComparer.OrdinalIgnoreCase))
+        {
+            var sample = group.ToList();
+            var master = sample
+                .Select(x => ecMap.TryGetValue(x.EcTeId, out var ec) ? ec : null)
+                .Where(x => x != null)
+                .OrderByDescending(x => x!.EcIssueDate)
+                .FirstOrDefault();
+            var attachments = sample
+                .Select(x => x.EcTeId)
+                .Distinct()
+                .SelectMany(id => attachmentGroups.TryGetValue(id, out var list) ? list : [])
+                .ToList();
+            linesByCode.TryGetValue(group.Key, out var lines);
+            rows.Add(BuildBatchTransposedRow(master, sample, attachments, lines ?? []));
+        }
+        var ordered = rows
+            .OrderByDescending(x => x.EcIssueDate)
+            .ThenBy(x => x.EcCode, StringComparer.Ordinal)
+            .ToList();
+        var skip = checked((pageIndex - 1) * pageSize);
         return new TaktEcExecBatchTransposedResultDto
         {
             Paged = TaktPagedResult<TaktEcExecBatchTransposedDto>.Create(
-                rows,
-                total,
-                queryDto.PageIndex,
-                queryDto.PageSize),
+                ordered.Skip(skip).Take(pageSize).ToList(),
+                ordered.Count,
+                pageIndex,
+                pageSize),
             StageCodeOrder = TaktEcBatchStageCodes.TransposedOrder,
         };
+    }
+
+    /// <summary>
+    /// 分批读取未作废明细，供同一设变号汇总机种和成品
+    /// </summary>
+    /// <param name="ecTeIds">技术主表 ID</param>
+    /// <returns>明细</returns>
+    private async Task<List<TaktEcDetail>> ListBatchDetailsAsync(IReadOnlyList<long> ecTeIds)
+    {
+        var details = new List<TaktEcDetail>();
+        const int batchSize = 200;
+        for (var offset = 0; offset < ecTeIds.Count; offset += batchSize)
+        {
+            var chunk = ecTeIds.Skip(offset).Take(batchSize).ToList();
+            details.AddRange(await _ecDetailRepository.GetListAsync(x =>
+                chunk.Contains(x.EcTeId) && x.IsDeleted == 0 && x.IsObsolete == 0));
+        }
+        return details;
     }
 
     /// <summary>
@@ -375,111 +428,172 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
         {
             return new Dictionary<long, List<TaktEcAttachment>>();
         }
-        var attachments = await _ecAttachmentRepository.GetListAsync(x => ecIds.Contains(x.EcGijutsuId));
+        var attachments = await _ecAttachmentRepository.GetListAsync(x => ecIds.Contains(x.EcTeId));
         return attachments
-            .GroupBy(x => x.EcGijutsuId)
+            .GroupBy(x => x.EcTeId)
             .ToDictionary(g => g.Key, g => g.ToList());
     }
 
     /// <summary>
-    /// 合并明细、主表、附件与部门记录为批次转置行
+    /// 合并一个设变号的主表、明细、附件和各部门执行行
     /// </summary>
-    /// <param name="detail">设变明细</param>
-    /// <param name="ecMap">主表映射</param>
-    /// <param name="deptGroups">部门分组</param>
-    /// <param name="attachmentGroups">附件分组</param>
-    /// <returns>批次转置行 DTO</returns>
+    /// <param name="master">技术主表</param>
+    /// <param name="details">该设变号的明细</param>
+    /// <param name="attachments">附件</param>
+    /// <param name="lines">各部门执行行</param>
+    /// <returns>批次转置行</returns>
     private static TaktEcExecBatchTransposedDto BuildBatchTransposedRow(
-        TaktEcDetail detail,
-        IReadOnlyDictionary<long, TaktEcGijutsu> ecMap,
-        IReadOnlyDictionary<long, List<object>> deptGroups,
-        IReadOnlyDictionary<long, List<TaktEcAttachment>> attachmentGroups)
+        TaktEcTe? master,
+        IReadOnlyList<TaktEcDetail> details,
+        IReadOnlyList<TaktEcAttachment> attachments,
+        IReadOnlyList<TaktEcBatchStageLine> lines)
     {
-        ecMap.TryGetValue(detail.EcGijutsuId, out var ec);
-        deptGroups.TryGetValue(detail.Id, out var deptList);
-        deptList ??= [];
-        attachmentGroups.TryGetValue(detail.EcGijutsuId, out var attachments);
-        attachments ??= [];
-        var pmc = TaktEcDeptEntityHelper.FindByDeptCode(deptList, TaktEcDeptCodes.Pmc) as TaktEcSeikan;
-        var mc = TaktEcDeptEntityHelper.FindByDeptCode(deptList, TaktEcDeptCodes.Mc) as TaktEcBukan;
-        var smt = deptList.OfType<TaktEcEmtl>().FirstOrDefault();
-        var pcbaSeizounika = deptList.OfType<TaktEcSeizounika>().FirstOrDefault();
-        var assy = TaktEcDeptEntityHelper.FindByDeptCode(deptList, TaktEcDeptCodes.Assy) as TaktEcSeizouikka;
-        var qa = TaktEcDeptEntityHelper.FindByDeptCode(deptList, TaktEcDeptCodes.Qa);
-        var stageCells = new Dictionary<string, TaktEcExecBatchTransposedStageDto>(StringComparer.Ordinal)
+        var first = details[0];
+        var stageCells = new Dictionary<string, TaktEcExecBatchTransposedStageDto>(StringComparer.Ordinal);
+        foreach (var stageCode in TaktEcBatchStageCodes.TransposedOrder)
         {
-            [TaktEcBatchStageCodes.Scheduled] = MapBatchStageCell(
-                TaktEcBatchStageCodes.Scheduled,
-                pmc?.ScheduledDate,
-                pmc?.ScheduledBatch),
-            [TaktEcBatchStageCodes.Outbound] = MapBatchStageCell(
-                TaktEcBatchStageCodes.Outbound,
-                mc?.OutboundDate,
-                mc?.OutboundBatch),
-            [TaktEcBatchStageCodes.PcbaProduction] = MapBatchStageCell(
-                TaktEcBatchStageCodes.PcbaProduction,
-                smt?.OutboundDate ?? pcbaSeizounika?.ProductionDate,
-                smt?.OutboundBatch ?? pcbaSeizounika?.ImplementationBatch),
-            [TaktEcBatchStageCodes.AssyProduction] = MapBatchStageCell(
-                TaktEcBatchStageCodes.AssyProduction,
-                assy?.ProductionDate,
-                assy?.ProductionTeam),
-            [TaktEcBatchStageCodes.SampleInspection] = MapBatchStageCell(
-                TaktEcBatchStageCodes.SampleInspection,
-                TaktEcDeptEntityHelper.ResolveSampleInspectionDate(qa),
-                null),
-        };
+            var stageLines = BuildDeptDetailLines(stageCode, master, details, lines);
+            var head = stageLines.FirstOrDefault();
+            stageCells[stageCode] = new TaktEcExecBatchTransposedStageDto
+            {
+                StageCode = stageCode,
+                Lines = stageLines,
+                StageDate = head?.StageDate,
+                BatchNo = head?.BatchCode,
+                BatchCode = head?.BatchCode ?? string.Empty,
+                DateDisplayText = head?.DateDisplayText,
+            };
+        }
         return new TaktEcExecBatchTransposedDto
         {
-            EcDetailId = detail.Id,
-            EcGijutsuId = detail.EcGijutsuId,
-            LineNumber = detail.LineNumber,
-            EcCode = detail.EcCode,
-            TechnicalLiaisonNo = FindAttachmentDocCode(attachments, TaktEcAttachmentTypeConstants.Liaison),
-            PNo = FindAttachmentDocCode(attachments, TaktEcAttachmentTypeConstants.Fpp),
-            TcjLiaisonNo = FindAttachmentDocCode(attachments, TaktEcAttachmentTypeConstants.Tcj),
-            EcIssueDate = ec?.EcIssueDate ?? ec?.EcEntryDate ?? default,
-            EcModelCode = detail.EcModelCode,
-            EcNewMaterialCode = detail.EcNewMaterialCode,
-            EcEntryDate = ec?.EcEntryDate ?? default,
+            EcDetailId = first.Id,
+            EcTeId = master?.Id ?? first.EcTeId,
+            LineNumber = first.LineNumber,
+            EcCode = first.EcCode,
+            TechnicalLiaisonNo = JoinAttachmentDocCodes(attachments, TaktEcAttachmentTypeConstants.Liaison),
+            PNo = JoinAttachmentDocCodes(attachments, TaktEcAttachmentTypeConstants.Fpp),
+            TcjLiaisonNo = JoinAttachmentDocCodes(attachments, TaktEcAttachmentTypeConstants.Tcj),
+            EcIssueDate = master?.EcIssueDate ?? master?.EcEntryDate ?? default,
+            EcModelCode = JoinDistinct(details.Select(x => x.EcModelCode)),
+            EcNewMaterialCode = JoinDistinct(details.Select(x => x.EcRootMaterialCode)),
+            EcEntryDate = master?.EcEntryDate ?? default,
             StageCells = stageCells,
         };
     }
 
     /// <summary>
-    /// 按附件类别取文件编码
+    /// 一个部门按可见明细逐行展开。同一设变加机种的多条明细各自占一行，日期和批次取对应执行行
     /// </summary>
-    /// <param name="attachments">附件列表</param>
-    /// <param name="attachmentType">文件类别</param>
-    /// <returns>文件编码</returns>
-    private static string? FindAttachmentDocCode(IReadOnlyList<TaktEcAttachment> attachments, string attachmentType)
+    /// <param name="stageCode">阶段编码</param>
+    /// <param name="master">技术主表</param>
+    /// <param name="details">该设变号的明细</param>
+    /// <param name="lines">该设变号的执行行</param>
+    /// <returns>阶段行</returns>
+    private static List<TaktEcExecBatchTransposedStageLineDto> BuildDeptDetailLines(
+        string stageCode,
+        TaktEcTe? master,
+        IReadOnlyList<TaktEcDetail> details,
+        IReadOnlyList<TaktEcBatchStageLine> lines)
     {
-        return attachments
-            .FirstOrDefault(x => string.Equals(x.AttachmentType, attachmentType, StringComparison.OrdinalIgnoreCase))
-            ?.DocCode;
+        var deptCode = DeptCodeOfStage(stageCode);
+        var controlScope = master?.EcControlScope ?? TaktEcControlScopeConstants.ByModel;
+        var implScope = master?.EcImplScope ?? 0;
+        var execByGrain = new Dictionary<string, TaktEcBatchStageLine>(StringComparer.OrdinalIgnoreCase);
+        foreach (var line in lines.Where(x => string.Equals(x.StageCode, stageCode, StringComparison.Ordinal)))
+        {
+            var grain = line.EcGrainKey ?? string.Empty;
+            if (!execByGrain.ContainsKey(grain))
+            {
+                execByGrain[grain] = line;
+            }
+        }
+        var result = new List<TaktEcExecBatchTransposedStageLineDto>();
+        foreach (var detail in details.OrderBy(x => x.LineNumber).ThenBy(x => x.Id))
+        {
+            if (!TaktEcScopeRowGrain.IsEligible(detail, deptCode, implScope, null))
+            {
+                continue;
+            }
+            execByGrain.TryGetValue(TaktEcScopeRowGrain.BuildExecGrainKey(detail, deptCode, controlScope), out var exec);
+            var cell = TaktEcExecBatchTransposedHelper.BuildStageCell(stageCode, exec?.StageDate, exec?.BatchCode);
+            result.Add(new TaktEcExecBatchTransposedStageLineDto
+            {
+                StageDate = cell.StageDate,
+                DateDisplayText = cell.DateDisplayText,
+                BatchCode = cell.BatchCode ?? string.Empty,
+            });
+        }
+        return result;
     }
 
     /// <summary>
-    /// 映射批次阶段单元格 DTO
+    /// 批次阶段对应的执行部门
     /// </summary>
     /// <param name="stageCode">阶段编码</param>
-    /// <param name="stageDate">阶段日期</param>
-    /// <param name="batchCode">批次号</param>
-    /// <returns>阶段单元格 DTO</returns>
-    private static TaktEcExecBatchTransposedStageDto MapBatchStageCell(
-        string stageCode,
-        DateTime? stageDate,
-        string? batchCode)
+    /// <returns>部门编码</returns>
+    private static string DeptCodeOfStage(string stageCode)
     {
-        var cell = TaktEcExecBatchTransposedHelper.BuildStageCell(stageCode, stageDate, batchCode);
-        return new TaktEcExecBatchTransposedStageDto
+        if (stageCode == TaktEcBatchStageCodes.Scheduled)
         {
-            StageCode = cell.StageCode,
-            StageDate = cell.StageDate,
-            BatchNo = cell.BatchCode,
-            BatchCode = cell.BatchCode ?? string.Empty,
-            DateDisplayText = cell.DateDisplayText,
-        };
+            return TaktEcDeptCodes.Pc;
+        }
+        if (stageCode == TaktEcBatchStageCodes.PurchaseOrder)
+        {
+            return TaktEcDeptCodes.Pur;
+        }
+        if (stageCode == TaktEcBatchStageCodes.IncomingInspection)
+        {
+            return TaktEcDeptCodes.Iqc;
+        }
+        if (stageCode == TaktEcBatchStageCodes.Outbound)
+        {
+            return TaktEcDeptCodes.Mc;
+        }
+        if (stageCode == TaktEcBatchStageCodes.ElectronicOutbound)
+        {
+            return TaktEcDeptCodes.Mtl;
+        }
+        if (stageCode == TaktEcBatchStageCodes.Mfg2Production)
+        {
+            return TaktEcDeptCodes.Mfg2;
+        }
+        if (stageCode == TaktEcBatchStageCodes.Mfg1Production)
+        {
+            return TaktEcDeptCodes.Mfg1;
+        }
+        if (stageCode == TaktEcBatchStageCodes.SampleInspection)
+        {
+            return TaktEcDeptCodes.Qc;
+        }
+        return TaktEcDeptCodes.Me;
+    }
+
+    /// <summary>
+    /// 同一类别的文件编码去重后用顿号连接
+    /// </summary>
+    /// <param name="attachments">附件</param>
+    /// <param name="attachmentType">文件类别</param>
+    /// <returns>文件编码</returns>
+    private static string JoinAttachmentDocCodes(IReadOnlyList<TaktEcAttachment> attachments, string attachmentType)
+    {
+        return JoinDistinct(attachments
+            .Where(x => x.IsObsolete == 0 && string.Equals(x.AttachmentType, attachmentType, StringComparison.OrdinalIgnoreCase))
+            .Select(x => x.DocCode));
+    }
+
+    /// <summary>
+    /// 去重后用顿号连接
+    /// </summary>
+    /// <param name="values">文本</param>
+    /// <returns>展示文本</returns>
+    private static string JoinDistinct(IEnumerable<string?> values)
+    {
+        return string.Join(
+            "、",
+            values.Where(x => !string.IsNullOrWhiteSpace(x))
+                .Select(x => x!.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(x => x, StringComparer.Ordinal));
     }
 
     /// <summary>
@@ -490,13 +604,22 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
     private static Expression<Func<TaktEcDetail, bool>> BatchTransposedQueryExpression(TaktEcExecBatchTransposedQueryDto queryDto)
     {
         var exp = Expressionable.Create<TaktEcDetail>();
+        exp = exp.And(x => SqlFunc.Subqueryable<TaktEcTe>()
+            .Where(ec => ec.Id == x.EcTeId
+                && ec.IsDeleted == 0
+                && (ec.EcImplScope == TaktEcScopeConstants.AllDestination
+                    || ec.EcImplScope == TaktEcScopeConstants.MaterialControl))
+            .Any());
         exp = exp.And(x =>
-            SqlFunc.Subqueryable<TaktEcSeikan>().Where(d => d.EcDetailId == x.Id && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
-            || SqlFunc.Subqueryable<TaktEcBukan>().Where(d => d.EcDetailId == x.Id && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
-            || SqlFunc.Subqueryable<TaktEcEmtl>().Where(d => d.EcDetailId == x.Id && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
-            || SqlFunc.Subqueryable<TaktEcSeizounika>().Where(d => d.EcDetailId == x.Id && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
-            || SqlFunc.Subqueryable<TaktEcSeizouikka>().Where(d => d.EcDetailId == x.Id && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
-            || SqlFunc.Subqueryable<TaktEcHinkan>().Where(d => d.EcDetailId == x.Id && d.IsDeleted == 0 && d.IsObsolete == 0).Any());
+            SqlFunc.Subqueryable<TaktEcPur>().Where(d => d.EcCode == x.EcCode && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
+            || SqlFunc.Subqueryable<TaktEcPc>().Where(d => d.EcCode == x.EcCode && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
+            || SqlFunc.Subqueryable<TaktEcIqc>().Where(d => d.EcCode == x.EcCode && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
+            || SqlFunc.Subqueryable<TaktEcMc>().Where(d => d.EcCode == x.EcCode && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
+            || SqlFunc.Subqueryable<TaktEcMtl>().Where(d => d.EcCode == x.EcCode && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
+            || SqlFunc.Subqueryable<TaktEcMfg2>().Where(d => d.EcCode == x.EcCode && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
+            || SqlFunc.Subqueryable<TaktEcMfg1>().Where(d => d.EcCode == x.EcCode && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
+            || SqlFunc.Subqueryable<TaktEcQc>().Where(d => d.EcCode == x.EcCode && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
+            || SqlFunc.Subqueryable<TaktEcMe>().Where(d => d.EcCode == x.EcCode && d.IsDeleted == 0 && d.IsObsolete == 0).Any());
         if (!string.IsNullOrEmpty(queryDto.KeyWords))
         {
             var keywords = queryDto.KeyWords;
@@ -521,35 +644,55 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
         if (queryDto.EcIssueDateStart.HasValue)
         {
             var start = queryDto.EcIssueDateStart.Value;
-            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcGijutsu>()
-                .Where(ec => ec.Id == x.EcGijutsuId && ec.EcIssueDate >= start)
+            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcTe>()
+                .Where(ec => ec.Id == x.EcTeId && ec.EcIssueDate >= start)
                 .Any());
         }
         if (queryDto.EcIssueDateEnd.HasValue)
         {
             var end = queryDto.EcIssueDateEnd.Value;
-            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcGijutsu>()
-                .Where(ec => ec.Id == x.EcGijutsuId && ec.EcIssueDate <= end)
+            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcTe>()
+                .Where(ec => ec.Id == x.EcTeId && ec.EcIssueDate <= end)
+                .Any());
+        }
+        if (queryDto.EcEntryDateStart.HasValue)
+        {
+            var entryStart = queryDto.EcEntryDateStart.Value;
+            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcTe>()
+                .Where(ec => ec.Id == x.EcTeId && ec.EcEntryDate >= entryStart)
+                .Any());
+        }
+        if (queryDto.EcEntryDateEnd.HasValue)
+        {
+            var entryEnd = queryDto.EcEntryDateEnd.Value;
+            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcTe>()
+                .Where(ec => ec.Id == x.EcTeId && ec.EcEntryDate <= entryEnd)
                 .Any());
         }
         if (!string.IsNullOrEmpty(queryDto.BatchCode))
         {
             var batchCode = queryDto.BatchCode;
             exp = exp.And(x =>
-                SqlFunc.Subqueryable<TaktEcSeikan>()
-                    .Where(d => d.EcDetailId == x.Id && d.ScheduledBatch != null && d.ScheduledBatch.Contains(batchCode))
+                SqlFunc.Subqueryable<TaktEcPur>()
+                    .Where(d => d.EcCode == x.EcCode && d.PurchaseOrderCode != null && d.PurchaseOrderCode.Contains(batchCode))
                     .Any()
-                || SqlFunc.Subqueryable<TaktEcBukan>()
-                    .Where(d => d.EcDetailId == x.Id && d.OutboundBatch != null && d.OutboundBatch.Contains(batchCode))
+                || SqlFunc.Subqueryable<TaktEcPc>()
+                    .Where(d => d.EcCode == x.EcCode && d.ScheduledBatch != null && d.ScheduledBatch.Contains(batchCode))
                     .Any()
-                || SqlFunc.Subqueryable<TaktEcEmtl>()
-                    .Where(d => d.EcDetailId == x.Id && d.OutboundBatch != null && d.OutboundBatch.Contains(batchCode))
+                || SqlFunc.Subqueryable<TaktEcIqc>()
+                    .Where(d => d.EcCode == x.EcCode && d.IqcOrderCode != null && d.IqcOrderCode.Contains(batchCode))
                     .Any()
-                || SqlFunc.Subqueryable<TaktEcSeizounika>()
-                    .Where(d => d.EcDetailId == x.Id && d.ImplementationBatch != null && d.ImplementationBatch.Contains(batchCode))
+                || SqlFunc.Subqueryable<TaktEcMc>()
+                    .Where(d => d.EcCode == x.EcCode && d.OutboundBatch != null && d.OutboundBatch.Contains(batchCode))
                     .Any()
-                || SqlFunc.Subqueryable<TaktEcSeizouikka>()
-                    .Where(d => d.EcDetailId == x.Id && d.ProductionTeam != null && d.ProductionTeam.Contains(batchCode))
+                || SqlFunc.Subqueryable<TaktEcMtl>()
+                    .Where(d => d.EcCode == x.EcCode && d.OutboundBatch != null && d.OutboundBatch.Contains(batchCode))
+                    .Any()
+                || SqlFunc.Subqueryable<TaktEcMfg2>()
+                    .Where(d => d.EcCode == x.EcCode && d.ImplementationBatch != null && d.ImplementationBatch.Contains(batchCode))
+                    .Any()
+                || SqlFunc.Subqueryable<TaktEcMfg1>()
+                    .Where(d => d.EcCode == x.EcCode && d.ImplementationBatch != null && d.ImplementationBatch.Contains(batchCode))
                     .Any());
         }
         return exp.ToExpression();

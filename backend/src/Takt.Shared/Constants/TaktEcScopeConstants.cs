@@ -4,7 +4,7 @@
 // 文件名称：TaktEcScopeConstants.cs
 // 创建时间：2026-08-26
 // 创建人：Takt365(Cursor AI)
-// 功能描述：设变实施范围 logistics_manufacturing_ec_scope_category 与执行生成判定常量
+// 功能描述：实施范围 logistics_manufacturing_ec_impl_scope_category 与执行生成判定常量
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -13,9 +13,9 @@
 namespace Takt.Shared.Constants;
 
 /// <summary>
-/// 设变实施范围（字典 logistics_manufacturing_ec_scope_category）及部门执行生成判定常量。
+/// 实施范围（字典 logistics_manufacturing_ec_impl_scope_category）及部门执行生成判定常量。
 /// 执行内容：全仕向空白待填；内部自动「实施范围-内部」；技术自动「实施范围-技术」；部管时制一/制二/品管自动「实施范围-部管」。根物料编码组全部停产写「全仕向:按机种:EOL」这类文案；整组都不是 FERT 时后缀改为工厂物料类型（如 HALB、ROH）。实施范围与部门实施取实际值，段间用英文冒号。
-/// 部门去重粒度见 TaktEcDeptScopeConstants（1=按成品，2=按机种，3=按设变）。
+/// 部门去重粒度见 TaktEcControlScopeConstants（1=按成品，2=按机种，3=按设变）。
 /// </summary>
 public static class TaktEcScopeConstants
 {
@@ -97,11 +97,11 @@ public static class TaktEcScopeConstants
     /// <summary>
     /// 实施范围显示名（全仕向 / 部管 / 内部 / 技术）
     /// </summary>
-    /// <param name="ecScope">设变实施范围</param>
+    /// <param name="ecImplScope">实施范围</param>
     /// <returns>显示名</returns>
-    public static string ResolveScopeLabel(int ecScope)
+    public static string ResolveScopeLabel(int ecImplScope)
     {
-        return ecScope switch
+        return ecImplScope switch
         {
             AllDestination => "全仕向",
             MaterialControl => "部管",
@@ -112,16 +112,16 @@ public static class TaktEcScopeConstants
     }
 
     /// <summary>
-    /// 执行内容：实施范围:部门实施:后缀。段间为英文冒号。后缀为 EOL 或物料类型（HALB、ROH）。
+    /// 执行内容：实施范围:部门实施:后缀。段间为英文冒号。后缀为 EOL、物料类型（HALB、ROH）或 N/A。
     /// </summary>
-    /// <param name="ecScope">设变实施范围</param>
-    /// <param name="ecDeptScope">部门实施范围</param>
+    /// <param name="ecImplScope">实施范围</param>
+    /// <param name="ecControlScope">部门实施范围</param>
     /// <param name="suffix">EOL 或物料类型</param>
     /// <returns>执行内容</returns>
-    public static string FormatScopeDeptExecContent(int ecScope, int ecDeptScope, string suffix)
+    public static string FormatScopeDeptExecContent(int ecImplScope, int ecControlScope, string suffix)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(suffix);
-        return $"{ResolveScopeLabel(ecScope)}:{TaktEcDeptScopeConstants.ResolveLabel(ecDeptScope)}:{suffix.Trim()}";
+        return $"{ResolveScopeLabel(ecImplScope)}:{TaktEcControlScopeConstants.ResolveLabel(ecControlScope)}:{suffix.Trim()}";
     }
 
     /// <summary>
@@ -227,6 +227,11 @@ public static class TaktEcScopeConstants
     public const string EolExecContent = "EOL";
 
     /// <summary>
+    /// 尚未填写时的执行内容后缀
+    /// </summary>
+    public const string NotApplicableExecSuffix = "N/A";
+
+    /// <summary>
     /// 是否为停产自动文案（「全仕向:按机种:EOL」）
     /// </summary>
     /// <param name="content">执行内容</param>
@@ -269,7 +274,7 @@ public static class TaktEcScopeConstants
         }
         return deptCode switch
         {
-            TaktEcDeptCodes.Mp => true,
+            TaktEcDeptCodes.Pur => true,
             TaktEcDeptCodes.Iqc => true,
             TaktEcDeptCodes.Mc => true,
             _ => false
@@ -323,7 +328,7 @@ public static class TaktEcScopeConstants
     /// <param name="purchaseType">新采购类型</param>
     /// <param name="newWarehouse">新品仓库</param>
     /// <returns>是否部管课可见待填</returns>
-    public static bool IsBukanVisible(string? purchaseType, string? newWarehouse)
+    public static bool IsMcVisible(string? purchaseType, string? newWarehouse)
     {
         return IsExternalPurchaseType(purchaseType) && !IsPcbaGateWarehouse(newWarehouse);
     }
@@ -351,28 +356,28 @@ public static class TaktEcScopeConstants
 
     /// <summary>
     /// 该部门是否整行自动填写。停产判断不在此处：调用方须先按 DiscontinuedStatus（空或 Z0 为在产，其余为停产）写入 EOL。
-    /// 全仕向不自动；制技始终不自动（按机种）；内部/技术除制技外自动；部管时仅非待填部门（制一/制二/品管）自动。
+    /// 全仕向不自动；制技始终不自动（按机种）；内部/技术除制技外自动；部管时仅非待填部门（制一/制二/品管）自动。自动填写时实施标记写已实施。
     /// </summary>
-    /// <param name="ecScope">实施范围</param>
+    /// <param name="ecImplScope">实施范围</param>
     /// <param name="deptCode">部门编码</param>
     /// <param name="purchaseType">新采购类型（部管待填名单不使用）</param>
     /// <param name="newWarehouse">新品仓库（部管待填名单不使用）</param>
-    /// <returns>该部门在此实施范围下由系统填写执行内容；是否实施不由系统写成已实施</returns>
+    /// <returns>该部门在此实施范围下由系统填写执行内容，并写成已实施</returns>
     public static bool ShouldAutoCompleteExec(
-        int ecScope,
+        int ecImplScope,
         string? deptCode,
         string? purchaseType = null,
         string? newWarehouse = null)
     {
-        if (ecScope == AllDestination || deptCode == TaktEcDeptCodes.Te)
+        if (ecImplScope == AllDestination || deptCode == TaktEcDeptCodes.Me)
         {
             return false;
         }
-        if (ecScope == Internal || ecScope == Technical)
+        if (ecImplScope == Internal || ecImplScope == Technical)
         {
             return true;
         }
-        if (ecScope == MaterialControl)
+        if (ecImplScope == MaterialControl)
         {
             return !IsMaterialControlNeedFillDept(deptCode, purchaseType, newWarehouse);
         }
@@ -382,11 +387,11 @@ public static class TaktEcScopeConstants
     /// <summary>
     /// 按实施范围解析自动执行内容：内部→「实施范围-内部」；技术→「实施范围-技术」；部管→「实施范围-部管」（仅自动部门使用）；全仕向→空
     /// </summary>
-    /// <param name="ecScope">设变实施范围</param>
+    /// <param name="ecImplScope">实施范围</param>
     /// <returns>自动填写文案；按成品/按机种返回空串</returns>
-    public static string ResolveAutoExecContent(int ecScope)
+    public static string ResolveAutoExecContent(int ecImplScope)
     {
-        return ecScope switch
+        return ecImplScope switch
         {
             AllDestination => string.Empty,
             MaterialControl => MaterialControlExecContent,
@@ -399,12 +404,12 @@ public static class TaktEcScopeConstants
     /// <summary>
     /// 全仕向，或部管（部分部门仍人工填写）时，允许写入「无关」类执行内容
     /// </summary>
-    /// <param name="ecScope">设变实施范围</param>
+    /// <param name="ecImplScope">实施范围</param>
     /// <returns>是否允许无关补齐</returns>
-    public static bool AllowsNotRelatedFill(int ecScope)
+    public static bool AllowsNotRelatedFill(int ecImplScope)
     {
-        return ecScope == AllDestination
-            || ecScope == MaterialControl;
+        return ecImplScope == AllDestination
+            || ecImplScope == MaterialControl;
     }
 
     /// <summary>
@@ -427,11 +432,11 @@ public static class TaktEcScopeConstants
         }
         return deptCode switch
         {
-            TaktEcDeptCodes.Pmc => true,
-            TaktEcDeptCodes.Mp => true,
+            TaktEcDeptCodes.Pc => true,
+            TaktEcDeptCodes.Pur => true,
             TaktEcDeptCodes.Iqc => true,
             TaktEcDeptCodes.Mc => true,
-            TaktEcDeptCodes.Smt => true,
+            TaktEcDeptCodes.Mtl => true,
             _ => false
         };
     }
@@ -455,9 +460,9 @@ public static class TaktEcScopeConstants
             || string.Equals(value, MaterialControlExecContent, StringComparison.Ordinal)
             || string.Equals(value, InternalExecContent, StringComparison.Ordinal)
             || string.Equals(value, TechnicalExecContent, StringComparison.Ordinal)
-            || string.Equals(value, TaktEcKoubaiConstants.NotPurchasingRelatedExecContent, StringComparison.Ordinal)
-            || string.Equals(value, TaktEcUkekenConstants.NotRelatedToIqcExecContent, StringComparison.Ordinal)
-            || string.Equals(value, TaktEcBukanConstants.NotRelatedToMaterialControlExecContent, StringComparison.Ordinal)
+            || string.Equals(value, TaktEcPurConstants.NotPurchasingRelatedExecContent, StringComparison.Ordinal)
+            || string.Equals(value, TaktEcIqcConstants.NotRelatedToIqcExecContent, StringComparison.Ordinal)
+            || string.Equals(value, TaktEcMcConstants.NotRelatedToMaterialControlExecContent, StringComparison.Ordinal)
             || IsDeptMaterialTypeExecContent(value)
             || IsEolExecContent(value);
     }

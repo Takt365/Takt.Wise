@@ -4,7 +4,7 @@
 // 文件名称：ecMonthlyTrend.api.ts
 // 创建时间：2026-07-18
 // 创建人：Takt365(Cursor AI)
-// 功能描述：月设变推移转置分析 API
+// 功能描述：设变推移转置分析 API
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -46,7 +46,7 @@ export function getEcMonthlyTrendEcCodeOptionsUrl(): string {
 }
 
 /**
- * 月设变推移分析
+ * 设变推移分析
  * @param {EcMonthlyTrendQuery} queryDto 查询条件
  * @returns {Promise<EcMonthlyTrendResult>} 转置结果
  */
@@ -61,7 +61,7 @@ export function getEcMonthlyTrendAnalysis(
 }
 
 /**
- * 导出月设变推移分析
+ * 导出设变推移分析
  * @param {EcMonthlyTrendQuery} query 查询条件
  * @param {string} [sheetName] 工作表名
  * @param {string} [exportName] 导出文件名

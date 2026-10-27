@@ -67,7 +67,7 @@ public sealed class TaktBomMaterialZeroPriceMovingBackfillJobHandler : ITaktQuar
         context.ExecuteMessage =
             $"零价格回填完成（月份 {result.ProcessedMonth}）：组件 {result.ComponentProcessedCount}，扫描 {result.ScannedRowCount}，更新 {result.UpdatedRowCount}，无建议价跳过 {result.SkippedNoPriceCount}，未变 {result.UnchangedRowCount}，产品月成本 {result.ProductMonthlyCostUpdatedCount}，机种月均 {result.ModelMonthlyAverageUpdatedCount}{itemTable}";
         TaktLogger.Information(
-            "[BomZeroPriceMpBk] Quartz 完成 Month={Month} Components={Components} Scanned={Scanned} Updated={Updated} SkippedNoPrice={Skipped} Unchanged={Unchanged} Pmc={Pmc} ModelAvg={ModelAvg} Tenant={Tenant} Company={Company}",
+            "[BomZeroPriceMpBk] Quartz 完成 Month={Month} Components={Components} Scanned={Scanned} Updated={Updated} SkippedNoPrice={Skipped} Unchanged={Unchanged} Pc={Pc} ModelAvg={ModelAvg} Tenant={Tenant} Company={Company}",
             result.ProcessedMonth,
             result.ComponentProcessedCount,
             result.ScannedRowCount,

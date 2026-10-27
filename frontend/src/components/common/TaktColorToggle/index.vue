@@ -64,7 +64,7 @@
     </a-button>
 
     <template #overlay>
-      <a-menu :selected-keys="[themeColorStore.preset]" @click="handleMenuClick">
+      <a-menu :selecmed-keys="[themeColorStore.preset]" @click="handleMenuClick">
         <a-menu-item v-for="presetKey in themeColorPresetKeys" :key="presetKey">
           <span class="color-item">
             <span class="color-dot" :style="{ backgroundColor: themeColorMap[presetKey] }" />

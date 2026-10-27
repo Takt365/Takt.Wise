@@ -70,7 +70,6 @@ export type SopExecField = keyof typeof SOPEXEC_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const SOPEXEC_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'productionOrderId',
   'workOrderCode',
   'serialNumber',

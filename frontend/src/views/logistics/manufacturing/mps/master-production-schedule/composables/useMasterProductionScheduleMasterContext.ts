@@ -15,7 +15,7 @@ export type MasterProductionScheduleRowRecord = MasterProductionSchedule | Recor
 /** 主表选中行上下文 */
 export interface MasterProductionScheduleMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<MasterProductionScheduleRowRecord | null>
+  selecmedMasterRow: Ref<MasterProductionScheduleRowRecord | null>
 }
 
 const masterProductionScheduleMasterContextKey: InjectionKey<MasterProductionScheduleMasterContext> = Symbol('master-production-scheduleMasterContext')
@@ -25,8 +25,8 @@ const masterProductionScheduleMasterContextKey: InjectionKey<MasterProductionSch
  * @returns {MasterProductionScheduleMasterContext} 主表上下文
  */
 export function provideMasterProductionScheduleMasterContext(): MasterProductionScheduleMasterContext {
-  const selectedMasterRow = ref<MasterProductionScheduleRowRecord | null>(null)
-  const ctx: MasterProductionScheduleMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<MasterProductionScheduleRowRecord | null>(null)
+  const ctx: MasterProductionScheduleMasterContext = { selecmedMasterRow }
   provide(masterProductionScheduleMasterContextKey, ctx)
   return ctx
 }

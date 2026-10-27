@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Foundation
 // 文件名称：TaktNumberingI18nSeedData.cs
-// 创建时间：2026-10-14
+// 创建时间：2026-10-27
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktNumbering 实体字段国际化种子（已对齐前端 locales：src/locales/foundation/numbering）
 // 
@@ -180,23 +180,14 @@ public class TaktNumberingI18nSeedData : ITaktSeedDataCoordinator
             // entity.numbering.resetperiod
             new TranslationSeedItem("entity.numbering.resetperiod", "zh-HK", "重置周期_hk", "重置周期（字典 sys_reset_period；DictValue=None|Annually|Monthly|Daily；须与 date_format 粒度匹配）"),
 
-            // entity.numbering.currentsequence
-            new TranslationSeedItem("entity.numbering.currentsequence", "en-US", "当前流水_us", "当前流水（用于记录下一个流水号值）"),
-            // entity.numbering.currentsequence
-            new TranslationSeedItem("entity.numbering.currentsequence", "ja-JP", "当前流水_jp", "当前流水（用于记录下一个流水号值）"),
-            // entity.numbering.currentsequence
-            new TranslationSeedItem("entity.numbering.currentsequence", "zh-CN", "当前流水", "当前流水（用于记录下一个流水号值）"),
-            // entity.numbering.currentsequence
-            new TranslationSeedItem("entity.numbering.currentsequence", "zh-HK", "当前流水_hk", "当前流水（用于记录下一个流水号值）"),
-
-            // entity.numbering.examplecode
-            new TranslationSeedItem("entity.numbering.examplecode", "en-US", "起始编码_us", "起始编码（新增时必填；完整业务编码样例，末段为当前流水号） 如：SO-20250120-000001；生成编码后会更新为最近一次产出编码"),
-            // entity.numbering.examplecode
-            new TranslationSeedItem("entity.numbering.examplecode", "ja-JP", "起始编码_jp", "起始编码（新增时必填；完整业务编码样例，末段为当前流水号） 如：SO-20250120-000001；生成编码后会更新为最近一次产出编码"),
-            // entity.numbering.examplecode
-            new TranslationSeedItem("entity.numbering.examplecode", "zh-CN", "起始编码", "起始编码（新增时必填；完整业务编码样例，末段为当前流水号） 如：SO-20250120-000001；生成编码后会更新为最近一次产出编码"),
-            // entity.numbering.examplecode
-            new TranslationSeedItem("entity.numbering.examplecode", "zh-HK", "起始编码_hk", "起始编码（新增时必填；完整业务编码样例，末段为当前流水号） 如：SO-20250120-000001；生成编码后会更新为最近一次产出编码"),
+            // entity.numbering.startingnumber
+            new TranslationSeedItem("entity.numbering.startingnumber", "en-US", "Starting Number", "Starting number (required on create; full business code sample, e.g. SO-20250120-000001; updated to the last issued code after take)"),
+            // entity.numbering.startingnumber
+            new TranslationSeedItem("entity.numbering.startingnumber", "ja-JP", "開始番号", "開始番号（新規時必須；業務コード見本、末尾が連番。例：SO-20250120-000001；採番後は直近発行コードに更新）"),
+            // entity.numbering.startingnumber
+            new TranslationSeedItem("entity.numbering.startingnumber", "zh-CN", "起始编码", "起始编码（新增时必填；完整业务编码样例，末段为流水号） 如：SO-20250120-000001；取号后更新为最近一次产出编码"),
+            // entity.numbering.startingnumber
+            new TranslationSeedItem("entity.numbering.startingnumber", "zh-HK", "起始編碼", "起始編碼（新增時必填；完整業務編碼樣例，末段為流水號） 如：SO-20250120-000001；取號後更新為最近一次產出編碼"),
 
             // entity.numbering.separator
             new TranslationSeedItem("entity.numbering.separator", "en-US", "分隔符_us", "分隔符（空=段直接拼接；-=连字符分隔，默认 -）"),

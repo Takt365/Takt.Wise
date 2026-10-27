@@ -23,7 +23,7 @@ namespace Takt.WebApi.Controllers.Logistics.Manufacturing.Defect;
 /// 月生产不良推移转置分析控制器
 /// </summary>
 [ApiModule(4, "后勤管理")]
-[Route("api/[controller]", Name = "月生产不良推移")]
+[Route("api/[controller]", Name = "不良推移")]
 public class TaktDefectMonthlyTrendsController : TaktControllerBase
 {
   private readonly ITaktDefectMonthlyTrendService _defectMonthlyTrendService;
@@ -43,11 +43,11 @@ public class TaktDefectMonthlyTrendsController : TaktControllerBase
   /// <returns>下拉选项</returns>
   [TaktPermission("logistics:manufacturing:defect:monthly:list", "月生产不良推移工厂选项")]
   [HttpGet("plant-options")]
-  public async Task<IActionResult> GetDefectMonthlyTrendPlantOptionsAsync([FromQuery] string? plantCode = null, [FromQuery] string? keyword = null)
+  public async Task<IActionResult> GetDefectMonthlyTrendPlantOptionsAsync([FromQuery] string? plantCode = null, [FromQuery] string? keyword = null, [FromQuery] string? statTab = null)
     {
     try
     {
-      var result = await _defectMonthlyTrendService.GetDefectMonthlyTrendPlantOptionsAsync(plantCode, keyword);
+      var result = await _defectMonthlyTrendService.GetDefectMonthlyTrendPlantOptionsAsync(plantCode, keyword, statTab);
       return Success(result, "查询成功");
     }
     catch (Exception ex)

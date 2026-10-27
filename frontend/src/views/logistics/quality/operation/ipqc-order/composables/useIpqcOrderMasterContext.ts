@@ -15,7 +15,7 @@ export type IpqcOrderRowRecord = IpqcOrder | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface IpqcOrderMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<IpqcOrderRowRecord | null>
+  selecmedMasterRow: Ref<IpqcOrderRowRecord | null>
 }
 
 const ipqcOrderMasterContextKey: InjectionKey<IpqcOrderMasterContext> = Symbol('ipqc-orderMasterContext')
@@ -25,8 +25,8 @@ const ipqcOrderMasterContextKey: InjectionKey<IpqcOrderMasterContext> = Symbol('
  * @returns {IpqcOrderMasterContext} 主表上下文
  */
 export function provideIpqcOrderMasterContext(): IpqcOrderMasterContext {
-  const selectedMasterRow = ref<IpqcOrderRowRecord | null>(null)
-  const ctx: IpqcOrderMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<IpqcOrderRowRecord | null>(null)
+  const ctx: IpqcOrderMasterContext = { selecmedMasterRow }
   provide(ipqcOrderMasterContextKey, ctx)
   return ctx
 }

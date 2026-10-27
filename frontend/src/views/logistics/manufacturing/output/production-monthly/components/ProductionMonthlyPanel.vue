@@ -2,7 +2,7 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/output/production-monthly/components -->
 <!-- 文件名称：ProductionMonthlyPanel.vue -->
-<!-- 功能描述：月生产推移转置表（工厂×机种×产出类别×月份） -->
+<!-- 功能描述：生产统计转置表（当前页签按班组或按机种 × 月份） -->
 <!-- 版权信息：Copyright (c) 2026 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->
@@ -20,7 +20,7 @@
         table-mode="single"
         :columns="columns"
         :visible-column-keys="visibleColumnKeys"
-        :id-column-key="'modelCode'"
+        :id-column-key="groupByTeam ? 'teamCode' : 'modelCode'"
         :data-source="rows"
         :loading="loading"
         :stripe="true"
@@ -32,9 +32,6 @@
         <template #bodyCell="{ column, record, text }">
           <template v-if="String(column.key).startsWith('period_')">
             {{ formatPeriodQty(record as ProductionMonthlyTrend, String(column.key)) }}
-          </template>
-          <template v-else-if="column.key === 'outputCategory'">
-            {{ resolveCategoryLabel(record as ProductionMonthlyTrend) }}
           </template>
           <template v-else-if="column.key === 'trend'">
             <span :class="trendClass((record as ProductionMonthlyTrend).trend || 'none')">
@@ -89,7 +86,7 @@
 
 <script setup lang="ts">
 /**
- * 月生产推移转置分析表
+ * 生产统计转置表：当前页签一行一个班组或一个机种
  */
 import { formatAnalysisVariancePercent } from '@/utils/analysisPercent'
 import { message } from 'ant-design-vue'
@@ -99,6 +96,10 @@ import {
   exportProductionMonthlyTrendAnalysis,
   getProductionMonthlyTrendAnalysis,
 } from '@/api/logistics/manufacturing/output/productionMonthly.api'
+import {
+  exportProductionTrendAnalysis,
+  getProductionTrendAnalysis,
+} from '@/api/logistics/manufacturing/output/productionTrend.api'
 import type { ProductionMonthlyTrend } from '@/types/logistics/manufacturing/output/productionMonthlyTrend.types'
 import { useTableRefresh } from '@/composables/useTableRefresh'
 import {
@@ -113,20 +114,28 @@ import { TAKT_TABLE_SCROLL_Y_MIN } from '@/utils/tableScroll'
 const props = defineProps<{
   /** 涨跌筛选 */
   trendFilter?: string
+  /** stat 走生产统计接口，trend 走生产推移接口 */
+  requestKind?: 'stat' | 'trend'
+  /** 页签 */
+  statTab?: string
   /** 工厂代码 */
   plantCode?: string
   /** 年月区间 */
   periodRange?: [string, string] | null
+  /** 班组 */
+  teamCode?: string
   /** 机种 */
   modelCode?: string
-  /** 产出类别 */
-  outputCategory?: string
+  /** 物料 */
+  materialCode?: string
 }>()
 
 const loading = defineModel<boolean>('loading', { default: false })
 const hasRows = defineModel<boolean>('hasRows', { default: false })
 
-const localePrefix = 'logistics.manufacturing.output.production-monthly.page'
+const localePrefix = computed(() => props.requestKind === 'trend'
+  ? 'logistics.manufacturing.output.production-trend.page'
+  : 'logistics.manufacturing.output.production-monthly.page')
 const { t } = useI18n()
 
 /** 行数据 */
@@ -154,15 +163,21 @@ const tableScrollY = ref(TAKT_TABLE_SCROLL_Y_MIN)
 /** ResizeObserver */
 let tableScrollResizeObserver: ResizeObserver | null = null
 
-/** 工厂必填 */
-const hasQuery = computed(() => !!props.plantCode?.trim())
+/** 按班组页签 */
+const groupByTeam = computed(() => props.statTab === 'assy-team' || props.statTab === 'pcba-team')
+
+/** 工厂与期间必填 */
+const hasQuery = computed(() => !!props.plantCode?.trim() && !!props.periodRange?.[0])
 
 /** 摘要 */
 const summaryText = computed(() => {
   if (!props.plantCode?.trim()) {
-    return t(`${localePrefix}.selectPlantRequired`)
+    return t(`${localePrefix.value}.selectPlantRequired`)
   }
-  return t(`${localePrefix}.summary`, { count: rowCount.value })
+  if (!props.periodRange?.[0]) {
+    return t(`${localePrefix.value}.selectPeriodRequired`)
+  }
+  return t(`${localePrefix.value}.summary`, { count: rowCount.value })
 })
 
 /** 动态列 */
@@ -177,19 +192,14 @@ const columns = computed<TableColumnsType>(() => {
       fixed: 'left',
     },
     {
-      title: t(`${localePrefix}.modelCode`),
-      dataIndex: 'modelCode',
-      key: 'modelCode',
+      title: groupByTeam.value
+        ? t(`${localePrefix.value}.teamCode`)
+        : t(`${localePrefix.value}.modelCode`),
+      dataIndex: groupByTeam.value ? 'teamCode' : 'modelCode',
+      key: groupByTeam.value ? 'teamCode' : 'modelCode',
       width: 120,
       ellipsis: true,
       fixed: 'left',
-    },
-    {
-      title: t(`${localePrefix}.outputCategory`),
-      dataIndex: 'outputCategory',
-      key: 'outputCategory',
-      width: 100,
-      ellipsis: true,
     }]
   for (const period of periodOrder.value) {
     cols.push({
@@ -202,14 +212,14 @@ const columns = computed<TableColumnsType>(() => {
   }
   cols.push(
     {
-      title: t(`${localePrefix}.columns.trend`),
+      title: t(`${localePrefix.value}.columns.trend`),
       dataIndex: 'trend',
       key: 'trend',
       width: 80,
       fixed: 'right',
     },
     {
-      title: t(`${localePrefix}.columns.varianceAmount`),
+      title: t(`${localePrefix.value}.columns.varianceAmount`),
       dataIndex: 'varianceAmount',
       key: 'varianceAmount',
       width: 120,
@@ -217,7 +227,7 @@ const columns = computed<TableColumnsType>(() => {
       fixed: 'right',
     },
     {
-      title: t(`${localePrefix}.columns.variancePercent`),
+      title: t(`${localePrefix.value}.columns.variancePercent`),
       dataIndex: 'variancePercent',
       key: 'variancePercent',
       width: 100,
@@ -236,23 +246,7 @@ const visibleColumnKeys = computed(() => columns.value.map((c) => String(c.key))
  * @returns {string} key
  */
 function getRowKey(record: ProductionMonthlyTrend): string {
-  return `${record.plantCode}|${record.modelCode}|${record.outputCategory}`
-}
-
-/**
- * 产出类别显示名
- * @param {ProductionMonthlyTrend} record 行
- * @returns {string} 文案
- */
-function resolveCategoryLabel(record: ProductionMonthlyTrend): string {
-  if (record.outputCategoryName?.trim()) {
-    return record.outputCategoryName.trim()
-  }
-  const key = record.outputCategory as 'assy' | 'pcba'
-  if (key === 'assy' || key === 'pcba') {
-    return t(`${localePrefix}.outputCategoryOptions.${key}`)
-  }
-  return record.outputCategory
+  return `${record.plantCode}|${record.teamCode || ''}|${record.modelCode || ''}`
 }
 
 /**
@@ -281,7 +275,7 @@ function formatPercent(value?: number | null): string {
  */
 function trendLabel(trend: string): string {
   const key = trend || 'none'
-  return t(`${localePrefix}.trend.${key}`)
+  return t(`${localePrefix.value}.trend.${key}`)
 }
 
 /**
@@ -344,13 +338,16 @@ function periodRangeToQuery(range: [string, string] | null | undefined) {
  */
 function buildQuery() {
   const plant = props.plantCode?.trim()
-  if (!plant) {
+  const statTab = props.statTab?.trim()
+  if (!plant || !statTab || !props.periodRange?.[0]) {
     return null
   }
   return {
     plantCode: plant,
+    statTab,
+    teamCode: props.teamCode?.trim() || undefined,
     modelCode: props.modelCode?.trim() || undefined,
-    outputCategory: props.outputCategory?.trim() || undefined,
+    materialCode: props.materialCode?.trim() || undefined,
     trendFilter: props.trendFilter || undefined,
     pageIndex: pageIndex.value,
     pageSize: pageSize.value,
@@ -382,7 +379,10 @@ async function loadData() {
   }
   loading.value = true
   try {
-    const result = await getProductionMonthlyTrendAnalysis(query)
+    const load = props.requestKind === 'trend'
+      ? getProductionTrendAnalysis
+      : getProductionMonthlyTrendAnalysis
+    const result = await load(query)
     rows.value = result.paged?.data ?? []
     total.value = result.paged?.total ?? 0
     periodOrder.value = result.periodOrder ?? []
@@ -396,7 +396,7 @@ async function loadData() {
   } catch (error: unknown) {
     clear()
     const err = error as { message?: string }
-    message.error(err?.message || t(`${localePrefix}.exportFailed`))
+    message.error(err?.message || t(`${localePrefix.value}.exportFailed`))
   } finally {
     loading.value = false
     await nextTick()
@@ -425,19 +425,22 @@ async function handlePageChange(page: number, size: number) {
 async function handleExport() {
   const query = buildQuery()
   if (!query) {
-    message.warning(t(`${localePrefix}.selectPlantRequired`))
+    message.warning(t(`${localePrefix.value}.selectPlantRequired`))
     return
   }
   if (rowCount.value === 0) {
-    message.warning(t(`${localePrefix}.exportEmpty`))
+    message.warning(t(`${localePrefix.value}.exportEmpty`))
     return
   }
   try {
     const { sheetName, exportName, fallbackBase } = taktTrendExportFileNames(
       query.plantCode,
-      t(`${localePrefix}.title`),
+      t(`${localePrefix.value}.title`),
     )
-    const exportMeta = await exportProductionMonthlyTrendAnalysis(
+    const exportFn = props.requestKind === 'trend'
+      ? exportProductionTrendAnalysis
+      : exportProductionMonthlyTrendAnalysis
+    const exportMeta = await exportFn(
       {
         ...query,
         pageIndex: 1,
@@ -461,10 +464,10 @@ async function handleExport() {
     link.click()
     document.body.removeChild(link)
     setTimeout(() => window.URL.revokeObjectURL(url), 100)
-    message.success(t(`${localePrefix}.exportSuccess`))
+    message.success(t(`${localePrefix.value}.exportSuccess`))
   } catch (error: unknown) {
     const err = error as { message?: string }
-    message.error(err?.message || t(`${localePrefix}.exportFailed`))
+    message.error(err?.message || t(`${localePrefix.value}.exportFailed`))
   }
 }
 

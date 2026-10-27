@@ -11,6 +11,6 @@
 export {
   taktAssignTransferHandleItemClick,
   taktAssignTransferShuttleByDblClick,
-  taktAssignTransferIsItemSelected,
+  taktAssignTransferIsItemSelecmed,
   type TaktAssignTransferDirection,
 } from '@/utils/taktTransfer'

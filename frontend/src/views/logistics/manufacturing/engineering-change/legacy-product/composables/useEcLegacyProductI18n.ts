@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：@/views/logistics/manufacturing/engineering-change/legacy-product/composables
 // 文件名称：useEcLegacyProductI18n.ts
-// 功能描述：旧品管制字段清单 + useEcLegacyProductI18n（明细字段走 entity.ecdetail.*；生管旧品处理走 entity.eclegacyproduct.oldproducthandling）
+// 功能描述：旧品管制字段清单 + useEcLegacyProductI18n（明细字段走 entity.ecdetail.*；生管与明细旧品处理走 entity.eclegacyproduct.*）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -33,9 +33,9 @@ export const ECLEGACYPRODUCT_LIST_FIELDS = [
   'ecIsCompatible',
   'ec2ndVendor',
   'ecInstruction',
+  'oldProductHandling',
   'ecOldPartDisposition',
   'ecNewMaterialCode',
-  'oldProductHandling',
   'discontinuedStatus',
 ] as const
 
@@ -60,9 +60,9 @@ export const ECLEGACYPRODUCT_PLACEHOLDER = {
   ecIsCompatible: 'optional',
   ec2ndVendor: 'select',
   ecInstruction: 'select',
+  oldProductHandling: 'select',
   ecOldPartDisposition: 'select',
   ecNewMaterialCode: 'optional',
-  oldProductHandling: 'select',
   discontinuedStatus: 'select',
   remark: 'optional',
 } as const satisfies Record<string, EntityFieldPlaceholderKind>
@@ -72,7 +72,6 @@ export type EcLegacyProductField = keyof typeof ECLEGACYPRODUCT_PLACEHOLDER
 
 /** 高级查询可 trim 的字符串字段（对齐 QueryDto） */
 export const ECLEGACYPRODUCT_QUERY_STRING_FIELDS = [
-  'plantCode',
   'cultureCode',
   'ecCode',
   'ecModelCode',
@@ -98,7 +97,9 @@ export function useEcLegacyProductI18n() {
    * @param field 小驼峰字段名
    */
   function resolverFor(field: string) {
-    return field === 'oldProductHandling' ? selfI18n : detailI18n
+    return field === 'oldProductHandling' || field === 'ecOldPartDisposition'
+      ? selfI18n
+      : detailI18n
   }
 
   /**

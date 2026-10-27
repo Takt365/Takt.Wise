@@ -2,39 +2,26 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/ec-monthly-trend -->
 <!-- 文件名称：index.vue -->
-<!-- 功能描述：月设变推移（工厂×设变号×部门×月份转置表） -->
+<!-- 功能描述：设变推移（工厂×设变号×部门×月份转置表） -->
 <!-- 版权信息：Copyright (c) 2026 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->
 
 <template>
-  <div class="flex h-full min-h-0 flex-col p-4">
+  <div class="ec-list-layout flex h-full min-h-0 flex-col p-4">
     <EcMonthlyTrendQueryForm
-      v-model:plant-code="plantCode"
       v-model:period-range="periodRange"
       v-model:ec-code="ecCode"
-      v-model:ec-scope="ecScope"
-      v-model:change-status="changeStatus"
-      v-model:ec-status="ecStatus"
-      v-model:dept-code="deptCode"
-      :active-tab="activeTab"
       :loading="panelLoading"
       @search="handleSearch"
       @reset="handleReset"
     />
-    <a-tabs
-      v-model:activeKey="activeTab"
-      class="ec-monthly-trend-tabs mb-1 shrink-0"
-    >
-      <a-tab-pane
-        key="issue"
-        :tab="t(`${localePrefix}.tabs.issue`)"
-      />
-      <a-tab-pane
-        key="implement"
-        :tab="t(`${localePrefix}.tabs.implement`)"
-      />
-    </a-tabs>
+    <TaktPaneTabs
+      v-model:active-key="activeTab"
+      class="ec-monthly-trend-tabs mb-[2pt] shrink-0 [&_.ant-tabs-nav]:!mb-0"
+      hide-content
+      :items="trendTabItems"
+    />
     <TaktToolsBar
       :show-create="false"
       :show-update="false"
@@ -64,7 +51,7 @@
       :plant-code="plantCode"
       :period-range="periodRange"
       :ec-code="ecCode"
-      :ec-scope="ecScope"
+      :ec-scope="ecImplScope"
       :change-status="changeStatus"
       :ec-status="ecStatus"
       :dept-code="deptCode"
@@ -74,11 +61,13 @@
 
 <script setup lang="ts">
 /**
- * 月设变推移转置分析
+ * 设变推移转置分析
  */
+import '../ec-list-layout.css'
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
 import type { ToolBarAction } from '@/components/business/TaktToolsBar/index.vue'
+import type { TaktPaneTabItem } from '@/components/business/TaktPaneTabs/index.vue'
 import {
   RiArrowDownLine,
   RiArrowUpDownLine,
@@ -91,28 +80,52 @@ import EcMonthlyTrendQueryForm from './components/EcMonthlyTrendQueryForm.vue'
 import EcMonthlyTrendPanel from './components/EcMonthlyTrendPanel.vue'
 import { useAnalysisPeriodRangeLimit } from '@/composables/useAnalysisPeriodRangeLimit'
 import { useAnalysisQueryDefaults } from '@/composables/useAnalysisQueryDefaults'
+import {
+  TAKT_ANALYSIS_PERIOD_MAX_MONTHS,
+  buildDefaultThroughCurrentPeriodRange,
+} from '@/views/logistics/manufacturing/bom/material-cost/utils/bomMaterialCostPeriod'
 
 const { t } = useI18n()
 
-/** 期间最多 12 个月（查询前校验） */
-const { assertPeriodRangeOk } = useAnalysisPeriodRangeLimit()
+/** 期间最多 12 个月，含本月（查询前校验） */
+const { assertPeriodRangeOk } = useAnalysisPeriodRangeLimit(TAKT_ANALYSIS_PERIOD_MAX_MONTHS, { allowCurrentMonth: true })
 /** 静态 locales 前缀 */
 const localePrefix = 'logistics.manufacturing.engineering-change.ec-monthly-trend.page'
 const tenantStore = useTenantStore()
 
-/** 当前 Tab：issue=月设变推移；implement=月实施推移 */
-const activeTab = ref<'issue' | 'implement'>('issue')
+/** 当前 Tab：issue=设变推移；implement=月实施推移 */
+const activeTab = ref('issue')
+/** 推移页签定义（可按 show/permission 删减） */
+const trendTabItems = computed<TaktPaneTabItem[]>(() => [
+  { key: 'issue', label: t(`${localePrefix}.tabs.issue`) },
+  { key: 'implement', label: t(`${localePrefix}.tabs.implement`) },
+])
 /** 工厂 */
 const plantCode = ref<string | undefined>()
 /** 期间年月 */
 const periodRange = ref<[string, string] | null>(null)
 
-/** 默认工厂=公司 RelatedPlant；期间=前三月（对齐成本差异推移） */
-const { applyDefaultPeriodRange, applyDefaultPlantFromCompany, applyAnalysisQueryDefaults } = useAnalysisQueryDefaults(plantCode, periodRange)
+const { applyDefaultPlantFromCompany } = useAnalysisQueryDefaults(plantCode, periodRange)
+
+/**
+ * 期间默认截止本月，共 3 个月
+ */
+function applyPeriodThroughCurrent(): void {
+  periodRange.value = buildDefaultThroughCurrentPeriodRange(3)
+}
+
+/**
+ * 写入默认工厂，并把期间收到本月
+ * @returns {Promise<void>}
+ */
+async function applyEcTrendQueryDefaults(): Promise<void> {
+  applyPeriodThroughCurrent()
+  await applyDefaultPlantFromCompany()
+}
 /** 设变单号 */
 const ecCode = ref<string | undefined>()
 /** 区分 */
-const ecScope = ref<number | undefined>()
+const ecImplScope = ref<number | undefined>()
 /** 变更状态 */
 const changeStatus = ref<number | undefined>()
 /** 设变状态 */
@@ -205,10 +218,10 @@ function clearPlantCascade() {
 /** 重置 */
 async function handleReset() {
   clearPlantCascade()
-  ecScope.value = undefined
+  ecImplScope.value = undefined
   changeStatus.value = undefined
   ecStatus.value = undefined
-  await applyAnalysisQueryDefaults()
+  await applyEcTrendQueryDefaults()
   trendFilter.value = ''
 }
 
@@ -240,7 +253,7 @@ watch(
 
 onMounted(async () => {
   await ensureTaktPaginationConfigAsync()
-  await applyAnalysisQueryDefaults()
+  await applyEcTrendQueryDefaults()
   void getTaktDefaultPageSize()
 })
 </script>

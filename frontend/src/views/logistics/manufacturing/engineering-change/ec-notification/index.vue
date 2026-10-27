@@ -8,7 +8,7 @@
 <!-- ======================================== -->
 
 <template>
-  <div class="p-4">
+  <div class="ec-list-layout p-4">
     <!-- 查询栏 -->
     <TaktQueryBar
       v-model="queryKeyword"
@@ -20,11 +20,11 @@
 
     <!-- 工具栏 -->
     <TaktToolsBar
-      create-permission="logistics:manufacturing:engineering:change:gijutsu:create"
-      update-permission="logistics:manufacturing:engineering:change:gijutsu:update"
-      delete-permission="logistics:manufacturing:engineering:change:gijutsu:delete"
-      import-permission="logistics:manufacturing:engineering:change:gijutsu:import"
-      export-permission="logistics:manufacturing:engineering:change:gijutsu:export"
+      create-permission="logistics:manufacturing:engineering:change:te:create"
+      update-permission="logistics:manufacturing:engineering:change:te:update"
+      delete-permission="logistics:manufacturing:engineering:change:te:delete"
+      import-permission="logistics:manufacturing:engineering:change:te:import"
+      export-permission="logistics:manufacturing:engineering:change:te:export"
       :show-create="true"
       :show-update="true"
       :show-delete="true"
@@ -109,17 +109,6 @@
       @reset="handleAdvancedQueryReset"
     >
       <template #default="{ isFieldVisible }">
-      <div v-show="isFieldVisible('plantCode')">
-      <a-form-item :label="pi.queryLabel('plantCode')">
-        <a-input
-          v-model:value="advancedQueryForm.plantCode"
-          :placeholder="pi.queryPh('plantCode', 'optional')"
-          show-count
-          :maxlength="4"
-          allow-clear
-        />
-      </a-form-item>
-      </div>
       <div v-show="isFieldVisible('ecNotificationCode')">
       <a-form-item :label="pi.queryLabel('ecNotificationCode')">
         <a-input
@@ -131,11 +120,11 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('ecGijutsuId')">
-      <a-form-item :label="pi.queryLabel('ecGijutsuId')">
+      <div v-show="isFieldVisible('ecTeId')">
+      <a-form-item :label="pi.queryLabel('ecTeId')">
         <a-input
-          v-model:value="advancedQueryForm.ecGijutsuId"
-          :placeholder="pi.queryPh('ecGijutsuId', 'required')"
+          v-model:value="advancedQueryForm.ecTeId"
+          :placeholder="pi.queryPh('ecTeId', 'required')"
           show-count
           :maxlength="20"
           allow-clear
@@ -437,6 +426,7 @@
  * 工程变更通知单管理页 · 由 generate-vue-crud-from-api.cjs 根据 types/api 生成
  * @module views/logistics/manufacturing/engineering-change/ec-notification
  */
+import '../ec-list-layout.css'
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
@@ -480,11 +470,11 @@ const pageSize = ref(getTaktDefaultPageSize())
 /** 分页 total */
 const total = ref(0)
 /** 工具栏单选时当前行 */
-const selectedRow = ref<EcNotification | null>(null)
+const selecmedRow = ref<EcNotification | null>(null)
 /** 表格多选行 */
-const selectedRows = ref<EcNotification[]>([])
+const selecmedRows = ref<EcNotification[]>([])
 /** 表格多选 row-key 集合 */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 
 /** 新增/编辑弹窗是否打开 */
 const formVisible = ref(false)
@@ -505,7 +495,7 @@ const advancedQueryVisible = ref(false)
 const advancedQueryForm = ref({
   plantCode: '',
   ecNotificationCode: '',
-  ecGijutsuId: '',
+  ecTeId: '',
   ecCode: '',
   ecTitle: '',
   ecNotificationDateStart: '',
@@ -544,9 +534,9 @@ const visibleColumnKeys = ref<string[]>([])
 /** 实体主键字段名（row-key、API 路径参数） */
 const entityIdName = 'ecNotificationId'
 /** 工具栏「编辑」是否禁用（须恰好选中一行） */
-const updateDisabled = computed(() => selectedRows.value.length !== 1)
+const updateDisabled = computed(() => selecmedRows.value.length !== 1)
 /** 工具栏「删除」是否禁用（未选中任何行） */
-const deleteDisabled = computed(() => selectedRows.value.length === 0)
+const deleteDisabled = computed(() => selecmedRows.value.length === 0)
 
 /**
  * 构建列表/导出查询参数（空字符串与未填数值/日期不下发，避免后端 DateTime? 模型绑定 400）
@@ -572,7 +562,7 @@ function buildListQuery(overrides?: Partial<EcNotificationQuery>): EcNotificatio
   }
   assignTrimmed('plantCode', form.plantCode)
   assignTrimmed('ecNotificationCode', form.ecNotificationCode)
-  assignTrimmed('ecGijutsuId', form.ecGijutsuId)
+  assignTrimmed('ecTeId', form.ecTeId)
   assignTrimmed('ecCode', form.ecCode)
   assignTrimmed('ecTitle', form.ecTitle)
   assignTrimmed('ecNotificationDateStart', form.ecNotificationDateStart)
@@ -640,13 +630,13 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getEcNotificationField(record, 'ecNotificationCode') ?? ''
   },
   {
-    title: pi.label('ecGijutsuId'),
-    dataIndex: 'ecGijutsuId',
-    key: 'ecGijutsuId',
+    title: pi.label('ecTeId'),
+    dataIndex: 'ecTeId',
+    key: 'ecTeId',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getEcNotificationField(record, 'ecGijutsuId') ?? ''
+    customRender: ({ record }: { record: any }) => getEcNotificationField(record, 'ecTeId') ?? ''
   },
   {
     title: pi.label('ecCode'),
@@ -736,7 +726,7 @@ const columns = computed<TableColumnsType>(() => [
         label: t('common.page.button.edit'),
         shape: 'plain',
         icon: RiEditLine,
-        permission: 'logistics:manufacturing:engineering:change:gijutsu:update',
+        permission: 'logistics:manufacturing:engineering:change:te:update',
         onClick: (record: EcNotification) => handleEdit(record)
       },
       {
@@ -744,7 +734,7 @@ const columns = computed<TableColumnsType>(() => [
         label: t('common.page.button.delete'),
         shape: 'plain',
         icon: RiDeleteBinLine,
-        permission: 'logistics:manufacturing:engineering:change:gijutsu:delete',
+        permission: 'logistics:manufacturing:engineering:change:te:delete',
         onClick: (record: EcNotification) => handleDeleteOne(record)
       }
     ]
@@ -762,21 +752,21 @@ const getEcNotificationField = (record: any, field: string): any => record?.[fie
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: EcNotification[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: EcNotification, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (selectedRow.value && getEcNotificationId(selectedRow.value) === getEcNotificationId(record)) {
-      selectedRow.value = null
+  onSelect: (record: EcNotification, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (selecmedRow.value && getEcNotificationId(selecmedRow.value) === getEcNotificationId(record)) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: EcNotification[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: EcNotification[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   }
 }))
 
@@ -784,16 +774,16 @@ const rowSelection = computed(() => ({
 const onClickRow = (record: EcNotification) => ({
   onClick: () => {
     const key = getEcNotificationId(record)
-    const index = selectedRowKeys.value.indexOf(key)
+    const index = selecmedRowKeys.value.indexOf(key)
     if (index > -1) {
-      selectedRowKeys.value.splice(index, 1)
+      selecmedRowKeys.value.splice(index, 1)
     } else {
-      selectedRowKeys.value.push(key)
+      selecmedRowKeys.value.push(key)
     }
-    selectedRows.value = dataSource.value.filter((item) => selectedRowKeys.value.includes(getEcNotificationId(item)))
-    selectedRow.value = selectedRowKeys.value.length === 1 ? (selectedRows.value[0] ?? null) : null
+    selecmedRows.value = dataSource.value.filter((item) => selecmedRowKeys.value.includes(getEcNotificationId(item)))
+    selecmedRow.value = selecmedRowKeys.value.length === 1 ? (selecmedRows.value[0] ?? null) : null
     if (rowSelection.value.onChange) {
-      rowSelection.value.onChange(selectedRowKeys.value, selectedRows.value)
+      rowSelection.value.onChange(selecmedRowKeys.value, selecmedRows.value)
     }
   }
 })
@@ -830,7 +820,7 @@ function handleReset() {
   advancedQueryForm.value = {
   plantCode: '',
   ecNotificationCode: '',
-  ecGijutsuId: '',
+  ecTeId: '',
   ecCode: '',
   ecTitle: '',
   ecNotificationDateStart: '',
@@ -874,8 +864,8 @@ function handleEdit(record: EcNotification) {
 
 /** 工具栏编辑：打开当前单选行 */
 function handleUpdate() {
-  if (selectedRow.value) {
-    handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: pi.self() }))
   }
@@ -995,17 +985,17 @@ async function handleDeleteOne(record: EcNotification) {
 }
 /** 批量删除选中行 */
 async function handleDelete() {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: pi.self() }))
     return
   }
   Modal.confirm({
     title: t('common.tip.confirm.delete.title'),
-    content: t('common.tip.confirm.delete.count', { entity: pi.self(), count: selectedRows.value.length }),
+    content: t('common.tip.confirm.delete.count', { entity: pi.self(), count: selecmedRows.value.length }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
+      const ids = selecmedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
       await deleteEcNotificationBatch(ids)
       message.success(t('common.feedback.deleted', { target: pi.self() }))
       loadData()
@@ -1028,7 +1018,7 @@ function handleAdvancedQueryReset() {
   advancedQueryForm.value = {
   plantCode: '',
   ecNotificationCode: '',
-  ecGijutsuId: '',
+  ecTeId: '',
   ecCode: '',
   ecTitle: '',
   ecNotificationDateStart: '',

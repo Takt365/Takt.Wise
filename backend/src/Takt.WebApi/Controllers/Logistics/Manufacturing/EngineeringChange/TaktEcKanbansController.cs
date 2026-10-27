@@ -51,10 +51,10 @@ public class TaktEcKanbansController : TaktControllerBase
     /// 获取设变看板详情
     /// </summary>
     [TaktPermission("logistics:manufacturing:engineering:change:kanban:query", "设变看板详情")]
-    [HttpGet("{ecGijutsuId}")]
-    public async Task<IActionResult> GetEcKanbanByEcIdAsync(long ecGijutsuId)
+    [HttpGet("{ecTeId}")]
+    public async Task<IActionResult> GetEcKanbanByEcIdAsync(long ecTeId)
     {
-        try { var result = await _service.GetEcKanbanByEcIdAsync(ecGijutsuId); if (result == null) return NotFound("设变看板不存在"); return Success(result, "查询成功"); }
+        try { var result = await _service.GetEcKanbanByEcIdAsync(ecTeId); if (result == null) return NotFound("设变看板不存在"); return Success(result, "查询成功"); }
         catch (Exception ex) { return HandleException(ex); }
     }
 
@@ -67,6 +67,17 @@ public class TaktEcKanbansController : TaktControllerBase
     public async Task<IActionResult> ExportEcKanbanAsync([FromQuery] TaktEcKanbanQueryDto? query)
     {
         try { var (fileName, fileContent) = await _service.ExportEcKanbanAsync(query); return File(fileContent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName); }
+        catch (Exception ex) { return HandleException(ex); }
+    }
+
+    /// <summary>
+    /// 获取设变看板统计（看板页签；实施状态 / 部门 / 按月）
+    /// </summary>
+    [TaktPermission("logistics:manufacturing:engineering:change:kanban:list", "设变看板统计")]
+    [HttpGet("board-stat")]
+    public async Task<IActionResult> GetEcKanbanBoardStatAsync([FromQuery] TaktEcKanbanQueryDto queryDto)
+    {
+        try { var result = await _service.GetEcKanbanBoardStatAsync(queryDto); return Success(result, "查询成功"); }
         catch (Exception ex) { return HandleException(ex); }
     }
 

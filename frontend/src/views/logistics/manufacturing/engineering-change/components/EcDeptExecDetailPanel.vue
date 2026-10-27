@@ -2,7 +2,7 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/components -->
 <!-- 文件名称：EcDeptExecDetailPanel.vue -->
-<!-- 功能描述：执行部门右栏明细页签：按左侧设变主表加载 TaktEcDetail；defineExpose reload -->
+<!-- 功能描述：执行部门右栏明细页签：按左侧设变主表加载计划物料（Z0）且根物料类型为 FERT 的明细；defineExpose reload -->
 <!-- 版权信息：Copyright (c) 2026 Takt All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->
@@ -73,6 +73,9 @@
           <template v-else-if="column.key === 'ecNewRequiresInspection' || column.key === 'isObsolete'">
             <TaktDictTag dict-type="sys_yes_no" :value="record[String(column.key)]" />
           </template>
+          <template v-else-if="isCalendarDateColumn(column.key)">
+            {{ formatCalendarDate(record[String(column.key)]) }}
+          </template>
         </template>
       </TaktSingleTable>
     </div>
@@ -96,6 +99,7 @@
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
 import { getEcDetailList } from '@/api/logistics/manufacturing/engineering-change/ecDetail.api'
+import { formatCalendarDate } from '@/utils/datetime'
 import { measureConstrainedTableScrollY } from '@/utils/tableScroll'
 import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 import type { EcDetail } from '@/types/logistics/manufacturing/engineering-change/ecDetail.types'
@@ -103,11 +107,11 @@ import {
   ECDETAIL_DEPT_MASTER_DEFAULT_VISIBLE_COLUMN_KEYS,
   buildEcDetailTableColumns,
   useEcDetailI18n,
-} from '../ec-gijutsu/composables/useEcDetailI18n'
+} from '../ec-te/composables/useEcDetailI18n'
 
 const props = defineProps<{
   /** 左侧选中的设变主表主键 */
-  ecGijutsuId?: string
+  ecTeId?: string
   /** 页签内表格 scroll.y（标准左右表高度减去页签栏） */
   scrollY: number
 }>()
@@ -115,8 +119,17 @@ const props = defineProps<{
 const { t } = useI18n()
 const pi = useEcDetailI18n()
 
+/**
+ * 列是否为日历日（字段名以 Date 结尾）
+ * @param key 列 key
+ * @returns {boolean} 是否按 yyyy-MM-dd 展示
+ */
+function isCalendarDateColumn(key: unknown): boolean {
+  return String(key ?? '').endsWith('Date')
+}
+
 /** 是否已选设变主表 */
-const hasMasterSelection = computed(() => !!props.ecGijutsuId?.trim())
+const hasMasterSelection = computed(() => !!props.ecTeId?.trim())
 /** 列表 loading */
 const loading = ref(false)
 /** 当前页明细 */
@@ -174,11 +187,11 @@ function getEcDetailId(record: EcDetail | Record<string, unknown>) {
 }
 
 /**
- * 加载设变明细（按左侧设变主表分页）
+ * 加载设变明细（按左侧设变主表分页，仅计划物料且根物料类型为 FERT）
  */
 async function loadData() {
-  const ecGijutsuId = props.ecGijutsuId?.trim()
-  if (!ecGijutsuId) {
+  const ecTeId = props.ecTeId?.trim()
+  if (!ecTeId) {
     dataSource.value = []
     total.value = 0
     return
@@ -186,12 +199,24 @@ async function loadData() {
   loading.value = true
   try {
     const res = await getEcDetailList({
-      ecGijutsuId,
+      ecTeId,
       pageIndex: currentPage.value,
       pageSize: pageSize.value,
       keyWords: queryKeyword.value.trim() || undefined,
+      discontinuedStatus: 'Z0',
+      ecRootMaterialType: 'FERT',
     })
-    dataSource.value = res.data ?? []
+    dataSource.value = (res.data ?? []).map((row) => {
+      const next = { ...row } as Record<string, unknown>
+      for (const key of Object.keys(next)) {
+        if (!key.endsWith('Date')) {
+          continue
+        }
+        const formatted = formatCalendarDate(next[key] as string | null | undefined)
+        next[key] = formatted || undefined
+      }
+      return next as EcDetail
+    })
     total.value = res.total ?? 0
   } catch (error: unknown) {
     logger.error('[EcDeptExec] 加载设变明细失败', { error })
@@ -251,7 +276,7 @@ function handleColumnSettingReset() {
 }
 
 watch(
-  () => props.ecGijutsuId,
+  () => props.ecTeId,
   () => {
     reload()
   },

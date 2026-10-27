@@ -102,7 +102,6 @@ export type SalesOrderField = keyof typeof SALESORDER_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const SALESORDER_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'salesOrderCode',
   'customerCode',
   'customerName1',

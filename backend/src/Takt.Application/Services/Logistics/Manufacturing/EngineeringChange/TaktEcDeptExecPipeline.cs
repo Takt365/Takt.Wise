@@ -28,17 +28,28 @@ internal interface ITaktEcDeptExecPipeline
     /// </summary>
     string DeptCode { get; }
     /// <summary>
-    /// 按明细 ID 查询（去重键：EcDetailId 唯一）
+    /// 按设变单号与执行去重键查询
     /// </summary>
-    Task<object?> QueryByDetailIdAsync(long ecDetailId);
+    /// <param name="ecCode">设变单号</param>
+    /// <param name="grainKey">执行去重键</param>
+    /// <returns>执行行；没有时 null</returns>
+    Task<object?> QueryByGrainAsync(string ecCode, string grainKey);
     /// <summary>
-    /// 按明细 ID 列表查询
+    /// 按设变单号查询
     /// </summary>
-    Task<List<object>> QueryByDetailIdsAsync(IReadOnlyList<long> detailIds);
+    /// <param name="ecCode">设变单号</param>
+    /// <returns>执行行</returns>
+    Task<List<object>> QueryByEcCodeAsync(string ecCode);
     /// <summary>
-    /// 新建或复用后同步明细冗余字段
+    /// 新建或复用后同步明细冗余字段。控制范围只在新建时写入。
     /// </summary>
-    object Bind(TaktEcDetail detail, object? existing, int lineNumber, bool applyNotRelatedAuto);
+    /// <param name="detail">设变明细</param>
+    /// <param name="existing">已有执行行；空则新建</param>
+    /// <param name="lineNumber">新建行号</param>
+    /// <param name="applyNotRelatedAuto">是否写入无关自动完成</param>
+    /// <param name="masterControlScope">技术课主表控制范围</param>
+    /// <returns>绑定后的执行实体</returns>
+    object Bind(TaktEcDetail detail, object? existing, int lineNumber, bool applyNotRelatedAuto, int masterControlScope);
     /// <summary>
     /// 保存
     /// </summary>
@@ -81,33 +92,31 @@ internal sealed class TaktEcDeptExecPipeline<TEntity> : ITaktEcDeptExecPipeline
     public string DeptCode { get; }
 
     /// <inheritdoc />
-    public async Task<object?> QueryByDetailIdAsync(long ecDetailId)
+    public async Task<object?> QueryByGrainAsync(string ecCode, string grainKey)
     {
-        return await _repository.FirstAsync(x => x.EcDetailId == ecDetailId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(ecCode);
+        ArgumentException.ThrowIfNullOrWhiteSpace(grainKey);
+        return await _repository.FirstAsync(x => x.EcCode == ecCode && SqlFunc.ToString(x.EcGrainKey) == grainKey);
     }
 
     /// <inheritdoc />
-    public async Task<List<object>> QueryByDetailIdsAsync(IReadOnlyList<long> detailIds)
+    public async Task<List<object>> QueryByEcCodeAsync(string ecCode)
     {
-        if (detailIds.Count == 0)
-        {
-            return [];
-        }
-        var list = await _repository.GetListAsync(x => detailIds.Contains(x.EcDetailId));
+        ArgumentException.ThrowIfNullOrWhiteSpace(ecCode);
+        var list = await _repository.GetListAsync(x => x.EcCode == ecCode);
         return list.Cast<object>().ToList();
     }
 
     /// <inheritdoc />
-    public object Bind(TaktEcDetail detail, object? existing, int lineNumber, bool applyNotRelatedAuto)
+    public object Bind(TaktEcDetail detail, object? existing, int lineNumber, bool applyNotRelatedAuto, int masterControlScope)
     {
         ArgumentNullException.ThrowIfNull(detail);
         var isNew = existing == null;
         var exec = existing as TEntity ?? new TEntity
         {
-            EcDetailId = detail.Id,
             DeptCode = DeptCode
         };
-        TaktEcDeptExecRedundantBinder.Apply(exec, detail, isNew ? lineNumber : null);
+        TaktEcDeptExecRedundantBinder.Apply(exec, detail, isNew ? lineNumber : null, masterControlScope);
         _afterBind?.Invoke(exec, detail, applyNotRelatedAuto);
         return exec;
     }
@@ -144,37 +153,37 @@ internal sealed class TaktEcDeptExecPipelineHub
     /// 构造函数
     /// </summary>
     public TaktEcDeptExecPipelineHub(
-        ITaktCompanyRepository<TaktEcSeikan> pmcRepository,
-        ITaktCompanyRepository<TaktEcKoubai> mpRepository,
-        ITaktCompanyRepository<TaktEcUkeken> iqcRepository,
-        ITaktCompanyRepository<TaktEcBukan> mcRepository,
-        ITaktCompanyRepository<TaktEcSeizounika> seizounikaRepository,
-        ITaktCompanyRepository<TaktEcEmtl> smtRepository,
-        ITaktCompanyRepository<TaktEcSeizouikka> assyRepository,
-        ITaktCompanyRepository<TaktEcHinkan> qaRepository,
-        ITaktCompanyRepository<TaktEcSeizougijutsu> teRepository)
+        ITaktCompanyRepository<TaktEcPc> pcRepository,
+        ITaktCompanyRepository<TaktEcPur> mpRepository,
+        ITaktCompanyRepository<TaktEcIqc> iqcRepository,
+        ITaktCompanyRepository<TaktEcMc> mcRepository,
+        ITaktCompanyRepository<TaktEcMfg2> pcbaRepository,
+        ITaktCompanyRepository<TaktEcMtl> smtRepository,
+        ITaktCompanyRepository<TaktEcMfg1> assyRepository,
+        ITaktCompanyRepository<TaktEcQc> qaRepository,
+        ITaktCompanyRepository<TaktEcMe> teRepository)
     {
-        // Pcba Hub 仍挂 Seizounika；PCBA 表运行时 Upsert 由 Persistence 双表路由，Hub 保留 pcba 注入供后续扩展
+        // Pcba Hub 仍挂 Pcba；PCBA 表运行时 Upsert 由 Persistence 双表路由，Hub 保留 pcba 注入供后续扩展
         _ = smtRepository;
         _pipelines = new Dictionary<string, ITaktEcDeptExecPipeline>(StringComparer.Ordinal)
         {
-            [TaktEcDeptCodes.Pmc] = new TaktEcDeptExecPipeline<TaktEcSeikan>(pmcRepository, TaktEcDeptCodes.Pmc),
-            [TaktEcDeptCodes.Mp] = new TaktEcDeptExecPipeline<TaktEcKoubai>(
+            [TaktEcDeptCodes.Pc] = new TaktEcDeptExecPipeline<TaktEcPc>(pcRepository, TaktEcDeptCodes.Pc),
+            [TaktEcDeptCodes.Pur] = new TaktEcDeptExecPipeline<TaktEcPur>(
                 mpRepository,
-                TaktEcDeptCodes.Mp,
-                (e, d, auto) => { if (auto) { TaktEcExecNotRelated.TryKoubai(e, d); } }),
-            [TaktEcDeptCodes.Iqc] = new TaktEcDeptExecPipeline<TaktEcUkeken>(
+                TaktEcDeptCodes.Pur,
+                (e, d, auto) => { if (auto) { TaktEcExecNotRelated.TryMp(e, d); } }),
+            [TaktEcDeptCodes.Iqc] = new TaktEcDeptExecPipeline<TaktEcIqc>(
                 iqcRepository,
                 TaktEcDeptCodes.Iqc,
-                (e, d, auto) => { if (auto) { TaktEcExecNotRelated.TryUkeken(e, d); } }),
-            [TaktEcDeptCodes.Mc] = new TaktEcDeptExecPipeline<TaktEcBukan>(
+                (e, d, auto) => { if (auto) { TaktEcExecNotRelated.TryIqc(e, d); } }),
+            [TaktEcDeptCodes.Mc] = new TaktEcDeptExecPipeline<TaktEcMc>(
                 mcRepository,
                 TaktEcDeptCodes.Mc,
-                (e, d, auto) => { if (auto) { TaktEcExecNotRelated.TryBukan(e, d); } }),
-            [TaktEcDeptCodes.Pcba] = new TaktEcDeptExecPipeline<TaktEcSeizounika>(seizounikaRepository, TaktEcDeptCodes.Pcba),
-            [TaktEcDeptCodes.Assy] = new TaktEcDeptExecPipeline<TaktEcSeizouikka>(assyRepository, TaktEcDeptCodes.Assy),
-            [TaktEcDeptCodes.Qa] = new TaktEcDeptExecPipeline<TaktEcHinkan>(qaRepository, TaktEcDeptCodes.Qa),
-            [TaktEcDeptCodes.Te] = new TaktEcDeptExecPipeline<TaktEcSeizougijutsu>(teRepository, TaktEcDeptCodes.Te)
+                (e, d, auto) => { if (auto) { TaktEcExecNotRelated.TryMc(e, d); } }),
+            [TaktEcDeptCodes.Mfg2] = new TaktEcDeptExecPipeline<TaktEcMfg2>(pcbaRepository, TaktEcDeptCodes.Mfg2),
+            [TaktEcDeptCodes.Mfg1] = new TaktEcDeptExecPipeline<TaktEcMfg1>(assyRepository, TaktEcDeptCodes.Mfg1),
+            [TaktEcDeptCodes.Qc] = new TaktEcDeptExecPipeline<TaktEcQc>(qaRepository, TaktEcDeptCodes.Qc),
+            [TaktEcDeptCodes.Me] = new TaktEcDeptExecPipeline<TaktEcMe>(teRepository, TaktEcDeptCodes.Me)
         };
     }
 
@@ -182,7 +191,7 @@ internal sealed class TaktEcDeptExecPipelineHub
     /// 全部部门链路（看板顺序）
     /// </summary>
     public IEnumerable<ITaktEcDeptExecPipeline> All =>
-        TaktEcDeptCodes.KanbanOrder.Where(code => code != TaktEcDeptCodes.Smt).Select(Get);
+        TaktEcDeptCodes.KanbanOrder.Where(code => code != TaktEcDeptCodes.Mtl).Select(Get);
 
     /// <summary>
     /// 取指定部门链路
@@ -208,47 +217,47 @@ internal static class TaktEcExecNotRelated
     /// <summary>
     /// 采购类型非 F：采购无关
     /// </summary>
-    public static void TryKoubai(TaktEcKoubai koubai, TaktEcDetail detail)
+    public static void TryMp(TaktEcPur mp, TaktEcDetail detail)
     {
         if (TaktEcScopeConstants.IsExternalPurchaseType(detail.EcNewPurchaseType))
         {
             return;
         }
-        koubai.ExecContent = TaktEcKoubaiConstants.NotPurchasingRelatedExecContent;
-        koubai.PurchaseOrderIssueDate = null;
-        koubai.Supplier = null;
-        koubai.PurchaseOrderCode = null;
-        koubai.IsImplemented = 1;
+        mp.ExecContent = TaktEcPurConstants.NotPurchasingRelatedExecContent;
+        mp.PurchaseOrderIssueDate = null;
+        mp.Supplier = null;
+        mp.PurchaseOrderCode = null;
+        mp.IsImplemented = 1;
     }
 
     /// <summary>
     /// 无需检验：跟 IQC 无关
     /// </summary>
-    public static void TryUkeken(TaktEcUkeken ukeken, TaktEcDetail detail)
+    public static void TryIqc(TaktEcIqc iqc, TaktEcDetail detail)
     {
         if (detail.EcNewRequiresInspection == 1)
         {
             return;
         }
-        ukeken.ExecContent = TaktEcUkekenConstants.NotRelatedToIqcExecContent;
-        ukeken.IqcOrderCode = null;
-        ukeken.InspectionDate = null;
-        ukeken.IsImplemented = 1;
+        iqc.ExecContent = TaktEcIqcConstants.NotRelatedToIqcExecContent;
+        iqc.IqcOrderCode = null;
+        iqc.InspectionDate = null;
+        iqc.IsImplemented = 1;
     }
 
     /// <summary>
     /// 部管不可见：跟部管无关
     /// </summary>
-    public static void TryBukan(TaktEcBukan bukan, TaktEcDetail detail)
+    public static void TryMc(TaktEcMc mc, TaktEcDetail detail)
     {
-        if (TaktEcScopeConstants.IsBukanVisible(detail.EcNewPurchaseType, detail.EcNewWarehouse))
+        if (TaktEcScopeConstants.IsMcVisible(detail.EcNewPurchaseType, detail.EcNewWarehouse))
         {
             return;
         }
-        bukan.ExecContent = TaktEcBukanConstants.NotRelatedToMaterialControlExecContent;
-        bukan.OutboundBatch = null;
-        bukan.OutboundDate = null;
-        bukan.IsImplemented = 1;
+        mc.ExecContent = TaktEcMcConstants.NotRelatedToMaterialControlExecContent;
+        mc.OutboundBatch = null;
+        mc.OutboundDate = null;
+        mc.IsImplemented = 1;
     }
 
     /// <summary>
@@ -262,14 +271,14 @@ internal static class TaktEcExecNotRelated
         ArgumentNullException.ThrowIfNull(detail);
         switch (exec)
         {
-            case TaktEcKoubai koubai:
-                TryKoubai(koubai, detail);
+            case TaktEcPur pur:
+                TryMp(pur, detail);
                 break;
-            case TaktEcUkeken ukeken:
-                TryUkeken(ukeken, detail);
+            case TaktEcIqc iqc:
+                TryIqc(iqc, detail);
                 break;
-            case TaktEcBukan bukan:
-                TryBukan(bukan, detail);
+            case TaktEcMc mc:
+                TryMc(mc, detail);
                 break;
         }
     }

@@ -179,7 +179,7 @@ public class TaktSalesInvoiceItem : TaktCompanyEntityBase
     /// <summary>
     /// 批次
     /// </summary>
-    [SugarColumn(ColumnName = "batch_code", ColumnDescription = "批次", ColumnDataType = "nvarchar", Length = 10, IsNullable = true)]
+    [SugarColumn(ColumnName = "batch_code", ColumnDescription = "批次", ColumnDataType = "nvarchar", Length = 20, IsNullable = true)]
     public string? BatchCode { get; set; }
 
     /// <summary>

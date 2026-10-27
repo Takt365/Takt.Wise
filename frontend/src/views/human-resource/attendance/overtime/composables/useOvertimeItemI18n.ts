@@ -75,7 +75,6 @@ export type OvertimeItemField = keyof typeof OVERTIMEITEM_PLACEHOLDER
 
 /** 高级查询可 trim 的字符串字段 */
 export const OVERTIMEITEM_QUERY_STRING_FIELDS = [
-  'plantCode',
   'employeeId',
   'employeeName',
   'actualStartTimeStart',

@@ -56,8 +56,8 @@
         :show-fullscreen="true"
         :show-refresh="true"
         :create-disabled="false"
-        :update-disabled="!selectedRow"
-        :delete-disabled="selectedRows.length === 0"
+        :update-disabled="!selecmedRow"
+        :delete-disabled="selecmedRows.length === 0"
         :create-loading="loading"
         :update-loading="loading"
         :delete-loading="loading"
@@ -387,9 +387,9 @@ const dataSource = ref<DictData[]>([])
 const loading = ref(false)
 
 // 行选择
-const selectedRowKeys = ref<(string | number)[]>([])
-const selectedRows = ref<DictData[]>([])
-const selectedRow = ref<DictData | null>(null)
+const selecmedRowKeys = ref<(string | number)[]>([])
+const selecmedRows = ref<DictData[]>([])
+const selecmedRow = ref<DictData | null>(null)
 
 // 表单
 const formVisible = ref(false)
@@ -559,25 +559,25 @@ const displayColumns = computed((): any => {
 
 // 行选择配置
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: DictData[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: DictData, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (selectedRow.value?.dictDataId === record?.dictDataId) {
-      selectedRow.value = null
+  onSelect: (record: DictData, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (selecmedRow.value?.dictDataId === record?.dictDataId) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: DictData[]) => {
-    if (selected) {
-      selectedRow.value =
-        selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: DictData[]) => {
+    if (selecmed) {
+      selecmedRow.value =
+        selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
     } else {
-      selectedRow.value = null
+      selecmedRow.value = null
     }
   }
 }))
@@ -625,9 +625,9 @@ const initWindow = () => {
   })
   
   // 重置选择状态
-  selectedRowKeys.value = []
-  selectedRows.value = []
-  selectedRow.value = null
+  selecmedRowKeys.value = []
+  selecmedRows.value = []
+  selecmedRow.value = null
   
   // 加载数据
   loadData()
@@ -686,7 +686,7 @@ const handleCreate = () => {
 
 // 编辑
 const handleUpdate = () => {
-  if (!selectedRow.value) {
+  if (!selecmedRow.value) {
     message.warning(
       t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: t('entity.dictdata._self') })
     )
@@ -694,13 +694,13 @@ const handleUpdate = () => {
   }
   
   formTitle.value = t('common.dialog.title.edit', { entity: t('entity.dictdata._self') })
-  formData.value = { ...selectedRow.value }
+  formData.value = { ...selecmedRow.value }
   formVisible.value = true
 }
 
 // 编辑单条记录（操作列使用）
 const handleEditOne = (record: DictData) => {
-  selectedRow.value = record
+  selecmedRow.value = record
   formTitle.value = t('common.dialog.title.edit', { entity: t('entity.dictdata._self') })
   formData.value = { ...record }
   formVisible.value = true
@@ -708,14 +708,14 @@ const handleEditOne = (record: DictData) => {
 
 // 删除
 const handleDelete = async () => {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(
       t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: t('entity.dictdata._self') })
     )
     return
   }
   
-  const ids = selectedRows.value.map(row => row.dictDataId).filter(Boolean)
+  const ids = selecmedRows.value.map(row => row.dictDataId).filter(Boolean)
   if (ids.length === 0) {
     message.warning(t('common.validation.invalid', { field: t('common.page.entity.id') }))
     return
@@ -735,9 +735,9 @@ const handleDelete = async () => {
     }
     message.success(t('common.feedback.deleted'))
     await loadData()
-    selectedRowKeys.value = []
-    selectedRows.value = []
-    selectedRow.value = null
+    selecmedRowKeys.value = []
+    selecmedRows.value = []
+    selecmedRow.value = null
   } catch (error) {
     logger.error('[DictData] 删除失败', { action: 'deleteBatch' }, error)
     message.error(t('common.feedback.delete.failed'))
@@ -758,11 +758,11 @@ const handleDeleteOne = async (record: DictData) => {
     await dictDataApi.deleteDictDataById(record.dictDataId)
     message.success(t('common.feedback.deleted'))
     await loadData()
-    if (selectedRow.value?.dictDataId === record.dictDataId) {
-      selectedRow.value = null
+    if (selecmedRow.value?.dictDataId === record.dictDataId) {
+      selecmedRow.value = null
     }
-    selectedRowKeys.value = selectedRowKeys.value.filter(k => k !== record.dictDataId)
-    selectedRows.value = selectedRows.value.filter(r => r.dictDataId !== record.dictDataId)
+    selecmedRowKeys.value = selecmedRowKeys.value.filter(k => k !== record.dictDataId)
+    selecmedRows.value = selecmedRows.value.filter(r => r.dictDataId !== record.dictDataId)
   } catch (error) {
     logger.error('[DictData] 删除失败', { action: 'deleteOne' }, error)
     message.error(t('common.feedback.delete.failed'))

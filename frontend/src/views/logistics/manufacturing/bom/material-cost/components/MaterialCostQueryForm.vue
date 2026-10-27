@@ -10,17 +10,6 @@
   <div class="takt-query-bar material-cost-query-bar">
     <div class="material-cost-query-bar__fields min-w-0 flex flex-1 flex-wrap items-center gap-x-3 gap-y-2">
       <div class="flex items-center gap-1">
-        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('common.page.entity.plantcode') }}</span>
-        <TaktSelect
-          v-model:value="plantCode"
-          api-url="TaktPlants/options"
-          class="material-cost-query-bar__control material-cost-query-bar__control--plant"
-          allow-clear
-          :placeholder="t('common.page.form.placeholder.selectonly')"
-          @change="handlePlantChange"
-        />
-      </div>
-      <div class="flex items-center gap-1">
         <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('logistics.manufacturing.bom.material-cost.page.costingMonth') }}</span>
         <a-date-picker
           v-model:value="costingMonth"

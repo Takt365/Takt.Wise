@@ -64,7 +64,7 @@ internal static class TaktEcExecModelRootMaterialDedup
                 && s.EcCode == x.EcCode
                 && s.EcModelCode == x.EcModelCode
                 && SqlFunc.ToString(s.EcRootMaterialCodeGroup) == SqlFunc.ToString(x.EcRootMaterialCodeGroup)
-                && s.EcDetailId > x.EcDetailId)
+                && s.Id > x.Id)
             .Any();
     }
 }

@@ -15,7 +15,7 @@ export type DocumentRowRecord = Document | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface DocumentMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<DocumentRowRecord | null>
+  selecmedMasterRow: Ref<DocumentRowRecord | null>
 }
 
 const documentMasterContextKey: InjectionKey<DocumentMasterContext> = Symbol('documentMasterContext')
@@ -25,8 +25,8 @@ const documentMasterContextKey: InjectionKey<DocumentMasterContext> = Symbol('do
  * @returns {DocumentMasterContext} 主表上下文
  */
 export function provideDocumentMasterContext(): DocumentMasterContext {
-  const selectedMasterRow = ref<DocumentRowRecord | null>(null)
-  const ctx: DocumentMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<DocumentRowRecord | null>(null)
+  const ctx: DocumentMasterContext = { selecmedMasterRow }
   provide(documentMasterContextKey, ctx)
   return ctx
 }

@@ -22,7 +22,7 @@ const ecDeptSignalrLogger = createLogger('ec-dept-signalr');
 
 /**
  * 设变部门页订阅本部门 SignalR 通知组（JoinDeptGroup / LeaveDeptGroup）
- * @param deptCode 部门编码（Eng/Mp 等，与后端 TaktEcExecCodes 一致）
+ * @param deptCode 部门编码（Te/Mp 等，与后端 TaktEcExecCodes 一致）
  */
 export function useEcExecSignalRGroup(deptCode: TaktEcExecCode): void {
   const { ecChangeHubState } = storeToRefs(useSignalRStore());

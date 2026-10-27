@@ -129,7 +129,7 @@ export interface Events {
   /**
    * 设变技术课主表后台保存完成（SignalR）
    */
-  'logistics:ec-gijutsu:persist-completed': import('@/types/logistics/manufacturing/engineering-change/ecGijutsuPersistSignalR.types').EcGijutsuPersistCompletedEvent;
+  'logistics:ec-te:persist-completed': import('@/types/logistics/manufacturing/engineering-change/ecTePersistSignalR.types').EcTePersistCompletedEvent;
 
   /**
    * 刷新菜单

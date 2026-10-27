@@ -1034,8 +1034,8 @@
               </a-button>
               <a-button
                 class="takt-button-delete-row"
-                :disabled="selectedColumnRowKeys.length === 0"
-                @click="handleDeleteSelectedColumnRows"
+                :disabled="selecmedColumnRowKeys.length === 0"
+                @click="handleDeleteSelecmedColumnRows"
               >
                 <template #icon>
                   <RiDeleteRow class="takt-remix-icon" />
@@ -1535,7 +1535,7 @@ const columnList = ref<GenTableColumnRow[]>([])
 /** 字段列表初始快照（重置所有时恢复） */
 const columnListBaseline = ref<GenTableColumnRow[]>([])
 /** 字段配置表选中行 key（columnId 字符串） */
-const selectedColumnRowKeys = ref<string[]>([])
+const selecmedColumnRowKeys = ref<string[]>([])
 
 /**
  * 深拷贝字段行列表
@@ -1565,9 +1565,9 @@ function getColumnRowKey(record: GenTableColumnRow): string {
 
 /** 字段配置表行选择 */
 const columnRowSelection = computed(() => ({
-  selectedRowKeys: selectedColumnRowKeys.value,
+  selecmedRowKeys: selecmedColumnRowKeys.value,
   onChange: (keys: (string | number)[]) => {
-    selectedColumnRowKeys.value = keys.map((k) => String(k))
+    selecmedColumnRowKeys.value = keys.map((k) => String(k))
   },
 }))
 /** 本地新增列临时 id 序号（负整数） */
@@ -2310,27 +2310,27 @@ function removeColumnRow(record: GenTableColumnRow) {
   const idStr = String(id)
   const nextList = columnList.value.filter(r => r.columnId !== id)
   columnList.value = normalizeColumnOrderNum(nextList)
-  selectedColumnRowKeys.value = selectedColumnRowKeys.value.filter((k) => k !== idStr)
+  selecmedColumnRowKeys.value = selecmedColumnRowKeys.value.filter((k) => k !== idStr)
 }
 
 /**
  * 删除选中的字段行
  */
-function handleDeleteSelectedColumnRows(): void {
-  if (selectedColumnRowKeys.value.length === 0) return
+function handleDeleteSelecmedColumnRows(): void {
+  if (selecmedColumnRowKeys.value.length === 0) return
   Modal.confirm({
     title: t('common.tip.confirm.delete.title'),
     content: t('common.tip.confirm.delete.count', {
-      count: selectedColumnRowKeys.value.length,
+      count: selecmedColumnRowKeys.value.length,
       entity: t('entity.gentablecolumn._self'),
     }),
     okText: t('common.page.button.confirm'),
     cancelText: t('common.page.button.cancel'),
     onOk: () => {
-      const keySet = new Set(selectedColumnRowKeys.value)
+      const keySet = new Set(selecmedColumnRowKeys.value)
       const nextList = columnList.value.filter((r) => !keySet.has(getColumnRowKey(r)))
       columnList.value = normalizeColumnOrderNum(nextList)
-      selectedColumnRowKeys.value = []
+      selecmedColumnRowKeys.value = []
     },
   })
 }
@@ -2346,7 +2346,7 @@ function handleResetAllColumnRows(): void {
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
       const tableId = formState.value.genTableId
-      selectedColumnRowKeys.value = []
+      selecmedColumnRowKeys.value = []
       if (tableId != null && String(tableId).trim() !== '') {
         await loadColumns(String(tableId))
         return
@@ -3053,7 +3053,7 @@ watch(
       menuButtonGroupIndeterminate.value = false
       columnList.value = []
       columnListBaseline.value = []
-      selectedColumnRowKeys.value = []
+      selecmedColumnRowKeys.value = []
     }
   },
   { immediate: true }
@@ -3214,7 +3214,7 @@ function reset() {
   if (btnOpts.length > 0) formState.value.menuButtonGroup = btnOpts.map((o: TaktDictSelectOption) => String(o.value)).join(',')
   columnList.value = []
   columnListBaseline.value = []
-  selectedColumnRowKeys.value = []
+  selecmedColumnRowKeys.value = []
   columnTableVisibleKeys.value = resolveColumnTableDefaultVisibleKeys()
   columnTableWidths.value = { ...COLUMN_TABLE_DEFAULT_WIDTHS }
   activeTab.value = 'table'

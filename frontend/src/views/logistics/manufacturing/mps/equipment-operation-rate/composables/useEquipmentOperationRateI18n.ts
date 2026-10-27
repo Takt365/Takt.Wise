@@ -88,7 +88,6 @@ export type EquipmentOperationRateField = keyof typeof EQUIPMENTOPERATIONRATE_PL
 
 /** 高级查询可 trim 的字符串字段 */
 export const EQUIPMENTOPERATIONRATE_QUERY_STRING_FIELDS = [
-  'plantCode',
   'startDateStart',
   'startDateEnd',
   'endDateStart',

@@ -43,9 +43,9 @@ import { WORKFLOW_TABLE_NAMES } from '@/composables/useWorkflowSignalrRefresh';
 import { QUARTZ_TABLE_NAME } from '@/composables/useQuartzSignalrRefresh';
 import { BOM_MATERIAL_COST_ITEM_TABLE_NAME } from '@/composables/useBomMaterialCostItemRecalculateSignalr';
 import {
-  EC_GIJUTSU_TABLE_NAME,
-  formatEcGijutsuPersistDuration,
-} from '@/composables/useEcGijutsuPersistSignalr';
+  EC_TE_TABLE_NAME,
+  formatEcTePersistDuration,
+} from '@/composables/useEcTePersistSignalr';
 import type {
   FlowInstanceProgressedEvent,
   FlowSchemeChangedEvent,
@@ -56,7 +56,7 @@ import type {
   QuartzTaskExecutedEvent,
 } from '@/types/foundation/quartzSignalR.types';
 import type { BomMaterialCostItemRecalculateCompletedEvent } from '@/types/logistics/manufacturing/bom/materialCostItemSignalR.types';
-import type { EcGijutsuPersistCompletedEvent } from '@/types/logistics/manufacturing/engineering-change/ecGijutsuPersistSignalR.types';
+import type { EcTePersistCompletedEvent } from '@/types/logistics/manufacturing/engineering-change/ecTePersistSignalR.types';
 import type {
   EcChangeClosedEvent,
   EcChangeNotificationEvent,
@@ -147,12 +147,12 @@ function dispatchBomMaterialCostItemRecalculateSignalREvents(
  * @param completedEvent 保存完成事件
  * @returns {void}
  */
-function dispatchEcGijutsuPersistSignalREvents(
-  completedEvent?: EcGijutsuPersistCompletedEvent,
+function dispatchEcTePersistSignalREvents(
+  completedEvent?: EcTePersistCompletedEvent,
 ): void {
   if (completedEvent) {
-    EventBus.emit('logistics:ec-gijutsu:persist-completed', completedEvent);
-    EventBus.emit('table:refresh', { tableName: EC_GIJUTSU_TABLE_NAME });
+    EventBus.emit('logistics:ec-te:persist-completed', completedEvent);
+    EventBus.emit('table:refresh', { tableName: EC_TE_TABLE_NAME });
   }
 }
 
@@ -437,24 +437,24 @@ export const useSignalRStore = defineStore('signalr', () => {
         onBomMaterialCostItemRecalculateCompleted: (event) => {
           dispatchBomMaterialCostItemRecalculateSignalREvents(event);
         },
-        onEcGijutsuPersistCompleted: (event) => {
-          dispatchEcGijutsuPersistSignalREvents(event);
+        onEcTePersistCompleted: (event) => {
+          dispatchEcTePersistSignalREvents(event);
           const isSuccess = event.executeStatus === 1;
           notify({
             type: isSuccess ? 'success' : 'error',
             message: translateLocaleMessage(
               isSuccess
-                ? 'logistics.manufacturing.engineering-change.ec-gijutsu.page.persist.completed'
-                : 'logistics.manufacturing.engineering-change.ec-gijutsu.page.persist.failed',
+                ? 'logistics.manufacturing.engineering-change.ec-te.page.persist.completed'
+                : 'logistics.manufacturing.engineering-change.ec-te.page.persist.failed',
               {
                 ecCode: event.ecCode,
                 action: translateLocaleMessage(
                   event.isUpdate
-                    ? 'logistics.manufacturing.engineering-change.ec-gijutsu.page.persist.actionUpdate'
-                    : 'logistics.manufacturing.engineering-change.ec-gijutsu.page.persist.actionCreate',
+                    ? 'logistics.manufacturing.engineering-change.ec-te.page.persist.actionUpdate'
+                    : 'logistics.manufacturing.engineering-change.ec-te.page.persist.actionCreate',
                 ),
                 detailCount: String(event.detailCount ?? 0),
-                duration: formatEcGijutsuPersistDuration(event.executeDuration ?? 0),
+                duration: formatEcTePersistDuration(event.executeDuration ?? 0),
               },
             ),
             description: isSuccess ? undefined : (event.errorMessage || undefined),

@@ -15,7 +15,7 @@ export type SopRevisionRowRecord = SopRevision | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface SopRevisionMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<SopRevisionRowRecord | null>
+  selecmedMasterRow: Ref<SopRevisionRowRecord | null>
 }
 
 const sopRevisionMasterContextKey: InjectionKey<SopRevisionMasterContext> = Symbol('revisionMasterContext')
@@ -25,8 +25,8 @@ const sopRevisionMasterContextKey: InjectionKey<SopRevisionMasterContext> = Symb
  * @returns {SopRevisionMasterContext} 主表上下文
  */
 export function provideSopRevisionMasterContext(): SopRevisionMasterContext {
-  const selectedMasterRow = ref<SopRevisionRowRecord | null>(null)
-  const ctx: SopRevisionMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<SopRevisionRowRecord | null>(null)
+  const ctx: SopRevisionMasterContext = { selecmedMasterRow }
   provide(sopRevisionMasterContextKey, ctx)
   return ctx
 }

@@ -24,7 +24,7 @@ namespace Takt.WebApi.Controllers.Logistics.Manufacturing.Bom;
 /// 查询栏工厂/机种选项走 TaktBomCostOptions。
 /// </summary>
 [ApiModule(4, "后勤管理")]
-[Route("api/[controller]", Name = "BOM零价格")]
+[Route("api/[controller]", Name = "零材料成本")]
 public class TaktBomMaterialZeroPricesController : TaktControllerBase
 {
     private readonly ITaktBomMaterialZeroPriceService _bomMaterialZeroPriceService;
@@ -51,7 +51,7 @@ public class TaktBomMaterialZeroPricesController : TaktControllerBase
     /// </summary>
     /// <param name="queryDto">查询</param>
     /// <returns>合并结果</returns>
-    [TaktPermission("logistics:manufacturing:bom:material:zeroprice:list", "BOM零价格")]
+    [TaktPermission("logistics:manufacturing:bom:material:zeroprice:list", "零材料成本")]
     [HttpGet("list")]
     public async Task<IActionResult> GetBomMaterialZeroPriceListAsync(
         [FromQuery] TaktBomMaterialZeroPriceQueryDto queryDto)
@@ -74,7 +74,7 @@ public class TaktBomMaterialZeroPricesController : TaktControllerBase
     /// <param name="sheetName">工作表名</param>
     /// <param name="exportName">导出文件名</param>
     /// <returns>Excel</returns>
-    [TaktPermission("logistics:manufacturing:bom:material:zeroprice:export", "导出BOM零价格")]
+    [TaktPermission("logistics:manufacturing:bom:material:zeroprice:export", "导出零材料成本")]
     [HttpGet("export")]
     public async Task<IActionResult> ExportBomMaterialZeroPriceAsync(
         [FromQuery] TaktBomMaterialZeroPriceQueryDto query,
@@ -98,7 +98,7 @@ public class TaktBomMaterialZeroPricesController : TaktControllerBase
     /// </summary>
     /// <param name="dto">回填条件</param>
     /// <returns>统计</returns>
-    [TaktPermission("logistics:manufacturing:bom:material:zeroprice:update", "回填BOM零价格移动价")]
+    [TaktPermission("logistics:manufacturing:bom:material:zeroprice:update", "回填零材料成本移动价")]
     [HttpPost("backfill-moving-price")]
     public async Task<IActionResult> BackfillBomMaterialZeroPriceMovingAsync(
         [FromBody] TaktBomMaterialZeroPriceMovingBackfillDto dto)
@@ -108,7 +108,10 @@ public class TaktBomMaterialZeroPricesController : TaktControllerBase
             var result = await _bomMaterialZeroPriceService.BackfillBomMaterialZeroPriceMovingAsync(dto);
             await TaktBomZeroPriceOperationMessageHelper.TryNotifyAsync(
                 _messageService,
-                TaktBomZeroPriceOperationMessageHelper.BuildMovingPriceBackfillSuccess(result, isManual: false));
+                TaktBomZeroPriceOperationMessageHelper.BuildMovingPriceBackfillSuccess(
+                    result,
+                    isManual: false,
+                    isBatch: string.IsNullOrWhiteSpace(dto.ComponentCode)));
             return Success(result, "回填成功");
         }
         catch (Exception ex)
@@ -122,7 +125,7 @@ public class TaktBomMaterialZeroPricesController : TaktControllerBase
     /// </summary>
     /// <param name="dto">原组件 + 新组件 + 价/单位/币种</param>
     /// <returns>统计</returns>
-    [TaktPermission("logistics:manufacturing:bom:material:zeroprice:update", "手工替换BOM零价格移动价")]
+    [TaktPermission("logistics:manufacturing:bom:material:zeroprice:update", "手工替换零材料成本移动价")]
     [HttpPost("manual-moving-price")]
     public async Task<IActionResult> ManualUpdateBomMaterialZeroPriceMovingAsync(
         [FromBody] TaktBomMaterialZeroPriceManualMovingDto dto)
@@ -146,7 +149,7 @@ public class TaktBomMaterialZeroPricesController : TaktControllerBase
     /// </summary>
     /// <param name="dto">打标条件</param>
     /// <returns>统计</returns>
-    [TaktPermission("logistics:manufacturing:bom:material:zeroprice:update", "标记BOM零价格PCB SECT")]
+    [TaktPermission("logistics:manufacturing:bom:material:zeroprice:update", "标记零材料成本PCB SECT")]
     [HttpPost("mark-pcb-sect")]
     public async Task<IActionResult> MarkBomMaterialZeroPricePcbSectAsync(
         [FromBody] TaktBomMaterialZeroPricePcbSectMarkDto dto)

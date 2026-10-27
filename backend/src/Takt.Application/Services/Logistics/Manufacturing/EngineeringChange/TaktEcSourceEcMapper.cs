@@ -34,7 +34,7 @@ public static class TaktEcSourceEcMapper
     /// <param name="materialsByCode">目标工厂物料字典（物料编码 → TaktMaterialPlant）；为空时不补全物料衍生字段</param>
     /// <param name="modelCodeByRootMaterial">根物料编码 → 机种编码（TaktModelDestination）；为空时 EcModelCode 回退来源主表 SourceModel</param>
     /// <returns>设变创建 DTO</returns>
-    public static TaktEcGijutsuCreateDto ToCreateDto(
+    public static TaktEcTeCreateDto ToCreateDto(
         TaktSourceEc sourceEc,
         IReadOnlyList<TaktSourceEcDetail> sourceDetails,
         string plantCode,
@@ -52,7 +52,7 @@ public static class TaktEcSourceEcMapper
         var today = DateTime.Today;
         var ecCode = sourceEc.SourceEcCode ?? string.Empty;
         var fallbackModelCode = sourceEc.SourceModel?.Trim() ?? string.Empty;
-        var createDto = new TaktEcGijutsuCreateDto
+        var createDto = new TaktEcTeCreateDto
         {
             TenantCode = tenantCode,
             CompanyCode = companyCode,
@@ -64,8 +64,8 @@ public static class TaktEcSourceEcMapper
             EcContent = sourceEc.SourceEcContent ?? string.Empty,
             EcLeader = string.Empty,
             EcLossAmount = 0,
-            EcScope = TaktEcScopeConstants.AllDestination,
-            EcDeptScope = TaktEcDeptScopeConstants.ByModel,
+            EcImplScope = TaktEcScopeConstants.AllDestination,
+            EcControlScope = TaktEcControlScopeConstants.ByModel,
             EcEntryDate = today,
             ChangeStatus = TaktEcSourceStatusMapper.MapToChangeStatusOrThrow(sourceEc.SourceStatus),
             EcStatus = 1,

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Sales
 // 文件名称：TaktClientService.cs
-// 创建时间：2026-10-14
+// 创建时间：2026-10-27
 // 创建人：Takt365(Cursor AI)
 // 功能描述：客户端信息应用服务实现
 // 
@@ -32,7 +32,6 @@ public class TaktClientService : TaktServiceBase, ITaktClientService
     private readonly ITaktCompanyRepository<TaktClient> _clientRepository;
     private readonly ITaktSortOrderGenerator _sortOrderGenerator;
     private readonly ITaktUniqueValidator _uniqueValidator;
-    private readonly ITaktNumberingGenerator _numberingGenerator;
 
     /// <summary>
     /// 构造函数
@@ -40,14 +39,12 @@ public class TaktClientService : TaktServiceBase, ITaktClientService
     /// <param name="clientRepository">客户端信息仓储</param>
     /// <param name="sortOrderGenerator">排序号生成器</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
-    /// <param name="numberingGenerator">业务编码生成器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktClientService(
         ITaktCompanyRepository<TaktClient> clientRepository,
         ITaktSortOrderGenerator sortOrderGenerator,
         ITaktUniqueValidator uniqueValidator,
-        ITaktNumberingGenerator numberingGenerator,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
@@ -55,7 +52,6 @@ public class TaktClientService : TaktServiceBase, ITaktClientService
         _clientRepository = clientRepository;
         _sortOrderGenerator = sortOrderGenerator;
         _uniqueValidator = uniqueValidator;
-        _numberingGenerator = numberingGenerator;
     }
 
     /// <summary>
@@ -128,19 +124,6 @@ public class TaktClientService : TaktServiceBase, ITaktClientService
     public async Task<TaktClientDto> CreateClientAsync(TaktClientCreateDto dto)
     {
         var entity = dto.Adapt<TaktClient>();
-        if (!string.IsNullOrWhiteSpace(dto.NumberingRuleCode))
-        {
-            var generated = await _numberingGenerator.GenerateNextAsync(dto.NumberingRuleCode.Trim());
-            if (string.IsNullOrWhiteSpace(generated.BusinessCode))
-            {
-                throw new TaktBusinessException("业务编码生成失败");
-            }
-            entity.ClientCode = generated.BusinessCode;
-        }
-        else if (string.IsNullOrWhiteSpace(entity.ClientCode))
-        {
-            throw new TaktBusinessException("客户端编码不能为空");
-        }
         var isUnique_ix_takt_logistics_sales_client_client_code_unique = await _uniqueValidator.IsUniqueAsync(
             _clientRepository,
             x => x.SalesOrganization == entity.SalesOrganization

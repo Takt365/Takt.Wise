@@ -19,7 +19,7 @@ namespace Takt.Domain.Entities.Logistics.Manufacturing.Bom;
 /// BOM 物料成本明细行（业务源数据：先导入/维护明细，再按工厂+产品+核算月聚合写入 TaktBomMaterialCost；无线上主表外键）
 /// <para>软删除：本表业务上永不软删，IsDeleted 恒为 0；计算/回填勿按软删过滤明细。</para>
 /// </summary>
-[SugarTable("takt_logistics_manufacturing_bom_material_cost_item", "BOM物料成本明细表")]
+[SugarTable("takt_logistics_manufacturing_bom_material_cost_item", "材料成本明细表")]
 [SugarIndex("ix_bom_material_cost_item_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
 [SugarIndex("ix_bom_material_cost_item_is_deleted", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(IsDeleted), OrderByType.Asc, false)]
 [SugarIndex(

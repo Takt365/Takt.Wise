@@ -41,7 +41,7 @@ public class TaktAssyOrderDefectsController : TaktControllerBase
     /// </summary>
     /// <param name="queryDto">查询DTO</param>
     /// <returns>分页结果</returns>
-    [TaktPermission("logistics:manufacturing:defect:assy:order:list", "组立工单不良统计列表")]
+    [TaktPermission("logistics:manufacturing:defect:mfg1:order:list", "组立工单不良统计列表")]
     [HttpGet("list")]
     public async Task<IActionResult> GetAssyOrderDefectListAsync([FromQuery] TaktAssyOrderDefectQueryDto queryDto)
     {
@@ -61,7 +61,7 @@ public class TaktAssyOrderDefectsController : TaktControllerBase
     /// </summary>
     /// <param name="id">组立工单不良统计ID</param>
     /// <returns>组立工单不良统计DTO</returns>
-    [TaktPermission("logistics:manufacturing:defect:assy:order:query", "组立工单不良统计详情")]
+    [TaktPermission("logistics:manufacturing:defect:mfg1:order:query", "组立工单不良统计详情")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAssyOrderDefectByIdAsync(long id)
     {
@@ -84,7 +84,7 @@ public class TaktAssyOrderDefectsController : TaktControllerBase
     /// 获取组立工单不良统计选项列表
     /// </summary>
     /// <returns>下拉选项</returns>
-    [TaktPermission("logistics:manufacturing:defect:assy:order:query", "组立工单不良统计选项")]
+    [TaktPermission("logistics:manufacturing:defect:mfg1:order:query", "组立工单不良统计选项")]
     [HttpGet("options")]
     public async Task<IActionResult> GetAssyOrderDefectOptionsAsync([FromQuery] string? plantCode = null, [FromQuery] string? keyword = null)
     {
@@ -104,7 +104,7 @@ public class TaktAssyOrderDefectsController : TaktControllerBase
     /// </summary>
     /// <param name="dto">创建DTO</param>
     /// <returns>组立工单不良统计DTO</returns>
-    [TaktPermission("logistics:manufacturing:defect:assy:order:create", "创建组立工单不良统计")]
+    [TaktPermission("logistics:manufacturing:defect:mfg1:order:create", "创建组立工单不良统计")]
     [HttpPost]
     public async Task<IActionResult> CreateAssyOrderDefectAsync([FromBody] TaktAssyOrderDefectCreateDto dto)
     {
@@ -125,7 +125,7 @@ public class TaktAssyOrderDefectsController : TaktControllerBase
     /// <param name="id">组立工单不良统计ID</param>
     /// <param name="dto">更新DTO</param>
     /// <returns>组立工单不良统计DTO</returns>
-    [TaktPermission("logistics:manufacturing:defect:assy:order:update", "更新组立工单不良统计")]
+    [TaktPermission("logistics:manufacturing:defect:mfg1:order:update", "更新组立工单不良统计")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateAssyOrderDefectAsync(long id, [FromBody] TaktAssyOrderDefectUpdateDto dto)
     {
@@ -145,7 +145,7 @@ public class TaktAssyOrderDefectsController : TaktControllerBase
     /// </summary>
     /// <param name="id">组立工单不良统计ID</param>
     /// <returns>操作结果</returns>
-    [TaktPermission("logistics:manufacturing:defect:assy:order:delete", "删除组立工单不良统计")]
+    [TaktPermission("logistics:manufacturing:defect:mfg1:order:delete", "删除组立工单不良统计")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAssyOrderDefectByIdAsync(long id)
     {
@@ -165,7 +165,7 @@ public class TaktAssyOrderDefectsController : TaktControllerBase
     /// </summary>
     /// <param name="ids">ID列表</param>
     /// <returns>操作结果</returns>
-    [TaktPermission("logistics:manufacturing:defect:assy:order:delete", "批量删除组立工单不良统计")]
+    [TaktPermission("logistics:manufacturing:defect:mfg1:order:delete", "批量删除组立工单不良统计")]
     [HttpDelete("batch")]
     public async Task<IActionResult> DeleteAssyOrderDefectBatchAsync([FromBody] IEnumerable<long> ids)
     {
@@ -185,7 +185,7 @@ public class TaktAssyOrderDefectsController : TaktControllerBase
     /// </summary>
     /// <param name="dto">状态 DTO</param>
     /// <returns>组立工单不良统计DTO</returns>
-    [TaktPermission("logistics:manufacturing:defect:assy:order:update", "更新组立工单不良统计状态")]
+    [TaktPermission("logistics:manufacturing:defect:mfg1:order:update", "更新组立工单不良统计状态")]
     [HttpPut("status")]
     public async Task<IActionResult> UpdateAssyOrderDefectStatusAsync([FromBody] TaktAssyOrderDefectStatusDto dto)
     {
@@ -204,7 +204,7 @@ public class TaktAssyOrderDefectsController : TaktControllerBase
     /// 获取导入模板
     /// </summary>
     /// <returns>Excel文件</returns>
-    [TaktPermission("logistics:manufacturing:defect:assy:order:import", "获取组立工单不良统计导入模板")]
+    [TaktPermission("logistics:manufacturing:defect:mfg1:order:import", "获取组立工单不良统计导入模板")]
     [HttpGet("template")]
     public async Task<IActionResult> GetAssyOrderDefectTemplateAsync([FromQuery] string? sheetName = null, [FromQuery] string? templateName = null)
     {
@@ -224,7 +224,7 @@ public class TaktAssyOrderDefectsController : TaktControllerBase
     /// </summary>
     /// <param name="file">Excel文件</param>
     /// <returns>导入结果</returns>
-    [TaktPermission("logistics:manufacturing:defect:assy:order:import", "导入组立工单不良统计")]
+    [TaktPermission("logistics:manufacturing:defect:mfg1:order:import", "导入组立工单不良统计")]
     [HttpPost("import")]
     public async Task<IActionResult> ImportAssyOrderDefectAsync(IFormFile file, [FromQuery] string? sheetName = null)
     {
@@ -254,7 +254,7 @@ public class TaktAssyOrderDefectsController : TaktControllerBase
     /// 导出组立工单不良统计
     /// </summary>
     /// <returns>Excel文件</returns>
-    [TaktPermission("logistics:manufacturing:defect:assy:order:export", "导出组立工单不良统计")]
+    [TaktPermission("logistics:manufacturing:defect:mfg1:order:export", "导出组立工单不良统计")]
     [HttpGet("export")]
     public async Task<IActionResult> ExportAssyOrderDefectAsync([FromQuery] TaktAssyOrderDefectQueryDto? query = null, [FromQuery] string? sheetName = null, [FromQuery] string? exportName = null)
     {

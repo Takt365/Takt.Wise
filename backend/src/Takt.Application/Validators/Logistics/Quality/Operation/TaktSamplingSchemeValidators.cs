@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Validators.Logistics.Quality.Operation
 // 文件名称：TaktSamplingSchemeValidators.cs
-// 创建时间：2026-10-14
+// 创建时间：2026-10-27
 // 创建人：Takt365(Auto Generated)
 // 功能描述：SamplingScheme 模块 FluentValidation 验证器（由 generate-validators-from-entity.cjs 根据 TaktSamplingScheme 生成，请按需审阅）
 // 

@@ -109,7 +109,7 @@ import { useUserStore } from '@/stores/identity/useUserStore'
 const pi = useMeetingNotificationI18n()
 const { t } = useI18n()
 const userStore = useUserStore()
-const { selectedMasterRow } = useMeetingMasterContext()
+const { selecmedMasterRow } = useMeetingMasterContext()
 
 /** Excel 导出默认命名 */
 const excelNames = taktExcelEntityNames('TaktMeetingNotification')
@@ -160,7 +160,7 @@ const visibleColumnKeys = ref<string[]>([...MEETINGNOTIFICATION_DEFAULT_VISIBLE_
 
 const entityIdName = 'meetingNotificationId'
 const masterMeetingId = computed((): string => {
-  const id = (selectedMasterRow.value as Record<string, unknown> | null)?.['meetingId']
+  const id = (selecmedMasterRow.value as Record<string, unknown> | null)?.['meetingId']
   return id != null ? String(id) : ''
 })
 const hasMasterSelection = computed(() => masterMeetingId.value !== '')

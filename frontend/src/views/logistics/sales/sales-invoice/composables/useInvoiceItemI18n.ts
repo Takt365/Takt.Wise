@@ -234,7 +234,6 @@ export type SalesInvoiceItemField = keyof typeof SALESINVOICEITEM_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const SALESINVOICEITEM_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'billingDocumentCode',
   'salesUnit',
   'baseUnit',

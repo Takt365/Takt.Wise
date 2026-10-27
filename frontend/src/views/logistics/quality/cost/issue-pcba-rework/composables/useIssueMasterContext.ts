@@ -12,7 +12,7 @@ import type { QualityIssue } from '@/types/logistics/quality/cost/issue.types'
 /** 主表选中行上下文 */
 export interface QualityIssueMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<QualityIssue | null>
+  selecmedMasterRow: Ref<QualityIssue | null>
 }
 
 const qualityIssueMasterContextKey: InjectionKey<QualityIssueMasterContext> = Symbol('issueMasterContext')
@@ -22,8 +22,8 @@ const qualityIssueMasterContextKey: InjectionKey<QualityIssueMasterContext> = Sy
  * @returns {QualityIssueMasterContext} 主表上下文
  */
 export function provideQualityIssueMasterContext(): QualityIssueMasterContext {
-  const selectedMasterRow = ref<QualityIssue | null>(null)
-  const ctx: QualityIssueMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<QualityIssue | null>(null)
+  const ctx: QualityIssueMasterContext = { selecmedMasterRow }
   provide(qualityIssueMasterContextKey, ctx)
   return ctx
 }

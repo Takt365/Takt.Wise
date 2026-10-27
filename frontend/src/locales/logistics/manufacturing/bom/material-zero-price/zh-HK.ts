@@ -20,7 +20,7 @@ export default {
     modelCode: '機種',
     modelCodesOptional: '機種（可選，可多選；空=全部機種）',
     modelCodePlaceholder: '可選；空＝全部機種',
-    hint: '{month} · 產品 {productCount} · 零價組件 {componentCount}（僅 FERT · IsDeleted=0 · ProductionRelated=X · PcbSectIndicator 空 · PurchaseType=F · 移動平均價=0；建議代替＝末尾字母逆推如 E02597400C→B→A，取移動價格表同期間或以前最近有價÷PriceUnit）',
+    hint: '{month} · 產品 {productCount} · 零價組件 {componentCount}（僅 FERT · IsDeleted=0 · ProductionRelated=X · PcbSectIndicator 空 · PurchaseType=F · 移動平均價=0；建議移動價格＝本組件從核算月往前取最近一次移動價大於 0 的月份（無購買的月份不算 0；仍無價再按末字母逆推如 E02597400C→B→A）÷PriceUnit）',
     productCodes: '共用產品',
     productCount: '產品數',
     suggestedComponentCode: '建議代替組件',
@@ -29,25 +29,25 @@ export default {
     exportFailed: 'Bom0價格匯出失敗',
     costSum: '計算成本',
     costRecalculate: '重算成本',
-    costAverage: '計算平均成本',
+    costAverage: '計算機種平均成本',
     purchaseInfoBackfill: '回填採購價',
     purchaseInfoBackfillSuccess:
       '{month} 回填採購價完成：掃描 {scanned} 行，更新 {updated}，無價格 {skipped}，未變化 {unchanged}',
     purchaseInfoBackfillFailed: '回填採購價失敗',
     movingPriceBackfill: '回填移動價格',
-    movingPriceBackfillBatch: '批量回填移動價格',
+    movingPriceBackfillBatch: '批量回填替代價格',
     movingPriceBackfillRow: '回填移動價格',
     movingPriceBackfillNoSuggested: '無建議代替組件，無法回填移動價格',
     movingPriceBackfillConfirmTitle: '確認回填移動價格？',
     movingPriceBackfillConfirmContent:
       '將按當前工廠與核算月，把組件 {component} 的零價明細回填為建議代替 {suggested} 的移動平均價／單位／貨幣，寫入 ExtField 履歷，並更新各機種產品月成本與機種月成本。',
-    movingPriceBackfillBatchConfirmTitle: '確認批量回填移動價格？',
+    movingPriceBackfillBatchConfirmTitle: '確認批量回填替代價格？',
     movingPriceBackfillBatchConfirmContent:
       '將按當前工廠與核算月 {month}（及機種條件）對全部有建議代替的零價組件回填移動平均價／單位／貨幣，寫入 ExtField 履歷，並更新各機種產品月成本與機種月成本。',
     movingPriceBackfillSuccess:
       '{month} 回填移動價格完成：明細掃描 {scanned}、更新 {updated}、無價格 {skipped}、未變化 {unchanged}；產品月成本 {productCost}、機種月成本 {modelAverage}；{priceInfo}',
     movingPriceBackfillBatchSuccess:
-      '{month} 批量回填移動價格完成：組件 {components}、明細掃描 {scanned}、更新 {updated}、無價格 {skipped}、未變化 {unchanged}；產品月成本 {productCost}、機種月成本 {modelAverage}',
+      '{month} 批量回填替代價格完成：組件 {components}、明細掃描 {scanned}、更新 {updated}、無價格 {skipped}、未變化 {unchanged}；產品月成本 {productCost}、機種月成本 {modelAverage}',
     movingPriceBackfillFailed: '回填移動價格失敗',
     movingPriceManualRow: '手工更新價格',
     movingPriceManualTitle: '手工替換更新移動價格',
@@ -77,14 +77,14 @@ export default {
     costAverageSuccess:
       '{month} 計算平均成本完成：掃描 {scanned} 行（產品月成本>0共 {positiveCostRows}），機種更新 {modelUpdated}，類型更新 {typeUpdated}，月均更新 {averageUpdated}（有成本組 {groupsWithCost}/{groups}，無成本組 {groupsNoCost}）',
     costAverageFailed: '計算平均成本失敗',
-    pcbSectMark: '標記 PCB SECT',
+    pcbSectMark: 'PCB SECT標識',
     pcbSectMarkConfirmTitle: '確認標記 PCB SECT 整樹？',
     pcbSectMarkConfirmContent:
       '將按當前工廠與核算月 {month}（及機種條件）識別組件描述含「PCB SECT」的節點及其子層級整樹，在明細 pcb_sect_indicator 寫入 X（已有標識跳過）。',
     pcbSectMarkSuccess:
       '{month} PCB SECT 打標完成：掃描 {scanned}，整樹 {pcbSect}，新標 {updated}，已有 {unchanged}',
     pcbSectMarkFailed: 'PCB SECT 打標失敗',
-    stripLeadingZeros: '去前導0',
+    stripLeadingZeros: '前導0',
     stripLeadingZerosConfirmTitle: '確認去掉前導 0？',
     stripLeadingZerosConfirmContent:
       '將當前工廠 {plant} 的成本匯總表產品編碼，以及明細表（含各年分表）的產品編碼、組件編碼中，純數字且帶前導 0 的值去掉前導 0。例如 000000001918610130 變為 1918610130。含字母的編碼（如 0919MH8G93）不改。去掉後與已有唯一鍵衝突的行會跳過。',

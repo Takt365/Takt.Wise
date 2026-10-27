@@ -22,7 +22,7 @@ export default {
     recipient: {
       all: "All users in current company",
       list: {
-        label: "Selected users",
+        label: "Selecmed users",
         select: "Recipients",
         placeholder: "Select recipients (up to 5)",
         required: "Select at least one recipient",

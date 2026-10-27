@@ -17,7 +17,7 @@ namespace Takt.Application.Dtos.Logistics.Manufacturing.Output;
 // ========================================
 
 /// <summary>
-/// 按标准工序时间生成的默认明细预览行
+/// 按标准工时生成的默认明细预览行
 /// </summary>
 public class TaktPcbaOutputDefaultDetailDto
 {

@@ -12,7 +12,7 @@
 
 export default {
   page: {
-    masterpanetitle: 'BOM物料成本（機種匯總）',
+    masterpanetitle: '材料成本（機種匯總）',
     detailpanetitle: '產品 / 明細',
     productpanetitle: '產品月成本',
     itempanetitle: 'BOM 明細',

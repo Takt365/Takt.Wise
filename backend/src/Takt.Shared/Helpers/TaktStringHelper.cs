@@ -280,6 +280,25 @@ public static class TaktStringHelper
     }
 
     /// <summary>
+    /// 批次标识：仅保留大写字母，最长 20
+    /// </summary>
+    /// <param name="input">输入；空白则返回 null</param>
+    /// <returns>规范化批次；没有字母时返回 null</returns>
+    public static string? NormalizeBatchCode(string? input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            return null;
+        }
+        var letters = Regex.Replace(input.ToUpperInvariant(), @"[^A-Z]", string.Empty);
+        if (letters.Length == 0)
+        {
+            return null;
+        }
+        return letters.Length <= 20 ? letters : letters[..20];
+    }
+
+    /// <summary>
     /// 提取字母和数字
     /// </summary>
     /// <param name="input">输入字符串</param>

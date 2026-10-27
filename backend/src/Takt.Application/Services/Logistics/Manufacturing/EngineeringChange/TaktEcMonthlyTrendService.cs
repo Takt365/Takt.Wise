@@ -4,7 +4,7 @@
 // 文件名称：TaktEcMonthlyTrendService.cs
 // 创建时间：2026-07-18
 // 创建人：Takt365(Cursor AI)
-// 功能描述：月设变推移转置分析（设变号×部门×月份完成件数；实施推移按部门汇总）
+// 功能描述：设变推移转置分析（设变号×部门×月份完成件数；实施推移按部门汇总）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -23,30 +23,30 @@ using Takt.Shared.Options;
 namespace Takt.Application.Services.Logistics.Manufacturing.EngineeringChange;
 
 /// <summary>
-/// 月设变推移转置分析服务
+/// 设变推移转置分析服务
 /// </summary>
 public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendService
 {
     private const int CompletedTaskStatus = 2;
 
-    private readonly ITaktCompanyRepository<TaktEcGijutsu> _ecGijutsuRepository;
+    private readonly ITaktCompanyRepository<TaktEcTe> _ecTeRepository;
     private readonly ITaktCompanyRepository<TaktEcExecutionTask> _ecExecutionTaskRepository;
 
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="ecGijutsuRepository">设变技术课仓储</param>
+    /// <param name="ecTeRepository">设变技术课仓储</param>
     /// <param name="ecExecutionTaskRepository">设变执行任务仓储</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktEcMonthlyTrendService(
-        ITaktCompanyRepository<TaktEcGijutsu> ecGijutsuRepository,
+        ITaktCompanyRepository<TaktEcTe> ecTeRepository,
         ITaktCompanyRepository<TaktEcExecutionTask> ecExecutionTaskRepository,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
     {
-        _ecGijutsuRepository = ecGijutsuRepository;
+        _ecTeRepository = ecTeRepository;
         _ecExecutionTaskRepository = ecExecutionTaskRepository;
     }
 
@@ -60,7 +60,7 @@ public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendSer
     {
         EnsureThreeLayerContext();
         // 执行任务无 PlantCode，工厂取自设变主表（与分析 Join 同源）
-        var list = await _ecGijutsuRepository.GetListAsync(
+        var list = await _ecTeRepository.GetListAsync(
             x => x.TenantCode == CurrentTenantCode
                 && x.CompanyCode == CurrentCompanyCode
                 && x.PlantCode != null
@@ -98,7 +98,7 @@ public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendSer
         var tasks = await _ecExecutionTaskRepository.GetListAsync(
             x => x.TenantCode == CurrentTenantCode
                 && x.CompanyCode == CurrentCompanyCode
-                && ecIdList.Contains(x.EcGijutsuId)
+                && ecIdList.Contains(x.EcTeId)
                 && x.DeptCode != null
                 && x.DeptCode != string.Empty);
         return tasks
@@ -137,7 +137,7 @@ public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendSer
         var tasks = await _ecExecutionTaskRepository.GetListAsync(
             x => x.TenantCode == CurrentTenantCode
                 && x.CompanyCode == CurrentCompanyCode
-                && ecIdList.Contains(x.EcGijutsuId)
+                && ecIdList.Contains(x.EcTeId)
                 && (string.IsNullOrWhiteSpace(trimmedDept) || x.DeptCode == trimmedDept)
                 && x.EcCode != null
                 && x.EcCode != string.Empty);
@@ -153,21 +153,21 @@ public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendSer
     }
 
     /// <summary>
-    /// 按工厂加载设变主表 Id 列表（执行任务无工厂列，经 EcGijutsuId 关联）
+    /// 按工厂加载设变主表 Id 列表（执行任务无工厂列，经 EcTeId 关联）
     /// </summary>
     /// <param name="plantCode">工厂代码（已 Trim）</param>
     /// <returns>设变 Id 列表</returns>
     private async Task<List<long>> LoadEcIdsByPlantAsync(string plantCode)
     {
-        var gijutsuRecords = await _ecGijutsuRepository.GetListAsync(
+        var teRecords = await _ecTeRepository.GetListAsync(
             x => x.TenantCode == CurrentTenantCode
                 && x.CompanyCode == CurrentCompanyCode
                 && x.PlantCode == plantCode);
-        return gijutsuRecords.Select(x => x.Id).Distinct().ToList();
+        return teRecords.Select(x => x.Id).Distinct().ToList();
     }
 
     /// <summary>
-    /// 获取月设变推移转置分析（分页）
+    /// 获取设变推移转置分析（分页）
     /// </summary>
     /// <param name="queryDto">查询 DTO</param>
     /// <returns>转置分析结果</returns>
@@ -196,7 +196,7 @@ public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendSer
     }
 
     /// <summary>
-    /// 导出月设变推移转置分析 Excel
+    /// 导出设变推移转置分析 Excel
     /// </summary>
     /// <param name="query">查询条件</param>
     /// <param name="sheetName">工作表名称</param>
@@ -243,8 +243,8 @@ public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendSer
             exportRows,
             columnKeys,
             columnLabels,
-            sheetName ?? "月设变推移表",
-            fileName ?? TaktNamingHelper.PlantPrefixedTrendExportBase(query.PlantCode, "月设变推移"));
+            sheetName ?? "设变推移表",
+            fileName ?? TaktNamingHelper.PlantPrefixedTrendExportBase(query.PlantCode, "设变推移"));
     }
 
     /// <summary>
@@ -324,7 +324,7 @@ public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendSer
     }
 
     /// <summary>
-    /// 构建月设变推移转置分析全量结果（设变号×部门）
+    /// 构建设变推移转置分析全量结果（设变号×部门）
     /// </summary>
     /// <param name="queryDto">查询条件</param>
     /// <returns>内存构建结果</returns>
@@ -345,13 +345,13 @@ public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendSer
         }
         var focusPeriod = ResolveFocusPeriod(queryDto.FocusPeriod, periodOrder);
         var rangeEndExclusive = rangeEnd.AddMonths(1);
-        var gijutsuRecords = await _ecGijutsuRepository.GetListAsync(
-            BuildEcGijutsuScopeExpression(plantCode, queryDto));
-        if (gijutsuRecords.Count == 0)
+        var teRecords = await _ecTeRepository.GetListAsync(
+            BuildEcTeScopeExpression(plantCode, queryDto));
+        if (teRecords.Count == 0)
         {
             return EcMonthlyTrendAnalysisBuilt.Empty();
         }
-        var plantByEcId = gijutsuRecords.ToDictionary(g => g.Id, g => g.PlantCode.Trim());
+        var plantByEcId = teRecords.ToDictionary(g => g.Id, g => g.PlantCode.Trim());
         var tasks = await _ecExecutionTaskRepository.GetListAsync(
             BuildEcExecutionTaskTrendExpression(
                 queryDto.DeptCode,
@@ -364,9 +364,9 @@ public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendSer
         }
         var periodSet = new HashSet<string>(periodOrder, StringComparer.Ordinal);
         var snapshots = tasks
-            .Where(t => plantByEcId.ContainsKey(t.EcGijutsuId))
+            .Where(t => plantByEcId.ContainsKey(t.EcTeId))
             .Select(t => new EcCodeDeptTaskSnapshot(
-                plantByEcId[t.EcGijutsuId],
+                plantByEcId[t.EcTeId],
                 t.EcCode?.Trim() ?? string.Empty,
                 t.DeptCode.Trim(),
                 t.CompletedAt!.Value))
@@ -419,15 +419,15 @@ public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendSer
         }
         var focusPeriod = ResolveFocusPeriod(queryDto.FocusPeriod, periodOrder);
         var rangeEndExclusive = rangeEnd.AddMonths(1);
-        var gijutsuRecords = await _ecGijutsuRepository.GetListAsync(x =>
+        var teRecords = await _ecTeRepository.GetListAsync(x =>
             x.TenantCode == CurrentTenantCode
             && x.CompanyCode == CurrentCompanyCode
             && x.PlantCode == plantCode);
-        if (gijutsuRecords.Count == 0)
+        if (teRecords.Count == 0)
         {
             return EcImplementationMonthlyTrendAnalysisBuilt.Empty();
         }
-        var plantByEcId = gijutsuRecords.ToDictionary(g => g.Id, g => g.PlantCode.Trim());
+        var plantByEcId = teRecords.ToDictionary(g => g.Id, g => g.PlantCode.Trim());
         var tasks = await _ecExecutionTaskRepository.GetListAsync(
             BuildEcExecutionTaskTrendExpression(
                 queryDto.DeptCode,
@@ -440,9 +440,9 @@ public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendSer
         }
         var periodSet = new HashSet<string>(periodOrder, StringComparer.Ordinal);
         var joinedTasks = tasks
-            .Where(t => plantByEcId.ContainsKey(t.EcGijutsuId))
+            .Where(t => plantByEcId.ContainsKey(t.EcTeId))
             .Select(t => new EcImplementationTaskSnapshot(
-                plantByEcId[t.EcGijutsuId],
+                plantByEcId[t.EcTeId],
                 t.DeptCode.Trim(),
                 t.CompletedAt!.Value))
             .ToList();
@@ -477,19 +477,19 @@ public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendSer
     /// <param name="plantCode">工厂代码</param>
     /// <param name="queryDto">查询 DTO</param>
     /// <returns>表达式</returns>
-    private Expression<Func<TaktEcGijutsu, bool>> BuildEcGijutsuScopeExpression(
+    private Expression<Func<TaktEcTe, bool>> BuildEcTeScopeExpression(
         string plantCode,
         TaktEcMonthlyTrendQueryDto queryDto)
     {
-        var exp = Expressionable.Create<TaktEcGijutsu>();
+        var exp = Expressionable.Create<TaktEcTe>();
         exp = exp.And(x =>
             x.TenantCode == CurrentTenantCode
             && x.CompanyCode == CurrentCompanyCode
             && x.PlantCode == plantCode);
-        if (queryDto.EcScope.HasValue)
+        if (queryDto.EcImplScope.HasValue)
         {
-            var ecScope = queryDto.EcScope.Value;
-            exp = exp.And(x => x.EcScope == ecScope);
+            var ecImplScope = queryDto.EcImplScope.Value;
+            exp = exp.And(x => x.EcImplScope == ecImplScope);
         }
         if (queryDto.ChangeStatus.HasValue)
         {
@@ -540,7 +540,7 @@ public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendSer
     }
 
     /// <summary>
-    /// 构建单行月设变推移（设变号×部门）
+    /// 构建单行设变推移（设变号×部门）
     /// </summary>
     /// <param name="key">行键</param>
     /// <param name="groupRows">同键完成任务</param>
@@ -882,7 +882,7 @@ public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendSer
     }
 
     /// <summary>
-    /// 月设变推移行键（工厂+设变号+部门）
+    /// 设变推移行键（工厂+设变号+部门）
     /// </summary>
     /// <param name="PlantCode">工厂代码</param>
     /// <param name="EcCode">设变单号</param>
@@ -890,7 +890,7 @@ public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendSer
     private sealed record EcMonthlyTrendRowKey(string PlantCode, string EcCode, string DeptCode);
 
     /// <summary>
-    /// 月设变推移行键比较器
+    /// 设变推移行键比较器
     /// </summary>
     private sealed class EcMonthlyTrendRowKeyComparer : IEqualityComparer<EcMonthlyTrendRowKey>
     {
@@ -948,7 +948,7 @@ public class TaktEcMonthlyTrendService : TaktServiceBase, ITaktEcMonthlyTrendSer
         DateTime CompletedAt);
 
     /// <summary>
-    /// 月设变推移分析构建结果
+    /// 设变推移分析构建结果
     /// </summary>
     private sealed class EcMonthlyTrendAnalysisBuilt
     {

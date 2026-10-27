@@ -502,7 +502,7 @@ public class TaktSignalRDispatchService : ITaktSignalRDispatchService
     /// </summary>
     /// <param name="push">推送模型</param>
     /// <returns>任务</returns>
-    public async Task PushEcGijutsuPersistCompletedToUserAsync(TaktSignalREcGijutsuPersistPush push)
+    public async Task PushEcTePersistCompletedToUserAsync(TaktSignalREcTePersistPush push)
     {
         ArgumentNullException.ThrowIfNull(push);
         var companyCode = push.CompanyCode?.Trim() ?? string.Empty;
@@ -520,7 +520,7 @@ public class TaktSignalRDispatchService : ITaktSignalRDispatchService
             push.PlantCode,
             push.EcCode,
             push.IsUpdate,
-            EcGijutsuId = push.EcGijutsuId.ToString(CultureInfo.InvariantCulture),
+            EcTeId = push.EcTeId.ToString(CultureInfo.InvariantCulture),
             push.DetailCount,
             push.ExecuteStatus,
             push.ExecuteDuration,
@@ -529,8 +529,8 @@ public class TaktSignalRDispatchService : ITaktSignalRDispatchService
         };
 
         var userGroup = TaktSignalRGroupNames.UserGroup(companyCode, UserName);
-        await _notificationHubContext.Clients.Group(userGroup).SendAsync("EcGijutsuPersistCompleted", payload);
-        TaktSignalRLogging.LogWorkflowPushed("ec-gijutsu-persist", companyCode, push.EcCode, UserName);
+        await _notificationHubContext.Clients.Group(userGroup).SendAsync("EcTePersistCompleted", payload);
+        TaktSignalRLogging.LogWorkflowPushed("ec-te-persist", companyCode, push.EcCode, UserName);
     }
 
     /// <summary>

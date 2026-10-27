@@ -32,7 +32,7 @@ internal static class TaktPcbaOutputDerivedFieldsHelper
     /// <summary>
     /// 按工作中心解析标准工时(分钟)
     /// </summary>
-    /// <param name="operationTimes">标准工序时间列表</param>
+    /// <param name="operationTimes">标准工时列表</param>
     /// <param name="workCenter">工作中心（生产时段）</param>
     /// <returns>标准工时(分钟)</returns>
     public static decimal CalculateStdMinutesForWorkCenter(
@@ -51,7 +51,7 @@ internal static class TaktPcbaOutputDerivedFieldsHelper
     /// <summary>
     /// 按工作中心解析标准点数
     /// </summary>
-    /// <param name="operationTimes">标准工序时间列表</param>
+    /// <param name="operationTimes">标准工时列表</param>
     /// <param name="workCenter">工作中心（生产时段）</param>
     /// <returns>标准点数</returns>
     public static int CalculateStdShortsForWorkCenter(
@@ -66,7 +66,7 @@ internal static class TaktPcbaOutputDerivedFieldsHelper
     /// <summary>
     /// 回填明细标准工时/标准点数并计算人员与设备标准产能及工数派生字段
     /// </summary>
-    /// <param name="standardOperationTimeRepository">标准工序时间仓储</param>
+    /// <param name="standardOperationTimeRepository">标准工时仓储</param>
     /// <param name="standardOperationRateRepository">标准生产稼动率仓储</param>
     /// <param name="equipmentOperationRateRepository">机器稼动率仓储</param>
     /// <param name="master">PCBA日报主表</param>
@@ -160,11 +160,11 @@ internal static class TaktPcbaOutputDerivedFieldsHelper
     }
 
     /// <summary>
-    /// 从标准工序时间列表中解析指定工作中心最新有效版本
+    /// 从标准工时列表中解析指定工作中心最新有效版本
     /// </summary>
-    /// <param name="operationTimes">标准工序时间列表</param>
+    /// <param name="operationTimes">标准工时列表</param>
     /// <param name="workCenter">工作中心</param>
-    /// <returns>有效标准工序时间；未匹配时返回 null</returns>
+    /// <returns>有效标准工时；未匹配时返回 null</returns>
     private static TaktStandardOperationTime? ResolveOperationTimeForWorkCenter(
         IReadOnlyList<TaktStandardOperationTime> operationTimes,
         string workCenter)

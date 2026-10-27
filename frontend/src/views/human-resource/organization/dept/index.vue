@@ -47,8 +47,8 @@
         :show-fullscreen="true"
         :show-refresh="true"
         :show-expand="true"
-        :update-disabled="!selectedRow"
-        :delete-disabled="!selectedRow && selectedRows.length === 0"
+        :update-disabled="!selecmedRow"
+        :delete-disabled="!selecmedRow && selecmedRows.length === 0"
         :create-loading="loading"
         :update-loading="loading"
         :delete-loading="loading"
@@ -70,7 +70,7 @@
     <div class="human-resource-organization-dept-tree-table-wrap">
       <TaktTreeLeftTable
         v-model:expanded-keys="treeExpandedKeys"
-        v-model:selected-keys="selectedTreeKeys"
+        v-model:selecmed-keys="selecmedTreeKeys"
         :tree-data="filteredTreeData"
         :tree-field-names="{ title: 'title', key: 'key', children: 'children' }"
         :tree-width-ratio="0.2"
@@ -172,16 +172,6 @@
           v-model:value="advancedQueryForm.cultureCode"
           dict-type="sys_culture_code"
           :placeholder="pi.queryPh('cultureCode', 'select')"
-          allow-clear
-        />
-      </a-form-item>
-      </div>
-      <div v-show="isFieldVisible('plantCode')">
-      <a-form-item :label="pi.queryLabel('plantCode')">
-        <TaktSelect
-          v-model:value="advancedQueryForm.plantCode"
-          api-url="TaktPlants/options"
-          :placeholder="pi.queryPh('plantCode', 'select')"
           allow-clear
         />
       </a-form-item>
@@ -570,13 +560,13 @@ const entityTreeData = ref<TaktLazyTreeNode[]>([])
 /** 右侧树表数据源（带 children / _hasChildren，组件内拍平 virtual） */
 const tableTreeData = ref<Record<string, unknown>[]>([])
 /** 左侧树当前选中的节点 key 列表 */
-const selectedTreeKeys = ref<(string | number)[]>([])
+const selecmedTreeKeys = ref<(string | number)[]>([])
 /** 工具栏单选时当前行（编辑/删除） */
-const selectedRow = ref<DeptRowRecord | null>(null)
+const selecmedRow = ref<DeptRowRecord | null>(null)
 /** 表格多选行 */
-const selectedRows = ref<DeptRowRecord[]>([])
+const selecmedRows = ref<DeptRowRecord[]>([])
 /** 表格多选 row-key 集合 */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 
 /** 新增/编辑弹窗是否打开 */
 const formVisible = ref(false)
@@ -796,8 +786,8 @@ function applyLeftTreeExpandKeys() {
  * 当前左侧选中节点 Id；未选中返回 null（右表必须为空）
  * @returns {string | null} 选中节点 Id
  */
-function getSelectedTreeNodeId(): string | null {
-  const keys = selectedTreeKeys.value
+function getSelecmedTreeNodeId(): string | null {
+  const keys = selecmedTreeKeys.value
   if (keys.length > 0 && keys[keys.length - 1] != null) {
     return String(keys[keys.length - 1])
   }
@@ -815,8 +805,8 @@ function unwrapDeptTree(res: unknown): DeptTree[] {
  * 加载右侧树：仅 tree API；未选中则空；选中则该节点 + 直接子级一层（更深靠展开懒加载）
  */
 async function loadRightTree() {
-  const selectedId = getSelectedTreeNodeId()
-  if (!selectedId) {
+  const selecmedId = getSelecmedTreeNodeId()
+  if (!selecmedId) {
     tableTreeData.value = []
     tableExpandedRowKeys.value = []
     tableExpanded.value = false
@@ -824,13 +814,13 @@ async function loadRightTree() {
   }
   listLoading.value = true
   try {
-    const detail = await getDeptById(selectedId) as Record<string, unknown>
-    const childRows = unwrapDeptTree(await getDeptTree(selectedId, true))
+    const detail = await getDeptById(selecmedId) as Record<string, unknown>
+    const childRows = unwrapDeptTree(await getDeptTree(selecmedId, true))
     const mappedChildren = mapDeptRightTreeNodes(childRows)
     const children = mappedChildren.length > 0 ? mappedChildren : undefined
     const root: Record<string, unknown> = {
       ...detail,
-      key: selectedId,
+      key: selecmedId,
       children,
       _hasChildren: (children?.length ?? 0) > 0 || !taktIsLeafFlag(detail.isLeaf),
     }
@@ -842,7 +832,7 @@ async function loadRightTree() {
       await nextTick()
     }
     tableExpandedRowKeys.value =
-      (children?.length ?? 0) > 0 || root._hasChildren === true ? [selectedId] : []
+      (children?.length ?? 0) > 0 || root._hasChildren === true ? [selecmedId] : []
   } catch (error: unknown) {
     logger.error('[Dept] 加载右侧树失败', undefined, error)
     message.error(getErrorMessage(error, t('common.feedback.load.data.failed')))
@@ -941,7 +931,7 @@ async function handleLeftTreeLoadData(treeNode: Record<string, unknown>) {
 
 /** 右侧展示树：未选中为空；选中后为该节点+直接子级（仅 tree API） */
 const tableDisplayTree = computed(() => {
-  if (!getSelectedTreeNodeId()) return []
+  if (!getSelecmedTreeNodeId()) return []
   return tableTreeData.value
 })
 
@@ -1138,8 +1128,8 @@ watch(filteredTreeData, () => {
 })
 
 /** 左侧树选中：右表展示该节点+直接子级；取消选中则右表清空 */
-const handleTreeSelect = (selectedKeys: (string | number)[]) => {
-  selectedTreeKeys.value = selectedKeys
+const handleTreeSelect = (selecmedKeys: (string | number)[]) => {
+  selecmedTreeKeys.value = selecmedKeys
   void loadRightTree()
 }
 
@@ -1390,18 +1380,18 @@ watchEffect(() => {
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: Dept[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? rows[0] : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? rows[0] : null
   },
-  onSelect: (record: DeptRowRecord, selected: boolean) => {
-    if (selected) selectedRow.value = record
-    else if (selectedRow.value && getDeptId(selectedRow.value) === getDeptId(record)) selectedRow.value = null
+  onSelect: (record: DeptRowRecord, selecmed: boolean) => {
+    if (selecmed) selecmedRow.value = record
+    else if (selecmedRow.value && getDeptId(selecmedRow.value) === getDeptId(record)) selecmedRow.value = null
   },
-  onSelectAll: (selected: boolean, selectedRowsData: Dept[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? selectedRowsData[0] : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: Dept[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? selecmedRowsData[0] : null
   },
 }))
 
@@ -1410,7 +1400,7 @@ async function loadData() {
   loading.value = true
   try {
     useLazyTree.value = true
-    selectedTreeKeys.value = []
+    selecmedTreeKeys.value = []
     tableTreeData.value = []
     tableExpandedRowKeys.value = []
     tableExpanded.value = false
@@ -1431,8 +1421,8 @@ async function loadData() {
 async function refreshAfterMutation() {
   loading.value = true
   try {
-    const selectedId = getSelectedTreeNodeId()
-    await reloadLeftTreeChildren(selectedId ?? '0')
+    const selecmedId = getSelecmedTreeNodeId()
+    await reloadLeftTreeChildren(selecmedId ?? '0')
     await loadRightTree()
   } catch (error: unknown) {
     logger.error('[Dept] 刷新失败', undefined, error)
@@ -1472,7 +1462,7 @@ async function handleDeptStatusChange(record: DeptRowRecord, checked: boolean) {
 /** 新增：默认 parentId 为当前左侧选中节点 */
 function handleCreate() {
   formTitle.value = t('common.dialog.title.create', { entity: pi.self() })
-  const keys = selectedTreeKeys.value
+  const keys = selecmedTreeKeys.value
   formData.value = {
     parentId: keys.length > 0 ? String(keys[keys.length - 1]) : '0',
   }
@@ -1489,8 +1479,8 @@ function handleEdit(record: DeptRowRecord) {
 
 /** 工具栏编辑：打开当前单选行 */
 function handleUpdate() {
-  if (selectedRow.value) {
-    handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: pi.self() }))
   }
@@ -1549,17 +1539,17 @@ async function handleDeleteOne(record: DeptRowRecord) {
 
 /** 批量删除选中行 */
 async function handleDelete() {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: pi.self() }))
     return
   }
   Modal.confirm({
     title: t('common.tip.confirm.delete.title'),
-    content: t('common.tip.confirm.delete.count', { entity: pi.self(), count: selectedRows.value.length }),
+    content: t('common.tip.confirm.delete.count', { entity: pi.self(), count: selecmedRows.value.length }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
+      const ids = selecmedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
       await deleteDeptBatch(ids)
       message.success(t('common.feedback.deleted', { target: pi.self() }))
       await refreshAfterMutation()

@@ -69,15 +69,15 @@
         </div>
 
         <div
-          v-if="selectedPreview"
+          v-if="selecmedPreview"
           class="flex items-center gap-2 text-sm text-text-secondary"
         >
-          <span>{{ t('common.page.icon.picker.selected') }}</span>
+          <span>{{ t('common.page.icon.picker.selecmed') }}</span>
           <TaktRemixIcon
-            :name="selectedPreview"
+            :name="selecmedPreview"
             :size="20"
           />
-          <span class="font-mono text-text">{{ selectedPreview }}</span>
+          <span class="font-mono text-text">{{ selecmedPreview }}</span>
         </div>
 
         <a-spin :spinning="listLoading">
@@ -89,9 +89,9 @@
               :key="name"
               type="button"
               class="flex flex-col items-center gap-1 rounded border border-border px-1 py-2 text-center transition-colors hover:border-primary hover:text-primary"
-              :class="name === selectedPreview ? 'border-primary bg-primary/5 text-primary' : ''"
+              :class="name === selecmedPreview ? 'border-primary bg-primary/5 text-primary' : ''"
               :title="name"
-              @click="selectedPreview = name"
+              @click="selecmedPreview = name"
             >
               <TaktRemixIcon
                 :name="name"
@@ -112,7 +112,7 @@
             v-if="allowClear"
             type="link"
             class="px-0"
-            @click="selectedPreview = ''"
+            @click="selecmedPreview = ''"
           >
             {{ t('common.page.icon.picker.clear') }}
           </a-button>
@@ -188,7 +188,7 @@ const variant = ref<TaktRemixIconVariant>('line')
 /** 当前变体下全量名称 */
 const allNames = ref<string[]>([])
 /** 弹窗内临时选中 */
-const selectedPreview = ref('')
+const selecmedPreview = ref('')
 /** 当前页 */
 const currentPage = ref(1)
 /** 每页条数 */
@@ -268,7 +268,7 @@ async function openModal(): Promise<void> {
   if (props.disabled) {
     return
   }
-  selectedPreview.value = String(props.modelValue ?? '').trim()
+  selecmedPreview.value = String(props.modelValue ?? '').trim()
   keyword.value = ''
   currentPage.value = 1
   modalOpen.value = true
@@ -284,7 +284,7 @@ function handleClear(): void {
 
 /** 确认选择 */
 function handleConfirm(): void {
-  const value = String(selectedPreview.value ?? '').trim()
+  const value = String(selecmedPreview.value ?? '').trim()
   emit('update:modelValue', value)
   emit('change', value)
   modalOpen.value = false

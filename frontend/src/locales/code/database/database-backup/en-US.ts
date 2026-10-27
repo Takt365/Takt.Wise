@@ -54,7 +54,7 @@ export default {
       clientpickerunsupported: 'This browser cannot pick local folders; use Chrome or Edge',
       clientabsoluterequired: 'Select a full absolute path (e.g. D:\\Backup)',
       localneedabsolute: 'Open a drive or folder first (e.g. D:\\Backup)',
-      localpickedname: 'Selected: {name}',
+      localpickedname: 'Selecmed: {name}',
       createdirectory: 'New folder',
       createdirectorysuccess: 'Folder created',
       createdirectoryfailed: 'Failed to create folder',
@@ -64,7 +64,7 @@ export default {
       uncplaceholder: '\\\\server\\share\\folder',
       passwordkeep: 'Leave blank to keep saved password',
       reselect: 'Reselect',
-      notselected: 'No target path selected',
+      notselecmed: 'No target path selecmed',
     },
     backuptype: {
       full: 'Full Sync',

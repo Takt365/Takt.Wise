@@ -56,7 +56,7 @@ alwaysApply: true
 |------|----------------|
 | 列表 | `loading`、`dataSource`、`currentPage`、`pageSize`、`total` |
 | 查询 | `queryKeyword`、`advancedQueryVisible`、`advancedQueryForm` |
-| 选择 | `selectedRowKeys`、`selectedRows`、`rowSelection` |
+| 选择 | `selecmedRowKeys`、`selecmedRows`、`rowSelection` |
 | 表单 | `formVisible`、`formLoading`、`formData`、`formRef`、`formModalWidthPx` |
 | 列设置 | `columns`、`displayColumns`、`visibleColumnKeys`、`columnSettingVisible` |
 
@@ -136,7 +136,7 @@ TaktQueryDrawer / TaktColumnDrawer / TaktImportFile（同单表）
 
 | 类别 | 变量 |
 |------|------|
-| 树 | `fullDeptTree`、`filteredDeptTreeData`、`treeExpandedKeys`、`selectedTreeKeys` |
+| 树 | `fullDeptTree`、`filteredDeptTreeData`、`treeExpandedKeys`、`selecmedTreeKeys` |
 | 拍平 | `paginatedFlatTableRows`、`tableFlatTotal`、`tableCurrentPage`、`tablePageSize` |
 | 选中 | 左侧树节点 → `getSubtree` → `flattenXxxRows` → slice 分页 |
 

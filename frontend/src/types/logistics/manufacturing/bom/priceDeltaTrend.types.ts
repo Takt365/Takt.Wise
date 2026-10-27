@@ -29,6 +29,10 @@ export interface BomPriceDeltaTrendQuery extends TaktPagedQuery {
    * 差异选项：all=全部（默认）；gt1/gt5/gt10/gt50/gt100=仅 |差异|≥该值的产品行。界面阈值为 >=1 等符号（四语不翻译）
    */
   priceDeltaOption?: string
+  /**
+   * 价格差异组涨跌条数：up3down3（默认）/ up5down5 / all。建议替代价格与组件差异不受此项影响
+   */
+  impactLineOption?: string
   /** 兼容旧参数；空则用 basePeriod */
   focusPeriod?: string
 }

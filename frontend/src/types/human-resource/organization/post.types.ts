@@ -49,7 +49,7 @@ export interface Post extends CompanyDtoBase {
   deptName: string;
 
   /**
-   * 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）
+   * 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）
    */
   postCategory: string;
 
@@ -169,7 +169,7 @@ export interface PostQuery extends TaktPagedQuery {
   deptName?: string;
 
   /**
-   * 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）
+   * 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）
    */
   postCategory?: string;
 
@@ -308,7 +308,7 @@ export interface PostCreate {
   deptName: string;
 
   /**
-   * 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）
+   * 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）
    */
   postCategory: string;
 
@@ -490,7 +490,7 @@ export interface PostTemplate {
   deptName?: string;
 
   /**
-   * 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）
+   * 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）
    */
   postCategory?: string;
 
@@ -619,7 +619,7 @@ export interface PostImport {
   deptName?: string;
 
   /**
-   * 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）
+   * 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）
    */
   postCategory?: string;
 
@@ -748,7 +748,7 @@ export interface PostExport {
   deptName: string;
 
   /**
-   * 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）
+   * 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）
    */
   postCategory: string;
 

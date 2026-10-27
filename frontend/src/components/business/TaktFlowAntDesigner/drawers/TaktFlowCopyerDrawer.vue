@@ -58,7 +58,7 @@
     </template>
     <TaktFlowSelectUserDialog
       v-model:open="selectUserOpen"
-      :selected-ids="form.copyUserIds"
+      :selecmed-ids="form.copyUserIds"
       @confirm="onSelectUserConfirm"
     />
   </a-drawer>

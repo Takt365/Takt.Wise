@@ -25,12 +25,18 @@ import {
  * - 最大月=上月（当月及以后禁用）
  * - 已选一端后，另一端仅可在锚点前后共 maxMonths 个月内点选
  * @param maxMonths 最大月数（含起止），默认 12
+ * @param options allowCurrentMonth 为 true 时最大月为本月（下月及以后禁用）。默认仍截止上月
  * @returns disabledDate / calendarChange / openChange / assertPeriodRangeOk
  */
-export function useAnalysisPeriodRangeLimit(maxMonths: number = TAKT_ANALYSIS_PERIOD_MAX_MONTHS) {
+export function useAnalysisPeriodRangeLimit(
+  maxMonths: number = TAKT_ANALYSIS_PERIOD_MAX_MONTHS,
+  options?: { allowCurrentMonth?: boolean },
+) {
   const { t } = useI18n()
   /** calendarChange 暂存（选一端时限制另一端） */
   const pickingRange = ref<[string | null, string | null] | null>(null)
+  /** 设变统计等页允许选到本月；其它分析页保持截止上月 */
+  const allowCurrentMonth = options?.allowCurrentMonth === true
 
   /**
    * RangePicker disabled-date：当月及以后禁用；相对锚点超 maxMonths 的月份禁用
@@ -38,7 +44,7 @@ export function useAnalysisPeriodRangeLimit(maxMonths: number = TAKT_ANALYSIS_PE
    * @returns {boolean} true=禁用（不可选中）
    */
   function disabledDate(current: { year: () => number; month: () => number } | null): boolean {
-    return isAnalysisPeriodMonthDisabled(current, pickingRange.value, maxMonths)
+    return isAnalysisPeriodMonthDisabled(current, pickingRange.value, maxMonths, allowCurrentMonth)
   }
 
   /**

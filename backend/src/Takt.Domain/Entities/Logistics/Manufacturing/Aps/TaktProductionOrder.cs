@@ -96,7 +96,7 @@ public class TaktProductionOrder : TaktCompanyEntityBase
     /// <summary>
     /// 生产批次
     /// </summary>
-    [SugarColumn(ColumnName = "prod_batch", ColumnDescription = "生产批次", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
+    [SugarColumn(ColumnName = "prod_batch", ColumnDescription = "生产批次", ColumnDataType = "nvarchar", Length = 20, IsNullable = true)]
     public string? ProdBatch { get; set; }
 
     /// <summary>

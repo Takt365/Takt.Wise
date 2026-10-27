@@ -66,7 +66,6 @@ export type SalesConditionField = keyof typeof SALESCONDITIONRECORD_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const SALESCONDITIONRECORD_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'salesConditionCode',
   'priceType',
   'customerCode',

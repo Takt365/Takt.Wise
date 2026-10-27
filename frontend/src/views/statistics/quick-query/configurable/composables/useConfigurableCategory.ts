@@ -61,13 +61,13 @@ export function useConfigurableCategory(
   )
 
   /** 当前选中模块对应的一级菜单 */
-  const selectedModuleMenu = computed(() =>
+  const selecmedModuleMenu = computed(() =>
     findConfigurableDomainMenu(menuStore.menuList, configurableDomainRef.value ?? undefined)
   )
 
   /** 选中模块下直接子级目录（MenuType=0）→ 子分类选项 */
   const subCategoryOptions = computed(() => {
-    const moduleMenu = selectedModuleMenu.value
+    const moduleMenu = selecmedModuleMenu.value
     if (!moduleMenu?.children?.length) {
       return []
     }

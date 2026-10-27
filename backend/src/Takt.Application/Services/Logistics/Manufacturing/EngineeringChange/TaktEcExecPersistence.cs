@@ -20,6 +20,7 @@ using Takt.Domain.Interfaces;
 using Takt.Domain.Repositories;
 using Takt.Shared.Constants;
 using Takt.Shared.Exceptions;
+using Takt.Shared.Helpers;
 
 namespace Takt.Application.Services.Logistics.Manufacturing.EngineeringChange;
 
@@ -28,52 +29,52 @@ namespace Takt.Application.Services.Logistics.Manufacturing.EngineeringChange;
 /// </summary>
 public partial class TaktEcExecPersistence
 {
-    private readonly ITaktCompanyRepository<TaktEcGijutsu> _ecGijutsuRepository;
+    private readonly ITaktCompanyRepository<TaktEcTe> _ecTeRepository;
     private readonly ITaktCompanyRepository<TaktEcDetail> _ecDetailRepository;
-    private readonly ITaktCompanyRepository<TaktEcSeikan> _pmcRepository;
-    private readonly ITaktCompanyRepository<TaktEcKoubai> _mpRepository;
-    private readonly ITaktCompanyRepository<TaktEcUkeken> _iqcRepository;
-    private readonly ITaktCompanyRepository<TaktEcBukan> _mcRepository;
-    private readonly ITaktCompanyRepository<TaktEcSeizounika> _seizounikaRepository;
-    private readonly ITaktCompanyRepository<TaktEcEmtl> _smtRepository;
-    private readonly ITaktCompanyRepository<TaktEcSeizouikka> _assyRepository;
-    private readonly ITaktCompanyRepository<TaktEcHinkan> _qaRepository;
-    private readonly ITaktCompanyRepository<TaktEcSeizougijutsu> _teRepository;
+    private readonly ITaktCompanyRepository<TaktEcPc> _pcRepository;
+    private readonly ITaktCompanyRepository<TaktEcPur> _mpRepository;
+    private readonly ITaktCompanyRepository<TaktEcIqc> _iqcRepository;
+    private readonly ITaktCompanyRepository<TaktEcMc> _mcRepository;
+    private readonly ITaktCompanyRepository<TaktEcMfg2> _pcbaRepository;
+    private readonly ITaktCompanyRepository<TaktEcMtl> _smtRepository;
+    private readonly ITaktCompanyRepository<TaktEcMfg1> _assyRepository;
+    private readonly ITaktCompanyRepository<TaktEcQc> _qaRepository;
+    private readonly ITaktCompanyRepository<TaktEcMe> _teRepository;
     private readonly ITaktCompanyRepository<TaktDept> _deptRepository;
     private readonly ITaktCompanyRepository<TaktMaterialPlant> _materialPlantRepository;
 
     private readonly TaktEcExecDeptAccess _deptAccess;
-    private readonly TaktEcGijutsuStatusSynchronizer _ecGijutsuStatusSynchronizer;
+    private readonly TaktEcTeStatusSynchronizer _ecTeStatusSynchronizer;
 
     /// <summary>
     /// 构造函数
     /// </summary>
     public TaktEcExecPersistence(
         TaktEcExecDeptAccess deptAccess,
-        TaktEcGijutsuStatusSynchronizer ecGijutsuStatusSynchronizer,
-        ITaktCompanyRepository<TaktEcGijutsu> ecGijutsuRepository,
+        TaktEcTeStatusSynchronizer ecTeStatusSynchronizer,
+        ITaktCompanyRepository<TaktEcTe> ecTeRepository,
         ITaktCompanyRepository<TaktEcDetail> ecDetailRepository,
-        ITaktCompanyRepository<TaktEcSeikan> pmcRepository,
-        ITaktCompanyRepository<TaktEcKoubai> mpRepository,
-        ITaktCompanyRepository<TaktEcUkeken> iqcRepository,
-        ITaktCompanyRepository<TaktEcBukan> mcRepository,
-        ITaktCompanyRepository<TaktEcSeizounika> seizounikaRepository,
-        ITaktCompanyRepository<TaktEcEmtl> smtRepository,
-        ITaktCompanyRepository<TaktEcSeizouikka> assyRepository,
-        ITaktCompanyRepository<TaktEcHinkan> qaRepository,
-        ITaktCompanyRepository<TaktEcSeizougijutsu> teRepository,
+        ITaktCompanyRepository<TaktEcPc> pcRepository,
+        ITaktCompanyRepository<TaktEcPur> mpRepository,
+        ITaktCompanyRepository<TaktEcIqc> iqcRepository,
+        ITaktCompanyRepository<TaktEcMc> mcRepository,
+        ITaktCompanyRepository<TaktEcMfg2> pcbaRepository,
+        ITaktCompanyRepository<TaktEcMtl> smtRepository,
+        ITaktCompanyRepository<TaktEcMfg1> assyRepository,
+        ITaktCompanyRepository<TaktEcQc> qaRepository,
+        ITaktCompanyRepository<TaktEcMe> teRepository,
         ITaktCompanyRepository<TaktDept> deptRepository,
         ITaktCompanyRepository<TaktMaterialPlant> materialPlantRepository)
     {
         _deptAccess = deptAccess;
-        _ecGijutsuStatusSynchronizer = ecGijutsuStatusSynchronizer;
-        _ecGijutsuRepository = ecGijutsuRepository;
+        _ecTeStatusSynchronizer = ecTeStatusSynchronizer;
+        _ecTeRepository = ecTeRepository;
         _ecDetailRepository = ecDetailRepository;
-        _pmcRepository = pmcRepository;
+        _pcRepository = pcRepository;
         _mpRepository = mpRepository;
         _iqcRepository = iqcRepository;
         _mcRepository = mcRepository;
-        _seizounikaRepository = seizounikaRepository;
+        _pcbaRepository = pcbaRepository;
         _smtRepository = smtRepository;
         _assyRepository = assyRepository;
         _qaRepository = qaRepository;
@@ -120,11 +121,32 @@ public partial class TaktEcExecPersistence
         {
             return new Dictionary<long, object>();
         }
-        var execs = await ListEntitiesByDetailIdsAndDeptAsync(detailIds, deptCode);
-        var result = new Dictionary<long, object>(execs.Count);
-        foreach (var exec in execs)
+        var details = await _ecDetailRepository.GetListAsync(x => detailIds.Contains(x.Id));
+        var result = new Dictionary<long, object>(details.Count);
+        foreach (var group in details.GroupBy(x => x.EcCode ?? string.Empty))
         {
-            result[TaktEcDeptEntityHelper.GetEcDetailId(exec)] = exec;
+            if (group.Key.Length == 0 || group.First() is not TaktEcDetail first)
+            {
+                continue;
+            }
+            var master = await GetMasterControlScopeAsync(first);
+            var execs = await ListEntitiesByEcCodeAndDeptAsync(group.Key, deptCode);
+            var byGrain = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            foreach (var exec in execs)
+            {
+                if (exec is ITaktEcDeptExecEntity row && !string.IsNullOrWhiteSpace(row.EcGrainKey))
+                {
+                    byGrain.TryAdd(row.EcGrainKey, exec);
+                }
+            }
+            foreach (var detail in group)
+            {
+                var grainKey = TaktEcScopeRowGrain.BuildExecGrainKey(detail, deptCode, master);
+                if (byGrain.TryGetValue(grainKey, out var exec))
+                {
+                    result[detail.Id] = exec;
+                }
+            }
         }
         return result;
     }
@@ -140,10 +162,22 @@ public partial class TaktEcExecPersistence
         {
             return new Dictionary<long, List<object>>();
         }
-        var execs = await ListAllEntitiesByDetailIdsAsync(detailIds);
-        return execs
-            .GroupBy(TaktEcDeptEntityHelper.GetEcDetailId)
-            .ToDictionary(g => g.Key, g => g.ToList());
+        var details = await _ecDetailRepository.GetListAsync(x => detailIds.Contains(x.Id));
+        var result = new Dictionary<long, List<object>>();
+        foreach (var detail in details)
+        {
+            var rows = new List<object>();
+            foreach (var deptCode in TaktEcDeptCodes.KanbanOrder)
+            {
+                var exec = await FirstEntityByDetailAndDeptAsync(detail.Id, deptCode);
+                if (exec != null)
+                {
+                    rows.Add(exec);
+                }
+            }
+            result[detail.Id] = rows;
+        }
+        return result;
     }
 
     /// <summary>
@@ -156,11 +190,11 @@ public partial class TaktEcExecPersistence
     public async Task<int> CountAllDeptRowsForScopeAsync(string tenantCode, string companyCode, int? isImplemented = null)
     {
         var execs = new List<object>();
-        execs.AddRange(await _pmcRepository.GetListAsync(x => x.TenantCode == tenantCode && x.CompanyCode == companyCode));
+        execs.AddRange(await _pcRepository.GetListAsync(x => x.TenantCode == tenantCode && x.CompanyCode == companyCode));
         execs.AddRange(await _mpRepository.GetListAsync(x => x.TenantCode == tenantCode && x.CompanyCode == companyCode));
         execs.AddRange(await _iqcRepository.GetListAsync(x => x.TenantCode == tenantCode && x.CompanyCode == companyCode));
         execs.AddRange(await _mcRepository.GetListAsync(x => x.TenantCode == tenantCode && x.CompanyCode == companyCode));
-        execs.AddRange(await _seizounikaRepository.GetListAsync(x => x.TenantCode == tenantCode && x.CompanyCode == companyCode));
+        execs.AddRange(await _pcbaRepository.GetListAsync(x => x.TenantCode == tenantCode && x.CompanyCode == companyCode));
         execs.AddRange(await _smtRepository.GetListAsync(x => x.TenantCode == tenantCode && x.CompanyCode == companyCode));
         execs.AddRange(await _assyRepository.GetListAsync(x => x.TenantCode == tenantCode && x.CompanyCode == companyCode));
         execs.AddRange(await _qaRepository.GetListAsync(x => x.TenantCode == tenantCode && x.CompanyCode == companyCode));
@@ -182,7 +216,7 @@ public partial class TaktEcExecPersistence
         var existingRows = await _deptAccess.ListBaseByEcDetailIdAsync(ecDetailId);
         var ecCode = existingRows.FirstOrDefault()?.EcCode;
         await _deptAccess.DeleteAllByEcDetailIdAsync(ecDetailId);
-        await _ecGijutsuStatusSynchronizer.RefreshByEcCodeAsync(ecCode);
+        await _ecTeStatusSynchronizer.RefreshByEcCodeAsync(ecCode);
     }
 
     /// <summary>
@@ -194,11 +228,11 @@ public partial class TaktEcExecPersistence
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(ecCode);
         var code = ecCode.Trim();
-        await _pmcRepository.DeleteAsync(x => x.EcCode == code);
+        await _pcRepository.DeleteAsync(x => x.EcCode == code);
         await _mpRepository.DeleteAsync(x => x.EcCode == code);
         await _iqcRepository.DeleteAsync(x => x.EcCode == code);
         await _mcRepository.DeleteAsync(x => x.EcCode == code);
-        await _seizounikaRepository.DeleteAsync(x => x.EcCode == code);
+        await _pcbaRepository.DeleteAsync(x => x.EcCode == code);
         await _smtRepository.DeleteAsync(x => x.EcCode == code);
         await _assyRepository.DeleteAsync(x => x.EcCode == code);
         await _qaRepository.DeleteAsync(x => x.EcCode == code);
@@ -216,10 +250,71 @@ public partial class TaktEcExecPersistence
         {
             return false;
         }
-        var gijutsu = await _ecGijutsuRepository.FirstAsync(x => x.EcCode == ecCode);
-        return gijutsu != null
-            && (gijutsu.EcScope == TaktEcScopeConstants.Internal
-                || gijutsu.EcScope == TaktEcScopeConstants.Technical);
+        var te = await _ecTeRepository.FirstAsync(x => x.EcCode == ecCode);
+        return te != null
+            && (te.EcImplScope == TaktEcScopeConstants.Internal
+                || te.EcImplScope == TaktEcScopeConstants.Technical);
+    }
+
+    /// <summary>
+    /// 读取技术课主表控制范围。明细不保存该字段，新建执行行时按部门解析。
+    /// </summary>
+    /// <param name="detail">设变明细</param>
+    /// <returns>1=按成品，2=按机种，3=按设变，4=不管理；缺主表时按机种</returns>
+    private async Task<int> GetMasterControlScopeAsync(TaktEcDetail detail)
+    {
+        TaktEcTe? te = null;
+        if (detail.EcTeId > 0)
+        {
+            te = await _ecTeRepository.GetByIdAsync(detail.EcTeId);
+        }
+        if (te == null && !string.IsNullOrWhiteSpace(detail.EcCode))
+        {
+            te = await _ecTeRepository.FirstAsync(x => x.EcCode == detail.EcCode);
+        }
+        var raw = te?.EcControlScope ?? TaktEcControlScopeConstants.ByModel;
+        return raw is TaktEcControlScopeConstants.ByFinishedProduct
+            or TaktEcControlScopeConstants.ByModel
+            or TaktEcControlScopeConstants.ByEngineeringChange
+            or TaktEcControlScopeConstants.NotManaged
+            ? raw
+            : TaktEcControlScopeConstants.ByModel;
+    }
+    /// <summary>
+    /// 取与执行行去重键相同的一条未作废明细。
+    /// </summary>
+    /// <param name="source">部门执行行</param>
+    /// <returns>明细；没有时 null</returns>
+    private async Task<TaktEcDetail?> FirstDetailForExecAsync(ITaktEcDeptExecEntity source)
+    {
+        if (string.IsNullOrWhiteSpace(source.EcCode) || string.IsNullOrWhiteSpace(source.EcGrainKey))
+        {
+            return null;
+        }
+        var details = await _ecDetailRepository.GetListAsync(x => x.EcCode == source.EcCode && x.IsObsolete == 0);
+        if (details.Count == 0)
+        {
+            return null;
+        }
+        var master = await GetMasterControlScopeAsync(details[0]);
+        return details.FirstOrDefault(x =>
+            TaktEcScopeRowGrain.BuildExecGrainKey(x, source.DeptCode, master) == source.EcGrainKey);
+    }
+    /// <summary>
+    /// 按执行行去重键更新停产状态。
+    /// </summary>
+    /// <param name="source">部门执行行</param>
+    /// <param name="discontinuedStatus">停产状态</param>
+    /// <returns>任务</returns>
+    public async Task ApplyDiscontinuedStatusForExecAsync(ITaktEcDeptExecEntity source, string discontinuedStatus)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        var detail = await FirstDetailForExecAsync(source);
+        if (detail == null)
+        {
+            throw new TaktBusinessException("设变明细不存在");
+        }
+        await ApplyDiscontinuedStatusForDetailAsync(detail.Id, discontinuedStatus);
     }
 
     /// <summary>
@@ -238,15 +333,15 @@ public partial class TaktEcExecPersistence
     {
         object? exec;
         bool isNew;
-        if (deptCode == TaktEcDeptCodes.Pcba)
+        if (deptCode == TaktEcDeptCodes.Mfg2)
         {
-            var route = TaktEcEmtlRouteHelper.Resolve(detail);
-            if (route == TaktEcEmtlRouteTarget.None)
+            var route = TaktEcMtlRouteHelper.Resolve(detail);
+            if (route == TaktEcMtlRouteTarget.None)
             {
                 await ObsoletePcbaBothTablesAsync(detail.Id);
                 throw new InvalidOperationException("制造二课当前明细无有效执行表路由（F 且非 C003）");
             }
-            if (route == TaktEcEmtlRouteTarget.Smt
+            if (route == TaktEcMtlRouteTarget.Mtl
                 && !TaktEcScopeConstants.HasEffectiveNewMaterialCode(detail.EcNewMaterialCode))
             {
                 await ObsoletePcbaBothTablesAsync(detail.Id);
@@ -254,59 +349,59 @@ public partial class TaktEcExecPersistence
             }
             await ObsoleteTypedDeptExecIfExistsAsync(
                 detail.Id,
-                route == TaktEcEmtlRouteTarget.Smt
-                    ? TaktEcEmtlRouteTarget.Seizounika
-                    : TaktEcEmtlRouteTarget.Smt);
+                route == TaktEcMtlRouteTarget.Mtl
+                    ? TaktEcMtlRouteTarget.Mfg2
+                    : TaktEcMtlRouteTarget.Mtl);
             exec = await FirstSmtEntityByDetailAndTargetAsync(detail.Id, route);
             isNew = exec == null;
-            exec = CreatePcbaConcreteExec(detail, route, exec, await lineNumberGenerator(), applyNotRelatedAuto: false);
+            exec = await CreatePcbaConcreteExec(detail, route, exec, await lineNumberGenerator(), applyNotRelatedAuto: false);
         }
         else
         {
             exec = await FirstEntityByDetailAndDeptAsync(detail.Id, deptCode);
             isNew = exec == null;
-            exec = CreateConcreteExec(detail, deptCode, exec, await lineNumberGenerator(), applyNotRelatedAuto: false);
+            exec = await CreateConcreteExec(detail, deptCode, exec, await lineNumberGenerator(), applyNotRelatedAuto: false);
         }
         ApplyViewUpdateToExec(exec, dto);
         ApplyViewUpdateDeptFields(exec, dto);
         var saved = await SaveEntityAsync(exec, deptCode, isNew);
-        if (saved is TaktEcSeikan seikan)
+        if (saved is TaktEcPc pc)
         {
-            await FanOutSeikanFillableByEcModelAndRootMaterialAsync(seikan);
+            await FanOutPcFillableByEcModelAndRootMaterialAsync(pc);
         }
-        else if (saved is TaktEcKoubai koubai)
+        else if (saved is TaktEcPur mp)
         {
-            await FanOutKoubaiFillableByEcAndNewMaterialAsync(koubai);
+            await FanOutMpFillableByEcAndNewMaterialAsync(mp);
         }
-        else if (saved is TaktEcUkeken ukeken)
+        else if (saved is TaktEcIqc iqc)
         {
-            await FanOutUkekenFillableByEcAndNewMaterialAsync(ukeken);
+            await FanOutIqcFillableByEcAndNewMaterialAsync(iqc);
         }
-        else if (saved is TaktEcBukan bukan)
+        else if (saved is TaktEcMc mc)
         {
-            await FanOutBukanFillableByEcModelAndNewMaterialAsync(bukan);
+            await FanOutMcFillableByEcModelAndNewMaterialAsync(mc);
         }
-        else if (saved is TaktEcSeizounika seizounika)
+        else if (saved is TaktEcMfg2 pcba)
         {
-            await FanOutSeizounikaFillableByEcModelAndRootMaterialAsync(seizounika);
+            await FanOutPcbaFillableByEcModelAndRootMaterialAsync(pcba);
         }
-        else if (saved is TaktEcEmtl smt)
+        else if (saved is TaktEcMtl smt)
         {
             await FanOutSmtFillableByEcAndParentMaterialAsync(smt);
         }
-        else if (saved is TaktEcSeizouikka assy)
+        else if (saved is TaktEcMfg1 assy)
         {
-            await FanOutSeizouikkaFillableByEcModelAndRootMaterialAsync(assy);
+            await FanOutAssyFillableByEcModelAndRootMaterialAsync(assy);
         }
-        else if (saved is TaktEcHinkan hinkan)
+        else if (saved is TaktEcQc qa)
         {
-            await FanOutHinkanFillableByEcModelAndRootMaterialAsync(hinkan);
+            await FanOutQaFillableByEcModelAndRootMaterialAsync(qa);
         }
-        else if (saved is TaktEcSeizougijutsu te)
+        else if (saved is TaktEcMe te)
         {
-            await FanOutSeizougijutsuFillableByEcModelAndRootMaterialAsync(te);
+            await FanOutTeFillableByEcModelAndRootMaterialAsync(te);
         }
-        await _ecGijutsuStatusSynchronizer.RefreshByEcCodeAsync(detail.EcCode);
+        await _ecTeStatusSynchronizer.RefreshByEcCodeAsync(detail.EcCode);
         await TryCascadeAfterGateDeptCompletedAsync(detail, deptCode, saved);
         return saved;
     }
@@ -317,14 +412,14 @@ public partial class TaktEcExecPersistence
     /// </summary>
     /// <param name="source">已写入当前行的采购执行实体</param>
     /// <returns>任务</returns>
-    public async Task FanOutKoubaiFillableByEcAndNewMaterialAsync(TaktEcKoubai source)
+    public async Task FanOutMpFillableByEcAndNewMaterialAsync(TaktEcPur source)
     {
         ArgumentNullException.ThrowIfNull(source);
         if (await ShouldSkipConditionFanOutAsync(source.EcCode))
         {
             return;
         }
-        var detail = await _ecDetailRepository.GetByIdAsync(source.EcDetailId);
+        var detail = await FirstDetailForExecAsync(source);
         if (detail == null || !TaktEcScopeConstants.IsExternalPurchaseType(detail.EcNewPurchaseType))
         {
             return;
@@ -341,7 +436,7 @@ public partial class TaktEcExecPersistence
         }
         var detailIds = siblingDetails.Select(x => x.Id).ToList();
         var rows = await _mpRepository.GetListAsync(x =>
-            detailIds.Contains(x.EcDetailId) && x.IsObsolete == 0 && x.Id != source.Id);
+            x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
         if (rows.Count == 0)
         {
             return;
@@ -353,6 +448,7 @@ public partial class TaktEcExecPersistence
             row.PurchaseOrderIssueDate = source.PurchaseOrderIssueDate;
             row.Supplier = source.Supplier;
             row.PurchaseOrderCode = source.PurchaseOrderCode;
+            row.EcOldPartDisposition = source.EcOldPartDisposition;
         }
         await _mpRepository.UpdateRangeAsync(rows);
     }
@@ -363,14 +459,14 @@ public partial class TaktEcExecPersistence
     /// </summary>
     /// <param name="source">已写入当前行的受检执行实体</param>
     /// <returns>任务</returns>
-    public async Task FanOutUkekenFillableByEcAndNewMaterialAsync(TaktEcUkeken source)
+    public async Task FanOutIqcFillableByEcAndNewMaterialAsync(TaktEcIqc source)
     {
         ArgumentNullException.ThrowIfNull(source);
         if (await ShouldSkipConditionFanOutAsync(source.EcCode))
         {
             return;
         }
-        var detail = await _ecDetailRepository.GetByIdAsync(source.EcDetailId);
+        var detail = await FirstDetailForExecAsync(source);
         if (detail == null || detail.EcNewRequiresInspection != 1)
         {
             return;
@@ -386,7 +482,7 @@ public partial class TaktEcExecPersistence
         }
         var detailIds = siblingDetails.Select(x => x.Id).ToList();
         var rows = await _iqcRepository.GetListAsync(x =>
-            detailIds.Contains(x.EcDetailId) && x.IsObsolete == 0 && x.Id != source.Id);
+            x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
         if (rows.Count == 0)
         {
             return;
@@ -407,15 +503,15 @@ public partial class TaktEcExecPersistence
     /// </summary>
     /// <param name="source">已写入当前行的部管执行实体</param>
     /// <returns>任务</returns>
-    public async Task FanOutBukanFillableByEcModelAndNewMaterialAsync(TaktEcBukan source)
+    public async Task FanOutMcFillableByEcModelAndNewMaterialAsync(TaktEcMc source)
     {
         ArgumentNullException.ThrowIfNull(source);
         if (await ShouldSkipConditionFanOutAsync(source.EcCode))
         {
             return;
         }
-        var detail = await _ecDetailRepository.GetByIdAsync(source.EcDetailId);
-        if (detail == null || !TaktEcScopeConstants.IsBukanVisible(detail.EcNewPurchaseType, detail.EcNewWarehouse))
+        var detail = await FirstDetailForExecAsync(source);
+        if (detail == null || !TaktEcScopeConstants.IsMcVisible(detail.EcNewPurchaseType, detail.EcNewWarehouse))
         {
             return;
         }
@@ -428,10 +524,10 @@ public partial class TaktEcExecPersistence
             && x.EcNewPurchaseType == purchaseTypeF
             && (x.EcNewWarehouse == null || x.EcNewWarehouse != warehouseC003)
             && x.IsObsolete == 0);
-        var bukanKind = TaktEcScopeRowGrain.ResolveKind(TaktEcDeptCodes.Mc, detail.EcDeptScope);
-        var bukanKey = TaktEcScopeRowGrain.BuildKey(detail, bukanKind);
+        var mcKind = TaktEcScopeRowGrain.ResolveKind(TaktEcDeptCodes.Mc, source.EcControlScope);
+        var mcKey = TaktEcScopeRowGrain.BuildKey(detail, mcKind);
         siblingDetails = siblingDetails
-            .Where(x => string.Equals(TaktEcScopeRowGrain.BuildKey(x, bukanKind), bukanKey, StringComparison.OrdinalIgnoreCase))
+            .Where(x => string.Equals(TaktEcScopeRowGrain.BuildKey(x, mcKind), mcKey, StringComparison.OrdinalIgnoreCase))
             .ToList();
         if (siblingDetails.Count == 0)
         {
@@ -439,7 +535,7 @@ public partial class TaktEcExecPersistence
         }
         var detailIds = siblingDetails.Select(x => x.Id).ToList();
         var rows = await _mcRepository.GetListAsync(x =>
-            detailIds.Contains(x.EcDetailId) && x.IsObsolete == 0 && x.Id != source.Id);
+            x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
         if (rows.Count == 0)
         {
             return;
@@ -458,7 +554,7 @@ public partial class TaktEcExecPersistence
         }
         foreach (var row in rows)
         {
-            await TryCascadeAfterGateDeptCompletedByDetailIdAsync(row.EcDetailId, TaktEcDeptCodes.Mc, row);
+            var coveredMc = await FirstDetailForExecAsync(row); if (coveredMc != null) { await TryCascadeAfterGateDeptCompletedByDetailIdAsync(coveredMc.Id, TaktEcDeptCodes.Mc, row); }
         }
     }
 
@@ -467,14 +563,14 @@ public partial class TaktEcExecPersistence
     /// </summary>
     /// <param name="source">已写入当前行的 SMT执行实体</param>
     /// <returns>任务</returns>
-    public async Task FanOutSmtFillableByEcAndParentMaterialAsync(TaktEcEmtl source)
+    public async Task FanOutSmtFillableByEcAndParentMaterialAsync(TaktEcMtl source)
     {
         ArgumentNullException.ThrowIfNull(source);
         if (await ShouldSkipConditionFanOutAsync(source.EcCode))
         {
             return;
         }
-        var detail = await _ecDetailRepository.GetByIdAsync(source.EcDetailId);
+        var detail = await FirstDetailForExecAsync(source);
         if (detail == null
             || !TaktEcScopeConstants.IsPcbaC003ExternalGroup(detail.EcNewPurchaseType, detail.EcNewWarehouse))
         {
@@ -490,7 +586,7 @@ public partial class TaktEcExecPersistence
             && x.EcNewWarehouse != null
             && x.EcNewWarehouse == warehouseC003
             && x.IsObsolete == 0);
-        var smtKind = TaktEcScopeRowGrain.ResolveKind(TaktEcDeptCodes.Smt, detail.EcDeptScope);
+        var smtKind = TaktEcScopeRowGrain.ResolveKind(TaktEcDeptCodes.Mtl, source.EcControlScope);
         var smtKey = TaktEcScopeRowGrain.BuildKey(detail, smtKind);
         siblingDetails = siblingDetails
             .Where(x => string.Equals(TaktEcScopeRowGrain.BuildKey(x, smtKind), smtKey, StringComparison.OrdinalIgnoreCase))
@@ -501,7 +597,7 @@ public partial class TaktEcExecPersistence
         }
         var detailIds = siblingDetails.Select(x => x.Id).ToList();
         var rows = await _smtRepository.GetListAsync(x =>
-            detailIds.Contains(x.EcDetailId) && x.IsObsolete == 0 && x.Id != source.Id);
+            x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
         if (rows.Count == 0)
         {
             return;
@@ -520,7 +616,7 @@ public partial class TaktEcExecPersistence
         }
         foreach (var row in rows)
         {
-            await TryCascadeAfterGateDeptCompletedByDetailIdAsync(row.EcDetailId, TaktEcDeptCodes.Smt, row);
+            var coveredSmt = await FirstDetailForExecAsync(row); if (coveredSmt != null) { await TryCascadeAfterGateDeptCompletedByDetailIdAsync(coveredSmt.Id, TaktEcDeptCodes.Mtl, row); }
         }
     }
 
@@ -529,14 +625,14 @@ public partial class TaktEcExecPersistence
     /// </summary>
     /// <param name="source">已写入当前行的制二执行实体</param>
     /// <returns>任务</returns>
-    public async Task FanOutSeizounikaFillableByEcModelAndRootMaterialAsync(TaktEcSeizounika source)
+    public async Task FanOutPcbaFillableByEcModelAndRootMaterialAsync(TaktEcMfg2 source)
     {
         ArgumentNullException.ThrowIfNull(source);
         if (await ShouldSkipConditionFanOutAsync(source.EcCode))
         {
             return;
         }
-        var detail = await _ecDetailRepository.GetByIdAsync(source.EcDetailId);
+        var detail = await FirstDetailForExecAsync(source);
         if (detail == null || !TaktEcScopeConstants.IsPcbaOtherPurchaseGroup(detail.EcNewPurchaseType))
         {
             return;
@@ -553,8 +649,8 @@ public partial class TaktEcExecPersistence
             return;
         }
         var detailIds = siblingDetails.Select(x => x.Id).ToList();
-        var rows = await _seizounikaRepository.GetListAsync(x =>
-            detailIds.Contains(x.EcDetailId) && x.IsObsolete == 0 && x.Id != source.Id);
+        var rows = await _pcbaRepository.GetListAsync(x =>
+            x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
         if (rows.Count == 0)
         {
             return;
@@ -567,7 +663,7 @@ public partial class TaktEcExecPersistence
             row.ProductionDate = source.ProductionDate;
             row.ImplementationBatch = source.ImplementationBatch;
         }
-        await _seizounikaRepository.UpdateRangeAsync(rows);
+        await _pcbaRepository.UpdateRangeAsync(rows);
     }
 
     /// <summary>
@@ -575,14 +671,14 @@ public partial class TaktEcExecPersistence
     /// </summary>
     /// <param name="source">已写入当前行的生管执行实体</param>
     /// <returns>任务</returns>
-    public async Task FanOutSeikanFillableByEcModelAndRootMaterialAsync(TaktEcSeikan source)
+    public async Task FanOutPcFillableByEcModelAndRootMaterialAsync(TaktEcPc source)
     {
         ArgumentNullException.ThrowIfNull(source);
         if (await ShouldSkipConditionFanOutAsync(source.EcCode))
         {
             return;
         }
-        var detail = await _ecDetailRepository.GetByIdAsync(source.EcDetailId);
+        var detail = await FirstDetailForExecAsync(source);
         if (detail == null)
         {
             return;
@@ -597,8 +693,8 @@ public partial class TaktEcExecPersistence
             return;
         }
         var detailIds = siblingDetails.Select(x => x.Id).ToList();
-        var rows = await _pmcRepository.GetListAsync(x =>
-            detailIds.Contains(x.EcDetailId) && x.IsObsolete == 0 && x.Id != source.Id);
+        var rows = await _pcRepository.GetListAsync(x =>
+            x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
         if (rows.Count > 0)
         {
             foreach (var row in rows)
@@ -608,30 +704,31 @@ public partial class TaktEcExecPersistence
                 row.ScheduledDate = source.ScheduledDate;
                 row.ScheduledBatch = source.ScheduledBatch;
                 row.PoRemainder = source.PoRemainder;
-                row.Balance = source.Balance;
+                row.BalanceQuantity = source.BalanceQuantity;
+                row.EcOldPartDisposition = source.EcOldPartDisposition;
             }
-            await _pmcRepository.UpdateRangeAsync(rows);
+            await _pcRepository.UpdateRangeAsync(rows);
         }
         // 去重后常仅一行生管：预定日期/批次冗余到除采购/受检外的执行表
-        await SyncSeikanScheduledRedundantToSiblingDeptsAsync(detailIds, source.ScheduledDate, source.ScheduledBatch);
+        await SyncPcScheduledRedundantToSiblingDeptsAsync(source.EcCode, source.ScheduledDate, source.ScheduledBatch);
     }
 
     /// <summary>
     /// 生管预定日期/预定批次 → 部管/制一/制二/SMT/品管（不含采购、受检、制技）。
     /// </summary>
-    private async Task SyncSeikanScheduledRedundantToSiblingDeptsAsync(
-        List<long> detailIds,
+    private async Task SyncPcScheduledRedundantToSiblingDeptsAsync(
+        string ecCode,
         DateTime? scheduledDate,
         string? scheduledBatch)
     {
-        if (detailIds.Count == 0)
+        if (string.IsNullOrWhiteSpace(ecCode))
         {
             return;
         }
         async Task SyncAsync<T>(ITaktCompanyRepository<T> repo, Action<T, DateTime?, string?> apply)
             where T : TaktCompanyEntityBase, ITaktEcDeptExecEntity, new()
         {
-            var rows = await repo.GetListAsync(x => detailIds.Contains(x.EcDetailId) && x.IsObsolete == 0);
+            var rows = await repo.GetListAsync(x => x.EcCode == ecCode && x.IsObsolete == 0);
             if (rows.Count == 0)
             {
                 return;
@@ -642,19 +739,19 @@ public partial class TaktEcExecPersistence
             }
             await repo.UpdateRangeAsync(rows);
         }
-        await SyncAsync(_mcRepository, (TaktEcBukan r, DateTime? d, string? b) => { r.ScheduledDate = d; r.ScheduledBatch = b; });
-        await SyncAsync(_assyRepository, (TaktEcSeizouikka r, DateTime? d, string? b) =>
+        await SyncAsync(_mcRepository, (TaktEcMc r, DateTime? d, string? b) => { r.ScheduledDate = d; r.ScheduledBatch = b; });
+        await SyncAsync(_assyRepository, (TaktEcMfg1 r, DateTime? d, string? b) =>
         {
-            if (IsSeizouikkaNotRelatedDefault(r))
+            if (IsAssyNotRelatedDefault(r))
             {
                 return;
             }
             r.ScheduledDate = d;
             r.ScheduledBatch = b;
         });
-        await SyncAsync(_seizounikaRepository, (TaktEcSeizounika r, DateTime? d, string? b) => { r.ScheduledDate = d; r.ScheduledBatch = b; });
-        await SyncAsync(_smtRepository, (TaktEcEmtl r, DateTime? d, string? b) => { r.ScheduledDate = d; r.ScheduledBatch = b; });
-        await SyncAsync(_qaRepository, (TaktEcHinkan r, DateTime? d, string? b) => { r.ScheduledDate = d; r.ScheduledBatch = b; });
+        await SyncAsync(_pcbaRepository, (TaktEcMfg2 r, DateTime? d, string? b) => { r.ScheduledDate = d; r.ScheduledBatch = b; });
+        await SyncAsync(_smtRepository, (TaktEcMtl r, DateTime? d, string? b) => { r.ScheduledDate = d; r.ScheduledBatch = b; });
+        await SyncAsync(_qaRepository, (TaktEcQc r, DateTime? d, string? b) => { r.ScheduledDate = d; r.ScheduledBatch = b; });
     }
 
     /// <summary>
@@ -662,14 +759,14 @@ public partial class TaktEcExecPersistence
     /// </summary>
     /// <param name="source">已写入当前行的制一执行实体</param>
     /// <returns>任务</returns>
-    public async Task FanOutSeizouikkaFillableByEcModelAndRootMaterialAsync(TaktEcSeizouikka source)
+    public async Task FanOutAssyFillableByEcModelAndRootMaterialAsync(TaktEcMfg1 source)
     {
         ArgumentNullException.ThrowIfNull(source);
         if (await ShouldSkipConditionFanOutAsync(source.EcCode))
         {
             return;
         }
-        var detail = await _ecDetailRepository.GetByIdAsync(source.EcDetailId);
+        var detail = await FirstDetailForExecAsync(source);
         if (detail == null)
         {
             return;
@@ -685,7 +782,7 @@ public partial class TaktEcExecPersistence
         }
         var detailIds = siblingDetails.Select(x => x.Id).ToList();
         var rows = await _assyRepository.GetListAsync(x =>
-            detailIds.Contains(x.EcDetailId) && x.IsObsolete == 0 && x.Id != source.Id);
+            x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
         if (rows.Count == 0)
         {
             return;
@@ -706,14 +803,14 @@ public partial class TaktEcExecPersistence
     /// </summary>
     /// <param name="source">已写入当前行的品管执行实体</param>
     /// <returns>任务</returns>
-    public async Task FanOutHinkanFillableByEcModelAndRootMaterialAsync(TaktEcHinkan source)
+    public async Task FanOutQaFillableByEcModelAndRootMaterialAsync(TaktEcQc source)
     {
         ArgumentNullException.ThrowIfNull(source);
         if (await ShouldSkipConditionFanOutAsync(source.EcCode))
         {
             return;
         }
-        var detail = await _ecDetailRepository.GetByIdAsync(source.EcDetailId);
+        var detail = await FirstDetailForExecAsync(source);
         if (detail == null)
         {
             return;
@@ -729,7 +826,7 @@ public partial class TaktEcExecPersistence
         }
         var detailIds = siblingDetails.Select(x => x.Id).ToList();
         var rows = await _qaRepository.GetListAsync(x =>
-            detailIds.Contains(x.EcDetailId) && x.IsObsolete == 0 && x.Id != source.Id);
+            x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
         if (rows.Count == 0)
         {
             return;
@@ -751,14 +848,14 @@ public partial class TaktEcExecPersistence
     /// </summary>
     /// <param name="source">已写入当前行的制技执行实体</param>
     /// <returns>任务</returns>
-    public async Task FanOutSeizougijutsuFillableByEcModelAndRootMaterialAsync(TaktEcSeizougijutsu source)
+    public async Task FanOutTeFillableByEcModelAndRootMaterialAsync(TaktEcMe source)
     {
         ArgumentNullException.ThrowIfNull(source);
         if (await ShouldSkipConditionFanOutAsync(source.EcCode))
         {
             return;
         }
-        var detail = await _ecDetailRepository.GetByIdAsync(source.EcDetailId);
+        var detail = await FirstDetailForExecAsync(source);
         if (detail == null)
         {
             return;
@@ -773,7 +870,7 @@ public partial class TaktEcExecPersistence
         }
         var detailIds = siblingDetails.Select(x => x.Id).ToList();
         var rows = await _teRepository.GetListAsync(x =>
-            detailIds.Contains(x.EcDetailId) && x.IsObsolete == 0 && x.Id != source.Id);
+            x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
         if (rows.Count == 0)
         {
             return;
@@ -798,34 +895,34 @@ public partial class TaktEcExecPersistence
     /// <param name="detail">设变明细</param>
     /// <param name="deptCode">部门编码</param>
     /// <param name="autoComplete">true=按实施范围自动填写；false=待人工填写</param>
-    /// <param name="ecScope">设变实施范围（字典 logistics_manufacturing_ec_scope_category）</param>
+    /// <param name="ecImplScope">实施范围（字典 logistics_manufacturing_ec_impl_scope_category）</param>
     /// <returns>部门执行实体；跳过生成时为 null</returns>
     public async Task<object?> UpsertDeptExecWithFillModeAsync(
         TaktEcDetail detail,
         string deptCode,
         bool autoComplete,
-        int ecScope)
+        int ecImplScope)
     {
         ArgumentNullException.ThrowIfNull(detail);
         ArgumentException.ThrowIfNullOrWhiteSpace(deptCode);
-        if (deptCode == TaktEcDeptCodes.Pcba || deptCode == TaktEcDeptCodes.Smt)
+        if (deptCode == TaktEcDeptCodes.Mfg2 || deptCode == TaktEcDeptCodes.Mtl)
         {
-            return await UpsertPcbaDeptExecWithFillModeAsync(detail, autoComplete, ecScope);
+            return await UpsertPcbaDeptExecWithFillModeAsync(detail, autoComplete, ecImplScope);
         }
         if (!await IsKnownRootMaterialAsync(detail))
         {
             await ObsoleteDeptExecIfExistsAsync(detail.Id, deptCode);
             return null;
         }
-        if (ecScope != TaktEcScopeConstants.Internal
-            && ecScope != TaktEcScopeConstants.Technical
+        if (ecImplScope != TaktEcScopeConstants.Internal
+            && ecImplScope != TaktEcScopeConstants.Technical
             && TaktEcScopeConstants.IsNewMaterialDependentDept(deptCode)
             && !TaktEcScopeConstants.HasEffectiveNewMaterialCode(detail.EcNewMaterialCode))
         {
             await ObsoleteDeptExecIfExistsAsync(detail.Id, deptCode);
             return null;
         }
-        if (await ShouldSkipDeptExecByScopeGrainAsync(detail, deptCode, ecScope))
+        if (await ShouldSkipDeptExecByScopeGrainAsync(detail, deptCode, ecImplScope))
         {
             await ObsoleteDeptExecIfExistsAsync(detail.Id, deptCode);
             return null;
@@ -833,28 +930,29 @@ public partial class TaktEcExecPersistence
         var existing = await FirstEntityByDetailAndDeptAsync(detail.Id, deptCode);
         var isNew = existing == null;
         var lineNumber = detail.LineNumber > 0 ? detail.LineNumber : 10;
-        var applyNotRelatedAuto = TaktEcScopeConstants.AllowsNotRelatedFill(ecScope);
-        var exec = CreateConcreteExec(detail, deptCode, existing, lineNumber, applyNotRelatedAuto);
-        await AssignScopeRootGroupAsync(exec, detail, deptCode, ecScope);
+        var applyNotRelatedAuto = TaktEcScopeConstants.AllowsNotRelatedFill(ecImplScope);
+        var exec = await CreateConcreteExec(detail, deptCode, existing, lineNumber, applyNotRelatedAuto);
+        await AssignScopeRootGroupAsync(exec, detail, deptCode, ecImplScope);
         EnsureDeptName(exec, await ResolveDeptNameAsync(deptCode));
         // 新物料有效时恢复此前因「无新物料」作废的行
         if (exec is ITaktEcDeptExecEntity deptExec && deptExec.IsObsolete == 1)
         {
             deptExec.IsObsolete = 0;
         }
-        ApplyScopeFillMode(exec, isNew, autoComplete, ecScope);
+        ApplyScopeFillMode(exec, isNew, autoComplete, ecImplScope);
         var filledContent = TaktEcDeptEntityHelper.GetExecContent(exec);
         var isEolFilled = TaktEcScopeConstants.IsEolExecContent(filledContent);
         if (!isEolFilled
-            && TaktEcScopeConstants.AllowsNotRelatedFill(ecScope))
+            && TaktEcScopeConstants.AllowsNotRelatedFill(ecImplScope))
         {
             TaktEcExecNotRelated.TryAfterFill(exec, detail);
         }
-        var autoCloseContent = await ResolveAutoCloseExecContentAsync(detail, deptCode, ecScope);
+        var autoCloseContent = await ResolveAutoCloseExecContentAsync(detail, deptCode, ecImplScope);
         if (autoCloseContent != null)
         {
             ApplyAutoCloseDeptExec(exec, isNew, autoCloseContent);
         }
+        await ApplyNonFertDeptControlledAsync(exec, detail, deptCode, ecImplScope);
         // 批量派生时不在此刷新主表状态（技术课导入路径不按子表重算；部门填报 CRUD 自行 Refresh）
         return await SaveEntityAsync(exec, deptCode, isNew);
     }
@@ -864,12 +962,12 @@ public partial class TaktEcExecPersistence
     /// </summary>
     /// <param name="detail">设变明细</param>
     /// <param name="autoComplete">是否自动填写</param>
-    /// <param name="ecScope">设变实施范围</param>
+    /// <param name="ecImplScope">实施范围</param>
     /// <returns>部门执行实体；跳过时 null</returns>
     private async Task<object?> UpsertPcbaDeptExecWithFillModeAsync(
         TaktEcDetail detail,
         bool autoComplete,
-        int ecScope)
+        int ecImplScope)
     {
         _ = autoComplete;
         if (!await IsKnownRootMaterialAsync(detail))
@@ -878,21 +976,21 @@ public partial class TaktEcExecPersistence
             return null;
         }
         object? saved = null;
-        if (await ShouldSkipDeptExecByScopeGrainAsync(detail, TaktEcDeptCodes.Smt, ecScope))
+        if (await ShouldSkipDeptExecByScopeGrainAsync(detail, TaktEcDeptCodes.Mtl, ecImplScope))
         {
-            await ObsoleteTypedDeptExecIfExistsAsync(detail.Id, TaktEcEmtlRouteTarget.Smt);
+            await ObsoleteTypedDeptExecIfExistsAsync(detail.Id, TaktEcMtlRouteTarget.Mtl);
         }
         else
         {
-            saved = await UpsertSmtTypedExecAsync(detail, TaktEcEmtlRouteTarget.Smt, ecScope);
+            saved = await UpsertSmtTypedExecAsync(detail, TaktEcMtlRouteTarget.Mtl, ecImplScope);
         }
-        if (await ShouldSkipDeptExecByScopeGrainAsync(detail, TaktEcDeptCodes.Pcba, ecScope))
+        if (await ShouldSkipDeptExecByScopeGrainAsync(detail, TaktEcDeptCodes.Mfg2, ecImplScope))
         {
-            await ObsoleteTypedDeptExecIfExistsAsync(detail.Id, TaktEcEmtlRouteTarget.Seizounika);
+            await ObsoleteTypedDeptExecIfExistsAsync(detail.Id, TaktEcMtlRouteTarget.Mfg2);
         }
         else
         {
-            saved = await UpsertSmtTypedExecAsync(detail, TaktEcEmtlRouteTarget.Seizounika, ecScope);
+            saved = await UpsertSmtTypedExecAsync(detail, TaktEcMtlRouteTarget.Mfg2, ecImplScope);
         }
         return saved;
     }
@@ -902,41 +1000,42 @@ public partial class TaktEcExecPersistence
     /// </summary>
     private async Task<object> UpsertSmtTypedExecAsync(
         TaktEcDetail detail,
-        TaktEcEmtlRouteTarget target,
-        int ecScope)
+        TaktEcMtlRouteTarget target,
+        int ecImplScope)
     {
         var existing = await FirstSmtEntityByDetailAndTargetAsync(detail.Id, target);
         var isNew = existing == null;
         var lineNumber = detail.LineNumber > 0 ? detail.LineNumber : 10;
-        var applyNotRelatedAuto = TaktEcScopeConstants.AllowsNotRelatedFill(ecScope);
-        var exec = CreatePcbaConcreteExec(detail, target, existing, lineNumber, applyNotRelatedAuto);
-        var targetDeptCode = target == TaktEcEmtlRouteTarget.Smt
-            ? TaktEcDeptCodes.Smt
-            : TaktEcDeptCodes.Pcba;
-        await AssignScopeRootGroupAsync(exec, detail, targetDeptCode, ecScope);
+        var applyNotRelatedAuto = TaktEcScopeConstants.AllowsNotRelatedFill(ecImplScope);
+        var exec = await CreatePcbaConcreteExec(detail, target, existing, lineNumber, applyNotRelatedAuto);
+        var targetDeptCode = target == TaktEcMtlRouteTarget.Mtl
+            ? TaktEcDeptCodes.Mtl
+            : TaktEcDeptCodes.Mfg2;
+        await AssignScopeRootGroupAsync(exec, detail, targetDeptCode, ecImplScope);
         EnsureDeptName(exec, await ResolveDeptNameAsync(targetDeptCode));
         if (exec is ITaktEcDeptExecEntity deptExec && deptExec.IsObsolete == 1)
         {
             deptExec.IsObsolete = 0;
         }
         var sideAuto = TaktEcScopeConstants.ShouldAutoCompleteExec(
-            ecScope,
+            ecImplScope,
             targetDeptCode,
             detail.EcNewPurchaseType,
             detail.EcNewWarehouse);
-        ApplyScopeFillMode(exec, isNew, sideAuto, ecScope);
+        ApplyScopeFillMode(exec, isNew, sideAuto, ecImplScope);
         var filledContent = TaktEcDeptEntityHelper.GetExecContent(exec);
         var isEolFilled = TaktEcScopeConstants.IsEolExecContent(filledContent);
         if (!isEolFilled
-            && TaktEcScopeConstants.AllowsNotRelatedFill(ecScope))
+            && TaktEcScopeConstants.AllowsNotRelatedFill(ecImplScope))
         {
             TaktEcExecNotRelated.TryAfterFill(exec, detail);
         }
-        var autoCloseContent = await ResolveAutoCloseExecContentAsync(detail, targetDeptCode, ecScope);
+        var autoCloseContent = await ResolveAutoCloseExecContentAsync(detail, targetDeptCode, ecImplScope);
         if (autoCloseContent != null)
         {
             ApplyAutoCloseDeptExec(exec, isNew, autoCloseContent);
         }
+        await ApplyNonFertDeptControlledAsync(exec, detail, targetDeptCode, ecImplScope);
         return await SavePcbaEntityAsync(exec, isNew);
     }
 
@@ -947,7 +1046,7 @@ public partial class TaktEcExecPersistence
     /// <param name="deptCode">部门编码</param>
     private async Task ObsoleteDeptExecIfExistsAsync(long ecDetailId, string deptCode)
     {
-        if (deptCode == TaktEcDeptCodes.Pcba)
+        if (deptCode == TaktEcDeptCodes.Mfg2)
         {
             await ObsoletePcbaBothTablesAsync(ecDetailId);
             return;
@@ -970,14 +1069,14 @@ public partial class TaktEcExecPersistence
     /// <param name="ecDetailId">设变明细 ID</param>
     private async Task ObsoletePcbaBothTablesAsync(long ecDetailId)
     {
-        await ObsoleteTypedDeptExecIfExistsAsync(ecDetailId, TaktEcEmtlRouteTarget.Smt);
-        await ObsoleteTypedDeptExecIfExistsAsync(ecDetailId, TaktEcEmtlRouteTarget.Seizounika);
+        await ObsoleteTypedDeptExecIfExistsAsync(ecDetailId, TaktEcMtlRouteTarget.Mtl);
+        await ObsoleteTypedDeptExecIfExistsAsync(ecDetailId, TaktEcMtlRouteTarget.Mfg2);
     }
 
     /// <summary>
     /// 作废制造二课指定目标表行
     /// </summary>
-    private async Task ObsoleteTypedDeptExecIfExistsAsync(long ecDetailId, TaktEcEmtlRouteTarget target)
+    private async Task ObsoleteTypedDeptExecIfExistsAsync(long ecDetailId, TaktEcMtlRouteTarget target)
     {
         var existing = await FirstSmtEntityByDetailAndTargetAsync(ecDetailId, target);
         if (existing == null || TaktEcDeptEntityHelper.GetIsObsolete(existing) == 1)
@@ -996,17 +1095,17 @@ public partial class TaktEcExecPersistence
     /// </summary>
     /// <param name="detail">设变明细</param>
     /// <param name="deptCode">部门编码</param>
-    /// <param name="ecScope">实施范围；空则用明细上的冗余值</param>
+    /// <param name="ecImplScope">实施范围；空则用明细上的冗余值</param>
     /// <returns>true=跳过并应作废已有行</returns>
-    private async Task<bool> ShouldSkipDeptExecByScopeGrainAsync(TaktEcDetail detail, string deptCode, int? ecScope = null)
+    private async Task<bool> ShouldSkipDeptExecByScopeGrainAsync(TaktEcDetail detail, string deptCode, int? ecImplScope = null)
     {
-        var scope = ecScope ?? detail.EcScope;
-        var masterDeptScope = detail.EcDeptScope > 0 ? detail.EcDeptScope : TaktEcDeptScopeConstants.ByModel;
-        var deptScope = TaktEcDeptScopeConstants.ResolveForDept(deptCode, scope, masterDeptScope);
+        var scope = ecImplScope ?? detail.EcImplScope;
+        var masterDeptScope = await GetMasterControlScopeAsync(detail);
+        var deptScope = TaktEcControlScopeConstants.ResolveForDept(deptCode, scope, masterDeptScope);
         var siblings = await _ecDetailRepository.GetListAsync(x =>
             x.EcCode == detail.EcCode && x.IsObsolete == 0);
         IReadOnlySet<string>? fertRootKeys = null;
-        if (deptCode == TaktEcDeptCodes.Assy && deptScope == TaktEcDeptScopeConstants.ByFinishedProduct)
+        if (deptCode == TaktEcDeptCodes.Mfg1 && deptScope == TaktEcControlScopeConstants.ByFinishedProduct)
         {
             fertRootKeys = CollectFertRootMaterialKeys(siblings);
         }
@@ -1023,27 +1122,27 @@ public partial class TaktEcExecPersistence
     /// <param name="exec">部门执行实体</param>
     /// <param name="detail">设变明细</param>
     /// <param name="deptCode">部门编码</param>
-    /// <param name="ecScope">实施范围</param>
+    /// <param name="ecImplScope">实施范围</param>
     /// <returns>任务</returns>
     private async Task AssignScopeRootGroupAsync(
         object exec,
         TaktEcDetail detail,
         string deptCode,
-        int ecScope)
+        int ecImplScope)
     {
         var siblings = await _ecDetailRepository.GetListAsync(x =>
             x.EcCode == detail.EcCode && x.IsObsolete == 0);
-        var masterDeptScope = detail.EcDeptScope > 0 ? detail.EcDeptScope : TaktEcDeptScopeConstants.ByModel;
-        var deptScope = TaktEcDeptScopeConstants.ResolveForDept(deptCode, ecScope, masterDeptScope);
+        var masterDeptScope = await GetMasterControlScopeAsync(detail);
+        var deptScope = TaktEcControlScopeConstants.ResolveForDept(deptCode, ecImplScope, masterDeptScope);
         IReadOnlySet<string>? fertRootKeys = null;
-        if (deptCode == TaktEcDeptCodes.Assy && deptScope == TaktEcDeptScopeConstants.ByFinishedProduct)
+        if (deptCode == TaktEcDeptCodes.Mfg1 && deptScope == TaktEcControlScopeConstants.ByFinishedProduct)
         {
             fertRootKeys = CollectFertRootMaterialKeys(siblings);
         }
         var groups = TaktEcScopeRowGrain.BuildRootGroups(siblings, deptCode, deptScope, fertRootKeys);
         var modelGroups = TaktEcScopeRowGrain.BuildModelGroups(siblings, deptCode, deptScope, fertRootKeys);
         var kind = TaktEcScopeRowGrain.ResolveKind(deptCode, deptScope);
-        var groupKey = TaktEcScopeRowGrain.BuildKey(detail, kind);
+        var groupKey = TaktEcScopeRowGrain.BuildKey(detail, kind, deptCode);
         if (groups.TryGetValue(groupKey, out var rootGroup))
         {
             AssignRootMaterialCodeGroup(exec, rootGroup);
@@ -1052,7 +1151,7 @@ public partial class TaktEcExecPersistence
         {
             AssignModelCodeGroup(exec, modelGroup);
         }
-        if (deptCode is TaktEcDeptCodes.Mp or TaktEcDeptCodes.Iqc)
+        if (deptCode is TaktEcDeptCodes.Pur or TaktEcDeptCodes.Iqc)
         {
             SetDiscontinuedStatusIfPresent(
                 exec,
@@ -1064,7 +1163,7 @@ public partial class TaktEcExecPersistence
                 exec,
                 TaktEcScopeRowGrain.ResolveRootGroupDiscontinuedStatus(siblings, detail, deptCode, deptScope, fertRootKeys));
         }
-        if (deptCode == TaktEcDeptCodes.Pcba)
+        if (deptCode == TaktEcDeptCodes.Mfg2)
         {
             var newMaterialGroups = TaktEcScopeRowGrain.BuildCodeGroups(siblings, deptCode, deptScope, fertRootKeys, item => item.EcNewMaterialCode);
             var parentMaterialGroups = TaktEcScopeRowGrain.BuildCodeGroups(siblings, deptCode, deptScope, fertRootKeys, item => item.EcParentMaterialCode);
@@ -1090,8 +1189,8 @@ public partial class TaktEcExecPersistence
         }
         return deptCode switch
         {
-            TaktEcDeptCodes.Mp => await HasNewerKoubaiVisibleSiblingAsync(detail),
-            TaktEcDeptCodes.Iqc => await HasNewerUkekenVisibleSiblingAsync(detail),
+            TaktEcDeptCodes.Pur => await HasNewerMpVisibleSiblingAsync(detail),
+            TaktEcDeptCodes.Iqc => await HasNewerIqcVisibleSiblingAsync(detail),
             _ => false
         };
     }
@@ -1104,7 +1203,7 @@ public partial class TaktEcExecPersistence
     /// <returns>true=跳过并应作废已有行</returns>
     private async Task<bool> ShouldSkipModelRootMaterialDeptByListDedupAsync(TaktEcDetail detail, string deptCode)
     {
-        if (deptCode is not (TaktEcDeptCodes.Pmc or TaktEcDeptCodes.Assy or TaktEcDeptCodes.Qa or TaktEcDeptCodes.Te))
+        if (deptCode is not (TaktEcDeptCodes.Pc or TaktEcDeptCodes.Mfg1 or TaktEcDeptCodes.Qc or TaktEcDeptCodes.Me))
         {
             return false;
         }
@@ -1112,7 +1211,7 @@ public partial class TaktEcExecPersistence
         {
             return true;
         }
-        if (deptCode == TaktEcDeptCodes.Te)
+        if (deptCode == TaktEcDeptCodes.Me)
         {
             var newerByModel = await _ecDetailRepository.FirstAsync(s =>
                 s.IsObsolete == 0
@@ -1133,7 +1232,7 @@ public partial class TaktEcExecPersistence
     /// <summary>
     /// 制二非 F 可见组内是否存在更大 Id 的同设变+机种+根物料编码明细
     /// </summary>
-    private async Task<bool> HasNewerSeizounikaVisibleSiblingAsync(TaktEcDetail detail)
+    private async Task<bool> HasNewerPcbaVisibleSiblingAsync(TaktEcDetail detail)
     {
         if (!TaktEcScopeConstants.IsPcbaOtherPurchaseGroup(detail.EcNewPurchaseType))
         {
@@ -1157,7 +1256,7 @@ public partial class TaktEcExecPersistence
     /// </summary>
     /// <param name="detail">当前明细</param>
     /// <returns>存在更大 Id 兄弟则 true</returns>
-    private async Task<bool> HasNewerKoubaiVisibleSiblingAsync(TaktEcDetail detail)
+    private async Task<bool> HasNewerMpVisibleSiblingAsync(TaktEcDetail detail)
     {
         if (!TaktEcScopeConstants.IsExternalPurchaseType(detail.EcNewPurchaseType))
         {
@@ -1179,7 +1278,7 @@ public partial class TaktEcExecPersistence
     /// </summary>
     /// <param name="detail">当前明细</param>
     /// <returns>存在更大 Id 兄弟则 true</returns>
-    private async Task<bool> HasNewerUkekenVisibleSiblingAsync(TaktEcDetail detail)
+    private async Task<bool> HasNewerIqcVisibleSiblingAsync(TaktEcDetail detail)
     {
         if (detail.EcNewRequiresInspection != 1)
         {
@@ -1212,8 +1311,8 @@ public partial class TaktEcExecPersistence
             : discontinuedStatus.Trim();
         detail.DiscontinuedStatus = status;
         await _ecDetailRepository.UpdateAsync(detail);
-        var gijutsu = await _ecGijutsuRepository.FirstAsync(x => x.EcCode == detail.EcCode);
-        var ecScope = gijutsu?.EcScope ?? TaktEcScopeConstants.Technical;
+        var te = await _ecTeRepository.FirstAsync(x => x.EcCode == detail.EcCode);
+        var ecImplScope = te?.EcImplScope ?? TaktEcScopeConstants.Technical;
         var rows = await ListAllEntitiesByDetailIdsAsync(new[] { detail.Id });
         foreach (var exec in rows)
         {
@@ -1223,10 +1322,10 @@ public partial class TaktEcExecPersistence
             }
             SetDiscontinuedStatusIfPresent(exec, status);
             var deptCode = TaktEcDeptEntityHelper.GetDeptCode(exec);
-            var deptScope = TaktEcDeptScopeConstants.ResolveForDept(deptCode, ecScope, detail.EcDeptScope);
-            ApplyManualDiscontinuedFillMode(exec, ecScope, deptScope, detail);
+            var deptScope = TaktEcControlScopeConstants.ResolveForDept(deptCode, ecImplScope, te?.EcControlScope ?? TaktEcControlScopeConstants.ByModel);
+            ApplyManualDiscontinuedFillMode(exec, ecImplScope, deptScope, detail);
             if (!TaktEcScopeConstants.IsEolDiscontinued(status)
-                && TaktEcScopeConstants.AllowsNotRelatedFill(ecScope))
+                && TaktEcScopeConstants.AllowsNotRelatedFill(ecImplScope))
             {
                 var filledContent = TaktEcDeptEntityHelper.GetExecContent(exec);
                 var isEolFilled = TaktEcScopeConstants.IsEolExecContent(filledContent);
@@ -1235,9 +1334,9 @@ public partial class TaktEcExecPersistence
                     TaktEcExecNotRelated.TryAfterFill(exec, detail);
                 }
             }
-            await SaveEntityAsync(exec, deptCode == TaktEcDeptCodes.Pcba ? TaktEcDeptCodes.Pcba : deptCode, isNew: false);
+            await SaveEntityAsync(exec, deptCode == TaktEcDeptCodes.Mfg2 ? TaktEcDeptCodes.Mfg2 : deptCode, isNew: false);
         }
-        await _ecGijutsuStatusSynchronizer.RefreshByEcCodeAsync(detail.EcCode);
+        await _ecTeStatusSynchronizer.RefreshByEcCodeAsync(detail.EcCode);
     }
 
     /// <summary>
@@ -1249,31 +1348,31 @@ public partial class TaktEcExecPersistence
     {
         switch (exec)
         {
-            case TaktEcKoubai e:
+            case TaktEcPur e:
                 e.DiscontinuedStatus = status;
                 break;
-            case TaktEcUkeken e:
+            case TaktEcIqc e:
                 e.DiscontinuedStatus = status;
                 break;
-            case TaktEcSeikan e:
+            case TaktEcPc e:
                 e.DiscontinuedStatus = status;
                 break;
-            case TaktEcBukan e:
+            case TaktEcMc e:
                 e.DiscontinuedStatus = status;
                 break;
-            case TaktEcEmtl e:
+            case TaktEcMtl e:
                 e.DiscontinuedStatus = status;
                 break;
-            case TaktEcSeizounika e:
+            case TaktEcMfg2 e:
                 e.DiscontinuedStatus = status;
                 break;
-            case TaktEcSeizouikka e:
+            case TaktEcMfg1 e:
                 e.DiscontinuedStatus = status;
                 break;
-            case TaktEcHinkan e:
+            case TaktEcQc e:
                 e.DiscontinuedStatus = status;
                 break;
-            case TaktEcSeizougijutsu e:
+            case TaktEcMe e:
                 e.DiscontinuedStatus = status;
                 break;
         }
@@ -1283,38 +1382,38 @@ public partial class TaktEcExecPersistence
     /// 人工停产/在产：停产写「全仕向:按机种:EOL」；在产按实施范围回填或清空
     /// </summary>
     /// <param name="exec">部门执行实体</param>
-    /// <param name="ecScope">设变实施范围</param>
-    /// <param name="ecDeptScope">部门实施范围</param>
+    /// <param name="ecImplScope">实施范围</param>
+    /// <param name="ecControlScope">部门实施范围</param>
     /// <param name="detail">设变明细</param>
-    private static void ApplyManualDiscontinuedFillMode(object exec, int ecScope, int ecDeptScope, TaktEcDetail detail)
+    private static void ApplyManualDiscontinuedFillMode(object exec, int ecImplScope, int ecControlScope, TaktEcDetail detail)
     {
         if (TaktEcScopeConstants.IsEolDiscontinued(detail.DiscontinuedStatus))
         {
             TaktEcDeptEntityHelper.SetIsImplemented(exec, 1);
             TaktEcDeptEntityHelper.SetExecContent(
                 exec,
-                TaktEcScopeConstants.FormatScopeDeptExecContent(ecScope, ecDeptScope, TaktEcScopeConstants.EolExecContent),
+                TaktEcScopeConstants.FormatScopeDeptExecContent(ecImplScope, ecControlScope, TaktEcScopeConstants.EolExecContent),
                 overwrite: true);
             return;
         }
-        if (ecScope == TaktEcScopeConstants.Internal
-            || ecScope == TaktEcScopeConstants.Technical)
+        if (ecImplScope == TaktEcScopeConstants.Internal
+            || ecImplScope == TaktEcScopeConstants.Technical)
         {
             TaktEcDeptEntityHelper.SetIsImplemented(exec, 1);
             TaktEcDeptEntityHelper.SetExecContent(
                 exec,
-                TaktEcScopeConstants.ResolveAutoExecContent(ecScope),
+                TaktEcScopeConstants.ResolveAutoExecContent(ecImplScope),
                 overwrite: true);
             return;
         }
         var deptCode = TaktEcDeptEntityHelper.GetDeptCode(exec);
-        var autoComplete = ResolveAutoCompleteForManualClear(ecScope, deptCode, detail);
+        var autoComplete = ResolveAutoCompleteForManualClear(ecImplScope, deptCode, detail);
         if (autoComplete)
         {
             TaktEcDeptEntityHelper.SetIsImplemented(exec, 1);
             TaktEcDeptEntityHelper.SetExecContent(
                 exec,
-                TaktEcScopeConstants.ResolveAutoExecContent(ecScope),
+                TaktEcScopeConstants.ResolveAutoExecContent(ecImplScope),
                 overwrite: true);
             return;
         }
@@ -1325,40 +1424,40 @@ public partial class TaktEcExecPersistence
     /// <summary>
     /// 在产清除后是否自动完成（与编排规则一致：全仕向不自动；部管按待填部门名单）
     /// </summary>
-    /// <param name="ecScope">设变实施范围</param>
+    /// <param name="ecImplScope">实施范围</param>
     /// <param name="deptCode">部门编码</param>
     /// <param name="detail">设变明细</param>
     /// <returns>是否自动完成</returns>
-    private static bool ResolveAutoCompleteForManualClear(int ecScope, string deptCode, TaktEcDetail detail)
+    private static bool ResolveAutoCompleteForManualClear(int ecImplScope, string deptCode, TaktEcDetail detail)
     {
         return TaktEcScopeConstants.ShouldAutoCompleteExec(
-            ecScope,
+            ecImplScope,
             deptCode,
             detail.EcNewPurchaseType,
             detail.EcNewWarehouse);
     }
 
     /// <summary>
-    /// 按实施范围写入执行内容。内部、技术、部管自动部门只写场景文案；全仕向等待人工填写。停产与非 FERT 由根物料编码组另写「全仕向:按机种:EOL」。
+    /// 按实施范围写入执行内容。内部、技术、部管自动部门写入场景文案，并把实施标记写成已实施。全仕向等待人工填写。停产与非 FERT 由根物料编码组另写「全仕向:按机种:EOL」。
     /// </summary>
     /// <param name="exec">部门执行实体</param>
     /// <param name="isNew">是否新建</param>
     /// <param name="autoComplete">是否自动填写（部管非待填部门 / 其它范围由调用方判定）</param>
-    /// <param name="ecScope">设变实施范围</param>
+    /// <param name="ecImplScope">实施范围</param>
     private static void ApplyScopeFillMode(
         object exec,
         bool isNew,
         bool autoComplete,
-        int ecScope)
+        int ecImplScope)
     {
-        if (ecScope == TaktEcScopeConstants.Internal
-            || ecScope == TaktEcScopeConstants.Technical
+        if (ecImplScope == TaktEcScopeConstants.Internal
+            || ecImplScope == TaktEcScopeConstants.Technical
             || autoComplete)
         {
-            TaktEcDeptEntityHelper.SetIsImplemented(exec, 0);
+            TaktEcDeptEntityHelper.SetIsImplemented(exec, 1);
             TaktEcDeptEntityHelper.SetExecContent(
                 exec,
-                TaktEcScopeConstants.ResolveAutoExecContent(ecScope),
+                TaktEcScopeConstants.ResolveAutoExecContent(ecImplScope),
                 overwrite: true);
             return;
         }
@@ -1387,13 +1486,13 @@ public partial class TaktEcExecPersistence
             return;
         }
         var isMcGate = deptCode == TaktEcDeptCodes.Mc;
-        var isPcbaGate = deptCode == TaktEcDeptCodes.Pcba || deptCode == TaktEcDeptCodes.Smt;
+        var isPcbaGate = deptCode == TaktEcDeptCodes.Mfg2 || deptCode == TaktEcDeptCodes.Mtl;
         if (!isMcGate && !isPcbaGate)
         {
             return;
         }
-        var gijutsu = await _ecGijutsuRepository.FirstAsync(x => x.EcCode == detail.EcCode);
-        if (gijutsu == null || gijutsu.EcScope != TaktEcScopeConstants.MaterialControl)
+        var te = await _ecTeRepository.FirstAsync(x => x.EcCode == detail.EcCode);
+        if (te == null || te.EcImplScope != TaktEcScopeConstants.MaterialControl)
         {
             return;
         }
@@ -1409,7 +1508,7 @@ public partial class TaktEcExecPersistence
         foreach (var otherDept in TaktEcDeptCodes.KanbanOrder)
         {
             if (otherDept == deptCode
-                || (isPcbaGate && otherDept == TaktEcDeptCodes.Pcba && deptCode == TaktEcDeptCodes.Smt))
+                || (isPcbaGate && otherDept == TaktEcDeptCodes.Mfg2 && deptCode == TaktEcDeptCodes.Mtl))
             {
                 continue;
             }
@@ -1423,6 +1522,23 @@ public partial class TaktEcExecPersistence
                 autoComplete: autoCompleteOther,
                 TaktEcScopeConstants.MaterialControl);
         }
+    }
+
+    /// <summary>
+    /// 按执行行去重键触发门禁部门完成后的级联。
+    /// </summary>
+    /// <param name="savedExec">已保存的部门执行实体</param>
+    /// <param name="deptCode">部门编码</param>
+    /// <returns>任务</returns>
+    public async Task TryCascadeAfterGateDeptCompletedForExecAsync(ITaktEcDeptExecEntity savedExec, string deptCode)
+    {
+        ArgumentNullException.ThrowIfNull(savedExec);
+        var detail = await FirstDetailForExecAsync(savedExec);
+        if (detail == null)
+        {
+            return;
+        }
+        await TryCascadeAfterGateDeptCompletedAsync(detail, deptCode, savedExec);
     }
 
     /// <summary>
@@ -1452,47 +1568,47 @@ public partial class TaktEcExecPersistence
     {
         switch (exec)
         {
-            case TaktEcSeikan e:
+            case TaktEcPc e:
                 e.IsImplemented = dto.IsImplemented;
                 e.ExecContent = dto.Content;
                 e.Remark = dto.Remark;
                 break;
-            case TaktEcKoubai e:
+            case TaktEcPur e:
                 e.IsImplemented = dto.IsImplemented;
                 e.ExecContent = dto.Content;
                 e.Remark = dto.Remark;
                 break;
-            case TaktEcUkeken e:
+            case TaktEcIqc e:
                 e.IsImplemented = dto.IsImplemented;
                 e.ExecContent = dto.Content;
                 e.Remark = dto.Remark;
                 break;
-            case TaktEcBukan e:
+            case TaktEcMc e:
                 e.IsImplemented = dto.IsImplemented;
                 e.ExecContent = dto.Content;
                 e.Remark = dto.Remark;
                 break;
-            case TaktEcEmtl e:
+            case TaktEcMtl e:
                 e.IsImplemented = dto.IsImplemented;
                 e.ExecContent = dto.Content;
                 e.Remark = dto.Remark;
                 break;
-            case TaktEcSeizounika e:
+            case TaktEcMfg2 e:
                 e.IsImplemented = dto.IsImplemented;
                 e.ExecContent = dto.Content;
                 e.Remark = dto.Remark;
                 break;
-            case TaktEcSeizouikka e:
+            case TaktEcMfg1 e:
                 e.IsImplemented = dto.IsImplemented;
                 e.ExecContent = dto.Content;
                 e.Remark = dto.Remark;
                 break;
-            case TaktEcHinkan e:
+            case TaktEcQc e:
                 e.IsImplemented = dto.IsImplemented;
                 e.ExecContent = dto.Content;
                 e.Remark = dto.Remark;
                 break;
-            case TaktEcSeizougijutsu e:
+            case TaktEcMe e:
                 e.IsImplemented = dto.IsImplemented;
                 e.ExecContent = dto.Content;
                 e.Remark = dto.Remark;
@@ -1507,50 +1623,55 @@ public partial class TaktEcExecPersistence
     {
         switch (exec)
         {
-            case TaktEcSeikan pmc:
-                pmc.ScheduledDate = dto.ScheduledDate;
-                pmc.ScheduledBatch = dto.ScheduledBatch;
-                pmc.PoRemainder = dto.PoRemainder;
-                pmc.Balance = dto.Balance;
-                // EcOldPartDisposition 冗余自明细，视图更新不写回
+            case TaktEcPc pc:
+                pc.ScheduledDate = dto.ScheduledDate;
+                pc.ScheduledBatch = dto.ScheduledBatch;
+                var poRemainder = string.IsNullOrWhiteSpace(dto.PoRemainder) ? null : dto.PoRemainder.Trim();
+                if (!TaktRegexHelper.IsValidEcPoRemainder(poRemainder))
+                {
+                    throw new TaktBusinessException("Po残须为空或「采购单10位-序号4位:数量」，如 4500123456-0010:18.5");
+                }
+                pc.PoRemainder = poRemainder;
+                pc.BalanceQuantity = dto.BalanceQuantity;
+                pc.EcOldPartDisposition = dto.OldProductHandling;
                 break;
-            case TaktEcKoubai mp:
-                mp.PurchaseOrderIssueDate = dto.PurchaseOrderIssueDate;
-                mp.Supplier = dto.Supplier;
-                mp.PurchaseOrderCode = dto.PurchaseOrderCode;
-                // EcOldPartDisposition 冗余自明细，视图更新不写回
+            case TaktEcPur pur:
+                pur.PurchaseOrderIssueDate = dto.PurchaseOrderIssueDate;
+                pur.Supplier = dto.Supplier;
+                pur.PurchaseOrderCode = dto.PurchaseOrderCode;
+                pur.EcOldPartDisposition = dto.OldProductHandling;
                 break;
-            case TaktEcUkeken iqc:
+            case TaktEcIqc iqc:
                 iqc.IqcOrderCode = dto.IqcOrderCode;
                 iqc.InspectionDate = dto.InspectionDate;
                 break;
-            case TaktEcBukan mc:
+            case TaktEcMc mc:
                 mc.OutboundBatch = dto.OutboundBatch;
                 mc.OutboundDate = dto.OutboundDate;
                 break;
-            case TaktEcEmtl electronic:
+            case TaktEcMtl electronic:
                 electronic.OutboundBatch = dto.OutboundBatch;
                 electronic.OutboundDate = dto.OutboundDate;
                 break;
-            case TaktEcSeizounika pcba:
-                pcba.ProductionDate = dto.ProductionDate;
-                pcba.ProductionTeam = dto.ProductionTeam;
-                pcba.ImplementationBatch = dto.ImplementationBatch ?? dto.ProductionBatch;
+            case TaktEcMfg2 mfg2:
+                mfg2.ProductionDate = dto.ProductionDate;
+                mfg2.ProductionTeam = dto.ProductionTeam;
+                mfg2.ImplementationBatch = dto.ImplementationBatch ?? dto.ProductionBatch;
                 break;
-            case TaktEcSeizouikka assy:
-                assy.ProductionTeam = dto.ProductionTeam;
-                assy.ProductionDate = dto.ProductionDate;
-                assy.ImplementationBatch = dto.ImplementationBatch;
+            case TaktEcMfg1 mfg1:
+                mfg1.ProductionTeam = dto.ProductionTeam;
+                mfg1.ProductionDate = dto.ProductionDate;
+                mfg1.ImplementationBatch = dto.ImplementationBatch;
                 break;
-            case TaktEcHinkan qa:
-                qa.ProductionTeam = dto.ProductionTeam;
-                qa.InspectionDate = dto.InspectionDate;
-                qa.InspectionBatch = dto.InspectionBatch;
-                qa.SamplingCode = dto.SamplingCode;
+            case TaktEcQc qc:
+                qc.ProductionTeam = dto.ProductionTeam;
+                qc.InspectionDate = dto.InspectionDate;
+                qc.InspectionBatch = dto.InspectionBatch;
+                qc.SamplingCode = dto.SamplingCode;
                 break;
-            case TaktEcSeizougijutsu te:
-                te.SopDate = dto.SopDate;
-                te.IsSopUpdated = dto.IsSopUpdated;
+            case TaktEcMe me:
+                me.SopDate = dto.SopDate;
+                me.IsSopUpdated = dto.IsSopUpdated;
                 break;
         }
     }
@@ -1560,19 +1681,42 @@ public partial class TaktEcExecPersistence
     /// </summary>
     private async Task<object?> FirstEntityByDetailAndDeptAsync(long ecDetailId, string deptCode)
     {
-        if (deptCode == TaktEcDeptCodes.Pcba || deptCode == TaktEcDeptCodes.Smt)
+        var detail = await _ecDetailRepository.GetByIdAsync(ecDetailId);
+        if (detail == null)
         {
-            return await FirstPcbaEntityByDetailIdAsync(ecDetailId);
+            return null;
+        }
+        var master = await GetMasterControlScopeAsync(detail);
+        return await FirstEntityByGrainAsync(detail, deptCode, master);
+    }
+
+    /// <summary>
+    /// 按执行去重键与部门查找执行实体。同一键的多条明细命中同一行。
+    /// </summary>
+    /// <param name="detail">设变明细</param>
+    /// <param name="deptCode">部门编码</param>
+    /// <param name="masterControlScope">技术课主表控制范围</param>
+    /// <returns>部门执行实体</returns>
+    private async Task<object?> FirstEntityByGrainAsync(TaktEcDetail detail, string deptCode, int masterControlScope)
+    {
+        var grainKey = TaktEcScopeRowGrain.BuildExecGrainKey(detail, deptCode, masterControlScope);
+        var ecCode = detail.EcCode ?? string.Empty;
+        if (deptCode == TaktEcDeptCodes.Mfg2 || deptCode == TaktEcDeptCodes.Mtl)
+        {
+            return await FirstSmtEntityByDetailAndTargetAsync(
+                detail,
+                deptCode == TaktEcDeptCodes.Mtl ? TaktEcMtlRouteTarget.Mtl : TaktEcMtlRouteTarget.Mfg2,
+                masterControlScope);
         }
         return deptCode switch
         {
-            TaktEcDeptCodes.Pmc => await _pmcRepository.FirstAsync(x => x.EcDetailId == ecDetailId),
-            TaktEcDeptCodes.Mp => await _mpRepository.FirstAsync(x => x.EcDetailId == ecDetailId),
-            TaktEcDeptCodes.Iqc => await _iqcRepository.FirstAsync(x => x.EcDetailId == ecDetailId),
-            TaktEcDeptCodes.Mc => await _mcRepository.FirstAsync(x => x.EcDetailId == ecDetailId),
-            TaktEcDeptCodes.Assy => await _assyRepository.FirstAsync(x => x.EcDetailId == ecDetailId),
-            TaktEcDeptCodes.Qa => await _qaRepository.FirstAsync(x => x.EcDetailId == ecDetailId),
-            TaktEcDeptCodes.Te => await _teRepository.FirstAsync(x => x.EcDetailId == ecDetailId),
+            TaktEcDeptCodes.Pc => await _pcRepository.FirstAsync(x => x.EcCode == ecCode && SqlFunc.ToString(x.EcGrainKey) == grainKey),
+            TaktEcDeptCodes.Pur => await _mpRepository.FirstAsync(x => x.EcCode == ecCode && SqlFunc.ToString(x.EcGrainKey) == grainKey),
+            TaktEcDeptCodes.Iqc => await _iqcRepository.FirstAsync(x => x.EcCode == ecCode && SqlFunc.ToString(x.EcGrainKey) == grainKey),
+            TaktEcDeptCodes.Mc => await _mcRepository.FirstAsync(x => x.EcCode == ecCode && SqlFunc.ToString(x.EcGrainKey) == grainKey),
+            TaktEcDeptCodes.Mfg1 => await _assyRepository.FirstAsync(x => x.EcCode == ecCode && SqlFunc.ToString(x.EcGrainKey) == grainKey),
+            TaktEcDeptCodes.Qc => await _qaRepository.FirstAsync(x => x.EcCode == ecCode && SqlFunc.ToString(x.EcGrainKey) == grainKey),
+            TaktEcDeptCodes.Me => await _teRepository.FirstAsync(x => x.EcCode == ecCode && SqlFunc.ToString(x.EcGrainKey) == grainKey),
             _ => null
         };
     }
@@ -1583,33 +1727,50 @@ public partial class TaktEcExecPersistence
     private async Task<object?> FirstPcbaEntityByDetailIdAsync(long ecDetailId)
     {
         var detail = await _ecDetailRepository.GetByIdAsync(ecDetailId);
-        if (detail != null)
+        if (detail == null)
         {
-            var route = TaktEcEmtlRouteHelper.Resolve(detail);
-            if (route != TaktEcEmtlRouteTarget.None)
-            {
-                return await FirstSmtEntityByDetailAndTargetAsync(ecDetailId, route);
-            }
+            return null;
         }
-        var electronic = await _smtRepository.FirstAsync(x => x.EcDetailId == ecDetailId);
-        if (electronic != null)
+        var route = TaktEcMtlRouteHelper.Resolve(detail);
+        if (route == TaktEcMtlRouteTarget.None)
         {
-            return electronic;
+            return null;
         }
-        return await _seizounikaRepository.FirstAsync(x => x.EcDetailId == ecDetailId);
+        var master = await GetMasterControlScopeAsync(detail);
+        return await FirstSmtEntityByDetailAndTargetAsync(detail, route, master);
     }
 
     /// <summary>
-    /// 按明细与目标表取制造二课执行行
+    /// 按去重键与目标表取制造二课执行行
     /// </summary>
-    private async Task<object?> FirstSmtEntityByDetailAndTargetAsync(long ecDetailId, TaktEcEmtlRouteTarget target)
+    private async Task<object?> FirstSmtEntityByDetailAndTargetAsync(long ecDetailId, TaktEcMtlRouteTarget target)
     {
+        var detail = await _ecDetailRepository.GetByIdAsync(ecDetailId);
+        if (detail == null)
+        {
+            return null;
+        }
+        var master = await GetMasterControlScopeAsync(detail);
+        return await FirstSmtEntityByDetailAndTargetAsync(detail, target, master);
+    }
+
+    /// <summary>
+    /// 按去重键与目标表取制造二课执行行
+    /// </summary>
+    private async Task<object?> FirstSmtEntityByDetailAndTargetAsync(
+        TaktEcDetail detail,
+        TaktEcMtlRouteTarget target,
+        int masterControlScope)
+    {
+        var deptCode = target == TaktEcMtlRouteTarget.Mtl ? TaktEcDeptCodes.Mtl : TaktEcDeptCodes.Mfg2;
+        var grainKey = TaktEcScopeRowGrain.BuildExecGrainKey(detail, deptCode, masterControlScope);
+        var ecCode = detail.EcCode ?? string.Empty;
         return target switch
         {
-            TaktEcEmtlRouteTarget.Smt =>
-                await _smtRepository.FirstAsync(x => x.EcDetailId == ecDetailId),
-            TaktEcEmtlRouteTarget.Seizounika =>
-                await _seizounikaRepository.FirstAsync(x => x.EcDetailId == ecDetailId),
+            TaktEcMtlRouteTarget.Mtl =>
+                await _smtRepository.FirstAsync(x => x.EcCode == ecCode && SqlFunc.ToString(x.EcGrainKey) == grainKey),
+            TaktEcMtlRouteTarget.Mfg2 =>
+                await _pcbaRepository.FirstAsync(x => x.EcCode == ecCode && SqlFunc.ToString(x.EcGrainKey) == grainKey),
             _ => null
         };
     }
@@ -1624,22 +1785,22 @@ public partial class TaktEcExecPersistence
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(ecCode);
         var code = ecCode.Trim();
-        if (deptCode == TaktEcDeptCodes.Pcba)
+        if (deptCode == TaktEcDeptCodes.Mfg2)
         {
             var rows = new List<object>();
             rows.AddRange(await _smtRepository.GetListAsync(x => x.EcCode == code, null, true));
-            rows.AddRange(await _seizounikaRepository.GetListAsync(x => x.EcCode == code, null, true));
+            rows.AddRange(await _pcbaRepository.GetListAsync(x => x.EcCode == code, null, true));
             return rows;
         }
         return deptCode switch
         {
-            TaktEcDeptCodes.Pmc => (await _pmcRepository.GetListAsync(x => x.EcCode == code, null, true)).Cast<object>().ToList(),
-            TaktEcDeptCodes.Mp => (await _mpRepository.GetListAsync(x => x.EcCode == code, null, true)).Cast<object>().ToList(),
+            TaktEcDeptCodes.Pc => (await _pcRepository.GetListAsync(x => x.EcCode == code, null, true)).Cast<object>().ToList(),
+            TaktEcDeptCodes.Pur => (await _mpRepository.GetListAsync(x => x.EcCode == code, null, true)).Cast<object>().ToList(),
             TaktEcDeptCodes.Iqc => (await _iqcRepository.GetListAsync(x => x.EcCode == code, null, true)).Cast<object>().ToList(),
             TaktEcDeptCodes.Mc => (await _mcRepository.GetListAsync(x => x.EcCode == code, null, true)).Cast<object>().ToList(),
-            TaktEcDeptCodes.Assy => (await _assyRepository.GetListAsync(x => x.EcCode == code, null, true)).Cast<object>().ToList(),
-            TaktEcDeptCodes.Qa => (await _qaRepository.GetListAsync(x => x.EcCode == code, null, true)).Cast<object>().ToList(),
-            TaktEcDeptCodes.Te => (await _teRepository.GetListAsync(x => x.EcCode == code, null, true)).Cast<object>().ToList(),
+            TaktEcDeptCodes.Mfg1 => (await _assyRepository.GetListAsync(x => x.EcCode == code, null, true)).Cast<object>().ToList(),
+            TaktEcDeptCodes.Qc => (await _qaRepository.GetListAsync(x => x.EcCode == code, null, true)).Cast<object>().ToList(),
+            TaktEcDeptCodes.Me => (await _teRepository.GetListAsync(x => x.EcCode == code, null, true)).Cast<object>().ToList(),
             _ => []
         };
     }
@@ -1653,52 +1814,17 @@ public partial class TaktEcExecPersistence
         {
             return [];
         }
-
-        // SQL Server IN 参数上限约 2100；分片查询
-        const int idChunk = 1000;
-        var rows = new List<object>();
-        for (var offset = 0; offset < detailIds.Count; offset += idChunk)
-        {
-            var chunk = detailIds.Skip(offset).Take(idChunk).ToList();
-            if (deptCode == TaktEcDeptCodes.Pcba)
-            {
-                rows.AddRange(await _smtRepository.GetListAsync(x => chunk.Contains(x.EcDetailId), null, true));
-                rows.AddRange(await _seizounikaRepository.GetListAsync(x => chunk.Contains(x.EcDetailId), null, true));
-                continue;
-            }
-
-            rows.AddRange(deptCode switch
-            {
-                TaktEcDeptCodes.Pmc => (await _pmcRepository.GetListAsync(x => chunk.Contains(x.EcDetailId), null, true)).Cast<object>(),
-                TaktEcDeptCodes.Mp => (await _mpRepository.GetListAsync(x => chunk.Contains(x.EcDetailId), null, true)).Cast<object>(),
-                TaktEcDeptCodes.Iqc => (await _iqcRepository.GetListAsync(x => chunk.Contains(x.EcDetailId), null, true)).Cast<object>(),
-                TaktEcDeptCodes.Mc => (await _mcRepository.GetListAsync(x => chunk.Contains(x.EcDetailId), null, true)).Cast<object>(),
-                TaktEcDeptCodes.Assy => (await _assyRepository.GetListAsync(x => chunk.Contains(x.EcDetailId), null, true)).Cast<object>(),
-                TaktEcDeptCodes.Qa => (await _qaRepository.GetListAsync(x => chunk.Contains(x.EcDetailId), null, true)).Cast<object>(),
-                TaktEcDeptCodes.Te => (await _teRepository.GetListAsync(x => chunk.Contains(x.EcDetailId), null, true)).Cast<object>(),
-                _ => Enumerable.Empty<object>()
-            });
-        }
-
-        return rows;
+        var map = await LoadMapByDetailIdsAsync(detailIds, deptCode);
+        return map.Values.Distinct().ToList();
     }
 
     /// <summary>
-    /// 按明细 ID 列表加载全部部门执行实体
+    /// 按明细 ID 列表加载这些明细所落入的全部部门执行行
     /// </summary>
     private async Task<List<object>> ListAllEntitiesByDetailIdsAsync(IReadOnlyList<long> detailIds)
     {
-        var rows = new List<object>();
-        rows.AddRange(await _pmcRepository.GetListAsync(x => detailIds.Contains(x.EcDetailId)));
-        rows.AddRange(await _mpRepository.GetListAsync(x => detailIds.Contains(x.EcDetailId)));
-        rows.AddRange(await _iqcRepository.GetListAsync(x => detailIds.Contains(x.EcDetailId)));
-        rows.AddRange(await _mcRepository.GetListAsync(x => detailIds.Contains(x.EcDetailId)));
-        rows.AddRange(await _smtRepository.GetListAsync(x => detailIds.Contains(x.EcDetailId)));
-        rows.AddRange(await _seizounikaRepository.GetListAsync(x => detailIds.Contains(x.EcDetailId)));
-        rows.AddRange(await _assyRepository.GetListAsync(x => detailIds.Contains(x.EcDetailId)));
-        rows.AddRange(await _qaRepository.GetListAsync(x => detailIds.Contains(x.EcDetailId)));
-        rows.AddRange(await _teRepository.GetListAsync(x => detailIds.Contains(x.EcDetailId)));
-        return rows;
+        var groups = await LoadGroupsAllDeptsAsync(detailIds);
+        return groups.Values.SelectMany(x => x).Distinct().ToList();
     }
 
     /// <summary>
@@ -1709,35 +1835,38 @@ public partial class TaktEcExecPersistence
     /// <param name="existing">已有执行实体；为空则新建</param>
     /// <param name="lineNumber">行号</param>
     /// <param name="applyNotRelatedAuto">是否按采购类型/检验写入「无关」自动完成（默认否；仅全仕向/部管由 Upsert 显式传入 true）</param>
-    private static object CreateConcreteExec(
+    /// <param name="masterControlScope">技术课主表控制范围；空则按明细所属主表读取。仅新建执行行写入</param>
+    private async Task<object> CreateConcreteExec(
         TaktEcDetail detail,
         string deptCode,
         object? existing,
         int lineNumber,
-        bool applyNotRelatedAuto = false)
+        bool applyNotRelatedAuto = false,
+        int? masterControlScope = null)
     {
-        if (deptCode == TaktEcDeptCodes.Pcba)
+        if (deptCode == TaktEcDeptCodes.Mfg2)
         {
-            var route = TaktEcEmtlRouteHelper.Resolve(detail);
-            if (route == TaktEcEmtlRouteTarget.None)
+            var route = TaktEcMtlRouteHelper.Resolve(detail);
+            if (route == TaktEcMtlRouteTarget.None)
             {
                 throw new InvalidOperationException("制造二课当前明细无有效执行表路由（F 且非 C003）");
             }
-            return CreatePcbaConcreteExec(detail, route, existing, lineNumber, applyNotRelatedAuto);
+            return await CreatePcbaConcreteExec(detail, route, existing, lineNumber, applyNotRelatedAuto, masterControlScope);
         }
         var isNew = existing == null;
         var exec = existing ?? deptCode switch
         {
-            TaktEcDeptCodes.Pmc => new TaktEcSeikan { EcDetailId = detail.Id, DeptCode = deptCode },
-            TaktEcDeptCodes.Mp => new TaktEcKoubai { EcDetailId = detail.Id, DeptCode = deptCode },
-            TaktEcDeptCodes.Iqc => new TaktEcUkeken { EcDetailId = detail.Id, DeptCode = deptCode },
-            TaktEcDeptCodes.Mc => new TaktEcBukan { EcDetailId = detail.Id, DeptCode = deptCode },
-            TaktEcDeptCodes.Assy => new TaktEcSeizouikka { EcDetailId = detail.Id, DeptCode = deptCode },
-            TaktEcDeptCodes.Qa => new TaktEcHinkan { EcDetailId = detail.Id, DeptCode = deptCode },
-            TaktEcDeptCodes.Te => new TaktEcSeizougijutsu { EcDetailId = detail.Id, DeptCode = deptCode },
+            TaktEcDeptCodes.Pc => new TaktEcPc { DeptCode = deptCode },
+            TaktEcDeptCodes.Pur => new TaktEcPur { DeptCode = deptCode },
+            TaktEcDeptCodes.Iqc => new TaktEcIqc { DeptCode = deptCode },
+            TaktEcDeptCodes.Mc => new TaktEcMc { DeptCode = deptCode },
+            TaktEcDeptCodes.Mfg1 => new TaktEcMfg1 { DeptCode = deptCode },
+            TaktEcDeptCodes.Qc => new TaktEcQc { DeptCode = deptCode },
+            TaktEcDeptCodes.Me => new TaktEcMe { DeptCode = deptCode },
             _ => throw new InvalidOperationException($"不支持的部门编码：{deptCode}")
         };
-        TaktEcDeptExecRedundantBinder.Apply(exec, detail, isNew ? lineNumber : null);
+        var controlScope = masterControlScope ?? await GetMasterControlScopeAsync(detail);
+        TaktEcDeptExecRedundantBinder.Apply(exec, detail, isNew ? lineNumber : null, controlScope);
         EnsureDeptName(exec);
         if (applyNotRelatedAuto)
         {
@@ -1749,46 +1878,48 @@ public partial class TaktEcExecPersistence
     /// <summary>
     /// 创建或复用制造二课目标表实体
     /// </summary>
-    private static object CreatePcbaConcreteExec(
+    private async Task<object> CreatePcbaConcreteExec(
         TaktEcDetail detail,
-        TaktEcEmtlRouteTarget target,
+        TaktEcMtlRouteTarget target,
         object? existing,
         int lineNumber,
-        bool applyNotRelatedAuto)
+        bool applyNotRelatedAuto,
+        int? masterControlScope = null)
     {
         object exec;
         var isNew = false;
-        if (target == TaktEcEmtlRouteTarget.Smt)
+        if (target == TaktEcMtlRouteTarget.Mtl)
         {
-            if (existing is TaktEcEmtl electronic)
+            if (existing is TaktEcMtl electronic)
             {
                 exec = electronic;
-                electronic.DeptCode = TaktEcDeptCodes.Smt;
+                electronic.DeptCode = TaktEcDeptCodes.Mtl;
             }
             else
             {
                 isNew = true;
-                exec = new TaktEcEmtl { EcDetailId = detail.Id, DeptCode = TaktEcDeptCodes.Smt };
+                exec = new TaktEcMtl { DeptCode = TaktEcDeptCodes.Mtl };
             }
         }
-        else if (target == TaktEcEmtlRouteTarget.Seizounika)
+        else if (target == TaktEcMtlRouteTarget.Mfg2)
         {
-            if (existing is TaktEcSeizounika seizounika)
+            if (existing is TaktEcMfg2 pcba)
             {
-                exec = seizounika;
-                seizounika.DeptCode = TaktEcDeptCodes.Pcba;
+                exec = pcba;
+                pcba.DeptCode = TaktEcDeptCodes.Mfg2;
             }
             else
             {
                 isNew = true;
-                exec = new TaktEcSeizounika { EcDetailId = detail.Id, DeptCode = TaktEcDeptCodes.Pcba };
+                exec = new TaktEcMfg2 { DeptCode = TaktEcDeptCodes.Mfg2 };
             }
         }
         else
         {
             throw new InvalidOperationException("制造二课路由目标无效");
         }
-        TaktEcDeptExecRedundantBinder.Apply(exec, detail, isNew ? lineNumber : null);
+        var controlScope = masterControlScope ?? await GetMasterControlScopeAsync(detail);
+        TaktEcDeptExecRedundantBinder.Apply(exec, detail, isNew ? lineNumber : null, controlScope);
         EnsureDeptName(exec);
         if (applyNotRelatedAuto)
         {
@@ -1810,7 +1941,7 @@ public partial class TaktEcExecPersistence
         int? lineNumberForCreate,
         bool applyNotRelatedAuto = false)
     {
-        TaktEcDeptExecRedundantBinder.Apply(exec, detail, lineNumberForCreate);
+        TaktEcDeptExecRedundantBinder.Apply(exec, detail, lineNumberForCreate, TaktEcControlScopeConstants.ByModel);
         EnsureDeptName(exec);
         if (applyNotRelatedAuto)
         {
@@ -1905,19 +2036,19 @@ public partial class TaktEcExecPersistence
     /// </summary>
     private async Task<object> SaveEntityAsync(object exec, string deptCode, bool isNew)
     {
-        if (deptCode == TaktEcDeptCodes.Pcba || deptCode == TaktEcDeptCodes.Smt)
+        if (deptCode == TaktEcDeptCodes.Mfg2 || deptCode == TaktEcDeptCodes.Mtl)
         {
             return await SavePcbaEntityAsync(exec, isNew);
         }
         var saved = deptCode switch
         {
-            TaktEcDeptCodes.Pmc => (object)await SaveTypedAsync(_pmcRepository, (TaktEcSeikan)exec, isNew),
-            TaktEcDeptCodes.Mp => await SaveTypedAsync(_mpRepository, (TaktEcKoubai)exec, isNew),
-            TaktEcDeptCodes.Iqc => await SaveTypedAsync(_iqcRepository, (TaktEcUkeken)exec, isNew),
-            TaktEcDeptCodes.Mc => await SaveTypedAsync(_mcRepository, (TaktEcBukan)exec, isNew),
-            TaktEcDeptCodes.Assy => await SaveTypedAsync(_assyRepository, (TaktEcSeizouikka)exec, isNew),
-            TaktEcDeptCodes.Qa => await SaveTypedAsync(_qaRepository, (TaktEcHinkan)exec, isNew),
-            TaktEcDeptCodes.Te => await SaveTypedAsync(_teRepository, (TaktEcSeizougijutsu)exec, isNew),
+            TaktEcDeptCodes.Pc => (object)await SaveTypedAsync(_pcRepository, (TaktEcPc)exec, isNew),
+            TaktEcDeptCodes.Pur => await SaveTypedAsync(_mpRepository, (TaktEcPur)exec, isNew),
+            TaktEcDeptCodes.Iqc => await SaveTypedAsync(_iqcRepository, (TaktEcIqc)exec, isNew),
+            TaktEcDeptCodes.Mc => await SaveTypedAsync(_mcRepository, (TaktEcMc)exec, isNew),
+            TaktEcDeptCodes.Mfg1 => await SaveTypedAsync(_assyRepository, (TaktEcMfg1)exec, isNew),
+            TaktEcDeptCodes.Qc => await SaveTypedAsync(_qaRepository, (TaktEcQc)exec, isNew),
+            TaktEcDeptCodes.Me => await SaveTypedAsync(_teRepository, (TaktEcMe)exec, isNew),
             _ => throw new InvalidOperationException($"不支持的部门编码：{deptCode}")
         };
         return saved;
@@ -1930,8 +2061,8 @@ public partial class TaktEcExecPersistence
     {
         var saved = exec switch
         {
-            TaktEcEmtl electronic => (object)await SaveTypedAsync(_smtRepository, electronic, isNew),
-            TaktEcSeizounika seizounika => await SaveTypedAsync(_seizounikaRepository, seizounika, isNew),
+            TaktEcMtl electronic => (object)await SaveTypedAsync(_smtRepository, electronic, isNew),
+            TaktEcMfg2 pcba => await SaveTypedAsync(_pcbaRepository, pcba, isNew),
             _ => throw new InvalidOperationException("制造二课执行实体类型不匹配")
         };
         return saved;
@@ -1950,15 +2081,15 @@ public partial class TaktEcExecPersistence
         var warehouseC003 = TaktEcScopeConstants.NewWarehousePcbaGate;
         switch (savedExec)
         {
-            case TaktEcSeikan e when dto is TaktEcSeikanDto d:
+            case TaktEcPc e when dto is TaktEcPcDto d:
                 d.EcDetails = (await _ecDetailRepository.GetListAsync(x =>
                         x.EcCode == e.EcCode
-                        && x.EcModelCode == e.EcModelCode
                         && x.IsObsolete == 0))
-                    .Where(x => TaktEcRootMaterialCodeGroup.ContainsCode(e.EcRootMaterialCodeGroup, x.EcRootMaterialCode))
+                    .Where(x => TaktEcRootMaterialCodeGroup.ContainsCode(e.EcModelCodeGroup, x.EcModelCode)
+                        && TaktEcRootMaterialCodeGroup.ContainsCode(e.EcRootMaterialCodeGroup, x.EcRootMaterialCode))
                     .Adapt<List<TaktEcDetailDto>>();
                 break;
-            case TaktEcKoubai e when dto is TaktEcKoubaiDto d:
+            case TaktEcPur e when dto is TaktEcPurDto d:
                 d.EcDetails = (await _ecDetailRepository.GetListAsync(x =>
                         x.EcCode == e.EcCode
                         && x.EcNewMaterialCode == e.EcNewMaterialCode
@@ -1966,7 +2097,7 @@ public partial class TaktEcExecPersistence
                         && x.IsObsolete == 0))
                     .Adapt<List<TaktEcDetailDto>>();
                 break;
-            case TaktEcUkeken e when dto is TaktEcUkekenDto d:
+            case TaktEcIqc e when dto is TaktEcIqcDto d:
                 d.EcDetails = (await _ecDetailRepository.GetListAsync(x =>
                         x.EcCode == e.EcCode
                         && x.EcNewMaterialCode == e.EcNewMaterialCode
@@ -1974,7 +2105,7 @@ public partial class TaktEcExecPersistence
                         && x.IsObsolete == 0))
                     .Adapt<List<TaktEcDetailDto>>();
                 break;
-            case TaktEcBukan e when dto is TaktEcBukanDto d:
+            case TaktEcMc e when dto is TaktEcMcDto d:
                 d.EcDetails = (await _ecDetailRepository.GetListAsync(x =>
                         x.EcCode == e.EcCode
                         && x.EcNewPurchaseType == purchaseTypeF
@@ -1983,7 +2114,7 @@ public partial class TaktEcExecPersistence
                     .Where(x => TaktEcRootMaterialCodeGroup.ContainsCode(e.EcModelCodeGroup, x.EcModelCode))
                     .Adapt<List<TaktEcDetailDto>>();
                 break;
-            case TaktEcEmtl e when dto is TaktEcEmtlDto d:
+            case TaktEcMtl e when dto is TaktEcMtlDto d:
                 d.EcDetails = (await _ecDetailRepository.GetListAsync(x =>
                         x.EcCode == e.EcCode
                         && x.EcNewPurchaseType == purchaseTypeF
@@ -1993,7 +2124,7 @@ public partial class TaktEcExecPersistence
                     .Where(x => TaktEcRootMaterialCodeGroup.ContainsCode(e.EcModelCodeGroup, x.EcModelCode))
                     .Adapt<List<TaktEcDetailDto>>();
                 break;
-            case TaktEcSeizounika e when dto is TaktEcSeizounikaDto d:
+            case TaktEcMfg2 e when dto is TaktEcMfg2Dto d:
                 d.EcDetails = (await _ecDetailRepository.GetListAsync(x =>
                         x.EcCode == e.EcCode
                         && x.EcNewPurchaseType != purchaseTypeF
@@ -2002,7 +2133,7 @@ public partial class TaktEcExecPersistence
                         && TaktEcRootMaterialCodeGroup.ContainsCode(e.EcRootMaterialCodeGroup, x.EcRootMaterialCode))
                     .Adapt<List<TaktEcDetailDto>>();
                 break;
-            case TaktEcSeizouikka e when dto is TaktEcSeizouikkaDto d:
+            case TaktEcMfg1 e when dto is TaktEcMfg1Dto d:
                 d.EcDetails = (await _ecDetailRepository.GetListAsync(x =>
                         x.EcCode == e.EcCode
                         && x.IsObsolete == 0))
@@ -2010,7 +2141,7 @@ public partial class TaktEcExecPersistence
                         && TaktEcRootMaterialCodeGroup.ContainsCode(e.EcRootMaterialCodeGroup, x.EcRootMaterialCode))
                     .Adapt<List<TaktEcDetailDto>>();
                 break;
-            case TaktEcHinkan e when dto is TaktEcHinkanDto d:
+            case TaktEcQc e when dto is TaktEcQcDto d:
                 d.EcDetails = (await _ecDetailRepository.GetListAsync(x =>
                         x.EcCode == e.EcCode
                         && x.IsObsolete == 0))
@@ -2018,12 +2149,12 @@ public partial class TaktEcExecPersistence
                         && TaktEcRootMaterialCodeGroup.ContainsCode(e.EcRootMaterialCodeGroup, x.EcRootMaterialCode))
                     .Adapt<List<TaktEcDetailDto>>();
                 break;
-            case TaktEcSeizougijutsu e when dto is TaktEcSeizougijutsuDto d:
+            case TaktEcMe e when dto is TaktEcMeDto d:
                 d.EcDetails = (await _ecDetailRepository.GetListAsync(x =>
                         x.EcCode == e.EcCode
-                        && x.EcModelCode == e.EcModelCode
                         && x.IsObsolete == 0))
-                    .Where(x => TaktEcRootMaterialCodeGroup.ContainsCode(e.EcRootMaterialCodeGroup, x.EcRootMaterialCode))
+                    .Where(x => TaktEcRootMaterialCodeGroup.ContainsCode(e.EcModelCodeGroup, x.EcModelCode)
+                        && TaktEcRootMaterialCodeGroup.ContainsCode(e.EcRootMaterialCodeGroup, x.EcRootMaterialCode))
                     .Adapt<List<TaktEcDetailDto>>();
                 break;
         }
@@ -2044,12 +2175,12 @@ public partial class TaktEcExecPersistence
         var created = 0;
         foreach (var deptCode in TaktEcDeptCodes.KanbanOrder)
         {
-            if (deptCode == TaktEcDeptCodes.Pcba)
+            if (deptCode == TaktEcDeptCodes.Mfg2)
             {
                 created += await EnsurePcbaDeptExecRowAsync(detail);
                 continue;
             }
-            if (deptCode == TaktEcDeptCodes.Smt)
+            if (deptCode == TaktEcDeptCodes.Mtl)
             {
                 continue;
             }
@@ -2070,11 +2201,11 @@ public partial class TaktEcExecPersistence
                 continue;
             }
             var lineNumber = detail.LineNumber > 0 ? detail.LineNumber : 10;
-            var exec = CreateConcreteExec(detail, deptCode, null, lineNumber, applyNotRelatedAuto: false);
+            var exec = await CreateConcreteExec(detail, deptCode, null, lineNumber, applyNotRelatedAuto: false);
             await SaveEntityAsync(exec, deptCode, true);
             created += 1;
         }
-        await _ecGijutsuStatusSynchronizer.RefreshByEcCodeAsync(detail.EcCode);
+        await _ecTeStatusSynchronizer.RefreshByEcCodeAsync(detail.EcCode);
         return created;
     }
 
@@ -2085,29 +2216,29 @@ public partial class TaktEcExecPersistence
     /// <returns>新建行数（0 或 1）</returns>
     private async Task<int> EnsurePcbaDeptExecRowAsync(TaktEcDetail detail)
     {
-        var route = TaktEcEmtlRouteHelper.Resolve(detail);
-        if (route == TaktEcEmtlRouteTarget.None)
+        var route = TaktEcMtlRouteHelper.Resolve(detail);
+        if (route == TaktEcMtlRouteTarget.None)
         {
             await ObsoletePcbaBothTablesAsync(detail.Id);
             return 0;
         }
-        if (route == TaktEcEmtlRouteTarget.Smt
+        if (route == TaktEcMtlRouteTarget.Mtl
             && !TaktEcScopeConstants.HasEffectiveNewMaterialCode(detail.EcNewMaterialCode))
         {
             await ObsoletePcbaBothTablesAsync(detail.Id);
             return 0;
         }
-        if (route == TaktEcEmtlRouteTarget.Seizounika
-            && await HasNewerSeizounikaVisibleSiblingAsync(detail))
+        if (route == TaktEcMtlRouteTarget.Mfg2
+            && await HasNewerPcbaVisibleSiblingAsync(detail))
         {
             await ObsoletePcbaBothTablesAsync(detail.Id);
             return 0;
         }
         await ObsoleteTypedDeptExecIfExistsAsync(
             detail.Id,
-            route == TaktEcEmtlRouteTarget.Smt
-                ? TaktEcEmtlRouteTarget.Seizounika
-                : TaktEcEmtlRouteTarget.Smt);
+            route == TaktEcMtlRouteTarget.Mtl
+                ? TaktEcMtlRouteTarget.Mfg2
+                : TaktEcMtlRouteTarget.Mtl);
         var existingPcba = await FirstSmtEntityByDetailAndTargetAsync(detail.Id, route);
         if (existingPcba != null)
         {
@@ -2120,7 +2251,7 @@ public partial class TaktEcExecPersistence
             return 0;
         }
         var pcbaLine = detail.LineNumber > 0 ? detail.LineNumber : 10;
-        var pcbaExec = CreatePcbaConcreteExec(detail, route, null, pcbaLine, applyNotRelatedAuto: false);
+        var pcbaExec = await CreatePcbaConcreteExec(detail, route, null, pcbaLine, applyNotRelatedAuto: false);
         await SavePcbaEntityAsync(pcbaExec, true);
         return 1;
     }
@@ -2170,12 +2301,12 @@ public partial class TaktEcExecPersistence
                     continue;
                 }
                 var normalizedDeptCode = deptCode.Trim();
-                if (normalizedDeptCode == TaktEcDeptCodes.Pcba)
+                if (normalizedDeptCode == TaktEcDeptCodes.Mfg2)
                 {
                     await EnsurePcbaDeptExecRowAsync(detail);
                     continue;
                 }
-                if (normalizedDeptCode == TaktEcDeptCodes.Smt)
+                if (normalizedDeptCode == TaktEcDeptCodes.Mtl)
                 {
                     continue;
                 }
@@ -2196,11 +2327,11 @@ public partial class TaktEcExecPersistence
                     continue;
                 }
                 var lineNumber = detail.LineNumber > 0 ? detail.LineNumber : 10;
-                var exec = CreateConcreteExec(detail, normalizedDeptCode, null, lineNumber, applyNotRelatedAuto: false);
+                var exec = await CreateConcreteExec(detail, normalizedDeptCode, null, lineNumber, applyNotRelatedAuto: false);
                 await SaveEntityAsync(exec, normalizedDeptCode, true);
             }
         }
-        await _ecGijutsuStatusSynchronizer.RefreshByEcCodesAsync(details.Select(x => x.EcCode));
+        await _ecTeStatusSynchronizer.RefreshByEcCodesAsync(details.Select(x => x.EcCode));
     }
 
     /// <summary>

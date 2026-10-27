@@ -36,7 +36,7 @@
             :wrapper-col="{ span: 24 }"
           >
             <TaktTransfer
-              v-model:target-keys="selectedMenuIds"
+              v-model:target-keys="selecmedMenuIds"
               :data-source="transferDataSource"
               :titles="transferTitles"
               :loading="menuOptionsLoading"
@@ -44,13 +44,13 @@
               hide-select-all
               :show-search="false"
             >
-              <template #children="{ direction, selectedKeys, onItemSelect }">
+              <template #children="{ direction, selecmedKeys, onItemSelect }">
                 <a-tree
                   v-if="direction === 'left'"
                   block-node
                   checkable
                   check-strictly
-                  :checked-keys="asCheckedKeys(selectedKeys)"
+                  :checked-keys="asCheckedKeys(selecmedKeys)"
                   :tree-data="leftTreeData"
                   :load-data="handleLeftLoadData"
                   :field-names="{ title: 'title', key: 'key', children: 'children' }"
@@ -60,7 +60,7 @@
                   <template #title="node">
                     <span
                       :class="{ 'opacity-50': node.disableCheckbox }"
-                      @click.stop="onNodeClick(node, selectedKeys, onItemSelect)"
+                      @click.stop="onNodeClick(node, selecmedKeys, onItemSelect)"
                       @dblclick.stop="onNodeDblClick(node, 'left')"
                     >{{ node.title }}</span>
                   </template>
@@ -70,7 +70,7 @@
                   block-node
                   checkable
                   check-strictly
-                  :checked-keys="asCheckedKeys(selectedKeys)"
+                  :checked-keys="asCheckedKeys(selecmedKeys)"
                   :tree-data="rightTreeData"
                   :field-names="{ title: 'title', key: 'key', children: 'children' }"
                   :height="360"
@@ -79,7 +79,7 @@
                   <template #title="node">
                     <span
                       :class="{ 'opacity-50': node.disableCheckbox }"
-                      @click.stop="onNodeClick(node, selectedKeys, onItemSelect)"
+                      @click.stop="onNodeClick(node, selecmedKeys, onItemSelect)"
                       @dblclick.stop="onNodeDblClick(node, 'right')"
                     >{{ node.title }}</span>
                   </template>
@@ -169,7 +169,7 @@ const roleId = ref('')
 /** 角色文案 */
 const roleInfo = ref('')
 /** Transfer targetKeys = 已分配 */
-const selectedMenuIds = ref<string[]>([])
+const selecmedMenuIds = ref<string[]>([])
 /** id → 父子/标题（构右树 + dataSource） */
 const nodeIndex = ref<Map<string, MenuNodeInfo>>(new Map())
 /** 左树 */
@@ -180,12 +180,12 @@ const rightTreeData = ref<MenuTreeNode[]>([])
 const syncing = ref(false)
 
 /** 已分配 Set */
-const assignedSet = computed(() => new Set(selectedMenuIds.value))
+const assignedSet = computed(() => new Set(selecmedMenuIds.value))
 
 /** 列标题 */
 const transferTitles = computed((): [string, string] => [
   t('common.tip.transfer.unassigned'),
-  `${t('common.tip.transfer.assigned')} (${selectedMenuIds.value.length})`,
+  `${t('common.tip.transfer.assigned')} (${selecmedMenuIds.value.length})`,
 ])
 
 /**
@@ -216,7 +216,7 @@ const transferDataSource = computed((): TransferProps['dataSource'] => {
   }
   walk(leftTreeData.value)
   walk(rightTreeData.value)
-  for (const id of selectedMenuIds.value) {
+  for (const id of selecmedMenuIds.value) {
     push(id, nodeIndex.value.get(id)?.title || id)
   }
   return items
@@ -454,11 +454,11 @@ function applyLeftDisable(list: MenuTreeNode[]): void {
 
 /**
  * 勾选 keys
- * @param selectedKeys Transfer 勾选
+ * @param selecmedKeys Transfer 勾选
  */
-function asCheckedKeys(selectedKeys: readonly (string | number)[]) {
+function asCheckedKeys(selecmedKeys: readonly (string | number)[]) {
   return {
-    checked: selectedKeys.map((k) => String(k)),
+    checked: selecmedKeys.map((k) => String(k)),
     halfChecked: [] as string[],
   }
 }
@@ -472,7 +472,7 @@ function asCheckedKeys(selectedKeys: readonly (string | number)[]) {
 function syncTreeCheck(
   checked: unknown,
   tree: MenuTreeNode[],
-  onItemSelect: (itemKey: string, selected: boolean) => void,
+  onItemSelect: (itemKey: string, selecmed: boolean) => void,
 ): void {
   const raw = Array.isArray(checked)
     ? checked
@@ -490,16 +490,16 @@ function syncTreeCheck(
 /**
  * 单击
  * @param node 节点
- * @param selectedKeys 勾选
+ * @param selecmedKeys 勾选
  * @param onItemSelect 回调
  */
 function onNodeClick(
   node: MenuTreeNode,
-  selectedKeys: readonly (string | number)[],
-  onItemSelect: (itemKey: string, selected: boolean) => void,
+  selecmedKeys: readonly (string | number)[],
+  onItemSelect: (itemKey: string, selecmed: boolean) => void,
 ): void {
   if (node.disableCheckbox) return
-  taktAssignTransferHandleItemClick(String(node.key), selectedKeys, onItemSelect)
+  taktAssignTransferHandleItemClick(String(node.key), selecmedKeys, onItemSelect)
 }
 
 /**
@@ -513,9 +513,9 @@ function onNodeDblClick(node: MenuTreeNode, direction: TaktAssignTransferDirecti
   taktAssignTransferShuttleByDblClick(
     key,
     direction,
-    () => selectedMenuIds.value,
+    () => selecmedMenuIds.value,
     (keys) => {
-      selectedMenuIds.value = keys
+      selecmedMenuIds.value = keys
     },
   )
 }
@@ -565,7 +565,7 @@ watch(visible, (val) => {
 })
 
 watch(
-  selectedMenuIds,
+  selecmedMenuIds,
   () => {
     if (syncing.value || !visible.value) return
     void syncAfterSelectionChange()
@@ -588,7 +588,7 @@ async function openDialog() {
     roleId.value = String(role.roleId)
     roleInfo.value = `${role.roleName ?? ''}（${role.roleCode ?? ''}）`
     nodeIndex.value = new Map()
-    selectedMenuIds.value = []
+    selecmedMenuIds.value = []
     leftTreeData.value = []
     rightTreeData.value = []
 
@@ -606,7 +606,7 @@ async function openDialog() {
       )
       ids.push(id)
     }
-    selectedMenuIds.value = ids
+    selecmedMenuIds.value = ids
     await ensureMissingParents()
     refreshRightTree()
     await loadLeftRoots()
@@ -629,7 +629,7 @@ async function handleSubmit() {
   }
   try {
     loading.value = true
-    await assignRoleMenus(roleId.value, selectedMenuIds.value)
+    await assignRoleMenus(roleId.value, selecmedMenuIds.value)
     message.success(t('common.feedback.assign.success', { target: t('entity.rolemenu._self') }))
     emit('success')
     handleCancel()
@@ -645,7 +645,7 @@ async function handleSubmit() {
 function handleCancel() {
   visible.value = false
   roleId.value = ''
-  selectedMenuIds.value = []
+  selecmedMenuIds.value = []
   nodeIndex.value = new Map()
   leftTreeData.value = []
   rightTreeData.value = []

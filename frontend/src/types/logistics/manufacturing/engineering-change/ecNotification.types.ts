@@ -16,7 +16,7 @@ import type {
 } from '@/types/common.types';
 
 /**
- * 工程变更通知单（技术阶段一 ④，隶属 TaktEcGijutsu）。技术完成 ①主表 ②附件 ③明细 保存后由 TaktEcGijutsuService 自动生成并派发； 各部门确认后在 TaktEcExec* 执行，技术通过看板/批次监控。FlowInstanceId 由通知审批流程写入（可选）。
+ * 工程变更通知单（技术阶段一 ④，隶属 TaktEcTe）。技术完成 ①主表 ②附件 ③明细 保存后由 TaktEcTeService 自动生成并派发； 各部门确认后在 TaktEcExec* 执行，技术通过看板/批次监控。FlowInstanceId 由通知审批流程写入（可选）。
  * 对应前端 TaktEcNotificationDto
  * 继承 TaktApprovalDtoBase
  * 对应前端 EcNotification
@@ -32,7 +32,7 @@ export interface EcNotification extends ApprovalDtoBase {
   /**
    * 关联的设变主表ID（序列化为string以避免Javascript精度问题）
    */
-  ecGijutsuId?: string;
+  ecTeId?: string;
 
   /**
    * 设变单号（冗余字段，便于查询）
@@ -50,7 +50,7 @@ export interface EcNotification extends ApprovalDtoBase {
   ecNotificationDate?: string;
 
   /**
-   * 通知部门编码（多个部门用逗号分隔，如：Assy,PCBA,QC）
+   * 通知部门编码（多个部门用逗号分隔，如：Mfg1,PCBA,QC）
    */
   ecNotificationDeptCodes?: string;
 
@@ -115,7 +115,7 @@ export interface EcNotificationExport {
   /**
    * 关联的设变主表ID（序列化为string以避免Javascript精度问题）
    */
-  ecGijutsuId: string;
+  ecTeId: string;
 
   /**
    * 设变单号（冗余字段，便于查询）
@@ -133,7 +133,7 @@ export interface EcNotificationExport {
   ecNotificationDate: string;
 
   /**
-   * 通知部门编码（多个部门用逗号分隔，如：Assy,PCBA,QC）
+   * 通知部门编码（多个部门用逗号分隔，如：Mfg1,PCBA,QC）
    */
   ecNotificationDeptCodes?: string;
 

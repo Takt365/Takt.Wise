@@ -96,16 +96,16 @@
               </a-button>
             </a-space>
             <a-descriptions
-              v-if="selectedEmployeeOption"
+              v-if="selecmedEmployeeOption"
               bordered
               size="middle"
               :column="1"
             >
               <a-descriptions-item :label="t('entity.employee.code')">
-                {{ displayStr(selectedEmployeeOption.extLabel) }}
+                {{ displayStr(selecmedEmployeeOption.extLabel) }}
               </a-descriptions-item>
               <a-descriptions-item :label="t('entity.employee.name')">
-                {{ displayStr(selectedEmployeeOption.dictLabel) }}
+                {{ displayStr(selecmedEmployeeOption.dictLabel) }}
               </a-descriptions-item>
             </a-descriptions>
             <a-alert
@@ -354,16 +354,16 @@ const isAdmin = computed(() => {
 })
 
 /** 根据 formState.employeeId 在员工选项中解析当前项 */
-const selectedEmployeeOption = computed(() => {
+const selecmedEmployeeOption = computed(() => {
   const id = formState.employeeId
   if (id === undefined || id === null || String(id).trim() === '') return undefined
   return employeeOptions.value.find((o) => String(o.dictValue) === String(id))
 })
 
-/** 编辑态下与已绑定员工对应的选项（依赖 selectedEmployeeOption） */
+/** 编辑态下与已绑定员工对应的选项（依赖 selecmedEmployeeOption） */
 const boundEmployeeOption = computed(() => {
   if (!props.formData?.userId) return undefined
-  return selectedEmployeeOption.value
+  return selecmedEmployeeOption.value
 })
 
 /** descriptions 展示用，空值显示为 `-` */

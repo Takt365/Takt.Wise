@@ -16,7 +16,7 @@
     layout="horizontal"
     label-align="right"
   >
-    <a-tabs
+    <TaktFormTabs
       v-model:active-key="activeTab"
       class="client-form-tabs"
     >
@@ -159,6 +159,16 @@
                 />
               </a-form-item>
             </a-col>
+          </a-row>
+        </div>
+      </a-tab-pane>
+      <a-tab-pane
+        key="tab-1"
+        :tab="t('common.page.form.tabs.basicinfo') + ' (2/7)'"
+        force-render
+      >
+        <div :class="formContentClass">
+          <a-row :gutter="24">
             <a-col :span="12">
               <a-form-item
                 :label="pi.label('clientName2')"
@@ -173,16 +183,6 @@
                 />
               </a-form-item>
             </a-col>
-          </a-row>
-        </div>
-      </a-tab-pane>
-      <a-tab-pane
-        key="tab-1"
-        :tab="t('common.page.form.tabs.basicinfo') + ' (2/7)'"
-        force-render
-      >
-        <div :class="formContentClass">
-          <a-row :gutter="24">
             <a-col :span="12">
               <a-form-item
                 :label="pi.label('clientName3')"
@@ -305,6 +305,16 @@
                 />
               </a-form-item>
             </a-col>
+          </a-row>
+        </div>
+      </a-tab-pane>
+      <a-tab-pane
+        key="tab-2"
+        :tab="t('common.page.form.tabs.basicinfo') + ' (3/7)'"
+        force-render
+      >
+        <div :class="formContentClass">
+          <a-row :gutter="24">
             <a-col :span="12">
               <a-form-item
                 :label="pi.label('addr4')"
@@ -319,16 +329,6 @@
                 />
               </a-form-item>
             </a-col>
-          </a-row>
-        </div>
-      </a-tab-pane>
-      <a-tab-pane
-        key="tab-2"
-        :tab="t('common.page.form.tabs.basicinfo') + ' (3/7)'"
-        force-render
-      >
-        <div :class="formContentClass">
-          <a-row :gutter="24">
             <a-col :span="12">
               <a-form-item
                 :label="pi.label('addr5')"
@@ -453,6 +453,16 @@
                 />
               </a-form-item>
             </a-col>
+          </a-row>
+        </div>
+      </a-tab-pane>
+      <a-tab-pane
+        key="tab-3"
+        :tab="t('common.page.form.tabs.basicinfo') + ' (4/7)'"
+        force-render
+      >
+        <div :class="formContentClass">
+          <a-row :gutter="24">
             <a-col :span="12">
               <a-form-item
                 :label="pi.label('taxNumber3')"
@@ -467,16 +477,6 @@
                 />
               </a-form-item>
             </a-col>
-          </a-row>
-        </div>
-      </a-tab-pane>
-      <a-tab-pane
-        key="tab-3"
-        :tab="t('common.page.form.tabs.basicinfo') + ' (4/7)'"
-        force-render
-      >
-        <div :class="formContentClass">
-          <a-row :gutter="24">
             <a-col :span="12">
               <a-form-item
                 :label="pi.label('bankCountryCode')"
@@ -499,7 +499,7 @@
                   v-model:value="formState.bankCode"
                   api-url="TaktBanks/options"
                   :placeholder="pi.ph('bankCode')"
-                  allow-clear
+                  :disabled="!!formData?.clientId"
                 />
               </a-form-item>
             </a-col>
@@ -592,6 +592,16 @@
                 />
               </a-form-item>
             </a-col>
+          </a-row>
+        </div>
+      </a-tab-pane>
+      <a-tab-pane
+        key="tab-4"
+        :tab="t('common.page.form.tabs.basicinfo') + ' (5/7)'"
+        force-render
+      >
+        <div :class="formContentClass">
+          <a-row :gutter="24">
             <a-col :span="12">
               <a-form-item
                 :label="pi.label('paymentMethod')"
@@ -618,16 +628,6 @@
                 />
               </a-form-item>
             </a-col>
-          </a-row>
-        </div>
-      </a-tab-pane>
-      <a-tab-pane
-        key="tab-4"
-        :tab="t('common.page.form.tabs.basicinfo') + ' (5/7)'"
-        force-render
-      >
-        <div :class="formContentClass">
-          <a-row :gutter="24">
             <a-col :span="12">
               <a-form-item
                 :label="pi.label('salesDepartment')"
@@ -727,7 +727,17 @@
                 />
               </a-form-item>
             </a-col>
-            <a-col :span="12">
+          </a-row>
+        </div>
+      </a-tab-pane>
+      <a-tab-pane
+        key="tab-5"
+        :tab="t('common.page.form.tabs.basicinfo') + ' (6/7)'"
+        force-render
+      >
+        <div :class="formContentClass">
+          <a-row :gutter="24">
+            <a-col :span="24">
               <a-form-item
                 :label="pi.label('accountAssignmentGroup')"
                 name="accountAssignmentGroup"
@@ -739,7 +749,7 @@
                 />
               </a-form-item>
             </a-col>
-            <a-col :span="12">
+            <a-col :span="24">
               <a-form-item
                 :label="pi.label('taxClassification')"
                 name="taxClassification"
@@ -751,16 +761,6 @@
                 />
               </a-form-item>
             </a-col>
-          </a-row>
-        </div>
-      </a-tab-pane>
-      <a-tab-pane
-        key="tab-5"
-        :tab="t('common.page.form.tabs.basicinfo') + ' (6/7)'"
-        force-render
-      >
-        <div :class="formContentClass">
-          <a-row :gutter="24">
             <a-col :span="24">
               <a-form-item
                 :label="pi.label('clientContact')"
@@ -920,7 +920,7 @@
           </a-row>
         </div>
       </a-tab-pane>
-    </a-tabs>
+    </TaktFormTabs>
   </a-form>
 </template>
 
@@ -933,13 +933,13 @@
 import { useI18n } from 'vue-i18n'
 import type { Rule } from 'ant-design-vue/es/form'
 import { useClientI18n } from '../composables/useClientI18n'
-import { useTaktFormNumbering } from '@/composables/useTaktFormNumbering'
 
 /** 实体字段 i18n */
 const pi = useClientI18n()
 import type { ClientCreate } from '@/types/logistics/sales/client.types'
 import { RiQuestionLine } from '@remixicon/vue'
 import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
+import { useTaktFormNumbering } from '@/composables/useTaktFormNumbering'
 import { useTenantStore } from '@/stores/identity/useTenantStore'
 import { useUserStore } from '@/stores/identity/useUserStore'
 
@@ -1026,6 +1026,14 @@ onMounted(() => {
 })
 
 
+/** 是否编辑态（编码规则取号仅新增） */
+const isEditMode = computed(() => !!props.formData?.clientId)
+
+useTaktFormNumbering({
+  formState,
+  isEdit: isEditMode,
+  businessCodeField: 'clientCode',
+})
 
 /** 编辑态灌入 formData；新增态恢复默认值（须含 clientId 才视为编辑） */
 watch(
@@ -1060,15 +1068,6 @@ watch(
     }
   },
 )
-
-/** 是否编辑态 */
-const isEditMode = computed(() => !!props.formData?.clientId)
-
-useTaktFormNumbering({
-  formState,
-  isEdit: isEditMode,
-  businessCodeField: 'clientCode',
-})
 
 /** 表单校验规则（与 FluentValidation 必填对齐） */
 const rules = computed<Record<string, Rule[]>>(() => ({

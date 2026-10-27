@@ -74,7 +74,6 @@ export type SopExecStepField = keyof typeof SOPEXECSTEP_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const SOPEXECSTEP_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'stepId',
   'startedAtStart',
   'startedAtEnd',

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcNotificationI18nSeedData.cs
-// 创建时间：2026-10-14
+// 创建时间：2026-10-27
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEcNotification 实体字段国际化种子（已对齐前端 locales：src/locales/logistics/manufacturing/engineering-change/ec-notification）
 // 
@@ -99,14 +99,14 @@ public class TaktEcNotificationI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecnotification.code
             new TranslationSeedItem("entity.ecnotification.code", "zh-HK", "通知单号_hk", "通知单号（按通知方式经编码规则生成；前端表单选择编码规则后自动通过 TaktNumbering 通知单号规则生成并展示，非手输；单据类型菜单：设变通知）"),
 
-            // entity.ecnotification.ecgijutsuid
-            new TranslationSeedItem("entity.ecnotification.ecgijutsuid", "en-US", "技术课主表ID_us", "技术课主表 ID（TaktEcGijutsu 主键；序列化为 string 避免 Javascript 精度问题）"),
-            // entity.ecnotification.ecgijutsuid
-            new TranslationSeedItem("entity.ecnotification.ecgijutsuid", "ja-JP", "技术课主表ID_jp", "技术课主表 ID（TaktEcGijutsu 主键；序列化为 string 避免 Javascript 精度问题）"),
-            // entity.ecnotification.ecgijutsuid
-            new TranslationSeedItem("entity.ecnotification.ecgijutsuid", "zh-CN", "技术课主表ID", "技术课主表 ID（TaktEcGijutsu 主键；序列化为 string 避免 Javascript 精度问题）"),
-            // entity.ecnotification.ecgijutsuid
-            new TranslationSeedItem("entity.ecnotification.ecgijutsuid", "zh-HK", "技术课主表ID_hk", "技术课主表 ID（TaktEcGijutsu 主键；序列化为 string 避免 Javascript 精度问题）"),
+            // entity.ecnotification.ecteid
+            new TranslationSeedItem("entity.ecnotification.ecteid", "en-US", "技术课主表ID_us", "技术课主表 ID（TaktEcTe 主键；序列化为 string 避免 Javascript 精度问题）"),
+            // entity.ecnotification.ecteid
+            new TranslationSeedItem("entity.ecnotification.ecteid", "ja-JP", "技术课主表ID_jp", "技术课主表 ID（TaktEcTe 主键；序列化为 string 避免 Javascript 精度问题）"),
+            // entity.ecnotification.ecteid
+            new TranslationSeedItem("entity.ecnotification.ecteid", "zh-CN", "技术课主表ID", "技术课主表 ID（TaktEcTe 主键；序列化为 string 避免 Javascript 精度问题）"),
+            // entity.ecnotification.ecteid
+            new TranslationSeedItem("entity.ecnotification.ecteid", "zh-HK", "技术课主表ID_hk", "技术课主表 ID（TaktEcTe 主键；序列化为 string 避免 Javascript 精度问题）"),
 
             // entity.ecnotification.eccode
             new TranslationSeedItem("entity.ecnotification.eccode", "en-US", "设变单号_us", "设变单号（冗余：按对应 Id 取主数据名称联动）"),
@@ -189,14 +189,14 @@ public class TaktEcNotificationI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecnotification.status
             new TranslationSeedItem("entity.ecnotification.status", "zh-HK", "通知状态_hk", "通知状态（0=待通知 1=已通知 2=已确认 3=已驳回 4=已过期）"),
 
-            // entity.ecnotification.ecgijutsu
-            new TranslationSeedItem("entity.ecnotification.ecgijutsu", "en-US", "关联的设变主表_us", "关联的设变主表"),
-            // entity.ecnotification.ecgijutsu
-            new TranslationSeedItem("entity.ecnotification.ecgijutsu", "ja-JP", "关联的设变主表_jp", "关联的设变主表"),
-            // entity.ecnotification.ecgijutsu
-            new TranslationSeedItem("entity.ecnotification.ecgijutsu", "zh-CN", "关联的设变主表", "关联的设变主表"),
-            // entity.ecnotification.ecgijutsu
-            new TranslationSeedItem("entity.ecnotification.ecgijutsu", "zh-HK", "关联的设变主表_hk", "关联的设变主表"),
+            // entity.ecnotification.ecte
+            new TranslationSeedItem("entity.ecnotification.ecte", "en-US", "关联的设变主表_us", "关联的设变主表"),
+            // entity.ecnotification.ecte
+            new TranslationSeedItem("entity.ecnotification.ecte", "ja-JP", "关联的设变主表_jp", "关联的设变主表"),
+            // entity.ecnotification.ecte
+            new TranslationSeedItem("entity.ecnotification.ecte", "zh-CN", "关联的设变主表", "关联的设变主表"),
+            // entity.ecnotification.ecte
+            new TranslationSeedItem("entity.ecnotification.ecte", "zh-HK", "关联的设变主表_hk", "关联的设变主表"),
         };
     }
 

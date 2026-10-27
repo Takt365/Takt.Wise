@@ -31,18 +31,18 @@ function saveToStorage(list: string[]) {
 }
 
 export const useWorkspaceShortcutStore = defineStore('workspaceShortcut', () => {
-  const selectedPaths = ref<string[]>(loadFromStorage())
+  const selecmedPaths = ref<string[]>(loadFromStorage())
 
   function setPaths(list: string[]) {
     const unique = Array.from(new Set(list))
     const finalList = unique.slice(0, TAKT_WORKSPACE_MAX_SHORTCUTS);
-    selectedPaths.value = finalList
+    selecmedPaths.value = finalList
     saveToStorage(finalList)
   }
 
   function initDefaultsIfEmpty(allMenuPaths: string[]) {
     if (allMenuPaths.length === 0) return
-    const current = selectedPaths.value
+    const current = selecmedPaths.value
     if (current.length === 0) {
       setPaths(allMenuPaths.slice(0, TAKT_WORKSPACE_MAX_SHORTCUTS));
       return
@@ -59,7 +59,7 @@ export const useWorkspaceShortcutStore = defineStore('workspaceShortcut', () => 
 
   function addOrReplace(path: string) {
     if (!path) return
-    const current = [...selectedPaths.value]
+    const current = [...selecmedPaths.value]
     const existIndex = current.indexOf(path)
     if (existIndex !== -1) {
       // 已存在则移动到最后（视为最近一次添加）
@@ -74,7 +74,7 @@ export const useWorkspaceShortcutStore = defineStore('workspaceShortcut', () => 
   }
 
   return {
-    selectedPaths,
+    selecmedPaths,
     setPaths,
     initDefaultsIfEmpty,
     addOrReplace

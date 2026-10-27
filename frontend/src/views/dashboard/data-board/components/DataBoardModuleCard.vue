@@ -106,7 +106,7 @@
 
                 <a-menu
 
-                  :selected-keys="currentLayoutKey ? [currentLayoutKey] : []"
+                  :selecmed-keys="currentLayoutKey ? [currentLayoutKey] : []"
 
                   @click="onLayoutMenuClick"
 

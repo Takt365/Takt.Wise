@@ -16,7 +16,7 @@
     layout="horizontal"
     label-align="right"
   >
-    <a-tabs
+    <TaktFormTabs
       v-model:active-key="activeTab"
       class="customer-form-tabs"
     >
@@ -76,21 +76,6 @@
                   v-model:value="formState.customerCode"
                   :placeholder="t('common.page.form.numberingCodePreview')"
                   disabled
-                />
-              </a-form-item>
-            </a-col>
-            <a-col :span="12">
-              <a-form-item
-                :label="pi.label('numberingRuleCode')"
-                name="numberingRuleCode"
-              >
-                <a-input
-                  v-model:value="formState.numberingRuleCode"
-                  :placeholder="pi.ph('numberingRuleCode')"
-                  show-count
-                  :maxlength="20"
-                  allow-clear
-                  :disabled="!!formData?.customerId"
                 />
               </a-form-item>
             </a-col>
@@ -160,16 +145,6 @@
                 />
               </a-form-item>
             </a-col>
-          </a-row>
-        </div>
-      </a-tab-pane>
-      <a-tab-pane
-        key="tab-1"
-        :tab="t('common.page.form.tabs.basicinfo') + ' (2/7)'"
-        force-render
-      >
-        <div :class="formContentClass">
-          <a-row :gutter="24">
             <a-col :span="12">
               <a-form-item
                 :label="pi.label('customerName1')"
@@ -184,6 +159,16 @@
                 />
               </a-form-item>
             </a-col>
+          </a-row>
+        </div>
+      </a-tab-pane>
+      <a-tab-pane
+        key="tab-1"
+        :tab="t('common.page.form.tabs.basicinfo') + ' (2/7)'"
+        force-render
+      >
+        <div :class="formContentClass">
+          <a-row :gutter="24">
             <a-col :span="12">
               <a-form-item
                 :label="pi.label('customerName2')"
@@ -306,16 +291,6 @@
                 />
               </a-form-item>
             </a-col>
-          </a-row>
-        </div>
-      </a-tab-pane>
-      <a-tab-pane
-        key="tab-2"
-        :tab="t('common.page.form.tabs.basicinfo') + ' (3/7)'"
-        force-render
-      >
-        <div :class="formContentClass">
-          <a-row :gutter="24">
             <a-col :span="12">
               <a-form-item
                 :label="pi.label('addr3')"
@@ -330,6 +305,16 @@
                 />
               </a-form-item>
             </a-col>
+          </a-row>
+        </div>
+      </a-tab-pane>
+      <a-tab-pane
+        key="tab-2"
+        :tab="t('common.page.form.tabs.basicinfo') + ' (3/7)'"
+        force-render
+      >
+        <div :class="formContentClass">
+          <a-row :gutter="24">
             <a-col :span="12">
               <a-form-item
                 :label="pi.label('addr4')"
@@ -454,16 +439,6 @@
                 />
               </a-form-item>
             </a-col>
-          </a-row>
-        </div>
-      </a-tab-pane>
-      <a-tab-pane
-        key="tab-3"
-        :tab="t('common.page.form.tabs.basicinfo') + ' (4/7)'"
-        force-render
-      >
-        <div :class="formContentClass">
-          <a-row :gutter="24">
             <a-col :span="12">
               <a-form-item
                 :label="pi.label('taxNumber2')"
@@ -478,6 +453,16 @@
                 />
               </a-form-item>
             </a-col>
+          </a-row>
+        </div>
+      </a-tab-pane>
+      <a-tab-pane
+        key="tab-3"
+        :tab="t('common.page.form.tabs.basicinfo') + ' (4/7)'"
+        force-render
+      >
+        <div :class="formContentClass">
+          <a-row :gutter="24">
             <a-col :span="12">
               <a-form-item
                 :label="pi.label('taxNumber3')"
@@ -514,7 +499,7 @@
                   v-model:value="formState.bankCode"
                   api-url="TaktBanks/options"
                   :placeholder="pi.ph('bankCode')"
-                  allow-clear
+                  :disabled="!!formData?.customerId"
                 />
               </a-form-item>
             </a-col>
@@ -935,7 +920,7 @@
           </a-row>
         </div>
       </a-tab-pane>
-    </a-tabs>
+    </TaktFormTabs>
   </a-form>
 </template>
 

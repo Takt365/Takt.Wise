@@ -13,6 +13,7 @@
 import type { Rule } from 'ant-design-vue/es/form'
 import { useI18n } from 'vue-i18n'
 import { getEcDeptExecFillRequiredFields } from '@/constants/logistics/ecDeptExecLineFields.constants'
+import { isValidEcPoRemainder } from '@/utils/regex'
 
 /**
  * 值是否视为空（字符串 trim；数字 0 合法）
@@ -41,7 +42,7 @@ export function useEcDeptViewFormRules(
 ) {
   const { t } = useI18n()
 
-  /** 更新态填报必填规则 */
+  /** 更新态填报必填规则；生管 Po残可空，有值须「采购单10位-序号4位:数量」 */
   const rules = computed<Record<string, Rule[]>>(() => {
     const result: Record<string, Rule[]> = {}
     for (const field of getEcDeptExecFillRequiredFields(deptSlug)) {
@@ -54,6 +55,23 @@ export function useEcDeptViewFormRules(
               return Promise.reject(
                 t('common.page.form.placeholder.required', { field: fieldLabel }),
               )
+            }
+            return Promise.resolve()
+          },
+          trigger: ['change', 'blur'],
+        },
+      ]
+    }
+    if (deptSlug === 'ecpc') {
+      const fieldLabel = label('poRemainder')
+      result.poRemainder = [
+        {
+          validator: async (_rule, value) => {
+            if (isEcDeptFillEmpty(value)) {
+              return Promise.resolve()
+            }
+            if (!isValidEcPoRemainder(String(value))) {
+              return Promise.reject(t('common.validation.format.po.remainder', { field: fieldLabel }))
             }
             return Promise.resolve()
           },

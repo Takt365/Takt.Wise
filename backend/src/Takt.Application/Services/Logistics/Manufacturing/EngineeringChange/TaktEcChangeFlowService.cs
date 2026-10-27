@@ -29,7 +29,7 @@ public class TaktEcChangeFlowService : TaktServiceBase, ITaktEcChangeFlowService
     private readonly ITaktApprovalRepository<TaktEcNotification> _ecNotificationRepository;
     private readonly ITaktCompanyRepository<TaktEcNotificationDelivery> _deliveryRepository;
     private readonly ITaktCompanyRepository<TaktEcExecutionTask> _taskRepository;
-    private readonly ITaktCompanyRepository<TaktEcGijutsu> _ecEngRepository;
+    private readonly ITaktCompanyRepository<TaktEcTe> _ecTeRepository;
     private readonly TaktEcExecDeptAccess _ecExecDeptAccess;
     private readonly ITaktTenantRepository<TaktUser> _userRepository;
     private readonly ITaktSignalRDispatchService _signalRDispatchService;
@@ -41,7 +41,7 @@ public class TaktEcChangeFlowService : TaktServiceBase, ITaktEcChangeFlowService
         ITaktApprovalRepository<TaktEcNotification> ecNotificationRepository,
         ITaktCompanyRepository<TaktEcNotificationDelivery> deliveryRepository,
         ITaktCompanyRepository<TaktEcExecutionTask> taskRepository,
-        ITaktCompanyRepository<TaktEcGijutsu> ecEngRepository,
+        ITaktCompanyRepository<TaktEcTe> ecTeRepository,
         TaktEcExecDeptAccess ecExecDeptAccess,
         ITaktTenantRepository<TaktUser> userRepository,
         ITaktSignalRDispatchService signalRDispatchService,
@@ -52,7 +52,7 @@ public class TaktEcChangeFlowService : TaktServiceBase, ITaktEcChangeFlowService
         _ecNotificationRepository = ecNotificationRepository;
         _deliveryRepository = deliveryRepository;
         _taskRepository = taskRepository;
-        _ecEngRepository = ecEngRepository;
+        _ecTeRepository = ecTeRepository;
         _ecExecDeptAccess = ecExecDeptAccess;
         _userRepository = userRepository;
         _signalRDispatchService = signalRDispatchService;
@@ -94,7 +94,7 @@ public class TaktEcChangeFlowService : TaktServiceBase, ITaktEcChangeFlowService
                 DeliveryId = delivery.Id,
                 EcNotificationId = notification.Id,
                 EcNotificationCode = notification.EcNotificationCode,
-                EcGijutsuId = notification.EcGijutsuId,
+                EcTeId = notification.EcTeId,
                 EcCode = notification.EcCode,
                 EcTitle = notification.EcTitle,
                 DeptCode = deptCode,
@@ -316,7 +316,7 @@ public class TaktEcChangeFlowService : TaktServiceBase, ITaktEcChangeFlowService
         {
             EcNotificationId = notification.Id,
             EcNotificationCode = notification.EcNotificationCode,
-            EcGijutsuId = notification.EcGijutsuId,
+            EcTeId = notification.EcTeId,
             EcCode = notification.EcCode,
             EcDeptGroupCode = deptCode,
             EcDeptGroupName = deptName,
@@ -395,16 +395,16 @@ public class TaktEcChangeFlowService : TaktServiceBase, ITaktEcChangeFlowService
         {
             return;
         }
-        var ec = await _ecEngRepository.GetByIdAsync(notification.EcGijutsuId);
+        var ec = await _ecTeRepository.GetByIdAsync(notification.EcTeId);
         var ecExec = await _ecExecDeptAccess.FirstBaseByEcCodeAndDeptAsync(notification.EcCode, deptCode);
         var dueDate = ec?.EcEntryDate ?? ec?.EcIssueDate ?? DateTime.Now.AddDays(7);
         var task = new TaktEcExecutionTask
         {
             EcNotificationId = notification.Id,
-            EcGijutsuId = notification.EcGijutsuId,
+            EcTeId = notification.EcTeId,
             EcCode = notification.EcCode,
             EcExecId = ecExec?.Id,
-            EcDetailId = ecExec?.EcDetailId,
+            EcDetailId = ecExec != null && ecExec.EcDetailId > 0 ? ecExec.EcDetailId : null,
             DeptCode = deptCode,
             TaskTitle = $"设变实施-{notification.EcCode}-{deptCode}",
             TaskStatus = TaktEcFlowConstants.TaskStatusPending,
@@ -434,16 +434,16 @@ public class TaktEcChangeFlowService : TaktServiceBase, ITaktEcChangeFlowService
             return;
         }
         var notification = await LoadNotificationAsync(ecNotificationId);
-        var ec = await _ecEngRepository.GetByIdAsync(notification.EcGijutsuId);
+        var ec = await _ecTeRepository.GetByIdAsync(notification.EcTeId);
         if (ec != null && ec.ChangeStatus != 5)
         {
             ec.ChangeStatus = 5;
-            await _ecEngRepository.UpdateAsync(ec);
+            await _ecTeRepository.UpdateAsync(ec);
         }
         var closedPush = new TaktEcChangeClosedPush
         {
             CompanyCode = CurrentCompanyCode,
-            EcGijutsuId = notification.EcGijutsuId,
+            EcTeId = notification.EcTeId,
             EcCode = notification.EcCode,
             EcNotificationId = notification.Id,
             ClosedAt = DateTime.Now

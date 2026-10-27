@@ -751,7 +751,11 @@ public class TaktFileService : TaktServiceBase, ITaktFileService
         if (!isUnique_ix_file_code_unique)
         {
             var ruleCode = ResolveFileNumberingRuleCode(entity.FileType);
-            var generated = await _numberingGenerator.GenerateNextAsync(ruleCode);
+            var existingRows = await _fileRepository.GetListAsync(
+                x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode);
+            var generated = await _numberingGenerator.GenerateNextAsync(
+                ruleCode,
+                existingRows.Select(x => (string?)x.FileCode).ToList());
             if (string.IsNullOrWhiteSpace(generated.BusinessCode))
             {
                 throw new TaktBusinessException("文件编码生成失败");

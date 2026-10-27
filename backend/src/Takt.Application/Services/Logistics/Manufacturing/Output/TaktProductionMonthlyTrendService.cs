@@ -10,176 +10,120 @@
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
 // ========================================
 
-using System.Linq.Expressions;
+using SqlSugar;
 using Takt.Application.Dtos.Logistics.Manufacturing.Output;
 using Takt.Domain.Entities.Logistics.Manufacturing.Output;
 using Takt.Domain.Interfaces;
-using Takt.Domain.Repositories;
 using Takt.Shared.Helpers;
 using Takt.Shared.Options;
 
 namespace Takt.Application.Services.Logistics.Manufacturing.Output;
 
 /// <summary>
-/// 月生产推移转置分析服务（读组立/PCBA 产出本表；与 CRUD 服务分离）
+/// 生产统计：按页签只查组立或 PCBA，按班组或按机种汇总产量
 /// </summary>
-public class TaktProductionMonthlyTrendService : TaktServiceBase, ITaktProductionMonthlyTrendService
+public partial class TaktProductionMonthlyTrendService : TaktServiceBase, ITaktProductionMonthlyTrendService
 {
   private const string CategoryAssy = "assy";
   private const string CategoryPcba = "pcba";
+  private const string TabMfg1Team = "assy-team";
+  private const string TabMfg1Model = "assy-model";
+  private const string TabMfg2Team = "pcba-team";
+  private const string TabMfg2Model = "pcba-model";
 
-  private readonly ITaktCompanyRepository<TaktAssyOutput> _assyOutputRepository;
-  private readonly ITaktCompanyRepository<TaktAssyOutputDetail> _assyOutputDetailRepository;
-  private readonly ITaktCompanyRepository<TaktPcbaOutput> _pcbaOutputRepository;
-  private readonly ITaktCompanyRepository<TaktPcbaOutputDetail> _pcbaOutputDetailRepository;
+  private readonly ISqlSugarClient _db;
 
   /// <summary>
   /// 构造函数
   /// </summary>
-  /// <param name="assyOutputRepository">组立日报主表仓储</param>
-  /// <param name="assyOutputDetailRepository">组立日报明细仓储</param>
-  /// <param name="pcbaOutputRepository">PCBA日报主表仓储</param>
-  /// <param name="pcbaOutputDetailRepository">PCBA日报明细仓储</param>
+  /// <param name="db">当前请求的 SqlSugar 客户端</param>
   /// <param name="userContext">用户上下文</param>
   /// <param name="localizationService">本地化服务</param>
   public TaktProductionMonthlyTrendService(
-      ITaktCompanyRepository<TaktAssyOutput> assyOutputRepository,
-      ITaktCompanyRepository<TaktAssyOutputDetail> assyOutputDetailRepository,
-      ITaktCompanyRepository<TaktPcbaOutput> pcbaOutputRepository,
-      ITaktCompanyRepository<TaktPcbaOutputDetail> pcbaOutputDetailRepository,
+      ISqlSugarClient db,
       ITaktUserContext? userContext = null,
       ITaktLocalizationService? localizationService = null)
       : base(userContext, localizationService)
   {
-    _assyOutputRepository = assyOutputRepository;
-    _assyOutputDetailRepository = assyOutputDetailRepository;
-    _pcbaOutputRepository = pcbaOutputRepository;
-    _pcbaOutputDetailRepository = pcbaOutputDetailRepository;
+    _db = db;
   }
 
-  /// <summary>
-  /// 推移查询栏：组立/PCBA 产出本表工厂去重选项（并集）
-  /// </summary>
-  /// <param name="plantCode">工厂代码（可选，用于按工厂过滤）</param>
-  /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
-  /// <returns>下拉选项</returns>
-  public async Task<List<TaktSelectOption>> GetProductionMonthlyTrendPlantOptionsAsync(string? plantCode = null, string? keyword = null)
+  /// <inheritdoc />
+  public async Task<List<TaktSelectOption>> GetProductionMonthlyTrendPlantOptionsAsync(string? statTab, string? keyword = null)
   {
     EnsureThreeLayerContext();
-    var assyList = await _assyOutputRepository.GetListAsync(
-        x => x.TenantCode == CurrentTenantCode
-            && x.CompanyCode == CurrentCompanyCode
-            && x.PlantCode != null
-            && x.PlantCode != string.Empty);
-    var pcbaList = await _pcbaOutputRepository.GetListAsync(
-        x => x.TenantCode == CurrentTenantCode
-            && x.CompanyCode == CurrentCompanyCode
-            && x.PlantCode != null
-            && x.PlantCode != string.Empty);
-    return assyList.Select(e => e.PlantCode.Trim())
-        .Concat(pcbaList.Select(e => e.PlantCode.Trim()))
-        .Where(c => !string.IsNullOrEmpty(c))
-        .GroupBy(c => c, StringComparer.OrdinalIgnoreCase)
-        .OrderBy(g => g.Key, StringComparer.Ordinal)
-        .Select(g => new TaktSelectOption
-        {
-          DictValue = g.Key,
-          DictLabel = g.Key,
-        })
-        .ToList();
+    if (!TryParseStatTab(statTab, out var scope))
+    {
+      return [];
+    }
+    var tenant = CurrentTenantCode;
+    var company = CurrentCompanyCode;
+    List<string> codes;
+    if (scope.IsAssy)
+    {
+      codes = await _db.Queryable<TaktAssyOutput>()
+          .Where(x => x.TenantCode == tenant && x.CompanyCode == company && x.IsDeleted == 0
+              && x.PlantCode != null && x.PlantCode != "")
+          .GroupBy(x => x.PlantCode)
+          .Select(x => x.PlantCode)
+          .ToListAsync();
+    }
+    else
+    {
+      codes = await _db.Queryable<TaktPcbaOutput>()
+          .Where(x => x.TenantCode == tenant && x.CompanyCode == company && x.IsDeleted == 0
+              && x.PlantCode != null && x.PlantCode != "")
+          .GroupBy(x => x.PlantCode)
+          .Select(x => x.PlantCode)
+          .ToListAsync();
+    }
+    return ToCodeOptions(codes, keyword);
   }
 
-  /// <summary>
-  /// 推移查询栏：按工厂返回有数据的产出类别（assy / pcba）
-  /// </summary>
-  /// <param name="plantCode">工厂代码</param>
-  /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
-  /// <returns>下拉选项</returns>
-  public async Task<List<TaktSelectOption>> GetProductionMonthlyTrendOutputCategoryOptionsAsync(string? plantCode = null, string? keyword = null)
+  /// <inheritdoc />
+  public async Task<List<TaktSelectOption>> GetProductionMonthlyTrendTeamOptionsAsync(string? statTab, string? plantCode, string? keyword = null)
   {
     EnsureThreeLayerContext();
     var plant = plantCode?.Trim() ?? string.Empty;
-    if (string.IsNullOrEmpty(plant))
+    if (plant.Length == 0 || !TryParseStatTab(statTab, out var scope))
     {
-      return new List<TaktSelectOption>();
+      return [];
     }
-    var options = new List<TaktSelectOption>();
-    var assyCount = await _assyOutputRepository.CountAsync(
-        x => x.TenantCode == CurrentTenantCode
-            && x.CompanyCode == CurrentCompanyCode
-            && x.PlantCode == plant);
-    if (assyCount > 0)
+    var tenant = CurrentTenantCode;
+    var company = CurrentCompanyCode;
+    List<string> codes;
+    if (scope.IsAssy)
     {
-      options.Add(new TaktSelectOption
-      {
-        DictValue = CategoryAssy,
-        DictLabel = "组立",
-      });
+      codes = await _db.Queryable<TaktAssyOutput>()
+          .Where(x => x.TenantCode == tenant && x.CompanyCode == company && x.IsDeleted == 0
+              && x.PlantCode == plant && x.TeamCode != null && x.TeamCode != "")
+          .GroupBy(x => x.TeamCode)
+          .Select(x => x.TeamCode)
+          .ToListAsync();
     }
-    var pcbaCount = await _pcbaOutputRepository.CountAsync(
-        x => x.TenantCode == CurrentTenantCode
-            && x.CompanyCode == CurrentCompanyCode
-            && x.PlantCode == plant);
-    if (pcbaCount > 0)
+    else
     {
-      options.Add(new TaktSelectOption
-      {
-        DictValue = CategoryPcba,
-        DictLabel = "PCBA",
-      });
+      codes = await _db.Queryable<TaktPcbaOutput>()
+          .InnerJoin<TaktPcbaOutputDetail>((h, d) => h.Id == d.PcbaOutputId)
+          .Where((h, d) => h.TenantCode == tenant && h.CompanyCode == company && h.IsDeleted == 0 && d.IsDeleted == 0
+              && h.PlantCode == plant && d.TeamCode != null && d.TeamCode != "")
+          .GroupBy((h, d) => d.TeamCode)
+          .Select((h, d) => d.TeamCode)
+          .ToListAsync();
     }
-    return options;
+    return ToCodeOptions(codes, keyword);
   }
 
-  /// <summary>
-  /// 推移查询栏：按工厂（及可选产出类别）去重机种
-  /// </summary>
-  /// <param name="plantCode">工厂代码</param>
-  /// <param name="outputCategory">产出类别（assy/pcba；空则并集）</param>
-  /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
-  /// <returns>下拉选项</returns>
-  public async Task<List<TaktSelectOption>> GetProductionMonthlyTrendModelOptionsAsync(string? plantCode = null, string? keyword = null, string? outputCategory = null)
+  /// <inheritdoc />
+  public Task<List<TaktSelectOption>> GetProductionMonthlyTrendModelOptionsAsync(string? statTab, string? plantCode, string? keyword = null)
   {
-    EnsureThreeLayerContext();
-    var plant = plantCode?.Trim() ?? string.Empty;
-    if (string.IsNullOrEmpty(plant))
-    {
-      return new List<TaktSelectOption>();
-    }
-    var category = outputCategory?.Trim().ToLowerInvariant() ?? string.Empty;
-    var modelCodes = new List<string>();
-    var includeAssy = string.IsNullOrEmpty(category) || category == CategoryAssy;
-    var includePcba = string.IsNullOrEmpty(category) || category == CategoryPcba;
-    if (includeAssy)
-    {
-      var assyList = await _assyOutputRepository.GetListAsync(
-          x => x.TenantCode == CurrentTenantCode
-              && x.CompanyCode == CurrentCompanyCode
-              && x.PlantCode == plant
-              && x.ModelCode != null
-              && x.ModelCode != string.Empty);
-      modelCodes.AddRange(assyList.Select(e => e.ModelCode.Trim()));
-    }
-    if (includePcba)
-    {
-      var pcbaList = await _pcbaOutputRepository.GetListAsync(
-          x => x.TenantCode == CurrentTenantCode
-              && x.CompanyCode == CurrentCompanyCode
-              && x.PlantCode == plant
-              && x.ModelCode != null
-              && x.ModelCode != string.Empty);
-      modelCodes.AddRange(pcbaList.Select(e => e.ModelCode.Trim()));
-    }
-    return modelCodes
-        .Where(c => !string.IsNullOrEmpty(c))
-        .GroupBy(c => c, StringComparer.OrdinalIgnoreCase)
-        .OrderBy(g => g.Key, StringComparer.Ordinal)
-        .Select(g => new TaktSelectOption
-        {
-          DictValue = g.Key,
-          DictLabel = g.Key,
-        })
-        .ToList();
+    return DistinctHeaderCodesAsync(statTab, plantCode, keyword, model: true);
+  }
+
+  /// <inheritdoc />
+  public Task<List<TaktSelectOption>> GetProductionMonthlyTrendMaterialOptionsAsync(string? statTab, string? plantCode, string? keyword = null)
+  {
+    return DistinctHeaderCodesAsync(statTab, plantCode, keyword, model: false);
   }
 
   /// <summary>
@@ -225,13 +169,16 @@ public class TaktProductionMonthlyTrendService : TaktServiceBase, ITaktProductio
   {
     ArgumentNullException.ThrowIfNull(query);
     var built = await BuildProductionMonthlyTrendAnalysisAsync(query);
+    var groupByTeam = TryParseStatTab(query.StatTab, out var scope) && scope.GroupByTeam;
+    var groupKey = groupByTeam ? "teamCode" : "modelCode";
+    var groupLabel = groupByTeam ? "班组" : "机种";
     var columnKeys = new List<string>
     {
-      "plantCode", "modelCode", "outputCategory", "outputCategoryName",
+      "plantCode", groupKey,
     };
     var columnLabels = new List<string>
     {
-      "工厂代码", "机种", "产出类别", "类别名称",
+      "工厂代码", groupLabel,
     };
     foreach (var period in built.PeriodOrder)
     {
@@ -245,9 +192,8 @@ public class TaktProductionMonthlyTrendService : TaktServiceBase, ITaktProductio
       var dict = new Dictionary<string, object?>(StringComparer.Ordinal)
       {
         ["plantCode"] = row.PlantCode,
+        ["teamCode"] = row.TeamCode,
         ["modelCode"] = row.ModelCode,
-        ["outputCategory"] = row.OutputCategory,
-        ["outputCategoryName"] = row.OutputCategoryName,
         ["basePeriod"] = row.BasePeriod,
         ["comparePeriod"] = row.ComparePeriod,
         ["varianceAmount"] = row.VarianceAmount,
@@ -268,8 +214,8 @@ public class TaktProductionMonthlyTrendService : TaktServiceBase, ITaktProductio
         exportRows,
         columnKeys,
         columnLabels,
-        sheetName ?? "月生产推移表",
-        fileName ?? TaktNamingHelper.PlantPrefixedTrendExportBase(query.PlantCode, "月生产推移"));
+        sheetName ?? ResolveStatTabTitle(query.StatTab),
+        fileName ?? TaktNamingHelper.PlantPrefixedTrendExportBase(query.PlantCode, "生产统计"));
   }
 
   /// <summary>
@@ -281,22 +227,27 @@ public class TaktProductionMonthlyTrendService : TaktServiceBase, ITaktProductio
       TaktProductionMonthlyTrendQueryDto queryDto)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(queryDto.PlantCode);
+    if (!TryParseStatTab(queryDto.StatTab, out var scope))
+    {
+      ThrowBusinessException("请选择统计页签");
+    }
     EnsureThreeLayerContext();
     var plantCode = queryDto.PlantCode.Trim();
-    var modelFilter = string.IsNullOrWhiteSpace(queryDto.ModelCode)
-        ? null
-        : queryDto.ModelCode.Trim();
-    var categoryFilter = NormalizeCategoryFilter(queryDto.OutputCategory);
+    var teamFilter = string.IsNullOrWhiteSpace(queryDto.TeamCode) ? null : queryDto.TeamCode.Trim();
+    var modelFilter = string.IsNullOrWhiteSpace(queryDto.ModelCode) ? null : queryDto.ModelCode.Trim();
+    var materialFilter = string.IsNullOrWhiteSpace(queryDto.MaterialCode) ? null : queryDto.MaterialCode.Trim();
     var periodOrder = ResolvePeriodOrder(queryDto, out var rangeStart, out var rangeEnd);
     if (periodOrder.Count == 0)
     {
       return ProductionMonthlyTrendAnalysisBuilt.Empty();
     }
     var focusPeriod = ResolveFocusPeriod(queryDto.FocusPeriod, periodOrder);
-    var sourceRows = await LoadProductionSourceRowsAsync(
+    var sourceRows = await LoadStatSourceRowsAsync(
+        scope,
         plantCode,
-        categoryFilter,
+        teamFilter,
         modelFilter,
+        materialFilter,
         rangeStart,
         rangeEnd);
     if (sourceRows.Count == 0)
@@ -306,7 +257,7 @@ public class TaktProductionMonthlyTrendService : TaktServiceBase, ITaktProductio
     var periodSet = new HashSet<string>(periodOrder, StringComparer.Ordinal);
     var allRows = sourceRows
         .GroupBy(
-            r => new ProductionMonthlyTrendRowKey(r.PlantCode, r.ModelCode, r.OutputCategory),
+            r => new ProductionMonthlyTrendRowKey(r.PlantCode, r.TeamCode, r.ModelCode),
             ProductionMonthlyTrendRowKeyComparer.Instance)
         .Select(g => BuildProductionMonthlyTrendRow(g.Key, g.ToList(), periodSet, focusPeriod))
         .ToList();
@@ -326,236 +277,173 @@ public class TaktProductionMonthlyTrendService : TaktServiceBase, ITaktProductio
   }
 
   /// <summary>
-  /// 加载组立与 PCBA 产出源行
+  /// 按页签汇总产量：组立主表班组/机种，PCBA 明细班组或主表机种
   /// </summary>
-  /// <param name="plantCode">工厂代码</param>
-  /// <param name="categoryFilter">产出类别筛选</param>
-  /// <param name="modelFilter">机种筛选</param>
+  /// <param name="scope">页签</param>
+  /// <param name="plantCode">工厂</param>
+  /// <param name="teamFilter">班组</param>
+  /// <param name="modelFilter">机种</param>
+  /// <param name="materialFilter">物料</param>
   /// <param name="rangeStart">期间起</param>
   /// <param name="rangeEnd">期间止</param>
-  /// <returns>源行列表</returns>
-  private async Task<List<ProductionMonthlyTrendSourceRow>> LoadProductionSourceRowsAsync(
+  /// <returns>源行</returns>
+  private async Task<List<ProductionMonthlyTrendSourceRow>> LoadStatSourceRowsAsync(
+      StatTabScope scope,
       string plantCode,
-      IReadOnlySet<string>? categoryFilter,
+      string? teamFilter,
       string? modelFilter,
+      string? materialFilter,
       DateTime rangeStart,
       DateTime rangeEnd)
   {
-    var rows = new List<ProductionMonthlyTrendSourceRow>();
-    if (ShouldIncludeCategory(categoryFilter, CategoryAssy))
+    var rangeEndExclusive = rangeEnd.AddMonths(1);
+    var tenant = CurrentTenantCode;
+    var company = CurrentCompanyCode;
+    var category = scope.IsAssy ? CategoryAssy : CategoryPcba;
+    List<StatMonthQty> grouped;
+    if (scope.IsAssy && scope.GroupByTeam)
     {
-      rows.AddRange(await LoadAssySourceRowsAsync(plantCode, modelFilter, rangeStart, rangeEnd));
+      var query = _db.Queryable<TaktAssyOutput>()
+          .InnerJoin<TaktAssyOutputDetail>((h, d) => h.Id == d.AssyOutputId)
+          .Where((h, d) => h.TenantCode == tenant && h.CompanyCode == company && h.IsDeleted == 0 && d.IsDeleted == 0
+              && d.IsObsolete == 0 && h.PlantCode == plantCode
+              && h.ProdDate >= rangeStart && h.ProdDate < rangeEndExclusive
+              && h.TeamCode != null && h.TeamCode != "");
+      if (teamFilter != null)
+      {
+        query = query.Where((h, d) => h.TeamCode == teamFilter);
+      }
+      if (modelFilter != null)
+      {
+        query = query.Where((h, d) => h.ModelCode == modelFilter);
+      }
+      if (materialFilter != null)
+      {
+        query = query.Where((h, d) => h.MaterialCode == materialFilter);
+      }
+      grouped = await query
+          .GroupBy((h, d) => new { h.TeamCode, h.ProdDate.Year, h.ProdDate.Month })
+          .Select((h, d) => new StatMonthQty
+          {
+            GroupCode = h.TeamCode,
+            Year = h.ProdDate.Year,
+            Month = h.ProdDate.Month,
+            Qty = SqlFunc.AggregateSum(d.ProdActualQty),
+          })
+          .ToListAsync();
     }
-    if (ShouldIncludeCategory(categoryFilter, CategoryPcba))
+    else if (scope.IsAssy)
     {
-      rows.AddRange(await LoadPcbaSourceRowsAsync(plantCode, modelFilter, rangeStart, rangeEnd));
+      var query = _db.Queryable<TaktAssyOutput>()
+          .InnerJoin<TaktAssyOutputDetail>((h, d) => h.Id == d.AssyOutputId)
+          .Where((h, d) => h.TenantCode == tenant && h.CompanyCode == company && h.IsDeleted == 0 && d.IsDeleted == 0
+              && d.IsObsolete == 0 && h.PlantCode == plantCode
+              && h.ProdDate >= rangeStart && h.ProdDate < rangeEndExclusive
+              && h.ModelCode != null && h.ModelCode != "");
+      if (teamFilter != null)
+      {
+        query = query.Where((h, d) => h.TeamCode == teamFilter);
+      }
+      if (modelFilter != null)
+      {
+        query = query.Where((h, d) => h.ModelCode == modelFilter);
+      }
+      if (materialFilter != null)
+      {
+        query = query.Where((h, d) => h.MaterialCode == materialFilter);
+      }
+      grouped = await query
+          .GroupBy((h, d) => new { h.ModelCode, h.ProdDate.Year, h.ProdDate.Month })
+          .Select((h, d) => new StatMonthQty
+          {
+            GroupCode = h.ModelCode,
+            Year = h.ProdDate.Year,
+            Month = h.ProdDate.Month,
+            Qty = SqlFunc.AggregateSum(d.ProdActualQty),
+          })
+          .ToListAsync();
     }
-    return rows;
-  }
-
-  /// <summary>
-  /// 加载组立产出源行
-  /// </summary>
-  /// <param name="plantCode">工厂代码</param>
-  /// <param name="modelFilter">机种筛选</param>
-  /// <param name="rangeStart">期间起</param>
-  /// <param name="rangeEnd">期间止</param>
-  /// <returns>源行列表</returns>
-  private async Task<List<ProductionMonthlyTrendSourceRow>> LoadAssySourceRowsAsync(
-      string plantCode,
-      string? modelFilter,
-      DateTime rangeStart,
-      DateTime rangeEnd)
-  {
-    var masters = await _assyOutputRepository.GetListAsync(
-        BuildAssyOutputExpression(plantCode, modelFilter, rangeStart, rangeEnd));
-    if (masters.Count == 0)
+    else if (scope.GroupByTeam)
     {
-      return new List<ProductionMonthlyTrendSourceRow>();
+      var query = _db.Queryable<TaktPcbaOutput>()
+          .InnerJoin<TaktPcbaOutputDetail>((h, d) => h.Id == d.PcbaOutputId)
+          .Where((h, d) => h.TenantCode == tenant && h.CompanyCode == company && h.IsDeleted == 0 && d.IsDeleted == 0
+              && d.IsObsolete == 0 && h.PlantCode == plantCode
+              && h.ProdDate >= rangeStart && h.ProdDate < rangeEndExclusive
+              && d.TeamCode != null && d.TeamCode != "");
+      if (teamFilter != null)
+      {
+        query = query.Where((h, d) => d.TeamCode == teamFilter);
+      }
+      if (modelFilter != null)
+      {
+        query = query.Where((h, d) => h.ModelCode == modelFilter);
+      }
+      if (materialFilter != null)
+      {
+        query = query.Where((h, d) => h.MaterialCode == materialFilter);
+      }
+      grouped = await query
+          .GroupBy((h, d) => new { d.TeamCode, h.ProdDate.Year, h.ProdDate.Month })
+          .Select((h, d) => new StatMonthQty
+          {
+            GroupCode = d.TeamCode,
+            Year = h.ProdDate.Year,
+            Month = h.ProdDate.Month,
+            Qty = SqlFunc.AggregateSum(d.DailyCompletedQty),
+          })
+          .ToListAsync();
     }
-    var masterMap = masters.ToDictionary(m => m.Id);
-    var masterIds = masterMap.Keys.ToList();
-    var details = await _assyOutputDetailRepository.GetListAsync(
-        BuildAssyDetailExpression(masterIds));
-    var rows = new List<ProductionMonthlyTrendSourceRow>(details.Count);
-    foreach (var detail in details)
+    else
     {
-      if (!masterMap.TryGetValue(detail.AssyOutputId, out var master))
+      var query = _db.Queryable<TaktPcbaOutput>()
+          .InnerJoin<TaktPcbaOutputDetail>((h, d) => h.Id == d.PcbaOutputId)
+          .Where((h, d) => h.TenantCode == tenant && h.CompanyCode == company && h.IsDeleted == 0 && d.IsDeleted == 0
+              && d.IsObsolete == 0 && h.PlantCode == plantCode
+              && h.ProdDate >= rangeStart && h.ProdDate < rangeEndExclusive
+              && h.ModelCode != null && h.ModelCode != "");
+      if (teamFilter != null)
+      {
+        query = query.Where((h, d) => d.TeamCode == teamFilter);
+      }
+      if (modelFilter != null)
+      {
+        query = query.Where((h, d) => h.ModelCode == modelFilter);
+      }
+      if (materialFilter != null)
+      {
+        query = query.Where((h, d) => h.MaterialCode == materialFilter);
+      }
+      grouped = await query
+          .GroupBy((h, d) => new { h.ModelCode, h.ProdDate.Year, h.ProdDate.Month })
+          .Select((h, d) => new StatMonthQty
+          {
+            GroupCode = h.ModelCode,
+            Year = h.ProdDate.Year,
+            Month = h.ProdDate.Month,
+            Qty = SqlFunc.AggregateSum(d.DailyCompletedQty),
+          })
+          .ToListAsync();
+    }
+    var rows = new List<ProductionMonthlyTrendSourceRow>(grouped.Count);
+    foreach (var item in grouped)
+    {
+      var code = item.GroupCode?.Trim() ?? string.Empty;
+      if (code.Length == 0 || item.Month is < 1 or > 12)
       {
         continue;
       }
       rows.Add(new ProductionMonthlyTrendSourceRow
       {
-        PlantCode = master.PlantCode.Trim(),
-        ModelCode = master.ModelCode.Trim(),
-        OutputCategory = CategoryAssy,
-        Period = new DateTime(master.ProdDate.Year, master.ProdDate.Month, 1).ToString("yyyy-MM"),
-        Qty = detail.ProdActualQty,
+        PlantCode = plantCode,
+        TeamCode = scope.GroupByTeam ? code : string.Empty,
+        ModelCode = scope.GroupByTeam ? string.Empty : code,
+        OutputCategory = category,
+        Period = new DateTime(item.Year, item.Month, 1).ToString("yyyy-MM"),
+        Qty = item.Qty,
       });
     }
     return rows;
-  }
-
-  /// <summary>
-  /// 加载 PCBA 产出源行
-  /// </summary>
-  /// <param name="plantCode">工厂代码</param>
-  /// <param name="modelFilter">机种筛选</param>
-  /// <param name="rangeStart">期间起</param>
-  /// <param name="rangeEnd">期间止</param>
-  /// <returns>源行列表</returns>
-  private async Task<List<ProductionMonthlyTrendSourceRow>> LoadPcbaSourceRowsAsync(
-      string plantCode,
-      string? modelFilter,
-      DateTime rangeStart,
-      DateTime rangeEnd)
-  {
-    var masters = await _pcbaOutputRepository.GetListAsync(
-        BuildPcbaOutputExpression(plantCode, modelFilter, rangeStart, rangeEnd));
-    if (masters.Count == 0)
-    {
-      return new List<ProductionMonthlyTrendSourceRow>();
-    }
-    var masterMap = masters.ToDictionary(m => m.Id);
-    var masterIds = masterMap.Keys.ToList();
-    var details = await _pcbaOutputDetailRepository.GetListAsync(
-        BuildPcbaDetailExpression(masterIds));
-    var rows = new List<ProductionMonthlyTrendSourceRow>(details.Count);
-    foreach (var detail in details)
-    {
-      if (!masterMap.TryGetValue(detail.PcbaOutputId, out var master))
-      {
-        continue;
-      }
-      rows.Add(new ProductionMonthlyTrendSourceRow
-      {
-        PlantCode = master.PlantCode.Trim(),
-        ModelCode = master.ModelCode.Trim(),
-        OutputCategory = CategoryPcba,
-        Period = new DateTime(master.ProdDate.Year, master.ProdDate.Month, 1).ToString("yyyy-MM"),
-        Qty = detail.DailyCompletedQty,
-      });
-    }
-    return rows;
-  }
-
-  /// <summary>
-  /// 是否包含指定产出类别
-  /// </summary>
-  /// <param name="categoryFilter">类别筛选集合</param>
-  /// <param name="category">类别码</param>
-  /// <returns>是否包含</returns>
-  private static bool ShouldIncludeCategory(IReadOnlySet<string>? categoryFilter, string category) =>
-      categoryFilter == null || categoryFilter.Contains(category);
-
-  /// <summary>
-  /// 归一化产出类别筛选
-  /// </summary>
-  /// <param name="outputCategory">产出类别</param>
-  /// <returns>类别集合；空表示全部</returns>
-  private static HashSet<string>? NormalizeCategoryFilter(string? outputCategory)
-  {
-    if (string.IsNullOrWhiteSpace(outputCategory))
-    {
-      return null;
-    }
-    var normalized = outputCategory.Trim().ToLowerInvariant();
-    return normalized switch
-    {
-      CategoryAssy => new HashSet<string>(StringComparer.Ordinal) { CategoryAssy },
-      CategoryPcba => new HashSet<string>(StringComparer.Ordinal) { CategoryPcba },
-      _ => throw new ArgumentException($"不支持的产出类别：{outputCategory}"),
-    };
-  }
-
-  /// <summary>
-  /// 构建组立日报主表查询条件
-  /// </summary>
-  /// <param name="plantCode">工厂代码</param>
-  /// <param name="modelFilter">机种</param>
-  /// <param name="rangeStart">期间起</param>
-  /// <param name="rangeEnd">期间止</param>
-  /// <returns>表达式</returns>
-  private Expression<Func<TaktAssyOutput, bool>> BuildAssyOutputExpression(
-      string plantCode,
-      string? modelFilter,
-      DateTime rangeStart,
-      DateTime rangeEnd)
-  {
-    var rangeEndExclusive = rangeEnd.AddMonths(1);
-    var exp = Expressionable.Create<TaktAssyOutput>();
-    exp = exp.And(x =>
-        x.TenantCode == CurrentTenantCode
-        && x.CompanyCode == CurrentCompanyCode
-        && x.PlantCode == plantCode
-        && x.ProdDate >= rangeStart
-        && x.ProdDate < rangeEndExclusive);
-    if (!string.IsNullOrWhiteSpace(modelFilter))
-    {
-      exp = exp.And(x => x.ModelCode == modelFilter);
-    }
-    return exp.ToExpression();
-  }
-
-  /// <summary>
-  /// 构建组立日报明细查询条件
-  /// </summary>
-  /// <param name="masterIds">主表主键集合</param>
-  /// <returns>表达式</returns>
-  private Expression<Func<TaktAssyOutputDetail, bool>> BuildAssyDetailExpression(IReadOnlyList<long> masterIds)
-  {
-    var exp = Expressionable.Create<TaktAssyOutputDetail>();
-    exp = exp.And(x =>
-        x.TenantCode == CurrentTenantCode
-        && x.CompanyCode == CurrentCompanyCode
-        && masterIds.Contains(x.AssyOutputId)
-        && x.IsObsolete == 0);
-    return exp.ToExpression();
-  }
-
-  /// <summary>
-  /// 构建 PCBA 日报主表查询条件
-  /// </summary>
-  /// <param name="plantCode">工厂代码</param>
-  /// <param name="modelFilter">机种</param>
-  /// <param name="rangeStart">期间起</param>
-  /// <param name="rangeEnd">期间止</param>
-  /// <returns>表达式</returns>
-  private Expression<Func<TaktPcbaOutput, bool>> BuildPcbaOutputExpression(
-      string plantCode,
-      string? modelFilter,
-      DateTime rangeStart,
-      DateTime rangeEnd)
-  {
-    var rangeEndExclusive = rangeEnd.AddMonths(1);
-    var exp = Expressionable.Create<TaktPcbaOutput>();
-    exp = exp.And(x =>
-        x.TenantCode == CurrentTenantCode
-        && x.CompanyCode == CurrentCompanyCode
-        && x.PlantCode == plantCode
-        && x.ProdDate >= rangeStart
-        && x.ProdDate < rangeEndExclusive);
-    if (!string.IsNullOrWhiteSpace(modelFilter))
-    {
-      exp = exp.And(x => x.ModelCode == modelFilter);
-    }
-    return exp.ToExpression();
-  }
-
-  /// <summary>
-  /// 构建 PCBA 日报明细查询条件
-  /// </summary>
-  /// <param name="masterIds">主表主键集合</param>
-  /// <returns>表达式</returns>
-  private Expression<Func<TaktPcbaOutputDetail, bool>> BuildPcbaDetailExpression(IReadOnlyList<long> masterIds)
-  {
-    var exp = Expressionable.Create<TaktPcbaOutputDetail>();
-    exp = exp.And(x =>
-        x.TenantCode == CurrentTenantCode
-        && x.CompanyCode == CurrentCompanyCode
-        && masterIds.Contains(x.PcbaOutputId)
-        && x.IsObsolete == 0);
-    return exp.ToExpression();
   }
 
   /// <summary>
@@ -665,9 +553,10 @@ public class TaktProductionMonthlyTrendService : TaktServiceBase, ITaktProductio
     var row = new TaktProductionMonthlyTrendDto
     {
       PlantCode = key.PlantCode,
+      TeamCode = key.TeamCode,
       ModelCode = key.ModelCode,
-      OutputCategory = key.OutputCategory,
-      OutputCategoryName = ResolveCategoryName(key.OutputCategory),
+      OutputCategory = groupRows.FirstOrDefault()?.OutputCategory ?? string.Empty,
+      OutputCategoryName = ResolveCategoryName(groupRows.FirstOrDefault()?.OutputCategory ?? string.Empty),
       Trend = "none",
     };
     foreach (var period in groupRows
@@ -785,8 +674,8 @@ public class TaktProductionMonthlyTrendService : TaktServiceBase, ITaktProductio
     return rows
         .OrderBy(r => TrendRank(r.Trend))
         .ThenByDescending(r => Math.Abs(r.VarianceAmount ?? 0m))
+        .ThenBy(r => r.TeamCode, StringComparer.Ordinal)
         .ThenBy(r => r.ModelCode, StringComparer.Ordinal)
-        .ThenBy(r => r.OutputCategory, StringComparer.Ordinal)
         .ToList();
   }
 
@@ -799,6 +688,159 @@ public class TaktProductionMonthlyTrendService : TaktServiceBase, ITaktProductio
       Math.Round(value, 1, MidpointRounding.AwayFromZero);
 
   /// <summary>
+  /// 当前页签主表机种或物料去重
+  /// </summary>
+  /// <param name="statTab">页签</param>
+  /// <param name="plantCode">工厂</param>
+  /// <param name="keyword">关键字</param>
+  /// <param name="model">true 机种，false 物料</param>
+  /// <returns>下拉选项</returns>
+  private async Task<List<TaktSelectOption>> DistinctHeaderCodesAsync(string? statTab, string? plantCode, string? keyword, bool model)
+  {
+    EnsureThreeLayerContext();
+    var plant = plantCode?.Trim() ?? string.Empty;
+    if (plant.Length == 0 || !TryParseStatTab(statTab, out var scope))
+    {
+      return [];
+    }
+    var tenant = CurrentTenantCode;
+    var company = CurrentCompanyCode;
+    List<string> codes;
+    if (scope.IsAssy && model)
+    {
+      codes = await _db.Queryable<TaktAssyOutput>()
+          .Where(x => x.TenantCode == tenant && x.CompanyCode == company && x.IsDeleted == 0
+              && x.PlantCode == plant && x.ModelCode != null && x.ModelCode != "")
+          .GroupBy(x => x.ModelCode)
+          .Select(x => x.ModelCode)
+          .ToListAsync();
+    }
+    else if (scope.IsAssy)
+    {
+      codes = await _db.Queryable<TaktAssyOutput>()
+          .Where(x => x.TenantCode == tenant && x.CompanyCode == company && x.IsDeleted == 0
+              && x.PlantCode == plant && x.MaterialCode != null && x.MaterialCode != "")
+          .GroupBy(x => x.MaterialCode)
+          .Select(x => x.MaterialCode)
+          .ToListAsync();
+    }
+    else if (model)
+    {
+      codes = await _db.Queryable<TaktPcbaOutput>()
+          .Where(x => x.TenantCode == tenant && x.CompanyCode == company && x.IsDeleted == 0
+              && x.PlantCode == plant && x.ModelCode != null && x.ModelCode != "")
+          .GroupBy(x => x.ModelCode)
+          .Select(x => x.ModelCode)
+          .ToListAsync();
+    }
+    else
+    {
+      codes = await _db.Queryable<TaktPcbaOutput>()
+          .Where(x => x.TenantCode == tenant && x.CompanyCode == company && x.IsDeleted == 0
+              && x.PlantCode == plant && x.MaterialCode != null && x.MaterialCode != "")
+          .GroupBy(x => x.MaterialCode)
+          .Select(x => x.MaterialCode)
+          .ToListAsync();
+    }
+    return ToCodeOptions(codes, keyword);
+  }
+
+  /// <summary>
+  /// 编码去重为下拉
+  /// </summary>
+  /// <param name="codes">编码</param>
+  /// <param name="keyword">关键字</param>
+  /// <returns>下拉选项</returns>
+  private static List<TaktSelectOption> ToCodeOptions(IEnumerable<string?> codes, string? keyword)
+  {
+    var kw = keyword?.Trim();
+    return codes
+        .Select(c => c?.Trim() ?? string.Empty)
+        .Where(c => c.Length > 0)
+        .Where(c => string.IsNullOrEmpty(kw) || c.Contains(kw, StringComparison.OrdinalIgnoreCase))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(c => c, StringComparer.Ordinal)
+        .Select(c => new TaktSelectOption { DictValue = c, DictLabel = c })
+        .ToList();
+  }
+
+  /// <summary>
+  /// 解析统计页签
+  /// </summary>
+  /// <param name="statTab">页签码</param>
+  /// <param name="scope">解析结果</param>
+  /// <returns>是否合法</returns>
+  private static bool TryParseStatTab(string? statTab, out StatTabScope scope)
+  {
+    switch (statTab?.Trim().ToLowerInvariant())
+    {
+      case TabMfg1Team:
+        scope = new StatTabScope(true, true);
+        return true;
+      case TabMfg1Model:
+        scope = new StatTabScope(true, false);
+        return true;
+      case TabMfg2Team:
+        scope = new StatTabScope(false, true);
+        return true;
+      case TabMfg2Model:
+        scope = new StatTabScope(false, false);
+        return true;
+      default:
+        scope = default;
+        return false;
+    }
+  }
+
+  /// <summary>
+  /// 页签导出工作表名
+  /// </summary>
+  /// <param name="statTab">页签码</param>
+  /// <returns>名称</returns>
+  private static string ResolveStatTabTitle(string? statTab) =>
+      statTab?.Trim().ToLowerInvariant() switch
+      {
+        TabMfg1Team => "组立按班组",
+        TabMfg1Model => "组立按机种",
+        TabMfg2Team => "PCBA按班组",
+        TabMfg2Model => "PCBA按机种",
+        _ => "生产统计",
+      };
+
+  /// <summary>
+  /// 统计页签：数据源与分组
+  /// </summary>
+  /// <param name="IsAssy">组立为 true，PCBA 为 false</param>
+  /// <param name="GroupByTeam">按班组为 true，按机种为 false</param>
+  private readonly record struct StatTabScope(bool IsAssy, bool GroupByTeam);
+
+  /// <summary>
+  /// 按分组键与年月汇总的产量
+  /// </summary>
+  private sealed class StatMonthQty
+  {
+    /// <summary>
+    /// 班组或机种
+    /// </summary>
+    public string GroupCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 年
+    /// </summary>
+    public int Year { get; set; }
+
+    /// <summary>
+    /// 月
+    /// </summary>
+    public int Month { get; set; }
+
+    /// <summary>
+    /// 产量
+    /// </summary>
+    public decimal Qty { get; set; }
+  }
+
+  /// <summary>
   /// 月生产推移源行
   /// </summary>
   private sealed class ProductionMonthlyTrendSourceRow
@@ -809,7 +851,12 @@ public class TaktProductionMonthlyTrendService : TaktServiceBase, ITaktProductio
     public string PlantCode { get; init; } = string.Empty;
 
     /// <summary>
-    /// 机种
+    /// 班组（按班组页签）
+    /// </summary>
+    public string TeamCode { get; init; } = string.Empty;
+
+    /// <summary>
+    /// 机种（按机种页签）
     /// </summary>
     public string ModelCode { get; init; } = string.Empty;
 
@@ -833,9 +880,9 @@ public class TaktProductionMonthlyTrendService : TaktServiceBase, ITaktProductio
   /// 月生产推移行键
   /// </summary>
   /// <param name="PlantCode">工厂代码</param>
+  /// <param name="TeamCode">班组</param>
   /// <param name="ModelCode">机种</param>
-  /// <param name="OutputCategory">产出类别</param>
-  private sealed record ProductionMonthlyTrendRowKey(string PlantCode, string ModelCode, string OutputCategory);
+  private sealed record ProductionMonthlyTrendRowKey(string PlantCode, string TeamCode, string ModelCode);
 
   /// <summary>
   /// 月生产推移行键比较器
@@ -848,7 +895,7 @@ public class TaktProductionMonthlyTrendService : TaktServiceBase, ITaktProductio
     public static ProductionMonthlyTrendRowKeyComparer Instance { get; } = new();
 
     /// <summary>
-    /// 判断两行键是否相等（工厂/机种/产出类别，忽略大小写）
+    /// 判断两行键是否相等（工厂/班组/机种，忽略大小写）
     /// </summary>
     /// <param name="x">左值</param>
     /// <param name="y">右值</param>
@@ -860,20 +907,20 @@ public class TaktProductionMonthlyTrendService : TaktServiceBase, ITaktProductio
         return ReferenceEquals(x, y);
       }
       return string.Equals(x.PlantCode, y.PlantCode, StringComparison.OrdinalIgnoreCase)
-          && string.Equals(x.ModelCode, y.ModelCode, StringComparison.OrdinalIgnoreCase)
-          && string.Equals(x.OutputCategory, y.OutputCategory, StringComparison.OrdinalIgnoreCase);
+          && string.Equals(x.TeamCode, y.TeamCode, StringComparison.OrdinalIgnoreCase)
+          && string.Equals(x.ModelCode, y.ModelCode, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
-    /// 计算行键哈希（工厂/机种/产出类别大写）
+    /// 计算行键哈希（工厂/班组/机种大写）
     /// </summary>
     /// <param name="obj">行键</param>
     /// <returns>哈希码</returns>
     public int GetHashCode(ProductionMonthlyTrendRowKey obj) =>
         HashCode.Combine(
             obj.PlantCode.ToUpperInvariant(),
-            obj.ModelCode.ToUpperInvariant(),
-            obj.OutputCategory.ToUpperInvariant());
+            obj.TeamCode.ToUpperInvariant(),
+            obj.ModelCode.ToUpperInvariant());
   }
 
   /// <summary>

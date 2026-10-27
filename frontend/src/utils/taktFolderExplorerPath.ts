@@ -119,17 +119,17 @@ export function buildFolderExplorerCrumbs(
  * 解析确认回填用的完整路径（优先选中项，相对名则拼到当前目录）
  * @param mode 路径模式
  * @param currentPath 当前浏览目录
- * @param selectedPath 选中路径或名称
+ * @param selecmedPath 选中路径或名称
  * @returns 完整绝对路径；无法解析时返回空串
  */
 export function resolveFolderExplorerConfirmPath(
   mode: TaktFolderExplorerPathMode,
   currentPath: string | null | undefined,
-  selectedPath: string | null | undefined,
+  selecmedPath: string | null | undefined,
 ): string {
-  const selected = String(selectedPath || '').trim()
+  const selecmed = String(selecmedPath || '').trim()
   const current = String(currentPath || '').trim()
-  const raw = selected || current
+  const raw = selecmed || current
   if (!raw) {
     return mode === 'ftp' ? '/' : ''
   }

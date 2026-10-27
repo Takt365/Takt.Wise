@@ -54,7 +54,6 @@ export type QualityGroupField = keyof typeof QUALITYGROUP_PLACEHOLDER
 
 /** 高级查询可 trim 的字符串字段 */
 export const QUALITYGROUP_QUERY_STRING_FIELDS = [
-  'plantCode',
   'qualityGroupCode',
   'qualityGroupName',
   'qualityGroupDescription',

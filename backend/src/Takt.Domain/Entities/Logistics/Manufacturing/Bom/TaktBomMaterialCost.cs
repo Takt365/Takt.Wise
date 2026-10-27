@@ -20,7 +20,7 @@ namespace Takt.Domain.Entities.Logistics.Manufacturing.Bom;
 /// <para>业务唯一键（新增/更新匹配）：TenantCode+CompanyCode+PlantCode+ProductCode+CostingDate；ModelCode/CostingPeriod 为业务字段，不参与唯一匹配。</para>
 /// <para>软删除：本表 IsDeleted 可为 0/1；列表读隔离不显示已删；合计/重算/机种平均须 includeSoftDeleted 含已删主表。</para>
 /// </summary>
-[SugarTable("takt_logistics_manufacturing_bom_material_cost", "BOM物料成本表")]
+[SugarTable("takt_logistics_manufacturing_bom_material_cost", "材料成本表")]
 [SugarIndex("ix_bom_material_cost_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
 [SugarIndex("ix_bom_material_cost_is_deleted", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(IsDeleted), OrderByType.Asc, false)]
 [SugarIndex("ix_takt_logistics_manufacturing_bom_material_cost_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(PlantCode), OrderByType.Asc, nameof(ProductCode), OrderByType.Asc, nameof(CostingDate), OrderByType.Asc, true)]

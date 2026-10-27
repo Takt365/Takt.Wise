@@ -121,7 +121,7 @@ alwaysApply: false
 |------|------|
 | 单表壳 | `TaktQueryBar` → `TaktToolsBar` → `TaktSingleTable` → `TaktPagination` → `TaktModal`（`:width="formModalWidthPx"` = `useTaktContentModalWidth`；（视口 − 左侧菜单）× 80%；导入弹窗仍 `:width="600"`） |
 | 主子表 | CreateDto 含 `List<ChildCreate>` → 展开行懒加载 `getById` + 表单子表 Tab 行编辑 |
-| 表单 Tabs | 每 Tab 最多 10 字段；`tenantCode`/`companyCode` 隔离字段只读（Tenant/Company 实体除外） |
+| 表单 Tabs | **`TaktFormTabs`** 包裹 `a-tab-pane`；每 Tab 最多 10 字段（`FORM_TAB_FIELDS_PER_TAB` ≡ `TAKT_FORM_TAB_FIELDS_PER_TAB`）；`tenantCode`/`companyCode` 隔离字段只读（Tenant/Company 实体除外） |
 | **`sortOrder`** | **禁止**入 `*Form.vue`（`SKIP_FORM_FIELDS`）；CreateDto 亦不含该字段（`CREATE_EXCLUDE_PROPERTY_NAMES`）；后端 Create/Import 自动回填；树拖拽改序走 Sort API |
 | 表单控件尺寸 | **禁止** `size="small"`（`renderFormControl` / 主子表 Tab 内嵌表均须默认 `middle`）；写入前 `assertGeneratedFormNoSmallSize` 校验 |
 | 「xxx内容」字段 | 表单控件 **`takt-rich-editor`**（`inferHtmlType` ← `isRichTextContentField`：`content` / `XxxContent` 或摘要标题以「内容」结尾，或注释含「富文本 HTML」）。排除 `contentType` 等元数据、流程 `ProcessContent` / 快照、JSON 列。高级查询抽屉仍用 `a-textarea`；子表行内单元格空间不足仍用 `textarea` 编辑器 |

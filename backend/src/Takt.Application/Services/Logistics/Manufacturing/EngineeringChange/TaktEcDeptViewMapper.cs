@@ -29,28 +29,28 @@ public static class TaktEcDeptViewMapper
     {
         switch (exec)
         {
-            case TaktEcSeikan pmc:
-                dto.EcExecId = pmc.Id;
-                dto.IsImplemented = pmc.IsImplemented;
-                dto.Content = pmc.ExecContent;
-                dto.Remark = pmc.Remark;
-                dto.ScheduledDate = pmc.ScheduledDate;
-                dto.ScheduledBatch = pmc.ScheduledBatch;
-                dto.PoRemainder = pmc.PoRemainder;
-                dto.Balance = pmc.Balance;
-                dto.OldProductHandling = pmc.EcOldPartDisposition;
+            case TaktEcPc pc:
+                dto.EcExecId = pc.Id;
+                dto.IsImplemented = pc.IsImplemented;
+                dto.Content = pc.ExecContent;
+                dto.Remark = pc.Remark;
+                dto.ScheduledDate = pc.ScheduledDate;
+                dto.ScheduledBatch = pc.ScheduledBatch;
+                dto.PoRemainder = pc.PoRemainder;
+                dto.BalanceQuantity = pc.BalanceQuantity;
+                dto.OldProductHandling = pc.EcOldPartDisposition;
                 break;
-            case TaktEcKoubai mp:
-                dto.EcExecId = mp.Id;
-                dto.IsImplemented = mp.IsImplemented;
-                dto.Content = mp.ExecContent;
-                dto.Remark = mp.Remark;
-                dto.PurchaseOrderIssueDate = mp.PurchaseOrderIssueDate;
-                dto.Supplier = mp.Supplier;
-                dto.PurchaseOrderCode = mp.PurchaseOrderCode;
-                dto.OldProductHandling = mp.EcOldPartDisposition;
+            case TaktEcPur pur:
+                dto.EcExecId = pur.Id;
+                dto.IsImplemented = pur.IsImplemented;
+                dto.Content = pur.ExecContent;
+                dto.Remark = pur.Remark;
+                dto.PurchaseOrderIssueDate = pur.PurchaseOrderIssueDate;
+                dto.Supplier = pur.Supplier;
+                dto.PurchaseOrderCode = pur.PurchaseOrderCode;
+                dto.OldProductHandling = pur.EcOldPartDisposition;
                 break;
-            case TaktEcUkeken iqc:
+            case TaktEcIqc iqc:
                 dto.EcExecId = iqc.Id;
                 dto.IsImplemented = iqc.IsImplemented;
                 dto.Content = iqc.ExecContent;
@@ -58,7 +58,7 @@ public static class TaktEcDeptViewMapper
                 dto.IqcOrderCode = iqc.IqcOrderCode;
                 dto.InspectionDate = iqc.InspectionDate;
                 break;
-            case TaktEcBukan mc:
+            case TaktEcMc mc:
                 dto.EcExecId = mc.Id;
                 dto.IsImplemented = mc.IsImplemented;
                 dto.Content = mc.ExecContent;
@@ -66,7 +66,7 @@ public static class TaktEcDeptViewMapper
                 dto.OutboundBatch = mc.OutboundBatch;
                 dto.OutboundDate = mc.OutboundDate;
                 break;
-            case TaktEcEmtl electronic:
+            case TaktEcMtl electronic:
                 dto.EcExecId = electronic.Id;
                 dto.IsImplemented = electronic.IsImplemented;
                 dto.Content = electronic.ExecContent;
@@ -74,41 +74,41 @@ public static class TaktEcDeptViewMapper
                 dto.OutboundBatch = electronic.OutboundBatch;
                 dto.OutboundDate = electronic.OutboundDate;
                 break;
-            case TaktEcSeizounika pcba:
-                dto.EcExecId = pcba.Id;
-                dto.IsImplemented = pcba.IsImplemented;
-                dto.Content = pcba.ExecContent;
-                dto.Remark = pcba.Remark;
-                dto.ProductionTeam = pcba.ProductionTeam;
-                dto.ProductionDate = pcba.ProductionDate;
-                dto.ImplementationBatch = pcba.ImplementationBatch;
+            case TaktEcMfg2 mfg2:
+                dto.EcExecId = mfg2.Id;
+                dto.IsImplemented = mfg2.IsImplemented;
+                dto.Content = mfg2.ExecContent;
+                dto.Remark = mfg2.Remark;
+                dto.ProductionTeam = mfg2.ProductionTeam;
+                dto.ProductionDate = mfg2.ProductionDate;
+                dto.ImplementationBatch = mfg2.ImplementationBatch;
                 break;
-            case TaktEcSeizouikka assy:
-                dto.EcExecId = assy.Id;
-                dto.IsImplemented = assy.IsImplemented;
-                dto.Content = assy.ExecContent;
-                dto.Remark = assy.Remark;
-                dto.ProductionTeam = assy.ProductionTeam;
-                dto.ProductionDate = assy.ProductionDate;
-                dto.ImplementationBatch = assy.ImplementationBatch;
+            case TaktEcMfg1 mfg1:
+                dto.EcExecId = mfg1.Id;
+                dto.IsImplemented = mfg1.IsImplemented;
+                dto.Content = mfg1.ExecContent;
+                dto.Remark = mfg1.Remark;
+                dto.ProductionTeam = mfg1.ProductionTeam;
+                dto.ProductionDate = mfg1.ProductionDate;
+                dto.ImplementationBatch = mfg1.ImplementationBatch;
                 break;
-            case TaktEcHinkan qa:
-                dto.EcExecId = qa.Id;
-                dto.IsImplemented = qa.IsImplemented;
-                dto.Content = qa.ExecContent;
-                dto.Remark = qa.Remark;
-                dto.ProductionTeam = qa.ProductionTeam;
-                dto.InspectionDate = qa.InspectionDate;
-                dto.InspectionBatch = qa.InspectionBatch;
-                dto.SamplingCode = qa.SamplingCode;
+            case TaktEcQc qc:
+                dto.EcExecId = qc.Id;
+                dto.IsImplemented = qc.IsImplemented;
+                dto.Content = qc.ExecContent;
+                dto.Remark = qc.Remark;
+                dto.ProductionTeam = qc.ProductionTeam;
+                dto.InspectionDate = qc.InspectionDate;
+                dto.InspectionBatch = qc.InspectionBatch;
+                dto.SamplingCode = qc.SamplingCode;
                 break;
-            case TaktEcSeizougijutsu te:
-                dto.EcExecId = te.Id;
-                dto.IsImplemented = te.IsImplemented;
-                dto.Content = te.ExecContent;
-                dto.Remark = te.Remark;
-                dto.SopDate = te.SopDate;
-                dto.IsSopUpdated = te.IsSopUpdated;
+            case TaktEcMe me:
+                dto.EcExecId = me.Id;
+                dto.IsImplemented = me.IsImplemented;
+                dto.Content = me.ExecContent;
+                dto.Remark = me.Remark;
+                dto.SopDate = me.SopDate;
+                dto.IsSopUpdated = me.IsSopUpdated;
                 break;
         }
     }
@@ -136,7 +136,7 @@ public static class TaktEcDeptViewMapper
         if (row.ScheduledDate.HasValue) dto.ScheduledDate = row.ScheduledDate;
         if (row.ScheduledBatch != null) dto.ScheduledBatch = row.ScheduledBatch;
         if (row.PoRemainder != null) dto.PoRemainder = row.PoRemainder;
-        if (row.Balance != null) dto.Balance = row.Balance;
+        if (row.BalanceQuantity != null) dto.BalanceQuantity = row.BalanceQuantity;
         if (row.OldProductHandling != null) dto.OldProductHandling = row.OldProductHandling;
         if (row.PurchaseOrderIssueDate.HasValue) dto.PurchaseOrderIssueDate = row.PurchaseOrderIssueDate;
         if (row.Supplier != null) dto.Supplier = row.Supplier;
@@ -169,86 +169,77 @@ public static class TaktEcDeptViewMapper
         var dto = new TaktEcDeptViewUpdateDto();
         switch (exec)
         {
-            case TaktEcSeikan pmc:
-                dto.EcDetailId = pmc.EcDetailId;
-                dto.IsImplemented = pmc.IsImplemented;
-                dto.Content = pmc.ExecContent;
-                dto.Remark = pmc.Remark;
-                dto.ScheduledDate = pmc.ScheduledDate;
-                dto.ScheduledBatch = pmc.ScheduledBatch;
-                dto.PoRemainder = pmc.PoRemainder;
-                dto.Balance = pmc.Balance;
-                dto.OldProductHandling = pmc.EcOldPartDisposition;
+            case TaktEcPc pc:
+                dto.IsImplemented = pc.IsImplemented;
+                dto.Content = pc.ExecContent;
+                dto.Remark = pc.Remark;
+                dto.ScheduledDate = pc.ScheduledDate;
+                dto.ScheduledBatch = pc.ScheduledBatch;
+                dto.PoRemainder = pc.PoRemainder;
+                dto.BalanceQuantity = pc.BalanceQuantity;
+                dto.OldProductHandling = pc.EcOldPartDisposition;
                 break;
-            case TaktEcKoubai mp:
-                dto.EcDetailId = mp.EcDetailId;
-                dto.IsImplemented = mp.IsImplemented;
-                dto.Content = mp.ExecContent;
-                dto.Remark = mp.Remark;
-                dto.PurchaseOrderIssueDate = mp.PurchaseOrderIssueDate;
-                dto.Supplier = mp.Supplier;
-                dto.PurchaseOrderCode = mp.PurchaseOrderCode;
-                dto.OldProductHandling = mp.EcOldPartDisposition;
+            case TaktEcPur pur:
+                dto.IsImplemented = pur.IsImplemented;
+                dto.Content = pur.ExecContent;
+                dto.Remark = pur.Remark;
+                dto.PurchaseOrderIssueDate = pur.PurchaseOrderIssueDate;
+                dto.Supplier = pur.Supplier;
+                dto.PurchaseOrderCode = pur.PurchaseOrderCode;
+                dto.OldProductHandling = pur.EcOldPartDisposition;
                 break;
-            case TaktEcUkeken iqc:
-                dto.EcDetailId = iqc.EcDetailId;
+            case TaktEcIqc iqc:
                 dto.IsImplemented = iqc.IsImplemented;
                 dto.Content = iqc.ExecContent;
                 dto.Remark = iqc.Remark;
                 dto.IqcOrderCode = iqc.IqcOrderCode;
                 dto.InspectionDate = iqc.InspectionDate;
                 break;
-            case TaktEcBukan mc:
-                dto.EcDetailId = mc.EcDetailId;
+            case TaktEcMc mc:
                 dto.IsImplemented = mc.IsImplemented;
                 dto.Content = mc.ExecContent;
                 dto.Remark = mc.Remark;
                 dto.OutboundBatch = mc.OutboundBatch;
                 dto.OutboundDate = mc.OutboundDate;
                 break;
-            case TaktEcEmtl electronic:
-                dto.EcDetailId = electronic.EcDetailId;
+            case TaktEcMtl electronic:
                 dto.IsImplemented = electronic.IsImplemented;
                 dto.Content = electronic.ExecContent;
                 dto.Remark = electronic.Remark;
                 dto.OutboundBatch = electronic.OutboundBatch;
                 dto.OutboundDate = electronic.OutboundDate;
                 break;
-            case TaktEcSeizounika pcba:
-                dto.EcDetailId = pcba.EcDetailId;
-                dto.IsImplemented = pcba.IsImplemented;
-                dto.Content = pcba.ExecContent;
-                dto.Remark = pcba.Remark;
-                dto.ProductionTeam = pcba.ProductionTeam;
-                dto.ProductionDate = pcba.ProductionDate;
-                dto.ImplementationBatch = pcba.ImplementationBatch;
+            case TaktEcMfg2 mfg2:
+                dto.IsImplemented = mfg2.IsImplemented;
+                dto.Content = mfg2.ExecContent;
+                dto.Remark = mfg2.Remark;
+                dto.ProductionTeam = mfg2.ProductionTeam;
+                dto.ProductionDate = mfg2.ProductionDate;
+                dto.ImplementationBatch = mfg2.ImplementationBatch;
                 break;
-            case TaktEcSeizouikka assy:
-                dto.EcDetailId = assy.EcDetailId;
-                dto.IsImplemented = assy.IsImplemented;
-                dto.Content = assy.ExecContent;
-                dto.Remark = assy.Remark;
-                dto.ProductionTeam = assy.ProductionTeam;
-                dto.ProductionDate = assy.ProductionDate;
-                dto.ImplementationBatch = assy.ImplementationBatch;
+            case TaktEcMfg1 mfg1:
+                dto.IsImplemented = mfg1.IsImplemented;
+                dto.Content = mfg1.ExecContent;
+                dto.Remark = mfg1.Remark;
+                dto.ProductionTeam = mfg1.ProductionTeam;
+                dto.ProductionDate = mfg1.ProductionDate;
+                dto.ImplementationBatch = mfg1.ImplementationBatch;
                 break;
-            case TaktEcHinkan qa:
-                dto.EcDetailId = qa.EcDetailId;
-                dto.IsImplemented = qa.IsImplemented;
-                dto.Content = qa.ExecContent;
-                dto.Remark = qa.Remark;
-                dto.ProductionTeam = qa.ProductionTeam;
-                dto.InspectionDate = qa.InspectionDate;
-                dto.InspectionBatch = qa.InspectionBatch;
-                dto.SamplingCode = qa.SamplingCode;
+            case TaktEcQc qc:
+                dto.IsImplemented = qc.IsImplemented;
+                dto.Content = qc.ExecContent;
+                dto.Remark = qc.Remark;
+                dto.ProductionTeam = qc.ProductionTeam;
+                dto.InspectionDate = qc.InspectionDate;
+                dto.InspectionBatch = qc.InspectionBatch;
+                dto.SamplingCode = qc.SamplingCode;
                 break;
-            case TaktEcSeizougijutsu te:
-                dto.EcDetailId = te.EcDetailId;
-                dto.IsImplemented = te.IsImplemented;
-                dto.Content = te.ExecContent;
-                dto.Remark = te.Remark;
-                dto.SopDate = te.SopDate;
-                dto.IsSopUpdated = te.IsSopUpdated;
+            case TaktEcMe me:
+                dto.IsImplemented = me.IsImplemented;
+                dto.Content = me.ExecContent;
+                dto.Remark = me.Remark;
+                dto.SopDate = me.SopDate;
+                dto.IsSopUpdated = me.IsSopUpdated;
                 break;
         }
         return dto;

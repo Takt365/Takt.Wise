@@ -239,7 +239,7 @@ public class TaktPurchasePriceTrendService : TaktServiceBase, ITaktPurchasePrice
         var skip = TaktPagedClamp.ComputeSkip(pageIndex, pageSize);
         var built = await _monthlyAnalysisBuilder.BuildAsync(queryDto);
         var lines = TaktPurchasePriceTrendExportHelper.ExpandToValidFromLines(
-            TaktPurchasePriceTrendExportHelper.WhereSelectedPlant(built.OrderedRows, queryDto.PlantCode));
+            TaktPurchasePriceTrendExportHelper.WhereSelecmedPlant(built.OrderedRows, queryDto.PlantCode));
         var pageRows = lines.Skip(skip).Take(pageSize).ToList();
         return new TaktPurchasePriceTrendResultDto
         {
@@ -272,7 +272,7 @@ public class TaktPurchasePriceTrendService : TaktServiceBase, ITaktPurchasePrice
         ArgumentException.ThrowIfNullOrWhiteSpace(query.PlantCode);
         var built = await _monthlyAnalysisBuilder.BuildAsync(query);
         var plantRows = TaktPurchasePriceTrendExportHelper.ExpandToValidFromLines(
-            TaktPurchasePriceTrendExportHelper.WhereSelectedPlant(built.OrderedRows, query.PlantCode));
+            TaktPurchasePriceTrendExportHelper.WhereSelecmedPlant(built.OrderedRows, query.PlantCode));
         var columnKeys = new[]
         {
             "plantCode", "purchaseInfoCode", "materialCode", "materialDescription", "supplierCode", "supplierName", "currencyCode", "unit",

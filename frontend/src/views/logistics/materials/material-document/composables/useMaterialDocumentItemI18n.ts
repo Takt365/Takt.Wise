@@ -267,7 +267,6 @@ export type MaterialDocumentItemField = keyof typeof MATERIALDOCUMENTITEM_PLACEH
 /** 高级查询可 trim 的字符串字段 */
 export const MATERIALDOCUMENTITEM_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'materialDocumentCode',
   'lineId',
   'parentLineId',

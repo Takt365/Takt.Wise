@@ -12,7 +12,7 @@ import type { QualityAssurance } from '@/types/logistics/quality/cost/assurance.
 /** 主表选中行上下文 */
 export interface QualityAssuranceMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<QualityAssurance | null>
+  selecmedMasterRow: Ref<QualityAssurance | null>
 }
 
 const qualityAssuranceMasterContextKey: InjectionKey<QualityAssuranceMasterContext> = Symbol('assuranceMasterContext')
@@ -22,8 +22,8 @@ const qualityAssuranceMasterContextKey: InjectionKey<QualityAssuranceMasterConte
  * @returns {QualityAssuranceMasterContext} 主表上下文
  */
 export function provideQualityAssuranceMasterContext(): QualityAssuranceMasterContext {
-  const selectedMasterRow = ref<QualityAssurance | null>(null)
-  const ctx: QualityAssuranceMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<QualityAssurance | null>(null)
+  const ctx: QualityAssuranceMasterContext = { selecmedMasterRow }
   provide(qualityAssuranceMasterContextKey, ctx)
   return ctx
 }

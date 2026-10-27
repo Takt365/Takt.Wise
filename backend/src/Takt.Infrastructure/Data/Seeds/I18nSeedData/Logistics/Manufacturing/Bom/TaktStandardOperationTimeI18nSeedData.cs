@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Bom
 // 文件名称：TaktStandardOperationTimeI18nSeedData.cs
-// 创建时间：2026-10-14
+// 创建时间：2026-10-27
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktStandardOperationTime 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -84,11 +84,11 @@ public class TaktStandardOperationTimeI18nSeedData : ITaktSeedDataCoordinator
             // entity.standardoperationtime._self
             new TranslationSeedItem("entity.standardoperationtime._self", "en-US", "Standard Operation Time Information_us", "实体名称"),
             // entity.standardoperationtime._self
-            new TranslationSeedItem("entity.standardoperationtime._self", "ja-JP", "标准工序时间信息_jp", "实体名称"),
+            new TranslationSeedItem("entity.standardoperationtime._self", "ja-JP", "标准工时信息_jp", "实体名称"),
             // entity.standardoperationtime._self
-            new TranslationSeedItem("entity.standardoperationtime._self", "zh-CN", "标准工序时间信息", "实体名称"),
+            new TranslationSeedItem("entity.standardoperationtime._self", "zh-CN", "标准工时信息", "实体名称"),
             // entity.standardoperationtime._self
-            new TranslationSeedItem("entity.standardoperationtime._self", "zh-HK", "标准工序时间信息_hk", "实体名称"),
+            new TranslationSeedItem("entity.standardoperationtime._self", "zh-HK", "标准工时信息_hk", "实体名称"),
 
             // entity.standardoperationtime.materialcode
             new TranslationSeedItem("entity.standardoperationtime.materialcode", "en-US", "物料编码_us", "物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）"),

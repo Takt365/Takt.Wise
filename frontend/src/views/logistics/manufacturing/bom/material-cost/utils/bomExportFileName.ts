@@ -22,18 +22,18 @@ function sanitizeExportSegment(segment: string): string {
 /**
  * 标准导出名 + 选中条件（工厂置前）组成下载基名，与推移分析统一为 {Plant}_{报表名}_{其它}
  * @param {string} standardName 标准名，如「DTA BOM成本推移表」
- * @param {ReadonlyArray<string | undefined | null>} selectedParts 选中信息；首段为工厂码，其后为机种/产品等
+ * @param {ReadonlyArray<string | undefined | null>} selecmedParts 选中信息；首段为工厂码，其后为机种/产品等
  * @returns {string} 基名（不含扩展名），如「C100_DTA BOM成本推移表_202MK7」
  */
 export function buildBomExportBaseName(
   standardName: string,
-  selectedParts: ReadonlyArray<string | undefined | null>,
+  selecmedParts: ReadonlyArray<string | undefined | null>,
 ): string {
   const base = sanitizeExportSegment(standardName || '')
   if (!base) {
     return 'export'
   }
-  const parts = selectedParts
+  const parts = selecmedParts
     .map((part) => (part == null ? '' : sanitizeExportSegment(String(part))))
     .filter((part) => part.length > 0)
   if (parts.length === 0) {
@@ -46,12 +46,12 @@ export function buildBomExportBaseName(
 /**
  * 带 .xlsx 的完整导出文件名
  * @param {string} standardName 标准名
- * @param {ReadonlyArray<string | undefined | null>} selectedParts 选中信息（首段工厂）
+ * @param {ReadonlyArray<string | undefined | null>} selecmedParts 选中信息（首段工厂）
  * @returns {string} 如「C100_DTA BOM通用组件成本推移表_202MK7.xlsx」
  */
 export function buildBomExportFileName(
   standardName: string,
-  selectedParts: ReadonlyArray<string | undefined | null>,
+  selecmedParts: ReadonlyArray<string | undefined | null>,
 ): string {
-  return `${buildBomExportBaseName(standardName, selectedParts)}.xlsx`
+  return `${buildBomExportBaseName(standardName, selecmedParts)}.xlsx`
 }

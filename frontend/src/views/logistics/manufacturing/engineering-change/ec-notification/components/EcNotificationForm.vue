@@ -16,7 +16,7 @@
     layout="horizontal"
     label-align="right"
   >
-    <a-tabs
+    <TaktFormTabs
       v-model:active-key="activeTab"
       class="ec-notification-form-tabs"
     >
@@ -93,12 +93,12 @@
             </a-col>
             <a-col :span="12">
               <a-form-item
-                :label="pi.label('ecGijutsuId')"
-                name="ecGijutsuId"
+                :label="pi.label('ecTeId')"
+                name="ecTeId"
               >
                 <a-input
-                  v-model:value="formState.ecGijutsuId"
-                  :placeholder="pi.ph('ecGijutsuId')"
+                  v-model:value="formState.ecTeId"
+                  :placeholder="pi.ph('ecTeId')"
                   show-count
                   :maxlength="20"
                   allow-clear
@@ -281,7 +281,7 @@
           </a-row>
         </div>
       </a-tab-pane>
-    </a-tabs>
+    </TaktFormTabs>
   </a-form>
 </template>
 
@@ -401,7 +401,7 @@ const formContentClass = computed(() => (formFields.length > 10 ? 'takt-form-con
 /** 当前激活的 Tab key */
 const activeTab = ref('tab-0')
 /** CreateDto 字段名列表（与 formState 键对齐） */
-const formFields = ["tenantCode","companyCode","cultureCode","plantCode","ecNotificationCode","ecGijutsuId","ecCode","ecTitle","ecNotificationDate","ecNotificationDeptCodes","ecNotificationDeptNames","ecNotificationNotifierGroupCode","ecNotificationNotifierGroupName","ecNotificationMethod","ecNotificationStatus","extField","remark"]
+const formFields = ["tenantCode","companyCode","cultureCode","plantCode","ecNotificationCode","ecTeId","ecCode","ecTitle","ecNotificationDate","ecNotificationDeptCodes","ecNotificationDeptNames","ecNotificationNotifierGroupCode","ecNotificationNotifierGroupName","ecNotificationMethod","ecNotificationStatus","extField","remark"]
 
 /** 父级传入的编辑 DTO；新增时为 undefined 或空对象 */
 interface Props {
@@ -479,10 +479,10 @@ const rules = computed<Record<string, Rule[]>>(() => ({
       trigger: 'blur'
     }
   ],
-  ecGijutsuId: [
+  ecTeId: [
     {
       required: true,
-      message: pi.ph('ecGijutsuId'),
+      message: pi.ph('ecTeId'),
       trigger: 'blur'
     }
   ],

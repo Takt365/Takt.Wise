@@ -40,7 +40,7 @@ public class TaktPcbaOutputStatsController : TaktControllerBase
     /// </summary>
     /// <param name="queryDto">查询 DTO</param>
     /// <returns>PCBA 生产统计</returns>
-    [TaktPermission("logistics:manufacturing:output:pcba:list", "PCBA生产统计")]
+    [TaktPermission("logistics:manufacturing:output:mfg2:list", "PCBA生产统计")]
     [HttpGet("production-stat")]
     public async Task<IActionResult> GetPcbaOutputProductionStatAsync([FromQuery] TaktOutputProductionStatQueryDto queryDto)
     {

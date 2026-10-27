@@ -28,7 +28,7 @@
     />
     <a-table
       size="small"
-      :row-selection="{ selectedRowKeys, onChange: onSelectChange }"
+      :row-selection="{ selecmedRowKeys, onChange: onSelectChange }"
       :columns="columns"
       :data-source="dataSource"
       :loading="loading"
@@ -50,7 +50,7 @@ const { t } = useI18n()
 
 const props = defineProps<{
   open: boolean
-  selectedIds: string[]
+  selecmedIds: string[]
 }>()
 
 const emit = defineEmits<{
@@ -69,7 +69,7 @@ const pageIndex = ref(getTaktDefaultPageIndex())
 const pageSize = ref(getTaktDefaultPageSize())
 const total = ref(0)
 const dataSource = ref<Role[]>([])
-const selectedRowKeys = ref<string[]>([])
+const selecmedRowKeys = ref<string[]>([])
 const nameById = ref<Record<string, string>>({})
 
 const columns = computed(() => [
@@ -87,7 +87,7 @@ const pagination = computed(() => ({
 
 function onSelectChange(keys: (string | number)[], rows: Role[]) {
   const ks = keys.map(String)
-  const prev = new Set(selectedRowKeys.value)
+  const prev = new Set(selecmedRowKeys.value)
   const next = new Set(ks)
   for (const id of prev) {
     if (!next.has(id)) delete nameById.value[id]
@@ -95,7 +95,7 @@ function onSelectChange(keys: (string | number)[], rows: Role[]) {
   for (const row of rows) {
     nameById.value[String(row.roleId)] = row.roleName ?? String(row.roleId)
   }
-  selectedRowKeys.value = ks
+  selecmedRowKeys.value = ks
 }
 
 async function fetchList() {
@@ -133,13 +133,13 @@ watch(
   (v) => {
     if (v) {
       nameById.value = {}
-      selectedRowKeys.value = [...(props.selectedIds ?? [])]
+      selecmedRowKeys.value = [...(props.selecmedIds ?? [])]
       keyWords.value = ''
       pageIndex.value = 1
       fetchList().then(() => {
         for (const row of dataSource.value) {
           const id = String(row.roleId)
-          if (selectedRowKeys.value.includes(id)) {
+          if (selecmedRowKeys.value.includes(id)) {
             nameById.value[id] = row.roleName ?? id
           }
         }
@@ -149,7 +149,7 @@ watch(
 )
 
 function handleOk() {
-  const ids = selectedRowKeys.value
+  const ids = selecmedRowKeys.value
   const items = ids.map((id) => ({ targetId: id, name: nameById.value[id] ?? id }))
   emit('confirm', { ids, items })
   emit('update:open', false)

@@ -14,7 +14,7 @@ import type { CompanyDtoBase, TaktPagedQuery } from '@/types/common.types';
 export interface EcDeptView extends CompanyDtoBase {
   ecDeptId?: string;
   ecDetailId: string;
-  ecGijutsuId: string;
+  ecTeId: string;
   ecCode: string;
   lineNumber: number;
   ecModelCode: string;
@@ -36,7 +36,7 @@ export interface EcDeptView extends CompanyDtoBase {
   scheduledDate?: string;
   scheduledBatch?: string;
   poRemainder?: string;
-  balance?: string;
+  balanceQuantity?: number | null;
   oldProductHandling?: string;
   purchaseOrderIssueDate?: string;
   supplier?: string;
@@ -78,7 +78,7 @@ export interface EcDeptViewUpdate {
   scheduledDate?: string;
   scheduledBatch?: string;
   poRemainder?: string;
-  balance?: string;
+  balanceQuantity?: number | null;
   oldProductHandling?: string;
   purchaseOrderIssueDate?: string;
   supplier?: string;

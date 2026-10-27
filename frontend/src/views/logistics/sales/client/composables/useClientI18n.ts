@@ -83,7 +83,8 @@ export const CLIENT_PLACEHOLDER = {
   companyCode: 'optional',
   cultureCode: 'optional',
   plantCode: 'optional',
-  clientCode: 'required',
+  numberingRuleCode: 'select',
+  clientCode: 'optional',
   accountGroup: 'required',
   salesOrganization: 'select',
   distributionChannel: 'required',
@@ -112,7 +113,7 @@ export const CLIENT_PLACEHOLDER = {
   taxNumber2: 'optional',
   taxNumber3: 'optional',
   bankCountryCode: 'optional',
-  bankCode: 'select',
+  bankCode: 'optional',
   bankAccount: 'optional',
   bankAccountHolder: 'optional',
   clientCategory: 'select',
@@ -148,7 +149,6 @@ export type ClientField = keyof typeof CLIENT_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const CLIENT_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'clientCode',
   'accountGroup',
   'salesOrganization',

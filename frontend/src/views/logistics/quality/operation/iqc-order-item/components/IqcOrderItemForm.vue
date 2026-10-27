@@ -118,7 +118,7 @@
                   v-model:value="formState.batchCode"
                   :placeholder="t('common.page.form.placeholder.required', { field: t('entity.iqcorderitem.batchCode') })"
                   show-count
-                  :maxlength="50"
+                  :maxlength="20"
                   allow-clear
                 />
               </a-form-item>

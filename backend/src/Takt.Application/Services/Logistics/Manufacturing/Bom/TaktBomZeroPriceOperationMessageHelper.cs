@@ -123,13 +123,19 @@ public static class TaktBomZeroPriceOperationMessageHelper
     /// </summary>
     /// <param name="result">结果</param>
     /// <param name="isManual">是否手工更新</param>
+    /// <param name="isBatch">是否批量回填替代价格（ComponentCode 为空）</param>
     /// <returns>正文</returns>
     public static string BuildMovingPriceBackfillSuccess(
         TaktBomMaterialZeroPriceMovingBackfillResultDto result,
-        bool isManual)
+        bool isManual,
+        bool isBatch = false)
     {
         ArgumentNullException.ThrowIfNull(result);
-        var head = isManual ? "手工更新移动价格完成" : "回填移动价格完成";
+        var head = isManual
+            ? "手工更新移动价格完成"
+            : isBatch
+                ? "批量回填替代价格完成"
+                : "回填移动价格完成";
         return $"{result.ProcessedMonth} {head}：组件 {result.ComponentProcessedCount}，扫描 {result.ScannedRowCount}，更新 {result.UpdatedRowCount}，未变化 {result.UnchangedRowCount}，无建议价 {result.SkippedNoPriceCount}，产品月成本 {result.ProductMonthlyCostUpdatedCount}，机种月成本 {result.ModelMonthlyAverageUpdatedCount}";
     }
 

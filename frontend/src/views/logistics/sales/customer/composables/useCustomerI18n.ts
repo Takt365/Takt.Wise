@@ -85,7 +85,6 @@ export const CUSTOMER_PLACEHOLDER = {
   plantCode: 'optional',
   numberingRuleCode: 'select',
   customerCode: 'optional',
-  numberingRuleCode: 'optional',
   accountGroup: 'required',
   salesOrganization: 'select',
   distributionChannel: 'required',
@@ -114,7 +113,7 @@ export const CUSTOMER_PLACEHOLDER = {
   taxNumber2: 'optional',
   taxNumber3: 'optional',
   bankCountryCode: 'optional',
-  bankCode: 'select',
+  bankCode: 'optional',
   bankAccount: 'optional',
   bankAccountHolder: 'optional',
   customerCategory: 'select',
@@ -150,7 +149,6 @@ export type CustomerField = keyof typeof CUSTOMER_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const CUSTOMER_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'customerCode',
   'accountGroup',
   'salesOrganization',

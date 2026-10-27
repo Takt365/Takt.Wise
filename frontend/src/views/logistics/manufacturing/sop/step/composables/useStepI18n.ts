@@ -50,7 +50,6 @@ export type SopStepField = keyof typeof SOPSTEP_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const SOPSTEP_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'contentId',
   'stepTitle',
   'stepDescription',

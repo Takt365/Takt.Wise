@@ -12,7 +12,7 @@ import { useEntityFieldI18n } from '@/composables/useEntityFieldI18n'
 
 /**
  * 执行部门表单字段 i18n（列标题与表单标签一律走该部门 entity.{slug}.* 种子）
- * @param deptSlug 部门实体 slug（eckoubai / ecseikan / …，与 TaktEcXxxI18nSeedData 一致）
+ * @param deptSlug 部门实体 slug（ecpur / ecpc / …，与 TaktEcXxxI18nSeedData 一致）
  */
 export function useEcDeptViewI18n(deptSlug: string) {
   const deptI18n = useEntityFieldI18n(deptSlug)
@@ -23,7 +23,7 @@ export function useEcDeptViewI18n(deptSlug: string) {
    * @returns {string} 翻译文案
    */
   function label(field: string): string {
-    // 执行行主键（ecSeikanId / ecKoubaiId …）无独立 entity 种子时用通用「主键ID」
+    // 执行行主键（ecPcId / ecPurId …）无独立 entity 种子时用通用「主键ID」
     if (field !== 'ecDetailId' && /^ec[A-Za-z]+Id$/.test(field)) {
       return deptI18n.t('common.page.entity.id')
     }

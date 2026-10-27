@@ -96,7 +96,6 @@ export type PersonnelOperationRateField = keyof typeof PERSONNELOPERATIONRATE_PL
 
 /** 高级查询可 trim 的字符串字段 */
 export const PERSONNELOPERATIONRATE_QUERY_STRING_FIELDS = [
-  'plantCode',
   'startDateStart',
   'startDateEnd',
   'endDateStart',

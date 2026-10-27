@@ -70,6 +70,11 @@ public class TaktBomPriceDeltaTrendQueryDto : TaktPagedQuery
     /// 差异选项：all=全部（默认）；gt1/gt5/gt10/gt50/gt100=仅保留 |差异|≥该值的产品行（差异=基准月−比较月，主表月成本）。界面为 >=1 等符号（四语不翻译）。改变产品行集合与分页总数。
     /// </summary>
     public string? PriceDeltaOption { get; set; }
+
+    /// <summary>
+    /// 涨跌明细：up3down3=涨幅跌幅各前 3 条（默认）；up5down5=各前 5 条；all=全部明细。只影响价格差异组。建议替代价格、组件差异始终全量。
+    /// </summary>
+    public string? ImpactLineOption { get; set; }
 }
 
 /// <summary>

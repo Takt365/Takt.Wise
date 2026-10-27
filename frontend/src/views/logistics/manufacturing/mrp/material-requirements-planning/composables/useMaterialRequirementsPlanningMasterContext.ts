@@ -15,7 +15,7 @@ export type MaterialRequirementsPlanningRowRecord = MaterialRequirementsPlanning
 /** 主表选中行上下文 */
 export interface MaterialRequirementsPlanningMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<MaterialRequirementsPlanningRowRecord | null>
+  selecmedMasterRow: Ref<MaterialRequirementsPlanningRowRecord | null>
 }
 
 const materialRequirementsPlanningMasterContextKey: InjectionKey<MaterialRequirementsPlanningMasterContext> = Symbol('material-requirements-planningMasterContext')
@@ -25,8 +25,8 @@ const materialRequirementsPlanningMasterContextKey: InjectionKey<MaterialRequire
  * @returns {MaterialRequirementsPlanningMasterContext} 主表上下文
  */
 export function provideMaterialRequirementsPlanningMasterContext(): MaterialRequirementsPlanningMasterContext {
-  const selectedMasterRow = ref<MaterialRequirementsPlanningRowRecord | null>(null)
-  const ctx: MaterialRequirementsPlanningMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<MaterialRequirementsPlanningRowRecord | null>(null)
+  const ctx: MaterialRequirementsPlanningMasterContext = { selecmedMasterRow }
   provide(materialRequirementsPlanningMasterContextKey, ctx)
   return ctx
 }

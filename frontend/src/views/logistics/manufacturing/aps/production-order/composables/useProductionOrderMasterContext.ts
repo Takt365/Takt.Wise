@@ -12,7 +12,7 @@ import type { ProductionOrder } from '@/types/logistics/manufacturing/aps/produc
 /** 主表选中行上下文 */
 export interface ProductionOrderMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<ProductionOrder | null>
+  selecmedMasterRow: Ref<ProductionOrder | null>
 }
 
 const productionOrderMasterContextKey: InjectionKey<ProductionOrderMasterContext> = Symbol('production-orderMasterContext')
@@ -22,8 +22,8 @@ const productionOrderMasterContextKey: InjectionKey<ProductionOrderMasterContext
  * @returns {ProductionOrderMasterContext} 主表上下文
  */
 export function provideProductionOrderMasterContext(): ProductionOrderMasterContext {
-  const selectedMasterRow = ref<ProductionOrder | null>(null)
-  const ctx: ProductionOrderMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<ProductionOrder | null>(null)
+  const ctx: ProductionOrderMasterContext = { selecmedMasterRow }
   provide(productionOrderMasterContextKey, ctx)
   return ctx
 }

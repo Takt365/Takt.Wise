@@ -64,7 +64,7 @@ public sealed class TaktBomModelAvgCostJobHandler : ITaktQuartzJobHandler
         context.ExecuteMessage =
             $"机种平均成本完成（期间 {result.CostingPeriod}）：扫描 {result.ScannedRowCount}（产品月成本>0共 {result.PositiveProductCostRowCount}），机种更新 {result.ModelCodeUpdatedCount}，物料类型更新 {result.MaterialTypeUpdatedCount}，月均更新 {result.AverageUpdatedCount}，有成本组 {result.GroupsWithProductCostCount}/{result.ModelGroupCount}，无成本组 {result.GroupsWithoutProductCostCount}";
         TaktLogger.Information(
-            "[BomModelAvgCost] Quartz 完成 Period={Period} Scanned={Scanned} PositivePmc={PositivePmc} ModelUpdated={ModelUpdated} TypeUpdated={TypeUpdated} AvgUpdated={AvgUpdated} GroupsWithCost={GroupsWithCost}/{Groups} NoCost={NoCost} Tenant={Tenant} Company={Company}",
+            "[BomModelAvgCost] Quartz 完成 Period={Period} Scanned={Scanned} PositivePc={PositivePc} ModelUpdated={ModelUpdated} TypeUpdated={TypeUpdated} AvgUpdated={AvgUpdated} GroupsWithCost={GroupsWithCost}/{Groups} NoCost={NoCost} Tenant={Tenant} Company={Company}",
             result.CostingPeriod,
             result.ScannedRowCount,
             result.PositiveProductCostRowCount,

@@ -98,7 +98,6 @@ export type PurchaseOrderField = keyof typeof PURCHASEORDER_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const PURCHASEORDER_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'purchaseOrderCode',
   'purchaseRequestId',
   'purchaseRequestCode',

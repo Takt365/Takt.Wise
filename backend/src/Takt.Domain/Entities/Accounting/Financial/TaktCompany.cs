@@ -44,7 +44,7 @@ public class TaktCompany : TaktTenantEntityBase
     /// <summary>
     /// 公司简称
     /// </summary>
-    [SugarColumn(ColumnName = "company_short_name", ColumnDescription = "公司简称", ColumnDataType = "nvarchar", Length = 50, IsNullable = false)]
+    [SugarColumn(ColumnName = "company_short_name", ColumnDescription = "公司简称", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string CompanyShortName { get; set; } = string.Empty;
     /// <summary>
     /// 企业性质（字典 sys_enterprise_nature）

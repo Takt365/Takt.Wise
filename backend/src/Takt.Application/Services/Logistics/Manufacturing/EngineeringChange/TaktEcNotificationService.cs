@@ -31,7 +31,7 @@ namespace Takt.Application.Services.Logistics.Manufacturing.EngineeringChange;
 public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationService
 {
     private readonly ITaktApprovalRepository<TaktEcNotification> _ecNotificationRepository;
-    private readonly ITaktCompanyRepository<TaktEcGijutsu> _ecGijutsuRepository;
+    private readonly ITaktCompanyRepository<TaktEcTe> _ecTeRepository;
     private readonly ITaktUniqueValidator _uniqueValidator;
     private readonly ITaktNumberingGenerator _numberingGenerator;
 
@@ -39,14 +39,14 @@ public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationSer
     /// 构造函数
     /// </summary>
     /// <param name="ecNotificationRepository">工程变更通知单仓储</param>
-    /// <param name="ecGijutsuRepository">设变技术课主仓储</param>
+    /// <param name="ecTeRepository">设变技术课主仓储</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
     /// <param name="numberingGenerator">业务编码生成器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktEcNotificationService(
         ITaktApprovalRepository<TaktEcNotification> ecNotificationRepository,
-        ITaktCompanyRepository<TaktEcGijutsu> ecGijutsuRepository,
+        ITaktCompanyRepository<TaktEcTe> ecTeRepository,
         ITaktUniqueValidator uniqueValidator,
         ITaktNumberingGenerator numberingGenerator,
         ITaktUserContext? userContext = null,
@@ -54,7 +54,7 @@ public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationSer
         : base(userContext, localizationService)
     {
         _ecNotificationRepository = ecNotificationRepository;
-        _ecGijutsuRepository = ecGijutsuRepository;
+        _ecTeRepository = ecTeRepository;
         _uniqueValidator = uniqueValidator;
         _numberingGenerator = numberingGenerator;
     }
@@ -129,9 +129,13 @@ public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationSer
     public async Task<TaktEcNotificationDto> CreateEcNotificationAsync(TaktEcNotificationCreateDto dto)
     {
         var entity = dto.Adapt<TaktEcNotification>();
-        await StampEcNotificationEcGijutsuAsync(entity, dto);
+        await StampEcNotificationEcTeAsync(entity, dto);
         var ruleCode = TaktEcFlowConstants.ResolveNotificationRuleCode(entity.EcNotificationMethod);
-        var generated = await _numberingGenerator.GenerateNextAsync(ruleCode);
+        var existingRows = await _ecNotificationRepository.GetListAsync(
+            x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode);
+        var generated = await _numberingGenerator.GenerateNextAsync(
+            ruleCode,
+            existingRows.Select(x => (string?)x.EcNotificationCode).ToList());
         if (string.IsNullOrWhiteSpace(generated.BusinessCode))
         {
             throw new TaktBusinessException("工程变更通知单号生成失败");
@@ -162,7 +166,7 @@ public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationSer
             throw new TaktBusinessException("工程变更通知单不存在");
         }
         dto.Adapt(entity);
-        await StampEcNotificationEcGijutsuAsync(entity, dto);
+        await StampEcNotificationEcTeAsync(entity, dto);
         var isUnique_ix_takt_logistics_manufacturing_ec_notification_code_unique = await _uniqueValidator.IsUniqueAsync(
             _ecNotificationRepository,
             x => x.EcNotificationCode == entity.EcNotificationCode,
@@ -261,7 +265,7 @@ public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationSer
             {
                 var entity = rows[i].Adapt<TaktEcNotification>();
                 var importDto = rows[i].Adapt<TaktEcNotificationCreateDto>();
-                await StampEcNotificationEcGijutsuAsync(entity, importDto);
+                await StampEcNotificationEcTeAsync(entity, importDto);
                 var importKey = $"{entity.EcNotificationCode}";
                 if (!importSeenKeys.Add(importKey))
                 {
@@ -329,18 +333,18 @@ public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationSer
     /// <param name="entity">当前实体</param>
     /// <param name="dto">创建 DTO</param>
     /// <returns>任务</returns>
-    private async Task StampEcNotificationEcGijutsuAsync(TaktEcNotification entity, TaktEcNotificationCreateDto dto)
+    private async Task StampEcNotificationEcTeAsync(TaktEcNotification entity, TaktEcNotificationCreateDto dto)
     {
-        if (dto.EcGijutsuId <= 0)
+        if (dto.EcTeId <= 0)
         {
             return;
         }
-        var master = await _ecGijutsuRepository.GetByIdAsync(dto.EcGijutsuId);
+        var master = await _ecTeRepository.GetByIdAsync(dto.EcTeId);
         if (master == null)
         {
             throw new TaktBusinessException("设变技术课主不存在");
         }
-        entity.EcGijutsuId = master.Id;
+        entity.EcTeId = master.Id;
         if (string.IsNullOrEmpty(entity.TenantCode))
         {
             entity.TenantCode = master.TenantCode;
@@ -414,10 +418,10 @@ public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationSer
             exp = exp.And(x => x.EcNotificationCode != null && x.EcNotificationCode.Contains(ecNotificationCode));
         }
 
-        if (queryDto?.EcGijutsuId.HasValue == true)
+        if (queryDto?.EcTeId.HasValue == true)
         {
-            var ecGijutsuId = queryDto.EcGijutsuId.Value;
-            exp = exp.And(x => x.EcGijutsuId == ecGijutsuId);
+            var ecTeId = queryDto.EcTeId.Value;
+            exp = exp.And(x => x.EcTeId == ecTeId);
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.EcCode))
@@ -534,7 +538,7 @@ public class TaktEcNotificationService : TaktServiceBase, ITaktEcNotificationSer
         {
             return true;
         }
-        if (queryDto.EcGijutsuId.HasValue)
+        if (queryDto.EcTeId.HasValue)
         {
             return true;
         }

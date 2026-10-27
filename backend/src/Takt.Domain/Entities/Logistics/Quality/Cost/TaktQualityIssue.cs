@@ -50,7 +50,7 @@ public class TaktQualityIssue : TaktCompanyEntityBase
     /// <summary>
     /// 批次号/Lot No
     /// </summary>
-    [SugarColumn(ColumnName = "lot", ColumnDescription = "批次号", Length = 30, ColumnDataType = "nvarchar", IsNullable = false)]
+    [SugarColumn(ColumnName = "lot", ColumnDescription = "批次号", Length = 20, ColumnDataType = "nvarchar", IsNullable = false)]
     public string Lot { get; set; } = string.Empty;
 
     // ==================== 汇总信息 ====================

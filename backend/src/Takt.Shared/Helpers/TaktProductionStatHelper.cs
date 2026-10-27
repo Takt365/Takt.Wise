@@ -32,7 +32,7 @@ public static class TaktProductionStatHelper
     public const int StandardOperationRateStatusEnabled = 1;
 
     /// <summary>
-    /// 标准工序时间审批通过状态（流程归档 ApprovalStatus=2）
+    /// 标准工时审批通过状态（流程归档 ApprovalStatus=2）
     /// </summary>
     public const int StandardOperationTimeApprovalCompleted = 2;
     /// <summary>

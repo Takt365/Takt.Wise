@@ -19,7 +19,7 @@ using Takt.Shared.Helpers;
 namespace Takt.WebApi.Controllers.Logistics.Manufacturing.Bom;
 
 /// <summary>
-/// BOM 机种成本推移分析控制器（与产品成本推移 / CostItem CRUD 分离）
+/// BOM 机种成本推移分析控制器（与 CostItem CRUD 分离）
 /// </summary>
 [ApiModule(4, "后勤管理")]
 [Route("api/[controller]", Name = "BOM机种成本推移")]

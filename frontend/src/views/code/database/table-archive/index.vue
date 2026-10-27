@@ -368,7 +368,7 @@
         </a-form-item>
         <a-form-item :label="t('code.database.table-archive.page.archive.selectpolicies')">
           <a-typography-text type="secondary">
-            {{ selectedEnabledPolicyIds.length }} / {{ selectedRows.length }}
+            {{ selecmedEnabledPolicyIds.length }} / {{ selecmedRows.length }}
           </a-typography-text>
         </a-form-item>
         <div class="mb-4 flex flex-wrap gap-2">
@@ -542,9 +542,9 @@ const dataSource = ref<TableArchive[]>([])
 const currentPage = ref(getTaktDefaultPageIndex())
 const pageSize = ref(getTaktDefaultPageSize())
 const total = ref(0)
-const selectedRow = ref<TableArchiveRowRecord | null>(null)
-const selectedRows = ref<TableArchiveRowRecord[]>([])
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRow = ref<TableArchiveRowRecord | null>(null)
+const selecmedRows = ref<TableArchiveRowRecord[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 const formVisible = ref(false)
 const formTitle = ref('')
 const formData = ref<Partial<TableArchive> | null>(null)
@@ -591,25 +591,25 @@ const advancedQueryForm = ref(createEmptyAdvancedQueryForm())
 const queryFieldsMeta = computed(() =>
   TABLE_ARCHIVE_QUERY_FIELDS.map((key) => ({ key, label: pi.queryLabel(key) })),
 )
-const updateDisabled = computed(() => selectedRows.value.length !== 1)
-const deleteDisabled = computed(() => selectedRows.value.length === 0)
+const updateDisabled = computed(() => selecmedRows.value.length !== 1)
+const deleteDisabled = computed(() => selecmedRows.value.length === 0)
 
-const selectedEnabledPolicyIds = computed(() =>
-  selectedRows.value
+const selecmedEnabledPolicyIds = computed(() =>
+  selecmedRows.value
     .filter((row) => Number((row as TableArchive).archiveStatus) === 1)
     .map((row) => getTableArchiveId(row))
     .filter(Boolean),
 )
 
-const archiveToolbarDisabled = computed(() => selectedEnabledPolicyIds.value.length === 0)
-const ensureYearsToolbarDisabled = computed(() => selectedRows.value.length !== 1)
+const archiveToolbarDisabled = computed(() => selecmedEnabledPolicyIds.value.length === 0)
+const ensureYearsToolbarDisabled = computed(() => selecmedRows.value.length !== 1)
 const archiveActionDisabled = computed(() =>
-  selectedEnabledPolicyIds.value.length === 0 || !archiveYear.value,
+  selecmedEnabledPolicyIds.value.length === 0 || !archiveYear.value,
 )
 
 const ensureYearsHint = computed(() => {
-  const tableName = selectedRows.value.length === 1
-    ? String((selectedRows.value[0] as TableArchive).tableName || '')
+  const tableName = selecmedRows.value.length === 1
+    ? String((selecmedRows.value[0] as TableArchive).tableName || '')
     : '{table}'
   return t('code.database.table-archive.page.ensureyears.yearshint').replace('{表名}', tableName)
 })
@@ -734,42 +734,42 @@ function buildYearRange(start: number, end: number): number[] {
 }
 
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: TableArchiveRowRecord[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: TableArchiveRowRecord, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
+  onSelect: (record: TableArchiveRowRecord, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
     } else if (
-      selectedRow.value
-      && getTableArchiveId(selectedRow.value) === getTableArchiveId(record)
+      selecmedRow.value
+      && getTableArchiveId(selecmedRow.value) === getTableArchiveId(record)
     ) {
-      selectedRow.value = null
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: TableArchiveRowRecord[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: TableArchiveRowRecord[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   },
 }))
 
 const onClickRow = (record: TableArchiveRowRecord) => ({
   onClick: () => {
     const key = getTableArchiveId(record)
-    const index = selectedRowKeys.value.indexOf(key)
+    const index = selecmedRowKeys.value.indexOf(key)
     if (index > -1) {
-      selectedRowKeys.value.splice(index, 1)
+      selecmedRowKeys.value.splice(index, 1)
     } else {
-      selectedRowKeys.value.push(key)
+      selecmedRowKeys.value.push(key)
     }
-    selectedRows.value = dataSource.value.filter((item) =>
-      selectedRowKeys.value.includes(getTableArchiveId(item)),
+    selecmedRows.value = dataSource.value.filter((item) =>
+      selecmedRowKeys.value.includes(getTableArchiveId(item)),
     )
-    selectedRow.value = selectedRowKeys.value.length === 1 ? (selectedRows.value[0] ?? null) : null
+    selecmedRow.value = selecmedRowKeys.value.length === 1 ? (selecmedRows.value[0] ?? null) : null
     if (rowSelection.value.onChange) {
-      rowSelection.value.onChange(selectedRowKeys.value, selectedRows.value)
+      rowSelection.value.onChange(selecmedRowKeys.value, selecmedRows.value)
     }
   },
 })
@@ -830,8 +830,8 @@ async function handleEdit(record: TableArchiveRowRecord) {
 }
 
 function handleUpdate() {
-  if (selectedRow.value) {
-    void handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    void handleEdit(selecmedRow.value)
   } else {
     message.warning(
       t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: pi.self() }),
@@ -932,7 +932,7 @@ function handleImportSuccess() {
 }
 
 async function handleDelete() {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(
       t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: pi.self() }),
     )
@@ -942,12 +942,12 @@ async function handleDelete() {
     title: t('common.tip.confirm.delete.title'),
     content: t('common.tip.confirm.delete.count', {
       entity: pi.self(),
-      count: selectedRows.value.length,
+      count: selecmedRows.value.length,
     }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value.map((row) => getTableArchiveId(row)).filter(Boolean)
+      const ids = selecmedRows.value.map((row) => getTableArchiveId(row)).filter(Boolean)
       await deleteTableArchiveBatch(ids)
       message.success(t('common.feedback.deleted', { target: pi.self() }))
       loadData()
@@ -996,7 +996,7 @@ function resolveArchivePolicyIds(record?: TableArchiveRowRecord): string[] {
     const id = getTableArchiveId(record)
     return id && Number((record as TableArchive).archiveStatus) === 1 ? [id] : []
   }
-  return [...selectedEnabledPolicyIds.value]
+  return [...selecmedEnabledPolicyIds.value]
 }
 
 function openArchiveModal(record?: TableArchiveRowRecord) {
@@ -1005,9 +1005,9 @@ function openArchiveModal(record?: TableArchiveRowRecord) {
     if (!id) {
       return
     }
-    selectedRowKeys.value = [id]
-    selectedRows.value = [record]
-    selectedRow.value = record
+    selecmedRowKeys.value = [id]
+    selecmedRows.value = [record]
+    selecmedRow.value = record
   }
   const policyIds = resolveArchivePolicyIds(record)
   if (policyIds.length === 0) {
@@ -1026,7 +1026,7 @@ function handleArchiveModalCancel() {
 }
 
 async function handleArchivePreview() {
-  const policyIds = selectedEnabledPolicyIds.value
+  const policyIds = selecmedEnabledPolicyIds.value
   if (policyIds.length === 0 || !archiveYear.value) {
     message.warning(t('code.database.table-archive.page.archive.emptyselection'))
     return
@@ -1048,7 +1048,7 @@ async function handleArchivePreview() {
 }
 
 async function handleArchiveRunNow() {
-  const policyIds = selectedEnabledPolicyIds.value
+  const policyIds = selecmedEnabledPolicyIds.value
   if (policyIds.length === 0 || !archiveYear.value) {
     message.warning(t('code.database.table-archive.page.archive.emptyselection'))
     return
@@ -1087,7 +1087,7 @@ async function handleRowRunNow(record: TableArchiveRowRecord) {
 }
 
 function openScheduleModalFromArchive() {
-  const policyIds = selectedEnabledPolicyIds.value
+  const policyIds = selecmedEnabledPolicyIds.value
   if (policyIds.length === 0) {
     message.warning(t('code.database.table-archive.page.archive.emptyselection'))
     return
@@ -1145,11 +1145,11 @@ function openEnsureYearsModal(record?: TableArchiveRowRecord) {
     if (!id) {
       return
     }
-    selectedRowKeys.value = [id]
-    selectedRows.value = [record]
-    selectedRow.value = record
+    selecmedRowKeys.value = [id]
+    selecmedRows.value = [record]
+    selecmedRow.value = record
   }
-  if (selectedRows.value.length !== 1) {
+  if (selecmedRows.value.length !== 1) {
     message.warning(
       t('common.tip.select.to.action', {
         action: t('code.database.table-archive.page.ensureyears.title'),
@@ -1171,10 +1171,10 @@ function handleEnsureYearsCancel() {
 }
 
 async function handleEnsureYearsSubmit() {
-  if (selectedRows.value.length !== 1) {
+  if (selecmedRows.value.length !== 1) {
     return
   }
-  const policyId = getTableArchiveId(selectedRows.value[0])
+  const policyId = getTableArchiveId(selecmedRows.value[0])
   const start = Number(ensureYearStart.value)
   const end = Number(ensureYearEnd.value)
   if (!policyId || Number.isNaN(start) || Number.isNaN(end)) {

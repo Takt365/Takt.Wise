@@ -62,9 +62,10 @@ export const TAKT_TABLE_VIEWPORT_CHROME_RESERVE =
   TAKT_LAYOUT_HEADER_HEIGHT_PX + TAKT_LAYOUT_FOOTER_HEIGHT_PX + TAKT_TABLE_PAGE_SHELL_BELOW_HEADER_PX;
 
 /**
- * 内容区内嵌 a-tabs（如个人中心 size=small）标签栏额外预留（px）；在 page 预留之上再减
+ * 内容区内嵌 a-tabs 标签栏额外预留（px）；在 page 预留之上再减。
+ * 默认标签栏约 46px，加页内间距后须把表体压回内容区，外置分页才留在可视区域。
  */
-export const TAKT_TABLE_INNER_TABS_CHROME_PX = 40;
+export const TAKT_TABLE_INNER_TABS_CHROME_PX = 88;
 
 /**
  * @deprecated 请使用 computeTableScrollYPx；仅保留给仍传 :scroll="{ y: TAKT_VIEWPORT_TABLE_SCROLL_Y }" 的旧页面

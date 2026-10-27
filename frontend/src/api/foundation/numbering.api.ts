@@ -132,8 +132,6 @@ export interface NumberingPreview {
   ruleCode: string;
   /** 预览业务编码 */
   businessCode: string;
-  /** 预览流水号 */
-  currentSequence: number;
 }
 
 /**

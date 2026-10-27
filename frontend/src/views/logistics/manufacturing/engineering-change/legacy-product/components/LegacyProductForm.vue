@@ -16,7 +16,7 @@
     layout="horizontal"
     label-align="right"
   >
-    <a-tabs v-model:active-key="activeTab">
+    <TaktFormTabs v-model:active-key="activeTab">
       <a-tab-pane
         key="tab-0"
         :tab="t('common.page.form.tabs.basicinfo') + ' (1/2)'"
@@ -123,6 +123,17 @@
               </a-form-item>
             </a-col>
             <a-col :span="12">
+              <a-form-item :label="pi.label('oldProductHandling')" name="oldProductHandling">
+                <TaktSelect
+                  v-model:value="formState.oldProductHandling"
+                  dict-type="logistics_manufacturing_ec_old_part_disposition"
+                  :placeholder="pi.ph('oldProductHandling')"
+                  disabled
+                  allow-clear
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
               <a-form-item :label="pi.label('ecOldPartDisposition')" name="ecOldPartDisposition">
                 <TaktSelect
                   v-model:value="formState.ecOldPartDisposition"
@@ -145,17 +156,6 @@
               </a-form-item>
             </a-col>
             <a-col :span="24">
-              <a-form-item :label="pi.label('oldProductHandling')" name="oldProductHandling">
-                <TaktSelect
-                  v-model:value="formState.oldProductHandling"
-                  dict-type="logistics_manufacturing_ec_old_part_disposition"
-                  :placeholder="pi.ph('oldProductHandling')"
-                  :disabled="loading"
-                  allow-clear
-                />
-              </a-form-item>
-            </a-col>
-            <a-col :span="24">
               <a-form-item :label="pi.label('remark')" name="remark">
                 <a-textarea
                   v-model:value="formState.remark"
@@ -171,7 +171,7 @@
           </a-row>
         </div>
       </a-tab-pane>
-    </a-tabs>
+    </TaktFormTabs>
   </a-form>
 </template>
 
@@ -225,9 +225,9 @@ const formFields = [
   'ecIsCompatible',
   'ec2ndVendor',
   'ecInstruction',
+  'oldProductHandling',
   'ecOldPartDisposition',
   'ecNewMaterialCode',
-  'oldProductHandling',
   'discontinuedStatus',
   'remark',
 ]
@@ -264,8 +264,8 @@ function applyScopeDefaults(target: Record<string, unknown>, force = false) {
 const LEGACY_PRODUCT_DICT_FIELDS = [
   { field: 'ec2ndVendor', dictType: 'logistics_manufacturing_ec_2nd_vendor' },
   { field: 'ecInstruction', dictType: 'logistics_manufacturing_ec_source_instruction' },
-  { field: 'ecOldPartDisposition', dictType: 'logistics_manufacturing_ec_old_part_disposition' },
   { field: 'oldProductHandling', dictType: 'logistics_manufacturing_ec_old_part_disposition' },
+  { field: 'ecOldPartDisposition', dictType: 'logistics_manufacturing_ec_old_part_disposition' },
   { field: 'discontinuedStatus', dictType: 'logistics_materials_material_discontinued_status' },
 ] as const
 

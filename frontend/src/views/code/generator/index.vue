@@ -32,8 +32,8 @@
       :show-fullscreen="true"
       :show-refresh="true"
       :create-disabled="false"
-      :update-disabled="!selectedRow"
-      :delete-disabled="selectedRows.length === 0"
+      :update-disabled="!selecmedRow"
+      :delete-disabled="selecmedRows.length === 0"
       :create-loading="loading"
       :update-loading="loading"
       :delete-loading="loading"
@@ -256,11 +256,11 @@ const pageSize = ref(getTaktDefaultPageSize())
 /** 总记录数 */
 const total = ref(0)
 /** 当前单选行（多选时为空） */
-const selectedRow = ref<GenTable | null>(null)
+const selecmedRow = ref<GenTable | null>(null)
 /** 当前多选行 */
-const selectedRows = ref<GenTable[]>([])
+const selecmedRows = ref<GenTable[]>([])
 /** 表格选中行主键 */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 /** 新增/编辑表单弹窗显隐 */
 const formVisible = ref(false)
 /** 表单弹窗标题 */
@@ -459,11 +459,11 @@ const displayColumns = computed<TableColumnsType>(() => {
 
 /** 表格行选择配置 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: GenTable[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   }
 }))
 
@@ -475,11 +475,11 @@ const rowSelection = computed(() => ({
 const onClickRow = (record: GenTable) => ({
   onClick: () => {
     const key = String(record.genTableId ?? '')
-    const idx = selectedRowKeys.value.indexOf(key)
-    if (idx > -1) selectedRowKeys.value.splice(idx, 1)
-    else selectedRowKeys.value.push(key)
-    selectedRows.value = dataSource.value.filter((item: GenTable) => selectedRowKeys.value.includes(String(item.genTableId ?? '')))
-    selectedRow.value = selectedRows.value.length === 1 ? (selectedRows.value[0] ?? null) : null
+    const idx = selecmedRowKeys.value.indexOf(key)
+    if (idx > -1) selecmedRowKeys.value.splice(idx, 1)
+    else selecmedRowKeys.value.push(key)
+    selecmedRows.value = dataSource.value.filter((item: GenTable) => selecmedRowKeys.value.includes(String(item.genTableId ?? '')))
+    selecmedRow.value = selecmedRows.value.length === 1 ? (selecmedRows.value[0] ?? null) : null
   }
 })
 
@@ -608,7 +608,7 @@ async function handleEdit(record: GenTable) {
  * 工具栏编辑：编辑当前单选行
  */
 function handleUpdate() {
-  if (selectedRow.value) handleEdit(selectedRow.value)
+  if (selecmedRow.value) handleEdit(selecmedRow.value)
   else message.warning(t('common.page.action.warnselecttoaction', { action: t('common.page.button.edit'), entity: tableConfig() }))
 }
 
@@ -639,21 +639,21 @@ function handleDeleteOne(record: GenTable) {
  * 批量删除选中行
  */
 function handleDelete() {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(t('common.page.action.warnselecttoaction', { action: t('common.page.button.delete'), entity: tableConfig() }))
     return
   }
   Modal.confirm({
     title: t('common.page.action.confirmdelete'),
-    content: t('common.page.confirm.deletecountentity', { count: selectedRows.value.length, entity: tableConfig() }),
+    content: t('common.page.confirm.deletecountentity', { count: selecmedRows.value.length, entity: tableConfig() }),
     onOk: async () => {
       try {
         loading.value = true
-        await Promise.all(selectedRows.value.map((r: GenTable) => deleteGenTableById(String(r.genTableId))))
+        await Promise.all(selecmedRows.value.map((r: GenTable) => deleteGenTableById(String(r.genTableId))))
         message.success(t('common.feedback.deleted'))
-        selectedRowKeys.value = []
-        selectedRows.value = []
-        selectedRow.value = null
+        selecmedRowKeys.value = []
+        selecmedRows.value = []
+        selecmedRow.value = null
         loadData()
       } catch (e: unknown) {
         message.error(getErrorMessage(e) || t('common.feedback.delete.failed'))
@@ -1068,7 +1068,7 @@ async function handlePreviewOne(record: GenTable) {
     return
   }
 
-  selectedRow.value = record
+  selecmedRow.value = record
   previewFiles.value = []
   previewValidationIssues.value = []
   previewVisible.value = true
@@ -1148,10 +1148,10 @@ async function handleImportSubmit(payload: { tenantCode: string; tableName: stri
     
     const id = String(imported?.genTableId ?? imported?.tableName ?? '')
     if (id) {
-      selectedRowKeys.value = [id]
+      selecmedRowKeys.value = [id]
       const found = dataSource.value.find((r: GenTable) => String(r.genTableId ?? '') === id || String(r.tableName) === (payload.tableName || ''))
-      selectedRows.value = found ? [found] : (imported ? [imported as GenTable] : [])
-      selectedRow.value = found ?? (imported as GenTable) ?? null
+      selecmedRows.value = found ? [found] : (imported ? [imported as GenTable] : [])
+      selecmedRow.value = found ?? (imported as GenTable) ?? null
     }
   } catch (e: unknown) {
     const msg =

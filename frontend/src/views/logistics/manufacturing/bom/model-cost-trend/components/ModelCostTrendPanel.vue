@@ -42,6 +42,21 @@
           <template v-else-if="column.key === 'variancePrice'">
             {{ formatCost((record as BomMaterialCostItemModelCostTrend).variancePrice) }}
           </template>
+          <template v-else-if="column.key === 'componentVarianceText'">
+            <a-tooltip
+              v-if="String(text ?? '').trim()"
+              placement="topLeft"
+              :overlay-style="longTextTooltipStyle"
+            >
+              <template #title>
+                <div class="max-h-80 max-w-md overflow-auto whitespace-pre-wrap break-all text-xs">
+                  {{ text }}
+                </div>
+              </template>
+              <span class="block max-w-full truncate">{{ text }}</span>
+            </a-tooltip>
+            <span v-else>—</span>
+          </template>
           <template v-else>
             {{ text }}
           </template>
@@ -114,11 +129,18 @@ import {
   buildBomExportBaseName,
   buildBomExportFileName,
 } from '@/views/logistics/manufacturing/bom/material-cost/utils/bomExportFileName'
-import { periodRangeToMovingPricePeriodQuery } from '@/views/logistics/manufacturing/bom/material-cost-trend/composables/useMaterialCostItemAnalysis'
-import { useBomMaterialCostAnalysisMasterContext } from '@/views/logistics/manufacturing/bom/material-cost-trend/composables/useMaterialCostAnalysisMasterContext'
+import {
+  periodRangeToMovingPricePeriodQuery,
+  useModelCostTrendQueryContext,
+} from '../composables/useModelCostTrendQueryContext'
 
 const loading = defineModel<boolean>('loading', { default: false })
 const hasRows = defineModel<boolean>('hasRows', { default: false })
+
+/** 长文本 Tooltip 样式（限制悬停层尺寸，避免整页撑爆） */
+const longTextTooltipStyle = {
+  maxWidth: '480px',
+} as const
 
 /** 静态 locales 前缀 */
 const localePrefix = 'logistics.manufacturing.bom.model-cost-trend.page'
@@ -128,7 +150,7 @@ const {
   queryMaterialType,
   queryModelCode,
   periodRange,
-} = useBomMaterialCostAnalysisMasterContext()
+} = useModelCostTrendQueryContext()
 
 /** 成品行 */
 const rows = ref<BomMaterialCostItemModelCostTrend[]>([])

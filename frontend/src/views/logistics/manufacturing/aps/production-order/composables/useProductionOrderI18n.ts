@@ -74,7 +74,6 @@ export type ProductionOrderField = keyof typeof PRODUCTIONORDER_PLACEHOLDER
 
 /** 高级查询可 trim 的字符串字段 */
 export const PRODUCTIONORDER_QUERY_STRING_FIELDS = [
-  'plantCode',
   'prodOrderType',
   'prodOrderCode',
   'materialCode',

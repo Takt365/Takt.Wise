@@ -12,7 +12,7 @@
 
 export default {
   page: {
-    masterpanetitle: 'BOM物料成本（机种汇总）',
+    masterpanetitle: '材料成本（机种汇总）',
     detailpanetitle: '产品 / 明细',
     productpanetitle: '产品月成本',
     itempanetitle: 'BOM 明细',

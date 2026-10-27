@@ -135,7 +135,11 @@ public class TaktSalesInvoiceService : TaktServiceBase, ITaktSalesInvoiceService
         var entity = dto.Adapt<TaktSalesInvoice>();
         if (!string.IsNullOrWhiteSpace(dto.NumberingRuleCode))
         {
-            var generated = await _numberingGenerator.GenerateNextAsync(dto.NumberingRuleCode.Trim());
+            var existingRows = await _salesInvoiceRepository.GetListAsync(
+                x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode);
+            var generated = await _numberingGenerator.GenerateNextAsync(
+                dto.NumberingRuleCode.Trim(),
+                existingRows.Select(x => (string?)x.BillingDocumentCode).ToList());
             if (string.IsNullOrWhiteSpace(generated.BusinessCode))
             {
                 throw new TaktBusinessException("业务编码生成失败");

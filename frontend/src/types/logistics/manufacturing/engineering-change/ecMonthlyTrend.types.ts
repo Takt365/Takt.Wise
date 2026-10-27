@@ -4,7 +4,7 @@
 // 文件名称：ecMonthlyTrend.types.ts
 // 创建时间：2026-07-18
 // 创建人：Takt365(Cursor AI)
-// 功能描述：月设变推移转置分析类型（设变号×部门×月份）
+// 功能描述：设变推移转置分析类型（设变号×部门×月份）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -13,7 +13,7 @@
 import type { TaktPagedQuery, TaktPagedResult } from '@/types/common.types';
 
 /**
- * 月设变推移查询
+ * 设变推移查询
  * @description 对应后端 TaktEcMonthlyTrendQueryDto
  */
 export interface EcMonthlyTrendQuery extends TaktPagedQuery {
@@ -29,18 +29,18 @@ export interface EcMonthlyTrendQuery extends TaktPagedQuery {
   ecCode?: string;
   /** 责任部门编码 */
   deptCode?: string;
-  /** 实施范围（字典 logistics_manufacturing_ec_scope_category） */
-  ecScope?: number;
+  /** 实施范围（字典 logistics_manufacturing_ec_impl_scope_category） */
+  ecImplScope?: number;
   /** 变更状态（字典 logistics_manufacturing_ec_status） */
   changeStatus?: number;
-  /** 设变状态（字典 logistics_manufacturing_ec_gijutsu_status） */
+  /** 设变状态（字典 logistics_manufacturing_ec_te_status） */
   ecStatus?: number;
   /** 涨跌筛选 */
   trendFilter?: string;
 }
 
 /**
- * 月设变推移转置行
+ * 设变推移转置行
  * @description 对应后端 TaktEcMonthlyTrendDto（工厂×设变号×部门）
  */
 export interface EcMonthlyTrend {
@@ -65,7 +65,7 @@ export interface EcMonthlyTrend {
 }
 
 /**
- * 月设变推移分析结果
+ * 设变推移分析结果
  * @description 对应后端 TaktEcMonthlyTrendResultDto
  */
 export interface EcMonthlyTrendResult {

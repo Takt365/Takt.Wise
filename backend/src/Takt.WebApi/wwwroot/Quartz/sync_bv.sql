@@ -640,7 +640,7 @@ VALUES (
   @base_id + 1,
   N'SYSTEM_SYNC',
   N'SYNC',
-  N'BOM物料成本汇总',
+  N'材料成本汇总',
   N'exec_sql_merge',
   'SQL',
   N'/sync/bom-material-cost',

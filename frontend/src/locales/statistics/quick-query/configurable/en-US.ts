@@ -102,7 +102,7 @@ export default {
         selectionfield: "Selection Fields",
         fieldname: "Field Name",
         empty: "Select a table in the previous step first",
-        sourcenotready: "Could not apply the data source. Confirm tenant and table are selected.",
+        sourcenotready: "Could not apply the data source. Confirm tenant and table are selecmed.",
       },
       jointype: {
         inner: "Inner Join",

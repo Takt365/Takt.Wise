@@ -34,7 +34,7 @@
           :label="t('workflow.designer.page.designatedmembers')"
         >
           <a-select
-            v-model:value="form.selectedUserIds"
+            v-model:value="form.selecmedUserIds"
             mode="multiple"
             show-search
             :filter-option="filterOption"
@@ -78,7 +78,7 @@ const visible = computed({
   set: (v) => { if (!v) close() }
 })
 const config = ref<FlowTreeNode | null>(null)
-const form = ref({ allPerson: true, selectedUserIds: [] as string[] })
+const form = ref({ allPerson: true, selecmedUserIds: [] as string[] })
 const userOptions = ref<TaktSelectOption[]>([])
 
 function filterOption(
@@ -97,7 +97,7 @@ watch(
       const list = state.config.nodeApproveList ?? []
       form.value = {
         allPerson: list.length === 0,
-        selectedUserIds: list.map((x) => x.targetId)
+        selecmedUserIds: list.map((x) => x.targetId)
       }
     } else {
       config.value = null
@@ -114,7 +114,7 @@ function handleSave() {
   if (!config.value) return
   const list = form.value.allPerson
     ? []
-    : (form.value.selectedUserIds ?? []).map((id) => {
+    : (form.value.selecmedUserIds ?? []).map((id) => {
         const o = userOptions.value.find((u) => String(u.dictValue) === id)
         return { targetId: id, name: o?.dictLabel ?? id }
       })

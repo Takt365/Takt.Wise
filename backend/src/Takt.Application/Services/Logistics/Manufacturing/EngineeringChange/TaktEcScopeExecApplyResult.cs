@@ -4,7 +4,7 @@
 // 文件名称：TaktEcScopeExecApplyResult.cs
 // 创建时间：2026-09-08
 // 创建人：Takt365(Cursor AI)
-// 功能描述：设变实施范围派生各部门执行行结果（含部门写入条数摘要）
+// 功能描述：实施范围派生各部门执行行结果（含部门写入条数摘要）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -36,7 +36,7 @@ public sealed class TaktEcDeptExecCountItem
 }
 
 /// <summary>
-/// 设变实施范围 → 部门执行行编排结果
+/// 实施范围 → 部门执行行编排结果
 /// </summary>
 public sealed class TaktEcScopeExecApplyResult
 {

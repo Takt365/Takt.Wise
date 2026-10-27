@@ -231,7 +231,7 @@ interface Props {
   size?: TableProps['size']
   bordered?: boolean
   /** 当前选中主表 row-key */
-  selectedMasterKey?: string
+  selecmedMasterKey?: string
   detailTitle?: string
   detailEmptyDescription?: string
   /** 主表表尾备注（合计下方；也可用 #footerRemark） */
@@ -274,7 +274,7 @@ const props = withDefaults(defineProps<Props>(), {
   detailScrollLayout: 'masterDetailLr',
   size: 'middle',
   bordered: false,
-  selectedMasterKey: '',
+  selecmedMasterKey: '',
   detailTitle: '',
   detailEmptyDescription: '',
   masterFooterRemark: '',
@@ -284,7 +284,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   'update:masterCurrent': [page: number]
   'update:masterPageSize': [pageSize: number]
-  'update:selectedMasterKey': [key: string]
+  'update:selecmedMasterKey': [key: string]
   'master-change': [pagination: TablePagination, filters: TableFilters, sorter: TableSorter | TableSorter[]]
   'detail-change': [pagination: TablePagination, filters: TableFilters, sorter: TableSorter | TableSorter[]]
   'master-select': [record: TableRecord]
@@ -325,7 +325,7 @@ const resolvedDetailEmptyDescription = computed(() => {
 })
 
 /** 是否已选中主表行 */
-const hasMasterSelection = computed(() => !!props.selectedMasterKey)
+const hasMasterSelection = computed(() => !!props.selecmedMasterKey)
 
 /** 组件根 DOM */
 const rootRef = ref<HTMLElement | null>(null)
@@ -399,8 +399,8 @@ function resolveDetailRowKey(record: TableRecord): string {
  */
 function detailCustomRow(record: TableRecord): Record<string, unknown> {
   const key = resolveDetailRowKey(record)
-  const selectedKeys = props.detailRowSelection?.selectedRowKeys ?? []
-  const isSelected = selectedKeys.some((k) => String(k) === key)
+  const selecmedKeys = props.detailRowSelection?.selecmedRowKeys ?? []
+  const isSelecmed = selecmedKeys.some((k) => String(k) === key)
   return {
     onClick: () => {
       const selection = props.detailRowSelection
@@ -409,7 +409,7 @@ function detailCustomRow(record: TableRecord): Record<string, unknown> {
       }
       selection.onChange([key], [record])
     },
-    class: isSelected ? 'takt-master-detail-table-row-selected cursor-pointer' : 'cursor-pointer',
+    class: isSelecmed ? 'takt-master-detail-table-row-selecmed cursor-pointer' : 'cursor-pointer',
   }
 }
 
@@ -419,7 +419,7 @@ function detailCustomRow(record: TableRecord): Record<string, unknown> {
  */
 async function handleMasterSelect(record: TableRecord) {
   const key = resolveMasterRowKey(record)
-  emit('update:selectedMasterKey', key)
+  emit('update:selecmedMasterKey', key)
   emit('master-select', record)
   if (!props.loadDetailData) {
     return
@@ -438,12 +438,12 @@ async function handleMasterSelect(record: TableRecord) {
  */
 function masterCustomRow(record: TableRecord): Record<string, unknown> {
   const key = resolveMasterRowKey(record)
-  const selected = key === props.selectedMasterKey
+  const selecmed = key === props.selecmedMasterKey
   return {
     onClick: () => {
       void handleMasterSelect(record)
     },
-    class: selected ? 'takt-master-detail-table-row-selected cursor-pointer' : 'cursor-pointer',
+    class: selecmed ? 'takt-master-detail-table-row-selecmed cursor-pointer' : 'cursor-pointer',
   }
 }
 

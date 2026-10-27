@@ -311,11 +311,11 @@ const chunkUploadCanResume = computed(
 /** 是否选中存储命名「自定义」（字典 sys_storage_naming=2） */
 const isCustomStorageNaming = computed(() => coerceStorageType(formState.storageNaming) === 2)
 /** 当前存储类型（字典 sys_storage_type） */
-const selectedStorageType = computed(() => coerceStorageType(formState.storageType))
+const selecmedStorageType = computed(() => coerceStorageType(formState.storageType))
 /** 是否展示 OSS 提供商（StorageType=1） */
-const showOssProviderField = computed(() => selectedStorageType.value === 1)
+const showOssProviderField = computed(() => selecmedStorageType.value === 1)
 /** 是否展示 FTP 提供商（StorageType=2） */
-const showFtpProviderField = computed(() => selectedStorageType.value === 2)
+const showFtpProviderField = computed(() => selecmedStorageType.value === 2)
 
 /**
  * 新增态公开范围、文件状态默认值

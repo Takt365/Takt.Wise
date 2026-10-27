@@ -16,7 +16,7 @@ export interface EcChangeNotificationEvent {
   deliveryId: string;
   ecNotificationId: string;
   ecNotificationCode: string;
-  ecGijutsuId: string;
+  ecTeId: string;
   ecCode: string;
   ecTitle?: string;
   deptCode: string;
@@ -50,7 +50,7 @@ export interface EcExecutionTaskProgressEvent {
 /** 变更闭环完成推送 */
 export interface EcChangeClosedEvent {
   companyCode: string;
-  ecGijutsuId: string;
+  ecTeId: string;
   ecCode: string;
   ecNotificationId: string;
   closedAt: string;

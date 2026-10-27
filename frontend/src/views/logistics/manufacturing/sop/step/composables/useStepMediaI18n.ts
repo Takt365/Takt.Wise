@@ -57,7 +57,6 @@ export type SopStepMediaField = keyof typeof SOPSTEPMEDIA_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const SOPSTEPMEDIA_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'fileUrl',
   'fileExt',
   'createdAtStart',

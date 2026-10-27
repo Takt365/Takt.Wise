@@ -4,7 +4,7 @@
 // 文件名称：TaktBomMaterialZeroPriceService.cs
 // 创建时间：2026-08-13
 // 创建人：Takt365(Cursor AI)
-// 功能描述：BOM 组件零价格清单应用服务（独立；FERT+建议代替末字母逆推）
+// 功能描述：BOM 组件零价格清单（视图只含生产相关=X、PCB SECT 标识为空、采购类型=F、移动平均价=0；FERT+建议代替末字母逆推）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -181,8 +181,8 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             exportRows,
             columnKeys,
             columnLabels,
-            sheetName ?? "BOM零价格",
-            fileName ?? $"BOM零价格_{plant}_{modelPart}_{costingPeriod}.xlsx");
+            sheetName ?? "零材料成本",
+            fileName ?? $"零材料成本_{plant}_{modelPart}_{costingPeriod}.xlsx");
     }
 
     /// <summary>
@@ -1069,18 +1069,20 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
     }
 
     /// <summary>
-    /// 加载产品 BOM 明细全量（含非 X+F，供产品月成本快照/PCB SECT 排除；明细无软删业务）
+    /// 加载产品 BOM 明细（明细无软删）。zeroPriceViewScope 为 true 时查询即限定零价格视图行。
     /// </summary>
     /// <param name="plantCode">工厂</param>
     /// <param name="productCodes">产品编码</param>
     /// <param name="costingMonthStart">核算月初</param>
     /// <param name="costingMonthEnd">核算月末（同月初则整月）</param>
+    /// <param name="zeroPriceViewScope">true=只查生产相关=X、PCB SECT 标识为空、采购类型=F、移动平均价=0</param>
     /// <returns>明细行</returns>
     private async Task<List<TaktBomMaterialCostItem>> LoadBomCostItemsRawForProductsAsync(
         string plantCode,
         IReadOnlyList<string> productCodes,
         DateTime? costingMonthStart,
-        DateTime? costingMonthEnd)
+        DateTime? costingMonthEnd,
+        bool zeroPriceViewScope = false)
     {
         var allItems = new List<TaktBomMaterialCostItem>();
         const int chunkSize = 200;
@@ -1116,6 +1118,16 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             {
                 var endExclusive = costingExclusiveEnd.Value;
                 exp = exp.And(x => x.CostingDate < endExclusive);
+            }
+            if (zeroPriceViewScope)
+            {
+                exp = exp.And(x =>
+                    x.MovingAveragePrice == 0
+                    && x.ProductionRelated != null
+                    && (x.ProductionRelated == "X" || x.ProductionRelated == "x")
+                    && x.PurchaseType != null
+                    && (x.PurchaseType == "F" || x.PurchaseType == "f")
+                    && (x.PcbSectIndicator == null || x.PcbSectIndicator == ""));
             }
             string? yearTable;
             try
@@ -1355,7 +1367,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             productCodes,
             costingStart,
             costingStart);
-        // 同一 ComponentCode 多位置须按行判定：任一笔生产相关=X、PCB SECT 标识为空、采购类型=F、用量>0.001、价0 即入清单
+        // 视图只保留：生产相关=X、PCB SECT 标识为空、采购类型=F、移动平均价=0
         var zeroItems = items
             .Where(TaktBomMaterialCostItemLineCostHelper.QualifiesAsZeroPriceListLine)
             .ToList();
@@ -1423,7 +1435,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
     }
 
     /// <summary>
-    /// 为零价组件填充建议代替：末字母依次前推；优先取核算月（期间）相同 ValuationPeriod 的移动价，否则取核算月及以前最近有价月
+    /// 为零价组件填充建议移动价格：先用本组件自身，从核算月往前取最近一次移动价大于 0 的月份（当月无记录或价格不大于 0 视为没有购买，继续前推，直到 19 年内确认没有价）。自身仍无价时，再按末字母逆推替代编码，同样按月前推。
     /// </summary>
     /// <param name="plantCode">工厂代码</param>
     /// <param name="costingPeriod">核算月 yyyy-MM</param>
@@ -1449,14 +1461,21 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             return;
         }
 
-        var lookbackStart = costingMonth.AddMonths(-24).ToString("yyyy-MM");
+        // 年分表查询跨度上限 20 年，这里取 19 年，覆盖核算月及以前全部有价月
+        var lookbackStart = costingMonth.AddYears(-19).ToString("yyyy-MM");
 
         var candidateSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var candidatesByComponent = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
         foreach (var row in rows)
         {
-            var candidates = EnumeratePreviousLetterRevisions(row.ComponentCode).ToList();
-            candidatesByComponent[row.ComponentCode] = candidates;
+            var componentCode = row.ComponentCode?.Trim() ?? string.Empty;
+            if (componentCode.Length == 0)
+            {
+                continue;
+            }
+            var candidates = new List<string> { componentCode };
+            candidates.AddRange(EnumeratePreviousLetterRevisions(componentCode));
+            candidatesByComponent[componentCode] = candidates;
             foreach (var code in candidates)
             {
                 foreach (var variant in TaktBomMaterialCostItemLineCostHelper.ExpandProductCodeLookupVariants(code))
@@ -1538,7 +1557,8 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
 
         foreach (var row in rows)
         {
-            if (!candidatesByComponent.TryGetValue(row.ComponentCode, out var list))
+            var componentCode = row.ComponentCode?.Trim() ?? string.Empty;
+            if (!candidatesByComponent.TryGetValue(componentCode, out var list))
             {
                 continue;
             }
@@ -1635,8 +1655,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
     }
 
     /// <summary>
-    /// 加载产品 BOM 明细：先拉全量展开，再 Filter（生产相关=X、PCB SECT 标识为空、采购类型=F）。
-    /// 分块仅用于查询，Filter 在合并后整表执行一次，避免同产品多码写法拆树导致误排除。
+    /// 零价格视图取数：只查生产相关=X、PCB SECT 标识为空、采购类型=F、移动平均价=0
     /// </summary>
     /// <param name="plantCode">工厂</param>
     /// <param name="productCodes">产品编码</param>
@@ -1653,10 +1672,10 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             plantCode,
             productCodes,
             costingMonthStart,
-            costingMonthEnd);
-        return TaktBomMaterialCostItemLineCostHelper
-            .FilterBomMaterialCostItemRows(
-                TaktBomMaterialCostItemLineCostHelper.ExcludePcbSectHierarchyRows(raw))
+            costingMonthEnd,
+            zeroPriceViewScope: true);
+        return raw
+            .Where(TaktBomMaterialCostItemLineCostHelper.QualifiesAsZeroPriceListLine)
             .ToList();
     }
 

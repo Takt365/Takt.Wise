@@ -2,7 +2,7 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/bom/price-delta-trend/components -->
 <!-- 文件名称：PriceDeltaTrendQueryForm.vue -->
-<!-- 功能描述：查询栏：工厂→期间→基准月/比较月→差异选项→物料类型(默认FERT)→机种→产品（机种/产品联动） -->
+<!-- 功能描述：查询栏：工厂→期间→基准月/比较月→差异选项→价格差异组涨跌→物料类型(默认FERT)→机种→产品（机种/产品联动） -->
 <!-- 版权信息：Copyright (c) 2026 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->
@@ -10,18 +10,6 @@
 <template>
   <div class="takt-query-bar price-delta-trend-query-bar">
     <div class="price-delta-trend-query-bar__fields min-w-0 flex flex-1 flex-wrap items-center gap-x-3 gap-y-2">
-      <div class="flex items-center gap-1">
-        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('common.page.entity.plantcode') }}</span>
-        <TaktSelect
-          v-model:value="plantCode"
-          :api-url="plantOptionsUrl"
-          class="price-delta-trend-query-bar__control price-delta-trend-query-bar__control--plant"
-          allow-clear
-          show-search
-          :placeholder="t('common.page.form.placeholder.selectonly')"
-          @change="handlePlantChange"
-        />
-      </div>
       <div class="flex items-center gap-1">
         <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.periodRange`) }}</span>
         <a-range-picker
@@ -71,6 +59,16 @@
         <TaktSelect
           v-model="priceDeltaOption"
           :options="priceDeltaOptionItems"
+          class="price-delta-trend-query-bar__control price-delta-trend-query-bar__control--delta-option"
+          :allow-clear="false"
+          :placeholder="t('common.page.form.placeholder.selectonly')"
+        />
+      </div>
+      <div class="flex items-center gap-1">
+        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.impactLineOption`) }}</span>
+        <TaktSelect
+          v-model="impactLineOption"
+          :options="impactLineOptionItems"
           class="price-delta-trend-query-bar__control price-delta-trend-query-bar__control--delta-option"
           :allow-clear="false"
           :placeholder="t('common.page.form.placeholder.selectonly')"
@@ -147,7 +145,7 @@
 <script setup lang="ts">
 /**
  * 成本差异推移查询栏：
- * 工厂 + 期间 + 基准月 + 比较月 + 差异选项(默认全部) + 物料类型(默认 FERT) + 机种(可选) + 产品(可选且随机种联动)
+ * 工厂 + 期间 + 基准月 + 比较月 + 差异选项(默认全部) + 价格差异组涨跌(默认涨3跌3) + 物料类型(默认 FERT) + 机种(可选) + 产品(可选且随机种联动)
  * → 后端按基准月/比较月算差异与 0价格组 / 价格差异组（两月须在期间列内，可不相邻）
  * → 差异选项：全部=不过滤；>=1/>=5/>=10/>=50/>=100=仅保留 |基准月−比较月|≥该值的产品行（分页总数变化）。阈值选项四语同一符号，不翻译
  */
@@ -186,6 +184,8 @@ const basePeriod = defineModel<string | undefined>('basePeriod')
 const comparePeriod = defineModel<string | undefined>('comparePeriod')
 /** 差异选项：all / gt1 / gt5 / gt10 / gt50 / gt100，默认全部；界面阈值为 >=N；按 |差异| 过滤产品行 */
 const priceDeltaOption = defineModel<string>('priceDeltaOption', { default: 'all' })
+/** 价格差异组涨跌：up3down3 / up5down5 / all，默认涨3跌3。建议替代价格与组件差异全量 */
+const impactLineOption = defineModel<string>('impactLineOption', { default: 'up3down3' })
 
 const props = defineProps<{
   /** 查询 loading */
@@ -206,6 +206,12 @@ const priceDeltaOptionItems = computed<TaktSelectOption[]>(() => [
   { dictLabel: '>=10', dictValue: 'gt10' },
   { dictLabel: '>=50', dictValue: 'gt50' },
   { dictLabel: '>=100', dictValue: 'gt100' },
+])
+/** 价格差异组涨跌：涨3跌3（默认）/ 涨5跌5 / 全部 */
+const impactLineOptionItems = computed<TaktSelectOption[]>(() => [
+  { dictLabel: t(`${localePrefix}.impactLineUp3Down3`), dictValue: 'up3down3' },
+  { dictLabel: t(`${localePrefix}.impactLineUp5Down5`), dictValue: 'up5down5' },
+  { dictLabel: t(`${localePrefix}.impactLineAll`), dictValue: 'all' },
 ])
 /** 机种下拉刷新键 */
 const modelSelectKey = ref(0)

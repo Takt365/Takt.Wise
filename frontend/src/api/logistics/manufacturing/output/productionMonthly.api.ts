@@ -15,6 +15,10 @@ import type {
   ProductionMonthlyTrendQuery,
   ProductionMonthlyTrendResult,
 } from '@/types/logistics/manufacturing/output/productionMonthlyTrend.types';
+import type {
+  ProductionStatLineQuery,
+  ProductionStatLineResult,
+} from '@/types/logistics/manufacturing/output/productionStatLine.types';
 
 /** API 路由前缀（对应 TaktProductionMonthlyTrendsController） */
 const PRODUCTION_MONTHLY_TREND_API_BASE = 'TaktProductionMonthlyTrends';
@@ -28,19 +32,27 @@ export function getProductionMonthlyTrendPlantOptionsUrl(): string {
 }
 
 /**
- * 推移查询栏：产出类别去重选项 URL
+ * 当前页签班组去重选项 URL
  * @returns {string} 相对 API 路径
  */
-export function getProductionMonthlyTrendOutputCategoryOptionsUrl(): string {
-  return `${PRODUCTION_MONTHLY_TREND_API_BASE}/output-category-options`;
+export function getProductionMonthlyTrendTeamOptionsUrl(): string {
+  return `${PRODUCTION_MONTHLY_TREND_API_BASE}/team-options`;
 }
 
 /**
- * 推移查询栏：机种去重选项 URL
+ * 当前页签机种去重选项 URL
  * @returns {string} 相对 API 路径
  */
 export function getProductionMonthlyTrendModelOptionsUrl(): string {
   return `${PRODUCTION_MONTHLY_TREND_API_BASE}/model-options`;
+}
+
+/**
+ * 当前页签物料去重选项 URL
+ * @returns {string} 相对 API 路径
+ */
+export function getProductionMonthlyTrendMaterialOptionsUrl(): string {
+  return `${PRODUCTION_MONTHLY_TREND_API_BASE}/material-options`;
 }
 
 /**
@@ -72,6 +84,44 @@ export function exportProductionMonthlyTrendAnalysis(
 ): Promise<Blob> {
   return request<Blob>({
     url: `${PRODUCTION_MONTHLY_TREND_API_BASE}/monthly-trend-analysis/export`,
+    method: 'get',
+    params: {
+      ...query,
+      sheetName,
+      exportName,
+    },
+    responseType: 'blob',
+    returnBinaryMeta: true,
+  });
+}
+
+/**
+ * 生产统计明细
+ * @param {ProductionStatLineQuery} queryDto 查询条件
+ * @returns {Promise<ProductionStatLineResult>} 分页行
+ */
+export function getProductionStatLineList(queryDto: ProductionStatLineQuery): Promise<ProductionStatLineResult> {
+  return request<ProductionStatLineResult>({
+    url: `${PRODUCTION_MONTHLY_TREND_API_BASE}/lines`,
+    method: 'get',
+    params: queryDto,
+  });
+}
+
+/**
+ * 导出生产统计明细
+ * @param {ProductionStatLineQuery} query 查询条件
+ * @param {string} [sheetName] 工作表名
+ * @param {string} [exportName] 导出文件名
+ * @returns {Promise<Blob>} Excel 文件
+ */
+export function exportProductionStatLine(
+  query: ProductionStatLineQuery,
+  sheetName?: string,
+  exportName?: string,
+): Promise<Blob> {
+  return request<Blob>({
+    url: `${PRODUCTION_MONTHLY_TREND_API_BASE}/lines/export`,
     method: 'get',
     params: {
       ...query,

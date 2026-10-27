@@ -135,7 +135,11 @@ public class TaktSalesQuotationService : TaktServiceBase, ITaktSalesQuotationSer
         var entity = dto.Adapt<TaktSalesQuotation>();
         if (!string.IsNullOrWhiteSpace(dto.NumberingRuleCode))
         {
-            var generated = await _numberingGenerator.GenerateNextAsync(dto.NumberingRuleCode.Trim());
+            var existingRows = await _salesQuotationRepository.GetListAsync(
+                x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode);
+            var generated = await _numberingGenerator.GenerateNextAsync(
+                dto.NumberingRuleCode.Trim(),
+                existingRows.Select(x => (string?)x.SalesQuotationCode).ToList());
             if (string.IsNullOrWhiteSpace(generated.BusinessCode))
             {
                 throw new TaktBusinessException("业务编码生成失败");

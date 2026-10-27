@@ -4,7 +4,7 @@
 // 文件名称：TaktEcMonthlyTrendDtos.cs
 // 创建时间：2026-07-18
 // 创建人：Takt365(Cursor AI)
-// 功能描述：月设变推移转置分析 DTO（设变号×部门×月份完成件数）
+// 功能描述：设变推移转置分析 DTO（设变号×部门×月份完成件数）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -13,7 +13,7 @@
 namespace Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange;
 
 /// <summary>
-/// 月设变推移转置分析查询 DTO（按设变号×部门统计）
+/// 设变推移转置分析查询 DTO（按设变号×部门统计）
 /// </summary>
 public class TaktEcMonthlyTrendQueryDto : TaktPagedQuery
 {
@@ -48,13 +48,13 @@ public class TaktEcMonthlyTrendQueryDto : TaktPagedQuery
     public string? DeptCode { get; set; }
 
     /// <summary>
-    /// 实施范围（字典 logistics_manufacturing_ec_scope_category；可选，按主表过滤）
+    /// 实施范围（字典 logistics_manufacturing_ec_impl_scope_category；可选，按主表过滤）
     /// </summary>
-    public int? EcScope { get; set; }
+    public int? EcImplScope { get; set; }
     /// <summary>
-    /// 部门实施范围（字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种
     /// </summary>
-    public int? EcDeptScope { get; set; }
+    public int? EcControlScope { get; set; }
 
     /// <summary>
     /// 变更状态（字典 logistics_manufacturing_ec_status；可选，按主表过滤）
@@ -62,7 +62,7 @@ public class TaktEcMonthlyTrendQueryDto : TaktPagedQuery
     public int? ChangeStatus { get; set; }
 
     /// <summary>
-    /// 设变状态（字典 logistics_manufacturing_ec_gijutsu_status；可选，按主表过滤）
+    /// 设变状态（字典 logistics_manufacturing_ec_te_status；可选，按主表过滤）
     /// </summary>
     public int? EcStatus { get; set; }
 
@@ -78,7 +78,7 @@ public class TaktEcMonthlyTrendQueryDto : TaktPagedQuery
 }
 
 /// <summary>
-/// 月设变推移转置行（行=工厂+设变号+部门，列=各月完成任务件数）
+/// 设变推移转置行（行=工厂+设变号+部门，列=各月完成任务件数）
 /// </summary>
 public class TaktEcMonthlyTrendDto
 {
@@ -134,7 +134,7 @@ public class TaktEcMonthlyTrendDto
 }
 
 /// <summary>
-/// 月设变推移转置分析结果
+/// 设变推移转置分析结果
 /// </summary>
 public class TaktEcMonthlyTrendResultDto
 {

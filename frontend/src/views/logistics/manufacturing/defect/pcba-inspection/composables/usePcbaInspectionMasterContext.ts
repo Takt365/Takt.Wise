@@ -15,7 +15,7 @@ export type PcbaInspectionRowRecord = PcbaInspection | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface PcbaInspectionMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<PcbaInspectionRowRecord | null>
+  selecmedMasterRow: Ref<PcbaInspectionRowRecord | null>
 }
 
 const pcbaInspectionMasterContextKey: InjectionKey<PcbaInspectionMasterContext> = Symbol('pcba-inspectionMasterContext')
@@ -25,8 +25,8 @@ const pcbaInspectionMasterContextKey: InjectionKey<PcbaInspectionMasterContext> 
  * @returns {PcbaInspectionMasterContext} 主表上下文
  */
 export function providePcbaInspectionMasterContext(): PcbaInspectionMasterContext {
-  const selectedMasterRow = ref<PcbaInspectionRowRecord | null>(null)
-  const ctx: PcbaInspectionMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<PcbaInspectionRowRecord | null>(null)
+  const ctx: PcbaInspectionMasterContext = { selecmedMasterRow }
   provide(pcbaInspectionMasterContextKey, ctx)
   return ctx
 }

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcNotificationDeliveryI18nSeedData.cs
-// 创建时间：2026-10-14
+// 创建时间：2026-10-27
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEcNotificationDelivery 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -108,14 +108,14 @@ public class TaktEcNotificationDeliveryI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecnotificationdelivery.ecnotificationcode
             new TranslationSeedItem("entity.ecnotificationdelivery.ecnotificationcode", "zh-HK", "通知单号_hk", "通知单号（冗余）"),
 
-            // entity.ecnotificationdelivery.ecgijutsuid
-            new TranslationSeedItem("entity.ecnotificationdelivery.ecgijutsuid", "en-US", "技术课主表ID_us", "技术课主表 ID（TaktEcGijutsu 主键）"),
-            // entity.ecnotificationdelivery.ecgijutsuid
-            new TranslationSeedItem("entity.ecnotificationdelivery.ecgijutsuid", "ja-JP", "技术课主表ID_jp", "技术课主表 ID（TaktEcGijutsu 主键）"),
-            // entity.ecnotificationdelivery.ecgijutsuid
-            new TranslationSeedItem("entity.ecnotificationdelivery.ecgijutsuid", "zh-CN", "技术课主表ID", "技术课主表 ID（TaktEcGijutsu 主键）"),
-            // entity.ecnotificationdelivery.ecgijutsuid
-            new TranslationSeedItem("entity.ecnotificationdelivery.ecgijutsuid", "zh-HK", "技术课主表ID_hk", "技术课主表 ID（TaktEcGijutsu 主键）"),
+            // entity.ecnotificationdelivery.ecteid
+            new TranslationSeedItem("entity.ecnotificationdelivery.ecteid", "en-US", "技术课主表ID_us", "技术课主表 ID（TaktEcTe 主键）"),
+            // entity.ecnotificationdelivery.ecteid
+            new TranslationSeedItem("entity.ecnotificationdelivery.ecteid", "ja-JP", "技术课主表ID_jp", "技术课主表 ID（TaktEcTe 主键）"),
+            // entity.ecnotificationdelivery.ecteid
+            new TranslationSeedItem("entity.ecnotificationdelivery.ecteid", "zh-CN", "技术课主表ID", "技术课主表 ID（TaktEcTe 主键）"),
+            // entity.ecnotificationdelivery.ecteid
+            new TranslationSeedItem("entity.ecnotificationdelivery.ecteid", "zh-HK", "技术课主表ID_hk", "技术课主表 ID（TaktEcTe 主键）"),
 
             // entity.ecnotificationdelivery.eccode
             new TranslationSeedItem("entity.ecnotificationdelivery.eccode", "en-US", "设变单号_us", "设变单号（冗余）"),

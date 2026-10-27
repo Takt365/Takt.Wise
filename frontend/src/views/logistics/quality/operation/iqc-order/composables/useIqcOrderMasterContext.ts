@@ -15,7 +15,7 @@ export type IqcOrderRowRecord = IqcOrder | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface IqcOrderMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<IqcOrderRowRecord | null>
+  selecmedMasterRow: Ref<IqcOrderRowRecord | null>
 }
 
 const iqcOrderMasterContextKey: InjectionKey<IqcOrderMasterContext> = Symbol('iqc-orderMasterContext')
@@ -25,8 +25,8 @@ const iqcOrderMasterContextKey: InjectionKey<IqcOrderMasterContext> = Symbol('iq
  * @returns {IqcOrderMasterContext} 主表上下文
  */
 export function provideIqcOrderMasterContext(): IqcOrderMasterContext {
-  const selectedMasterRow = ref<IqcOrderRowRecord | null>(null)
-  const ctx: IqcOrderMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<IqcOrderRowRecord | null>(null)
+  const ctx: IqcOrderMasterContext = { selecmedMasterRow }
   provide(iqcOrderMasterContextKey, ctx)
   return ctx
 }

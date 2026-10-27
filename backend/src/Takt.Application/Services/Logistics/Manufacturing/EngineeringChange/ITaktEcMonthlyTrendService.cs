@@ -4,7 +4,7 @@
 // 文件名称：ITaktEcMonthlyTrendService.cs
 // 创建时间：2026-07-18
 // 创建人：Takt365(Cursor AI)
-// 功能描述：月设变推移转置分析服务接口（设变号×部门；实施推移按部门）
+// 功能描述：设变推移转置分析服务接口（设变号×部门；实施推移按部门）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -16,7 +16,7 @@ using Takt.Shared.Options;
 namespace Takt.Application.Services.Logistics.Manufacturing.EngineeringChange;
 
 /// <summary>
-/// 月设变推移转置分析服务
+/// 设变推移转置分析服务
 /// </summary>
 public interface ITaktEcMonthlyTrendService
 {
@@ -46,7 +46,7 @@ public interface ITaktEcMonthlyTrendService
     Task<List<TaktSelectOption>> GetEcMonthlyTrendEcCodeOptionsAsync(string? plantCode = null, string? keyword = null, string? deptCode = null);
 
     /// <summary>
-    /// 获取月设变推移转置分析（分页）
+    /// 获取设变推移转置分析（分页）
     /// </summary>
     /// <param name="queryDto">查询 DTO</param>
     /// <returns>转置分析结果</returns>
@@ -54,7 +54,7 @@ public interface ITaktEcMonthlyTrendService
         TaktEcMonthlyTrendQueryDto queryDto);
 
     /// <summary>
-    /// 导出月设变推移转置分析 Excel
+    /// 导出设变推移转置分析 Excel
     /// </summary>
     /// <param name="query">查询条件</param>
     /// <param name="sheetName">工作表名称</param>

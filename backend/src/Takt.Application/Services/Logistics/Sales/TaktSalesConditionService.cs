@@ -131,7 +131,11 @@ public class TaktSalesConditionService : TaktServiceBase, ITaktSalesConditionSer
         var entity = dto.Adapt<TaktSalesCondition>();
         if (!string.IsNullOrWhiteSpace(dto.NumberingRuleCode))
         {
-            var generated = await _numberingGenerator.GenerateNextAsync(dto.NumberingRuleCode.Trim());
+            var existingRows = await _salesConditionRepository.GetListAsync(
+                x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode);
+            var generated = await _numberingGenerator.GenerateNextAsync(
+                dto.NumberingRuleCode.Trim(),
+                existingRows.Select(x => (string?)x.SalesConditionCode).ToList());
             if (string.IsNullOrWhiteSpace(generated.BusinessCode))
             {
                 throw new TaktBusinessException("业务编码生成失败");

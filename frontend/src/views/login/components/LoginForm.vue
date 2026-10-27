@@ -575,7 +575,7 @@ function resolveLoginErrorMessage(error: unknown, fallback: string): string {
   const tenantNoAccessHints = [
     'common.permission.tenant.no.access',
     '当前用户无权登录所选租户',
-    'You do not have permission to sign in to the selected tenant',
+    'You do not have permission to sign in to the selecmed tenant',
     '選択したテナントにログインする権限がありません'] as const;
 
   if (tenantNoAccessHints.some((hint) => msg.includes(hint))) {

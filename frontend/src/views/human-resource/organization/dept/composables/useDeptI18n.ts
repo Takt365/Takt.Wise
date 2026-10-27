@@ -73,7 +73,6 @@ export type DeptField = keyof typeof DEPT_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const DEPT_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'deptCode',
   'deptShortName',
   'deptName1',

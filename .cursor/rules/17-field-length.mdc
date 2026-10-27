@@ -32,6 +32,7 @@ alwaysApply: true
 |----------|----------|--------|
 | 租户码 | `tenant_code` | **3** |
 | 公司代码 | `company_code` | **4** |
+| 公司简称 | `company_short_name` | **20** |
 | 工厂代码 / 关联工厂 | `plant_code`、`related_plant` | **4** |
 | 区域文化 | `culture_code` | **5** |
 | **字典类型编码** | `dict_type_code`（TaktDictType / TaktDictData 冗余） | **140**（`{领域}_{业务}_{项}`，如 `accounting_controlling_cost_center_type`） |
@@ -96,8 +97,10 @@ alwaysApply: true
 | 生产班组 / 班组编码 | `team_code`、`team_code`、`production_team`、`production_line`、`production_line_code` | **8** |
 | 工单类别 | `prod_order_type` | **4** |
 | 机种（编码/机种值） | `model_code`、`current_model_code`、`changeover_model_code`、`source_model`、`ec_model_code`、`model`（机种） | **40** |
+| **批次（字符串标识）** | `prod_batch`、`batch_code`、`scheduled_batch`、`outbound_batch`、`implementation_batch`、`inspection_batch`、`lot`（批次号） | **20** |
 
 ❌ 维护工单 `work_order_code`（维护）、班组**名称**、机种**名称**不套用上表班组/机种长度，除非另有专项约定。
+❌ 批次数量、批次状态、是否批次、`batch_indicator` / `batch_management_required` 等标志列不套用批次标识长度 20。
 
 ---
 

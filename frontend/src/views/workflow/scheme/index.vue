@@ -32,8 +32,8 @@
       :show-fullscreen="true"
       :show-advanced-query="true"
       :show-column-setting="true"
-      :update-disabled="!selectedRow"
-      :delete-disabled="selectedRows.length === 0"
+      :update-disabled="!selecmedRow"
+      :delete-disabled="selecmedRows.length === 0"
       :create-loading="loading"
       :update-loading="loading"
       :delete-loading="loading"
@@ -201,9 +201,9 @@ const dataSource = ref<FlowScheme[]>([])
 const currentPage = ref(getTaktDefaultPageIndex())
 const pageSize = ref(getTaktDefaultPageSize())
 const total = ref(0)
-const selectedRow = ref<FlowScheme | null>(null)
-const selectedRows = ref<FlowScheme[]>([])
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRow = ref<FlowScheme | null>(null)
+const selecmedRows = ref<FlowScheme[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 const formVisible = ref(false)
 /** 表单弹窗宽度：（视口 − 左侧菜单）× 80% */
 const formModalWidthPx = useTaktContentModalWidth()
@@ -372,30 +372,30 @@ const columns = computed<TableColumnsType>(() => [
 // 合并列配置（包含审计字段）- 使用 any 避免 TypeScript「类型实例化过深」错误
 
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: FlowScheme[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: FlowScheme, selected: boolean) => {
-    if (selected) selectedRow.value = record
-    else if (selectedRow.value && getSchemeId(selectedRow.value) === getSchemeId(record)) selectedRow.value = null
+  onSelect: (record: FlowScheme, selecmed: boolean) => {
+    if (selecmed) selecmedRow.value = record
+    else if (selecmedRow.value && getSchemeId(selecmedRow.value) === getSchemeId(record)) selecmedRow.value = null
   },
-  onSelectAll: (selected: boolean, selectedRowsData: FlowScheme[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: FlowScheme[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   }
 }))
 
 const onClickRow = (record: FlowScheme) => ({
   onClick: () => {
     const key = getSchemeId(record)
-    const index = selectedRowKeys.value.indexOf(key)
-    if (index > -1) selectedRowKeys.value.splice(index, 1)
-    else selectedRowKeys.value.push(key)
-    selectedRows.value = dataSource.value.filter(item => selectedRowKeys.value.includes(getSchemeId(item)))
-    selectedRow.value = selectedRowKeys.value.length === 1 ? (selectedRows.value[0] ?? null) : null
-    if (rowSelection.value.onChange) rowSelection.value.onChange(selectedRowKeys.value, selectedRows.value)
+    const index = selecmedRowKeys.value.indexOf(key)
+    if (index > -1) selecmedRowKeys.value.splice(index, 1)
+    else selecmedRowKeys.value.push(key)
+    selecmedRows.value = dataSource.value.filter(item => selecmedRowKeys.value.includes(getSchemeId(item)))
+    selecmedRow.value = selecmedRowKeys.value.length === 1 ? (selecmedRows.value[0] ?? null) : null
+    if (rowSelection.value.onChange) rowSelection.value.onChange(selecmedRowKeys.value, selecmedRows.value)
   }
 })
 
@@ -676,7 +676,7 @@ async function handleEdit(record: FlowScheme) {
 
 /** 更新：若有选中行则编辑该行，否则提示请选择 */
 function handleUpdate() {
-  if (selectedRow.value) handleEdit(selectedRow.value)
+  if (selecmedRow.value) handleEdit(selecmedRow.value)
   else message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: t('entity.flowscheme._self') }))
 }
 
@@ -706,26 +706,26 @@ function handleDeleteOne(record: FlowScheme) {
 
 /** 批量删除：无选中则提示；有选中则二次确认后逐条 deleteById 并刷新 */
 function handleDelete() {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: t('entity.flowscheme._self') }))
     return
   }
   Modal.confirm({
     centered: true,
     title: t('common.tip.confirm.delete.title'),
-    content: t('common.tip.confirm.delete.count', { count: selectedRows.value.length, entity: t('entity.flowscheme._self') }),
+    content: t('common.tip.confirm.delete.count', { count: selecmedRows.value.length, entity: t('entity.flowscheme._self') }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
       try {
         loading.value = true
-        for (const row of selectedRows.value) {
+        for (const row of selecmedRows.value) {
           await deleteFlowSchemeById(row.flowSchemeId)
         }
         message.success(t('common.feedback.deleted'))
-        selectedRowKeys.value = []
-        selectedRows.value = []
-        selectedRow.value = null
+        selecmedRowKeys.value = []
+        selecmedRows.value = []
+        selecmedRow.value = null
         loadData()
       } catch (error: unknown) {
         message.error(getErrorMessage(error, t('common.feedback.delete.failed')))

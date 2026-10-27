@@ -5,8 +5,8 @@
 // 创建时间：2026-06-09
 // 创建人：Takt365(Cursor AI)
 // 功能描述：编码规则应用服务实现（CRUD + 导入导出）
-// · 新增/导入/更新：服务端按规则自动生成或刷新起始编码 ExampleCode（Create/Import 同时写入 CurrentSequence）
-// · 运行时取号：业务模块注入 ITaktNumberingGenerator，不在本服务重复封装
+// · 新增/导入/更新：服务端按规则自动生成或刷新起始编码 StartingNumber
+// · 运行时取号：业务模块注入 ITaktNumberingGenerator（按业务表编码 max；本服务不维护流水计数）
 // 
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -17,6 +17,7 @@ using Mapster;
 using SqlSugar;
 using Takt.Application.Dtos.Foundation;
 using Takt.Domain.Entities;
+using Takt.Domain.Entities.Accounting.Financial;
 using Takt.Domain.Entities.Foundation;
 using Takt.Domain.Interfaces;
 using Takt.Domain.Repositories;
@@ -33,6 +34,7 @@ namespace Takt.Application.Services.Foundation;
 public class TaktNumberingService : TaktServiceBase, ITaktNumberingService
 {
     private readonly ITaktCompanyRepository<TaktNumbering> _numberingRepository;
+    private readonly ITaktTenantRepository<TaktCompany> _companyRepository;
     private readonly ITaktUniqueValidator _uniqueValidator;
     private readonly ITaktNumberingGenerator _numberingGenerator;
 
@@ -40,12 +42,14 @@ public class TaktNumberingService : TaktServiceBase, ITaktNumberingService
     /// 构造函数
     /// </summary>
     /// <param name="numberingRepository">编码规则仓储</param>
+    /// <param name="companyRepository">公司仓储</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
     /// <param name="numberingGenerator">运行时编码生成器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktNumberingService(
         ITaktCompanyRepository<TaktNumbering> numberingRepository,
+        ITaktTenantRepository<TaktCompany> companyRepository,
         ITaktUniqueValidator uniqueValidator,
         ITaktNumberingGenerator numberingGenerator,
         ITaktUserContext? userContext = null,
@@ -53,6 +57,7 @@ public class TaktNumberingService : TaktServiceBase, ITaktNumberingService
         : base(userContext, localizationService)
     {
         _numberingRepository = numberingRepository;
+        _companyRepository = companyRepository;
         _uniqueValidator = uniqueValidator;
         _numberingGenerator = numberingGenerator;
     }
@@ -107,7 +112,6 @@ public class TaktNumberingService : TaktServiceBase, ITaktNumberingService
         {
             RuleCode = model.RuleCode ?? ruleCode.Trim(),
             BusinessCode = model.BusinessCode ?? string.Empty,
-            CurrentSequence = model.CurrentSequence,
         };
     }
 
@@ -133,7 +137,7 @@ public class TaktNumberingService : TaktServiceBase, ITaktNumberingService
         {
             DictValue = e.RuleCode,
             DictLabel = string.IsNullOrWhiteSpace(e.RuleName) ? e.RuleCode : $"{e.RuleName} ({e.RuleCode})",
-            ExtValue = e.ExampleCode,
+            ExtValue = e.StartingNumber,
         }).ToList();
     }
 
@@ -150,9 +154,9 @@ public class TaktNumberingService : TaktServiceBase, ITaktNumberingService
         entity.CompanyCode = CurrentCompanyCode;
         entity.IsBuiltIn = 0;
         NormalizeNumberingEntity(entity);
-        var (initialCode, initialSequence) = TaktNumberingHelper.BuildInitialExampleCode(ToModel(entity), DateTime.Now);
-        entity.ExampleCode = initialCode;
-        entity.CurrentSequence = initialSequence;
+        entity.StartingNumber = TaktNumberingHelper.BuildInitialStartingNumber(
+            await ToModelAsync(entity),
+            DateTime.Now);
         var isUnique_ix_numbering_code_unique = await _uniqueValidator.IsUniqueAsync(
             _numberingRepository,
             x => x.RuleCode == entity.RuleCode);
@@ -178,15 +182,14 @@ public class TaktNumberingService : TaktServiceBase, ITaktNumberingService
             throw new TaktBusinessException("编码规则不存在");
         }
         var originalIsBuiltIn = entity.IsBuiltIn;
-        var originalCurrentSequence = entity.CurrentSequence;
         dto.Adapt(entity);
         entity.IsBuiltIn = originalIsBuiltIn;
-        entity.CurrentSequence = originalCurrentSequence;
         NormalizeNumberingEntity(entity);
-        var sequenceForExample = entity.CurrentSequence <= 0
-            ? (entity.SequenceStep <= 0 ? 1 : entity.SequenceStep)
-            : entity.CurrentSequence;
-        entity.ExampleCode = TaktNumberingHelper.FormatBusinessCode(ToModel(entity), sequenceForExample, DateTime.Now);
+        var step = entity.SequenceStep <= 0 ? 1 : entity.SequenceStep;
+        entity.StartingNumber = TaktNumberingHelper.FormatBusinessCode(
+            await ToModelAsync(entity),
+            step,
+            DateTime.Now);
         var isUnique_ix_numbering_code_unique = await _uniqueValidator.IsUniqueAsync(
             _numberingRepository,
             x => x.RuleCode == entity.RuleCode,
@@ -306,7 +309,7 @@ public class TaktNumberingService : TaktServiceBase, ITaktNumberingService
                 entity.TenantCode = CurrentTenantCode;
                 entity.CompanyCode = CurrentCompanyCode;
                 NormalizeNumberingEntity(entity);
-                ApplyExampleCodeOnCreate(entity, rows[i].ExampleCode, autoGenerateWhenEmpty: true);
+                await ApplyStartingNumberOnCreateAsync(entity, rows[i].StartingNumber, autoGenerateWhenEmpty: true);
                 var importKey = $"{entity.RuleCode}";
                 if (!importSeenKeys.Add(importKey))
                 {
@@ -383,8 +386,7 @@ public class TaktNumberingService : TaktServiceBase, ITaktNumberingService
                 || SqlFunc.ToString(x.SequenceStep).Contains(keywords)
                 || (x.SuffixCode != null && x.SuffixCode.Contains(keywords))
                 || (x.ResetPeriod != null && x.ResetPeriod.Contains(keywords))
-                || SqlFunc.ToString(x.CurrentSequence).Contains(keywords)
-                || x.ExampleCode.Contains(keywords)
+                || x.StartingNumber.Contains(keywords)
                 || (x.Separator != null && x.Separator.Contains(keywords))
                 || SqlFunc.ToString(x.IsBuiltIn).Contains(keywords)
                 || SqlFunc.ToString(x.NumberingStatus).Contains(keywords)
@@ -446,14 +448,9 @@ public class TaktNumberingService : TaktServiceBase, ITaktNumberingService
             exp = exp.And(x => x.ResetPeriod != null && x.ResetPeriod.Contains(queryDto.ResetPeriod));
         }
 
-        if (queryDto?.CurrentSequence.HasValue == true)
+        if (!string.IsNullOrEmpty(queryDto?.StartingNumber))
         {
-            exp = exp.And(x => x.CurrentSequence == queryDto.CurrentSequence);
-        }
-
-        if (!string.IsNullOrEmpty(queryDto?.ExampleCode))
-        {
-            exp = exp.And(x => x.ExampleCode.Contains(queryDto.ExampleCode));
+            exp = exp.And(x => x.StartingNumber.Contains(queryDto.StartingNumber));
         }
 
         if (!string.IsNullOrEmpty(queryDto?.Separator))
@@ -515,14 +512,14 @@ public class TaktNumberingService : TaktServiceBase, ITaktNumberingService
     // ========================================
 
     /// <summary>
-    /// 实体转编码模型（供 TaktNumberingHelper 纯计算）
+    /// 实体转编码模型（不含公司简称；仅供 Normalize）
     /// </summary>
     /// <param name="entity">编码规则实体</param>
     /// <returns>编码模型</returns>
     private static TaktNumberingModel ToModel(TaktNumbering entity) => new()
     {
         RuleCode = entity.RuleCode,
-        BusinessCode = entity.ExampleCode,
+        BusinessCode = entity.StartingNumber,
         CompanyCode = entity.CompanyCode,
         DeptCode = entity.DeptCode,
         PrefixCode = entity.PrefixCode,
@@ -531,12 +528,45 @@ public class TaktNumberingService : TaktServiceBase, ITaktNumberingService
         SequenceStep = entity.SequenceStep,
         SuffixCode = entity.SuffixCode,
         ResetPeriod = entity.ResetPeriod,
-        CurrentSequence = entity.CurrentSequence,
         Separator = entity.Separator,
         Description = entity.NumberingDescription,
         DocumentType = entity.DocumentType,
         UpdatedAt = entity.UpdatedAt,
     };
+
+    /// <summary>
+    /// 实体转编码模型（含当前公司简称，供起始编码/取号样例拼接）
+    /// </summary>
+    /// <param name="entity">编码规则实体</param>
+    /// <returns>编码模型</returns>
+    private async Task<TaktNumberingModel> ToModelAsync(TaktNumbering entity)
+    {
+        var model = ToModel(entity);
+        model.CompanyShortName = await ResolveCompanyShortNameAsync(entity.CompanyCode);
+        return model;
+    }
+
+    /// <summary>
+    /// 按公司代码解析公司简称（无简称时回退公司代码）
+    /// </summary>
+    /// <param name="companyCode">公司代码</param>
+    /// <returns>公司简称或公司代码</returns>
+    private async Task<string> ResolveCompanyShortNameAsync(string? companyCode)
+    {
+        var code = companyCode?.Trim();
+        if (string.IsNullOrWhiteSpace(code) || string.IsNullOrWhiteSpace(CurrentTenantCode))
+        {
+            return code ?? string.Empty;
+        }
+        var list = await _companyRepository.GetListAsync(
+            x => x.TenantCode == CurrentTenantCode && x.CompanyCode == code);
+        var company = list.FirstOrDefault();
+        if (company == null || string.IsNullOrWhiteSpace(company.CompanyShortName))
+        {
+            return code;
+        }
+        return company.CompanyShortName.Trim();
+    }
 
     /// <summary>
     /// 规范化编码规则实体默认值
@@ -556,21 +586,19 @@ public class TaktNumberingService : TaktServiceBase, ITaktNumberingService
     }
 
     /// <summary>
-    /// 创建/导入时写入起始编码与当前流水
+    /// 创建/导入时写入起始编码样例（公司段用简称）
     /// </summary>
     /// <param name="entity">编码规则实体</param>
-    /// <param name="exampleCodeInput">起始编码</param>
+    /// <param name="startingNumberInput">起始编码</param>
     /// <param name="autoGenerateWhenEmpty">为空时是否自动生成</param>
-    private static void ApplyExampleCodeOnCreate(
+    private async Task ApplyStartingNumberOnCreateAsync(
         TaktNumbering entity,
-        string? exampleCodeInput,
+        string? startingNumberInput,
         bool autoGenerateWhenEmpty)
     {
-        var (exampleCode, currentSequence) = TaktNumberingHelper.ResolveExampleCodeOnCreate(
-            ToModel(entity),
-            exampleCodeInput,
+        entity.StartingNumber = TaktNumberingHelper.ResolveStartingNumberOnCreate(
+            await ToModelAsync(entity),
+            startingNumberInput,
             autoGenerateWhenEmpty);
-        entity.ExampleCode = exampleCode;
-        entity.CurrentSequence = currentSequence;
     }
 }

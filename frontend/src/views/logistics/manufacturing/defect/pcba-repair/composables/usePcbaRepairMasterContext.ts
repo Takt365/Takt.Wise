@@ -15,7 +15,7 @@ export type PcbaRepairRowRecord = PcbaRepair | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface PcbaRepairMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<PcbaRepairRowRecord | null>
+  selecmedMasterRow: Ref<PcbaRepairRowRecord | null>
 }
 
 const pcbaRepairMasterContextKey: InjectionKey<PcbaRepairMasterContext> = Symbol('pcba-repairMasterContext')
@@ -25,8 +25,8 @@ const pcbaRepairMasterContextKey: InjectionKey<PcbaRepairMasterContext> = Symbol
  * @returns {PcbaRepairMasterContext} 主表上下文
  */
 export function providePcbaRepairMasterContext(): PcbaRepairMasterContext {
-  const selectedMasterRow = ref<PcbaRepairRowRecord | null>(null)
-  const ctx: PcbaRepairMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<PcbaRepairRowRecord | null>(null)
+  const ctx: PcbaRepairMasterContext = { selecmedMasterRow }
   provide(pcbaRepairMasterContextKey, ctx)
   return ctx
 }

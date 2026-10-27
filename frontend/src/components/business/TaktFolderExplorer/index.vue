@@ -104,7 +104,7 @@
           block-node
           :tree-data="treeData"
           :expanded-keys="expandedKeys"
-          :selected-keys="selectedKeys"
+          :selecmed-keys="selecmedKeys"
           :field-names="{ title: 'title', key: 'key', children: 'children' }"
           @expand="onTreeExpand"
           @select="onTreeSelect"
@@ -246,7 +246,7 @@ const props = withDefaults(defineProps<{
   /** 列表项 */
   items?: TaktFolderExplorerItem[]
   /** 当前选中路径 */
-  selectedPath?: string
+  selecmedPath?: string
   /** 路径模式 */
   mode?: TaktFolderExplorerPathMode
   /** 地址栏占位 */
@@ -301,7 +301,7 @@ const treeData = ref<TaktFolderExplorerTreeNode[]>([])
 /** 展开键 */
 const expandedKeys = ref<string[]>([])
 /** 选中键 */
-const selectedKeys = ref<string[]>([])
+const selecmedKeys = ref<string[]>([])
 /** 历史栈 */
 const historyStack = ref<string[]>([])
 /** 历史指针 */
@@ -346,9 +346,9 @@ const crumbs = computed(() =>
 )
 
 const statusPath = computed(() => {
-  const selected = String(props.selectedPath || '').trim()
-  if (selected && !isFolderExplorerLocalRoot(selected)) {
-    return selected
+  const selecmed = String(props.selecmedPath || '').trim()
+  if (selecmed && !isFolderExplorerLocalRoot(selecmed)) {
+    return selecmed
   }
   const current = String(props.currentPath || '').trim()
   if (current && !isFolderExplorerLocalRoot(current)) {
@@ -399,11 +399,11 @@ watch(
 )
 
 watch(
-  () => props.selectedPath,
+  () => props.selecmedPath,
   (v) => {
     const key = toHistoryKey(v || props.currentPath)
     if (key) {
-      selectedKeys.value = [key]
+      selecmedKeys.value = [key]
     }
   },
 )
@@ -578,7 +578,7 @@ function customRow(record: TaktFolderExplorerItem) {
  * @returns class
  */
 function rowClassName(record: TaktFolderExplorerItem) {
-  return props.selectedPath === rowFullPath(record)
+  return props.selecmedPath === rowFullPath(record)
     ? 'bg-primary/10 cursor-pointer'
     : 'cursor-pointer'
 }
@@ -644,7 +644,7 @@ function syncTreeWithBrowse() {
     })
   treeData.value = snapshot
   expandAncestors(parentKey)
-  selectedKeys.value = [parentKey]
+  selecmedKeys.value = [parentKey]
 }
 
 /**
@@ -838,7 +838,7 @@ function onTreeSelect(keys: (string | number)[]) {
   if (!key) {
     return
   }
-  selectedKeys.value = [key]
+  selecmedKeys.value = [key]
   emitNavigate(key)
 }
 </script>

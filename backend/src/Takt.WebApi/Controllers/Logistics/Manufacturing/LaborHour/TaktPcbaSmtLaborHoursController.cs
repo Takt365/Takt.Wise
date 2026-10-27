@@ -41,7 +41,7 @@ public class TaktPcbaSmtLaborHoursController : TaktControllerBase
     /// </summary>
     /// <param name="queryDto">查询DTO</param>
     /// <returns>分页结果</returns>
-    [TaktPermission("logistics:manufacturing:labor:hour:pcba:smt:list", "PCBA SMT工数统计列表")]
+    [TaktPermission("logistics:manufacturing:labor:hour:mfg2:mtl:list", "PCBA SMT工数统计列表")]
     [HttpGet("list")]
     public async Task<IActionResult> GetPcbaSmtLaborHourListAsync([FromQuery] TaktPcbaSmtLaborHourQueryDto queryDto)
     {
@@ -61,7 +61,7 @@ public class TaktPcbaSmtLaborHoursController : TaktControllerBase
     /// </summary>
     /// <param name="id">PCBA SMT工数统计ID</param>
     /// <returns>PCBA SMT工数统计DTO</returns>
-    [TaktPermission("logistics:manufacturing:labor:hour:pcba:smt:query", "PCBA SMT工数统计详情")]
+    [TaktPermission("logistics:manufacturing:labor:hour:mfg2:mtl:query", "PCBA SMT工数统计详情")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetPcbaSmtLaborHourByIdAsync(long id)
     {
@@ -84,7 +84,7 @@ public class TaktPcbaSmtLaborHoursController : TaktControllerBase
     /// 获取PCBA SMT工数统计选项列表
     /// </summary>
     /// <returns>下拉选项</returns>
-    [TaktPermission("logistics:manufacturing:labor:hour:pcba:smt:query", "PCBA SMT工数统计选项")]
+    [TaktPermission("logistics:manufacturing:labor:hour:mfg2:mtl:query", "PCBA SMT工数统计选项")]
     [HttpGet("options")]
     public async Task<IActionResult> GetPcbaSmtLaborHourOptionsAsync([FromQuery] string? plantCode = null, [FromQuery] string? keyword = null)
     {
@@ -104,7 +104,7 @@ public class TaktPcbaSmtLaborHoursController : TaktControllerBase
     /// </summary>
     /// <param name="dto">创建DTO</param>
     /// <returns>PCBA SMT工数统计DTO</returns>
-    [TaktPermission("logistics:manufacturing:labor:hour:pcba:smt:create", "创建PCBA SMT工数统计")]
+    [TaktPermission("logistics:manufacturing:labor:hour:mfg2:mtl:create", "创建PCBA SMT工数统计")]
     [HttpPost]
     public async Task<IActionResult> CreatePcbaSmtLaborHourAsync([FromBody] TaktPcbaSmtLaborHourCreateDto dto)
     {
@@ -125,7 +125,7 @@ public class TaktPcbaSmtLaborHoursController : TaktControllerBase
     /// <param name="id">PCBA SMT工数统计ID</param>
     /// <param name="dto">更新DTO</param>
     /// <returns>PCBA SMT工数统计DTO</returns>
-    [TaktPermission("logistics:manufacturing:labor:hour:pcba:smt:update", "更新PCBA SMT工数统计")]
+    [TaktPermission("logistics:manufacturing:labor:hour:mfg2:mtl:update", "更新PCBA SMT工数统计")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdatePcbaSmtLaborHourAsync(long id, [FromBody] TaktPcbaSmtLaborHourUpdateDto dto)
     {
@@ -145,7 +145,7 @@ public class TaktPcbaSmtLaborHoursController : TaktControllerBase
     /// </summary>
     /// <param name="id">PCBA SMT工数统计ID</param>
     /// <returns>操作结果</returns>
-    [TaktPermission("logistics:manufacturing:labor:hour:pcba:smt:delete", "删除PCBA SMT工数统计")]
+    [TaktPermission("logistics:manufacturing:labor:hour:mfg2:mtl:delete", "删除PCBA SMT工数统计")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePcbaSmtLaborHourByIdAsync(long id)
     {
@@ -165,7 +165,7 @@ public class TaktPcbaSmtLaborHoursController : TaktControllerBase
     /// </summary>
     /// <param name="ids">ID列表</param>
     /// <returns>操作结果</returns>
-    [TaktPermission("logistics:manufacturing:labor:hour:pcba:smt:delete", "批量删除PCBA SMT工数统计")]
+    [TaktPermission("logistics:manufacturing:labor:hour:mfg2:mtl:delete", "批量删除PCBA SMT工数统计")]
     [HttpDelete("batch")]
     public async Task<IActionResult> DeletePcbaSmtLaborHourBatchAsync([FromBody] IEnumerable<long> ids)
     {
@@ -184,7 +184,7 @@ public class TaktPcbaSmtLaborHoursController : TaktControllerBase
     /// 获取导入模板
     /// </summary>
     /// <returns>Excel文件</returns>
-    [TaktPermission("logistics:manufacturing:labor:hour:pcba:smt:import", "获取PCBA SMT工数统计导入模板")]
+    [TaktPermission("logistics:manufacturing:labor:hour:mfg2:mtl:import", "获取PCBA SMT工数统计导入模板")]
     [HttpGet("template")]
     public async Task<IActionResult> GetPcbaSmtLaborHourTemplateAsync([FromQuery] string? sheetName = null, [FromQuery] string? templateName = null)
     {
@@ -204,7 +204,7 @@ public class TaktPcbaSmtLaborHoursController : TaktControllerBase
     /// </summary>
     /// <param name="file">Excel文件</param>
     /// <returns>导入结果</returns>
-    [TaktPermission("logistics:manufacturing:labor:hour:pcba:smt:import", "导入PCBA SMT工数统计")]
+    [TaktPermission("logistics:manufacturing:labor:hour:mfg2:mtl:import", "导入PCBA SMT工数统计")]
     [HttpPost("import")]
     public async Task<IActionResult> ImportPcbaSmtLaborHourAsync(IFormFile file, [FromQuery] string? sheetName = null)
     {
@@ -234,7 +234,7 @@ public class TaktPcbaSmtLaborHoursController : TaktControllerBase
     /// 导出PCBA SMT工数统计
     /// </summary>
     /// <returns>Excel文件</returns>
-    [TaktPermission("logistics:manufacturing:labor:hour:pcba:smt:export", "导出PCBA SMT工数统计")]
+    [TaktPermission("logistics:manufacturing:labor:hour:mfg2:mtl:export", "导出PCBA SMT工数统计")]
     [HttpGet("export")]
     public async Task<IActionResult> ExportPcbaSmtLaborHourAsync([FromQuery] TaktPcbaSmtLaborHourQueryDto? query = null, [FromQuery] string? sheetName = null, [FromQuery] string? exportName = null)
     {

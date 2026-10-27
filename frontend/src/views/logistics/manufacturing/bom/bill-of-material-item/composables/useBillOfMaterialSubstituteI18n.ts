@@ -97,7 +97,6 @@ export type BillOfMaterialSubstituteField = keyof typeof BILLOFMATERIALSUBSTITUT
 /** 高级查询可 trim 的字符串字段 */
 export const BILLOFMATERIALSUBSTITUTE_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'billOfMaterialId',
   'bomCode',
   'primaryMaterialCode',

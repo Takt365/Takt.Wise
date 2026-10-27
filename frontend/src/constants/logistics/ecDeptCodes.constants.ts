@@ -15,36 +15,36 @@
  */
 export const TaktEcDeptCodes = {
   /** 技术课 D0710 */
-  Eng: 'D0710',
+  Te: 'D0710',
   /** 生管课 D0420 */
-  Pmc: 'D0420',
+  Pc: 'D0420',
   /** 采购课 D0510 */
-  Mp: 'D0510',
+  Pur: 'D0510',
   /** 受检课 D0810 */
   Iqc: 'D0810',
   /** 部管课 D0430 */
   Mc: 'D0430',
-  /** 电子物料 D0625 */
-  Smt: 'D0625',
-  /** 制造2课 D0620（看板「制二」桶；TaktEcSeizounika） */
-  Pcba: 'D0620',
+  /** 物料 D0625 */
+  Mtl: 'D0625',
+  /** 制造2课 D0620（看板「制二」桶；TaktEcMfg2） */
+  Mfg2: 'D0620',
   /** 制造1课 D0610 */
-  Assy: 'D0610',
+  Mfg1: 'D0610',
   /** 品管课 D0820 */
-  Qa: 'D0820',
+  Qc: 'D0820',
   /** 制造技术课 D0630 */
-  Te: 'D0630',
+  Me: 'D0630',
 } as const;
 
 /** 部门转置列顺序（与后端 TaktEcDeptCodes.TransposedOrder 一致；不含 Te） */
 export const TaktEcDeptTransposedOrder: readonly string[] = [
-  TaktEcDeptCodes.Mp,
-  TaktEcDeptCodes.Pmc,
+  TaktEcDeptCodes.Pur,
+  TaktEcDeptCodes.Pc,
   TaktEcDeptCodes.Iqc,
   TaktEcDeptCodes.Mc,
-  TaktEcDeptCodes.Pcba,
-  TaktEcDeptCodes.Assy,
-  TaktEcDeptCodes.Qa,
+  TaktEcDeptCodes.Mfg2,
+  TaktEcDeptCodes.Mfg1,
+  TaktEcDeptCodes.Qc,
 ];
 
 export type TaktEcDeptCode = (typeof TaktEcDeptCodes)[keyof typeof TaktEcDeptCodes];

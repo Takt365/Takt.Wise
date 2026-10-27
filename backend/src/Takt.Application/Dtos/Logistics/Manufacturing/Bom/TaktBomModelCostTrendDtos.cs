@@ -101,7 +101,7 @@ public class TaktBomModelCostTrendDto
     public decimal? VariancePrice { get; set; }
 
     /// <summary>
-    /// 组件差异（同机种各成品间用量或单价不一致的组件；格式 组件编码-用量:价格，价格 5 位小数，分号分隔）
+    /// 组件差异（同机种各成品间用量或单价不一致的组件。首行 Net 为差异行成本合计，其后全量 编码:用量-行成本，换行分隔）
     /// </summary>
     public string ComponentVarianceText { get; set; } = string.Empty;
 }

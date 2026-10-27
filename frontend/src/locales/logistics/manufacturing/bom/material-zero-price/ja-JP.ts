@@ -20,7 +20,7 @@ export default {
     modelCode: '機種',
     modelCodesOptional: '機種（任意・複数可；空=全機種）',
     modelCodePlaceholder: '任意；空＝全機種',
-    hint: '{month} · 製品 {productCount} · ゼロ価格部品 {componentCount}（FERT のみ · IsDeleted=0 · ProductionRelated=X · PcbSectIndicator 空 · PurchaseType=F · 移動平均価格=0；推奨代替＝末尾文字逆順例 E02597400C→B→A、移動価格表の同期間または直近有価÷PriceUnit）',
+    hint: '{month} · 製品 {productCount} · ゼロ価格部品 {componentCount}（FERT のみ · IsDeleted=0 · ProductionRelated=X · PcbSectIndicator 空 · PurchaseType=F · 移動平均価格=0；推奨移動価格＝当該部品を原価月から遡り移動価格>0の直近月（購買なしの月は 0 ではない；無ければ末尾文字逆順例 E02597400C→B→A）÷PriceUnit）',
     productCodes: '共用製品',
     productCount: '製品数',
     suggestedComponentCode: '推奨代替部品',
@@ -29,25 +29,25 @@ export default {
     exportFailed: 'Bom0価格のエクスポートに失敗しました',
     costSum: 'コスト計算',
     costRecalculate: '再計算コスト',
-    costAverage: '平均コスト計算',
+    costAverage: '機種平均コスト計算',
     purchaseInfoBackfill: '購買価格補完',
     purchaseInfoBackfillSuccess:
       '{month} 購買価格補完完了：スキャン {scanned}、更新 {updated}、価格なし {skipped}、変更なし {unchanged}',
     purchaseInfoBackfillFailed: '購買価格補完に失敗しました',
     movingPriceBackfill: '移動価格を補完',
-    movingPriceBackfillBatch: '移動価格を一括補完',
+    movingPriceBackfillBatch: '代替価格を一括補完',
     movingPriceBackfillRow: '移動価格を補完',
     movingPriceBackfillNoSuggested: '推奨代替部品がないため移動価格を補完できません',
     movingPriceBackfillConfirmTitle: '移動価格を補完しますか？',
     movingPriceBackfillConfirmContent:
       '現在の工場・原価月で部品 {component} のゼロ価格明細を推奨代替 {suggested} の移動平均価格／単位／通貨で補完し、ExtField 履歴を書き込み、各機種の製品月次原価と機種月次原価を更新します。',
-    movingPriceBackfillBatchConfirmTitle: '移動価格を一括補完しますか？',
+    movingPriceBackfillBatchConfirmTitle: '代替価格を一括補完しますか？',
     movingPriceBackfillBatchConfirmContent:
       '現在の工場・原価月 {month}（および機種条件）で、推奨代替がある全ゼロ価格部品の移動平均価格／単位／通貨を補完し、ExtField 履歴と製品／機種月次原価を更新します。',
     movingPriceBackfillSuccess:
       '{month} 移動価格補完完了：明細スキャン {scanned}、更新 {updated}、価格なし {skipped}、変更なし {unchanged}；製品月次原価 {productCost}、機種月次原価 {modelAverage}；{priceInfo}',
     movingPriceBackfillBatchSuccess:
-      '{month} 移動価格一括補完完了：部品 {components}、明細スキャン {scanned}、更新 {updated}、価格なし {skipped}、変更なし {unchanged}；製品月次原価 {productCost}、機種月次原価 {modelAverage}',
+      '{month} 代替価格一括補完完了：部品 {components}、明細スキャン {scanned}、更新 {updated}、価格なし {skipped}、変更なし {unchanged}；製品月次原価 {productCost}、機種月次原価 {modelAverage}',
     movingPriceBackfillFailed: '移動価格補完に失敗しました',
     movingPriceManualRow: '手動で価格更新',
     movingPriceManualTitle: '移動価格を手動置換',
@@ -77,14 +77,14 @@ export default {
     costAverageSuccess:
       '{month} 平均完了：スキャン {scanned}（製品月次原価>0は {positiveCostRows}）、機種更新 {modelUpdated}、タイプ更新 {typeUpdated}、平均更新 {averageUpdated}（原価あり {groupsWithCost}/{groups}、なし {groupsNoCost}）',
     costAverageFailed: '平均コスト計算に失敗しました',
-    pcbSectMark: 'PCB SECT を標記',
+    pcbSectMark: 'PCB SECT標識',
     pcbSectMarkConfirmTitle: 'PCB SECT ツリー全体を標記しますか？',
     pcbSectMarkConfirmContent:
       '工場・原価月 {month}（および機種条件）で、説明に「PCB SECT」を含むノードとその子孫ツリーに pcb_sect_indicator=X を書き込みます（既存はスキップ）。',
     pcbSectMarkSuccess:
       '{month} PCB SECT 標記完了：スキャン {scanned}、ツリー {pcbSect}、新規 {updated}、既存 {unchanged}',
     pcbSectMarkFailed: 'PCB SECT 標記に失敗しました',
-    stripLeadingZeros: '先頭0を除去',
+    stripLeadingZeros: '先頭0',
     stripLeadingZerosConfirmTitle: '先頭の 0 を除去しますか？',
     stripLeadingZerosConfirmContent:
       '工場 {plant} の原価ヘッダの製品コード、および明細（年次表を含む）の製品コード・部品コードのうち、数字のみで先頭が 0 の値から先頭 0 を除きます。例：000000001918610130 → 1918610130。0919MH8G93 のように文字を含むコードは変更しません。一意キーが衝突する行はスキップします。',

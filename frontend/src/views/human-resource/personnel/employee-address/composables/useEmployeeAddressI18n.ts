@@ -74,7 +74,6 @@ export type EmployeeAddressField = keyof typeof EMPLOYEEADDRESS_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const EMPLOYEEADDRESS_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'employeeCode',
   'employeeName',
   'country',

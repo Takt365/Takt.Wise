@@ -16,7 +16,7 @@ namespace Takt.Application.Services.Logistics.Manufacturing.Bom;
 
 /// <summary>
 /// BOM 组件零价格清单服务（FERT+未删除；X+F+移动平均价=0；建议代替末字母逆推）
-/// 查询栏工厂/机种选项统一走 ITaktBomMaterialCostAnalysisService。
+/// 查询栏工厂/机种选项统一走 ITaktBomCostOptionService。
 /// </summary>
 public interface ITaktBomMaterialZeroPriceService
 {

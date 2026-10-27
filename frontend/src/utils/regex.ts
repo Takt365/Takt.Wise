@@ -257,6 +257,12 @@ export const RegexPatterns = {
 
   /** 权限标识（模块:资源:操作，格式如：identity:user:create，小写字母、数字、冒号，3-100位） */
   PERMISSION: /^[a-z][a-z0-9]*:[a-z0-9]+:[a-z0-9]+$/,
+
+  /**
+   * 设变生管 Po残（与 TaktRegexHelper.EcPoRemainder 对齐）
+   * 空合法；非空须为「采购单10位-序号4位:数量」，数量非负整数或最多两位小数，如 4500123456-0010:18.5
+   */
+  EC_PO_REMAINDER: /^\d{10}-\d{4}:\d+(?:\.\d{1,2})?$/,
   
   /** 全角字符（全角空格、全角英数与标点、全角货币符；与 TaktRegexHelper.FullWidth 对齐。汉字与假名不在此列） */
   FULL_WIDTH: /[\u3000\uFF01-\uFF60\uFFE0-\uFFE6]/,
@@ -1135,6 +1141,18 @@ export class RegexHelper {
   }
 
   /**
+   * 验证设变生管 Po残。空串合法；非空须为「采购单10位-序号4位:数量」
+   * @param value Po残文本
+   * @returns {boolean} 空或格式正确时为 true
+   */
+  static isValidEcPoRemainder(value: string | null | undefined): boolean {
+    if (value == null || typeof value !== 'string' || !value.trim()) {
+      return true
+    }
+    return this.test('EC_PO_REMAINDER', value.trim())
+  }
+
+  /**
    * 验证批次编码
    * @param code 批次编码
    * @returns 是否有效
@@ -1420,6 +1438,7 @@ export const isValidCode = RegexHelper.isValidCode.bind(RegexHelper)
 export const isValidMaterialCode = RegexHelper.isValidMaterialCode.bind(RegexHelper)
 export const isValidDocumentCode = RegexHelper.isValidDocumentCode.bind(RegexHelper)
 export const isValidOrderCode = RegexHelper.isValidOrderCode.bind(RegexHelper)
+export const isValidEcPoRemainder = RegexHelper.isValidEcPoRemainder.bind(RegexHelper)
 export const isValidBatchCode = RegexHelper.isValidBatchCode.bind(RegexHelper)
 export const isValidSerialNumber = RegexHelper.isValidSerialNumber.bind(RegexHelper)
 export const isValidCodeWithDate = RegexHelper.isValidCodeWithDate.bind(RegexHelper)

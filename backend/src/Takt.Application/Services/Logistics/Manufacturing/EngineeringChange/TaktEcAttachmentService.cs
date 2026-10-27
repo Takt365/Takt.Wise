@@ -31,7 +31,7 @@ namespace Takt.Application.Services.Logistics.Manufacturing.EngineeringChange;
 public class TaktEcAttachmentService : TaktServiceBase, ITaktEcAttachmentService
 {
     private readonly ITaktCompanyRepository<TaktEcAttachment> _ecAttachmentRepository;
-    private readonly ITaktCompanyRepository<TaktEcGijutsu> _ecGijutsuRepository;
+    private readonly ITaktCompanyRepository<TaktEcTe> _ecTeRepository;
     private readonly ITaktFileService _fileService;
     private readonly ITaktLineNumberGenerator _lineNumberGenerator;
     private readonly ITaktUniqueValidator _uniqueValidator;
@@ -40,7 +40,7 @@ public class TaktEcAttachmentService : TaktServiceBase, ITaktEcAttachmentService
     /// 构造函数
     /// </summary>
     /// <param name="ecAttachmentRepository">设变附件仓储</param>
-    /// <param name="ecGijutsuRepository">设变技术课主仓储</param>
+    /// <param name="ecTeRepository">设变技术课主仓储</param>
     /// <param name="fileService">文件服务（按 AccessUrl 打开物理流）</param>
     /// <param name="lineNumberGenerator">明细行号生成器</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
@@ -48,7 +48,7 @@ public class TaktEcAttachmentService : TaktServiceBase, ITaktEcAttachmentService
     /// <param name="localizationService">本地化服务</param>
     public TaktEcAttachmentService(
         ITaktCompanyRepository<TaktEcAttachment> ecAttachmentRepository,
-        ITaktCompanyRepository<TaktEcGijutsu> ecGijutsuRepository,
+        ITaktCompanyRepository<TaktEcTe> ecTeRepository,
         ITaktFileService fileService,
         ITaktLineNumberGenerator lineNumberGenerator,
         ITaktUniqueValidator uniqueValidator,
@@ -57,7 +57,7 @@ public class TaktEcAttachmentService : TaktServiceBase, ITaktEcAttachmentService
         : base(userContext, localizationService)
     {
         _ecAttachmentRepository = ecAttachmentRepository;
-        _ecGijutsuRepository = ecGijutsuRepository;
+        _ecTeRepository = ecTeRepository;
         _fileService = fileService;
         _lineNumberGenerator = lineNumberGenerator;
         _uniqueValidator = uniqueValidator;
@@ -159,16 +159,16 @@ public class TaktEcAttachmentService : TaktServiceBase, ITaktEcAttachmentService
         var entity = dto.Adapt<TaktEcAttachment>();
         entity.IsObsolete = 0;
         ApplyEcAttachmentFileNameFromDocCode(entity);
-        await StampEcAttachmentEcGijutsuAsync(entity, dto);
+        await StampEcAttachmentEcTeAsync(entity, dto);
         if (entity.LineNumber <= 0)
         {
             var maxLine = await _ecAttachmentRepository.GetMaxIntAsync(
-                x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.EcGijutsuId == entity.EcGijutsuId,
+                x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.EcTeId == entity.EcTeId,
                 x => x.LineNumber);
-            var businessCode = !string.IsNullOrWhiteSpace(entity.EcCode) ? entity.EcCode : entity.EcGijutsuId.ToString();
+            var businessCode = !string.IsNullOrWhiteSpace(entity.EcCode) ? entity.EcCode : entity.EcTeId.ToString();
             entity.LineNumber = _lineNumberGenerator.GenerateNext(businessCode, maxLine);
         }
-        await EnsureEcAttachmentUniqueAsync(entity.EcGijutsuId, entity.DocCode, entity.LineNumber, excludeId: null);
+        await EnsureEcAttachmentUniqueAsync(entity.EcTeId, entity.DocCode, entity.LineNumber, excludeId: null);
         entity = await _ecAttachmentRepository.CreateAsync(entity);
         return await GetEcAttachmentByIdAsync(entity.Id) ?? entity.Adapt<TaktEcAttachmentDto>();
     }
@@ -189,8 +189,8 @@ public class TaktEcAttachmentService : TaktServiceBase, ITaktEcAttachmentService
         EnsureEcAttachmentDocCodeFormat(dto.AttachmentType, dto.DocCode, dto.EcCode);
         dto.Adapt(entity);
         ApplyEcAttachmentFileNameFromDocCode(entity);
-        await StampEcAttachmentEcGijutsuAsync(entity, dto);
-        await EnsureEcAttachmentUniqueAsync(entity.EcGijutsuId, entity.DocCode, entity.LineNumber, excludeId: id);
+        await StampEcAttachmentEcTeAsync(entity, dto);
+        await EnsureEcAttachmentUniqueAsync(entity.EcTeId, entity.DocCode, entity.LineNumber, excludeId: id);
         await _ecAttachmentRepository.UpdateAsync(entity);
         return await GetEcAttachmentByIdAsync(id) ?? throw new TaktBusinessException("设变附件不存在");
     }
@@ -297,21 +297,21 @@ public class TaktEcAttachmentService : TaktServiceBase, ITaktEcAttachmentService
                 var importDto = rows[i].Adapt<TaktEcAttachmentCreateDto>();
                 EnsureEcAttachmentDocCodeFormat(entity.AttachmentType, entity.DocCode, entity.EcCode);
                 ApplyEcAttachmentFileNameFromDocCode(entity);
-                await StampEcAttachmentEcGijutsuAsync(entity, importDto);
+                await StampEcAttachmentEcTeAsync(entity, importDto);
                 if (entity.LineNumber <= 0)
                 {
                     var maxLine = await _ecAttachmentRepository.GetMaxIntAsync(
-                        x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.EcGijutsuId == entity.EcGijutsuId,
+                        x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.EcTeId == entity.EcTeId,
                         x => x.LineNumber);
-                    var businessCode = !string.IsNullOrWhiteSpace(entity.EcCode) ? entity.EcCode : entity.EcGijutsuId.ToString();
+                    var businessCode = !string.IsNullOrWhiteSpace(entity.EcCode) ? entity.EcCode : entity.EcTeId.ToString();
                     entity.LineNumber = _lineNumberGenerator.GenerateNext(businessCode, maxLine);
                 }
-                var importKey = $"{entity.EcGijutsuId}|{(entity.DocCode ?? string.Empty).Trim()}|{entity.LineNumber}";
+                var importKey = $"{entity.EcTeId}|{(entity.DocCode ?? string.Empty).Trim()}|{entity.LineNumber}";
                 if (!importSeenKeys.Add(importKey))
                 {
-                    throw new TaktBusinessException("与Excel中其他行重复（EcGijutsuId、DocCode、LineNumber）");
+                    throw new TaktBusinessException("与Excel中其他行重复（EcTeId、DocCode、LineNumber）");
                 }
-                await EnsureEcAttachmentUniqueAsync(entity.EcGijutsuId, entity.DocCode, entity.LineNumber, excludeId: null);
+                await EnsureEcAttachmentUniqueAsync(entity.EcTeId, entity.DocCode, entity.LineNumber, excludeId: null);
                 await _ecAttachmentRepository.CreateAsync(entity);
                 success += 1;
             }
@@ -393,24 +393,24 @@ public class TaktEcAttachmentService : TaktServiceBase, ITaktEcAttachmentService
     }
 
     /// <summary>
-    /// 设变附件唯一键：EcGijutsuId + DocCode + LineNumber（对齐 ix_takt_logistics_manufacturing_ec_attachment_unique）
+    /// 设变附件唯一键：EcTeId + DocCode + LineNumber（对齐 ix_takt_logistics_manufacturing_ec_attachment_unique）
     /// </summary>
-    /// <param name="ecGijutsuId">设变主表ID</param>
+    /// <param name="ecTeId">设变主表ID</param>
     /// <param name="docCode">文件编码</param>
     /// <param name="lineNumber">行号</param>
     /// <param name="excludeId">更新时排除的主键</param>
-    private async Task EnsureEcAttachmentUniqueAsync(long ecGijutsuId, string? docCode, int lineNumber, long? excludeId)
+    private async Task EnsureEcAttachmentUniqueAsync(long ecTeId, string? docCode, int lineNumber, long? excludeId)
     {
         var trimmed = (docCode ?? string.Empty).Trim();
         var isUnique = await _uniqueValidator.IsUniqueAsync(
             _ecAttachmentRepository,
-            x => x.EcGijutsuId == ecGijutsuId
+            x => x.EcTeId == ecTeId
                 && x.DocCode == trimmed
                 && x.LineNumber == lineNumber,
             excludeId);
         if (!isUnique)
         {
-            throw new TaktBusinessException("设变附件的EcGijutsuId、DocCode、LineNumber已存在");
+            throw new TaktBusinessException("设变附件的EcTeId、DocCode、LineNumber已存在");
         }
     }
 
@@ -420,18 +420,18 @@ public class TaktEcAttachmentService : TaktServiceBase, ITaktEcAttachmentService
     /// <param name="entity">当前实体</param>
     /// <param name="dto">创建 DTO</param>
     /// <returns>任务</returns>
-    private async Task StampEcAttachmentEcGijutsuAsync(TaktEcAttachment entity, TaktEcAttachmentCreateDto dto)
+    private async Task StampEcAttachmentEcTeAsync(TaktEcAttachment entity, TaktEcAttachmentCreateDto dto)
     {
-        if (dto.EcGijutsuId <= 0)
+        if (dto.EcTeId <= 0)
         {
             return;
         }
-        var master = await _ecGijutsuRepository.GetByIdAsync(dto.EcGijutsuId);
+        var master = await _ecTeRepository.GetByIdAsync(dto.EcTeId);
         if (master == null)
         {
             throw new TaktBusinessException("设变技术课主不存在");
         }
-        entity.EcGijutsuId = master.Id;
+        entity.EcTeId = master.Id;
         if (string.IsNullOrEmpty(entity.TenantCode))
         {
             entity.TenantCode = master.TenantCode;
@@ -503,10 +503,10 @@ public class TaktEcAttachmentService : TaktServiceBase, ITaktEcAttachmentService
             exp = exp.And(x => x.PlantCode != null && x.PlantCode.Contains(plantCode));
         }
 
-        if (queryDto?.EcGijutsuId.HasValue == true)
+        if (queryDto?.EcTeId.HasValue == true)
         {
-            var ecGijutsuId = queryDto.EcGijutsuId.Value;
-            exp = exp.And(x => x.EcGijutsuId == ecGijutsuId);
+            var ecTeId = queryDto.EcTeId.Value;
+            exp = exp.And(x => x.EcTeId == ecTeId);
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.EcCode))
@@ -595,7 +595,7 @@ public class TaktEcAttachmentService : TaktServiceBase, ITaktEcAttachmentService
         {
             return true;
         }
-        if (queryDto.EcGijutsuId.HasValue)
+        if (queryDto.EcTeId.HasValue)
         {
             return true;
         }

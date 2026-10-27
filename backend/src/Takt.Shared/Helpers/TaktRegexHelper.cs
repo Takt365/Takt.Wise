@@ -338,6 +338,13 @@ public static class TaktRegexHelper
     /// </summary>
     public static readonly Regex OrderCode = new(@"^[a-zA-Z][a-zA-Z0-9-]{2,49}$", Opt);
     /// <summary>
+    /// 设变生管 Po残（与前端 RegexPatterns.EC_PO_REMAINDER 对齐）。
+    /// 空串合法（字段可空）；非空须为「采购单10位-序号4位:数量」，数量为非负整数或最多两位小数，如 4500123456-0010:18.5。
+    /// </summary>
+    public static readonly Regex EcPoRemainder = new(
+        @"^\d{10}-\d{4}:\d+(?:\.\d{1,2})?$",
+        Opt);
+    /// <summary>
     /// 批次编码（字母开头，3-50位）。
     /// </summary>
     public static readonly Regex BatchCode = new(@"^[a-zA-Z][a-zA-Z0-9-]{2,49}$", Opt);
@@ -797,4 +804,19 @@ public static class TaktRegexHelper
     /// 是否为有效资产编码（数值型字符，最大8位）。
     /// </summary>
     public static bool IsValidAssetCode(string? value) => IsMatch(AssetCode, value);
+
+    /// <summary>
+    /// 是否为有效设变生管 Po残。空或空白视为合法；非空须匹配「采购单10位-序号4位:数量」。
+    /// </summary>
+    /// <param name="value">Po残文本</param>
+    /// <returns>空或格式正确时为 true</returns>
+    public static bool IsValidEcPoRemainder(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return true;
+        }
+
+        return IsMatch(EcPoRemainder, value);
+    }
 }

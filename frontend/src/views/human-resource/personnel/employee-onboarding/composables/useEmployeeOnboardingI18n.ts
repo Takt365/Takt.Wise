@@ -81,7 +81,6 @@ export type EmployeeOnboardingField = keyof typeof EMPLOYEEONBOARDING_PLACEHOLDE
 /** 高级查询可 trim 的字符串字段 */
 export const EMPLOYEEONBOARDING_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'offerId',
   'todoCode',
   'plannedJoinedDateStart',

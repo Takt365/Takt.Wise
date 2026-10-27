@@ -316,9 +316,9 @@ const dataSource = ref<OvertimeItem[]>([])
 const currentPage = ref(getTaktDefaultPageIndex())
 const pageSize = ref(getTaktDefaultPageSize())
 const total = ref(0)
-const selectedRow = ref<OvertimeItem | null>(null)
-const selectedRows = ref<OvertimeItem[]>([])
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRow = ref<OvertimeItem | null>(null)
+const selecmedRows = ref<OvertimeItem[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 
 const formVisible = ref(false)
 const formTitle = ref('')
@@ -365,8 +365,8 @@ const columnSettingVisible = ref(false)
 const importVisible = ref(false)
 const visibleColumnKeys = ref<string[]>([])
 const entityIdName = 'overtimeItemId'
-const updateDisabled = computed(() => selectedRows.value.length !== 1)
-const deleteDisabled = computed(() => selectedRows.value.length === 0)
+const updateDisabled = computed(() => selecmedRows.value.length !== 1)
+const deleteDisabled = computed(() => selecmedRows.value.length === 0)
 
 onMounted(() => {
   loadData()
@@ -499,37 +499,37 @@ const getOvertimeItemId = (record: any): string => record?.[entityIdName] ?? ''
 const getOvertimeItemField = (record: any, field: string): any => record?.[field]
 
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: OvertimeItem[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: OvertimeItem, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (getOvertimeItemId(selectedRow.value) === getOvertimeItemId(record)) {
-      selectedRow.value = null
+  onSelect: (record: OvertimeItem, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (getOvertimeItemId(selecmedRow.value) === getOvertimeItemId(record)) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: OvertimeItem[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: OvertimeItem[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   }
 }))
 
 const onClickRow = (record: OvertimeItem) => ({
   onClick: () => {
     const key = getOvertimeItemId(record)
-    const index = selectedRowKeys.value.indexOf(key)
+    const index = selecmedRowKeys.value.indexOf(key)
     if (index > -1) {
-      selectedRowKeys.value.splice(index, 1)
+      selecmedRowKeys.value.splice(index, 1)
     } else {
-      selectedRowKeys.value.push(key)
+      selecmedRowKeys.value.push(key)
     }
-    selectedRows.value = dataSource.value.filter((item) => selectedRowKeys.value.includes(getOvertimeItemId(item)))
-    selectedRow.value = selectedRowKeys.value.length === 1 ? (selectedRows.value[0] ?? null) : null
+    selecmedRows.value = dataSource.value.filter((item) => selecmedRowKeys.value.includes(getOvertimeItemId(item)))
+    selecmedRow.value = selecmedRowKeys.value.length === 1 ? (selecmedRows.value[0] ?? null) : null
     if (rowSelection.value.onChange) {
-      rowSelection.value.onChange(selectedRowKeys.value, selectedRows.value)
+      rowSelection.value.onChange(selecmedRowKeys.value, selecmedRows.value)
     }
   }
 })
@@ -602,8 +602,8 @@ function handleEdit(record: OvertimeItem) {
 }
 
 function handleUpdate() {
-  if (selectedRow.value) {
-    handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: t('entity.overtimeItem._self') }))
   }
@@ -711,17 +711,17 @@ async function handleDeleteOne(record: OvertimeItem) {
   })
 }
 async function handleDelete() {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: t('entity.overtimeItem._self') }))
     return
   }
   Modal.confirm({
     title: t('common.tip.confirm.delete.title'),
-    content: t('common.tip.confirm.delete.count', { entity: t('entity.overtimeItem._self'), count: selectedRows.value.length }),
+    content: t('common.tip.confirm.delete.count', { entity: t('entity.overtimeItem._self'), count: selecmedRows.value.length }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
+      const ids = selecmedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
       await deleteOvertimeItemBatch(ids)
       message.success(t('common.feedback.deleted', { target: t('entity.overtimeItem._self') }))
       loadData()

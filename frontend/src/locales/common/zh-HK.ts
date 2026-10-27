@@ -120,7 +120,7 @@ export default {
         title: "選擇圖標",
         placeholder: "請選擇圖標",
         search: "搜尋圖標名稱（如 grid、user）",
-        selected: "已選：",
+        selecmed: "已選：",
         clear: "清空選擇",
         empty: "無匹配圖標",
         total: "共 {total} 個",

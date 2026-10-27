@@ -72,7 +72,6 @@ export type ProductionChangeoverField = keyof typeof PRODUCTIONCHANGEOVER_PLACEH
 
 /** 高级查询可 trim 的字符串字段 */
 export const PRODUCTIONCHANGEOVER_QUERY_STRING_FIELDS = [
-  'plantCode',
   'prodCategory',
   'changeoverCategory',
   'prodDateStart',

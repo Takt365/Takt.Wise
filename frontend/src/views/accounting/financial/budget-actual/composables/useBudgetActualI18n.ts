@@ -74,7 +74,6 @@ export type BudgetActualField = keyof typeof BUDGETACTUAL_PLACEHOLDER
 
 /** 高级查询可 trim 的字符串字段 */
 export const BUDGETACTUAL_QUERY_STRING_FIELDS = [
-  'plantCode',
   'periodCode',
   'costCenterCode',
   'costCenterName',

@@ -291,7 +291,7 @@ import {
 import type { QualityAssuranceCustomerResponse, QualityAssuranceCustomerResponseQuery } from '@/types/logistics/quality/cost/assuranceCustomerResponse.types'
 
 const { t } = useI18n()
-const { selectedMasterRow } = useQualityAssuranceMasterContext()
+const { selecmedMasterRow } = useQualityAssuranceMasterContext()
 
 /** Excel 导入/导出默认 sheet 名与文件名前缀 */
 const excelNames = taktExcelEntityNames('TaktQualityAssuranceCustomerResponse')
@@ -306,9 +306,9 @@ const currentPage = ref(getTaktDefaultPageIndex())
 const pageSize = ref(getTaktDefaultPageSize())
 const total = ref(0)
 const queryKeyword = ref('')
-const selectedRow = ref<QualityAssuranceCustomerResponse | null>(null)
-const selectedRows = ref<QualityAssuranceCustomerResponse[]>([])
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRow = ref<QualityAssuranceCustomerResponse | null>(null)
+const selecmedRows = ref<QualityAssuranceCustomerResponse[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 const formVisible = ref(false)
 const formTitle = ref('')
 const formData = ref<Partial<QualityAssuranceCustomerResponse>>({})
@@ -394,10 +394,10 @@ function handleColumnSettingReset() {
 const importVisible = ref(false)
 
 const entityIdName = 'qualityAssuranceCustomerResponseId'
-const hasMasterSelection = computed(() => !!selectedMasterRow.value?.qualityAssuranceId)
-const masterQualityAssuranceId = computed(() => selectedMasterRow.value?.qualityAssuranceId ?? '')
-const updateDisabled = computed(() => !hasMasterSelection.value || selectedRows.value.length !== 1)
-const deleteDisabled = computed(() => !hasMasterSelection.value || selectedRows.value.length === 0)
+const hasMasterSelection = computed(() => !!selecmedMasterRow.value?.qualityAssuranceId)
+const masterQualityAssuranceId = computed(() => selecmedMasterRow.value?.qualityAssuranceId ?? '')
+const updateDisabled = computed(() => !hasMasterSelection.value || selecmedRows.value.length !== 1)
+const deleteDisabled = computed(() => !hasMasterSelection.value || selecmedRows.value.length === 0)
 
 function getQualityAssuranceCustomerResponseId(record: QualityAssuranceCustomerResponse | Record<string, unknown>): string {
   return String((record as QualityAssuranceCustomerResponse)?.[entityIdName] ?? '')
@@ -510,21 +510,21 @@ const columns = computed<TableColumnsType>(() => [
   })])
 
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: QualityAssuranceCustomerResponse[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: QualityAssuranceCustomerResponse, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (getQualityAssuranceCustomerResponseId(selectedRow.value) === getQualityAssuranceCustomerResponseId(record)) {
-      selectedRow.value = null
+  onSelect: (record: QualityAssuranceCustomerResponse, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (getQualityAssuranceCustomerResponseId(selecmedRow.value) === getQualityAssuranceCustomerResponseId(record)) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: QualityAssuranceCustomerResponse[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: QualityAssuranceCustomerResponse[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   },
 }))
 
@@ -536,12 +536,12 @@ function onClickRow(record: QualityAssuranceCustomerResponse) {
   const key = getQualityAssuranceCustomerResponseId(record)
   return {
     onClick: () => {
-      selectedRowKeys.value = [key]
-      selectedRows.value = [record]
-      selectedRow.value = record
+      selecmedRowKeys.value = [key]
+      selecmedRows.value = [record]
+      selecmedRow.value = record
     },
-    class: selectedRowKeys.value.includes(key)
-      ? 'takt-master-detail-table-row-selected cursor-pointer'
+    class: selecmedRowKeys.value.includes(key)
+      ? 'takt-master-detail-table-row-selecmed cursor-pointer'
       : 'cursor-pointer',
   }
 }
@@ -594,9 +594,9 @@ async function loadData() {
   if (!hasMasterSelection.value) {
     dataSource.value = []
     total.value = 0
-    selectedRowKeys.value = []
-    selectedRows.value = []
-    selectedRow.value = null
+    selecmedRowKeys.value = []
+    selecmedRows.value = []
+    selecmedRow.value = null
     return
   }
   loading.value = true
@@ -661,8 +661,8 @@ async function handleEdit(record: QualityAssuranceCustomerResponse) {
 }
 
 function handleUpdate() {
-  if (selectedRow.value) {
-    void handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    void handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', {
       action: t('common.page.button.edit'),
@@ -719,7 +719,7 @@ async function handleDeleteOne(record: QualityAssuranceCustomerResponse) {
 }
 
 async function handleDelete() {
-  if (!hasMasterSelection.value || selectedRows.value.length === 0) {
+  if (!hasMasterSelection.value || selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', {
       action: t('common.page.button.delete'),
       entity: t('entity.qualityassurancecustomerresponse._self'),
@@ -730,12 +730,12 @@ async function handleDelete() {
     title: t('common.tip.confirm.delete.title'),
     content: t('common.tip.confirm.delete.count', {
       entity: t('entity.qualityassurancecustomerresponse._self'),
-      count: selectedRows.value.length,
+      count: selecmedRows.value.length,
     }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value.map((r) => getQualityAssuranceCustomerResponseId(r)).filter(Boolean)
+      const ids = selecmedRows.value.map((r) => getQualityAssuranceCustomerResponseId(r)).filter(Boolean)
       await deleteQualityAssuranceCustomerResponseBatch(ids)
       message.success(t('common.feedback.deleted', { target: t('entity.qualityassurancecustomerresponse._self') }))
       await loadData()

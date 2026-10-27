@@ -16,7 +16,7 @@ import type {
 } from '@/types/common.types';
 
 /**
- * 设变附件实体（技术阶段一 ②，隶属 TaktEcGijutsu）。文件类别见字典 logistics_manufacturing_ec_attachment_type；与主表、明细保存后由系统生成 TaktEcNotification。
+ * 设变附件实体（技术阶段一 ②，隶属 TaktEcTe）。文件类别见字典 logistics_manufacturing_ec_attachment_type；与主表、明细保存后由系统生成 TaktEcNotification。
  * 对应前端 TaktEcAttachmentDto
  * 继承 TaktCompanyDtoBase
  * 对应前端 EcAttachment
@@ -36,7 +36,7 @@ export interface EcAttachment extends CompanyDtoBase {
   /**
    * 设变主表ID
    */
-  ecGijutsuId?: string;
+  ecTeId?: string;
 
   /**
    * 设变单号（冗余字段,便于查询）
@@ -104,7 +104,7 @@ export interface EcAttachmentExport {
   /**
    * 设变主表ID
    */
-  ecGijutsuId: string;
+  ecTeId: string;
 
   /**
    * 设变单号（冗余字段,便于查询）

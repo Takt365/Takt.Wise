@@ -34,18 +34,18 @@ public class TaktEcExecutionTask : TaktCompanyEntityBase
     public long EcNotificationId { get; set; }
 
     /// <summary>
-    /// 技术课主表 ID（TaktEcGijutsu 主键）
+    /// 技术课主表 ID（TaktEcTe 主键）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_gijutsu_id", ColumnDescription = "技术课主表ID", ColumnDataType = "bigint", IsNullable = false)]
+    [SugarColumn(ColumnName = "ec_te_id", ColumnDescription = "技术课主表ID", ColumnDataType = "bigint", IsNullable = false)]
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
     /// <summary>
     /// 设变单号（冗余）
     /// </summary>
     [SugarColumn(ColumnName = "ec_code", ColumnDescription = "设变单号", ColumnDataType = "varchar", Length = 40, IsNullable = false)]
     public string EcCode { get; set; } = string.Empty;
     /// <summary>
-    /// 关联设变部门行 ID（TaktEcSeikan/Mp 等 8 张部门执行表主键）
+    /// 关联设变部门行 ID（TaktEcPc/Mp 等 8 张部门执行表主键）
     /// </summary>
     [SugarColumn(ColumnName = "ec_exec_id", ColumnDescription = "设变部门行ID", ColumnDataType = "bigint", IsNullable = true)]
     [JsonConverter(typeof(ValueToStringConverter))]

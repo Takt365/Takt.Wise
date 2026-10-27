@@ -15,7 +15,7 @@ export type RoutingRowRecord = Routing | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface RoutingMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<RoutingRowRecord | null>
+  selecmedMasterRow: Ref<RoutingRowRecord | null>
 }
 
 const routingMasterContextKey: InjectionKey<RoutingMasterContext> = Symbol('routingMasterContext')
@@ -25,8 +25,8 @@ const routingMasterContextKey: InjectionKey<RoutingMasterContext> = Symbol('rout
  * @returns {RoutingMasterContext} 主表上下文
  */
 export function provideRoutingMasterContext(): RoutingMasterContext {
-  const selectedMasterRow = ref<RoutingRowRecord | null>(null)
-  const ctx: RoutingMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<RoutingRowRecord | null>(null)
+  const ctx: RoutingMasterContext = { selecmedMasterRow }
   provide(routingMasterContextKey, ctx)
   return ctx
 }

@@ -15,7 +15,7 @@ export type PurchaseForecastRowRecord = PurchaseForecast | Record<string, unknow
 /** 主表选中行上下文 */
 export interface PurchaseForecastMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<PurchaseForecastRowRecord | null>
+  selecmedMasterRow: Ref<PurchaseForecastRowRecord | null>
 }
 
 const purchaseForecastMasterContextKey: InjectionKey<PurchaseForecastMasterContext> = Symbol('purchase-forecastMasterContext')
@@ -25,8 +25,8 @@ const purchaseForecastMasterContextKey: InjectionKey<PurchaseForecastMasterConte
  * @returns {PurchaseForecastMasterContext} 主表上下文
  */
 export function providePurchaseForecastMasterContext(): PurchaseForecastMasterContext {
-  const selectedMasterRow = ref<PurchaseForecastRowRecord | null>(null)
-  const ctx: PurchaseForecastMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<PurchaseForecastRowRecord | null>(null)
+  const ctx: PurchaseForecastMasterContext = { selecmedMasterRow }
   provide(purchaseForecastMasterContextKey, ctx)
   return ctx
 }

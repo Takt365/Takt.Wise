@@ -4,7 +4,7 @@
 // 文件名称：TaktStandardOperationTimeService.cs
 // 创建时间：2026-06-23
 // 创建人：Takt365(Cursor AI)
-// 功能描述：标准工序时间应用服务实现
+// 功能描述：标准工时应用服务实现
 // 
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -25,7 +25,7 @@ using Takt.Shared.Options;
 namespace Takt.Application.Services.Logistics.Manufacturing.Bom;
 
 /// <summary>
-/// 标准工序时间应用服务
+/// 标准工时应用服务
 /// </summary>
 public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOperationTimeService
 {
@@ -37,7 +37,7 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="standardOperationTimeRepository">标准工序时间仓储</param>
+    /// <param name="standardOperationTimeRepository">标准工时仓储</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
@@ -53,7 +53,7 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
     }
 
     /// <summary>
-    /// 获取标准工序时间列表（分页）
+    /// 获取标准工时列表（分页）
     /// </summary>
     /// <param name="queryDto">查询DTO</param>
     /// <returns>分页结果</returns>
@@ -72,9 +72,9 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
     }
 
     /// <summary>
-    /// 根据ID获取标准工序时间
+    /// 根据ID获取标准工时
     /// </summary>
-    /// <param name="id">标准工序时间ID</param>
+    /// <param name="id">标准工时ID</param>
     /// <returns>DTO</returns>
     public async Task<TaktStandardOperationTimeDto?> GetStandardOperationTimeByIdAsync(long id)
     {
@@ -88,7 +88,7 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
         return dto;    }
 
     /// <summary>
-    /// 获取标准工序时间选项列表
+    /// 获取标准工时选项列表
     /// </summary>
     /// <param name="plantCode">工厂代码（可选，用于按工厂过滤）</param>
     /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
@@ -108,12 +108,12 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
     }
 
     /// <summary>
-    /// 根据物料编码获取当前有效的标准工序时间列表
+    /// 根据物料编码获取当前有效的标准工时列表
     /// </summary>
     /// <param name="materialCode">物料编码</param>
     /// <param name="plantCode">工厂代码（可选）</param>
     /// <param name="prodDate">生产日期（可选；未传时按当天解析有效期）</param>
-    /// <returns>标准工序时间 DTO 列表</returns>
+    /// <returns>标准工时 DTO 列表</returns>
     public async Task<List<TaktStandardOperationTimeDto>> GetStandardOperationTimeByMaterialAsync(string materialCode, string? plantCode = null, DateTime? prodDate = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(materialCode);
@@ -151,12 +151,12 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
     }
 
     /// <summary>
-    /// 查询物料当前有效的标准工序时间实体列表
+    /// 查询物料当前有效的标准工时实体列表
     /// </summary>
     /// <param name="materialCode">物料编码</param>
     /// <param name="plantCode">工厂代码（可选）</param>
     /// <param name="prodDate">生产日期（可选；未传时按当天解析有效期）</param>
-    /// <returns>标准工序时间实体列表</returns>
+    /// <returns>标准工时实体列表</returns>
     private async Task<List<TaktStandardOperationTime>> QueryEffectiveStandardOperationTimesByMaterialAsync(string materialCode, string? plantCode, DateTime? prodDate = null)
     {
         EnsureThreeLayerContext();
@@ -170,12 +170,12 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
     }
 
     /// <summary>
-    /// 按物料与可选工厂查询生产日期有效的标准工序时间（不含工厂回退）
+    /// 按物料与可选工厂查询生产日期有效的标准工时（不含工厂回退）
     /// </summary>
     /// <param name="materialCode">物料编码（已 trim）</param>
     /// <param name="plantCode">工厂代码（可选，已 trim）</param>
     /// <param name="effectiveDate">生产日期（仅日期部分）</param>
-    /// <returns>标准工序时间实体列表</returns>
+    /// <returns>标准工时实体列表</returns>
     private async Task<List<TaktStandardOperationTime>> GetEffectiveStandardOperationTimesByMaterialCoreAsync(
         string materialCode,
         string? plantCode,
@@ -194,7 +194,7 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
     }
 
     /// <summary>
-    /// 创建标准工序时间
+    /// 创建标准工时
     /// </summary>
     /// <param name="dto">创建DTO</param>
     /// <returns>DTO</returns>
@@ -208,7 +208,7 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
                 && x.WorkCenter == entity.WorkCenter);
         if (!isUnique_ix_takt_logistics_manufacturing_bom_standard_operation_time_unique)
         {
-            throw new TaktBusinessException("标准工序时间的PlantCode、MaterialCode、WorkCenter已存在");
+            throw new TaktBusinessException("标准工时的PlantCode、MaterialCode、WorkCenter已存在");
         }
         entity = await _standardOperationTimeRepository.CreateAsync(entity);
                 await SaveStandardOperationTimeChildrenAsync(entity, dto);
@@ -216,9 +216,9 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
     }
 
     /// <summary>
-    /// 更新标准工序时间
+    /// 更新标准工时
     /// </summary>
-    /// <param name="id">标准工序时间ID</param>
+    /// <param name="id">标准工时ID</param>
     /// <param name="dto">更新DTO</param>
     /// <returns>DTO</returns>
     public async Task<TaktStandardOperationTimeDto> UpdateStandardOperationTimeAsync(long id, TaktStandardOperationTimeUpdateDto dto)
@@ -226,7 +226,7 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
         var entity = await _standardOperationTimeRepository.GetByIdAsync(id);
         if (entity == null)
         {
-            throw new TaktBusinessException("标准工序时间不存在");
+            throw new TaktBusinessException("标准工时不存在");
         }
         dto.Adapt(entity);
         var isUnique_ix_takt_logistics_manufacturing_bom_standard_operation_time_unique = await _uniqueValidator.IsUniqueAsync(
@@ -237,33 +237,33 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
             id);
         if (!isUnique_ix_takt_logistics_manufacturing_bom_standard_operation_time_unique)
         {
-            throw new TaktBusinessException("标准工序时间的PlantCode、MaterialCode、WorkCenter已存在");
+            throw new TaktBusinessException("标准工时的PlantCode、MaterialCode、WorkCenter已存在");
         }
         await _standardOperationTimeRepository.UpdateAsync(entity);
                 await SaveStandardOperationTimeChildrenAsync(entity, dto);
-        return await GetStandardOperationTimeByIdAsync(id) ?? throw new TaktBusinessException("标准工序时间不存在");
+        return await GetStandardOperationTimeByIdAsync(id) ?? throw new TaktBusinessException("标准工时不存在");
     }
 
     /// <summary>
-    /// 删除标准工序时间
+    /// 删除标准工时
     /// </summary>
-    /// <param name="id">标准工序时间ID</param>
+    /// <param name="id">标准工时ID</param>
     /// <returns>任务</returns>
     public async Task DeleteStandardOperationTimeByIdAsync(long id)
     {
         var entity = await _standardOperationTimeRepository.GetByIdAsync(id);
         if (entity == null)
         {
-            throw new TaktBusinessException("标准工序时间不存在或已删除");
+            throw new TaktBusinessException("标准工时不存在或已删除");
         }        var deleted = await _standardOperationTimeRepository.DeleteAsync(id);
         if (!deleted)
         {
-            throw new TaktBusinessException("标准工序时间不存在或已删除");
+            throw new TaktBusinessException("标准工时不存在或已删除");
         }
     }
 
     /// <summary>
-    /// 批量删除标准工序时间
+    /// 批量删除标准工时
     /// </summary>
     /// <param name="ids">ID列表</param>
     /// <returns>任务</returns>
@@ -289,12 +289,12 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
     public async Task<(string fileName, byte[] content)> GetStandardOperationTimeTemplateAsync(string? sheetName = null, string? fileName = null)
     {
         return await TaktExcelHelper.GenerateTemplateAsync<TaktStandardOperationTimeTemplateDto>(
-            sheetName ?? "标准工序时间导入模板",
-            fileName ?? "标准工序时间导入模板.xlsx");
+            sheetName ?? "标准工时导入模板",
+            fileName ?? "标准工时导入模板.xlsx");
     }
 
     /// <summary>
-    /// 导入标准工序时间
+    /// 导入标准工时
     /// </summary>
     /// <param name="fileStream">Excel 文件流</param>
     /// <param name="sheetName">工作表名称</param>
@@ -304,7 +304,7 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
         var errors = new List<string>();
         var success = 0;
         var fail = 0;
-        var rows = await TaktExcelHelper.ImportAsync<TaktStandardOperationTimeImportDto>(fileStream, sheetName ?? "标准工序时间导入模板");
+        var rows = await TaktExcelHelper.ImportAsync<TaktStandardOperationTimeImportDto>(fileStream, sheetName ?? "标准工时导入模板");
         if (rows == null || rows.Count == 0)
         {
             errors.Add("Excel文件中没有数据");
@@ -328,7 +328,7 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
                         && x.WorkCenter == entity.WorkCenter);
                 if (!isUnique_ix_takt_logistics_manufacturing_bom_standard_operation_time_unique)
                 {
-                    throw new TaktBusinessException("标准工序时间的PlantCode、MaterialCode、WorkCenter已存在");
+                    throw new TaktBusinessException("标准工时的PlantCode、MaterialCode、WorkCenter已存在");
                 }
                 await _standardOperationTimeRepository.CreateAsync(entity);
                 success += 1;
@@ -343,7 +343,7 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
     }
 
     /// <summary>
-    /// 导出标准工序时间
+    /// 导出标准工时
     /// </summary>
     /// <param name="query">查询条件</param>
     /// <param name="sheetName">工作表名称</param>
@@ -357,14 +357,14 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
         {
             return await TaktExcelHelper.ExportAsync(
                 new List<TaktStandardOperationTimeExportDto>(),
-                sheetName ?? "标准工序时间数据",
-                fileName ?? "标准工序时间导出.xlsx");
+                sheetName ?? "标准工时数据",
+                fileName ?? "标准工时导出.xlsx");
         }
         var exportData = list.Adapt<List<TaktStandardOperationTimeExportDto>>();
         return await TaktExcelHelper.ExportAsync(
             exportData,
-            sheetName ?? "标准工序时间数据",
-            fileName ?? "标准工序时间导出.xlsx");
+            sheetName ?? "标准工时数据",
+            fileName ?? "标准工时导出.xlsx");
     }
 
     // ========================================
@@ -372,7 +372,7 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
     // ========================================
 
     /// <summary>
-    /// 填充标准工序时间详情（加载 OneToMany 子表：标准工序时间变更记录）
+    /// 填充标准工时详情（加载 OneToMany 子表：标准工时变更记录）
     /// </summary>
     /// <param name="dto">响应 DTO</param>
     /// <param name="entity">主表实体</param>
@@ -386,7 +386,7 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
     }
 
     /// <summary>
-    /// 保存标准工序时间子表级联（标准工序时间变更记录；Create/Update 后按主表 Id 先删后插）
+    /// 保存标准工时子表级联（标准工时变更记录；Create/Update 后按主表 Id 先删后插）
     /// </summary>
     /// <param name="entity">主表实体</param>
     /// <param name="dto">创建/更新 DTO（含子表集合；UpdateDto 须继承 CreateDto）</param>
@@ -399,7 +399,7 @@ public class TaktStandardOperationTimeService : TaktServiceBase, ITaktStandardOp
     // ========================================
 
     /// <summary>
-    /// 构建标准工序时间查询表达式
+    /// 构建标准工时查询表达式
     /// </summary>
     /// <param name="queryDto">查询DTO</param>
     /// <returns>查询表达式</returns>

@@ -4,7 +4,7 @@
 // 文件名称：ecExecTransposed.types.ts
 // 创建时间：2026-06-29
 // 创建人：Takt365(Cursor AI)
-// 功能描述：设变部门/批次转置列表类型（TaktEcBukans/transposed、TaktEcBatches/transposed）
+// 功能描述：设变部门/批次转置列表类型（TaktEcMcs/transposed、TaktEcBatches/transposed）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -23,7 +23,7 @@ export interface EcExecTransposedCell {
 /** 设变部门转置行 */
 export interface EcExecTransposed {
   ecDetailId: string;
-  ecGijutsuId: string;
+  ecTeId: string;
   lineNumber: number;
   ecIssueDate: string;
   ecLeader: string;
@@ -51,9 +51,17 @@ export interface EcExecTransposedResult {
   deptCodeOrder: string[];
 }
 
-/** 设变批次转置阶段单元格 */
+/** 投入批次某一部门的一行 */
+export interface EcExecBatchTransposedStageLine {
+  stageDate?: string | null;
+  dateDisplayText?: string | null;
+  batchCode?: string | null;
+}
+
+/** 设变批次转置阶段单元格。lines 的长度等于该部门执行行数 */
 export interface EcExecBatchTransposedStage {
   stageCode: string;
+  lines?: EcExecBatchTransposedStageLine[];
   stageDate?: string | null;
   batchCode?: string | null;
   dateDisplayText?: string | null;
@@ -62,7 +70,7 @@ export interface EcExecBatchTransposedStage {
 /** 设变批次转置行 */
 export interface EcExecBatchTransposed {
   ecDetailId: string;
-  ecGijutsuId: string;
+  ecTeId: string;
   lineNumber: number;
   ecCode: string;
   technicalLiaisonNo?: string | null;
@@ -82,6 +90,10 @@ export interface EcExecBatchTransposedQuery extends TaktPagedQuery {
   ecNewMaterialCode?: string;
   ecIssueDateStart?: string;
   ecIssueDateEnd?: string;
+  /** 录入日期起，yyyy-MM-dd */
+  ecEntryDateStart?: string;
+  /** 录入日期止，yyyy-MM-dd */
+  ecEntryDateEnd?: string;
   batchCode?: string;
 }
 

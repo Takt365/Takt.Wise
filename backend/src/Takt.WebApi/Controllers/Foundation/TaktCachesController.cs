@@ -4,7 +4,7 @@
 // 文件名称：TaktCachesController.cs
 // 创建时间：2026-06-11
 // 创建人：Takt365(Cursor AI)
-// 功能描述：缓存管理控制器，提供配置、统计与键操作 API
+// 功能描述：缓存部门管控器，提供配置、统计与键操作 API
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -17,7 +17,7 @@ using Takt.Shared.Constants;
 namespace Takt.WebApi.Controllers.Foundation;
 
 /// <summary>
-/// 缓存管理控制器
+/// 缓存部门管控器
 /// </summary>
 [ApiModule(8, "基础设置")]
 [Route("api/[controller]", Name = "缓存管理")]

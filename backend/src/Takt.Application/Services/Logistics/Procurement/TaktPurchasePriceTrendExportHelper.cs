@@ -81,7 +81,7 @@ internal static class TaktPurchasePriceTrendExportHelper
     /// <param name="rows">推移行</param>
     /// <param name="plantCode">所选工厂</param>
     /// <returns>该工厂的行</returns>
-    public static List<TaktPurchasePriceTrendDto> WhereSelectedPlant(
+    public static List<TaktPurchasePriceTrendDto> WhereSelecmedPlant(
         IReadOnlyList<TaktPurchasePriceTrendDto> rows,
         string plantCode)
     {

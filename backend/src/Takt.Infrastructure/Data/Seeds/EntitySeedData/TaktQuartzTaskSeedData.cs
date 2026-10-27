@@ -530,7 +530,7 @@ public class TaktQuartzTaskSeedData : ITaktSeedDataCoordinator
                 Description: "每月 3 日 03:15：销售商物料（月度；以手动为主；默认暂停）"),
             new(
                 TaskCode: "QT_SYNC_BC",
-                TaskName: "源数据同步：BOM物料成本明细",
+                TaskName: "源数据同步：材料成本明细",
                 JobName: "sync_bc",
                 TaskType: TaskTypeSql,
                 SqlScript: "Quartz/sync_bc.sql",
@@ -539,7 +539,7 @@ public class TaktQuartzTaskSeedData : ITaktSeedDataCoordinator
                 CronExpression: "0 30 3 3 * ?",
                 TaskStatus: TaskStatusPaused,
                 ExecuteParams: SyncStagingParams,
-                Description: "每月 3 日 03:30：BOM物料成本明细（源表原样同步；采购价回填见 QT_SYNC_BC_BK；PCB SECT 标识回填见 QT_SYNC_BC_PCB_SECT_BK；月度；以手动为主；默认暂停）"),
+                Description: "每月 3 日 03:30：材料成本明细（源表原样同步；采购价回填见 QT_SYNC_BC_BK；PCB SECT 标识回填见 QT_SYNC_BC_PCB_SECT_BK；月度；以手动为主；默认暂停）"),
             new(
                 TaskCode: "QT_SYNC_BC_BK",
                 TaskName: "回填：BOM明细采购价",
@@ -566,7 +566,7 @@ public class TaktQuartzTaskSeedData : ITaktSeedDataCoordinator
                 Description: "每月 3 日 03:40：回填 pcb_sect_indicator=X（描述含 PCB SECT 的节点及子孙；已有 X 跳过；写入 ext_field._bk.pcb_sect；对齐 LineCostHelper；立即执行须选目标库+核算月；建议在 QT_SYNC_BC 之后、成本合计之前；默认暂停）"),
             new(
                 TaskCode: "QT_BOM_ZERO_PRICE_MP_BK",
-                TaskName: "回填：BOM零价格移动平均价",
+                TaskName: "回填：零材料成本移动平均价",
                 JobName: "bom_zero_price_mp_bk",
                 TaskType: TaskTypeAssembly,
                 TriggerType: TriggerTypeCron,
@@ -579,7 +579,7 @@ public class TaktQuartzTaskSeedData : ITaktSeedDataCoordinator
                 Description: "每月 3 日 03:42：零价组件回填移动平均价（PcbSectIndicator=X 或用量≤0 永不回填；其余建议价末字母逆推；写入 ext_field._bk.mp；立即执行须选目标库+核算月；建议在 QT_SYNC_BC/MAP/PCB_SECT 之后、成本合计之前；默认暂停）"),
             new(
                 TaskCode: "QT_SYNC_BV",
-                TaskName: "源数据同步：BOM物料成本汇总",
+                TaskName: "源数据同步：材料成本汇总",
                 JobName: "sync_bv",
                 TaskType: TaskTypeSql,
                 SqlScript: "Quartz/sync_bv.sql",
@@ -588,7 +588,7 @@ public class TaktQuartzTaskSeedData : ITaktSeedDataCoordinator
                 CronExpression: "0 45 3 3 * ?",
                 TaskStatus: TaskStatusPaused,
                 ExecuteParams: SyncStagingParams,
-                Description: "每月 3 日 03:45：BOM物料成本汇总（源表原样同步；机种/物料类型回填见 QT_SYNC_BV_BK；月度；以手动为主；默认暂停）"),
+                Description: "每月 3 日 03:45：材料成本汇总（源表原样同步；机种/物料类型回填见 QT_SYNC_BV_BK；月度；以手动为主；默认暂停）"),
             new(
                 TaskCode: "QT_SYNC_BV_BK",
                 TaskName: "回填：BOM机种与物料类型",
@@ -603,7 +603,7 @@ public class TaktQuartzTaskSeedData : ITaktSeedDataCoordinator
                 Description: "每月 3 日 03:50：先查出 BOM 成本主表/明细 product_code、明细 component_code 前导 00000000 的行并去掉这 8 位（撞唯一键跳过），再回填主表空机种/空物料类型（已有值不覆盖；写入 ext_field._bk.bv；model_destination；general_material→material_plant）；建议在 QT_SYNC_MAT/MATPLT/MDL/BV 之后；默认暂停"),
             new(
                 TaskCode: "QT_BOM_MATERIAL_COST_SUM",
-                TaskName: "BOM物料成本合计",
+                TaskName: "材料成本合计",
                 JobName: "bom_material_cost_sum",
                 TaskType: TaskTypeAssembly,
                 TriggerType: TriggerTypeCron,
@@ -616,7 +616,7 @@ public class TaktQuartzTaskSeedData : ITaktSeedDataCoordinator
                 Description: "每月 3 日 04:00 合计 CostingDate 当月（不回填机种/物料类型，须先 QT_SYNC_BV_BK；立即执行须选目标库+核算月；月度；以手动为主；默认暂停）"),
             new(
                 TaskCode: "QT_BOM_MATERIAL_COST_RECALC",
-                TaskName: "BOM物料成本重算",
+                TaskName: "材料成本重算",
                 JobName: "bom_material_cost_recalc",
                 TaskType: TaskTypeAssembly,
                 TriggerType: TriggerTypeCron,

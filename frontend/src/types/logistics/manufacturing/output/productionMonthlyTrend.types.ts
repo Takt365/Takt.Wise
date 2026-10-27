@@ -17,6 +17,8 @@ import type { TaktPagedQuery, TaktPagedResult } from '@/types/common.types';
  * @description 对应后端 TaktProductionMonthlyTrendQueryDto
  */
 export interface ProductionMonthlyTrendQuery extends TaktPagedQuery {
+  /** 页签：assy-team / assy-model / pcba-team / pcba-model */
+  statTab: string;
   /** 工厂代码（必填） */
   plantCode: string;
   /** 期间起（当月首日） */
@@ -25,10 +27,12 @@ export interface ProductionMonthlyTrendQuery extends TaktPagedQuery {
   periodDateEnd?: string;
   /** 关注期间 yyyy-MM */
   focusPeriod?: string;
+  /** 班组 */
+  teamCode?: string;
   /** 机种 */
   modelCode?: string;
-  /** 产出类别：assy / pcba */
-  outputCategory?: string;
+  /** 物料编码 */
+  materialCode?: string;
   /** 涨跌筛选 */
   trendFilter?: string;
 }
@@ -40,6 +44,8 @@ export interface ProductionMonthlyTrendQuery extends TaktPagedQuery {
 export interface ProductionMonthlyTrend {
   /** 工厂代码 */
   plantCode: string;
+  /** 班组 */
+  teamCode?: string;
   /** 机种 */
   modelCode: string;
   /** 产出类别 */

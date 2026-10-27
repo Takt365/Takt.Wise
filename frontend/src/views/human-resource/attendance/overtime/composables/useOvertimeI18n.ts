@@ -63,7 +63,6 @@ export const OVERTIME_QUERY_STRING_FIELDS = [
   'plannedEndTimeStart',
   'plannedEndTimeEnd',
   'reason',
-  'plantCode',
   'handlingBy',
   'handlingAtStart',
   'handlingAtEnd',

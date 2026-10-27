@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Validators.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcExecutionTaskValidators.cs
-// 创建时间：2026-10-14
+// 创建时间：2026-10-27
 // 创建人：Takt365(Auto Generated)
 // 功能描述：EcExecutionTask 模块 FluentValidation 验证器（由 generate-validators-from-entity.cjs 根据 TaktEcExecutionTask 生成，请按需审阅）
 // 
@@ -43,7 +43,7 @@ public class TaktEcExecutionTaskCreateValidator : AbstractValidator<TaktEcExecut
             .MaximumLength(4).WithMessage("工厂代码长度不能超过4个字符");
         RuleFor(x => x.EcNotificationId)
             .GreaterThanOrEqualTo(0).WithMessage("通知单 ID不能为负数");
-        RuleFor(x => x.EcGijutsuId)
+        RuleFor(x => x.EcTeId)
             .GreaterThanOrEqualTo(0).WithMessage("技术课主表 ID不能为负数");
         RuleFor(x => x.EcCode)
             .NotEmpty().WithMessage("设变单号不能为空")
@@ -95,7 +95,7 @@ public class TaktEcExecutionTaskUpdateValidator : AbstractValidator<TaktEcExecut
             .MaximumLength(4).WithMessage("工厂代码长度不能超过4个字符");
         RuleFor(x => x.EcNotificationId)
             .GreaterThanOrEqualTo(0).WithMessage("通知单 ID不能为负数");
-        RuleFor(x => x.EcGijutsuId)
+        RuleFor(x => x.EcTeId)
             .GreaterThanOrEqualTo(0).WithMessage("技术课主表 ID不能为负数");
         RuleFor(x => x.EcCode)
             .NotEmpty().WithMessage("设变单号不能为空")
@@ -141,7 +141,7 @@ public class TaktEcExecutionTaskImportValidator : AbstractValidator<TaktEcExecut
             .MaximumLength(4).WithMessage("工厂代码长度不能超过4个字符").When(x => !string.IsNullOrWhiteSpace(x.PlantCode));
         RuleFor(x => x.EcNotificationId)
             .GreaterThanOrEqualTo(0).WithMessage("通知单 ID不能为负数");
-        RuleFor(x => x.EcGijutsuId)
+        RuleFor(x => x.EcTeId)
             .GreaterThanOrEqualTo(0).WithMessage("技术课主表 ID不能为负数");
         RuleFor(x => x.EcCode)
             .NotEmpty().WithMessage("设变单号不能为空")

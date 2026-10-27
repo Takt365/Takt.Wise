@@ -15,7 +15,7 @@ export type SerialOutboundRowRecord = SerialOutbound | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface SerialOutboundMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<SerialOutboundRowRecord | null>
+  selecmedMasterRow: Ref<SerialOutboundRowRecord | null>
 }
 
 const serialOutboundMasterContextKey: InjectionKey<SerialOutboundMasterContext> = Symbol('outboundMasterContext')
@@ -25,8 +25,8 @@ const serialOutboundMasterContextKey: InjectionKey<SerialOutboundMasterContext> 
  * @returns {SerialOutboundMasterContext} 主表上下文
  */
 export function provideSerialOutboundMasterContext(): SerialOutboundMasterContext {
-  const selectedMasterRow = ref<SerialOutboundRowRecord | null>(null)
-  const ctx: SerialOutboundMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<SerialOutboundRowRecord | null>(null)
+  const ctx: SerialOutboundMasterContext = { selecmedMasterRow }
   provide(serialOutboundMasterContextKey, ctx)
   return ctx
 }

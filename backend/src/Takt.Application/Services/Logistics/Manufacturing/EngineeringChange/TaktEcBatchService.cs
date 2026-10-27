@@ -30,6 +30,7 @@ namespace Takt.Application.Services.Logistics.Manufacturing.EngineeringChange;
 public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
 {
     private readonly ITaktCompanyRepository<TaktEcDetail> _ecDetailRepository;
+    private readonly ITaktCompanyRepository<TaktEcTe> _ecTeRepository;
     private readonly TaktEcExecDeptAccess _ecExecDeptAccess;
     private readonly ITaktLineNumberGenerator _lineNumberGenerator;
 
@@ -37,12 +38,14 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
     /// 构造函数
     /// </summary>
     /// <param name="ecDetailRepository">设变明细仓储</param>
+    /// <param name="ecTeRepository">设变技术课主表仓储</param>
     /// <param name="ecExecDeptAccess">设变部门执行跨表访问</param>
     /// <param name="lineNumberGenerator">行号生成器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktEcBatchService(
         ITaktCompanyRepository<TaktEcDetail> ecDetailRepository,
+        ITaktCompanyRepository<TaktEcTe> ecTeRepository,
         TaktEcExecDeptAccess ecExecDeptAccess,
         ITaktLineNumberGenerator lineNumberGenerator,
         ITaktUserContext? userContext = null,
@@ -50,6 +53,7 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
         : base(userContext, localizationService)
     {
         _ecDetailRepository = ecDetailRepository;
+        _ecTeRepository = ecTeRepository;
         _ecExecDeptAccess = ecExecDeptAccess;
         _lineNumberGenerator = lineNumberGenerator;
     }
@@ -107,10 +111,12 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
         {
             throw new TaktBusinessException("设变明细不存在");
         }
-        await UpsertPmcBatchFieldAsync(detail, pmc =>
+        dto.ScheduledBatch = TaktStringHelper.NormalizeBatchCode(dto.ScheduledBatch);
+        dto.ProductionBatch = TaktStringHelper.NormalizeBatchCode(dto.ProductionBatch);
+        await UpsertPcBatchFieldAsync(detail, pc =>
         {
-            pmc.ScheduledBatch = dto.ScheduledBatch;
-            pmc.ScheduledDate = dto.ScheduledDate;
+            pc.ScheduledBatch = dto.ScheduledBatch;
+            pc.ScheduledDate = dto.ScheduledDate;
         });
         await UpsertSmtBatchFieldsAsync(detail, dto.ProductionBatch, dto.ProductionDate);
         return await MapBatchRowAsync(detail);
@@ -150,29 +156,32 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
     private async Task<TaktEcBatchDto> MapBatchRowAsync(TaktEcDetail detail)
     {
         var dto = detail.Adapt<TaktEcBatchDto>();
-        var pmc = await _ecExecDeptAccess.PmcRepository.FirstAsync(x => x.EcDetailId == detail.Id);
-        if (pmc != null)
+        var pcGrain = await ExecGrainAsync(detail, TaktEcDeptCodes.Pc);
+        var pc = await _ecExecDeptAccess.PcRepository.FirstAsync(x => x.EcCode == detail.EcCode && SqlFunc.ToString(x.EcGrainKey) == pcGrain);
+        if (pc != null)
         {
-            dto.ScheduledBatch = pmc.ScheduledBatch;
-            dto.ScheduledDate = pmc.ScheduledDate;
+            dto.ScheduledBatch = pc.ScheduledBatch;
+            dto.ScheduledDate = pc.ScheduledDate;
         }
-        var route = TaktEcEmtlRouteHelper.Resolve(detail);
-        if (route == TaktEcEmtlRouteTarget.Smt)
+        var route = TaktEcMtlRouteHelper.Resolve(detail);
+        if (route == TaktEcMtlRouteTarget.Mtl)
         {
-            var electronic = await _ecExecDeptAccess.SmtRepository.FirstAsync(x => x.EcDetailId == detail.Id);
+            var smtGrain = await ExecGrainAsync(detail, TaktEcDeptCodes.Mtl);
+            var electronic = await _ecExecDeptAccess.MtlRepository.FirstAsync(x => x.EcCode == detail.EcCode && SqlFunc.ToString(x.EcGrainKey) == smtGrain);
             if (electronic != null)
             {
                 dto.ProductionBatch = electronic.OutboundBatch;
                 dto.ProductionDate = electronic.OutboundDate;
             }
         }
-        else if (route == TaktEcEmtlRouteTarget.Seizounika)
+        else if (route == TaktEcMtlRouteTarget.Mfg2)
         {
-            var seizounika = await _ecExecDeptAccess.SeizounikaRepository.FirstAsync(x => x.EcDetailId == detail.Id);
-            if (seizounika != null)
+            var nikaGrain = await ExecGrainAsync(detail, TaktEcDeptCodes.Mfg2);
+            var pcba = await _ecExecDeptAccess.Mfg2Repository.FirstAsync(x => x.EcCode == detail.EcCode && SqlFunc.ToString(x.EcGrainKey) == nikaGrain);
+            if (pcba != null)
             {
-                dto.ProductionBatch = seizounika.ImplementationBatch;
-                dto.ProductionDate = seizounika.ProductionDate;
+                dto.ProductionBatch = pcba.ImplementationBatch;
+                dto.ProductionDate = pcba.ProductionDate;
             }
         }
         return dto;
@@ -184,28 +193,29 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
     /// <param name="detail">设变明细</param>
     /// <param name="apply">字段赋值</param>
     /// <returns>任务</returns>
-    private async Task UpsertPmcBatchFieldAsync(TaktEcDetail detail, Action<TaktEcSeikan> apply)
+    private async Task UpsertPcBatchFieldAsync(TaktEcDetail detail, Action<TaktEcPc> apply)
     {
-        var pmcRepo = _ecExecDeptAccess.PmcRepository;
-        var pmc = await pmcRepo.FirstAsync(x => x.EcDetailId == detail.Id);
-        if (pmc == null)
+        var pcRepo = _ecExecDeptAccess.PcRepository;
+        var pcGrain = await ExecGrainAsync(detail, TaktEcDeptCodes.Pc);
+        var pc = await pcRepo.FirstAsync(x => x.EcCode == detail.EcCode && SqlFunc.ToString(x.EcGrainKey) == pcGrain);
+        if (pc == null)
         {
-            pmc = new TaktEcSeikan
+            pc = new TaktEcPc
             {
-                EcDetailId = detail.Id,
                 EcCode = detail.EcCode,
-                DeptCode = TaktEcDeptCodes.Pmc,
+                DeptCode = TaktEcDeptCodes.Pc,
             };
-            var maxLine = await pmcRepo.GetMaxIntAsync(
-                x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.EcDetailId == detail.Id,
+            var maxLine = await pcRepo.GetMaxIntAsync(
+                x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.EcCode == detail.EcCode && SqlFunc.ToString(x.EcGrainKey) == pcGrain,
                 x => x.LineNumber);
-            pmc.LineNumber = _lineNumberGenerator.GenerateNext(detail.Id.ToString(), maxLine);
-            apply(pmc);
-            await pmcRepo.CreateAsync(pmc);
+            pc.LineNumber = _lineNumberGenerator.GenerateNext(detail.EcCode, maxLine);
+            TaktEcDeptExecRedundantBinder.Apply(pc, detail, pc.LineNumber, await ResolveMasterControlScopeAsync(detail));
+            apply(pc);
+            await pcRepo.CreateAsync(pc);
             return;
         }
-        apply(pmc);
-        await pmcRepo.UpdateAsync(pmc);
+        apply(pc);
+        await pcRepo.UpdateAsync(pc);
     }
 
     /// <summary>
@@ -217,8 +227,8 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
     /// <returns>任务</returns>
     private async Task UpsertSmtBatchFieldsAsync(TaktEcDetail detail, string? productionBatch, DateTime? productionDate)
     {
-        var route = TaktEcEmtlRouteHelper.Resolve(detail);
-        if (route == TaktEcEmtlRouteTarget.Smt)
+        var route = TaktEcMtlRouteHelper.Resolve(detail);
+        if (route == TaktEcMtlRouteTarget.Mtl)
         {
             await UpsertSmtBatchFieldAsync(detail, e =>
             {
@@ -227,9 +237,9 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
             });
             return;
         }
-        if (route == TaktEcEmtlRouteTarget.Seizounika)
+        if (route == TaktEcMtlRouteTarget.Mfg2)
         {
-            await UpsertSeizounikaBatchFieldAsync(detail, pcba =>
+            await UpsertPcbaBatchFieldAsync(detail, pcba =>
             {
                 pcba.ImplementationBatch = productionBatch;
                 pcba.ProductionDate = productionDate;
@@ -240,57 +250,93 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
     /// <summary>
     /// 更新或创建制二非 F 批次字段
     /// </summary>
-    private async Task UpsertSeizounikaBatchFieldAsync(TaktEcDetail detail, Action<TaktEcSeizounika> apply)
+    private async Task UpsertPcbaBatchFieldAsync(TaktEcDetail detail, Action<TaktEcMfg2> apply)
     {
-        var seizounikaRepo = _ecExecDeptAccess.SeizounikaRepository;
-        var seizounika = await seizounikaRepo.FirstAsync(x => x.EcDetailId == detail.Id);
-        if (seizounika == null)
+        var pcbaRepo = _ecExecDeptAccess.Mfg2Repository;
+        var nikaGrain = await ExecGrainAsync(detail, TaktEcDeptCodes.Mfg2);
+        var pcba = await pcbaRepo.FirstAsync(x => x.EcCode == detail.EcCode && SqlFunc.ToString(x.EcGrainKey) == nikaGrain);
+        if (pcba == null)
         {
-            seizounika = new TaktEcSeizounika
+            pcba = new TaktEcMfg2
             {
-                EcDetailId = detail.Id,
                 EcCode = detail.EcCode,
-                DeptCode = TaktEcDeptCodes.Pcba,
+                DeptCode = TaktEcDeptCodes.Mfg2,
             };
-            var maxLine = await seizounikaRepo.GetMaxIntAsync(
-                x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.EcDetailId == detail.Id,
+            var maxLine = await pcbaRepo.GetMaxIntAsync(
+                x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.EcCode == detail.EcCode && SqlFunc.ToString(x.EcGrainKey) == nikaGrain,
                 x => x.LineNumber);
-            seizounika.LineNumber = _lineNumberGenerator.GenerateNext(detail.Id.ToString(), maxLine);
-            TaktEcDeptExecRedundantBinder.Apply(seizounika, detail, seizounika.LineNumber);
-            apply(seizounika);
-            await seizounikaRepo.CreateAsync(seizounika);
+            pcba.LineNumber = _lineNumberGenerator.GenerateNext(detail.Id.ToString(), maxLine);
+            TaktEcDeptExecRedundantBinder.Apply(pcba, detail, pcba.LineNumber, await ResolveMasterControlScopeAsync(detail));
+            apply(pcba);
+            await pcbaRepo.CreateAsync(pcba);
             return;
         }
-        apply(seizounika);
-        await seizounikaRepo.UpdateAsync(seizounika);
+        apply(pcba);
+        await pcbaRepo.UpdateAsync(pcba);
     }
 
     /// <summary>
     /// 更新或创建 SMT出库批次字段
     /// </summary>
-    private async Task UpsertSmtBatchFieldAsync(TaktEcDetail detail, Action<TaktEcEmtl> apply)
+    private async Task UpsertSmtBatchFieldAsync(TaktEcDetail detail, Action<TaktEcMtl> apply)
     {
-        var repo = _ecExecDeptAccess.SmtRepository;
-        var row = await repo.FirstAsync(x => x.EcDetailId == detail.Id);
+        var repo = _ecExecDeptAccess.MtlRepository;
+        var smtGrain = await ExecGrainAsync(detail, TaktEcDeptCodes.Mtl);
+        var row = await repo.FirstAsync(x => x.EcCode == detail.EcCode && SqlFunc.ToString(x.EcGrainKey) == smtGrain);
         if (row == null)
         {
-            row = new TaktEcEmtl
+            row = new TaktEcMtl
             {
-                EcDetailId = detail.Id,
                 EcCode = detail.EcCode,
-                DeptCode = TaktEcDeptCodes.Smt,
+                DeptCode = TaktEcDeptCodes.Mtl,
             };
             var maxLine = await repo.GetMaxIntAsync(
-                x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.EcDetailId == detail.Id,
+                x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.EcCode == detail.EcCode && SqlFunc.ToString(x.EcGrainKey) == smtGrain,
                 x => x.LineNumber);
             row.LineNumber = _lineNumberGenerator.GenerateNext(detail.Id.ToString(), maxLine);
-            TaktEcDeptExecRedundantBinder.Apply(row, detail, row.LineNumber);
+            TaktEcDeptExecRedundantBinder.Apply(row, detail, row.LineNumber, await ResolveMasterControlScopeAsync(detail));
             apply(row);
             await repo.CreateAsync(row);
             return;
         }
         apply(row);
         await repo.UpdateAsync(row);
+    }
+
+    /// <summary>
+    /// 计算明细在指定部门的执行去重键。
+    /// </summary>
+    /// <param name="detail">设变明细</param>
+    /// <param name="deptCode">部门编码</param>
+    /// <returns>去重键</returns>
+    private async Task<string> ExecGrainAsync(TaktEcDetail detail, string deptCode)
+    {
+        var master = await ResolveMasterControlScopeAsync(detail);
+        return TaktEcScopeRowGrain.BuildExecGrainKey(detail, deptCode, master);
+    }
+    /// <summary>
+    /// 读取技术课主表控制范围，供新建执行行使用。
+    /// </summary>
+    /// <param name="detail">设变明细</param>
+    /// <returns>主表控制范围；缺主表时按机种</returns>
+    private async Task<int> ResolveMasterControlScopeAsync(TaktEcDetail detail)
+    {
+        TaktEcTe? te = null;
+        if (detail.EcTeId > 0)
+        {
+            te = await _ecTeRepository.GetByIdAsync(detail.EcTeId);
+        }
+        if (te == null && !string.IsNullOrWhiteSpace(detail.EcCode))
+        {
+            te = await _ecTeRepository.FirstAsync(x => x.EcCode == detail.EcCode);
+        }
+        var raw = te?.EcControlScope ?? TaktEcControlScopeConstants.ByModel;
+        return raw is TaktEcControlScopeConstants.ByFinishedProduct
+            or TaktEcControlScopeConstants.ByModel
+            or TaktEcControlScopeConstants.ByEngineeringChange
+            or TaktEcControlScopeConstants.NotManaged
+            ? raw
+            : TaktEcControlScopeConstants.ByModel;
     }
 
     /// <summary>
@@ -321,14 +367,14 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
         {
             var batchCode = queryDto.BatchCode;
             exp = exp.And(x =>
-                SqlFunc.Subqueryable<TaktEcSeikan>()
-                    .Where(d => d.EcDetailId == x.Id && d.ScheduledBatch != null && d.ScheduledBatch.Contains(batchCode))
+                SqlFunc.Subqueryable<TaktEcPc>()
+                    .Where(d => d.EcCode == x.EcCode && d.ScheduledBatch != null && d.ScheduledBatch.Contains(batchCode))
                     .Any()
-                || SqlFunc.Subqueryable<TaktEcEmtl>()
-                    .Where(d => d.EcDetailId == x.Id && d.OutboundBatch != null && d.OutboundBatch.Contains(batchCode))
+                || SqlFunc.Subqueryable<TaktEcMtl>()
+                    .Where(d => d.EcCode == x.EcCode && d.OutboundBatch != null && d.OutboundBatch.Contains(batchCode))
                     .Any()
-                || SqlFunc.Subqueryable<TaktEcSeizounika>()
-                    .Where(d => d.EcDetailId == x.Id && d.ImplementationBatch != null && d.ImplementationBatch.Contains(batchCode))
+                || SqlFunc.Subqueryable<TaktEcMfg2>()
+                    .Where(d => d.EcCode == x.EcCode && d.ImplementationBatch != null && d.ImplementationBatch.Contains(batchCode))
                     .Any());
         }
 
@@ -337,6 +383,12 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
             exp = exp.And(x => x.CultureCode != null && x.CultureCode.Contains(queryDto.CultureCode));
         }
 
+        exp = exp.And(x => SqlFunc.Subqueryable<TaktEcTe>()
+            .Where(ec => ec.Id == x.EcTeId
+                && ec.IsDeleted == 0
+                && (ec.EcImplScope == TaktEcScopeConstants.AllDestination
+                    || ec.EcImplScope == TaktEcScopeConstants.MaterialControl))
+            .Any());
         return exp.ToExpression();
     }
 }

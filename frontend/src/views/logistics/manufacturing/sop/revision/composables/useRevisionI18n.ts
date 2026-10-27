@@ -56,7 +56,6 @@ export type SopRevisionField = keyof typeof SOPREVISION_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const SOPREVISION_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'sopId',
   'revision',
   'fileUrl',

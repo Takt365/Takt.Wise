@@ -16,34 +16,63 @@ using Takt.Shared.Options;
 namespace Takt.Application.Services.Logistics.Manufacturing.Output;
 
 /// <summary>
-/// 月生产推移转置分析服务（读组立/PCBA 产出本表；与 CRUD 服务分离）
+/// 生产统计：组立/PCBA 按班组或按机种分别统计，选项取自各自产出表
 /// </summary>
 public interface ITaktProductionMonthlyTrendService
 {
     /// <summary>
-    /// 推移查询栏：组立/PCBA 产出本表工厂去重选项（并集）
+    /// 当前页签产出表的工厂去重
     /// </summary>
-    /// <param name="plantCode">工厂代码（可选，用于按工厂过滤）</param>
-    /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
+    /// <param name="statTab">assy-team / assy-model / pcba-team / pcba-model</param>
+    /// <param name="keyword">关键字</param>
     /// <returns>下拉选项</returns>
-    Task<List<TaktSelectOption>> GetProductionMonthlyTrendPlantOptionsAsync(string? plantCode = null, string? keyword = null);
+    Task<List<TaktSelectOption>> GetProductionMonthlyTrendPlantOptionsAsync(string? statTab, string? keyword = null);
 
     /// <summary>
-    /// 推移查询栏：按工厂返回有数据的产出类别（assy / pcba）
+    /// 当前页签产出表的班组去重（组立主表；PCBA 明细）
     /// </summary>
-    /// <param name="plantCode">工厂代码</param>
-    /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
+    /// <param name="statTab">页签</param>
+    /// <param name="plantCode">工厂</param>
+    /// <param name="keyword">关键字</param>
     /// <returns>下拉选项</returns>
-    Task<List<TaktSelectOption>> GetProductionMonthlyTrendOutputCategoryOptionsAsync(string? plantCode = null, string? keyword = null);
+    Task<List<TaktSelectOption>> GetProductionMonthlyTrendTeamOptionsAsync(string? statTab, string? plantCode, string? keyword = null);
 
     /// <summary>
-    /// 推移查询栏：按工厂（及可选产出类别）去重机种
+    /// 当前页签产出表的机种去重
     /// </summary>
-    /// <param name="plantCode">工厂代码</param>
-    /// <param name="outputCategory">产出类别（assy/pcba；空则并集）</param>
-    /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
+    /// <param name="statTab">页签</param>
+    /// <param name="plantCode">工厂</param>
+    /// <param name="keyword">关键字</param>
     /// <returns>下拉选项</returns>
-    Task<List<TaktSelectOption>> GetProductionMonthlyTrendModelOptionsAsync(string? plantCode = null, string? keyword = null, string? outputCategory = null);
+    Task<List<TaktSelectOption>> GetProductionMonthlyTrendModelOptionsAsync(string? statTab, string? plantCode, string? keyword = null);
+
+    /// <summary>
+    /// 当前页签产出表的物料去重
+    /// </summary>
+    /// <param name="statTab">页签</param>
+    /// <param name="plantCode">工厂</param>
+    /// <param name="keyword">关键字</param>
+    /// <returns>下拉选项</returns>
+    Task<List<TaktSelectOption>> GetProductionMonthlyTrendMaterialOptionsAsync(string? statTab, string? plantCode, string? keyword = null);
+
+    /// <summary>
+    /// 生产统计明细（组立按日报，PCBA 按明细）
+    /// </summary>
+    /// <param name="queryDto">查询</param>
+    /// <returns>分页行</returns>
+    Task<TaktProductionStatLineResultDto> GetProductionStatLineListAsync(TaktProductionMonthlyTrendQueryDto queryDto);
+
+    /// <summary>
+    /// 导出生产统计明细
+    /// </summary>
+    /// <param name="query">查询</param>
+    /// <param name="sheetName">工作表</param>
+    /// <param name="fileName">文件名</param>
+    /// <returns>文件名与内容</returns>
+    Task<(string fileName, byte[] fileContent)> ExportProductionStatLineAsync(
+        TaktProductionMonthlyTrendQueryDto query,
+        string? sheetName = null,
+        string? fileName = null);
 
     /// <summary>
     /// 获取月生产推移转置分析（分页）

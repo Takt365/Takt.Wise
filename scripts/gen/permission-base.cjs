@@ -99,7 +99,7 @@ function buildPermissionBaseFull(pathParts, entityShort) {
   /** @type {string[]} */
   const result = [...segments];
   const pathWordSet = new Set(segments);
-  // EngineeringChange 实体短名以 Ec 开头（EcKoubai、EcGijutsu）时跳过词 ec，
+  // EngineeringChange 实体短名以 Ec 开头（EcPur、EcTe）时跳过词 ec，
   // 与菜单 logistics:manufacturing:engineering:change:{dept} 对齐；EcGroup 仍保留 :ec:group。
   const skipLeadingEc =
     segments.includes('engineering')

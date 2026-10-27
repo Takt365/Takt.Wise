@@ -111,7 +111,6 @@ export type IpqcOrderItemField = keyof typeof IPQCORDERITEM_PLACEHOLDER
 
 /** 高级查询可 trim 的字符串字段 */
 export const IPQCORDERITEM_QUERY_STRING_FIELDS = [
-  'plantCode',
   'ipqcOrderCode',
   'materialCode',
   'materialDescription',

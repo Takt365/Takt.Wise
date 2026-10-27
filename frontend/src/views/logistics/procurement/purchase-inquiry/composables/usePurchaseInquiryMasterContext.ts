@@ -15,7 +15,7 @@ export type PurchaseInquiryRowRecord = PurchaseInquiry | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface PurchaseInquiryMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<PurchaseInquiryRowRecord | null>
+  selecmedMasterRow: Ref<PurchaseInquiryRowRecord | null>
 }
 
 const purchaseInquiryMasterContextKey: InjectionKey<PurchaseInquiryMasterContext> = Symbol('purchase-inquiryMasterContext')
@@ -25,8 +25,8 @@ const purchaseInquiryMasterContextKey: InjectionKey<PurchaseInquiryMasterContext
  * @returns {PurchaseInquiryMasterContext} 主表上下文
  */
 export function providePurchaseInquiryMasterContext(): PurchaseInquiryMasterContext {
-  const selectedMasterRow = ref<PurchaseInquiryRowRecord | null>(null)
-  const ctx: PurchaseInquiryMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<PurchaseInquiryRowRecord | null>(null)
+  const ctx: PurchaseInquiryMasterContext = { selecmedMasterRow }
   provide(purchaseInquiryMasterContextKey, ctx)
   return ctx
 }

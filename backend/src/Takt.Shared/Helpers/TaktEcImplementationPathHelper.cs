@@ -80,7 +80,7 @@ public static class TaktEcImplementationPathHelper
                 break;
             }
         }
-        var qaStage = GetStage(stageMap, TaktEcDeptCodes.Qa);
+        var qaStage = GetStage(stageMap, TaktEcDeptCodes.Qc);
         var isOfficiallyCompleted = qaStage.TotalCount > 0
             && qaStage.ImplementedCount >= qaStage.TotalCount;
         var anyProgress = stages.Any(s => s.ImplementedCount > 0);

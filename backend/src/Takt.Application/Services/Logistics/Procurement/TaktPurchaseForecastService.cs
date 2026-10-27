@@ -135,7 +135,11 @@ public class TaktPurchaseForecastService : TaktServiceBase, ITaktPurchaseForecas
         var entity = dto.Adapt<TaktPurchaseForecast>();
         if (!string.IsNullOrWhiteSpace(dto.NumberingRuleCode))
         {
-            var generated = await _numberingGenerator.GenerateNextAsync(dto.NumberingRuleCode.Trim());
+            var existingRows = await _purchaseForecastRepository.GetListAsync(
+                x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode);
+            var generated = await _numberingGenerator.GenerateNextAsync(
+                dto.NumberingRuleCode.Trim(),
+                existingRows.Select(x => (string?)x.PurchaseForecastCode).ToList());
             if (string.IsNullOrWhiteSpace(generated.BusinessCode))
             {
                 throw new TaktBusinessException("业务编码生成失败");

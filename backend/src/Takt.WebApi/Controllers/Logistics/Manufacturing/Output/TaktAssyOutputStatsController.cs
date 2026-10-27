@@ -40,7 +40,7 @@ public class TaktAssyOutputStatsController : TaktControllerBase
     /// </summary>
     /// <param name="queryDto">查询 DTO</param>
     /// <returns>组立生产统计</returns>
-    [TaktPermission("logistics:manufacturing:output:assy:list", "组立生产统计")]
+    [TaktPermission("logistics:manufacturing:output:mfg1:list", "组立生产统计")]
     [HttpGet("production-stat")]
     public async Task<IActionResult> GetAssyOutputProductionStatAsync([FromQuery] TaktOutputProductionStatQueryDto queryDto)
     {

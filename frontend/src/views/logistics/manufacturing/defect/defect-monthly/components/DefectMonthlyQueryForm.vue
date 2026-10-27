@@ -2,7 +2,7 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/defect/defect-monthly/components -->
 <!-- 文件名称：DefectMonthlyQueryForm.vue -->
-<!-- 功能描述：月生产不良推移查询栏（工厂/期间/不良类别/机种级联） -->
+<!-- 功能描述：不良推移查询栏（当前页签的工厂与机种） -->
 <!-- 版权信息：Copyright (c) 2026 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->
@@ -10,17 +10,6 @@
 <template>
   <div class="takt-query-bar defect-monthly-query-bar">
     <div class="defect-monthly-query-bar__fields min-w-0 flex flex-1 flex-wrap items-center gap-x-3 gap-y-2">
-      <div class="flex items-center gap-1">
-        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('common.page.entity.plantcode') }}</span>
-        <TaktSelect
-          v-model:value="plantCode"
-          :api-url="plantOptionsUrl"
-          class="defect-monthly-query-bar__control defect-monthly-query-bar__control--plant"
-          allow-clear
-          show-search
-          :placeholder="t('common.page.form.placeholder.selectonly')"
-        />
-      </div>
       <div class="flex items-center gap-1">
         <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.periodRange`) }}</span>
         <a-range-picker
@@ -39,21 +28,9 @@
         />
       </div>
       <div class="flex items-center gap-1">
-        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.defectCategory`) }}</span>
-        <TaktSelect
-          v-model:value="defectCategory"
-          :api-url="defectCategoryOptionsUrl"
-          :api-params="defectCategoryApiParams"
-          :disabled="!plantCode?.trim()"
-          class="defect-monthly-query-bar__control defect-monthly-query-bar__control--category"
-          allow-clear
-          show-search
-          :placeholder="t('common.page.form.placeholder.selectonly')"
-        />
-      </div>
-      <div class="flex items-center gap-1">
         <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.modelCode`) }}</span>
         <TaktSelect
+          :key="`${props.statTab}-model`"
           v-model:value="modelCode"
           :api-url="modelOptionsUrl"
           :api-params="modelApiParams"
@@ -92,17 +69,14 @@
 
 <script setup lang="ts">
 /**
- * 月生产不良推移查询栏：工厂 → 不良类别 → 机种（机种可空）
+ * 不良推移查询栏：工厂、期间必填，机种取自当前页签
  */
 import { RiSearchLine, RiRefreshLine } from '@remixicon/vue'
 import { useI18n } from 'vue-i18n'
 import {
-  getDefectMonthlyTrendDefectCategoryOptionsUrl,
   getDefectMonthlyTrendModelOptionsUrl,
   getDefectMonthlyTrendPlantOptionsUrl,
 } from '@/api/logistics/manufacturing/defect/defectMonthly.api'
-
-/** 工厂代码（第 1 级，必选） */
 
 /** 期间最多 12 个月 */
 const { disabledDate, onCalendarChange, onOpenChange } = useAnalysisPeriodRangeLimit()
@@ -110,11 +84,11 @@ const { disabledDate, onCalendarChange, onOpenChange } = useAnalysisPeriodRangeL
 const plantCode = defineModel<string | undefined>('plantCode')
 /** 年月区间 */
 const periodRange = defineModel<[string, string] | null>('periodRange')
-/** 不良类别（第 2 级，可空） */
-const defectCategory = defineModel<string | undefined>('defectCategory')
-/** 机种编码（第 3 级，可空） */
+/** 机种（可空） */
 const modelCode = defineModel<string | undefined>('modelCode')
 const props = defineProps<{
+  /** 页签 assy / pcba */
+  statTab: string
   /** 查询 loading */
   loading?: boolean
 }>()
@@ -126,44 +100,24 @@ const emit = defineEmits<{
 const { t } = useI18n()
 /** 静态 locales 前缀 */
 const localePrefix = 'logistics.manufacturing.defect.defect-monthly.page'
-/** 推移本表级联选项 URL（TaktDefectMonthlyTrends） */
 const plantOptionsUrl = getDefectMonthlyTrendPlantOptionsUrl()
-const defectCategoryOptionsUrl = getDefectMonthlyTrendDefectCategoryOptionsUrl()
 const modelOptionsUrl = getDefectMonthlyTrendModelOptionsUrl()
 
-/** 第 2 级：工厂 → 不良类别 */
-const defectCategoryApiParams = computed(() => {
-  const plant = plantCode.value?.trim()
-  if (!plant) {
-    return undefined
-  }
-  return { plantCode: plant }
-})
+/** 工厂只取当前页签 */
+const plantApiParams = computed(() => ({ statTab: props.statTab }))
 
-/** 第 3 级：工厂 + 可选不良类别 → 机种 */
+/** 机种只取当前页签的产出不良表 */
 const modelApiParams = computed(() => {
   const plant = plantCode.value?.trim()
   if (!plant) {
     return undefined
   }
-  const category = defectCategory.value?.trim()
-  return category
-    ? { plantCode: plant, defectCategory: category }
-    : { plantCode: plant }
+  return { plantCode: plant, defectCategory: props.statTab }
 })
 
-/** 工厂变更：清空第 2～3 级 */
+/** 工厂变更：清空机种 */
 watch(
   () => plantCode.value,
-  () => {
-    defectCategory.value = undefined
-    modelCode.value = undefined
-  },
-)
-
-/** 不良类别变更：清空第 3 级 */
-watch(
-  () => defectCategory.value,
   () => {
     modelCode.value = undefined
   },

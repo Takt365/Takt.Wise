@@ -15,7 +15,7 @@ export type SalesOrderRowRecord = SalesOrder | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface SalesOrderMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<SalesOrderRowRecord | null>
+  selecmedMasterRow: Ref<SalesOrderRowRecord | null>
 }
 
 const salesOrderMasterContextKey: InjectionKey<SalesOrderMasterContext> = Symbol('orderMasterContext')
@@ -25,8 +25,8 @@ const salesOrderMasterContextKey: InjectionKey<SalesOrderMasterContext> = Symbol
  * @returns {SalesOrderMasterContext} 主表上下文
  */
 export function provideSalesOrderMasterContext(): SalesOrderMasterContext {
-  const selectedMasterRow = ref<SalesOrderRowRecord | null>(null)
-  const ctx: SalesOrderMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<SalesOrderRowRecord | null>(null)
+  const ctx: SalesOrderMasterContext = { selecmedMasterRow }
   provide(salesOrderMasterContextKey, ctx)
   return ctx
 }

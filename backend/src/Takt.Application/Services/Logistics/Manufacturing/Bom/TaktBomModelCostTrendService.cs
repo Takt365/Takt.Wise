@@ -25,7 +25,7 @@ namespace Takt.Application.Services.Logistics.Manufacturing.Bom;
 
 /// <summary>
 /// BOM 机种成本推移：一行一个成品。各月列为成品月计算；差额为最后月减前一月。
-/// 组件差异取期间止月，只列出同一机种各成品间用量或单价不一致的成本组件（编码-用量:价格）。共通价格、差异价格为这些组件的行成本合计。
+/// 组件差异取期间止月，只列出同一机种各成品间用量或单价不一致的成本组件。首行 Net 为这些组件的行成本合计，其后按行成本绝对值降序全量列出 编码:用量-行成本。共通价格、差异价格为组件行成本合计。
 /// 机种空则范围内每个机种各自对比。
 /// </summary>
 public class TaktBomModelCostTrendService : TaktServiceBase, ITaktBomModelCostTrendService
@@ -145,12 +145,19 @@ public class TaktBomModelCostTrendService : TaktServiceBase, ITaktBomModelCostTr
             })
             .ToList();
         const string defaultSheet = "机种成本推移";
+        var columnWidths = new Dictionary<string, double>(StringComparer.Ordinal)
+        {
+            ["componentVarianceText"] = 20d,
+        };
         return await TaktExcelHelper.ExportDictionaryRowsAsync(
             exportRows,
             columnKeys,
             columnLabels,
             sheetName ?? defaultSheet,
-            fileName ?? TaktNamingHelper.PlantPrefixedTrendExportBase(query.PlantCode, defaultSheet));
+            fileName ?? TaktNamingHelper.PlantPrefixedTrendExportBase(query.PlantCode, defaultSheet),
+            columnWidths: columnWidths,
+            autoFitUnspecifiedColumns: true,
+            keepNaturalRowHeight: true);
     }
 
     /// <summary>
@@ -266,7 +273,7 @@ public class TaktBomModelCostTrendService : TaktServiceBase, ITaktBomModelCostTr
     }
 
     /// <summary>
-    /// 期间止月：同机种成品间用量或单价不一致的组件，写到各成品行（编码-用量:价格）
+    /// 期间止月：同机种成品间用量或单价不一致的组件，写到各成品行（首行 Net，其后全量 编码:用量-行成本）
     /// </summary>
     /// <param name="rows">成品行</param>
     /// <param name="items">止月成本明细</param>
@@ -354,8 +361,8 @@ public class TaktBomModelCostTrendService : TaktServiceBase, ITaktBomModelCostTr
     {
         decimal common = 0m;
         decimal variance = 0m;
-        var parts = new List<string>();
-        foreach (var componentCode in usage.Keys.OrderBy(c => c, StringComparer.Ordinal))
+        var entries = new List<(string Text, decimal LineCost)>();
+        foreach (var componentCode in usage.Keys)
         {
             if (!usage.TryGetValue(componentCode, out var perProduct)
                 || !perProduct.TryGetValue(productKey, out var bucket))
@@ -370,14 +377,21 @@ public class TaktBomModelCostTrendService : TaktServiceBase, ITaktBomModelCostTr
             }
             variance += lineCost;
             var qty = TaktBomMaterialCostItemLineCostHelper.RoundCost(bucket.Quantity);
-            var unitPrice = qty == 0m
-                ? 0m
-                : TaktBomMaterialCostItemLineCostHelper.RoundCost(bucket.LineCost / qty);
-            parts.Add($"{componentCode}-{FormatQuantity(qty)}:{unitPrice.ToString("0.00000", CultureInfo.InvariantCulture)}");
+            entries.Add(($"{componentCode}:{FormatQuantity(qty)}-{FormatMoney(lineCost)}", lineCost));
         }
         row.CommonPrice = TaktBomMaterialCostItemLineCostHelper.RoundCost(common);
         row.VariancePrice = TaktBomMaterialCostItemLineCostHelper.RoundCost(variance);
-        row.ComponentVarianceText = string.Join(";", parts);
+        if (entries.Count == 0)
+        {
+            row.ComponentVarianceText = string.Empty;
+            return;
+        }
+        var lines = new List<string> { $"Net:{FormatMoney(row.VariancePrice ?? 0m)}" };
+        lines.AddRange(entries
+            .OrderByDescending(e => Math.Abs(e.LineCost))
+            .ThenBy(e => e.Text, StringComparer.Ordinal)
+            .Select(e => e.Text));
+        row.ComponentVarianceText = string.Join("\n", lines);
     }
 
     /// <summary>
@@ -476,6 +490,15 @@ public class TaktBomModelCostTrendService : TaktServiceBase, ITaktBomModelCostTr
         }
         return totals;
     }
+
+    /// <summary>
+    /// 行成本展示（RoundCost 后最多 5 位，与成本差异推移一致）
+    /// </summary>
+    /// <param name="value">金额</param>
+    /// <returns>文本</returns>
+    private static string FormatMoney(decimal value)
+        => TaktBomMaterialCostItemLineCostHelper.RoundCost(value)
+            .ToString("0.#####", CultureInfo.InvariantCulture);
 
     /// <summary>
     /// 数量展示（整数不带小数）

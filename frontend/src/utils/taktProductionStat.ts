@@ -208,8 +208,8 @@ export function calculateAssyStdCapacity(
 }
 
 /**
- * 汇总标准工序时间得到标准工时（分钟）
- * @param rows 标准工序时间行（ConvertedMinutes 优先，为 0 时取 StandardMinutes）
+ * 汇总标准工时得到标准工时（分钟）
+ * @param rows 标准工时行（ConvertedMinutes 优先，为 0 时取 StandardMinutes）
  * @returns 标准工时
  */
 export function calculateStdMinutesFromOperationTimes(

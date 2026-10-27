@@ -15,7 +15,7 @@ export type MaintenanceWorkOrderRowRecord = MaintenanceWorkOrder | Record<string
 /** 主表选中行上下文 */
 export interface MaintenanceWorkOrderMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<MaintenanceWorkOrderRowRecord | null>
+  selecmedMasterRow: Ref<MaintenanceWorkOrderRowRecord | null>
 }
 
 const maintenanceWorkOrderMasterContextKey: InjectionKey<MaintenanceWorkOrderMasterContext> = Symbol('work-orderMasterContext')
@@ -25,8 +25,8 @@ const maintenanceWorkOrderMasterContextKey: InjectionKey<MaintenanceWorkOrderMas
  * @returns {MaintenanceWorkOrderMasterContext} 主表上下文
  */
 export function provideMaintenanceWorkOrderMasterContext(): MaintenanceWorkOrderMasterContext {
-  const selectedMasterRow = ref<MaintenanceWorkOrderRowRecord | null>(null)
-  const ctx: MaintenanceWorkOrderMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<MaintenanceWorkOrderRowRecord | null>(null)
+  const ctx: MaintenanceWorkOrderMasterContext = { selecmedMasterRow }
   provide(maintenanceWorkOrderMasterContextKey, ctx)
   return ctx
 }

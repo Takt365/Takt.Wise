@@ -15,7 +15,7 @@
     layout="horizontal"
     label-align="right"
   >
-    <a-tabs
+    <TaktFormTabs
       v-model:active-key="activeTab"
       class="source-ec-detail-form-tabs"
     >
@@ -342,7 +342,7 @@
           </a-row>
         </div>
       </a-tab-pane>
-    </a-tabs>
+    </TaktFormTabs>
   </a-form>
 </template>
 

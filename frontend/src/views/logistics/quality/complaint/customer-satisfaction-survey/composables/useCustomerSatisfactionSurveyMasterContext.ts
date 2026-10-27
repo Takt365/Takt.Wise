@@ -15,7 +15,7 @@ export type CustomerSatisfactionSurveyRowRecord = CustomerSatisfactionSurvey | R
 /** 主表选中行上下文 */
 export interface CustomerSatisfactionSurveyMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<CustomerSatisfactionSurveyRowRecord | null>
+  selecmedMasterRow: Ref<CustomerSatisfactionSurveyRowRecord | null>
 }
 
 const customerSatisfactionSurveyMasterContextKey: InjectionKey<CustomerSatisfactionSurveyMasterContext> = Symbol('customer-satisfaction-surveyMasterContext')
@@ -25,8 +25,8 @@ const customerSatisfactionSurveyMasterContextKey: InjectionKey<CustomerSatisfact
  * @returns {CustomerSatisfactionSurveyMasterContext} 主表上下文
  */
 export function provideCustomerSatisfactionSurveyMasterContext(): CustomerSatisfactionSurveyMasterContext {
-  const selectedMasterRow = ref<CustomerSatisfactionSurveyRowRecord | null>(null)
-  const ctx: CustomerSatisfactionSurveyMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<CustomerSatisfactionSurveyRowRecord | null>(null)
+  const ctx: CustomerSatisfactionSurveyMasterContext = { selecmedMasterRow }
   provide(customerSatisfactionSurveyMasterContextKey, ctx)
   return ctx
 }

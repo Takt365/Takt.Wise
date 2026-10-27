@@ -83,13 +83,13 @@ const entityTreeData = ref<TaktLazyTreeNode[]>([])
 /** 右侧树表数据源（带 children / _hasChildren，组件内拍平 virtual） */
 const tableTreeData = ref<Record<string, unknown>[]>([])
 /** 左侧树当前选中的节点 key 列表 */
-const selectedTreeKeys = ref<(string | number)[]>([])
+const selecmedTreeKeys = ref<(string | number)[]>([])
 /** 工具栏单选时当前行（编辑/删除） */
-const selectedRow = ref<${entityPascal}RowRecord | null>(null)
+const selecmedRow = ref<${entityPascal}RowRecord | null>(null)
 /** 表格多选行 */
-const selectedRows = ref<${entityPascal}RowRecord[]>([])
+const selecmedRows = ref<${entityPascal}RowRecord[]>([])
 /** 表格多选 row-key 集合 */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 ${formBlock}
 /** 高级查询抽屉是否打开 */
 const advancedQueryVisible = ref(false)
@@ -151,10 +151,10 @@ const formModalWidthPx = useTaktContentModalWidth()
 const importVisible = ref(false)
 ` : '';
   const updateDisabled = hasUpdate ? `/** 工具栏「编辑」是否禁用（须恰好选中一行） */
-const updateDisabled = computed(() => selectedRows.value.length !== 1)
+const updateDisabled = computed(() => selecmedRows.value.length !== 1)
 ` : '';
   const deleteDisabled = hasDelete ? `/** 工具栏「删除」是否禁用（未选中任何行） */
-const deleteDisabled = computed(() => selectedRows.value.length === 0)
+const deleteDisabled = computed(() => selecmedRows.value.length === 0)
 ` : '';
   const visibleColumnKeysBlock = defaultVisibleColumnKeysLiteral
     ? `/** 默认可见列（id + 前 8 个业务列 + 操作列，与 CRUD 单表一致） */
@@ -186,11 +186,11 @@ const pageSize = ref(getTaktDefaultPageSize())
 /** 分页 total */
 const total = ref(0)
 /** 工具栏单选时当前行 */
-const selectedRow = ref<${entityPascal}RowRecord | null>(null)
+const selecmedRow = ref<${entityPascal}RowRecord | null>(null)
 /** 表格多选行 */
-const selectedRows = ref<${entityPascal}RowRecord[]>([])
+const selecmedRows = ref<${entityPascal}RowRecord[]>([])
 /** 表格多选 row-key 集合 */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 ${formBlock}
 /** 高级查询抽屉是否打开 */
 const advancedQueryVisible = ref(false)

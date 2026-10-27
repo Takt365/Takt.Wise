@@ -44,6 +44,34 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
     /// </summary>
     private const int MaxGroupTextLength = 2000;
     /// <summary>
+    /// 涨跌选项：涨幅、跌幅各前 3 条（默认）
+    /// </summary>
+    private const string ImpactLineOptionUp3Down3 = "up3down3";
+    /// <summary>
+    /// 涨跌选项：涨幅、跌幅各前 5 条
+    /// </summary>
+    private const string ImpactLineOptionUp5Down5 = "up5down5";
+    /// <summary>
+    /// 涨跌选项：全部明细
+    /// </summary>
+    private const string ImpactLineOptionAll = "all";
+    /// <summary>
+    /// 涨价逐条下限。没有达到的一侧不写明细
+    /// </summary>
+    private const decimal MinIncreaseDiff = 1.0000m;
+    /// <summary>
+    /// 跌价逐条上限。没有达到的一侧不写明细
+    /// </summary>
+    private const decimal MaxDecreaseDiff = -1.0000m;
+
+    /// <summary>
+    /// 涨跌明细窗口。ApplyThreshold 为 true 时只保留差额达到 1 或 -1 的行，某一侧没有则该侧为空。
+    /// </summary>
+    /// <param name="IncreaseTake">涨价最多条数</param>
+    /// <param name="DecreaseTake">跌价最多条数</param>
+    /// <param name="ApplyThreshold">是否套用 1 / -1 门槛</param>
+    private readonly record struct ImpactLineWindow(int IncreaseTake, int DecreaseTake, bool ApplyThreshold);
+    /// <summary>
     /// 差异选项：全部（四组文完整）
     /// </summary>
     private const string PriceDeltaOptionAll = "all";
@@ -178,12 +206,23 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
             }
             return (IReadOnlyDictionary<string, object?>)dict;
         }).ToList();
+        var columnWidths = new Dictionary<string, double>(StringComparer.Ordinal)
+        {
+            ["zeroPriceGroup"] = 20d,
+            ["replaceComponentGroup"] = 20d,
+            ["priceDeltaTrend"] = 20d,
+            ["componentDeltaGroup"] = 20d,
+            ["reworkOrderGroup"] = 20d,
+        };
         return await TaktExcelHelper.ExportDictionaryRowsAsync(
             exportRows,
             columnKeys,
             columnLabels,
             sheetName ?? "DTA BOM成本差异推移",
-            fileName ?? TaktNamingHelper.PlantPrefixedTrendExportBase(query.PlantCode, "DTA BOM成本差异推移"));
+            fileName ?? TaktNamingHelper.PlantPrefixedTrendExportBase(query.PlantCode, "DTA BOM成本差异推移"),
+            columnWidths: columnWidths,
+            autoFitUnspecifiedColumns: true,
+            keepNaturalRowHeight: true);
     }
 
     /// <summary>
@@ -311,7 +350,8 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
             .ToList();
 
         // 仅当前页（或导出全量页）按明细填组文与差异列，避免未展示行做 BOM 明细全量计算
-        await FillComponentGroupTextsAsync(plantCode, pageRows, againstPeriod, focusPeriod);
+        var impactWindow = ResolveImpactLineWindow(queryDto.ImpactLineOption);
+        await FillComponentGroupTextsAsync(plantCode, pageRows, againstPeriod, focusPeriod, impactWindow);
         // 改修列：与差异阈值无关；按产品编码 + 基准月实际开始日期填 ZDTB 工单号
         await FillReworkOrderGroupAsync(plantCode, pageRows, focusPeriod);
 
@@ -368,6 +408,30 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
             return 100m;
         }
         throw new TaktBusinessException("差异选项仅支持全部、>=1、>=5、>=10、>=50、>=100");
+    }
+
+    /// <summary>
+    /// 解析涨跌明细窗口。空值按涨3跌3。未知值拒绝。
+    /// </summary>
+    /// <param name="option">up3down3 / up5down5 / all</param>
+    /// <returns>涨跌条数与是否套用 1 / -1 门槛</returns>
+    private static ImpactLineWindow ResolveImpactLineWindow(string? option)
+    {
+        if (string.IsNullOrWhiteSpace(option)
+            || string.Equals(option.Trim(), ImpactLineOptionUp3Down3, StringComparison.OrdinalIgnoreCase))
+        {
+            return new ImpactLineWindow(3, 3, true);
+        }
+        var key = option.Trim();
+        if (string.Equals(key, ImpactLineOptionUp5Down5, StringComparison.OrdinalIgnoreCase))
+        {
+            return new ImpactLineWindow(5, 5, true);
+        }
+        if (string.Equals(key, ImpactLineOptionAll, StringComparison.OrdinalIgnoreCase))
+        {
+            return new ImpactLineWindow(int.MaxValue, int.MaxValue, false);
+        }
+        throw new TaktBusinessException("涨跌选项仅支持涨3跌3、涨5跌5、全部");
     }
 
     /// <summary>
@@ -704,7 +768,7 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
         {
             var againstCost = ResolveProductMonthlyCostColumn(productRows, againstPeriod);
             var focusCost = ResolveProductMonthlyCostColumn(productRows, focusPeriod);
-            // 比较月或基准月产品成本为 0：标记跳过（PriceDelta=null）；有价时先写主表差，Fill 再按明细覆盖
+            // 比较月或基准月产品成本为 0：标记跳过（PriceDelta=null）；有价时差异=基准月产品成本−比较月产品成本
             if (againstCost > 0m && focusCost > 0m)
             {
                 priceDelta = TaktBomMaterialCostItemLineCostHelper.RoundCost(focusCost - againstCost);
@@ -824,7 +888,8 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
         string plantCode,
         List<TaktBomPriceDeltaTrendDto> rows,
         string? basePeriod,
-        string? comparePeriod)
+        string? comparePeriod,
+        ImpactLineWindow impactWindow)
     {
         if (rows.Count == 0 || string.IsNullOrWhiteSpace(comparePeriod))
         {
@@ -881,16 +946,16 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
 
             if (!string.IsNullOrWhiteSpace(basePeriod))
             {
-                var (priceText, priceSummary, componentText, componentSummary) = BuildDeltaGroupTexts(
+                var (priceText, _, componentText, _) = BuildDeltaGroupTexts(
                     plantCode,
                     row.ProductCode,
                     productItems,
                     basePeriod!,
-                    comparePeriod!);
+                    comparePeriod!,
+                    impactWindow);
                 row.PriceDeltaTrend = priceText;
                 row.ComponentDeltaGroup = componentText;
-                row.PriceDelta = TaktBomMaterialCostItemLineCostHelper.RoundCost(
-                    checked(priceSummary + componentSummary));
+                // 差异列保持主表产品月成本（基准月−比较月）。价格组/组件组只说明构成，不回写差异。
             }
 
             // 环比差异为 0：0价格组 / 价格差异组 / 组件差异组全空
@@ -1026,7 +1091,7 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
         IReadOnlyList<TaktBomMaterialCostItem> productItems,
         string focusPeriod)
     {
-        var map = new Dictionary<string, (string SourceCode, decimal UnitPrice)>(StringComparer.OrdinalIgnoreCase);
+        var map = new Dictionary<string, (string SourceCode, decimal OldUnitPrice, decimal NewUnitPrice)>(StringComparer.OrdinalIgnoreCase);
         var preferredPeriodByComponent = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var item in productItems)
@@ -1036,14 +1101,14 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
             {
                 continue;
             }
-            foreach (var (component, source, unitPrice, valuationPeriod) in EnumerateMpReplacePairsDetailed(item.ExtField))
+            foreach (var (component, source, oldUnitPrice, newUnitPrice, valuationPeriod) in EnumerateMpReplacePairsDetailed(item.ExtField))
             {
                 // 只认本行组件的替换对，禁止同 ExtField 内串其它组件码
                 if (!string.Equals(component, rowComponent, StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }
-                map[component] = (source, unitPrice);
+                map[component] = (source, oldUnitPrice, newUnitPrice);
                 if (!string.IsNullOrWhiteSpace(valuationPeriod))
                 {
                     preferredPeriodByComponent[component] = valuationPeriod;
@@ -1178,7 +1243,7 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
     /// <summary>
     /// 枚举单条 ExtField 中可用于「建议替代价格」的 _bk.mp 替换对（含单价与 valuation_period）
     /// </summary>
-    private static IEnumerable<(string ComponentCode, string SourceCode, decimal UnitPrice, string ValuationPeriod)> EnumerateMpReplacePairsDetailed(
+    private static IEnumerable<(string ComponentCode, string SourceCode, decimal OldUnitPrice, decimal NewUnitPrice, string ValuationPeriod)> EnumerateMpReplacePairsDetailed(
         string? extField)
     {
         if (string.IsNullOrWhiteSpace(extField))
@@ -1214,7 +1279,7 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
     /// </summary>
     private static bool TryReadMpReplacePair(
         JsonObject? entry,
-        out (string ComponentCode, string SourceCode, decimal UnitPrice, string ValuationPeriod) pair)
+        out (string ComponentCode, string SourceCode, decimal OldUnitPrice, decimal NewUnitPrice, string ValuationPeriod) pair)
     {
         pair = default;
         if (entry == null)
@@ -1241,13 +1306,20 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
         {
             unit = u;
         }
-        var unitPrice = TaktBomMaterialCostItemLineCostHelper.RoundCost(movingPrice / unit);
+        var newUnitPrice = TaktBomMaterialCostItemLineCostHelper.RoundCost(movingPrice / unit);
+        var oldMovingPrice = TryReadJsonDecimal(entry["old_moving_average_price"], out var oldMp) ? oldMp : 0m;
+        var oldUnit = 1;
+        if (TryReadJsonInt(entry["old_moving_price_unit"], out var oldU) && oldU > 0)
+        {
+            oldUnit = oldU;
+        }
+        var oldUnitPrice = TaktBomMaterialCostItemLineCostHelper.RoundCost(oldMovingPrice / oldUnit);
         var valuationPeriod = ReadJsonString(entry["valuation_period"]);
         if (!string.IsNullOrWhiteSpace(valuationPeriod))
         {
             valuationPeriod = NormalizeCostingPeriodKey(valuationPeriod);
         }
-        pair = (component, source, unitPrice, valuationPeriod);
+        pair = (component, source, oldUnitPrice, newUnitPrice, valuationPeriod);
         return true;
     }
 
@@ -1339,32 +1411,36 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
     }
 
     /// <summary>
-    /// 格式化建议替代价格组文：仅用量&gt;0；格式 组件:用量→源:单价×用量
+    /// 格式化建议替代价格：首行净额，明细全量列出
     /// </summary>
     private static string FormatReplaceComponentGroup(
-        IReadOnlyDictionary<string, (string SourceCode, decimal UnitPrice)> map,
+        IReadOnlyDictionary<string, (string SourceCode, decimal OldUnitPrice, decimal NewUnitPrice)> map,
         IReadOnlyDictionary<string, decimal>? qtyByComponent)
     {
         if (map == null || map.Count == 0 || qtyByComponent == null)
         {
             return string.Empty;
         }
-        var parts = map
-            .OrderBy(kv => kv.Key, StringComparer.Ordinal)
-            .Select(kv =>
+        var summary = 0m;
+        var entries = new List<(string Text, decimal Diff)>();
+        foreach (var kv in map)
+        {
+            if (!qtyByComponent.TryGetValue(kv.Key, out var qty) || qty <= 0m)
             {
-                if (!qtyByComponent.TryGetValue(kv.Key, out var qty) || qty <= 0m)
-                {
-                    return null;
-                }
-                var lineAmount = TaktBomMaterialCostItemLineCostHelper.RoundCost(
-                    checked(kv.Value.UnitPrice * qty));
-                return $"{kv.Key}:{FormatQuantity(qty)}→{kv.Value.SourceCode}:{FormatMoney(lineAmount)}";
-            })
-            .Where(p => !string.IsNullOrEmpty(p))
-            .Cast<string>()
-            .ToList();
-        return FormatGroup(parts);
+                continue;
+            }
+            var oldAmount = TaktBomMaterialCostItemLineCostHelper.RoundCost(
+                checked(kv.Value.OldUnitPrice * qty));
+            var newAmount = TaktBomMaterialCostItemLineCostHelper.RoundCost(
+                checked(kv.Value.NewUnitPrice * qty));
+            var delta = TaktBomMaterialCostItemLineCostHelper.RoundCost(newAmount - oldAmount);
+            summary = checked(summary + delta);
+            entries.Add((
+                $"{kv.Key}:{FormatQuantity(qty)}-{FormatMoney(oldAmount)}→{kv.Value.SourceCode}:{FormatQuantity(qty)}-{FormatMoney(newAmount)},Diff:{FormatMoney(delta)}",
+                delta));
+        }
+        summary = TaktBomMaterialCostItemLineCostHelper.RoundCost(summary);
+        return FormatFullGroup(entries, $"Net:{FormatSummaryCost(summary)}");
     }
 
     /// <summary>
@@ -1682,15 +1758,22 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
 
     /// <summary>
     /// 构建价格差异组 + 组件差异组。
-    /// 价格组 Summary Var=各条 Diff（差价×用量）合计；组件组 Summary Var=N-{新增}-R-{删除}={净值}；二者之和写入差异列。
+    /// 价格组按涨跌窗口截取，默认涨3跌3且差额达到 1 或 -1，某一侧没有则该侧为空。组件差异全量。单条仍是用量-行金额，Diff 为两侧行金额差。差异列不使用组内合计。
     /// </summary>
+    /// <param name="plantCode">工厂</param>
+    /// <param name="productCode">产品编码</param>
+    /// <param name="productItems">本产品明细</param>
+    /// <param name="basePeriod">基准月</param>
+    /// <param name="comparePeriod">比较月</param>
+    /// <param name="impactWindow">涨跌明细窗口</param>
     /// <returns>价格组文、价格汇总、组件组文、组件汇总</returns>
     private static (string PriceText, decimal PriceSummary, string ComponentText, decimal ComponentSummary) BuildDeltaGroupTexts(
         string plantCode,
         string productCode,
         IReadOnlyList<TaktBomMaterialCostItem> productItems,
         string basePeriod,
-        string comparePeriod)
+        string comparePeriod,
+        ImpactLineWindow impactWindow)
     {
         // 价格/组件差异仅本产品明细，禁止串产品
         var scopedItems = FilterItemsBelongingToProduct(productItems, productCode);
@@ -1752,15 +1835,12 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
             {
                 continue;
             }
-            var baseRep = PickRepresentativeRow(baseRows);
-            var compareRep = PickRepresentativeRow(compareRows);
-            var basePrice = TaktBomMaterialCostItemLineCostHelper.ResolvePerBaseUnitPrice(baseRep);
-            var comparePrice = TaktBomMaterialCostItemLineCostHelper.ResolvePerBaseUnitPrice(compareRep);
-            var lineDelta = TaktBomMaterialCostItemLineCostHelper.RoundCost(
-                SumRowsLineCost(compareRows) - SumRowsLineCost(baseRows));
+            var baseAmount = TaktBomMaterialCostItemLineCostHelper.RoundCost(SumRowsLineCost(baseRows));
+            var compareAmount = TaktBomMaterialCostItemLineCostHelper.RoundCost(SumRowsLineCost(compareRows));
+            var lineDelta = TaktBomMaterialCostItemLineCostHelper.RoundCost(compareAmount - baseAmount);
             versionSum = checked(versionSum + lineDelta);
             componentEntries.Add((
-                $"{baseCandidate.Code}:{FormatQuantity(baseQty)}:{FormatMoney(basePrice)}→{compareCode}:{FormatQuantity(compareQty)}:{FormatMoney(comparePrice)}→version",
+                $"{baseCandidate.Code}:{FormatQuantity(baseQty)}-{FormatMoney(baseAmount)}→{compareCode}:{FormatQuantity(compareQty)}-{FormatMoney(compareAmount)}→version,Diff:{FormatMoney(lineDelta)}",
                 lineDelta));
         }
 
@@ -1772,12 +1852,11 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
             {
                 continue;
             }
-            var price = TaktBomMaterialCostItemLineCostHelper.ResolvePerBaseUnitPrice(PickRepresentativeRow(rows));
             var removedCost = TaktBomMaterialCostItemLineCostHelper.RoundCost(SumRowsLineCost(rows));
             var lineDelta = TaktBomMaterialCostItemLineCostHelper.RoundCost(-removedCost);
             removeSum = checked(removeSum + removedCost);
             componentEntries.Add((
-                $"{c}:{FormatQuantity(qty)}:{FormatMoney(price)}→remove",
+                $"{c}:{FormatQuantity(qty)}-{FormatMoney(removedCost)}→remove,Diff:{FormatMoney(lineDelta)}",
                 lineDelta));
         }
         foreach (var c in compareMap.Keys.Where(x => !matchedCompare.Contains(x)).OrderBy(x => x, StringComparer.Ordinal))
@@ -1788,19 +1867,14 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
             {
                 continue;
             }
-            var price = TaktBomMaterialCostItemLineCostHelper.ResolvePerBaseUnitPrice(PickRepresentativeRow(rows));
-            var lineDelta = TaktBomMaterialCostItemLineCostHelper.RoundCost(SumRowsLineCost(rows));
+            var addedCost = TaktBomMaterialCostItemLineCostHelper.RoundCost(SumRowsLineCost(rows));
+            var lineDelta = addedCost;
             newSum = checked(newSum + lineDelta);
             componentEntries.Add((
-                $"{c}:{FormatQuantity(qty)}:{FormatMoney(price)}→new",
+                $"{c}:{FormatQuantity(qty)}-{FormatMoney(addedCost)}→new,Diff:{FormatMoney(lineDelta)}",
                 lineDelta));
         }
 
-        var componentParts = componentEntries
-            .OrderByDescending(e => e.Diff)
-            .ThenBy(e => e.Text, StringComparer.Ordinal)
-            .Select(e => e.Text)
-            .ToList();
         newSum = TaktBomMaterialCostItemLineCostHelper.RoundCost(newSum);
         removeSum = TaktBomMaterialCostItemLineCostHelper.RoundCost(removeSum);
         versionSum = TaktBomMaterialCostItemLineCostHelper.RoundCost(versionSum);
@@ -1808,7 +1882,8 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
         var componentSummary = TaktBomMaterialCostItemLineCostHelper.RoundCost(
             checked(newSum - removeSum + versionSum));
 
-        // ③ 仅「编码完全相同」配对进价格差异组（不含 version 配对）；Diff=差价×用量，按 Diff 降序
+        // ③ 仅「编码完全相同」配对进价格差异组（不含 version 配对）。
+        // 文案：编码:比较月用量-行金额→基准月用量-行金额。行金额=单价×用量；Diff=两侧行金额差（含用量变化）。
         var priceEntries = new List<(string Text, decimal Diff)>();
         var priceSummary = 0m;
         foreach (var code in sameCodeMatched)
@@ -1817,42 +1892,29 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
             {
                 continue;
             }
-            var baseRep = PickRepresentativeRow(baseRows);
-            var compareRep = PickRepresentativeRow(compareRows);
-            var basePrice = TaktBomMaterialCostItemLineCostHelper.ResolvePerBaseUnitPrice(baseRep);
-            var comparePrice = TaktBomMaterialCostItemLineCostHelper.ResolvePerBaseUnitPrice(compareRep);
-            var unitDelta = TaktBomMaterialCostItemLineCostHelper.RoundCost(comparePrice - basePrice);
-            if (unitDelta == 0m)
+            var baseQty = SumRowsQty(baseRows);
+            var compareQty = SumRowsQty(compareRows);
+            if (baseQty <= 0m && compareQty <= 0m)
             {
                 continue;
             }
-            // 用量：比较侧（基准月）合并合计；用量≤0 不进价格差异组；Diff = 差价 × 用量
-            var qty = SumRowsQty(compareRows);
-            if (qty <= 0m)
-            {
-                continue;
-            }
-            var deltaDisplay = TaktBomMaterialCostItemLineCostHelper.RoundCost(unitDelta * qty);
+            var baseAmount = TaktBomMaterialCostItemLineCostHelper.RoundCost(SumRowsLineCost(baseRows));
+            var compareAmount = TaktBomMaterialCostItemLineCostHelper.RoundCost(SumRowsLineCost(compareRows));
+            var deltaDisplay = TaktBomMaterialCostItemLineCostHelper.RoundCost(compareAmount - baseAmount);
             if (deltaDisplay == 0m)
             {
                 continue;
             }
             priceSummary = checked(priceSummary + deltaDisplay);
             priceEntries.Add((
-                $"{code}:{FormatQuantity(qty)}:{FormatMoney(basePrice)}→{FormatMoney(comparePrice)},Diff:{FormatMoney(deltaDisplay)}",
+                $"{code}:{FormatQuantity(baseQty)}-{FormatMoney(baseAmount)}→{FormatQuantity(compareQty)}-{FormatMoney(compareAmount)},Diff:{FormatMoney(deltaDisplay)}",
                 deltaDisplay));
         }
         priceSummary = TaktBomMaterialCostItemLineCostHelper.RoundCost(priceSummary);
-        var priceParts = priceEntries
-            .OrderByDescending(e => e.Diff)
-            .ThenBy(e => e.Text, StringComparer.Ordinal)
-            .Select(e => e.Text)
-            .ToList();
-
         return (
-            FormatGroup(priceParts, priceSummary),
+            FormatImpactGroup(priceEntries, $"Net:{FormatSummaryCost(priceSummary)}", impactWindow),
             priceSummary,
-            FormatComponentGroup(componentParts, newSum, removeSum, componentSummary),
+            FormatComponentGroup(componentEntries, newSum, removeSum, componentSummary),
             componentSummary);
     }
 
@@ -1921,38 +1983,123 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
     }
 
     /// <summary>
-    /// 组文 + Summary Var（与差异列同精度 5 位）
+    /// 全量组文案：首行结论，其后按差额绝对值降序列出全部明细。换行分隔。
     /// </summary>
-    private static string FormatGroup(IReadOnlyList<string> parts, decimal summaryVar)
+    /// <param name="entries">条目文案与差额</param>
+    /// <param name="header">首行结论</param>
+    /// <returns>组展示串；无条目时空串</returns>
+    private static string FormatFullGroup(
+        IReadOnlyList<(string Text, decimal Diff)> entries,
+        string header)
     {
-        var body = FormatGroup(parts);
-        if (string.IsNullOrEmpty(body))
+        if (entries == null || entries.Count == 0 || string.IsNullOrWhiteSpace(header))
         {
             return string.Empty;
         }
-        return $"{body},Summary Var:{FormatSummaryCost(summaryVar)}";
+        var lines = new List<string> { header };
+        lines.AddRange(entries
+            .OrderByDescending(e => Math.Abs(e.Diff))
+            .ThenBy(e => e.Text, StringComparer.Ordinal)
+            .Select(e => e.Text));
+        return string.Join("\n", lines);
     }
 
     /// <summary>
-    /// 组件差异组文 + Summary Var:N-{新增}-R-{删除}={净值}
+    /// 价格差异组文案：首行净额。涨价差额降序且达到 1、跌价达到 -1，条数由涨跌窗口决定；某一侧没有则不写该侧，其余合成一行。全部则全量。换行分隔，导出自动换行。
     /// </summary>
-    /// <param name="parts">条目文案</param>
+    /// <param name="entries">条目文案与差额</param>
+    /// <param name="header">首行净额</param>
+    /// <param name="window">涨跌明细窗口</param>
+    /// <returns>组展示串；无条目时空串</returns>
+    private static string FormatImpactGroup(
+        IReadOnlyList<(string Text, decimal Diff)> entries,
+        string header,
+        ImpactLineWindow window)
+    {
+        if (entries == null || entries.Count == 0 || string.IsNullOrWhiteSpace(header))
+        {
+            return string.Empty;
+        }
+        if (!window.ApplyThreshold)
+        {
+            return FormatFullGroup(entries, header);
+        }
+        var increaseIndexes = new HashSet<int>();
+        foreach (var index in entries
+            .Select((entry, index) => (entry, index))
+            .Where(x => x.entry.Diff >= MinIncreaseDiff)
+            .OrderByDescending(x => x.entry.Diff)
+            .ThenBy(x => x.entry.Text, StringComparer.Ordinal)
+            .Take(window.IncreaseTake)
+            .Select(x => x.index))
+        {
+            increaseIndexes.Add(index);
+        }
+        var decreaseIndexes = new HashSet<int>();
+        foreach (var index in entries
+            .Select((entry, index) => (entry, index))
+            .Where(x => x.entry.Diff <= MaxDecreaseDiff)
+            .OrderBy(x => x.entry.Diff)
+            .ThenBy(x => x.entry.Text, StringComparer.Ordinal)
+            .Take(window.DecreaseTake)
+            .Select(x => x.index))
+        {
+            decreaseIndexes.Add(index);
+        }
+        var lines = new List<string> { header };
+        if (increaseIndexes.Count > 0)
+        {
+            lines.AddRange(entries
+                .Select((entry, index) => (entry, index))
+                .Where(x => increaseIndexes.Contains(x.index))
+                .OrderByDescending(x => x.entry.Diff)
+                .ThenBy(x => x.entry.Text, StringComparer.Ordinal)
+                .Select(x => x.entry.Text));
+        }
+        if (decreaseIndexes.Count > 0)
+        {
+            lines.AddRange(entries
+                .Select((entry, index) => (entry, index))
+                .Where(x => decreaseIndexes.Contains(x.index))
+                .OrderBy(x => x.entry.Diff)
+                .ThenBy(x => x.entry.Text, StringComparer.Ordinal)
+                .Select(x => x.entry.Text));
+        }
+        var rest = 0m;
+        var restCount = 0;
+        for (var i = 0; i < entries.Count; i++)
+        {
+            if (increaseIndexes.Contains(i) || decreaseIndexes.Contains(i))
+            {
+                continue;
+            }
+            restCount++;
+            rest = checked(rest + entries[i].Diff);
+        }
+        if (restCount > 0)
+        {
+            lines.Add($"Remaining {restCount} items, Net:{FormatSummaryCost(rest)}");
+        }
+        return string.Join("\n", lines);
+    }
+
+    /// <summary>
+    /// 组件差异：首行净值与新增、删除合计（Add / Remove），明细全量列出，不写 Remaining
+    /// </summary>
+    /// <param name="entries">条目文案与行差</param>
     /// <param name="newSum">→new 行成本合计</param>
     /// <param name="removeSum">→remove 行成本绝对值合计</param>
     /// <param name="netSummary">净值（新增−删除+version）</param>
     /// <returns>组展示串；无条目时空串</returns>
     private static string FormatComponentGroup(
-        IReadOnlyList<string> parts,
+        IReadOnlyList<(string Text, decimal Diff)> entries,
         decimal newSum,
         decimal removeSum,
         decimal netSummary)
     {
-        var body = FormatGroup(parts);
-        if (string.IsNullOrEmpty(body))
-        {
-            return string.Empty;
-        }
-        return $"{body},Summary Var:N-{FormatSummaryCost(newSum)}-R-{FormatSummaryCost(removeSum)}={FormatSummaryCost(netSummary)}";
+        var header =
+            $"Net:{FormatSummaryCost(netSummary)},Add:{FormatSummaryCost(newSum)} Remove:{FormatSummaryCost(removeSum)}";
+        return FormatFullGroup(entries, header);
     }
 
     private static string FormatQuantity(decimal qty)
@@ -1965,7 +2112,7 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
     }
 
     /// <summary>
-    /// 单价 / Diff（差价×用量）/ 行成本：一律 RoundCost 5 位（禁止改成 2 位）
+    /// 行金额 / Diff（两侧行金额差）/ 行成本：一律 RoundCost 5 位（禁止改成 2 位）
     /// </summary>
     private static string FormatMoney(decimal value)
         => FormatSummaryCost(value);

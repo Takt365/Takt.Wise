@@ -99,7 +99,7 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-const { selectedMasterRow } = useNewsMasterContext()
+const { selecmedMasterRow } = useNewsMasterContext()
 
 /** 行数据类型（三类互动记录并集） */
 type EngagementRow = NewsLike | NewsFavorite | NewsShare | Record<string, unknown>
@@ -115,11 +115,11 @@ const pageSize = ref(getTaktDefaultPageSize())
 /** 总数 */
 const total = ref(0)
 /** 多选 keys */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 /** 多选行 */
-const selectedRows = ref<EngagementRow[]>([])
+const selecmedRows = ref<EngagementRow[]>([])
 /** 单选当前行 */
-const selectedRow = ref<EngagementRow | null>(null)
+const selecmedRow = ref<EngagementRow | null>(null)
 
 /** 子表滚动容器 */
 const detailTableWrapRef = ref<HTMLElement | null>(null)
@@ -129,7 +129,7 @@ let detailTableScrollResizeObserver: ResizeObserver | null = null
 
 /** 当前选中新闻 Id（string） */
 const masterNewsId = computed(() => {
-  const row = selectedMasterRow.value as Record<string, unknown> | null
+  const row = selecmedMasterRow.value as Record<string, unknown> | null
   const id = row?.newsId ?? row?.id
   return id != null && String(id).length > 0 ? String(id) : ''
 })
@@ -139,7 +139,7 @@ const hasMasterSelection = computed(() => masterNewsId.value.length > 0)
 
 /** 删除按钮禁用 */
 const deleteDisabled = computed(
-  () => !hasMasterSelection.value || (selectedRowKeys.value.length === 0 && !selectedRow.value),
+  () => !hasMasterSelection.value || (selecmedRowKeys.value.length === 0 && !selecmedRow.value),
 )
 
 /** 按互动类型使用附属权限码（TaktMenuOtherSeedData） */
@@ -236,10 +236,10 @@ const tabLabel = computed(() => {
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: EngagementRow[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
   },
 }))
 
@@ -251,7 +251,7 @@ const rowSelection = computed(() => ({
 function onClickRow(record: EngagementRow) {
   return {
     onClick: () => {
-      selectedRow.value = record
+      selecmedRow.value = record
     },
   }
 }
@@ -301,9 +301,9 @@ function stopDetailTableScrollObserve(): void {
 function clearListState(): void {
   dataSource.value = []
   total.value = 0
-  selectedRowKeys.value = []
-  selectedRows.value = []
-  selectedRow.value = null
+  selecmedRowKeys.value = []
+  selecmedRows.value = []
+  selecmedRow.value = null
 }
 
 /**
@@ -405,9 +405,9 @@ async function handleDeleteRow(record: EngagementRow): Promise<void> {
  * @returns {void}
  */
 function handleDelete(): void {
-  const ids = selectedRowKeys.value.map(String).filter(Boolean)
-  if (ids.length === 0 && selectedRow.value) {
-    ids.push(getRowId(selectedRow.value))
+  const ids = selecmedRowKeys.value.map(String).filter(Boolean)
+  if (ids.length === 0 && selecmedRow.value) {
+    ids.push(getRowId(selecmedRow.value))
   }
   if (ids.length === 0) {
     return
@@ -435,9 +435,9 @@ function handleDelete(): void {
           await deleteNewsShareBatch(ids)
         }
         message.success(t('common.feedback.deleted', { target: tabLabel.value }))
-        selectedRowKeys.value = []
-        selectedRows.value = []
-        selectedRow.value = null
+        selecmedRowKeys.value = []
+        selecmedRows.value = []
+        selecmedRow.value = null
         await loadData()
       } finally {
         loading.value = false

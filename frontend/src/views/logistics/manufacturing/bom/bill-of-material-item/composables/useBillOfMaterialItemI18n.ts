@@ -72,7 +72,6 @@ export type BillOfMaterialItemField = keyof typeof BILLOFMATERIALITEM_PLACEHOLDE
 /** 高级查询可 trim 的字符串字段 */
 export const BILLOFMATERIALITEM_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'billOfMaterialId',
   'bomCode',
   'materialCode',

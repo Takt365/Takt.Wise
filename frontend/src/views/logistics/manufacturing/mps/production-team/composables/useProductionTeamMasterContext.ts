@@ -15,7 +15,7 @@ export type ProductionTeamRowRecord = ProductionTeam | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface ProductionTeamMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<ProductionTeamRowRecord | null>
+  selecmedMasterRow: Ref<ProductionTeamRowRecord | null>
 }
 
 const productionTeamMasterContextKey: InjectionKey<ProductionTeamMasterContext> = Symbol('production-teamMasterContext')
@@ -25,8 +25,8 @@ const productionTeamMasterContextKey: InjectionKey<ProductionTeamMasterContext> 
  * @returns {ProductionTeamMasterContext} 主表上下文
  */
 export function provideProductionTeamMasterContext(): ProductionTeamMasterContext {
-  const selectedMasterRow = ref<ProductionTeamRowRecord | null>(null)
-  const ctx: ProductionTeamMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<ProductionTeamRowRecord | null>(null)
+  const ctx: ProductionTeamMasterContext = { selecmedMasterRow }
   provide(productionTeamMasterContextKey, ctx)
   return ctx
 }

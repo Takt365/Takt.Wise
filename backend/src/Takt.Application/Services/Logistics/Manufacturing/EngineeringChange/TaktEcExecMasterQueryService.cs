@@ -56,41 +56,41 @@ public class TaktEcExecMasterQueryService : TaktServiceBase, ITaktEcExecMasterQu
         queryDto ??= new TaktEcDetailQueryDto();
         var exp = Expressionable.Create<TaktEcDetail>();
         exp = exp.And(TaktEcDetailService.QueryExpression(queryDto));
-        if (string.Equals(execDeptCode, TaktEcDeptCodes.Pmc, StringComparison.Ordinal))
+        if (string.Equals(execDeptCode, TaktEcDeptCodes.Pc, StringComparison.Ordinal))
         {
-            exp = exp.And(TaktEcSeikanQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcPcQueryHelper.VisibleDetailExpression());
         }
-        else if (string.Equals(execDeptCode, TaktEcDeptCodes.Mp, StringComparison.Ordinal))
+        else if (string.Equals(execDeptCode, TaktEcDeptCodes.Pur, StringComparison.Ordinal))
         {
-            exp = exp.And(TaktEcKoubaiQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcPurQueryHelper.VisibleDetailExpression());
         }
         else if (string.Equals(execDeptCode, TaktEcDeptCodes.Iqc, StringComparison.Ordinal))
         {
-            exp = exp.And(TaktEcUkekenQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcIqcQueryHelper.VisibleDetailExpression());
         }
         else if (string.Equals(execDeptCode, TaktEcDeptCodes.Mc, StringComparison.Ordinal))
         {
-            exp = exp.And(TaktEcBukanQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcMcQueryHelper.VisibleDetailExpression());
         }
-        else if (string.Equals(execDeptCode, TaktEcDeptCodes.Pcba, StringComparison.Ordinal))
+        else if (string.Equals(execDeptCode, TaktEcDeptCodes.Mfg2, StringComparison.Ordinal))
         {
-            exp = exp.And(TaktEcEmtlQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcMtlQueryHelper.VisibleDetailExpression());
         }
-        else if (string.Equals(execDeptCode, TaktEcDeptCodes.SeizounikaMaster, StringComparison.Ordinal))
+        else if (string.Equals(execDeptCode, TaktEcDeptCodes.Mfg2Master, StringComparison.Ordinal))
         {
-            exp = exp.And(TaktEcSeizounikaQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcMfg2QueryHelper.VisibleDetailExpression());
         }
-        else if (string.Equals(execDeptCode, TaktEcDeptCodes.Assy, StringComparison.Ordinal))
+        else if (string.Equals(execDeptCode, TaktEcDeptCodes.Mfg1, StringComparison.Ordinal))
         {
-            exp = exp.And(TaktEcSeizouikkaQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcMfg1QueryHelper.VisibleDetailExpression());
         }
-        else if (string.Equals(execDeptCode, TaktEcDeptCodes.Qa, StringComparison.Ordinal))
+        else if (string.Equals(execDeptCode, TaktEcDeptCodes.Qc, StringComparison.Ordinal))
         {
-            exp = exp.And(TaktEcHinkanQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcQcQueryHelper.VisibleDetailExpression());
         }
-        else if (string.Equals(execDeptCode, TaktEcDeptCodes.Te, StringComparison.Ordinal))
+        else if (string.Equals(execDeptCode, TaktEcDeptCodes.Me, StringComparison.Ordinal))
         {
-            exp = exp.And(TaktEcSeizougijutsuQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcMeQueryHelper.VisibleDetailExpression());
         }
         var predicate = exp.ToExpression();
         var (data, total) = await _ecDetailRepository.GetPagedAsync(

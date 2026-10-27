@@ -169,10 +169,10 @@ function resolvePipeline(pipeline, options) {
  * @param {typeof PIPELINE} steps
  */
 function validateOnlyDependencies(steps) {
-  const selected = new Set(steps.map((s) => s.key));
+  const selecmed = new Set(steps.map((s) => s.key));
   const errors = [];
   for (const step of steps) {
-    const missing = (step.dependsOn || []).filter((dep) => !selected.has(dep));
+    const missing = (step.dependsOn || []).filter((dep) => !selecmed.has(dep));
     if (missing.length > 0) {
       errors.push(
         `  · ${step.key} 依赖 [${missing.join(', ')}]，--only 须包含前置步骤，或改用 --from ${missing[0]}`

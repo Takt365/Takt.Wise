@@ -26,7 +26,7 @@
         :current-path="currentPath"
         :parent-path="parentPath"
         :items="items"
-        :selected-path="selectedPath"
+        :selecmed-path="selecmedPath"
         :empty-hint="t('code.database.database-backup.page.dialog.clientemptyhint')"
         :panel-height="480"
         :table-scroll-y="340"
@@ -95,7 +95,7 @@ const parentPath = ref<string | null>(null)
 /** 列表项 */
 const items = ref<TaktFolderExplorerItem[]>([])
 /** 选中路径 */
-const selectedPath = ref('')
+const selecmedPath = ref('')
 
 /** 盘符字母 */
 const DRIVE_LETTERS = 'CDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
@@ -214,7 +214,7 @@ async function grantDriveRoot(driveKey: string): Promise<boolean> {
       handleByPath.set(rootPath.toLowerCase(), handle)
     }
     currentPath.value = abs
-    selectedPath.value = abs
+    selecmedPath.value = abs
     parentPath.value = isDriveRootPath(abs) ? TAKT_FOLDER_EXPLORER_LOCAL_ROOT : rootPath
     items.value = await listDirEntries(handle, abs)
     message.success(t('code.database.database-backup.page.dialog.localpickedname', { name: abs }))
@@ -256,7 +256,7 @@ async function load(path?: string | null) {
     if (!target || isFolderExplorerLocalRoot(target)) {
       currentPath.value = TAKT_FOLDER_EXPLORER_LOCAL_ROOT
       parentPath.value = null
-      selectedPath.value = ''
+      selecmedPath.value = ''
       items.value = buildDriveItems()
       return
     }
@@ -275,7 +275,7 @@ async function load(path?: string | null) {
       return
     }
     currentPath.value = abs
-    selectedPath.value = abs
+    selecmedPath.value = abs
     if (isDriveRootPath(abs)) {
       parentPath.value = TAKT_FOLDER_EXPLORER_LOCAL_ROOT
     } else {
@@ -331,7 +331,7 @@ async function onRefresh() {
  * @param path 选中路径
  */
 function onSelectPath(path: string) {
-  selectedPath.value = String(path || '').trim()
+  selecmedPath.value = String(path || '').trim()
 }
 
 /**
@@ -359,7 +359,7 @@ async function onCreateFolder(name: string) {
     const fullPath = toAbs(`${base.replace(/\\+$/, '')}\\${folderName}`)
     handleByPath.set(fullPath.toLowerCase(), created)
     await load(base)
-    selectedPath.value = fullPath
+    selecmedPath.value = fullPath
     message.success(t('code.database.database-backup.page.dialog.createdirectorysuccess'))
   } catch (error) {
     logger.error('[BackupClientDialog] mkdir failed', { error })
@@ -371,7 +371,7 @@ async function onCreateFolder(name: string) {
 
 /** 确认回填完整绝对路径 */
 async function handleOk() {
-  const candidate = toAbs(selectedPath.value || currentPath.value)
+  const candidate = toAbs(selecmedPath.value || currentPath.value)
   if (!isClientAbsolutePath(candidate) || isFolderExplorerLocalRoot(candidate)) {
     message.warning(t('code.database.database-backup.page.dialog.localneedabsolute'))
     return
@@ -394,10 +394,10 @@ watch(
     confirmLoading.value = false
     const initial = toAbs(props.initialPath || '')
     if (isLocalAbsolutePath(initial)) {
-      selectedPath.value = initial
+      selecmedPath.value = initial
       await load(initial)
     } else {
-      selectedPath.value = ''
+      selecmedPath.value = ''
       await load(TAKT_FOLDER_EXPLORER_LOCAL_ROOT)
     }
   },

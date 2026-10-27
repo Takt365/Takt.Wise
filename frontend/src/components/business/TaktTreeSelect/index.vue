@@ -92,11 +92,12 @@ type TreeSelectRefLike = {
 // 获取 attrs，排除冲突的事件处理器和已定义的 props
 const attrs = useAttrs()
 const excludedProps = new Set([
-  'onUpdate:value', 'onUpdateValue', 
+  'onUpdate:value', 'onUpdateValue',
   'allowClear', 'allow-clear',
   'disabled', 'multiple', 'placeholder', 'size',
   'showSearch', 'treeCheckable', 'treeCheckStrictly',
-  'treeData', 'value', 'modelValue'
+  'treeData', 'value', 'modelValue',
+  'apiUrl', 'apiParams', 'api-params', 'lazy',
 ])
 const filteredAttrs = computed(() => {
   const result: Record<string, unknown> = {}
@@ -115,6 +116,11 @@ interface Props {
   value?: TreeValue | TreeValueArray | undefined
   /** API 端点(可选,如果提供了 treeData 或 dictType 则不需要) */
   apiUrl?: string | undefined
+  /**
+   * 附加查询参数（与 TaktSelect.apiParams 一致；如 plantCode 按当前登录公司关联工厂过滤）
+   * 空值字段不传；与 parentId 合并后请求
+   */
+  apiParams?: Record<string, string | number | boolean | undefined | null> | undefined
   /** 树形选项数据(可选,如果提供了则直接使用,不再通过 apiUrl 或 dictType 加载) */
   treeData?: TreeNodeLike[] | undefined
   /** 占位符 */
@@ -162,6 +168,7 @@ const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
   value: undefined,
   apiUrl: undefined,
+  apiParams: undefined,
   treeData: undefined,
   placeholder: undefined,
   allowClear: true,
@@ -402,6 +409,25 @@ const treeData = computed(() => {
 })
 
 /**
+ * 合并 apiParams 与额外查询参数（跳过空值）
+ * @param {Record<string, string | number | boolean>} extra 如 parentId
+ * @returns {Record<string, string | number | boolean> | undefined} 请求 params
+ */
+function buildApiRequestParams(
+  extra?: Record<string, string | number | boolean>,
+): Record<string, string | number | boolean> | undefined {
+  const params: Record<string, string | number | boolean> = { ...(extra ?? {}) }
+  if (props.apiParams) {
+    for (const [key, val] of Object.entries(props.apiParams)) {
+      if (val !== undefined && val !== null && val !== '') {
+        params[key] = val
+      }
+    }
+  }
+  return Object.keys(params).length > 0 ? params : undefined
+}
+
+/**
  * apiUrl 懒加载：展开时按 parentId 拉取一层子节点（无 apiUrl 或外部 treeData / 非懒模式时不绑定）
  * @param treeNode Ant TreeSelect 节点
  */
@@ -409,7 +435,7 @@ async function onApiLazyLoadData(treeNode: Record<string, unknown>) {
   if (!props.apiUrl || props.treeData !== undefined || !lazyApiEnabled.value) return
   const valueField = treeFieldNames.value.value
   const dataRef = (treeNode.dataRef ?? treeNode) as Record<string, unknown>
-  // ExtValue=实体 Id（如 valueBy=name 时 DictValue=名称）；API parentId 须用 Id
+  // ExtValue=实体 Id（如 valueBy=name / iso-tree 时 DictValue=业务码）；API parentId 须用 Id
   const apiParentId = dataRef.extValue ?? dataRef[valueField] ?? dataRef.value ?? dataRef.key
   const mergeKey = dataRef[valueField] ?? dataRef.value ?? dataRef.key
   if (apiParentId == null || apiParentId === '' || mergeKey == null || mergeKey === '') return
@@ -419,7 +445,7 @@ async function onApiLazyLoadData(treeNode: Record<string, unknown>) {
     const data = await request<TaktTreeSelectOption[]>({
       url: props.apiUrl,
       method: 'get',
-      params: { parentId: String(apiParentId) },
+      params: buildApiRequestParams({ parentId: String(apiParentId) }),
     })
     const children = normalizeApiLazyOptions(Array.isArray(data) ? data : [])
     rawData.value = mergeLoadedChildren(
@@ -464,7 +490,9 @@ const loadData = async () => {
     const data = await request<TaktTreeSelectOption[]>({
       url: props.apiUrl,
       method: 'get',
-      ...(props.lazy === false ? {} : { params: { parentId: '0' } }),
+      params: props.lazy === false
+        ? buildApiRequestParams()
+        : buildApiRequestParams({ parentId: '0' }),
     })
     const rows = Array.isArray(data) ? data : []
     lazyApiEnabled.value = resolveLazyApiEnabled(rows)
@@ -756,12 +784,16 @@ const handleUncheckAll = () => {
   tryUpdateTreeSelectValue(emptyValues)
 }
 
-// 监听 API URL 和 treeData 变化
-watch(() => [props.apiUrl, props.treeData], () => {
-  if (!props.treeData?.length && props.apiUrl) {
-    loadData()
-  }
-})
+// 监听 API URL / treeData / apiParams 变化（公司切换后 plantCode 等需重载）
+watch(
+  () => [props.apiUrl, props.treeData, props.apiParams] as const,
+  () => {
+    if (!props.treeData?.length && props.apiUrl) {
+      loadData()
+    }
+  },
+  { deep: true },
+)
 
 // 监听下拉框显示状态和树数据变化，重新插入按钮
 watch([() => dropdownVisible.value, () => treeData.value], () => {

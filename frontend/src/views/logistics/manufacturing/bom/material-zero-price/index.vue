@@ -66,13 +66,13 @@
       </a-space>
     </div>
 
-    <!-- 工具栏：计算操作 + 导出/列设置/刷新 -->
+    <!-- 工具栏：前导0、PCB SECT标识、计算、回填、机种平均、批量回填替代价格、导出；右侧列设置/刷新 -->
     <TaktToolsBar
       update-permission="logistics:manufacturing:bom:material:zeroprice:update"
       export-permission="logistics:manufacturing:bom:material:zeroprice:export"
       :left-actions="toolbarLeftActions"
       :show-import="false"
-      :show-export="true"
+      :show-export="false"
       :show-create="false"
       :show-update="false"
       :show-delete="false"
@@ -292,7 +292,7 @@ import {
   formatBomMaterialCostItemRecalculateDuration,
   useBomMaterialCostItemRecalculateSignalR,
 } from '@/composables/useBomMaterialCostItemRecalculateSignalr'
-import { RiCalculatorLine, RiCoinLine, RiEditLine, RiEraserLine, RiFlagLine, RiFundsLine, RiPriceTag3Line, RiRefreshLine, RiSearchLine, RiShoppingCart2Line } from '@remixicon/vue'
+import { RiCalculatorLine, RiCoinLine, RiEditLine, RiEraserLine, RiExportLine, RiFlagLine, RiFundsLine, RiPriceTag3Line, RiRefreshLine, RiSearchLine, RiShoppingCart2Line } from '@remixicon/vue'
 import {
   buildDefaultCostingMonth,
   costingMonthToDateQuery,
@@ -317,6 +317,8 @@ const modelOptionsUrl = getBomCostOptionModelOptionsUrl()
 const modelSelectKey = ref(0)
 /** 计算按钮权限 */
 const calculateUpdatePermission = 'logistics:manufacturing:bom:material:zeroprice:update'
+/** 导出按钮权限 */
+const exportPermission = 'logistics:manufacturing:bom:material:zeroprice:export'
 
 /** 查询条件 */
 const queryForm = reactive({
@@ -326,7 +328,7 @@ const queryForm = reactive({
 })
 
 /** 已选机种（去空白） */
-const selectedModelCodes = computed(() =>
+const selecmedModelCodes = computed(() =>
   (queryForm.modelCodes ?? []).map((c) => String(c).trim()).filter(Boolean),
 )
 
@@ -349,7 +351,7 @@ const modelApiParams = computed(() =>
  * @returns {string | undefined}
  */
 function modelCodesQueryParam(): string | undefined {
-  const joined = selectedModelCodes.value.join(',')
+  const joined = selecmedModelCodes.value.join(',')
   return joined || undefined
 }
 
@@ -426,8 +428,26 @@ function syncHintFontSize(): void {
 /** 核算月展示 */
 const costingMonthLabel = computed(() => queryForm.costingMonth?.trim() || '—')
 
-/** 工具栏左侧：计算成本 / 重算 / 平均 / 回填采购价 / 最近采购成本 */
+/** 工具栏：前导0、PCB SECT标识、计算成本、重算成本、回填采购价、最近采购成本、机种平均成本、批量回填替代价格、导出 */
 const toolbarLeftActions = computed<ToolBarAction[]>(() => [
+  {
+    key: 'strip-leading-zeros',
+    label: t(`${localePrefix}.stripLeadingZeros`),
+    icon: RiEraserLine,
+    buttonClass: 'takt-button-sync',
+    permission: calculateUpdatePermission,
+    loading: stripLeadingZeroPending.value,
+    onClick: () => handleStripLeadingZeros(),
+  },
+  {
+    key: 'pcb-sect-mark',
+    label: t(`${localePrefix}.pcbSectMark`),
+    icon: RiFlagLine,
+    buttonClass: 'takt-button-sync',
+    permission: calculateUpdatePermission,
+    loading: pcbSectMarkPending.value,
+    onClick: () => handleMarkPcbSect(),
+  },
   {
     key: 'cost-sum',
     label: t(`${localePrefix}.costSum`),
@@ -447,15 +467,6 @@ const toolbarLeftActions = computed<ToolBarAction[]>(() => [
     onClick: () => handleSumOrRecalculate(true),
   },
   {
-    key: 'cost-average',
-    label: t(`${localePrefix}.costAverage`),
-    icon: RiPriceTag3Line,
-    buttonClass: 'takt-button-sync',
-    permission: calculateUpdatePermission,
-    loading: averagePending.value,
-    onClick: () => handleAverage(),
-  },
-  {
     key: 'purchase-price-backfill',
     label: t(`${localePrefix}.purchaseInfoBackfill`),
     icon: RiShoppingCart2Line,
@@ -463,15 +474,6 @@ const toolbarLeftActions = computed<ToolBarAction[]>(() => [
     permission: calculateUpdatePermission,
     loading: purchaseBackfillPending.value,
     onClick: () => handlePurchaseInfoBackfill(),
-  },
-  {
-    key: 'moving-price-backfill-batch',
-    label: t(`${localePrefix}.movingPriceBackfillBatch`),
-    icon: RiCoinLine,
-    buttonClass: 'takt-button-sync',
-    permission: calculateUpdatePermission,
-    loading: movingBackfillBatchPending.value,
-    onClick: () => handleBackfillMovingPriceBatch(),
   },
   {
     key: 'latest-purchase-cost',
@@ -483,22 +485,31 @@ const toolbarLeftActions = computed<ToolBarAction[]>(() => [
     onClick: () => handleLatestPurchaseCost(),
   },
   {
-    key: 'pcb-sect-mark',
-    label: t(`${localePrefix}.pcbSectMark`),
-    icon: RiFlagLine,
+    key: 'cost-average',
+    label: t(`${localePrefix}.costAverage`),
+    icon: RiPriceTag3Line,
     buttonClass: 'takt-button-sync',
     permission: calculateUpdatePermission,
-    loading: pcbSectMarkPending.value,
-    onClick: () => handleMarkPcbSect(),
+    loading: averagePending.value,
+    onClick: () => handleAverage(),
   },
   {
-    key: 'strip-leading-zeros',
-    label: t(`${localePrefix}.stripLeadingZeros`),
-    icon: RiEraserLine,
+    key: 'moving-price-backfill-batch',
+    label: t(`${localePrefix}.movingPriceBackfillBatch`),
+    icon: RiCoinLine,
     buttonClass: 'takt-button-sync',
     permission: calculateUpdatePermission,
-    loading: stripLeadingZeroPending.value,
-    onClick: () => handleStripLeadingZeros(),
+    loading: movingBackfillBatchPending.value,
+    onClick: () => handleBackfillMovingPriceBatch(),
+  },
+  {
+    key: 'export',
+    label: t('common.page.button.export'),
+    icon: RiExportLine,
+    buttonClass: 'takt-button-export',
+    permission: exportPermission,
+    loading: exportLoading.value,
+    onClick: () => handleExport(),
   },
 ])
 

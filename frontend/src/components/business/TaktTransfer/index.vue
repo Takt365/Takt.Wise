@@ -39,14 +39,14 @@
                 :key="String(item.key)"
                 class="ant-transfer-list-content-item"
                 :class="{
-                  'ant-transfer-list-content-item-checked': isItemSelected(item.key, slotProps.selectedKeys),
+                  'ant-transfer-list-content-item-checked': isItemSelecmed(item.key, slotProps.selecmedKeys),
                   'ant-transfer-list-content-item-disabled': slotProps.disabled || item.disabled,
                 }"
-                @click="handleItemClick(item, slotProps.selectedKeys, slotProps.onItemSelect, slotProps.disabled)"
+                @click="handleItemClick(item, slotProps.selecmedKeys, slotProps.onItemSelect, slotProps.disabled)"
                 @dblclick="handleItemDblClick(item, slotProps.direction, slotProps.onItemSelect, slotProps.disabled)"
               >
                 <a-checkbox
-                  :checked="isItemSelected(item.key, slotProps.selectedKeys)"
+                  :checked="isItemSelecmed(item.key, slotProps.selecmedKeys)"
                   :disabled="Boolean(slotProps.disabled || item.disabled)"
                   @click.stop
                   @dblclick.stop
@@ -84,7 +84,7 @@ import {
   taktAssignTransferHandleScroll,
   taktAssignTransferHandleItemClick,
   taktAssignTransferShuttleByDblClick,
-  taktAssignTransferIsItemSelected,
+  taktAssignTransferIsItemSelecmed,
   type TaktAssignTransferDirection,
   type TaktTransferRecord,
 } from '@/utils/taktTransfer'
@@ -206,31 +206,31 @@ watch(
 /**
  * 行是否选中
  * @param key 行 key
- * @param selectedKeys 当前列已选
+ * @param selecmedKeys 当前列已选
  * @returns 是否选中
  */
-function isItemSelected(
+function isItemSelecmed(
   key: string | number | undefined,
-  selectedKeys: readonly (string | number)[],
+  selecmedKeys: readonly (string | number)[],
 ): boolean {
   if (key == null) return false
-  return taktAssignTransferIsItemSelected(key, selectedKeys)
+  return taktAssignTransferIsItemSelecmed(key, selecmedKeys)
 }
 
 /**
  * 单击切换选中
  * @param item 行数据
- * @param selectedKeys 当前列已选
+ * @param selecmedKeys 当前列已选
  * @param onItemSelect Transfer 回调
  * @param listDisabled 整列禁用
  */
 function handleItemClick(
   item: TaktTransferRecord,
-  selectedKeys: readonly (string | number)[],
-  onItemSelect: (itemKey: string, selected: boolean) => void,
+  selecmedKeys: readonly (string | number)[],
+  onItemSelect: (itemKey: string, selecmed: boolean) => void,
   listDisabled?: boolean,
 ): void {
-  taktAssignTransferHandleItemClick(item.key!, selectedKeys, onItemSelect, listDisabled, item.disabled)
+  taktAssignTransferHandleItemClick(item.key!, selecmedKeys, onItemSelect, listDisabled, item.disabled)
 }
 
 /**
@@ -243,7 +243,7 @@ function handleItemClick(
 function handleCheckboxChange(
   item: TaktTransferRecord,
   checked: boolean,
-  onItemSelect: (itemKey: string, selected: boolean) => void,
+  onItemSelect: (itemKey: string, selecmed: boolean) => void,
   listDisabled?: boolean,
 ): void {
   if (listDisabled || item.disabled) return
@@ -260,7 +260,7 @@ function handleCheckboxChange(
 function handleItemDblClick(
   item: TaktTransferRecord,
   direction: TaktAssignTransferDirection,
-  onItemSelect: (itemKey: string, selected: boolean) => void,
+  onItemSelect: (itemKey: string, selecmed: boolean) => void,
   listDisabled?: boolean,
 ): void {
   taktAssignTransferShuttleByDblClick(

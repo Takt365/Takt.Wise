@@ -165,7 +165,6 @@ export type PurchaseInvoiceItemField = keyof typeof PURCHASEINVOICEITEM_PLACEHOL
 /** 高级查询可 trim 的字符串字段 */
 export const PURCHASEINVOICEITEM_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'purchaseInvoiceCode',
   'purchaseOrderCode',
   'accountAssignmentSeq',

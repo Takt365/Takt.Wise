@@ -15,7 +15,7 @@ export type ProductionPlanRowRecord = ProductionPlan | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface ProductionPlanMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<ProductionPlanRowRecord | null>
+  selecmedMasterRow: Ref<ProductionPlanRowRecord | null>
 }
 
 const productionPlanMasterContextKey: InjectionKey<ProductionPlanMasterContext> = Symbol('production-planMasterContext')
@@ -25,8 +25,8 @@ const productionPlanMasterContextKey: InjectionKey<ProductionPlanMasterContext> 
  * @returns {ProductionPlanMasterContext} 主表上下文
  */
 export function provideProductionPlanMasterContext(): ProductionPlanMasterContext {
-  const selectedMasterRow = ref<ProductionPlanRowRecord | null>(null)
-  const ctx: ProductionPlanMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<ProductionPlanRowRecord | null>(null)
+  const ctx: ProductionPlanMasterContext = { selecmedMasterRow }
   provide(productionPlanMasterContextKey, ctx)
   return ctx
 }

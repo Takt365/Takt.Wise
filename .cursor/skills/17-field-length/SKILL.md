@@ -35,6 +35,7 @@ description: >-
 | MDS·销售预测·MPS·MRP | 20 |
 | 生产类别 / 班组 / 工单类别 | 4 / 8 / 4 |
 | 机种 | 40 |
+| 批次字符串标识（`prod_batch` / `batch_code` / `scheduled_batch` / `outbound_batch` / `implementation_batch` / `inspection_batch` / `lot`） | 20 |
 | 销售/采购订单·报价·询价·价格 | 20 |
 | 客户 / 供应商 | 10 / 10 |
 | 设备编码 | 18 |

@@ -22,7 +22,7 @@ namespace Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange;
 // ========================================
 
 /// <summary>
-/// 设变明细（技术阶段一 ③，外键 EcGijutsuId 隶属 TaktEcGijutsu；含各部门执行视图外键 EcXxxId）。对应前端 TaktEcDetailDto。
+/// 设变明细（技术阶段一 ③，外键 EcTeId 隶属 TaktEcTe；含各部门执行视图外键 EcXxxId）。对应前端 TaktEcDetailDto。
 /// </summary>
 public class TaktEcDetailDto : TaktCompanyDtoBase
 {
@@ -37,7 +37,7 @@ public class TaktEcDetailDto : TaktCompanyDtoBase
     /// 设变主表ID（主表主键,序列化为string以避免Javascript精度问题）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
 
     /// <summary>
     /// 设变主表名称（填充字段）
@@ -93,14 +93,16 @@ public class TaktEcDetailDto : TaktCompanyDtoBase
     /// 停产状态（字典 logistics_materials_material_discontinued_status；DictValue=01/Z0 等；默认 Z0=计划物料）
     /// </summary>
     public string DiscontinuedStatus { get; set; } = "Z0";
+
     /// <summary>
-    /// 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
+    /// 实施范围（冗余：来自 TaktEcTe.EcImplScope）
     /// </summary>
-    public int EcScope { get; set; }
+    public int EcImplScope { get; set; }
+
     /// <summary>
-    /// 制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
+    /// 控制范围（确认列表从执行行投影；明细表不保存。字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理）
     /// </summary>
-    public int EcDeptScope { get; set; } = 2;
+    public int EcControlScope { get; set; }
 
     /// <summary>
     /// 旧物料编码
@@ -207,6 +209,17 @@ public class TaktEcDetailDto : TaktCompanyDtoBase
     /// </summary>
     public string? EcOldPartDisposition { get; set; } = string.Empty;
 
+
+    /// <summary>
+    /// 机种编码组（制一、制二、品管执行行）
+    /// </summary>
+    public string EcModelCodeGroup { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 根物料编码组（生管、制一、制二、品管执行行）
+    /// </summary>
+    public string EcRootMaterialCodeGroup { get; set; } = string.Empty;
+
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
     /// </summary>
@@ -248,7 +261,7 @@ public class TaktEcDetailQueryDto : TaktPagedQuery
     /// 设变主表ID（主表主键,序列化为string以避免Javascript精度问题）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcGijutsuId { get; set; }
+    public long? EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余字段,便于查询）
@@ -300,14 +313,9 @@ public class TaktEcDetailQueryDto : TaktPagedQuery
     /// </summary>
     public string? DiscontinuedStatus { get; set; }
     /// <summary>
-    /// 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
+    /// 实施范围（冗余：来自 TaktEcTe.EcImplScope）
     /// </summary>
-    public int? EcScope { get; set; }
-    /// <summary>
-    /// 制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
-    /// </summary>
-    public int? EcDeptScope { get; set; }
-
+    public int? EcImplScope { get; set; }
     /// <summary>
     /// 旧物料编码
     /// </summary>
@@ -477,7 +485,7 @@ public class TaktEcDetailCreateDto
     /// 设变主表ID（主表主键,序列化为string以避免Javascript精度问题）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余字段,便于查询）
@@ -530,14 +538,9 @@ public class TaktEcDetailCreateDto
     /// </summary>
     public string DiscontinuedStatus { get; set; } = "Z0";
     /// <summary>
-    /// 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
+    /// 实施范围（冗余：来自 TaktEcTe.EcImplScope）
     /// </summary>
-    public int EcScope { get; set; }
-    /// <summary>
-    /// 制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
-    /// </summary>
-    public int EcDeptScope { get; set; } = 2;
-
+    public int EcImplScope { get; set; }
     /// <summary>
     /// 旧物料编码
     /// </summary>
@@ -736,7 +739,7 @@ public class TaktEcDetailTemplateDto
     /// 设变主表ID（主表主键,序列化为string以避免Javascript精度问题）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcGijutsuId { get; set; }
+    public long? EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余字段,便于查询）
@@ -788,14 +791,9 @@ public class TaktEcDetailTemplateDto
     /// </summary>
     public string? DiscontinuedStatus { get; set; }
     /// <summary>
-    /// 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
+    /// 实施范围（冗余：来自 TaktEcTe.EcImplScope）
     /// </summary>
-    public int? EcScope { get; set; }
-    /// <summary>
-    /// 制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
-    /// </summary>
-    public int? EcDeptScope { get; set; }
-
+    public int? EcImplScope { get; set; }
     /// <summary>
     /// 旧物料编码
     /// </summary>
@@ -947,7 +945,7 @@ public class TaktEcDetailImportDto
     /// 设变主表ID（主表主键,序列化为string以避免Javascript精度问题）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcGijutsuId { get; set; }
+    public long? EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余字段,便于查询）
@@ -999,14 +997,9 @@ public class TaktEcDetailImportDto
     /// </summary>
     public string? DiscontinuedStatus { get; set; }
     /// <summary>
-    /// 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
+    /// 实施范围（冗余：来自 TaktEcTe.EcImplScope）
     /// </summary>
-    public int? EcScope { get; set; }
-    /// <summary>
-    /// 制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
-    /// </summary>
-    public int? EcDeptScope { get; set; }
-
+    public int? EcImplScope { get; set; }
     /// <summary>
     /// 旧物料编码
     /// </summary>
@@ -1164,7 +1157,7 @@ public class TaktEcDetailExportDto
     /// 设变主表ID（主表主键,序列化为string以避免Javascript精度问题）
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余字段,便于查询）
@@ -1216,14 +1209,9 @@ public class TaktEcDetailExportDto
     /// </summary>
     public string DiscontinuedStatus { get; set; } = "Z0";
     /// <summary>
-    /// 实施范围（冗余：来自 TaktEcGijutsu.EcScope）
+    /// 实施范围（冗余：来自 TaktEcTe.EcImplScope）
     /// </summary>
-    public int EcScope { get; set; }
-    /// <summary>
-    /// 制二/制一/品管实施范围（冗余自主表；字典 logistics_manufacturing_ec_dept_scope_category；1=按成品，2=按机种，3=按设变）
-    /// </summary>
-    public int EcDeptScope { get; set; } = 2;
-
+    public int EcImplScope { get; set; }
     /// <summary>
     /// 旧物料编码
     /// </summary>

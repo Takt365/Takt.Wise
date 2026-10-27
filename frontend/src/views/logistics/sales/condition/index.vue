@@ -13,7 +13,7 @@
     <TaktMasterDetailTableLr
       v-model:master-current="currentPage"
       v-model:master-page-size="pageSize"
-      v-model:selected-master-key="selectedMasterKey"
+      v-model:selecmed-master-key="selecmedMasterKey"
       class="min-h-0 flex-1"
       :master-columns="columns"
       :master-data-source="dataSource"
@@ -138,16 +138,6 @@
           v-model:value="advancedQueryForm.cultureCode"
           dict-type="sys_culture_code"
           :placeholder="pi.queryPh('cultureCode', 'select')"
-          allow-clear
-        />
-      </a-form-item>
-      </div>
-      <div v-show="isFieldVisible('plantCode')">
-      <a-form-item :label="pi.queryLabel('plantCode')">
-        <TaktSelect
-          v-model:value="advancedQueryForm.plantCode"
-          api-url="TaktPlants/options"
-          :placeholder="pi.queryPh('plantCode', 'select')"
           allow-clear
         />
       </a-form-item>
@@ -472,11 +462,11 @@ const pageSize = ref(getTaktDefaultPageSize())
 /** 分页 total */
 const total = ref(0)
 /** 工具栏单选时当前行 */
-const selectedRow = ref<SalesConditionRowRecord | null>(null)
+const selecmedRow = ref<SalesConditionRowRecord | null>(null)
 /** 表格多选行 */
-const selectedRows = ref<SalesConditionRowRecord[]>([])
+const selecmedRows = ref<SalesConditionRowRecord[]>([])
 /** 表格多选 row-key 集合 */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 
 /** 新增/编辑弹窗是否打开 */
 const formVisible = ref(false)
@@ -548,14 +538,14 @@ const visibleColumnKeys = ref<string[]>([])
 /** 实体主键字段名（row-key、API 路径参数） */
 const entityIdName = 'salesConditionId'
 /** 工具栏「编辑」是否禁用（须恰好选中一行） */
-const updateDisabled = computed(() => selectedRows.value.length !== 1)
+const updateDisabled = computed(() => selecmedRows.value.length !== 1)
 /** 工具栏「删除」是否禁用（未选中任何行） */
-const deleteDisabled = computed(() => selectedRows.value.length === 0)
+const deleteDisabled = computed(() => selecmedRows.value.length === 0)
 
 /** Pinia：字典缓存（列表/查询 dict-type 渲染前预热） */
 const dictDataStore = useDictDataStore()
 /** 主表选中行上下文（右侧明细面板读取） */
-const { selectedMasterRow } = provideSalesConditionMasterContext()
+const { selecmedMasterRow } = provideSalesConditionMasterContext()
 const salesConditionItemPanelRef = ref<InstanceType<typeof SalesConditionItemPanel> | null>(null)
 
 /**
@@ -598,14 +588,13 @@ onMounted(async () => {
   loadData()
 })
 
-
 /** 主表行点击选中 key（左右主子表高亮） */
-const selectedMasterKey = ref('')
+const selecmedMasterKey = ref('')
 
 /** 同步主表选中行到右侧明细（子表由 *-panel watch 自动 reload） */
 function syncMasterSelection(record: SalesConditionRowRecord | null) {
-  selectedMasterRow.value = record
-  selectedMasterKey.value = record ? getSalesConditionId(record) : ''
+  selecmedMasterRow.value = record
+  selecmedMasterKey.value = record ? getSalesConditionId(record) : ''
 }
 
 /**
@@ -615,9 +604,9 @@ function syncMasterSelection(record: SalesConditionRowRecord | null) {
 function handleMasterSelect(record: Record<string, unknown>) {
   const row = record as unknown as SalesConditionRowRecord
   const key = getSalesConditionId(row)
-  selectedRowKeys.value = [key]
-  selectedRows.value = [row]
-  selectedRow.value = row
+  selecmedRowKeys.value = [key]
+  selecmedRows.value = [row]
+  selecmedRow.value = row
   syncMasterSelection(row)
 }
 
@@ -831,33 +820,31 @@ const getSalesConditionDictValue = (
   return String(value)
 }
 
-
-
 /** 行选择配置 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: SalesConditionRowRecord[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
     if (rows.length === 1 && rows[0]) {
       syncMasterSelection(rows[0])
     } else if (rows.length === 0) {
       syncMasterSelection(null)
     }
   },
-  onSelect: (record: SalesConditionRowRecord, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
+  onSelect: (record: SalesConditionRowRecord, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
       syncMasterSelection(record)
-    } else if (selectedRow.value && getSalesConditionId(selectedRow.value) === getSalesConditionId(record)) {
-      selectedRow.value = null
+    } else if (selecmedRow.value && getSalesConditionId(selecmedRow.value) === getSalesConditionId(record)) {
+      selecmedRow.value = null
       syncMasterSelection(null)
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: SalesConditionRowRecord[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
-    syncMasterSelection(selectedRow.value)
+  onSelectAll: (selecmed: boolean, selecmedRowsData: SalesConditionRowRecord[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
+    syncMasterSelection(selecmedRow.value)
   }
 }))
 
@@ -945,8 +932,8 @@ async function handleEdit(record: SalesConditionRowRecord) {
 
 /** 工具栏编辑：打开当前单选行 */
 function handleUpdate() {
-  if (selectedRow.value) {
-    void handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    void handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: pi.self() }))
   }
@@ -974,7 +961,7 @@ async function handleFormSubmit() {
     formVisible.value = false
     formData.value = null
   nextTick(() => formRef.value?.resetFields())
-    if (selectedMasterKey.value) {
+    if (selecmedMasterKey.value) {
   salesConditionItemPanelRef.value?.reload?.()
     }
     loadData()
@@ -1010,7 +997,7 @@ async function handleImportFile(file: File, sheetName?: string): Promise<TaktImp
 function handleImportSuccess(result: TaktImportResult) {
   loadData()
 
-      if (selectedMasterKey.value) {
+      if (selecmedMasterKey.value) {
     salesConditionItemPanelRef.value?.reload?.()
       }
   if (result.fail === 0 && result.success > 0) {
@@ -1070,9 +1057,9 @@ async function handleDeleteOne(record: SalesConditionRowRecord) {
     onOk: async () => {
       await deleteSalesConditionById((record as any)[entityIdName])
       message.success(t('common.feedback.deleted', { target: pi.self() }))
-      selectedRowKeys.value = []
-      selectedRows.value = []
-      selectedRow.value = null
+      selecmedRowKeys.value = []
+      selecmedRows.value = []
+      selecmedRow.value = null
       syncMasterSelection(null)
       loadData()
     }
@@ -1080,22 +1067,22 @@ async function handleDeleteOne(record: SalesConditionRowRecord) {
 }
 /** 批量删除选中行 */
 async function handleDelete() {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: pi.self() }))
     return
   }
   Modal.confirm({
     title: t('common.tip.confirm.delete.title'),
-    content: t('common.tip.confirm.delete.count', { entity: pi.self(), count: selectedRows.value.length }),
+    content: t('common.tip.confirm.delete.count', { entity: pi.self(), count: selecmedRows.value.length }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
+      const ids = selecmedRows.value.map((r: any) => r[entityIdName]).filter(Boolean)
       await deleteSalesConditionBatch(ids)
       message.success(t('common.feedback.deleted', { target: pi.self() }))
-      selectedRowKeys.value = []
-      selectedRows.value = []
-      selectedRow.value = null
+      selecmedRowKeys.value = []
+      selecmedRows.value = []
+      selecmedRow.value = null
       syncMasterSelection(null)
       loadData()
     }

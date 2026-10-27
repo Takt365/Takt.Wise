@@ -17,7 +17,7 @@ export const COST_DECIMAL_DIGITS = 5
 export type BomMaterialCostItemLineCostFields = {
   productionRelated?: string | null
   purchaseType?: string | null
-  /** PCB SECT 标识（空参与；X 不参与） */
+  /** PCB SECT 标识（空才参与；非空一律不参与） */
   pcbSectIndicator?: string | null
   componentQuantity?: number | string | null
   movingAveragePrice?: number | string | null
@@ -52,7 +52,7 @@ export function countsTowardBomMaterialCostItem(row: BomMaterialCostItemLineCost
   return (
     productionRelated.toUpperCase() === 'X'
     && purchaseType.toUpperCase() === 'F'
-    && pcbSectIndicator.toUpperCase() !== 'X'
+    && pcbSectIndicator.length === 0
   )
 }
 

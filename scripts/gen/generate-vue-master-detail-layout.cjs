@@ -347,7 +347,7 @@ export type ${rowRecordType} = ${entityPascal} | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface ${entityPascal}MasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<${rowRecordType} | null>
+  selecmedMasterRow: Ref<${rowRecordType} | null>
 }
 
 const ${entityCamel}MasterContextKey: InjectionKey<${entityPascal}MasterContext> = Symbol('${viewEntityKebab}MasterContext')
@@ -357,8 +357,8 @@ const ${entityCamel}MasterContextKey: InjectionKey<${entityPascal}MasterContext>
  * @returns {${entityPascal}MasterContext} 主表上下文
  */
 export function provide${entityPascal}MasterContext(): ${entityPascal}MasterContext {
-  const selectedMasterRow = ref<${rowRecordType} | null>(null)
-  const ctx: ${entityPascal}MasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<${rowRecordType} | null>(null)
+  const ctx: ${entityPascal}MasterContext = { selecmedMasterRow }
   provide(${entityCamel}MasterContextKey, ctx)
   return ctx
 }
@@ -1031,7 +1031,7 @@ ${toolsBarImportExport}
         ref="formRef"
         :form-data="formData"
         :master-id="master${entityPascal}Id"
-        :master-row="selectedMasterRow"
+        :master-row="selecmedMasterRow"
         :loading="formLoading"
       />
     </TaktModal>
@@ -1069,7 +1069,7 @@ import type { ${child.childType}, ${child.childPascal}Query } from '@/types/${mo
 
 ${childEntityI18nImport}
 const { t } = useI18n()
-const { selectedMasterRow } = use${entityPascal}MasterContext()
+const { selecmedMasterRow } = use${entityPascal}MasterContext()
 
 ${childCaps.hasImport || childCaps.hasExport ? `/** Excel 导入/导出默认 sheet 名与文件名前缀 */
 const excelNames = taktExcelEntityNames('${child.childEntityClassName || `Takt${child.childPascal}`}')
@@ -1085,9 +1085,9 @@ const currentPage = ref(getTaktDefaultPageIndex())
 const pageSize = ref(getTaktDefaultPageSize())
 const total = ref(0)
 const queryKeyword = ref('')
-const selectedRow = ref<${child.childType} | null>(null)
-const selectedRows = ref<${child.childType}[]>([])
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRow = ref<${child.childType} | null>(null)
+const selecmedRows = ref<${child.childType}[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 const formVisible = ref(false)
 const formTitle = ref('')
 const formData = ref<Partial<${child.childType}>>({})
@@ -1098,12 +1098,12 @@ ${advancedQueryScript}${columnSettingScript}
 ${childCaps.hasImport && childCaps.hasGetTemplate ? 'const importVisible = ref(false)\n' : ''}
 const entityIdName = '${child.childIdField}'
 const master${entityPascal}Id = computed((): string => {
-  const id = (selectedMasterRow.value as Record<string, unknown> | null)?.['${caps.entityIdName}']
+  const id = (selecmedMasterRow.value as Record<string, unknown> | null)?.['${caps.entityIdName}']
   return id != null ? String(id) : ''
 })
 const hasMasterSelection = computed(() => master${entityPascal}Id.value !== '')
-const updateDisabled = computed(() => !hasMasterSelection.value || selectedRows.value.length !== 1)
-const deleteDisabled = computed(() => !hasMasterSelection.value || selectedRows.value.length === 0)
+const updateDisabled = computed(() => !hasMasterSelection.value || selecmedRows.value.length !== 1)
+const deleteDisabled = computed(() => !hasMasterSelection.value || selecmedRows.value.length === 0)
 
 function get${child.childPascal}Id(record: ${child.childType} | Record<string, unknown>): string {
   return String((record as ${child.childType})?.[entityIdName] ?? '')
@@ -1149,21 +1149,21 @@ ${listCols}
 ])
 ${summaryParts.scriptBlock}
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: ${child.childType}[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: ${child.childType}, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (selectedRow.value && get${child.childPascal}Id(selectedRow.value) === get${child.childPascal}Id(record)) {
-      selectedRow.value = null
+  onSelect: (record: ${child.childType}, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (selecmedRow.value && get${child.childPascal}Id(selecmedRow.value) === get${child.childPascal}Id(record)) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: ${child.childType}[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: ${child.childType}[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   },
 }))
 
@@ -1175,12 +1175,12 @@ function onClickRow(record: ${child.childType}) {
   const key = get${child.childPascal}Id(record)
   return {
     onClick: () => {
-      selectedRowKeys.value = [key]
-      selectedRows.value = [record]
-      selectedRow.value = record
+      selecmedRowKeys.value = [key]
+      selecmedRows.value = [record]
+      selecmedRow.value = record
     },
-    class: selectedRowKeys.value.includes(key)
-      ? 'takt-master-detail-table-row-selected cursor-pointer'
+    class: selecmedRowKeys.value.includes(key)
+      ? 'takt-master-detail-table-row-selecmed cursor-pointer'
       : 'cursor-pointer',
   }
 }
@@ -1189,9 +1189,9 @@ async function loadData() {
   if (!hasMasterSelection.value) {
     dataSource.value = []
     total.value = 0
-    selectedRowKeys.value = []
-    selectedRows.value = []
-    selectedRow.value = null
+    selecmedRowKeys.value = []
+    selecmedRows.value = []
+    selecmedRow.value = null
     return
   }
   loading.value = true
@@ -1246,8 +1246,8 @@ watch(
   },
 )
 
-watch(hasMasterSelection, (selected) => {
-  if (selected) {
+watch(hasMasterSelection, (selecmed) => {
+  if (selecmed) {
     void nextTick(() => startDetailTableScrollObserve())
   }
 })
@@ -1286,8 +1286,8 @@ async function handleEdit(record: ${child.childType}) {
 }
 
 function handleUpdate() {
-  if (selectedRow.value) {
-    void handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    void handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', {
       action: t('common.page.button.edit'),
@@ -1344,7 +1344,7 @@ async function handleDeleteOne(record: ${child.childType}) {
 }
 
 async function handleDelete() {
-  if (!hasMasterSelection.value || selectedRows.value.length === 0) {
+  if (!hasMasterSelection.value || selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', {
       action: t('common.page.button.delete'),
       entity: pi.self(),
@@ -1355,12 +1355,12 @@ async function handleDelete() {
     title: t('common.tip.confirm.delete.title'),
     content: t('common.tip.confirm.delete.count', {
       entity: pi.self(),
-      count: selectedRows.value.length,
+      count: selecmedRows.value.length,
     }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value.map((r) => get${child.childPascal}Id(r)).filter(Boolean)
+      const ids = selecmedRows.value.map((r) => get${child.childPascal}Id(r)).filter(Boolean)
       await ${childCaps.apiDeleteBatch}(ids)
       message.success(t('common.feedback.deleted', { target: pi.self() }))
       await loadData()
@@ -1442,18 +1442,18 @@ async function load${entityPascal}Detail(record: ${rowRecordType}): Promise<${en
     panelImports,
     composableImport: `import { provide${entityPascal}MasterContext, type ${rowRecordType} } from './composables/${entityMasterContextComposableFileName(ctx.entityPascal).replace(/\.ts$/, '')}'`,
     composableSetup: `/** 主表选中行上下文（右侧明细面板读取） */
-const { selectedMasterRow } = provide${entityPascal}MasterContext()`,
+const { selecmedMasterRow } = provide${entityPascal}MasterContext()`,
     panelRefs,
     detailSlot,
     detailFn,
     lrScript: `
 /** 主表行点击选中 key（左右主子表高亮） */
-const selectedMasterKey = ref('')
+const selecmedMasterKey = ref('')
 
 /** 同步主表选中行到右侧明细（子表由 *-panel watch 自动 reload） */
 function syncMasterSelection(record: ${rowRecordType} | null) {
-  selectedMasterRow.value = record
-  selectedMasterKey.value = record ? get${entityPascal}Id(record) : ''
+  selecmedMasterRow.value = record
+  selecmedMasterKey.value = record ? get${entityPascal}Id(record) : ''
 }
 
 /**
@@ -1463,9 +1463,9 @@ function syncMasterSelection(record: ${rowRecordType} | null) {
 function handleMasterSelect(record: Record<string, unknown>) {
   const row = record as unknown as ${rowRecordType}
   const key = get${entityPascal}Id(row)
-  selectedRowKeys.value = [key]
-  selectedRows.value = [row]
-  selectedRow.value = row
+  selecmedRowKeys.value = [key]
+  selecmedRows.value = [row]
+  selecmedRow.value = row
   syncMasterSelection(row)
 }
 
@@ -1483,12 +1483,12 @@ ${detailFn}`,
     } else if (rows.length === 0) {
       syncMasterSelection(null)
     }`,
-    deleteClearSelection: `      selectedRowKeys.value = []
-      selectedRows.value = []
-      selectedRow.value = null
+    deleteClearSelection: `      selecmedRowKeys.value = []
+      selecmedRows.value = []
+      selecmedRow.value = null
       syncMasterSelection(null)`,
     formSubmitReload: children.length ? `
-    if (selectedMasterKey.value) {
+    if (selecmedMasterKey.value) {
 ${reloadPanels}
     }` : '',
   };

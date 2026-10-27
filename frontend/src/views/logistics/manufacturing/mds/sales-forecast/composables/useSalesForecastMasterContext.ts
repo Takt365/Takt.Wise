@@ -15,7 +15,7 @@ export type SalesForecastRowRecord = SalesForecast | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface SalesForecastMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<SalesForecastRowRecord | null>
+  selecmedMasterRow: Ref<SalesForecastRowRecord | null>
 }
 
 const salesForecastMasterContextKey: InjectionKey<SalesForecastMasterContext> = Symbol('sales-forecastMasterContext')
@@ -25,8 +25,8 @@ const salesForecastMasterContextKey: InjectionKey<SalesForecastMasterContext> = 
  * @returns {SalesForecastMasterContext} 主表上下文
  */
 export function provideSalesForecastMasterContext(): SalesForecastMasterContext {
-  const selectedMasterRow = ref<SalesForecastRowRecord | null>(null)
-  const ctx: SalesForecastMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<SalesForecastRowRecord | null>(null)
+  const ctx: SalesForecastMasterContext = { selecmedMasterRow }
   provide(salesForecastMasterContextKey, ctx)
   return ctx
 }

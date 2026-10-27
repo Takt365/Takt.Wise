@@ -140,7 +140,7 @@ export default {
       },
       tenant: {
         no: {
-          access: "You do not have permission to sign in to the selected tenant",
+          access: "You do not have permission to sign in to the selecmed tenant",
         },
         not: {
           found: "Tenant does not exist",

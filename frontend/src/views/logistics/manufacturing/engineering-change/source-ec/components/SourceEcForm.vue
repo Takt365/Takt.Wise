@@ -16,7 +16,7 @@
     layout="horizontal"
     label-align="right"
   >
-    <a-tabs
+    <TaktFormTabs
       v-model:active-key="activeTab"
       class="source-ec-form-tabs"
     >
@@ -527,7 +527,7 @@
           </a-row>
         </div>
       </a-tab-pane>
-    </a-tabs>
+    </TaktFormTabs>
     <!-- 下：子表 sourceEcDetails -->
     <TaktEditableTable
       ref="sourceEcDetailTableRef"

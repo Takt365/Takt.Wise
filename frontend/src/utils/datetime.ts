@@ -103,6 +103,26 @@ export class DateTimeHelper {
   }
 
   /**
+   * 日历日（yyyy-MM-dd）。ISO 日期时间只取日期部分，不按时区换算。
+   * @param value 日期或日期时间；空则返回空串
+   * @returns {string} yyyy-MM-dd；不是该形态时再按本地日期格式化
+   */
+  static formatCalendarDate(value: Date | number | string | null | undefined): string {
+    if (value == null || value === '') {
+      return ''
+    }
+    if (value instanceof Date) {
+      return this.formatDate(value)
+    }
+    const text = String(value).trim()
+    const matched = /^(\d{4}-\d{2}-\d{2})(?:[T\s].*)?$/.exec(text)
+    if (matched) {
+      return matched[1]
+    }
+    return this.formatDate(text)
+  }
+
+  /**
    * 格式化时间（HH:mm:ss）
    * @param date 日期时间
    * @returns 格式化后的时间字符串
@@ -483,6 +503,7 @@ export class DateTimeHelper {
  */
 export const formatDateTime = DateTimeHelper.format.bind(DateTimeHelper)
 export const formatDate = DateTimeHelper.formatDate.bind(DateTimeHelper)
+export const formatCalendarDate = DateTimeHelper.formatCalendarDate.bind(DateTimeHelper)
 export const formatTime = DateTimeHelper.formatTime.bind(DateTimeHelper)
 export const formatDateTimeShort = DateTimeHelper.formatDateTimeShort.bind(DateTimeHelper)
 export const formatDateCN = DateTimeHelper.formatDateCN.bind(DateTimeHelper)

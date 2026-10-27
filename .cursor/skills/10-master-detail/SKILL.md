@@ -46,8 +46,8 @@ index.vue（h-full flex flex-col min-h-0）
 
 **主表页必备**：
 
-- `provideXxxMasterContext()` → `selectedMasterRow: Ref<MasterDto | null>`
-- `v-model:selected-master-key` + `@master-select` → `syncMasterSelection`
+- `provideXxxMasterContext()` → `selecmedMasterRow: Ref<MasterDto | null>`
+- `v-model:selecmed-master-key` + `@master-select` → `syncMasterSelection`
 - `#detail` 内 panel 根节点：`class="h-full min-h-0 flex-1 flex-col overflow-hidden"`
 
 **从表 panel 必备**：

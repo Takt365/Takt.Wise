@@ -12,7 +12,7 @@ alwaysApply: true
 
 | 表形态 | 表单特征 | 参照 |
 |--------|----------|------|
-| **单表** | 单 `a-form` 或 `a-tabs` 分业务段 | `UserForm.vue` |
+| **单表** | 单 `a-form` 或 `TaktFormTabs` 分业务段 | `UserForm.vue` |
 | **主子表** | Tab 主表 + Tab/表格内嵌子表行 | `DictTypeForm.vue` |
 | **树表** | `TaktTreeSelect` 选 `parentId` | `DeptForm.vue` |
 
@@ -62,7 +62,7 @@ loading?: boolean
 - **文件名称 + 访问地址**：同表同时有 `fileName` 与 `accessUrl` 时用 `takt-upload-file`（上传后回填 `fileName`，禁止手输）；**排除** Foundation `TaktFile` 自身。查询抽屉仍用普通输入；子表行内单元格仍用输入框
 - **TaktNumbering 自动编码（表单）**：实体字段 XML 描述含「自动通过 TaktNumbering」且**不含** MIME → 新增态 **编码规则下拉**（`TaktSelect` + `TaktNumberings/options`，`:api-params="{ documentType: '<菜单 MenuName>' }"` 仅显示该单据类型规则，字段 `numberingRuleCode`）+ **业务编码只读预览**（`previewNumberingNext` / `useTaktFormNumbering`）；编辑态规则隐藏、编码 `disabled`。`DocumentType` 存 **MenuName**（非 Id）。文案：`common.page.form.numberingRule` / `numberingCodePreview` / `numberingRuleRequired`。参照 `AnnouncementForm.vue` / `EmployeeForm.vue`。❌ 禁止按类型/性别猜规则码；❌ 禁止手输业务编码；❌ 禁止无 `documentType` 过滤拉全量规则
 - **TaktNumbering 自动编码（上传引擎）**：字段描述含「自动通过 TaktNumbering」且含 MIME → **不走表单选规则**；由 `TaktFileUploadEngine` 按 MIME→`FD-F*` 调 `ITaktNumberingGenerator`
-- 长表单：`a-tabs` 分 Tab；Tab 文案用 `{路径}.page.tabs.*` 静态 locales
+- 长表单：**`TaktFormTabs`** 分 Tab（每 Tab ≤10 字段，由 `generate-vue-common` 分区后透传 `a-tab-pane`；工具函数见 `utils/taktFormTabs.ts`）；Tab 文案默认 `common.page.form.tabs.basicinfo`；专有文案用 `{路径}.page.tabs.*`
 
 ❌ 在 form 内再包 `TaktModal`；❌ 硬编码中文；❌ 表单控件 `size="small"`（须 Ant Design 默认 `middle`）；❌ 隔离/只读字段用 HTML `readonly`（须 `disabled`，参照 `UserForm.vue`）；❌ 大块 scoped 布局 CSS（Tailwind / 极简 `:deep` 例外见 `02-frontend` §1.2）
 
@@ -75,9 +75,9 @@ loading?: boolean
 ### 2.1 结构
 
 ```text
-a-form（或 a-form 外包 a-tabs）
-  → a-form-item + a-input / TaktSelect / a-input-number / takt-rich-editor / takt-upload-file …
-  → 业务复杂时分 a-tab-pane
+a-form（或 a-form 内 `TaktFormTabs`）
+ → a-form-item + a-input / TaktSelect / a-input-number / takt-rich-editor / takt-upload-file …
+ → 业务复杂时分 `#tab-0`… 插槽（或透传 `a-tab-pane`）
 ```
 
 ### 2.2 状态
@@ -100,7 +100,7 @@ a-form（或 a-form 外包 a-tabs）
 ### 3.1 结构
 
 ```text
-a-tabs
+TaktFormTabs
   Tab「主表」→ a-form（mainFormRef / mainFormState / mainFormRules）
   Tab「子表」→ a-table 行内编辑 或 子 form 列表
 ```
@@ -140,7 +140,7 @@ await mainFormRef.value?.validate()
 
 ### 4.2 父级默认值
 
-- `index.vue` 打开新增弹窗时：若左侧树有选中节点，传入 `formData.parentId = selectedTreeKey`（string）
+- `index.vue` 打开新增弹窗时：若左侧树有选中节点，传入 `formData.parentId = selecmedTreeKey`（string）
 - `getValues` 返回的 `parentId`：**string**；根节点用 `"0"` 或与后端约定一致
 
 ### 4.3 防环（前端辅助）
@@ -193,7 +193,7 @@ async function handleFormSubmit() {
 
 | 形态 | 脚本产出 |
 |------|----------|
-| **单表** | CreateDto 字段 → `a-form`；超 10 字段自动 Tabs；隔离字段只读 |
+| **单表** | CreateDto 字段 → `a-form`；超 10 字段自动 `TaktFormTabs`+`a-tab-pane`；隔离字段只读 |
 | **主子表** | 主表 Tab + 子表 Tab（`a-table` 行内编辑、`handleAdd/Remove*Row`） |
 | **树表** | **不生成**；手工 `TaktTreeSelect` + `parentId`（§四） |
 

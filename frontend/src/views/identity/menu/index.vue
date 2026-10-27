@@ -45,8 +45,8 @@
         :show-fullscreen="true"
         :show-refresh="true"
         :show-expand="true"
-        :update-disabled="!selectedRow"
-        :delete-disabled="!selectedRow && selectedRows.length === 0"
+        :update-disabled="!selecmedRow"
+        :delete-disabled="!selecmedRow && selecmedRows.length === 0"
         :create-loading="loading"
         :update-loading="loading"
         :delete-loading="loading"
@@ -68,7 +68,7 @@
     <div class="menu-tree-table-wrap">
       <TaktTreeLeftTable
         v-model:expanded-keys="treeExpandedKeys"
-        v-model:selected-keys="selectedTreeKeys"
+        v-model:selecmed-keys="selecmedTreeKeys"
         :tree-data="filteredTreeData"
         :tree-field-names="{ title: 'title', key: 'key', children: 'children' }"
         :tree-width-ratio="0.2"
@@ -300,10 +300,10 @@ const listLoading = ref(false)
 const entityTreeData = ref<TaktLazyTreeNode[]>([])
 /** 右侧树表数据源（带 children / _hasChildren，组件内拍平 virtual） */
 const tableTreeData = ref<Record<string, unknown>[]>([])
-const selectedTreeKeys = ref<(string | number)[]>([])
-const selectedRow = ref<Menu | null>(null)
-const selectedRows = ref<Menu[]>([])
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedTreeKeys = ref<(string | number)[]>([])
+const selecmedRow = ref<Menu | null>(null)
+const selecmedRows = ref<Menu[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 const formVisible = ref(false)
 const formTitle = ref('')
 const formData = ref<Partial<Menu>>({})
@@ -434,8 +434,8 @@ function applyLeftTreeExpandKeys() {
  * 当前左侧选中节点 Id；未选中返回 null（右表必须为空）
  * @returns {string | null} 选中节点 Id
  */
-function getSelectedTreeNodeId(): string | null {
-  const keys = selectedTreeKeys.value
+function getSelecmedTreeNodeId(): string | null {
+  const keys = selecmedTreeKeys.value
   if (keys.length > 0 && keys[keys.length - 1] != null) {
     return String(keys[keys.length - 1])
   }
@@ -446,8 +446,8 @@ function getSelectedTreeNodeId(): string | null {
  * 加载右侧树：未选中则空；选中则该节点 + 直接子级一层（更深靠展开懒加载）
  */
 async function loadRightTree() {
-  const selectedId = getSelectedTreeNodeId()
-  if (!selectedId) {
+  const selecmedId = getSelecmedTreeNodeId()
+  if (!selecmedId) {
     tableTreeData.value = []
     tableExpandedRowKeys.value = []
     tableExpanded.value = false
@@ -455,13 +455,13 @@ async function loadRightTree() {
   }
   listLoading.value = true
   try {
-    const detail = await getMenuById(selectedId) as Record<string, unknown>
-    const childRows = unwrapMenuTree(await getMenuTree(selectedId, true))
+    const detail = await getMenuById(selecmedId) as Record<string, unknown>
+    const childRows = unwrapMenuTree(await getMenuTree(selecmedId, true))
     const mappedChildren = mapMenuRightTreeNodes(childRows)
     const children = mappedChildren.length > 0 ? mappedChildren : undefined
     const root: Record<string, unknown> = {
       ...detail,
-      key: selectedId,
+      key: selecmedId,
       children,
       _hasChildren: (children?.length ?? 0) > 0 || !taktIsLeafFlag(detail.isLeaf),
     }
@@ -472,7 +472,7 @@ async function loadRightTree() {
       await nextTick()
     }
     tableExpandedRowKeys.value =
-      (children?.length ?? 0) > 0 || root._hasChildren === true ? [selectedId] : []
+      (children?.length ?? 0) > 0 || root._hasChildren === true ? [selecmedId] : []
   } catch (error: unknown) {
     logger.error('[Menu] 加载右侧树失败', undefined, error)
     message.error((error as { message?: string })?.message || t('common.feedback.load.data.failed'))
@@ -569,7 +569,7 @@ async function handleLeftTreeLoadData(treeNode: Record<string, unknown>) {
 
 /** 右侧展示树：未选中为空；选中后为该节点+直接子级 */
 const tableDisplayTree = computed(() => {
-  if (!getSelectedTreeNodeId()) return []
+  if (!getSelecmedTreeNodeId()) return []
   return tableTreeData.value
 })
 
@@ -685,8 +685,8 @@ watch(filteredTreeData, () => {
 })
 
 /** 左侧树选中：右表展示该节点+直接子级；取消选中则右表清空 */
-const handleTreeSelect = (selectedKeys: (string | number)[]) => {
-  selectedTreeKeys.value = selectedKeys
+const handleTreeSelect = (selecmedKeys: (string | number)[]) => {
+  selecmedTreeKeys.value = selecmedKeys
   void loadRightTree()
 }
 
@@ -792,7 +792,7 @@ const handleTreeQuerySearch = () => {
 async function loadData() {
   loading.value = true
   try {
-    selectedTreeKeys.value = []
+    selecmedTreeKeys.value = []
     tableTreeData.value = []
     tableExpandedRowKeys.value = []
     tableExpanded.value = false
@@ -811,8 +811,8 @@ async function loadData() {
 async function refreshAfterMutation() {
   loading.value = true
   try {
-    const selectedId = getSelectedTreeNodeId()
-    await reloadLeftTreeChildren(selectedId ?? '0')
+    const selecmedId = getSelecmedTreeNodeId()
+    await reloadLeftTreeChildren(selecmedId ?? '0')
     await loadRightTree()
   } catch (error: unknown) {
     logger.error('[Menu] 刷新失败', undefined, error)
@@ -982,18 +982,18 @@ const columns = computed<TableColumnsType>(() => [
 ])
 
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: Menu[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: Menu, selected: boolean) => {
-    if (selected) selectedRow.value = record
-    else if (selectedRow.value && getMenuId(selectedRow.value) === getMenuId(record)) selectedRow.value = null
+  onSelect: (record: Menu, selecmed: boolean) => {
+    if (selecmed) selecmedRow.value = record
+    else if (selecmedRow.value && getMenuId(selecmedRow.value) === getMenuId(record)) selecmedRow.value = null
   },
-  onSelectAll: (selected: boolean, selectedRowsData: Menu[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: Menu[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   }
 }))
 
@@ -1041,7 +1041,7 @@ const handleAssignSuccess = () => {
 }
 
 const handleUpdate = () => {
-  if (selectedRow.value) handleEdit(selectedRow.value)
+  if (selecmedRow.value) handleEdit(selecmedRow.value)
   else message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: t('entity.menu._self') }))
 }
 
@@ -1068,23 +1068,23 @@ const handleDeleteOne = (record: Menu) => {
 }
 
 const handleDelete = () => {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: t('entity.menu._self') }))
     return
   }
   Modal.confirm({
     title: t('common.tip.confirm.delete.title'),
-    content: t('common.tip.confirm.delete.count', { count: selectedRows.value.length, entity: t('entity.menu._self') }),
+    content: t('common.tip.confirm.delete.count', { count: selecmedRows.value.length, entity: t('entity.menu._self') }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
       try {
         loading.value = true
-        await Promise.all(selectedRows.value.map(record => deleteMenuById(getMenuId(record))))
+        await Promise.all(selecmedRows.value.map(record => deleteMenuById(getMenuId(record))))
         message.success(t('common.feedback.deleted'))
-        selectedRows.value = []
-        selectedRowKeys.value = []
-        selectedRow.value = null
+        selecmedRows.value = []
+        selecmedRowKeys.value = []
+        selecmedRow.value = null
         await refreshAfterMutation()
       } catch (error: any) {
         message.error(error?.message || t('common.feedback.delete.failed'))

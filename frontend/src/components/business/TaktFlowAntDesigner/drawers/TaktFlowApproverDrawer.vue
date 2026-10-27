@@ -137,12 +137,12 @@
     </template>
     <TaktFlowSelectUserDialog
       v-model:open="selectUserOpen"
-      :selected-ids="form.assigneeUserIds"
+      :selecmed-ids="form.assigneeUserIds"
       @confirm="onSelectUserConfirm"
     />
     <TaktFlowSelectRoleDialog
       v-model:open="selectRoleOpen"
-      :selected-ids="form.roleIds"
+      :selecmed-ids="form.roleIds"
       @confirm="onSelectRoleConfirm"
     />
   </a-drawer>

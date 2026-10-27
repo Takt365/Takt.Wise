@@ -106,7 +106,7 @@ public class TaktDeptService : TaktServiceBase, ITaktDeptService
         return dto;    }
 
     /// <summary>
-    /// 获取部门树形选项列表（懒加载：仅 parentId 直接子级一层）
+    /// 获取部门树形选项列表（懒加载：仅 parentId 直接子级一层；强制当前登录公司隔离）
     /// </summary>
     /// <param name="parentId">父级ID（0=根）</param>
     /// <param name="plantCode">工厂代码（可选，用于按工厂过滤）</param>
@@ -115,7 +115,17 @@ public class TaktDeptService : TaktServiceBase, ITaktDeptService
     public async Task<List<TaktTreeSelectOption>> GetDeptTreeOptionsAsync(long parentId = 0, string? plantCode = null, string? keyword = null)
     {
         EnsureThreeLayerContext();
-        var list = await _deptRepository.GetListAsync(x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.ParentId == parentId && x.DeptStatus == 1);
+        var normalizedPlantCode = plantCode?.Trim();
+        var normalizedKeyword = keyword?.Trim();
+        var predicate = Expressionable.Create<TaktDept>()
+            .And(x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.ParentId == parentId && x.DeptStatus == 1)
+            .AndIF(!string.IsNullOrEmpty(normalizedPlantCode), x => x.PlantCode == normalizedPlantCode)
+            .AndIF(!string.IsNullOrEmpty(normalizedKeyword), x =>
+                (x.DeptCode != null && x.DeptCode.Contains(normalizedKeyword!))
+                || (x.DeptName1 != null && x.DeptName1.Contains(normalizedKeyword!))
+                || (x.IsoCode != null && x.IsoCode.Contains(normalizedKeyword!)))
+            .ToExpression();
+        var list = await _deptRepository.GetListAsync(predicate);
         return list
             .OrderBy(x => x.SortOrder)
             .Select(item =>
@@ -125,6 +135,7 @@ public class TaktDeptService : TaktServiceBase, ITaktDeptService
                 {
                     DictValue = item.Id.ToString(),
                     DictLabel = item.DeptName1,
+                    ExtValue = item.Id.ToString(),
                     I18nKey = string.IsNullOrWhiteSpace(item.DeptCode)
                         ? null
                         : TaktNamingHelper.OrgDeptResourceKey(item.DeptCode),
@@ -169,20 +180,27 @@ public class TaktDeptService : TaktServiceBase, ITaktDeptService
     }
 
     /// <summary>
-    /// 获取部门 ISO 编码树形选项列表（懒加载：仅 parentId 直接子级一层；DictValue=IsoCode）
+    /// 获取部门 ISO 编码树形选项列表（懒加载：仅 parentId 直接子级一层；DictValue=IsoCode；ExtValue=实体 Id 供展开；强制当前登录公司隔离）
     /// </summary>
-    /// <param name="parentId">父级ID（0=根）</param>
+    /// <param name="parentId">父级ID（0=根；懒加载展开时由前端传 ExtValue=实体 Id）</param>
     /// <param name="plantCode">工厂代码（可选，用于按工厂过滤）</param>
     /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
     /// <returns>树形选项（一层）</returns>
     public async Task<List<TaktTreeSelectOption>> GetDeptIsoTreeOptionsAsync(long parentId = 0, string? plantCode = null, string? keyword = null)
     {
         EnsureThreeLayerContext();
-        var list = await _deptRepository.GetListAsync(x =>
-            x.TenantCode == CurrentTenantCode
-            && x.CompanyCode == CurrentCompanyCode
-            && x.ParentId == parentId
-            && x.DeptStatus == 1);
+        var normalizedPlantCode = plantCode?.Trim();
+        var normalizedKeyword = keyword?.Trim();
+        var predicate = Expressionable.Create<TaktDept>()
+            .And(x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode && x.ParentId == parentId && x.DeptStatus == 1)
+            .AndIF(!string.IsNullOrEmpty(normalizedPlantCode), x => x.PlantCode == normalizedPlantCode)
+            .AndIF(!string.IsNullOrEmpty(normalizedKeyword), x =>
+                (x.DeptCode != null && x.DeptCode.Contains(normalizedKeyword!))
+                || (x.DeptName1 != null && x.DeptName1.Contains(normalizedKeyword!))
+                || (x.IsoCode != null && x.IsoCode.Contains(normalizedKeyword!))
+                || (x.DeptShortName != null && x.DeptShortName.Contains(normalizedKeyword!)))
+            .ToExpression();
+        var list = await _deptRepository.GetListAsync(predicate);
         return list
             .OrderBy(x => x.SortOrder)
             .Select(item =>
@@ -192,16 +210,21 @@ public class TaktDeptService : TaktServiceBase, ITaktDeptService
                 {
                     iso = (item.DeptShortName ?? string.Empty).Trim();
                 }
+                if (string.IsNullOrEmpty(iso))
+                {
+                    iso = (item.DeptCode ?? string.Empty).Trim();
+                }
                 var label = string.IsNullOrEmpty(iso)
                     ? item.DeptName1
                     : $"{iso} - {item.DeptName1}";
                 var isLeaf = TaktLazyTreeHelper.ToAntIsLeaf(item.IsLeaf);
                 return new TaktTreeSelectOption
                 {
+                    // 编码规则等存 IsoCode；展开 parentId 必须用实体 Id（勿把 DeptCode/IsoCode 当 parentId）
                     DictValue = iso,
                     DictLabel = label,
-                    ExtLabel = item.DeptName1,
-                    ExtValue = item.DeptCode,
+                    ExtLabel = item.DeptCode,
+                    ExtValue = item.Id.ToString(),
                     SortOrder = item.SortOrder,
                     IsLeaf = isLeaf,
                     Children = null,

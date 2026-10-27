@@ -94,10 +94,10 @@ function filterUserOption(input: string, option: unknown) {
 
 /** 转办用户选择变化时同步 toUserName */
 function onUserChange(value: SelectValue) {
-  const selected = value == null || Array.isArray(value) || typeof value === 'object'
+  const selecmed = value == null || Array.isArray(value) || typeof value === 'object'
     ? ''
     : String(value)
-  const opt = props.userOptions.find(o => String(o.dictValue) === selected)
+  const opt = props.userOptions.find(o => String(o.dictValue) === selecmed)
   form.toUserName = opt?.dictLabel ?? ''
 }
 

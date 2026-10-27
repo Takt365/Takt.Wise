@@ -72,8 +72,9 @@ internal enum TaktEcScopeDedupKind
 }
 
 /// <summary>
-/// 设变实施范围 → 部门执行去重键。
-/// 部门范围 EcDeptScope：1=按成品，2=按机种，3=按设变。管理范围 EcScope（全仕向/部管/内部/技术）不参与去重键。
+/// 实施范围 → 部门执行去重键。
+/// 部门范围 EcControlScope：1=按成品，2=按机种，3=按设变。管理范围 EcImplScope（全仕向/部管/内部/技术）不参与去重键。
+/// 生管/制一/制二/品管在按机种、按设变时，停产与在产非 FERT 各自成行，机种组与根物料组不并入在产成品。
 /// </summary>
 internal static class TaktEcScopeRowGrain
 {
@@ -81,31 +82,44 @@ internal static class TaktEcScopeRowGrain
     /// 解析部门在该实施范围下的去重粒度
     /// </summary>
     /// <param name="deptCode">部门编码</param>
-    /// <param name="ecDeptScope">部门实施范围</param>
+    /// <param name="ecControlScope">部门实施范围</param>
     /// <returns>去重粒度</returns>
-    internal static TaktEcScopeDedupKind ResolveKind(string deptCode, int ecDeptScope)
+    internal static TaktEcScopeDedupKind ResolveKind(string deptCode, int ecControlScope)
     {
-        var finished = ecDeptScope == TaktEcDeptScopeConstants.ByFinishedProduct;
-        var byModel = ecDeptScope == TaktEcDeptScopeConstants.ByModel;
+        var finished = ecControlScope == TaktEcControlScopeConstants.ByFinishedProduct;
+        var byModel = ecControlScope == TaktEcControlScopeConstants.ByModel;
+        // 生管与制一/制二/品管同一套：按成品 / 按机种 / 按设变（含内部·技术→按设变）
         return deptCode switch
         {
-            TaktEcDeptCodes.Pmc => finished
-                ? TaktEcScopeDedupKind.ModelRoot
-                : byModel
-                    ? TaktEcScopeDedupKind.ModelGroup
-                    : TaktEcScopeDedupKind.ModelOnly,
-            TaktEcDeptCodes.Mc or TaktEcDeptCodes.Smt => TaktEcScopeDedupKind.ModelOnly,
-            TaktEcDeptCodes.Te => TaktEcScopeDedupKind.ModelGroup,
-            TaktEcDeptCodes.Pcba or TaktEcDeptCodes.Assy or TaktEcDeptCodes.Qa => finished
-                ? TaktEcScopeDedupKind.EcRootGroup
+            TaktEcDeptCodes.Pc or TaktEcDeptCodes.Mfg2 or TaktEcDeptCodes.Mfg1 or TaktEcDeptCodes.Qc => finished
+                ? (deptCode == TaktEcDeptCodes.Pc
+                    ? TaktEcScopeDedupKind.ModelRoot
+                    : TaktEcScopeDedupKind.EcRootGroup)
                 : byModel
                     ? TaktEcScopeDedupKind.ModelGroup
                     : TaktEcScopeDedupKind.EcOnlyGroup,
-            TaktEcDeptCodes.Mp or TaktEcDeptCodes.Iqc => TaktEcScopeDedupKind.EcNewGroup,
+            TaktEcDeptCodes.Mc or TaktEcDeptCodes.Mtl => TaktEcScopeDedupKind.ModelOnly,
+            TaktEcDeptCodes.Me => TaktEcScopeDedupKind.ModelGroup,
+            TaktEcDeptCodes.Pur or TaktEcDeptCodes.Iqc => TaktEcScopeDedupKind.EcNewGroup,
             _ => finished || byModel
                 ? TaktEcScopeDedupKind.ModelRoot
                 : TaktEcScopeDedupKind.ModelOnly,
         };
+    }
+
+    /// <summary>
+    /// 执行行去重键。同一键的多条明细共用一条执行记录。键按部门解析后的控制范围计算，不用执行行上可能被写成不管理的值。
+    /// </summary>
+    /// <param name="detail">设变明细</param>
+    /// <param name="deptCode">部门编码</param>
+    /// <param name="masterControlScope">技术课主表控制范围</param>
+    /// <returns>去重键</returns>
+    internal static string BuildExecGrainKey(TaktEcDetail detail, string deptCode, int masterControlScope)
+    {
+        ArgumentNullException.ThrowIfNull(detail);
+        ArgumentException.ThrowIfNullOrWhiteSpace(deptCode);
+        var deptScope = TaktEcControlScopeConstants.ResolveForDept(deptCode, detail.EcImplScope, masterControlScope);
+        return BuildKey(detail, ResolveKind(deptCode, deptScope), deptCode);
     }
 
     /// <summary>
@@ -114,13 +128,13 @@ internal static class TaktEcScopeRowGrain
     /// </summary>
     /// <param name="detail">设变明细</param>
     /// <param name="deptCode">部门编码</param>
-    /// <param name="ecScope">调用方传入的范围参数（去重键用部门实施范围，与明细上的实施范围数值可能撞车，部管资格以明细 EcScope 为准）</param>
+    /// <param name="ecImplScope">调用方传入的范围参数（去重键用部门实施范围，与明细上的实施范围数值可能撞车，部管资格以明细 EcImplScope 为准）</param>
     /// <param name="fertRootKeys">历史参数。制二/制一/品管已改为全量，不再按 FERT 过滤</param>
     /// <returns>是否可生成执行行</returns>
     internal static bool IsEligible(
         TaktEcDetail detail,
         string deptCode,
-        int ecScope,
+        int ecImplScope,
         IReadOnlySet<string>? fertRootKeys)
     {
         ArgumentNullException.ThrowIfNull(detail);
@@ -128,17 +142,17 @@ internal static class TaktEcScopeRowGrain
         {
             return false;
         }
-        if (deptCode is TaktEcDeptCodes.Pcba or TaktEcDeptCodes.Assy or TaktEcDeptCodes.Qa)
+        if (deptCode is TaktEcDeptCodes.Mfg2 or TaktEcDeptCodes.Mfg1 or TaktEcDeptCodes.Qc)
         {
             return true;
         }
-        _ = ecScope;
+        _ = ecImplScope;
         return deptCode switch
         {
             TaktEcDeptCodes.Mc => IsMaterialControlEligible(detail),
-            TaktEcDeptCodes.Smt => TaktEcScopeConstants.IsPcbaC003ExternalGroup(detail.EcNewPurchaseType, detail.EcNewWarehouse)
+            TaktEcDeptCodes.Mtl => TaktEcScopeConstants.IsPcbaC003ExternalGroup(detail.EcNewPurchaseType, detail.EcNewWarehouse)
                 && TaktEcScopeConstants.HasEffectiveNewMaterialCode(detail.EcNewMaterialCode),
-            TaktEcDeptCodes.Mp => TaktEcScopeConstants.IsExternalPurchaseType(detail.EcNewPurchaseType)
+            TaktEcDeptCodes.Pur => TaktEcScopeConstants.IsExternalPurchaseType(detail.EcNewPurchaseType)
                 && TaktEcScopeConstants.HasEffectiveNewMaterialCode(detail.EcNewMaterialCode),
             TaktEcDeptCodes.Iqc => detail.EcNewRequiresInspection == 1
                 && TaktEcScopeConstants.HasEffectiveNewMaterialCode(detail.EcNewMaterialCode),
@@ -153,22 +167,23 @@ internal static class TaktEcScopeRowGrain
     /// <returns>是否可生成部管执行行</returns>
     private static bool IsMaterialControlEligible(TaktEcDetail detail)
     {
-        if (detail.EcScope == TaktEcScopeConstants.Internal
-            || detail.EcScope == TaktEcScopeConstants.Technical)
+        if (detail.EcImplScope == TaktEcScopeConstants.Internal
+            || detail.EcImplScope == TaktEcScopeConstants.Technical)
         {
             return true;
         }
-        return TaktEcScopeConstants.IsBukanVisible(detail.EcNewPurchaseType, detail.EcNewWarehouse)
+        return TaktEcScopeConstants.IsMcVisible(detail.EcNewPurchaseType, detail.EcNewWarehouse)
             && TaktEcScopeConstants.HasEffectiveNewMaterialCode(detail.EcNewMaterialCode);
     }
 
     /// <summary>
-    /// 去重键（忽略大小写比较）
+    /// 去重键（忽略大小写比较）。生管/制一/制二/品管按机种或按设变时追加分道，停产、在产非 FERT 不与在产成品同键。
     /// </summary>
     /// <param name="detail">设变明细</param>
     /// <param name="kind">去重粒度</param>
+    /// <param name="deptCode">部门编码；为空时不分道</param>
     /// <returns>组合键</returns>
-    internal static string BuildKey(TaktEcDetail detail, TaktEcScopeDedupKind kind)
+    internal static string BuildKey(TaktEcDetail detail, TaktEcScopeDedupKind kind, string? deptCode = null)
     {
         ArgumentNullException.ThrowIfNull(detail);
         var ecCode = detail.EcCode ?? string.Empty;
@@ -177,7 +192,7 @@ internal static class TaktEcScopeRowGrain
         var material = detail.EcNewMaterialCode ?? string.Empty;
         var purchaseType = detail.EcNewPurchaseType ?? string.Empty;
         var inspection = detail.EcNewRequiresInspection.ToString();
-        return kind switch
+        var key = kind switch
         {
             TaktEcScopeDedupKind.ModelRoot => $"{ecCode}\u001f{model}\u001f{root}",
             TaktEcScopeDedupKind.ModelGroup or TaktEcScopeDedupKind.ModelOnly => $"{ecCode}\u001f{model}",
@@ -190,6 +205,52 @@ internal static class TaktEcScopeRowGrain
             TaktEcScopeDedupKind.EcRootGroup => $"{ecCode}\u001f{root}",
             _ => $"{ecCode}\u001f{model}\u001f{root}",
         };
+        if (!SplitsOutlierFromLive(deptCode, kind))
+        {
+            return key;
+        }
+        return key + "\u001f" + OutlierLane(detail);
+    }
+
+    /// <summary>
+    /// 生管/制一/制二/品管的按机种、按设变需要把停产和在产非 FERT 从在产成品组拆出。
+    /// </summary>
+    /// <param name="deptCode">部门编码</param>
+    /// <param name="kind">去重粒度</param>
+    /// <returns>需要分道时为 true</returns>
+    private static bool SplitsOutlierFromLive(string? deptCode, TaktEcScopeDedupKind kind)
+    {
+        if (deptCode is not (TaktEcDeptCodes.Pc or TaktEcDeptCodes.Mfg1 or TaktEcDeptCodes.Mfg2 or TaktEcDeptCodes.Qc))
+        {
+            return false;
+        }
+        return kind is TaktEcScopeDedupKind.ModelGroup
+            or TaktEcScopeDedupKind.ModelOnly
+            or TaktEcScopeDedupKind.EcOnlyGroup;
+    }
+
+    /// <summary>
+    /// 分道：在产 FERT、停产 FERT、在产非 FERT、停产非 FERT 各自成行。
+    /// </summary>
+    /// <param name="detail">设变明细</param>
+    /// <returns>live、eol、nonfert 或 eol-nonfert</returns>
+    private static string OutlierLane(TaktEcDetail detail)
+    {
+        var nonFert = IsNonFertRootMaterialType(detail.EcRootMaterialType);
+        var eol = TaktEcScopeConstants.IsEolDiscontinued(detail.DiscontinuedStatus);
+        if (nonFert && eol)
+        {
+            return "eol-nonfert";
+        }
+        if (nonFert)
+        {
+            return "nonfert";
+        }
+        if (eol)
+        {
+            return "eol";
+        }
+        return "live";
     }
 
     /// <summary>
@@ -208,20 +269,20 @@ internal static class TaktEcScopeRowGrain
     /// </summary>
     /// <param name="details">同一设变明细</param>
     /// <param name="deptCode">部门编码</param>
-    /// <param name="ecScope">实施范围</param>
+    /// <param name="ecImplScope">实施范围</param>
     /// <param name="fertRootKeys">可见性过滤用的成品键</param>
     /// <returns>应跳过的明细 Id</returns>
     internal static HashSet<long> BuildLineMaterialSkipIds(
         IReadOnlyList<TaktEcDetail> details,
         string deptCode,
-        int ecScope,
+        int ecImplScope,
         IReadOnlySet<string>? fertRootKeys)
     {
         ArgumentNullException.ThrowIfNull(details);
         var groups = new Dictionary<string, List<TaktEcDetail>>(StringComparer.OrdinalIgnoreCase);
         foreach (var detail in details)
         {
-            if (!IsEligible(detail, deptCode, ecScope, fertRootKeys))
+            if (!IsEligible(detail, deptCode, ecImplScope, fertRootKeys))
             {
                 continue;
             }
@@ -253,29 +314,29 @@ internal static class TaktEcScopeRowGrain
     /// </summary>
     /// <param name="details">同一设变明细</param>
     /// <param name="deptCode">部门编码</param>
-    /// <param name="ecScope">实施范围</param>
+    /// <param name="ecImplScope">实施范围</param>
     /// <param name="fertRootKeys">制一按成品的 FERT 键</param>
     /// <returns>应跳过的明细 Id</returns>
     internal static HashSet<long> BuildSkipIds(
         IReadOnlyList<TaktEcDetail> details,
         string deptCode,
-        int ecScope,
+        int ecImplScope,
         IReadOnlySet<string>? fertRootKeys)
     {
         ArgumentNullException.ThrowIfNull(details);
-        if (deptCode is TaktEcDeptCodes.Mc or TaktEcDeptCodes.Smt)
+        if (deptCode is TaktEcDeptCodes.Mc or TaktEcDeptCodes.Mtl)
         {
-            return BuildLineMaterialSkipIds(details, deptCode, ecScope, fertRootKeys);
+            return BuildLineMaterialSkipIds(details, deptCode, ecImplScope, fertRootKeys);
         }
-        var kind = ResolveKind(deptCode, ecScope);
+        var kind = ResolveKind(deptCode, ecImplScope);
         var groups = new Dictionary<string, List<TaktEcDetail>>(StringComparer.OrdinalIgnoreCase);
         foreach (var detail in details)
         {
-            if (!IsEligible(detail, deptCode, ecScope, fertRootKeys))
+            if (!IsEligible(detail, deptCode, ecImplScope, fertRootKeys))
             {
                 continue;
             }
-            var key = BuildKey(detail, kind);
+            var key = BuildKey(detail, kind, deptCode);
             if (!groups.TryGetValue(key, out var list))
             {
                 list = [];
@@ -304,28 +365,28 @@ internal static class TaktEcScopeRowGrain
     /// <param name="details">同一设变明细</param>
     /// <param name="keeper">本次保留的明细</param>
     /// <param name="deptCode">部门编码</param>
-    /// <param name="ecDeptScope">部门实施范围</param>
+    /// <param name="ecControlScope">部门实施范围</param>
     /// <param name="fertRootKeys">制一按成品的 FERT 键</param>
     /// <returns>组内存在未停产时为 true</returns>
     internal static bool RootGroupHasInProduction(
         IReadOnlyList<TaktEcDetail> details,
         TaktEcDetail keeper,
         string deptCode,
-        int ecDeptScope,
+        int ecControlScope,
         IReadOnlySet<string>? fertRootKeys)
     {
         ArgumentNullException.ThrowIfNull(details);
         ArgumentNullException.ThrowIfNull(keeper);
         ArgumentException.ThrowIfNullOrWhiteSpace(deptCode);
-        var kind = ResolveKind(deptCode, ecDeptScope);
-        var key = BuildKey(keeper, kind);
+        var kind = ResolveKind(deptCode, ecControlScope);
+        var key = BuildKey(keeper, kind, deptCode);
         foreach (var item in details)
         {
-            if (!IsEligible(item, deptCode, ecDeptScope, fertRootKeys))
+            if (!IsEligible(item, deptCode, ecControlScope, fertRootKeys))
             {
                 continue;
             }
-            if (!string.Equals(BuildKey(item, kind), key, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(BuildKey(item, kind, deptCode), key, StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
@@ -343,29 +404,29 @@ internal static class TaktEcScopeRowGrain
     /// <param name="details">同一设变明细</param>
     /// <param name="keeper">本次保留的明细</param>
     /// <param name="deptCode">部门编码</param>
-    /// <param name="ecDeptScope">部门实施范围</param>
+    /// <param name="ecControlScope">部门实施范围</param>
     /// <param name="fertRootKeys">制一按成品的 FERT 键</param>
     /// <returns>整组停产时为 true</returns>
     internal static bool RootGroupAllDiscontinued(
         IReadOnlyList<TaktEcDetail> details,
         TaktEcDetail keeper,
         string deptCode,
-        int ecDeptScope,
+        int ecControlScope,
         IReadOnlySet<string>? fertRootKeys)
     {
         ArgumentNullException.ThrowIfNull(details);
         ArgumentNullException.ThrowIfNull(keeper);
         ArgumentException.ThrowIfNullOrWhiteSpace(deptCode);
-        var kind = ResolveKind(deptCode, ecDeptScope);
-        var key = BuildKey(keeper, kind);
+        var kind = ResolveKind(deptCode, ecControlScope);
+        var key = BuildKey(keeper, kind, deptCode);
         var matched = false;
         foreach (var item in details)
         {
-            if (!IsEligible(item, deptCode, ecDeptScope, fertRootKeys))
+            if (!IsEligible(item, deptCode, ecControlScope, fertRootKeys))
             {
                 continue;
             }
-            if (!string.Equals(BuildKey(item, kind), key, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(BuildKey(item, kind, deptCode), key, StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
@@ -384,29 +445,29 @@ internal static class TaktEcScopeRowGrain
     /// <param name="details">同一设变明细</param>
     /// <param name="keeper">本次保留的明细</param>
     /// <param name="deptCode">部门编码</param>
-    /// <param name="ecDeptScope">部门实施范围</param>
+    /// <param name="ecControlScope">部门实施范围</param>
     /// <param name="fertRootKeys">制一按成品的 FERT 键</param>
     /// <returns>整组非 FERT 时为 true</returns>
     internal static bool RootGroupAllNonFert(
         IReadOnlyList<TaktEcDetail> details,
         TaktEcDetail keeper,
         string deptCode,
-        int ecDeptScope,
+        int ecControlScope,
         IReadOnlySet<string>? fertRootKeys)
     {
         ArgumentNullException.ThrowIfNull(details);
         ArgumentNullException.ThrowIfNull(keeper);
         ArgumentException.ThrowIfNullOrWhiteSpace(deptCode);
-        var kind = ResolveKind(deptCode, ecDeptScope);
-        var key = BuildKey(keeper, kind);
+        var kind = ResolveKind(deptCode, ecControlScope);
+        var key = BuildKey(keeper, kind, deptCode);
         var matched = false;
         foreach (var item in details)
         {
-            if (!IsEligible(item, deptCode, ecDeptScope, fertRootKeys))
+            if (!IsEligible(item, deptCode, ecControlScope, fertRootKeys))
             {
                 continue;
             }
-            if (!string.Equals(BuildKey(item, kind), key, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(BuildKey(item, kind, deptCode), key, StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
@@ -420,36 +481,75 @@ internal static class TaktEcScopeRowGrain
     }
 
     /// <summary>
+    /// 根物料编码组是否含有不是 FERT 的根物料类型。
+    /// </summary>
+    /// <param name="details">同一设变明细</param>
+    /// <param name="keeper">本次保留的明细</param>
+    /// <param name="deptCode">部门编码</param>
+    /// <param name="ecControlScope">部门实施范围</param>
+    /// <param name="fertRootKeys">制一按成品的 FERT 键</param>
+    /// <returns>组内有非 FERT 类型时为 true</returns>
+    internal static bool RootGroupHasNonFert(
+        IReadOnlyList<TaktEcDetail> details,
+        TaktEcDetail keeper,
+        string deptCode,
+        int ecControlScope,
+        IReadOnlySet<string>? fertRootKeys)
+    {
+        ArgumentNullException.ThrowIfNull(details);
+        ArgumentNullException.ThrowIfNull(keeper);
+        ArgumentException.ThrowIfNullOrWhiteSpace(deptCode);
+        var kind = ResolveKind(deptCode, ecControlScope);
+        var key = BuildKey(keeper, kind, deptCode);
+        foreach (var item in details)
+        {
+            if (!IsEligible(item, deptCode, ecControlScope, fertRootKeys))
+            {
+                continue;
+            }
+            if (!string.Equals(BuildKey(item, kind, deptCode), key, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+            if (IsNonFertRootMaterialType(item.EcRootMaterialType))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
     /// 根物料编码组的物料类型。整组都不是 FERT 时，按出现顺序去重，用 / 连接，如 HALB/ROH。
     /// </summary>
     /// <param name="details">同一设变明细</param>
     /// <param name="keeper">本次保留的明细</param>
     /// <param name="deptCode">部门编码</param>
-    /// <param name="ecDeptScope">部门实施范围</param>
+    /// <param name="ecControlScope">部门实施范围</param>
     /// <param name="fertRootKeys">制一按成品的 FERT 键</param>
     /// <returns>物料类型后缀；不是整组非 FERT 时为 null</returns>
     internal static string? RootGroupMaterialTypeSuffix(
         IReadOnlyList<TaktEcDetail> details,
         TaktEcDetail keeper,
         string deptCode,
-        int ecDeptScope,
+        int ecControlScope,
         IReadOnlySet<string>? fertRootKeys)
     {
-        if (!RootGroupAllNonFert(details, keeper, deptCode, ecDeptScope, fertRootKeys))
+        if (!RootGroupAllNonFert(details, keeper, deptCode, ecControlScope, fertRootKeys))
         {
             return null;
         }
-        var kind = ResolveKind(deptCode, ecDeptScope);
-        var key = BuildKey(keeper, kind);
+        var kind = ResolveKind(deptCode, ecControlScope);
+        var key = BuildKey(keeper, kind, deptCode);
         var types = new List<string>();
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var item in details)
         {
-            if (!IsEligible(item, deptCode, ecDeptScope, fertRootKeys))
+            if (!IsEligible(item, deptCode, ecControlScope, fertRootKeys))
             {
                 continue;
             }
-            if (!string.Equals(BuildKey(item, kind), key, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(BuildKey(item, kind, deptCode), key, StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
@@ -469,18 +569,18 @@ internal static class TaktEcScopeRowGrain
     /// <param name="details">同一设变明细</param>
     /// <param name="keeper">本次保留的明细</param>
     /// <param name="deptCode">部门编码</param>
-    /// <param name="ecDeptScope">部门实施范围</param>
+    /// <param name="ecControlScope">部门实施范围</param>
     /// <param name="fertRootKeys">制一按成品的 FERT 键</param>
     /// <returns>写入执行行的停产状态</returns>
     internal static string ResolveRootGroupDiscontinuedStatus(
         IReadOnlyList<TaktEcDetail> details,
         TaktEcDetail keeper,
         string deptCode,
-        int ecDeptScope,
+        int ecControlScope,
         IReadOnlySet<string>? fertRootKeys)
     {
         ArgumentNullException.ThrowIfNull(keeper);
-        if (RootGroupHasInProduction(details, keeper, deptCode, ecDeptScope, fertRootKeys))
+        if (RootGroupHasInProduction(details, keeper, deptCode, ecControlScope, fertRootKeys))
         {
             return TaktEcScopeConstants.PlannedMaterialStatus;
         }
@@ -493,22 +593,22 @@ internal static class TaktEcScopeRowGrain
     /// <param name="details">同一设变明细</param>
     /// <param name="keeper">本次保留的明细</param>
     /// <param name="deptCode">部门编码（仅采购、受检）</param>
-    /// <param name="ecDeptScope">部门实施范围</param>
+    /// <param name="ecControlScope">部门实施范围</param>
     /// <returns>写入执行行的停产状态</returns>
     internal static string ResolvePurchaseInspectDiscontinuedStatus(
         IReadOnlyList<TaktEcDetail> details,
         TaktEcDetail keeper,
         string deptCode,
-        int ecDeptScope)
+        int ecControlScope)
     {
         ArgumentNullException.ThrowIfNull(details);
         ArgumentNullException.ThrowIfNull(keeper);
         var fallback = keeper.DiscontinuedStatus?.Trim() ?? string.Empty;
-        if (deptCode is not (TaktEcDeptCodes.Mp or TaktEcDeptCodes.Iqc))
+        if (deptCode is not (TaktEcDeptCodes.Pur or TaktEcDeptCodes.Iqc))
         {
             return fallback;
         }
-        return ResolveRootGroupDiscontinuedStatus(details, keeper, deptCode, ecDeptScope, null);
+        return ResolveRootGroupDiscontinuedStatus(details, keeper, deptCode, ecControlScope, null);
     }
 
     /// <summary>
@@ -517,7 +617,7 @@ internal static class TaktEcScopeRowGrain
     /// <param name="details">同一设变明细</param>
     /// <param name="keeper">本次保留的明细</param>
     /// <param name="deptCode">部门编码（采购或受检）</param>
-    /// <param name="ecDeptScope">部门实施范围</param>
+    /// <param name="ecControlScope">部门实施范围</param>
     /// <param name="knownRootKeys">工厂物料已建档的工厂+根物料键</param>
     /// <param name="nonFertRootKeys">类型不是 FERT 的工厂+根物料键</param>
     /// <returns>组内存在在产成品时为 true</returns>
@@ -525,7 +625,7 @@ internal static class TaktEcScopeRowGrain
         IReadOnlyList<TaktEcDetail> details,
         TaktEcDetail keeper,
         string deptCode,
-        int ecDeptScope,
+        int ecControlScope,
         IReadOnlySet<string> knownRootKeys,
         IReadOnlySet<string> nonFertRootKeys)
     {
@@ -534,19 +634,19 @@ internal static class TaktEcScopeRowGrain
         ArgumentException.ThrowIfNullOrWhiteSpace(deptCode);
         ArgumentNullException.ThrowIfNull(knownRootKeys);
         ArgumentNullException.ThrowIfNull(nonFertRootKeys);
-        if (deptCode is not (TaktEcDeptCodes.Mp or TaktEcDeptCodes.Iqc))
+        if (deptCode is not (TaktEcDeptCodes.Pur or TaktEcDeptCodes.Iqc))
         {
             return false;
         }
-        var kind = ResolveKind(deptCode, ecDeptScope);
-        var key = BuildKey(keeper, kind);
+        var kind = ResolveKind(deptCode, ecControlScope);
+        var key = BuildKey(keeper, kind, deptCode);
         foreach (var item in details)
         {
-            if (!IsEligible(item, deptCode, ecDeptScope, null))
+            if (!IsEligible(item, deptCode, ecControlScope, null))
             {
                 continue;
             }
-            if (!string.Equals(BuildKey(item, kind), key, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(BuildKey(item, kind, deptCode), key, StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
@@ -570,25 +670,25 @@ internal static class TaktEcScopeRowGrain
     /// </summary>
     /// <param name="details">同一设变明细</param>
     /// <param name="deptCode">部门编码</param>
-    /// <param name="ecScope">实施范围</param>
+    /// <param name="ecImplScope">实施范围</param>
     /// <param name="fertRootKeys">制一按成品的 FERT 键</param>
     /// <returns>键为去重键，值为编码组</returns>
     internal static Dictionary<string, string> BuildRootGroups(
         IReadOnlyList<TaktEcDetail> details,
         string deptCode,
-        int ecScope,
+        int ecImplScope,
         IReadOnlySet<string>? fertRootKeys)
     {
         ArgumentNullException.ThrowIfNull(details);
-        var kind = ResolveKind(deptCode, ecScope);
+        var kind = ResolveKind(deptCode, ecImplScope);
         var buckets = new Dictionary<string, List<string?>>(StringComparer.OrdinalIgnoreCase);
         foreach (var detail in details)
         {
-            if (!IsEligible(detail, deptCode, ecScope, fertRootKeys))
+            if (!IsEligible(detail, deptCode, ecImplScope, fertRootKeys))
             {
                 continue;
             }
-            var key = BuildKey(detail, kind);
+            var key = BuildKey(detail, kind, deptCode);
             if (!buckets.TryGetValue(key, out var codes))
             {
                 codes = [];
@@ -607,16 +707,16 @@ internal static class TaktEcScopeRowGrain
     /// </summary>
     /// <param name="details">同一设变明细</param>
     /// <param name="deptCode">部门编码</param>
-    /// <param name="ecScope">实施范围</param>
+    /// <param name="ecImplScope">实施范围</param>
     /// <param name="fertRootKeys">制一按成品的 FERT 键</param>
     /// <returns>键为去重键，值为机种编码组</returns>
     internal static Dictionary<string, string> BuildModelGroups(
         IReadOnlyList<TaktEcDetail> details,
         string deptCode,
-        int ecScope,
+        int ecImplScope,
         IReadOnlySet<string>? fertRootKeys)
     {
-        return BuildCodeGroups(details, deptCode, ecScope, fertRootKeys, detail => detail.EcModelCode);
+        return BuildCodeGroups(details, deptCode, ecImplScope, fertRootKeys, detail => detail.EcModelCode);
     }
 
     /// <summary>
@@ -624,28 +724,28 @@ internal static class TaktEcScopeRowGrain
     /// </summary>
     /// <param name="details">同一设变明细</param>
     /// <param name="deptCode">部门编码</param>
-    /// <param name="ecScope">实施范围</param>
+    /// <param name="ecImplScope">实施范围</param>
     /// <param name="fertRootKeys">制一按成品的 FERT 键</param>
     /// <param name="pick">从明细取编码</param>
     /// <returns>键为去重键，值为编码组</returns>
     internal static Dictionary<string, string> BuildCodeGroups(
         IReadOnlyList<TaktEcDetail> details,
         string deptCode,
-        int ecScope,
+        int ecImplScope,
         IReadOnlySet<string>? fertRootKeys,
         Func<TaktEcDetail, string?> pick)
     {
         ArgumentNullException.ThrowIfNull(details);
         ArgumentNullException.ThrowIfNull(pick);
-        var kind = ResolveKind(deptCode, ecScope);
+        var kind = ResolveKind(deptCode, ecImplScope);
         var buckets = new Dictionary<string, List<string?>>(StringComparer.OrdinalIgnoreCase);
         foreach (var detail in details)
         {
-            if (!IsEligible(detail, deptCode, ecScope, fertRootKeys))
+            if (!IsEligible(detail, deptCode, ecImplScope, fertRootKeys))
             {
                 continue;
             }
-            var key = BuildKey(detail, kind);
+            var key = BuildKey(detail, kind, deptCode);
             if (!buckets.TryGetValue(key, out var codes))
             {
                 codes = [];
@@ -665,28 +765,28 @@ internal static class TaktEcScopeRowGrain
     /// <param name="detail">当前明细</param>
     /// <param name="siblings">同一设变未作废明细（含当前行）</param>
     /// <param name="deptCode">部门编码</param>
-    /// <param name="ecScope">实施范围</param>
+    /// <param name="ecImplScope">实施范围</param>
     /// <param name="fertRootKeys">制一按成品的 FERT 键</param>
     /// <returns>存在更大 Id 则 true</returns>
     internal static bool HasNewer(
         TaktEcDetail detail,
         IEnumerable<TaktEcDetail> siblings,
         string deptCode,
-        int ecScope,
+        int ecImplScope,
         IReadOnlySet<string>? fertRootKeys)
     {
         ArgumentNullException.ThrowIfNull(detail);
         ArgumentNullException.ThrowIfNull(siblings);
-        if (deptCode is TaktEcDeptCodes.Mc or TaktEcDeptCodes.Smt)
+        if (deptCode is TaktEcDeptCodes.Mc or TaktEcDeptCodes.Mtl)
         {
-            if (!IsEligible(detail, deptCode, ecScope, fertRootKeys))
+            if (!IsEligible(detail, deptCode, ecImplScope, fertRootKeys))
             {
                 return false;
             }
             var lineKey = BuildLineMaterialKey(detail);
             foreach (var sibling in siblings)
             {
-                if (sibling.Id <= detail.Id || !IsEligible(sibling, deptCode, ecScope, fertRootKeys))
+                if (sibling.Id <= detail.Id || !IsEligible(sibling, deptCode, ecImplScope, fertRootKeys))
                 {
                     continue;
                 }
@@ -697,19 +797,19 @@ internal static class TaktEcScopeRowGrain
             }
             return false;
         }
-        if (!IsEligible(detail, deptCode, ecScope, fertRootKeys))
+        if (!IsEligible(detail, deptCode, ecImplScope, fertRootKeys))
         {
             return false;
         }
-        var kind = ResolveKind(deptCode, ecScope);
-        var key = BuildKey(detail, kind);
+        var kind = ResolveKind(deptCode, ecImplScope);
+        var key = BuildKey(detail, kind, deptCode);
         foreach (var sibling in siblings)
         {
-            if (sibling.Id <= detail.Id || !IsEligible(sibling, deptCode, ecScope, fertRootKeys))
+            if (sibling.Id <= detail.Id || !IsEligible(sibling, deptCode, ecImplScope, fertRootKeys))
             {
                 continue;
             }
-            if (string.Equals(BuildKey(sibling, kind), key, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(BuildKey(sibling, kind, deptCode), key, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -753,6 +853,6 @@ internal static class TaktEcScopeRowGrain
     {
         var type = materialType?.Trim() ?? string.Empty;
         return type.Length > 0
-            && !string.Equals(type, TaktEcSeizouikkaConstants.FertMaterialType, StringComparison.OrdinalIgnoreCase);
+            && !string.Equals(type, TaktEcMfg1Constants.FertMaterialType, StringComparison.OrdinalIgnoreCase);
     }
 }

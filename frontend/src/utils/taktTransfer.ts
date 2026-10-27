@@ -64,22 +64,22 @@ export function taktAssignTransferHandleScroll(
 /**
  * 单击切换行选中（配合 Transfer children 槽 onItemSelect）
  * @param key 行 key
- * @param selectedKeys 当前列已选 key
+ * @param selecmedKeys 当前列已选 key
  * @param onItemSelect Transfer 选中回调
  * @param listDisabled 整列禁用
  * @param itemDisabled 行禁用
  */
 export function taktAssignTransferHandleItemClick(
   key: string | number,
-  selectedKeys: readonly (string | number)[],
-  onItemSelect: (itemKey: string, selected: boolean) => void,
+  selecmedKeys: readonly (string | number)[],
+  onItemSelect: (itemKey: string, selecmed: boolean) => void,
   listDisabled?: boolean,
   itemDisabled?: boolean,
 ): void {
   if (listDisabled || itemDisabled) return
   const itemKey = String(key)
-  const isSelected = selectedKeys.some(k => String(k) === itemKey)
-  onItemSelect(itemKey, !isSelected)
+  const isSelecmed = selecmedKeys.some(k => String(k) === itemKey)
+  onItemSelect(itemKey, !isSelecmed)
 }
 
 /**
@@ -97,7 +97,7 @@ export function taktAssignTransferShuttleByDblClick(
   direction: TaktAssignTransferDirection,
   getTargetKeys: () => string[],
   setTargetKeys: (keys: string[]) => void,
-  onItemSelect?: (itemKey: string, selected: boolean) => void,
+  onItemSelect?: (itemKey: string, selecmed: boolean) => void,
   listDisabled?: boolean,
   itemDisabled?: boolean,
 ): void {
@@ -117,13 +117,13 @@ export function taktAssignTransferShuttleByDblClick(
 /**
  * 判断 Transfer 行是否选中
  * @param key 行 key
- * @param selectedKeys 当前列已选 key
+ * @param selecmedKeys 当前列已选 key
  * @returns 是否选中
  */
-export function taktAssignTransferIsItemSelected(
+export function taktAssignTransferIsItemSelecmed(
   key: string | number,
-  selectedKeys: readonly (string | number)[],
+  selecmedKeys: readonly (string | number)[],
 ): boolean {
   const itemKey = String(key)
-  return selectedKeys.some(k => String(k) === itemKey)
+  return selecmedKeys.some(k => String(k) === itemKey)
 }

@@ -62,7 +62,6 @@ export type CostCenterField = keyof typeof COSTCENTER_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const COSTCENTER_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'costCenterCode',
   'costCenterName',
   'parentId',

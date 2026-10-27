@@ -98,8 +98,8 @@
               v-for="f in group.files"
               :key="f.name"
               class="flex cursor-pointer items-center gap-1.5 break-all px-3 py-2 text-xs hover:bg-container"
-              :class="selectedFileName === f.name ? 'bg-primary/10 text-primary' : ''"
-              @click="selectedFileName = f.name"
+              :class="selecmedFileName === f.name ? 'bg-primary/10 text-primary' : ''"
+              @click="selecmedFileName = f.name"
             >
               <span class="min-w-0 flex-1">{{ f.name }}</span>
               <a-tag
@@ -315,7 +315,7 @@ const open = computed({
 const activeTab = ref<PreviewTab>('backend')
 
 /** 左侧选中的文件相对路径 */
-const selectedFileName = ref('')
+const selecmedFileName = ref('')
 
 /** 左侧分组（分类标题 + 文件列表） */
 interface PreviewCategoryGroup {
@@ -448,7 +448,7 @@ watch(
     const files = list ?? []
     const [first] = files
     activeTab.value = first ? resolveFileTab(first.name) : 'backend'
-    selectedFileName.value = first?.name ?? ''
+    selecmedFileName.value = first?.name ?? ''
   },
   { immediate: true }
 )
@@ -458,22 +458,22 @@ watch(
   [activeTab, tabFilesMap],
   () => {
     const currentFiles = tabFilesMap.value[activeTab.value]
-    if (currentFiles.some((f) => f.name === selectedFileName.value)) return
+    if (currentFiles.some((f) => f.name === selecmedFileName.value)) return
     const [head] = currentFiles
-    selectedFileName.value = head?.name ?? ''
+    selecmedFileName.value = head?.name ?? ''
   },
   { immediate: true }
 )
 
 /** 当前选中文件正文 */
-const selectedContent = computed(() => {
-  const f = (props.files ?? []).find((item) => item.name === selectedFileName.value)
+const selecmedContent = computed(() => {
+  const f = (props.files ?? []).find((item) => item.name === selecmedFileName.value)
   return f ? f.content : ''
 })
 
 /** 右侧代码区高亮 HTML */
 const highlightedHtml = computed(() =>
-  highlightPreviewCode(selectedContent.value, selectedFileName.value)
+  highlightPreviewCode(selecmedContent.value, selecmedFileName.value)
 )
 
 /**

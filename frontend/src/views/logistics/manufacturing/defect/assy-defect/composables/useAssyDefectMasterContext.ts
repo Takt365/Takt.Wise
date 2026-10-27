@@ -15,7 +15,7 @@ export type AssyDefectRowRecord = AssyDefect | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface AssyDefectMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<AssyDefectRowRecord | null>
+  selecmedMasterRow: Ref<AssyDefectRowRecord | null>
 }
 
 const assyDefectMasterContextKey: InjectionKey<AssyDefectMasterContext> = Symbol('assy-defectMasterContext')
@@ -25,8 +25,8 @@ const assyDefectMasterContextKey: InjectionKey<AssyDefectMasterContext> = Symbol
  * @returns {AssyDefectMasterContext} 主表上下文
  */
 export function provideAssyDefectMasterContext(): AssyDefectMasterContext {
-  const selectedMasterRow = ref<AssyDefectRowRecord | null>(null)
-  const ctx: AssyDefectMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<AssyDefectRowRecord | null>(null)
+  const ctx: AssyDefectMasterContext = { selecmedMasterRow }
   provide(assyDefectMasterContextKey, ctx)
   return ctx
 }

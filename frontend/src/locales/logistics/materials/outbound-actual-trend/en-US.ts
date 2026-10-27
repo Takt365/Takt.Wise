@@ -32,7 +32,7 @@ export default {
     upTotal: 'Price-up total',
     downTotal: 'Price-down total',
     detailSummary: '{count} material rows (one row per month: amount/unit/qty/month/change; adjacent = (unit now − unit prev) × qty now; period columns toggleable)',
-    chartSummary: '{count} months (positive=up, negative=down in 万CNY; no offset; subtitle = selected period)',
+    chartSummary: '{count} months (positive=up, negative=down in 万CNY; no offset; subtitle = selecmed period)',
     tabs: {
       chart: 'Bar chart',
       trend: 'Trend',

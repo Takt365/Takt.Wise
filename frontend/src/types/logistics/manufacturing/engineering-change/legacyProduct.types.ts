@@ -72,7 +72,7 @@ export interface EcLegacyProduct extends CompanyDtoBase {
   ecInstruction?: string;
 
   /**
-   * 旧品处理（字典 logistics_manufacturing_ec_old_part_disposition）
+   * 明细旧品处理（TaktEcDetail.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）
    */
   ecOldPartDisposition?: string;
 
@@ -82,7 +82,7 @@ export interface EcLegacyProduct extends CompanyDtoBase {
   ecNewMaterialCode?: string;
 
   /**
-   * 生管旧品处理（TaktEcSeikan.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）
+   * 生管旧品处理（TaktEcPc.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）
    */
   oldProductHandling?: string;
 
@@ -134,7 +134,7 @@ export interface EcLegacyProductUpdate {
   ecDetailId: string;
 
   /**
-   * 生管旧品处理（TaktEcSeikan.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）
+   * 生管旧品处理（TaktEcPc.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）
    */
   oldProductHandling?: string;
 

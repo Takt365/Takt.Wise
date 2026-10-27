@@ -104,7 +104,7 @@ const { t } = useI18n()
 /** 实体字段 i18n */
 const pi = useBomMaterialCostI18n()
 /** 三层选中上下文 */
-const { selectedModelGroup, selectedProductRow } = useBomMaterialCostMasterContext()
+const { selecmedModelGroup, selecmedProductRow } = useBomMaterialCostMasterContext()
 
 /** 次子表面板 ref */
 const itemPanelRef = ref<InstanceType<typeof BomMaterialCostItemPanel> | null>(null)
@@ -119,7 +119,7 @@ const productPageSize = ref(getTaktDefaultPageSize())
 /** 产品 total */
 const productTotal = ref(0)
 /** 产品多选 keys */
-const productSelectedKeys = ref<(string | number)[]>([])
+const productSelecmedKeys = ref<(string | number)[]>([])
 /** 中栏表格容器 */
 const productTableWrapRef = ref<HTMLElement | null>(null)
 /** 中栏 scroll.y */
@@ -129,11 +129,11 @@ let productTableScrollResizeObserver: ResizeObserver | null = null
 
 /** 是否已选机种组 */
 const hasModelGroup = computed(() => {
-  const g = selectedModelGroup.value as Record<string, unknown> | null
+  const g = selecmedModelGroup.value as Record<string, unknown> | null
   return !!(g?.plantCode && g?.modelCode && g?.costingPeriod)
 })
 /** 是否已选产品行 */
-const hasProductSelection = computed(() => !!selectedProductRow.value)
+const hasProductSelection = computed(() => !!selecmedProductRow.value)
 
 /** 产品列默认可见 */
 const productVisibleKeys = ref([
@@ -228,15 +228,15 @@ function handleProductResizeColumn(width: number, column: { width?: number }) {
  * @param record 产品行
  */
 function syncProductSelection(record: BomMaterialCostRowRecord | null) {
-  selectedProductRow.value = record
+  selecmedProductRow.value = record
 }
 
 /** 产品行选择 */
 const productRowSelection = computed(() => ({
   type: 'radio' as const,
-  selectedRowKeys: productSelectedKeys.value,
+  selecmedRowKeys: productSelecmedKeys.value,
   onChange: (keys: (string | number)[], rows: BomMaterialCostRowRecord[]) => {
-    productSelectedKeys.value = keys
+    productSelecmedKeys.value = keys
     syncProductSelection(rows[0] ?? null)
   },
 }))
@@ -249,11 +249,11 @@ function onProductClickRow(record: BomMaterialCost) {
   const key = getProductRowKey(record)
   return {
     onClick: () => {
-      productSelectedKeys.value = [key]
+      productSelecmedKeys.value = [key]
       syncProductSelection(record)
     },
-    class: productSelectedKeys.value.includes(key)
-      ? 'takt-master-detail-table-row-selected cursor-pointer'
+    class: productSelecmedKeys.value.includes(key)
+      ? 'takt-master-detail-table-row-selecmed cursor-pointer'
       : 'cursor-pointer',
   }
 }
@@ -292,11 +292,11 @@ function stopProductTableScrollObserve(): void {
  * @returns {Promise<void>}
  */
 async function loadProductData() {
-  const g = selectedModelGroup.value as Record<string, unknown> | null
+  const g = selecmedModelGroup.value as Record<string, unknown> | null
   if (!g?.plantCode || !g?.modelCode || !g?.costingPeriod) {
     productDataSource.value = []
     productTotal.value = 0
-    productSelectedKeys.value = []
+    productSelecmedKeys.value = []
     syncProductSelection(null)
     return
   }
@@ -315,15 +315,15 @@ async function loadProductData() {
     productTotal.value = res.total ?? 0
     if (productDataSource.value.length === 1) {
       const only = productDataSource.value[0]!
-      productSelectedKeys.value = [getProductRowKey(only)]
+      productSelecmedKeys.value = [getProductRowKey(only)]
       syncProductSelection(only)
     } else if (
-      selectedProductRow.value
+      selecmedProductRow.value
       && !productDataSource.value.some(
-        (r) => getProductRowKey(r) === getProductRowKey(selectedProductRow.value as BomMaterialCostRowRecord),
+        (r) => getProductRowKey(r) === getProductRowKey(selecmedProductRow.value as BomMaterialCostRowRecord),
       )
     ) {
-      productSelectedKeys.value = []
+      productSelecmedKeys.value = []
       syncProductSelection(null)
     }
   } catch (error: unknown) {
@@ -350,12 +350,12 @@ function reload() {
 
 watch(
   () => {
-    const g = selectedModelGroup.value as Record<string, unknown> | null
+    const g = selecmedModelGroup.value as Record<string, unknown> | null
     return `${g?.plantCode ?? ''}|${g?.materialType ?? ''}|${g?.modelCode ?? ''}|${g?.costingPeriod ?? ''}`
   },
   () => {
     productPage.value = getTaktDefaultPageIndex()
-    productSelectedKeys.value = []
+    productSelecmedKeys.value = []
     syncProductSelection(null)
     void loadProductData()
   },

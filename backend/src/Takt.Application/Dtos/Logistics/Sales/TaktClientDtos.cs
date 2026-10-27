@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Sales
 // 文件名称：TaktClientDtos.cs
-// 创建时间：2026-10-14
+// 创建时间：2026-10-27
 // 创建人：Takt365(Auto Generated)
 // 功能描述：Client 模块 DTO（由 generate-dtos-from-entity.cjs 根据 TaktClient 生成，请按需审阅）
 // 
@@ -36,7 +36,7 @@ public class TaktClientDto : TaktCompanyDtoBase
     public long ClientId { get; set; }
 
     /// <summary>
-    /// 客户端编码（与公司、销售组织共同唯一）
+    /// 客户端编码（与租户、公司、销售组织共同唯一；前端表单选择编码规则后自动通过 TaktNumbering 客户端编码规则生成并展示，非手输；单据类型菜单：顾客信息）
     /// </summary>
     public string ClientCode { get; set; } = string.Empty;
 
@@ -348,7 +348,7 @@ public class TaktClientQueryDto : TaktPagedQuery
     public string? PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 客户端编码（与公司、销售组织共同唯一）
+    /// 客户端编码（与租户、公司、销售组织共同唯一；前端表单选择编码规则后自动通过 TaktNumbering 客户端编码规则生成并展示，非手输；单据类型菜单：顾客信息）
     /// </summary>
     public string? ClientCode { get; set; } = string.Empty;
 
@@ -678,13 +678,13 @@ public class TaktClientCreateDto
     public string PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 客户端编码（与公司、销售组织共同唯一；前端表单选择编码规则后自动通过 TaktNumbering 客户端编码规则生成并展示，非手输；单据类型菜单：顾客信息）
+    /// 客户端编码（与租户、公司、销售组织共同唯一；前端表单选择编码规则后自动通过 TaktNumbering 客户端编码规则生成并展示，非手输；单据类型菜单：顾客信息）
     /// </summary>
-    [Required(ErrorMessage = "客户端编码（与公司、销售组织共同唯一）不能为空")]
+    [Required(ErrorMessage = "客户端编码（与租户、公司、销售组织共同唯一；前端表单选择编码规则后自动通过 TaktNumbering 客户端编码规则生成并展示，非手输；单据类型菜单：顾客信息）不能为空")]
     public string ClientCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 编码规则编码（新增时选择顾客信息编码规则后取号；对应 TaktNumbering.RuleCode；不落库）
+    /// 编码规则编码（前端表单从 TaktNumberings/options 选择；对应 TaktNumbering.RuleCode；不落库）
     /// </summary>
     public string? NumberingRuleCode { get; set; }
 
@@ -1086,7 +1086,7 @@ public class TaktClientTemplateDto
     public string? PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 客户端编码（与公司、销售组织共同唯一）
+    /// 客户端编码（与租户、公司、销售组织共同唯一；前端表单选择编码规则后自动通过 TaktNumbering 客户端编码规则生成并展示，非手输；单据类型菜单：顾客信息）
     /// </summary>
     public string? ClientCode { get; set; } = string.Empty;
 
@@ -1398,7 +1398,7 @@ public class TaktClientImportDto
     public string? PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 客户端编码（与公司、销售组织共同唯一）
+    /// 客户端编码（与租户、公司、销售组织共同唯一；前端表单选择编码规则后自动通过 TaktNumbering 客户端编码规则生成并展示，非手输；单据类型菜单：顾客信息）
     /// </summary>
     public string? ClientCode { get; set; } = string.Empty;
 
@@ -1716,7 +1716,7 @@ public class TaktClientExportDto
     public string CultureCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 客户端编码（与公司、销售组织共同唯一）
+    /// 客户端编码（与租户、公司、销售组织共同唯一；前端表单选择编码规则后自动通过 TaktNumbering 客户端编码规则生成并展示，非手输；单据类型菜单：顾客信息）
     /// </summary>
     public string ClientCode { get; set; } = string.Empty;
 

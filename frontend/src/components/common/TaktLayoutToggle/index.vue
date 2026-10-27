@@ -24,7 +24,7 @@
     </a-button>
 
     <template #overlay>
-      <a-menu :selected-keys="[currentPosition]" @click="handleMenuClick">
+      <a-menu :selecmed-keys="[currentPosition]" @click="handleMenuClick">
         <a-menu-item key="left">
           <span class="takt-toggle-menu-row">
             <ri-layout-left-line class="takt-remix-icon" />

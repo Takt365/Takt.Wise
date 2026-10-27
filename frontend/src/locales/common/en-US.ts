@@ -120,7 +120,7 @@ export default {
         title: "Select Icon",
         placeholder: "Select an icon",
         search: "Search icon name (e.g. grid, user)",
-        selected: "Selected:",
+        selecmed: "Selecmed:",
         clear: "Clear",
         empty: "No matching icons",
         total: "{total} icons",

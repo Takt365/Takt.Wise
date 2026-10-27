@@ -267,33 +267,33 @@ public abstract class TaktEcDeptViewServiceBase : TaktServiceBase
     private Expression<Func<TaktEcDetail, bool>> BuildDetailQueryExpression(TaktEcDeptViewQueryDto queryDto)
     {
         var exp = Expressionable.Create<TaktEcDetail>();
-        if (DeptCode == TaktEcDeptCodes.Pmc)
+        if (DeptCode == TaktEcDeptCodes.Pc)
         {
-            exp = exp.And(TaktEcSeikanQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcPcQueryHelper.VisibleDetailExpression());
         }
-        else if (DeptCode == TaktEcDeptCodes.Mp)
+        else if (DeptCode == TaktEcDeptCodes.Pur)
         {
-            exp = exp.And(TaktEcKoubaiQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcPurQueryHelper.VisibleDetailExpression());
         }
         else if (DeptCode == TaktEcDeptCodes.Iqc)
         {
-            exp = exp.And(TaktEcUkekenQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcIqcQueryHelper.VisibleDetailExpression());
         }
         else if (DeptCode == TaktEcDeptCodes.Mc)
         {
-            exp = exp.And(TaktEcBukanQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcMcQueryHelper.VisibleDetailExpression());
         }
-        else if (DeptCode == TaktEcDeptCodes.Assy)
+        else if (DeptCode == TaktEcDeptCodes.Mfg1)
         {
-            exp = exp.And(TaktEcSeizouikkaQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcMfg1QueryHelper.VisibleDetailExpression());
         }
-        else if (DeptCode == TaktEcDeptCodes.Qa)
+        else if (DeptCode == TaktEcDeptCodes.Qc)
         {
-            exp = exp.And(TaktEcHinkanQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcQcQueryHelper.VisibleDetailExpression());
         }
-        else if (DeptCode == TaktEcDeptCodes.Te)
+        else if (DeptCode == TaktEcDeptCodes.Me)
         {
-            exp = exp.And(TaktEcSeizougijutsuQueryHelper.VisibleDetailExpression());
+            exp = exp.And(TaktEcMeQueryHelper.VisibleDetailExpression());
         }
         if (!string.IsNullOrEmpty(queryDto.KeyWords))
         {
@@ -325,16 +325,16 @@ public abstract class TaktEcDeptViewServiceBase : TaktServiceBase
             var flag = queryDto.IsImplemented.Value;
             exp = DeptCode switch
             {
-                TaktEcDeptCodes.Pmc => exp.And(x => SqlFunc.Subqueryable<TaktEcSeikan>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
-                TaktEcDeptCodes.Mp => exp.And(x => SqlFunc.Subqueryable<TaktEcKoubai>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
-                TaktEcDeptCodes.Iqc => exp.And(x => SqlFunc.Subqueryable<TaktEcUkeken>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
-                TaktEcDeptCodes.Mc => exp.And(x => SqlFunc.Subqueryable<TaktEcBukan>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
-                TaktEcDeptCodes.Pcba => exp.And(x =>
-                    SqlFunc.Subqueryable<TaktEcEmtl>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()
-                    || SqlFunc.Subqueryable<TaktEcSeizounika>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
-                TaktEcDeptCodes.Assy => exp.And(x => SqlFunc.Subqueryable<TaktEcSeizouikka>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
-                TaktEcDeptCodes.Qa => exp.And(x => SqlFunc.Subqueryable<TaktEcHinkan>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
-                TaktEcDeptCodes.Te => exp.And(x => SqlFunc.Subqueryable<TaktEcSeizougijutsu>().Where(d => d.EcDetailId == x.Id && d.IsImplemented == flag).Any()),
+                TaktEcDeptCodes.Pc => exp.And(x => SqlFunc.Subqueryable<TaktEcPc>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()),
+                TaktEcDeptCodes.Pur => exp.And(x => SqlFunc.Subqueryable<TaktEcPur>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()),
+                TaktEcDeptCodes.Iqc => exp.And(x => SqlFunc.Subqueryable<TaktEcIqc>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()),
+                TaktEcDeptCodes.Mc => exp.And(x => SqlFunc.Subqueryable<TaktEcMc>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()),
+                TaktEcDeptCodes.Mfg2 => exp.And(x =>
+                    SqlFunc.Subqueryable<TaktEcMtl>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()
+                    || SqlFunc.Subqueryable<TaktEcMfg2>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()),
+                TaktEcDeptCodes.Mfg1 => exp.And(x => SqlFunc.Subqueryable<TaktEcMfg1>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()),
+                TaktEcDeptCodes.Qc => exp.And(x => SqlFunc.Subqueryable<TaktEcQc>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()),
+                TaktEcDeptCodes.Me => exp.And(x => SqlFunc.Subqueryable<TaktEcMe>().Where(d => d.EcCode == x.EcCode && d.IsImplemented == flag).Any()),
                 _ => exp
             };
         }

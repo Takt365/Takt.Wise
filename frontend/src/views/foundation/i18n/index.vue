@@ -36,8 +36,8 @@
       :show-transpose="true"
       :show-refresh="true"
       :create-disabled="false"
-      :update-disabled="!translationSelectedRow"
-      :delete-disabled="translationSelectedRows.length === 0"
+      :update-disabled="!translationSelecmedRow"
+      :delete-disabled="translationSelecmedRows.length === 0"
       :create-loading="translationLoading"
       :update-loading="translationLoading"
       :delete-loading="translationLoading"
@@ -308,11 +308,11 @@ const translationTotal = ref(0)
 /** 列表数据源 */
 const translationDataSource = ref<Translation[]>([])
 /** 选中行 keys */
-const translationSelectedRowKeys = ref<(string | number)[]>([])
+const translationSelecmedRowKeys = ref<(string | number)[]>([])
 /** 选中行 */
-const translationSelectedRows = ref<Translation[]>([])
+const translationSelecmedRows = ref<Translation[]>([])
 /** 单选行（编辑） */
-const translationSelectedRow = ref<Translation | null>(null)
+const translationSelecmedRow = ref<Translation | null>(null)
 /** 转置表单可见 */
 const translationTransposedFormVisible = ref(false)
 /** 转置表单标题 */
@@ -524,11 +524,11 @@ const transposedTableRows = computed(() => {
 
 /** 行选择 */
 const translationRowSelection = computed(() => ({
-  selectedRowKeys: translationSelectedRowKeys.value,
+  selecmedRowKeys: translationSelecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: Translation[]) => {
-    translationSelectedRowKeys.value = keys
-    translationSelectedRows.value = rows
-    translationSelectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    translationSelecmedRowKeys.value = keys
+    translationSelecmedRows.value = rows
+    translationSelecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   }
 }))
 
@@ -670,11 +670,11 @@ const handleTranslationCreate = () => {
 }
 
 const handleTranslationUpdate = async () => {
-  if (!translationSelectedRow.value) {
+  if (!translationSelecmedRow.value) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: t('entity.translation._self') }))
     return
   }
-  await openTransposedEditFromRecord(translationSelectedRow.value)
+  await openTransposedEditFromRecord(translationSelecmedRow.value)
 }
 
 const handleTranslationEditOne = (record: Translation) => {
@@ -692,9 +692,9 @@ const handleTranslationDeleteOne = async (record: Translation) => {
     message.success(t('common.feedback.deleted'))
     refreshPageData()
     const k = record.translationId
-    translationSelectedRowKeys.value = translationSelectedRowKeys.value.filter((x) => x !== k)
-    translationSelectedRows.value = translationSelectedRows.value.filter((r) => r.translationId !== k)
-    if (translationSelectedRow.value?.translationId === k) translationSelectedRow.value = null
+    translationSelecmedRowKeys.value = translationSelecmedRowKeys.value.filter((x) => x !== k)
+    translationSelecmedRows.value = translationSelecmedRows.value.filter((r) => r.translationId !== k)
+    if (translationSelecmedRow.value?.translationId === k) translationSelecmedRow.value = null
   } catch (e) {
     logger.error('[Translation] 删除失败', undefined, e)
     message.error(t('common.feedback.delete.failed'))
@@ -704,19 +704,19 @@ const handleTranslationDeleteOne = async (record: Translation) => {
 }
 
 const handleTranslationDelete = async () => {
-  if (translationSelectedRows.value.length === 0) {
+  if (translationSelecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: t('entity.translation._self') }))
     return
   }
-  const ids = translationSelectedRows.value.map((r) => r.translationId).filter(Boolean) as string[]
+  const ids = translationSelecmedRows.value.map((r) => r.translationId).filter(Boolean) as string[]
   try {
     translationLoading.value = true
     for (const id of ids) await deleteTranslationById(id)
     message.success(t('common.feedback.deleted'))
     refreshPageData()
-    translationSelectedRowKeys.value = []
-    translationSelectedRows.value = []
-    translationSelectedRow.value = null
+    translationSelecmedRowKeys.value = []
+    translationSelecmedRows.value = []
+    translationSelecmedRow.value = null
   } catch (e) {
     logger.error('[Translation] 删除失败', undefined, e)
     message.error(t('common.feedback.delete.failed'))

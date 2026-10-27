@@ -14,18 +14,26 @@
  * 设变批次转置阶段编码
  */
 export const TaktEcBatchStageCodes = {
+  PurchaseOrder: 'PurchaseOrder',
   Scheduled: 'Scheduled',
+  IncomingInspection: 'IncomingInspection',
   Outbound: 'Outbound',
+  ElectronicOutbound: 'ElectronicOutbound',
   PcbaProduction: 'PcbaProduction',
   AssyProduction: 'AssyProduction',
   SampleInspection: 'SampleInspection',
+  TechSop: 'TechSop',
 } as const;
 
 /** 转置表列顺序（与后端 TaktEcBatchStageCodes.TransposedOrder 一致） */
 export const TaktEcBatchStageTransposedOrder: readonly string[] = [
   TaktEcBatchStageCodes.Scheduled,
+  TaktEcBatchStageCodes.PurchaseOrder,
+  TaktEcBatchStageCodes.IncomingInspection,
   TaktEcBatchStageCodes.Outbound,
-  TaktEcBatchStageCodes.PcbaProduction,
-  TaktEcBatchStageCodes.AssyProduction,
+  TaktEcBatchStageCodes.ElectronicOutbound,
+  TaktEcBatchStageCodes.Mfg2Production,
+  TaktEcBatchStageCodes.Mfg1Production,
   TaktEcBatchStageCodes.SampleInspection,
+  TaktEcBatchStageCodes.TechSop,
 ];

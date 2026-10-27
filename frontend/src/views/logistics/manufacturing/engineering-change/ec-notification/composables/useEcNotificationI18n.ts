@@ -20,7 +20,7 @@ export const ECNOTIFICATION_SELF_I18N_KEY = buildEntitySelfI18nKey(ECNOTIFICATIO
 /** 列表业务列（不含主键；对齐 TaktEcNotification 属性小驼峰） */
 export const ECNOTIFICATION_LIST_FIELDS = [
   'ecNotificationCode',
-  'ecGijutsuId',
+  'ecTeId',
   'ecCode',
   'ecTitle',
   'ecNotificationDate',
@@ -39,7 +39,7 @@ export const ECNOTIFICATION_PLACEHOLDER = {
   cultureCode: 'optional',
   plantCode: 'select',
   ecNotificationCode: 'required',
-  ecGijutsuId: 'required',
+  ecTeId: 'required',
   ecCode: 'required',
   ecTitle: 'optional',
   ecNotificationDate: 'select',
@@ -58,9 +58,8 @@ export type EcNotificationField = keyof typeof ECNOTIFICATION_PLACEHOLDER
 
 /** 高级查询可 trim 的字符串字段（对齐 QueryDto 小驼峰） */
 export const ECNOTIFICATION_QUERY_STRING_FIELDS = [
-  'plantCode',
   'ecNotificationCode',
-  'ecGijutsuId',
+  'ecTeId',
   'ecCode',
   'ecTitle',
   'ecNotificationDateStart',

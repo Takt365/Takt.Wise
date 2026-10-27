@@ -72,7 +72,6 @@ export type EmployeeExperienceField = keyof typeof EMPLOYEEEXPERIENCE_PLACEHOLDE
 /** 高级查询可 trim 的字符串字段 */
 export const EMPLOYEEEXPERIENCE_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'employeeCode',
   'employeeName',
   'companyName',

@@ -69,7 +69,7 @@
       :current-path="currentPath"
       :parent-path="parentPath"
       :items="items"
-      :selected-path="selectedPath"
+      :selecmed-path="selecmedPath"
       :empty-hint="emptyHint"
       :address-placeholder="addressPlaceholder"
       :panel-height="panelHeight"
@@ -160,7 +160,7 @@ const creating = ref(false)
 const currentPath = ref('')
 const parentPath = ref<string | null>(null)
 const items = ref<TaktDirectoryExploreItem[]>([])
-const selectedPath = ref('')
+const selecmedPath = ref('')
 
 const authState = reactive({
   userName: '',
@@ -214,7 +214,7 @@ const canCreateHere = computed(() => {
     if (cur && !isFolderExplorerLocalRoot(cur) && /^[A-Za-z]:/.test(cur)) {
       return true
     }
-    const sel = String(selectedPath.value || '').trim()
+    const sel = String(selecmedPath.value || '').trim()
     return !!sel && /^[A-Za-z]:[\\/]?$/.test(sel)
   }
   if (props.method === 'fileserver') {
@@ -233,7 +233,7 @@ function resolveCreateParent(): string {
     if (cur && !isFolderExplorerLocalRoot(cur) && /^[A-Za-z]:/.test(cur)) {
       return cur.replace(/\\+$/, '') || cur
     }
-    const sel = String(selectedPath.value || '').trim()
+    const sel = String(selecmedPath.value || '').trim()
     if (/^[A-Za-z]:[\\/]?$/.test(sel)) {
       return sel.replace(/[\\/]+$/, '') || sel
     }
@@ -323,9 +323,9 @@ async function load(path?: string | null) {
     )
     // 进入目录后选中当前目录；回到「此电脑」清空选中
     if (props.method === 'server' && !res.currentPath) {
-      selectedPath.value = ''
+      selecmedPath.value = ''
     } else {
-      selectedPath.value = res.currentPath || ''
+      selecmedPath.value = res.currentPath || ''
     }
     emit('update:path', currentPath.value)
   } catch (error) {
@@ -384,7 +384,7 @@ function refresh() {
  * @param path 选中
  */
 function onSelectPath(path: string) {
-  selectedPath.value = path
+  selecmedPath.value = path
   emit('select', path)
 }
 
@@ -428,7 +428,7 @@ async function onCreateFolder(name: string) {
     })
     message.success(t('components.common.page.directoryexplore.createfoldersuccess'))
     await load(refreshPath)
-    selectedPath.value = target
+    selecmedPath.value = target
   } catch (error) {
     logger.error('[TaktDirectoryExplore] mkdir failed', { error })
     message.error(
@@ -454,7 +454,7 @@ async function createFolder() {
  */
 async function resolveConfirmPath(ensure = true): Promise<string> {
   const mode = explorerMode.value
-  let path = resolveFolderExplorerConfirmPath(mode, currentPath.value, selectedPath.value)
+  let path = resolveFolderExplorerConfirmPath(mode, currentPath.value, selecmedPath.value)
   if (!path) {
     return ''
   }
@@ -505,7 +505,7 @@ async function resolveConfirmPath(ensure = true): Promise<string> {
 function getValues() {
   return {
     method: props.method,
-    path: resolveFolderExplorerConfirmPath(explorerMode.value, currentPath.value, selectedPath.value),
+    path: resolveFolderExplorerConfirmPath(explorerMode.value, currentPath.value, selecmedPath.value),
     userName: props.method === 'ftp' ? ftpState.userName : authState.userName,
     password: props.method === 'ftp' ? ftpState.password : authState.password,
     host: ftpState.host,
@@ -531,7 +531,7 @@ watch(
     ftpState.userName = props.initialUserName || ''
     ftpState.password = ''
     newFolderName.value = ''
-    selectedPath.value = props.initialPath || ''
+    selecmedPath.value = props.initialPath || ''
     currentPath.value = props.initialPath || (props.method === 'ftp' ? '/' : '')
     items.value = []
     parentPath.value = null
@@ -559,7 +559,7 @@ defineExpose({
   createFolder,
   resolveConfirmPath,
   getValues,
-  getSelectedPath: () => selectedPath.value,
+  getSelecmedPath: () => selecmedPath.value,
   getCurrentPath: () => currentPath.value,
 })
 </script>

@@ -69,11 +69,7 @@ public class TaktEcLegacyProductService : TaktServiceBase, ITaktEcLegacyProductS
             queryDto.PageSize,
             x => x.EcCode,
             false);
-        var rows = new List<TaktEcLegacyProductDto>();
-        foreach (var detail in details)
-        {
-            rows.Add(await MapLegacyProductRowAsync(detail));
-        }
+        var rows = await MapLegacyProductRowsAsync(details);
         return TaktPagedResult<TaktEcLegacyProductDto>.Create(rows, total, queryDto.PageIndex, queryDto.PageSize);
     }
 
@@ -128,32 +124,46 @@ public class TaktEcLegacyProductService : TaktServiceBase, ITaktEcLegacyProductS
         EnsureThreeLayerContext();
         var predicate = QueryExpression(query ?? new TaktEcLegacyProductQueryDto());
         var list = await _ecDetailRepository.GetListForExportAsync(predicate);
-        var rows = new List<TaktEcLegacyProductDto>();
-        foreach (var detail in list)
-        {
-            rows.Add(await MapLegacyProductRowAsync(detail));
-        }
+        var rows = await MapLegacyProductRowsAsync(list);
         var (sheet, fileBase) = TaktNamingHelper.ResolveExcelImportExport(sheetName, fileName, "TaktEcLegacyProduct");
         return await TaktExcelHelper.ExportAsync(rows, sheet, fileBase);
     }
 
     /// <summary>
-    /// 映射旧品管制行
+    /// 映射单条旧品管制行，并带上生管、采购旧品处理。
     /// </summary>
     /// <param name="detail">设变明细</param>
     /// <returns>旧品管制 DTO</returns>
     private async Task<TaktEcLegacyProductDto> MapLegacyProductRowAsync(TaktEcDetail detail)
     {
-        var dto = detail.Adapt<TaktEcLegacyProductDto>();
-        dto.EcDetailId = detail.Id;
-        dto.EcLegacyProductId = detail.Id;
-        dto.EcIsCompatible = detail.EcIsCompatible;
-        dto.Ec2ndVendor = detail.Ec2ndVendor;
-        dto.EcInstruction = detail.EcInstruction;
-        dto.EcOldPartDisposition = detail.EcOldPartDisposition;
-        var pmc = await _ecExecDeptAccess.PmcRepository.FirstAsync(x => x.EcDetailId == detail.Id);
-        dto.OldProductHandling = pmc?.EcOldPartDisposition;
-        return dto;
+        var rows = await MapLegacyProductRowsAsync([detail]);
+        return rows[0];
+    }
+    /// <summary>
+    /// 按明细批量关联生管、采购旧品处理。
+    /// </summary>
+    /// <param name="details">设变明细</param>
+    /// <returns>旧品管制 DTO</returns>
+    private async Task<List<TaktEcLegacyProductDto>> MapLegacyProductRowsAsync(IReadOnlyList<TaktEcDetail> details)
+    {
+        var dispositions = await _ecExecDeptAccess.ListPcOldPartDispositionByDetailsAsync(details);
+        var rows = new List<TaktEcLegacyProductDto>(details.Count);
+        foreach (var detail in details)
+        {
+            var dto = detail.Adapt<TaktEcLegacyProductDto>();
+            dto.EcDetailId = detail.Id;
+            dto.EcLegacyProductId = detail.Id;
+            dto.EcIsCompatible = detail.EcIsCompatible;
+            dto.Ec2ndVendor = detail.Ec2ndVendor;
+            dto.EcInstruction = detail.EcInstruction;
+            dto.EcOldPartDisposition = detail.EcOldPartDisposition;
+            if (dispositions.TryGetValue(detail.Id, out var pcDisposition))
+            {
+                dto.OldProductHandling = pcDisposition;
+            }
+            rows.Add(dto);
+        }
+        return rows;
     }
 
     /// <summary>

@@ -73,7 +73,6 @@ export type DocumentVersionField = keyof typeof DOCUMENTVERSION_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const DOCUMENTVERSION_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'versionNote',
   'fileId',
   'revisedBy',

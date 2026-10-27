@@ -170,7 +170,6 @@ export type ProductionEquipmentField = keyof typeof PRODUCTIONEQUIPMENT_PLACEHOL
 
 /** 高级查询可 trim 的字符串字段 */
 export const PRODUCTIONEQUIPMENT_QUERY_STRING_FIELDS = [
-  'plantCode',
   'prodEquipCode',
   'prodEquipName',
   'manufacturer',

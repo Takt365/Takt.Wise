@@ -12,7 +12,11 @@
 
 export default {
   page: {
-    title: '月生产不良推移',
+    title: '不良推移',
+    tabs: {
+      assy: '组立',
+      pcba: 'PCBA',
+    },
     periodRange: '期间年月',
     defectCategory: '不良类别',
     modelCode: '机种',

@@ -30,9 +30,9 @@ public interface ITaktEcKanbanService
     /// <summary>
     /// 根据设变主表 ID 获取看板行
     /// </summary>
-    /// <param name="ecGijutsuId">设变主表 ID</param>
+    /// <param name="ecTeId">设变主表 ID</param>
     /// <returns>看板 DTO</returns>
-    Task<TaktEcKanbanDto?> GetEcKanbanByEcIdAsync(long ecGijutsuId);
+    Task<TaktEcKanbanDto?> GetEcKanbanByEcIdAsync(long ecTeId);
 
     /// <summary>
     /// 导出设变看板
@@ -45,4 +45,11 @@ public interface ITaktEcKanbanService
         TaktEcKanbanQueryDto? query = null,
         string? sheetName = null,
         string? fileName = null);
+
+    /// <summary>
+    /// 获取设变看板统计（实施状态饼图、部门柱图、按月折线）
+    /// </summary>
+    /// <param name="queryDto">查询条件（录入期间等）</param>
+    /// <returns>看板统计</returns>
+    Task<TaktEcKanbanBoardStatDto> GetEcKanbanBoardStatAsync(TaktEcKanbanQueryDto queryDto);
 }

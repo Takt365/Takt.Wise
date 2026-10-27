@@ -15,7 +15,7 @@ export type AssyOutputRowRecord = AssyOutput | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface AssyOutputMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<AssyOutputRowRecord | null>
+  selecmedMasterRow: Ref<AssyOutputRowRecord | null>
 }
 
 const assyOutputMasterContextKey: InjectionKey<AssyOutputMasterContext> = Symbol('assy-outputMasterContext')
@@ -25,8 +25,8 @@ const assyOutputMasterContextKey: InjectionKey<AssyOutputMasterContext> = Symbol
  * @returns {AssyOutputMasterContext} 主表上下文
  */
 export function provideAssyOutputMasterContext(): AssyOutputMasterContext {
-  const selectedMasterRow = ref<AssyOutputRowRecord | null>(null)
-  const ctx: AssyOutputMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<AssyOutputRowRecord | null>(null)
+  const ctx: AssyOutputMasterContext = { selecmedMasterRow }
   provide(assyOutputMasterContextKey, ctx)
   return ctx
 }

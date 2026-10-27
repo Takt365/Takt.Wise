@@ -11,7 +11,7 @@
 export default {
   page: {
     placeholder: {
-      autocode: 'Leave blank to auto-generate from the selected numbering rule',
+      autocode: 'Leave blank to auto-generate from the selecmed numbering rule',
     },
     validation: {
       numberingRuleRequired: 'Select a numbering rule for auto-generation',

@@ -13,9 +13,9 @@
 namespace Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange;
 
 /// <summary>
-/// 设变技术课主表统计（看板 TaktEcGijutsus/stat）
+/// 设变技术课主表统计（看板 TaktEcTes/stat）
 /// </summary>
-public class TaktEcGijutsuStatDto
+public class TaktEcTeStatDto
 {
     /// <summary>
     /// 统计月份（yyyy-MM）
@@ -23,7 +23,7 @@ public class TaktEcGijutsuStatDto
     public string StatMonth { get; set; } = string.Empty;
 
     /// <summary>
-    /// 设变主表数量（distinct EcGijutsuId）
+    /// 设变主表数量（distinct EcTeId）
     /// </summary>
     public int EcCount { get; set; }
 
@@ -41,7 +41,7 @@ public class TaktEcGijutsuStatDto
 /// <summary>
 /// 设变技术课主表统计查询 DTO
 /// </summary>
-public class TaktEcGijutsuStatQueryDto
+public class TaktEcTeStatQueryDto
 {
     /// <summary>
     /// 录入日期（范围-开始；默认当月 1 日）
@@ -70,7 +70,7 @@ public class TaktEcExecStatDto
     public string StatMonth { get; set; } = string.Empty;
 
     /// <summary>
-    /// 设变主表数量（distinct EcGijutsuId）
+    /// 设变主表数量（distinct EcTeId）
     /// </summary>
     public int EcCount { get; set; }
 

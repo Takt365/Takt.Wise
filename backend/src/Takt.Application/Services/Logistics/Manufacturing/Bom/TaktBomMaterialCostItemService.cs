@@ -4,7 +4,7 @@
 // 文件名称：TaktBomMaterialCostItemService.cs
 // 创建时间：2026-08-11
 // 创建人：Takt365(Cursor AI)
-// 功能描述：BOM物料成本明细应用服务实现
+// 功能描述：材料成本明细应用服务实现
 // 
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -26,7 +26,7 @@ using Takt.Shared.Options;
 namespace Takt.Application.Services.Logistics.Manufacturing.Bom;
 
 /// <summary>
-/// BOM物料成本明细应用服务
+/// 材料成本明细应用服务
 /// </summary>
 public class TaktBomMaterialCostItemService : TaktServiceBase, ITaktBomMaterialCostItemService
 {
@@ -37,7 +37,7 @@ public class TaktBomMaterialCostItemService : TaktServiceBase, ITaktBomMaterialC
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="bomMaterialCostItemRepository">BOM物料成本明细仓储</param>
+    /// <param name="bomMaterialCostItemRepository">材料成本明细仓储</param>
     /// <param name="uniqueValidator">唯一性验证器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
@@ -76,7 +76,7 @@ public class TaktBomMaterialCostItemService : TaktServiceBase, ITaktBomMaterialC
     }
 
     /// <summary>
-    /// 获取BOM物料成本明细列表（分页；无业务查询条件时返回空结果）
+    /// 获取材料成本明细列表（分页；无业务查询条件时返回空结果）
     /// </summary>
     /// <param name="queryDto">查询DTO</param>
     /// <returns>分页结果</returns>
@@ -107,9 +107,9 @@ public class TaktBomMaterialCostItemService : TaktServiceBase, ITaktBomMaterialC
     }
 
     /// <summary>
-    /// 根据ID获取BOM物料成本明细
+    /// 根据ID获取材料成本明细
     /// </summary>
-    /// <param name="id">BOM物料成本明细ID</param>
+    /// <param name="id">材料成本明细ID</param>
     /// <returns>DTO</returns>
     public async Task<TaktBomMaterialCostItemDto?> GetBomMaterialCostItemByIdAsync(long id)
     {
@@ -122,7 +122,7 @@ public class TaktBomMaterialCostItemService : TaktServiceBase, ITaktBomMaterialC
     }
 
     /// <summary>
-    /// 获取BOM物料成本选项列表（产品编码去重，DictValue=ProductCode）
+    /// 获取材料成本选项列表（产品编码去重，DictValue=ProductCode）
     /// </summary>
     /// <param name="plantCode">工厂代码（可选，用于缩小候选产品）</param>
     /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
@@ -157,7 +157,7 @@ public class TaktBomMaterialCostItemService : TaktServiceBase, ITaktBomMaterialC
     }
 
     /// <summary>
-    /// 创建BOM物料成本明细
+    /// 创建材料成本明细
     /// </summary>
     /// <param name="dto">创建DTO</param>
     /// <returns>DTO</returns>
@@ -169,9 +169,9 @@ public class TaktBomMaterialCostItemService : TaktServiceBase, ITaktBomMaterialC
     }
 
     /// <summary>
-    /// 更新BOM物料成本明细
+    /// 更新材料成本明细
     /// </summary>
-    /// <param name="id">BOM物料成本明细ID</param>
+    /// <param name="id">材料成本明细ID</param>
     /// <param name="dto">更新DTO</param>
     /// <returns>DTO</returns>
     public async Task<TaktBomMaterialCostItemDto> UpdateBomMaterialCostItemAsync(long id, TaktBomMaterialCostItemUpdateDto dto)
@@ -179,29 +179,29 @@ public class TaktBomMaterialCostItemService : TaktServiceBase, ITaktBomMaterialC
         var entity = await _bomMaterialCostItemRepository.GetByIdAsync(id);
         if (entity == null)
         {
-            throw new TaktBusinessException("BOM物料成本明细不存在");
+            throw new TaktBusinessException("材料成本明细不存在");
         }
         dto.Adapt(entity);
         await _bomMaterialCostItemRepository.UpdateAsync(entity);
-        return await GetBomMaterialCostItemByIdAsync(id) ?? throw new TaktBusinessException("BOM物料成本明细不存在");
+        return await GetBomMaterialCostItemByIdAsync(id) ?? throw new TaktBusinessException("材料成本明细不存在");
     }
 
     /// <summary>
-    /// 删除BOM物料成本明细
+    /// 删除材料成本明细
     /// </summary>
-    /// <param name="id">BOM物料成本明细ID</param>
+    /// <param name="id">材料成本明细ID</param>
     /// <returns>任务</returns>
     public async Task DeleteBomMaterialCostItemByIdAsync(long id)
     {
         var deleted = await _bomMaterialCostItemRepository.DeleteAsync(id);
         if (!deleted)
         {
-            throw new TaktBusinessException("BOM物料成本明细不存在或已删除");
+            throw new TaktBusinessException("材料成本明细不存在或已删除");
         }
     }
 
     /// <summary>
-    /// 批量删除BOM物料成本明细
+    /// 批量删除材料成本明细
     /// </summary>
     /// <param name="ids">ID列表</param>
     /// <returns>任务</returns>
@@ -227,12 +227,12 @@ public class TaktBomMaterialCostItemService : TaktServiceBase, ITaktBomMaterialC
     public async Task<(string fileName, byte[] content)> GetBomMaterialCostItemTemplateAsync(string? sheetName = null, string? fileName = null)
     {
         return await TaktExcelHelper.GenerateTemplateAsync<TaktBomMaterialCostItemTemplateDto>(
-            sheetName ?? "BOM物料成本明细导入模板",
-            fileName ?? "BOM物料成本明细导入模板.xlsx");
+            sheetName ?? "材料成本明细导入模板",
+            fileName ?? "材料成本明细导入模板.xlsx");
     }
 
     /// <summary>
-    /// 导入BOM物料成本明细
+    /// 导入材料成本明细
     /// </summary>
     /// <param name="fileStream">Excel 文件流</param>
     /// <param name="sheetName">工作表名称</param>
@@ -242,7 +242,7 @@ public class TaktBomMaterialCostItemService : TaktServiceBase, ITaktBomMaterialC
         var errors = new List<string>();
         var success = 0;
         var fail = 0;
-        var rows = await TaktExcelHelper.ImportAsync<TaktBomMaterialCostItemImportDto>(fileStream, sheetName ?? "BOM物料成本明细导入模板");
+        var rows = await TaktExcelHelper.ImportAsync<TaktBomMaterialCostItemImportDto>(fileStream, sheetName ?? "材料成本明细导入模板");
         if (rows == null || rows.Count == 0)
         {
             errors.Add("Excel文件中没有数据");
@@ -266,7 +266,7 @@ public class TaktBomMaterialCostItemService : TaktServiceBase, ITaktBomMaterialC
     }
 
     /// <summary>
-    /// 导出BOM物料成本明细
+    /// 导出材料成本明细
     /// </summary>
     /// <param name="query">查询条件</param>
     /// <param name="sheetName">工作表名称</param>
@@ -279,8 +279,8 @@ public class TaktBomMaterialCostItemService : TaktServiceBase, ITaktBomMaterialC
         {
             return await TaktExcelHelper.ExportAsync(
                 new List<TaktBomMaterialCostItemExportDto>(),
-                sheetName ?? "BOM物料成本明细数据",
-                fileName ?? "BOM物料成本明细导出.xlsx");
+                sheetName ?? "材料成本明细数据",
+                fileName ?? "材料成本明细导出.xlsx");
         }
         var predicate = QueryExpression(queryDto);
         var list = await _bomMaterialCostItemRepository.GetListAsync(predicate);
@@ -288,8 +288,8 @@ public class TaktBomMaterialCostItemService : TaktServiceBase, ITaktBomMaterialC
         {
             return await TaktExcelHelper.ExportAsync(
                 new List<TaktBomMaterialCostItemExportDto>(),
-                sheetName ?? "BOM物料成本明细数据",
-                fileName ?? "BOM物料成本明细导出.xlsx");
+                sheetName ?? "材料成本明细数据",
+                fileName ?? "材料成本明细导出.xlsx");
         }
         var exportData = list
             .OrderBy(x => x.ProductCode, StringComparer.OrdinalIgnoreCase)
@@ -297,8 +297,8 @@ public class TaktBomMaterialCostItemService : TaktServiceBase, ITaktBomMaterialC
             .Adapt<List<TaktBomMaterialCostItemExportDto>>();
         return await TaktExcelHelper.ExportAsync(
             exportData,
-            sheetName ?? "BOM物料成本明细数据",
-            fileName ?? "BOM物料成本明细导出.xlsx");
+            sheetName ?? "材料成本明细数据",
+            fileName ?? "材料成本明细导出.xlsx");
     }
 
     // ========================================
@@ -306,7 +306,7 @@ public class TaktBomMaterialCostItemService : TaktServiceBase, ITaktBomMaterialC
     // ========================================
 
     /// <summary>
-    /// 构建BOM物料成本明细查询表达式
+    /// 构建材料成本明细查询表达式
     /// </summary>
     /// <param name="queryDto">查询DTO</param>
     /// <returns>查询表达式</returns>

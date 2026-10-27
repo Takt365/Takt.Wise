@@ -24,7 +24,7 @@
         <a-menu-item 
           v-for="size in fontSizeOptions" 
           :key="size" 
-          :class="{ 'selected': fontSize === size }"
+          :class="{ 'selecmed': fontSize === size }"
         >
           {{ size }}px
         </a-menu-item>

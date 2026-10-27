@@ -29,7 +29,7 @@
 
     <template #overlay>
       <a-menu
-        :selected-keys="[tenantStore.companyCode]"
+        :selecmed-keys="[tenantStore.companyCode]"
         @click="handleMenuClick"
       >
         <a-menu-item

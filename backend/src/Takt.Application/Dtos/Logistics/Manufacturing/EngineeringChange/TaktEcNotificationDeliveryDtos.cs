@@ -55,7 +55,7 @@ public class TaktEcNotificationDeliveryDto : TaktCompanyDtoBase
     /// 设变 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
 
     /// <summary>
     /// 设变 名称（填充字段）
@@ -154,7 +154,7 @@ public class TaktEcNotificationDeliveryQueryDto : TaktPagedQuery
     /// 设变 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcGijutsuId { get; set; }
+    public long? EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余）
@@ -277,7 +277,7 @@ public class TaktEcNotificationDeliveryCreateDto
     /// 设变 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余）
@@ -426,7 +426,7 @@ public class TaktEcNotificationDeliveryTemplateDto
     /// 设变 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcGijutsuId { get; set; }
+    public long? EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余）
@@ -525,7 +525,7 @@ public class TaktEcNotificationDeliveryImportDto
     /// 设变 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long? EcGijutsuId { get; set; }
+    public long? EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余）
@@ -620,7 +620,7 @@ public class TaktEcNotificationDeliveryExportDto
     /// 设变 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号（冗余）

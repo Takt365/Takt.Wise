@@ -106,17 +106,6 @@
       @reset="handleAdvancedQueryReset"
     >
       <template #default="{ isFieldVisible }">
-      <div v-show="isFieldVisible('plantCode')">
-      <a-form-item :label="t('common.page.entity.plantcode')">
-        <a-input
-          v-model:value="advancedQueryForm.plantCode"
-          :placeholder="t('common.page.form.placeholder.required', { field: t('common.page.entity.plantcode') })"
-          show-count
-          :maxlength="4"
-          allow-clear
-        />
-      </a-form-item>
-      </div>
       <div v-show="isFieldVisible('notificationCode')">
       <a-form-item :label="t('entity.maintenancenotification.notificationcode')">
         <a-input
@@ -532,7 +521,7 @@ import {
 import type { MaintenanceNotification, MaintenanceNotificationQuery } from '@/types/logistics/maintenance/notification.types'
 
 const { t } = useI18n()
-const { selectedMasterRow } = useEquipmentMasterContext()
+const { selecmedMasterRow } = useEquipmentMasterContext()
 
 /** Excel 导入/导出默认 sheet 名与文件名前缀 */
 const excelNames = taktExcelEntityNames('TaktMaintenanceNotification')
@@ -547,9 +536,9 @@ const currentPage = ref(getTaktDefaultPageIndex())
 const pageSize = ref(getTaktDefaultPageSize())
 const total = ref(0)
 const queryKeyword = ref('')
-const selectedRow = ref<MaintenanceNotification | null>(null)
-const selectedRows = ref<MaintenanceNotification[]>([])
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRow = ref<MaintenanceNotification | null>(null)
+const selecmedRows = ref<MaintenanceNotification[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 const formVisible = ref(false)
 const formTitle = ref('')
 const formData = ref<Partial<MaintenanceNotification>>({})
@@ -597,7 +586,6 @@ const visibleQueryFieldKeys = ref<string[]>([])
 
 /** 高级查询字段元数据 */
 const queryFieldsMeta = computed(() => [
-  { key: 'plantCode', label: t('common.page.entity.plantcode') },
   { key: 'notificationCode', label: t('entity.maintenancenotification.notificationcode') },
   { key: 'EquipCode', label: t('entity.maintenancenotification.EquipCode') },
   { key: 'equipmentName', label: t('entity.maintenancenotification.equipmentname') },
@@ -701,10 +689,10 @@ function handleColumnSettingReset() {
 const importVisible = ref(false)
 
 const entityIdName = 'maintenanceNotificationId'
-const hasMasterSelection = computed(() => !!selectedMasterRow.value?.equipmentId)
-const masterEquipmentId = computed(() => selectedMasterRow.value?.equipmentId ?? '')
-const updateDisabled = computed(() => !hasMasterSelection.value || selectedRows.value.length !== 1)
-const deleteDisabled = computed(() => !hasMasterSelection.value || selectedRows.value.length === 0)
+const hasMasterSelection = computed(() => !!selecmedMasterRow.value?.equipmentId)
+const masterEquipmentId = computed(() => selecmedMasterRow.value?.equipmentId ?? '')
+const updateDisabled = computed(() => !hasMasterSelection.value || selecmedRows.value.length !== 1)
+const deleteDisabled = computed(() => !hasMasterSelection.value || selecmedRows.value.length === 0)
 
 function getMaintenanceNotificationId(record: MaintenanceNotification | Record<string, unknown>): string {
   return String((record as MaintenanceNotification)?.[entityIdName] ?? '')
@@ -827,21 +815,21 @@ const columns = computed<TableColumnsType>(() => [
   })])
 
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: MaintenanceNotification[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: MaintenanceNotification, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (getMaintenanceNotificationId(selectedRow.value) === getMaintenanceNotificationId(record)) {
-      selectedRow.value = null
+  onSelect: (record: MaintenanceNotification, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (getMaintenanceNotificationId(selecmedRow.value) === getMaintenanceNotificationId(record)) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: MaintenanceNotification[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: MaintenanceNotification[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   },
 }))
 
@@ -853,12 +841,12 @@ function onClickRow(record: MaintenanceNotification) {
   const key = getMaintenanceNotificationId(record)
   return {
     onClick: () => {
-      selectedRowKeys.value = [key]
-      selectedRows.value = [record]
-      selectedRow.value = record
+      selecmedRowKeys.value = [key]
+      selecmedRows.value = [record]
+      selecmedRow.value = record
     },
-    class: selectedRowKeys.value.includes(key)
-      ? 'takt-master-detail-table-row-selected cursor-pointer'
+    class: selecmedRowKeys.value.includes(key)
+      ? 'takt-master-detail-table-row-selecmed cursor-pointer'
       : 'cursor-pointer',
   }
 }
@@ -933,9 +921,9 @@ async function loadData() {
   if (!hasMasterSelection.value) {
     dataSource.value = []
     total.value = 0
-    selectedRowKeys.value = []
-    selectedRows.value = []
-    selectedRow.value = null
+    selecmedRowKeys.value = []
+    selecmedRows.value = []
+    selecmedRow.value = null
     return
   }
   loading.value = true
@@ -1000,8 +988,8 @@ async function handleEdit(record: MaintenanceNotification) {
 }
 
 function handleUpdate() {
-  if (selectedRow.value) {
-    void handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    void handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', {
       action: t('common.page.button.edit'),
@@ -1058,7 +1046,7 @@ async function handleDeleteOne(record: MaintenanceNotification) {
 }
 
 async function handleDelete() {
-  if (!hasMasterSelection.value || selectedRows.value.length === 0) {
+  if (!hasMasterSelection.value || selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', {
       action: t('common.page.button.delete'),
       entity: t('entity.maintenancenotification._self'),
@@ -1069,12 +1057,12 @@ async function handleDelete() {
     title: t('common.tip.confirm.delete.title'),
     content: t('common.tip.confirm.delete.count', {
       entity: t('entity.maintenancenotification._self'),
-      count: selectedRows.value.length,
+      count: selecmedRows.value.length,
     }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value.map((r) => getMaintenanceNotificationId(r)).filter(Boolean)
+      const ids = selecmedRows.value.map((r) => getMaintenanceNotificationId(r)).filter(Boolean)
       await deleteMaintenanceNotificationBatch(ids)
       message.success(t('common.feedback.deleted', { target: t('entity.maintenancenotification._self') }))
       await loadData()

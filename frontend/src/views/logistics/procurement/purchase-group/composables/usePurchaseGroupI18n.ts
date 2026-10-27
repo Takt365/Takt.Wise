@@ -55,7 +55,6 @@ export type PurchaseGroupField = keyof typeof PURCHASEGROUP_PLACEHOLDER
 
 /** 高级查询可 trim 的字符串字段 */
 export const PURCHASEGROUP_QUERY_STRING_FIELDS = [
-  'plantCode',
   'purchaseGroupCode',
   'purchaseGroupName',
   'purchaseGroupDescription',

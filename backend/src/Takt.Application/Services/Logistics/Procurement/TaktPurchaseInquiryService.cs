@@ -144,7 +144,11 @@ public class TaktPurchaseInquiryService : TaktServiceBase, ITaktPurchaseInquiryS
         var entity = dto.Adapt<TaktPurchaseInquiry>();
         if (!string.IsNullOrWhiteSpace(dto.NumberingRuleCode))
         {
-            var generated = await _numberingGenerator.GenerateNextAsync(dto.NumberingRuleCode.Trim());
+            var existingRows = await _purchaseInquiryRepository.GetListAsync(
+                x => x.TenantCode == CurrentTenantCode && x.CompanyCode == CurrentCompanyCode);
+            var generated = await _numberingGenerator.GenerateNextAsync(
+                dto.NumberingRuleCode.Trim(),
+                existingRows.Select(x => (string?)x.PurchaseInquiryCode).ToList());
             if (string.IsNullOrWhiteSpace(generated.BusinessCode))
             {
                 throw new TaktBusinessException("业务编码生成失败");

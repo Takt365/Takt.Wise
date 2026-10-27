@@ -104,7 +104,7 @@
                   v-model:value="formState.lot"
                   :placeholder="t('common.page.form.placeholder.required', { field: t('entity.qualityissue.lot') })"
                   show-count
-                  :maxlength="30"
+                  :maxlength="20"
                   allow-clear
                 />
               </a-form-item>

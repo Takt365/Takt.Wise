@@ -90,7 +90,6 @@ export type BankField = keyof typeof BANK_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const BANK_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'countryRegion',
   'bankCode',
   'bankName1',

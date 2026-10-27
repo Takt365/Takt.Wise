@@ -12,7 +12,7 @@ import type { MaterialPlant } from '@/types/logistics/materials/materialPlant.ty
 /** 主表选中行上下文 */
 export interface MaterialPlantMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<MaterialPlant | null>
+  selecmedMasterRow: Ref<MaterialPlant | null>
 }
 
 const materialPlantMasterContextKey: InjectionKey<MaterialPlantMasterContext> = Symbol('material-plantMasterContext')
@@ -22,8 +22,8 @@ const materialPlantMasterContextKey: InjectionKey<MaterialPlantMasterContext> = 
  * @returns {MaterialPlantMasterContext} 主表上下文
  */
 export function provideMaterialPlantMasterContext(): MaterialPlantMasterContext {
-  const selectedMasterRow = ref<MaterialPlant | null>(null)
-  const ctx: MaterialPlantMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<MaterialPlant | null>(null)
+  const ctx: MaterialPlantMasterContext = { selecmedMasterRow }
   provide(materialPlantMasterContextKey, ctx)
   return ctx
 }

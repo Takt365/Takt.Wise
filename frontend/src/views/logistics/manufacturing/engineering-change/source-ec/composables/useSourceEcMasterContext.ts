@@ -15,7 +15,7 @@ export type SourceEcRowRecord = SourceEc | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface SourceEcMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<SourceEcRowRecord | null>
+  selecmedMasterRow: Ref<SourceEcRowRecord | null>
 }
 
 const sourceEcMasterContextKey: InjectionKey<SourceEcMasterContext> = Symbol('source-ecMasterContext')
@@ -25,8 +25,8 @@ const sourceEcMasterContextKey: InjectionKey<SourceEcMasterContext> = Symbol('so
  * @returns {SourceEcMasterContext} 主表上下文
  */
 export function provideSourceEcMasterContext(): SourceEcMasterContext {
-  const selectedMasterRow = ref<SourceEcRowRecord | null>(null)
-  const ctx: SourceEcMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<SourceEcRowRecord | null>(null)
+  const ctx: SourceEcMasterContext = { selecmedMasterRow }
   provide(sourceEcMasterContextKey, ctx)
   return ctx
 }

@@ -15,7 +15,7 @@ export type WorkCenterRowRecord = WorkCenter | Record<string, unknown>
 /** 主表选中行上下文 */
 export interface WorkCenterMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<WorkCenterRowRecord | null>
+  selecmedMasterRow: Ref<WorkCenterRowRecord | null>
 }
 
 const workCenterMasterContextKey: InjectionKey<WorkCenterMasterContext> = Symbol('work-centerMasterContext')
@@ -25,8 +25,8 @@ const workCenterMasterContextKey: InjectionKey<WorkCenterMasterContext> = Symbol
  * @returns {WorkCenterMasterContext} 主表上下文
  */
 export function provideWorkCenterMasterContext(): WorkCenterMasterContext {
-  const selectedMasterRow = ref<WorkCenterRowRecord | null>(null)
-  const ctx: WorkCenterMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<WorkCenterRowRecord | null>(null)
+  const ctx: WorkCenterMasterContext = { selecmedMasterRow }
   provide(workCenterMasterContextKey, ctx)
   return ctx
 }

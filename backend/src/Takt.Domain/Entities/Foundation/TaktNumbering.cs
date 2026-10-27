@@ -79,16 +79,10 @@ public class TaktNumbering : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "reset_period", ColumnDescription = "重置周期", ColumnDataType = "varchar", Length = 20, IsNullable = false, DefaultValue = "None")]
     public string ResetPeriod { get; set; } = "None";
     /// <summary>
-    /// 当前流水（用于记录下一个流水号值）
+    /// 起始编码（样例；空表首号形态如 …000001；取号成功后可更新为最近一次产出编码；实际流水以业务表编码 max 为准）
     /// </summary>
-    [SugarColumn(ColumnName = "current_sequence", ColumnDescription = "当前流水", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
-    public int CurrentSequence { get; set; } = 0;
-    /// <summary>
-    /// 起始编码（新增时必填；完整业务编码样例，末段为当前流水号）
-    /// 如：SO-20250120-000001；生成编码后会更新为最近一次产出编码
-    /// </summary>
-    [SugarColumn(ColumnName = "example_code", ColumnDescription = "起始编码", ColumnDataType = "varchar", Length = 100, IsNullable = false)]
-    public string ExampleCode { get; set; } = string.Empty;
+    [SugarColumn(ColumnName = "starting_number", ColumnDescription = "起始编码", ColumnDataType = "varchar", Length = 100, IsNullable = false)]
+    public string StartingNumber { get; set; } = string.Empty;
     /// <summary>
     /// 分隔符（空=段直接拼接；-=连字符分隔，默认 -）
     /// </summary>

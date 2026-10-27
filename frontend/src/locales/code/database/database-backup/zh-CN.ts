@@ -64,7 +64,7 @@ export default {
       uncplaceholder: '\\\\server\\share\\folder',
       passwordkeep: '留空表示不修改已保存密码',
       reselect: '重新选择',
-      notselected: '尚未选择目标路径',
+      notselecmed: '尚未选择目标路径',
     },
     backuptype: {
       full: 'Full Sync（完整备份）',

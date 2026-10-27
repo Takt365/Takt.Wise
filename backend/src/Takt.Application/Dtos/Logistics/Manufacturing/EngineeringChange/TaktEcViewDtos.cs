@@ -4,7 +4,7 @@
 // 文件名称：TaktEcViewDtos.cs
 // 创建时间：2026-06-22
 // 创建人：Takt365(Cursor AI)
-// 功能描述：设变看板/投入批次/物料确认/部门视图/旧品管制 专用 DTO
+// 功能描述：设变看板/投入批次/实施管控/部门视图/旧品管制 专用 DTO
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -47,7 +47,7 @@ public class TaktEcDeptViewDto : TaktCompanyDtoBase
     /// 设变主表 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
     /// <summary>
     /// 设变单号
     /// </summary>
@@ -109,13 +109,13 @@ public class TaktEcDeptViewDto : TaktCompanyDtoBase
     /// </summary>
     public string? ScheduledBatch { get; set; }
     /// <summary>
-    /// Po残
+    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
     /// </summary>
     public string? PoRemainder { get; set; }
     /// <summary>
-    /// 结余
+    /// 结余数量
     /// </summary>
-    public string? Balance { get; set; }
+    public decimal? BalanceQuantity { get; set; }
     /// <summary>
     /// 旧品处理（生管/采购执行行存字典 logistics_manufacturing_ec_old_part_disposition；视图字段名兼容）
     /// </summary>
@@ -278,13 +278,13 @@ public class TaktEcDeptViewUpdateDto
     /// </summary>
     public string? ScheduledBatch { get; set; }
     /// <summary>
-    /// Po残
+    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
     /// </summary>
     public string? PoRemainder { get; set; }
     /// <summary>
-    /// 结余
+    /// 结余数量
     /// </summary>
-    public string? Balance { get; set; }
+    public decimal? BalanceQuantity { get; set; }
     /// <summary>
     /// 旧品处理（生管/采购执行行存字典 logistics_manufacturing_ec_old_part_disposition；视图字段名兼容）
     /// </summary>
@@ -427,13 +427,13 @@ public class TaktEcDeptViewTemplateDto
     /// </summary>
     public string? ScheduledBatch { get; set; }
     /// <summary>
-    /// Po残
+    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
     /// </summary>
     public string? PoRemainder { get; set; }
     /// <summary>
-    /// 结余
+    /// 结余数量
     /// </summary>
-    public string? Balance { get; set; }
+    public decimal? BalanceQuantity { get; set; }
     /// <summary>
     /// 旧品处理（生管/采购执行行存字典 logistics_manufacturing_ec_old_part_disposition；视图字段名兼容）
     /// </summary>
@@ -551,86 +551,142 @@ public class TaktEcDeptViewImportDto : TaktEcDeptViewTemplateDto
 // ========================================
 
 /// <summary>
-/// 设变看板行（按设变单汇总各部门实施进度）
+/// 设变看板转置行（一行一个设变号；各部门列是该部门每一条执行行的实施标记）
 /// </summary>
 public class TaktEcKanbanDto : TaktCompanyDtoBase
 {
     /// <summary>
-    /// EcKanbanID（适配实体 Id，序列化为 string 以避免 Javascript 精度问题）
-    /// </summary>
-    [AdaptMember("Id")]
-    [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcKanbanId { get; set; }
-
-    /// <summary>
     /// 设变主表 ID
     /// </summary>
-    [AdaptMember("Id")]
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
+    /// <summary>
+    /// 发行日期
+    /// </summary>
+    public DateTime EcIssueDate { get; set; }
+    /// <summary>
+    /// 技术担当（设变组编码）
+    /// </summary>
+    public string EcLeader { get; set; } = string.Empty;
     /// <summary>
     /// 设变单号
     /// </summary>
     public string EcCode { get; set; } = string.Empty;
     /// <summary>
-    /// 设变标题
+    /// 机种编码
     /// </summary>
-    public string EcTitle { get; set; } = string.Empty;
+    public string EcModelCode { get; set; } = string.Empty;
     /// <summary>
-    /// 变更状态
+    /// 成品（根物料编码）
     /// </summary>
-    public int ChangeStatus { get; set; }
+    public string EcRootMaterialCode { get; set; } = string.Empty;
     /// <summary>
-    /// 设变状态
+    /// 技术课（技术主表录入日期）
     /// </summary>
-    public int EcStatus { get; set; }
+    public DateTime EcEntryDate { get; set; }
     /// <summary>
-    /// 负责人
+    /// 采购课每一行的实施标记（字典 sys_yes_no；0=否 1=是）。行数即列表长度
     /// </summary>
-    public string EcLeader { get; set; } = string.Empty;
+    public List<int> PurImplemented { get; set; } = [];
     /// <summary>
-    /// 明细行数
+    /// 生管课每一行的实施标记（字典 sys_yes_no；0=否 1=是）
     /// </summary>
-    public int DetailCount { get; set; }
+    public List<int> PcImplemented { get; set; } = [];
     /// <summary>
-    /// 各部门实施汇总
+    /// 受检课每一行的实施标记（字典 sys_yes_no；0=否 1=是）
     /// </summary>
-    public List<TaktEcKanbanDeptStageDto> DeptStages { get; set; } = [];
+    public List<int> IqcImplemented { get; set; } = [];
     /// <summary>
-    /// 当前待实施部门编码（路径上首个未全部完成的部门；字典 logistics_ec_dept_code）
+    /// 部管课每一行的实施标记（字典 sys_yes_no；0=否 1=是）
     /// </summary>
-    public string? CurrentDeptCode { get; set; }
+    public List<int> McImplemented { get; set; } = [];
     /// <summary>
-    /// 待实施数（各执行部门行数之和，与明细数 DetailCount 分开）
+    /// 制二课每一行的实施标记（字典 sys_yes_no；0=否 1=是）
     /// </summary>
-    public int PendingAtCurrentDeptCount { get; set; }
+    public List<int> Mfg2Implemented { get; set; } = [];
     /// <summary>
-    /// 实施路径状态（0 未开始 1 实施中 2 正式完成 3 全部完成）
+    /// 制一课每一行的实施标记（字典 sys_yes_no；0=否 1=是）
     /// </summary>
-    public int ImplementationStatus { get; set; }
+    public List<int> Mfg1Implemented { get; set; } = [];
     /// <summary>
-    /// 品管课是否已全部实施（正式完成）
+    /// 品管课每一行的实施标记（字典 sys_yes_no；0=否 1=是）
     /// </summary>
-    public int IsOfficiallyCompleted { get; set; }
+    public List<int> QcImplemented { get; set; } = [];
+    /// <summary>
+    /// 物料每一行的实施标记（字典 sys_yes_no；0=否 1=是）
+    /// </summary>
+    public List<int> MtlImplemented { get; set; } = [];
+    /// <summary>
+    /// 制技每一行的更新 SOP 标记（字典 sys_yes_no；0=否 1=是）
+    /// </summary>
+    public List<int> MeImplemented { get; set; } = [];
 }
 
 /// <summary>
-/// 看板部门阶段
+/// 设变看板导出行
 /// </summary>
-public class TaktEcKanbanDeptStageDto
+public class TaktEcKanbanExportDto
 {
     /// <summary>
-    /// 部门编码
+    /// 发行日期
     /// </summary>
-    public string DeptCode { get; set; } = string.Empty;
+    public string EcIssueDate { get; set; } = string.Empty;
     /// <summary>
-    /// 已实施执行行数
+    /// 技术担当
     /// </summary>
-    public int ImplementedCount { get; set; }
+    public string EcLeader { get; set; } = string.Empty;
     /// <summary>
-    /// 该执行部门行数
+    /// 设变号码
     /// </summary>
-    public int TotalCount { get; set; }
+    public string EcCode { get; set; } = string.Empty;
+    /// <summary>
+    /// 机种
+    /// </summary>
+    public string EcModelCode { get; set; } = string.Empty;
+    /// <summary>
+    /// 成品
+    /// </summary>
+    public string EcRootMaterialCode { get; set; } = string.Empty;
+    /// <summary>
+    /// 技术课
+    /// </summary>
+    public string EcEntryDate { get; set; } = string.Empty;
+    /// <summary>
+    /// 生管课
+    /// </summary>
+    public string PcImplemented { get; set; } = string.Empty;
+    /// <summary>
+    /// 采购课
+    /// </summary>
+    public string PurImplemented { get; set; } = string.Empty;
+    /// <summary>
+    /// 受检课
+    /// </summary>
+    public string IqcImplemented { get; set; } = string.Empty;
+    /// <summary>
+    /// 部管课
+    /// </summary>
+    public string McImplemented { get; set; } = string.Empty;
+    /// <summary>
+    /// 物料
+    /// </summary>
+    public string MtlImplemented { get; set; } = string.Empty;
+    /// <summary>
+    /// 制二课
+    /// </summary>
+    public string Mfg2Implemented { get; set; } = string.Empty;
+    /// <summary>
+    /// 制一课
+    /// </summary>
+    public string Mfg1Implemented { get; set; } = string.Empty;
+    /// <summary>
+    /// 品管课
+    /// </summary>
+    public string QcImplemented { get; set; } = string.Empty;
+    /// <summary>
+    /// 制技
+    /// </summary>
+    public string MeImplemented { get; set; } = string.Empty;
 }
 
 /// <summary>
@@ -655,9 +711,24 @@ public class TaktEcKanbanQueryDto : TaktPagedQuery
     /// </summary>
     public string? CurrentDeptCode { get; set; }
     /// <summary>
-    /// 实施路径状态（0 未开始 1 实施中 2 正式完成 3 全部完成）
+    /// 实施路径状态（0 未开始 1 实施中 2 正式完成 3 全部完成）。数据看板仍用此字段；页面筛选用 IsImplemented
     /// </summary>
     public int? ImplementationStatus { get; set; }
+
+    /// <summary>
+    /// 实施标记（字典 sys_yes_no；0=否 1=是）。选定部门时只比较该部门，未选部门时任一部门命中即可
+    /// </summary>
+    public int? IsImplemented { get; set; }
+
+    /// <summary>
+    /// 录入日期起（含当天）
+    /// </summary>
+    public DateTime? EcEntryDateStart { get; set; }
+
+    /// <summary>
+    /// 录入日期止（含当天）
+    /// </summary>
+    public DateTime? EcEntryDateEnd { get; set; }
 
     /// <summary>
     /// EcCode
@@ -668,6 +739,84 @@ public class TaktEcKanbanQueryDto : TaktPagedQuery
     /// CultureCode
     /// </summary>
     public string? CultureCode { get; set; }
+}
+
+/// <summary>
+/// 设变看板统计页签：实施状态、部门执行、按月录入
+/// </summary>
+public class TaktEcKanbanBoardStatDto
+{
+    /// <summary>
+    /// 设变主表总数（全仕向/部管，当前查询条件）
+    /// </summary>
+    public int EcTotal { get; set; }
+
+    /// <summary>
+    /// 未开始
+    /// </summary>
+    public int NotStarted { get; set; }
+
+    /// <summary>
+    /// 实施中
+    /// </summary>
+    public int InProgress { get; set; }
+
+    /// <summary>
+    /// 正式完成
+    /// </summary>
+    public int OfficiallyCompleted { get; set; }
+
+    /// <summary>
+    /// 全部完成
+    /// </summary>
+    public int FullyCompleted { get; set; }
+
+    /// <summary>
+    /// 各部门执行行实施/未实施
+    /// </summary>
+    public List<TaktEcKanbanDeptStatDto> Depts { get; set; } = new();
+
+    /// <summary>
+    /// 录入期间内按月设变单数
+    /// </summary>
+    public List<TaktEcKanbanMonthStatDto> Months { get; set; } = new();
+}
+
+/// <summary>
+/// 看板统计·部门执行行
+/// </summary>
+public class TaktEcKanbanDeptStatDto
+{
+    /// <summary>
+    /// 部门编码
+    /// </summary>
+    public string DeptCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 已实施行数
+    /// </summary>
+    public int Implemented { get; set; }
+
+    /// <summary>
+    /// 未实施行数
+    /// </summary>
+    public int NotImplemented { get; set; }
+}
+
+/// <summary>
+/// 看板统计·按月录入
+/// </summary>
+public class TaktEcKanbanMonthStatDto
+{
+    /// <summary>
+    /// 年月（yyyy-MM）
+    /// </summary>
+    public string YearMonth { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 设变单数
+    /// </summary>
+    public int EcCount { get; set; }
 }
 
 // ========================================
@@ -789,20 +938,20 @@ public class TaktEcBatchUpdateDto
 }
 
 // ========================================
-// 物料确认
+// 实施管控
 // ========================================
 
 /// <summary>
-/// 物料确认视图行
+/// 实施管控视图行
 /// </summary>
-public class TaktEcKakuninDto : TaktCompanyDtoBase
+public class TaktEcImplCtrlDto : TaktCompanyDtoBase
 {
     /// <summary>
-    /// EcKakuninID（适配实体 Id，序列化为 string 以避免 Javascript 精度问题）
+    /// EcImplCtrlID（适配实体 Id，序列化为 string 以避免 Javascript 精度问题）
     /// </summary>
     [AdaptMember("Id")]
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcKakuninId { get; set; }
+    public long EcImplCtrlId { get; set; }
 
     /// <summary>
     /// 设变明细 ID
@@ -857,9 +1006,9 @@ public class TaktEcKakuninDto : TaktCompanyDtoBase
 }
 
 /// <summary>
-/// 物料确认查询 DTO
+/// 实施管控查询 DTO
 /// </summary>
-public class TaktEcKakuninQueryDto : TaktPagedQuery
+public class TaktEcImplCtrlQueryDto : TaktPagedQuery
 {
     /// <summary>
     /// 设变单号
@@ -906,12 +1055,27 @@ public class TaktEcKakuninQueryDto : TaktPagedQuery
     /// 设变单号
     /// </summary>
     public string EcCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 页签：pc 生管、assy 制一、pcba 制二、qa 品管
+    /// </summary>
+    public string DeptTab { get; set; } = "mfg2";
+
+    /// <summary>
+    /// 录入日期起（含当天，按技术主表 EcEntryDate）
+    /// </summary>
+    public DateTime? EcEntryDateStart { get; set; }
+
+    /// <summary>
+    /// 录入日期止（含当天，按技术主表 EcEntryDate）
+    /// </summary>
+    public DateTime? EcEntryDateEnd { get; set; }
 }
 
 /// <summary>
-/// 物料确认更新 DTO
+/// 实施管控更新 DTO
 /// </summary>
-public class TaktEcKakuninUpdateDto
+public class TaktEcImplCtrlUpdateDto
 {
     /// <summary>
     /// 设变明细 ID
@@ -919,21 +1083,14 @@ public class TaktEcKakuninUpdateDto
     [JsonConverter(typeof(ValueToStringConverter))]
     public long EcDetailId { get; set; }
     /// <summary>
-    /// 旧采购类型（F=外部采购，E=自制生产）
+    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种
     /// </summary>
-    public string? EcOldPurchaseType { get; set; }
+    public int EcControlScope { get; set; } = 2;
+
     /// <summary>
-    /// 旧品检验（0=否 1=是）
+    /// 当前页签。只更新该部门执行表
     /// </summary>
-    public int EcOldRequiresInspection { get; set; }
-    /// <summary>
-    /// 新采购类型（F=外部采购，E=自制生产）
-    /// </summary>
-    public string? EcNewPurchaseType { get; set; }
-    /// <summary>
-    /// 新品检验（0=否 1=是）
-    /// </summary>
-    public int EcNewRequiresInspection { get; set; }
+    public string DeptTab { get; set; } = string.Empty;
 }
 
 // ========================================
@@ -995,7 +1152,7 @@ public class TaktEcLegacyProductDto : TaktCompanyDtoBase
     /// </summary>
     public string? EcInstruction { get; set; }
     /// <summary>
-    /// 旧品处理（字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
+    /// 明细旧品处理（TaktEcDetail.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
     /// </summary>
     public string? EcOldPartDisposition { get; set; }
     /// <summary>
@@ -1003,7 +1160,7 @@ public class TaktEcLegacyProductDto : TaktCompanyDtoBase
     /// </summary>
     public string? EcNewMaterialCode { get; set; }
     /// <summary>
-    /// 生管旧品处理（TaktEcSeikan.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition；与明细 EcOldPartDisposition 同字典，存执行行）
+    /// 生管旧品处理（TaktEcPc.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition；按明细去重键关联生管执行行）
     /// </summary>
     public string? OldProductHandling { get; set; }
     /// <summary>
@@ -1054,7 +1211,7 @@ public class TaktEcLegacyProductUpdateDto
     [JsonConverter(typeof(ValueToStringConverter))]
     public long EcDetailId { get; set; }
     /// <summary>
-    /// 生管旧品处理（TaktEcSeikan.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition；与明细 EcOldPartDisposition 同字典，存执行行）
+    /// 生管旧品处理（TaktEcPc.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition；与明细 EcOldPartDisposition 同字典，存执行行）
     /// </summary>
     public string? OldProductHandling { get; set; }
     /// <summary>

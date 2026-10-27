@@ -86,14 +86,9 @@ public class TaktNumberingDto : TaktCompanyDtoBase
     public string ResetPeriod { get; set; } = string.Empty;
 
     /// <summary>
-    /// 当前流水（用于记录下一个流水号值）
+    /// 起始编码（新建时为首次应发样例如 2300-CLT-000001；取号后更新为最近一次产出编码）
     /// </summary>
-    public int CurrentSequence { get; set; } = 0;
-
-    /// <summary>
-    /// 起始编码（新增时必填；完整业务编码样例，末段为当前流水号） 如：SO-20250120-000001；生成编码后会更新为最近一次产出编码
-    /// </summary>
-    public string ExampleCode { get; set; } = string.Empty;
+    public string StartingNumber { get; set; } = string.Empty;
 
     /// <summary>
     /// 分隔符（空=段直接拼接；-=连字符分隔，默认 -）
@@ -198,14 +193,9 @@ public class TaktNumberingQueryDto : TaktPagedQuery
     public string? ResetPeriod { get; set; } = string.Empty;
 
     /// <summary>
-    /// 当前流水（用于记录下一个流水号值）
+    /// 起始编码（新建时为首次应发样例如 2300-CLT-000001；取号后更新为最近一次产出编码）
     /// </summary>
-    public int? CurrentSequence { get; set; }
-
-    /// <summary>
-    /// 起始编码（新增时必填；完整业务编码样例，末段为当前流水号） 如：SO-20250120-000001；生成编码后会更新为最近一次产出编码
-    /// </summary>
-    public string? ExampleCode { get; set; } = string.Empty;
+    public string? StartingNumber { get; set; } = string.Empty;
 
     /// <summary>
     /// 分隔符（空=段直接拼接；-=连字符分隔，默认 -）
@@ -334,15 +324,10 @@ public class TaktNumberingCreateDto
     public string ResetPeriod { get; set; } = string.Empty;
 
     /// <summary>
-    /// 当前流水（用于记录下一个流水号值）
+    /// 起始编码（新建时为首次应发样例如 2300-CLT-000001；取号后更新为最近一次产出编码）
     /// </summary>
-    public int CurrentSequence { get; set; } = 0;
-
-    /// <summary>
-    /// 起始编码（新增时必填；完整业务编码样例，末段为当前流水号） 如：SO-20250120-000001；生成编码后会更新为最近一次产出编码
-    /// </summary>
-    [Required(ErrorMessage = "起始编码（新增时必填；完整业务编码样例，末段为当前流水号） 如：SO-20250120-000001；生成编码后会更新为最近一次产出编码不能为空")]
-    public string ExampleCode { get; set; } = string.Empty;
+    [Required(ErrorMessage = "起始编码不能为空")]
+    public string StartingNumber { get; set; } = string.Empty;
 
     /// <summary>
     /// 分隔符（空=段直接拼接；-=连字符分隔，默认 -）
@@ -500,14 +485,9 @@ public class TaktNumberingTemplateDto
     public string? ResetPeriod { get; set; } = string.Empty;
 
     /// <summary>
-    /// 当前流水（用于记录下一个流水号值）
+    /// 起始编码（新建时为首次应发样例如 2300-CLT-000001；取号后更新为最近一次产出编码）
     /// </summary>
-    public int? CurrentSequence { get; set; }
-
-    /// <summary>
-    /// 起始编码（新增时必填；完整业务编码样例，末段为当前流水号） 如：SO-20250120-000001；生成编码后会更新为最近一次产出编码
-    /// </summary>
-    public string? ExampleCode { get; set; } = string.Empty;
+    public string? StartingNumber { get; set; } = string.Empty;
 
     /// <summary>
     /// 分隔符（空=段直接拼接；-=连字符分隔，默认 -）
@@ -618,14 +598,9 @@ public class TaktNumberingImportDto
     public string? ResetPeriod { get; set; } = string.Empty;
 
     /// <summary>
-    /// 当前流水（用于记录下一个流水号值）
+    /// 起始编码（新建时为首次应发样例如 2300-CLT-000001；取号后更新为最近一次产出编码）
     /// </summary>
-    public int? CurrentSequence { get; set; }
-
-    /// <summary>
-    /// 起始编码（新增时必填；完整业务编码样例，末段为当前流水号） 如：SO-20250120-000001；生成编码后会更新为最近一次产出编码
-    /// </summary>
-    public string? ExampleCode { get; set; } = string.Empty;
+    public string? StartingNumber { get; set; } = string.Empty;
 
     /// <summary>
     /// 分隔符（空=段直接拼接；-=连字符分隔，默认 -）
@@ -688,11 +663,6 @@ public class TaktNumberingPreviewDto
     /// 预览业务编码
     /// </summary>
     public string BusinessCode { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 预览流水号
-    /// </summary>
-    public int CurrentSequence { get; set; }
 }
 
 // ========================================
@@ -767,14 +737,9 @@ public class TaktNumberingExportDto
     public string ResetPeriod { get; set; } = string.Empty;
 
     /// <summary>
-    /// 当前流水（用于记录下一个流水号值）
+    /// 起始编码（新建时为首次应发样例如 2300-CLT-000001；取号后更新为最近一次产出编码）
     /// </summary>
-    public int CurrentSequence { get; set; } = 0;
-
-    /// <summary>
-    /// 起始编码（新增时必填；完整业务编码样例，末段为当前流水号） 如：SO-20250120-000001；生成编码后会更新为最近一次产出编码
-    /// </summary>
-    public string ExampleCode { get; set; } = string.Empty;
+    public string StartingNumber { get; set; } = string.Empty;
 
     /// <summary>
     /// 分隔符（空=段直接拼接；-=连字符分隔，默认 -）

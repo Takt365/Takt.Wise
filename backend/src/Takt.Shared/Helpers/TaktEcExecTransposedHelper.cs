@@ -95,13 +95,13 @@ public static class TaktEcExecTransposedHelper
         ArgumentException.ThrowIfNullOrWhiteSpace(deptCode);
         DateTime? primary = deptCode switch
         {
-            _ when deptCode == TaktEcDeptCodes.Pmc => scheduledDate,
-            _ when deptCode == TaktEcDeptCodes.Mp => purchaseOrderIssueDate,
+            _ when deptCode == TaktEcDeptCodes.Pc => scheduledDate,
+            _ when deptCode == TaktEcDeptCodes.Pur => purchaseOrderIssueDate,
             _ when deptCode == TaktEcDeptCodes.Iqc => inspectionDate,
             _ when deptCode == TaktEcDeptCodes.Mc => outboundDate,
-            _ when deptCode == TaktEcDeptCodes.Pcba => productionDate,
-            _ when deptCode == TaktEcDeptCodes.Assy => productionDate,
-            _ when deptCode == TaktEcDeptCodes.Qa => inspectionDate,
+            _ when deptCode == TaktEcDeptCodes.Mfg2 => productionDate,
+            _ when deptCode == TaktEcDeptCodes.Mfg1 => productionDate,
+            _ when deptCode == TaktEcDeptCodes.Qc => inspectionDate,
             _ => null,
         };
         if (primary.HasValue)

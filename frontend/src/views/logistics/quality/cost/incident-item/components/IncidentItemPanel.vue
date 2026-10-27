@@ -367,7 +367,7 @@ import {
 import type { QualityIncidentItem, QualityIncidentItemQuery } from '@/types/logistics/quality/cost/incidentItem.types'
 
 const { t } = useI18n()
-const { selectedMasterRow } = useQualityIncidentMasterContext()
+const { selecmedMasterRow } = useQualityIncidentMasterContext()
 
 /** Excel 导入/导出默认 sheet 名与文件名前缀 */
 const excelNames = taktExcelEntityNames('TaktQualityIncidentItem')
@@ -382,9 +382,9 @@ const currentPage = ref(getTaktDefaultPageIndex())
 const pageSize = ref(getTaktDefaultPageSize())
 const total = ref(0)
 const queryKeyword = ref('')
-const selectedRow = ref<QualityIncidentItem | null>(null)
-const selectedRows = ref<QualityIncidentItem[]>([])
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRow = ref<QualityIncidentItem | null>(null)
+const selecmedRows = ref<QualityIncidentItem[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 const formVisible = ref(false)
 const formTitle = ref('')
 const formData = ref<Partial<QualityIncidentItem>>({})
@@ -494,10 +494,10 @@ function handleColumnSettingReset() {
 const importVisible = ref(false)
 
 const entityIdName = 'qualityIncidentItemId'
-const hasMasterSelection = computed(() => !!selectedMasterRow.value?.qualityIncidentId)
-const masterQualityIncidentId = computed(() => selectedMasterRow.value?.qualityIncidentId ?? '')
-const updateDisabled = computed(() => !hasMasterSelection.value || selectedRows.value.length !== 1)
-const deleteDisabled = computed(() => !hasMasterSelection.value || selectedRows.value.length === 0)
+const hasMasterSelection = computed(() => !!selecmedMasterRow.value?.qualityIncidentId)
+const masterQualityIncidentId = computed(() => selecmedMasterRow.value?.qualityIncidentId ?? '')
+const updateDisabled = computed(() => !hasMasterSelection.value || selecmedRows.value.length !== 1)
+const deleteDisabled = computed(() => !hasMasterSelection.value || selecmedRows.value.length === 0)
 
 function getQualityIncidentItemId(record: QualityIncidentItem | Record<string, unknown>): string {
   return String((record as QualityIncidentItem)?.[entityIdName] ?? '')
@@ -620,21 +620,21 @@ const columns = computed<TableColumnsType>(() => [
   })])
 
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: QualityIncidentItem[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: QualityIncidentItem, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (getQualityIncidentItemId(selectedRow.value) === getQualityIncidentItemId(record)) {
-      selectedRow.value = null
+  onSelect: (record: QualityIncidentItem, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (getQualityIncidentItemId(selecmedRow.value) === getQualityIncidentItemId(record)) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: QualityIncidentItem[]) => {
-    selectedRow.value = selected && selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: QualityIncidentItem[]) => {
+    selecmedRow.value = selecmed && selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
   },
 }))
 
@@ -646,12 +646,12 @@ function onClickRow(record: QualityIncidentItem) {
   const key = getQualityIncidentItemId(record)
   return {
     onClick: () => {
-      selectedRowKeys.value = [key]
-      selectedRows.value = [record]
-      selectedRow.value = record
+      selecmedRowKeys.value = [key]
+      selecmedRows.value = [record]
+      selecmedRow.value = record
     },
-    class: selectedRowKeys.value.includes(key)
-      ? 'takt-master-detail-table-row-selected cursor-pointer'
+    class: selecmedRowKeys.value.includes(key)
+      ? 'takt-master-detail-table-row-selecmed cursor-pointer'
       : 'cursor-pointer',
   }
 }
@@ -724,9 +724,9 @@ async function loadData() {
   if (!hasMasterSelection.value) {
     dataSource.value = []
     total.value = 0
-    selectedRowKeys.value = []
-    selectedRows.value = []
-    selectedRow.value = null
+    selecmedRowKeys.value = []
+    selecmedRows.value = []
+    selecmedRow.value = null
     return
   }
   loading.value = true
@@ -791,8 +791,8 @@ async function handleEdit(record: QualityIncidentItem) {
 }
 
 function handleUpdate() {
-  if (selectedRow.value) {
-    void handleEdit(selectedRow.value)
+  if (selecmedRow.value) {
+    void handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', {
       action: t('common.page.button.edit'),
@@ -849,7 +849,7 @@ async function handleDeleteOne(record: QualityIncidentItem) {
 }
 
 async function handleDelete() {
-  if (!hasMasterSelection.value || selectedRows.value.length === 0) {
+  if (!hasMasterSelection.value || selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', {
       action: t('common.page.button.delete'),
       entity: t('entity.qualityincidentitem._self'),
@@ -860,12 +860,12 @@ async function handleDelete() {
     title: t('common.tip.confirm.delete.title'),
     content: t('common.tip.confirm.delete.count', {
       entity: t('entity.qualityincidentitem._self'),
-      count: selectedRows.value.length,
+      count: selecmedRows.value.length,
     }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
-      const ids = selectedRows.value.map((r) => getQualityIncidentItemId(r)).filter(Boolean)
+      const ids = selecmedRows.value.map((r) => getQualityIncidentItemId(r)).filter(Boolean)
       await deleteQualityIncidentItemBatch(ids)
       message.success(t('common.feedback.deleted', { target: t('entity.qualityincidentitem._self') }))
       await loadData()

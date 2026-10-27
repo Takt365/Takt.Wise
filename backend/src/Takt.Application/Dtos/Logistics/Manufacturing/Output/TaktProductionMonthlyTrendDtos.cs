@@ -13,10 +13,15 @@
 namespace Takt.Application.Dtos.Logistics.Manufacturing.Output;
 
 /// <summary>
-/// 月生产推移转置分析查询 DTO
+/// 生产统计查询 DTO
 /// </summary>
 public class TaktProductionMonthlyTrendQueryDto : TaktPagedQuery
 {
+    /// <summary>
+    /// 统计页签：assy-team / assy-model / pcba-team / pcba-model
+    /// </summary>
+    public string StatTab { get; set; } = string.Empty;
+
     /// <summary>
     /// 工厂代码（必填）
     /// </summary>
@@ -38,14 +43,24 @@ public class TaktProductionMonthlyTrendQueryDto : TaktPagedQuery
     public string? FocusPeriod { get; set; }
 
     /// <summary>
+    /// 生产班组（可选；组立取自主表，PCBA 取自明细）
+    /// </summary>
+    public string? TeamCode { get; set; }
+
+    /// <summary>
     /// 机种（可选）
     /// </summary>
     public string? ModelCode { get; set; }
 
     /// <summary>
-    /// 产出类别：assy / pcba；空表示全部
+    /// 物料编码（可选）
     /// </summary>
-    public string? OutputCategory { get; set; }
+    public string? MaterialCode { get; set; }
+
+    /// <summary>
+    /// 生产类别（字典 logistics_manufacturing_prod_category；可选）
+    /// </summary>
+    public string? ProdCategory { get; set; }
 
     /// <summary>
     /// 涨跌筛选：空=全部；up/down/flat/none；changed=仅涨或跌
@@ -64,7 +79,12 @@ public class TaktProductionMonthlyTrendDto
     public string PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种
+    /// 生产班组（按班组页签）
+    /// </summary>
+    public string TeamCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 机种（按机种页签）
     /// </summary>
     public string ModelCode { get; set; } = string.Empty;
 

@@ -88,7 +88,7 @@
                   v-model:value="formState.companyShortName"
                   :placeholder="pi.ph('companyShortName')"
                   show-count
-                  :maxlength="50"
+                  :maxlength="20"
                   allow-clear
                 />
               </a-form-item>

@@ -288,9 +288,9 @@ const currentPage = ref(getTaktDefaultPageIndex())
 const pageSize = ref(getTaktDefaultPageSize())
 const total = ref(0)
 // 行选择：单选行、多选行、勾选 key
-const selectedRow = ref<User | null>(null)
-const selectedRows = ref<User[]>([])
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRow = ref<User | null>(null)
+const selecmedRows = ref<User[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 // 新增/编辑表单弹窗
 const formVisible = ref(false)
 const formTitle = ref('')
@@ -536,38 +536,38 @@ function toUserRecord(record: Record<string, unknown>): User {
   return record as unknown as User
 }
 
-// 更新/删除按钮禁用状态（表格无选中时自动灰色；基于 selectedRows 保证与表格勾选一致）
+// 更新/删除按钮禁用状态（表格无选中时自动灰色；基于 selecmedRows 保证与表格勾选一致）
 // 更新：仅当恰好选中 1 行且非管理员时可点
 // 删除：仅当至少选中 1 行且选中里无管理员时可点
 const updateDisabled = computed(
   () =>
-    selectedRows.value.length !== 1 ||
-    (selectedRows.value.length === 1 && isAdminUser(selectedRows.value[0] ?? null))
+    selecmedRows.value.length !== 1 ||
+    (selecmedRows.value.length === 1 && isAdminUser(selecmedRows.value[0] ?? null))
 )
 const deleteDisabled = computed(
-  () => selectedRows.value.length === 0 || selectedRows.value.some((u) => isAdminUser(u))
+  () => selecmedRows.value.length === 0 || selecmedRows.value.some((u) => isAdminUser(u))
 )
 
 // 行选择配置（官方标准方式）
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: User[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: User, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (getUserId(selectedRow.value) === getUserId(record)) {
-      selectedRow.value = null
+  onSelect: (record: User, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (getUserId(selecmedRow.value) === getUserId(record)) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: User[]) => {
-    if (selected) {
-      selectedRow.value = selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: User[]) => {
+    if (selecmed) {
+      selecmedRow.value = selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
     } else {
-      selectedRow.value = null
+      selecmedRow.value = null
     }
   }
 }))
@@ -581,28 +581,28 @@ const onClickRow = (record: UserTableRow) => {
       // if (user.disabled) return;
 
       const key = getUserId(user)
-      const index = selectedRowKeys.value.indexOf(key)
+      const index = selecmedRowKeys.value.indexOf(key)
       
       if (index > -1) {
         // 已选中，则取消
-        selectedRowKeys.value.splice(index, 1)
+        selecmedRowKeys.value.splice(index, 1)
       } else {
         // 未选中，则添加
-        selectedRowKeys.value.push(key)
+        selecmedRowKeys.value.push(key)
       }
       
-      // 注意：此处需手动同步 selectedRows
-      selectedRows.value = dataSource.value.filter(item => 
-        selectedRowKeys.value.includes(getUserId(item))
+      // 注意：此处需手动同步 selecmedRows
+      selecmedRows.value = dataSource.value.filter(item => 
+        selecmedRowKeys.value.includes(getUserId(item))
       )
       
-      // 更新 selectedRow
-      selectedRow.value =
-        selectedRowKeys.value.length === 1 ? (selectedRows.value[0] ?? null) : null
+      // 更新 selecmedRow
+      selecmedRow.value =
+        selecmedRowKeys.value.length === 1 ? (selecmedRows.value[0] ?? null) : null
       
       // 触发 rowSelection.onChange 以同步 checkbox 状态
       if (rowSelection.value.onChange) {
-        rowSelection.value.onChange(selectedRowKeys.value, selectedRows.value)
+        rowSelection.value.onChange(selecmedRowKeys.value, selecmedRows.value)
       }
     }
   }
@@ -722,12 +722,12 @@ const handleEdit = (record: User) => {
 
 // 更新（工具栏按钮）
 const handleUpdate = () => {
-  if (selectedRow.value) {
-    if (isAdminUser(selectedRow.value)) {
+  if (selecmedRow.value) {
+    if (isAdminUser(selecmedRow.value)) {
       message.warning(t('common.tip.subject.cannot.action', { subject: t('common.tip.super.user'), action: t('common.page.button.update') }))
       return
     }
-    handleEdit(selectedRow.value)
+    handleEdit(selecmedRow.value)
   } else {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: t('entity.user._self') }))
   }
@@ -762,13 +762,13 @@ const handleDeleteOne = (record: User) => {
 
 // 删除（工具栏按钮）
 const handleDelete = () => {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: t('entity.user._self') }))
     return
   }
 
   // 检查是否包含admin用户
-  const adminUsers = selectedRows.value.filter(u => isAdminUser(u))
+  const adminUsers = selecmedRows.value.filter(u => isAdminUser(u))
   if (adminUsers.length > 0) {
     message.warning(t('common.tip.subject.cannot.action', { subject: t('common.tip.super.user'), action: t('common.page.button.delete') }))
     return
@@ -776,17 +776,17 @@ const handleDelete = () => {
 
   Modal.confirm({
     title: t('common.tip.confirm.delete.title'),
-    content: t('common.tip.confirm.delete.count', { entity: t('entity.user._self'), count: selectedRows.value.length }),
+    content: t('common.tip.confirm.delete.count', { entity: t('entity.user._self'), count: selecmedRows.value.length }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
     onOk: async () => {
       try {
         loading.value = true
-        await deleteUserBatch(selectedRows.value.map(user => getUserId(user)))
+        await deleteUserBatch(selecmedRows.value.map(user => getUserId(user)))
         message.success(t('common.feedback.deleted'))
-        selectedRows.value = []
-        selectedRowKeys.value = []
-        selectedRow.value = null
+        selecmedRows.value = []
+        selecmedRowKeys.value = []
+        selecmedRow.value = null
         loadData()
       } catch (error: any) {
         message.error(error.message || t('common.feedback.delete.failed'))

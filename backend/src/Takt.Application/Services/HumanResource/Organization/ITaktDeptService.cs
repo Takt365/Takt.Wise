@@ -53,7 +53,7 @@ public interface ITaktDeptService
     Task<List<TaktSelectOption>> GetDeptOptionsAsync(string? plantCode = null, string? keyword = null);
 
     /// <summary>
-    /// 获取部门 ISO 编码树形选项列表（懒加载：DictValue=IsoCode，用于编码规则等部门段选择）
+    /// 获取部门 ISO 编码树形选项列表（懒加载：DictValue=IsoCode；ExtValue=实体 Id 供展开；当前登录公司隔离；用于编码规则等部门段选择）
     /// </summary>
     /// <param name="parentId">父级ID（0=根）</param>
     /// <param name="plantCode">工厂代码（可选，用于按工厂过滤）</param>

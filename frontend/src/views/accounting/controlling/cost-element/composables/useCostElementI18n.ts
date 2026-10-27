@@ -56,7 +56,6 @@ export type CostElementField = keyof typeof COSTELEMENT_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const COSTELEMENT_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'costElementCode',
   'costElementName',
   'parentId',

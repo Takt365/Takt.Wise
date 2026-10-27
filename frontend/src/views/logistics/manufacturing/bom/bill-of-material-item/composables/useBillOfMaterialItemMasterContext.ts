@@ -15,7 +15,7 @@ export type BillOfMaterialItemRowRecord = BillOfMaterialItem | Record<string, un
 /** 主表选中行上下文 */
 export interface BillOfMaterialItemMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<BillOfMaterialItemRowRecord | null>
+  selecmedMasterRow: Ref<BillOfMaterialItemRowRecord | null>
 }
 
 const billOfMaterialItemMasterContextKey: InjectionKey<BillOfMaterialItemMasterContext> = Symbol('bill-of-material-itemMasterContext')
@@ -25,8 +25,8 @@ const billOfMaterialItemMasterContextKey: InjectionKey<BillOfMaterialItemMasterC
  * @returns {BillOfMaterialItemMasterContext} 主表上下文
  */
 export function provideBillOfMaterialItemMasterContext(): BillOfMaterialItemMasterContext {
-  const selectedMasterRow = ref<BillOfMaterialItemRowRecord | null>(null)
-  const ctx: BillOfMaterialItemMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<BillOfMaterialItemRowRecord | null>(null)
+  const ctx: BillOfMaterialItemMasterContext = { selecmedMasterRow }
   provide(billOfMaterialItemMasterContextKey, ctx)
   return ctx
 }

@@ -45,10 +45,10 @@ public class TaktPost : TaktCompanyEntityBase
     [SugarColumn(ColumnName = "dept_name", ColumnDescription = "所属部门名称", ColumnDataType = "nvarchar", Length = 100, IsNullable = false, DefaultValue = "")]
     public string DeptName { get; set; } = string.Empty;
     /// <summary>
-    /// 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 TEC=技术岗 SUP=支持岗 OPS=操作岗）
+    /// 岗位类别（字典 sys_post_category；列存 DictValue：MGT=管理岗 PRO=专业岗 ENG=技术岗 SUP=支持岗 OPS=操作岗）
     /// </summary>
-    [SugarColumn(ColumnName = "post_category", ColumnDescription = "岗位类别", ColumnDataType = "varchar", Length = 40, IsNullable = false, DefaultValue = "TEC")]
-    public string PostCategory { get; set; } = "TEC";
+    [SugarColumn(ColumnName = "post_category", ColumnDescription = "岗位类别", ColumnDataType = "varchar", Length = 40, IsNullable = false, DefaultValue = "ENG")]
+    public string PostCategory { get; set; } = "ENG";
     /// <summary>
     /// 岗位职级（字典 sys_post_level；列存 DictValue：P1~P4 专业序列 M1~M5 管理序列）
     /// </summary>

@@ -80,7 +80,6 @@ export type PurchaseSalesInventoryField = keyof typeof PURCHASESALESINVENTORY_PL
 
 /** 高级查询可 trim 的字符串字段 */
 export const PURCHASESALESINVENTORY_QUERY_STRING_FIELDS = [
-  'plantCode',
   'periodCode',
   'materialCode',
   'materialDescription',

@@ -69,7 +69,6 @@ export const PROFITCENTER_QUERY_STRING_FIELDS = [
   'validFromEnd',
   'validToStart',
   'validToEnd',
-  'plantCode',
   'createdAtStart',
   'createdAtEnd',
   'extField',

@@ -54,7 +54,6 @@ export type CostGroupField = keyof typeof COSTGROUP_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const COSTGROUP_QUERY_STRING_FIELDS = [
   'cultureCode',
-  'plantCode',
   'costGroupCode',
   'costGroupName',
   'costGroupDescription',

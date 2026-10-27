@@ -15,7 +15,7 @@ export type SalesConditionItemRowRecord = SalesConditionItem | Record<string, un
 /** 主表选中行上下文 */
 export interface SalesConditionItemMasterContext {
   /** 当前选中的主表行（右侧明细依赖） */
-  selectedMasterRow: Ref<SalesConditionItemRowRecord | null>
+  selecmedMasterRow: Ref<SalesConditionItemRowRecord | null>
 }
 
 const salesConditionItemMasterContextKey: InjectionKey<SalesConditionItemMasterContext> = Symbol('price-itemMasterContext')
@@ -25,8 +25,8 @@ const salesConditionItemMasterContextKey: InjectionKey<SalesConditionItemMasterC
  * @returns {SalesConditionItemMasterContext} 主表上下文
  */
 export function provideSalesConditionItemMasterContext(): SalesConditionItemMasterContext {
-  const selectedMasterRow = ref<SalesConditionItemRowRecord | null>(null)
-  const ctx: SalesConditionItemMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<SalesConditionItemRowRecord | null>(null)
+  const ctx: SalesConditionItemMasterContext = { selecmedMasterRow }
   provide(salesConditionItemMasterContextKey, ctx)
   return ctx
 }

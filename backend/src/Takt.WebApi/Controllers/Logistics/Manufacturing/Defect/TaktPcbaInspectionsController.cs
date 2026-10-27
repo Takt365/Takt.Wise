@@ -41,7 +41,7 @@ public class TaktPcbaInspectionsController : TaktControllerBase
     /// </summary>
     /// <param name="queryDto">查询DTO</param>
     /// <returns>分页结果</returns>
-    [TaktPermission("logistics:manufacturing:defect:pcba:inspection:list", "PCBA检查日报列表")]
+    [TaktPermission("logistics:manufacturing:defect:mfg2:inspection:list", "PCBA检查日报列表")]
     [HttpGet("list")]
     public async Task<IActionResult> GetPcbaInspectionListAsync([FromQuery] TaktPcbaInspectionQueryDto queryDto)
     {
@@ -61,7 +61,7 @@ public class TaktPcbaInspectionsController : TaktControllerBase
     /// </summary>
     /// <param name="queryDto">查询 DTO</param>
     /// <returns>PCBA 检查统计</returns>
-    [TaktPermission("logistics:manufacturing:defect:pcba:inspection:list", "PCBA检查不良统计")]
+    [TaktPermission("logistics:manufacturing:defect:mfg2:inspection:list", "PCBA检查不良统计")]
     [HttpGet("defect-stat")]
     public async Task<IActionResult> GetPcbaInspectionStatAsync([FromQuery] TaktDefectStatQueryDto queryDto)
     {
@@ -81,7 +81,7 @@ public class TaktPcbaInspectionsController : TaktControllerBase
     /// </summary>
     /// <param name="id">PCBA检查日报ID</param>
     /// <returns>PCBA检查日报DTO</returns>
-    [TaktPermission("logistics:manufacturing:defect:pcba:inspection:query", "PCBA检查日报详情")]
+    [TaktPermission("logistics:manufacturing:defect:mfg2:inspection:query", "PCBA检查日报详情")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetPcbaInspectionByIdAsync(long id)
     {
@@ -104,7 +104,7 @@ public class TaktPcbaInspectionsController : TaktControllerBase
     /// 获取PCBA检查日报选项列表
     /// </summary>
     /// <returns>下拉选项</returns>
-    [TaktPermission("logistics:manufacturing:defect:pcba:inspection:query", "PCBA检查日报选项")]
+    [TaktPermission("logistics:manufacturing:defect:mfg2:inspection:query", "PCBA检查日报选项")]
     [HttpGet("options")]
     public async Task<IActionResult> GetPcbaInspectionOptionsAsync([FromQuery] string? plantCode = null, [FromQuery] string? keyword = null)
     {
@@ -124,7 +124,7 @@ public class TaktPcbaInspectionsController : TaktControllerBase
     /// </summary>
     /// <param name="dto">创建DTO</param>
     /// <returns>PCBA检查日报DTO</returns>
-    [TaktPermission("logistics:manufacturing:defect:pcba:inspection:create", "创建PCBA检查日报")]
+    [TaktPermission("logistics:manufacturing:defect:mfg2:inspection:create", "创建PCBA检查日报")]
     [HttpPost]
     public async Task<IActionResult> CreatePcbaInspectionAsync([FromBody] TaktPcbaInspectionCreateDto dto)
     {
@@ -145,7 +145,7 @@ public class TaktPcbaInspectionsController : TaktControllerBase
     /// <param name="id">PCBA检查日报ID</param>
     /// <param name="dto">更新DTO</param>
     /// <returns>PCBA检查日报DTO</returns>
-    [TaktPermission("logistics:manufacturing:defect:pcba:inspection:update", "更新PCBA检查日报")]
+    [TaktPermission("logistics:manufacturing:defect:mfg2:inspection:update", "更新PCBA检查日报")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdatePcbaInspectionAsync(long id, [FromBody] TaktPcbaInspectionUpdateDto dto)
     {
@@ -165,7 +165,7 @@ public class TaktPcbaInspectionsController : TaktControllerBase
     /// </summary>
     /// <param name="id">PCBA检查日报ID</param>
     /// <returns>操作结果</returns>
-    [TaktPermission("logistics:manufacturing:defect:pcba:inspection:delete", "删除PCBA检查日报")]
+    [TaktPermission("logistics:manufacturing:defect:mfg2:inspection:delete", "删除PCBA检查日报")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePcbaInspectionByIdAsync(long id)
     {
@@ -185,7 +185,7 @@ public class TaktPcbaInspectionsController : TaktControllerBase
     /// </summary>
     /// <param name="ids">ID列表</param>
     /// <returns>操作结果</returns>
-    [TaktPermission("logistics:manufacturing:defect:pcba:inspection:delete", "批量删除PCBA检查日报")]
+    [TaktPermission("logistics:manufacturing:defect:mfg2:inspection:delete", "批量删除PCBA检查日报")]
     [HttpDelete("batch")]
     public async Task<IActionResult> DeletePcbaInspectionBatchAsync([FromBody] IEnumerable<long> ids)
     {
@@ -204,7 +204,7 @@ public class TaktPcbaInspectionsController : TaktControllerBase
     /// 获取导入模板
     /// </summary>
     /// <returns>Excel文件</returns>
-    [TaktPermission("logistics:manufacturing:defect:pcba:inspection:import", "获取PCBA检查日报导入模板")]
+    [TaktPermission("logistics:manufacturing:defect:mfg2:inspection:import", "获取PCBA检查日报导入模板")]
     [HttpGet("template")]
     public async Task<IActionResult> GetPcbaInspectionTemplateAsync([FromQuery] string? sheetName = null, [FromQuery] string? templateName = null)
     {
@@ -224,7 +224,7 @@ public class TaktPcbaInspectionsController : TaktControllerBase
     /// </summary>
     /// <param name="file">Excel文件</param>
     /// <returns>导入结果</returns>
-    [TaktPermission("logistics:manufacturing:defect:pcba:inspection:import", "导入PCBA检查日报")]
+    [TaktPermission("logistics:manufacturing:defect:mfg2:inspection:import", "导入PCBA检查日报")]
     [HttpPost("import")]
     public async Task<IActionResult> ImportPcbaInspectionAsync(IFormFile file, [FromQuery] string? sheetName = null)
     {
@@ -254,7 +254,7 @@ public class TaktPcbaInspectionsController : TaktControllerBase
     /// 导出PCBA检查日报
     /// </summary>
     /// <returns>Excel文件</returns>
-    [TaktPermission("logistics:manufacturing:defect:pcba:inspection:export", "导出PCBA检查日报")]
+    [TaktPermission("logistics:manufacturing:defect:mfg2:inspection:export", "导出PCBA检查日报")]
     [HttpGet("export")]
     public async Task<IActionResult> ExportPcbaInspectionAsync([FromQuery] TaktPcbaInspectionQueryDto? query = null, [FromQuery] string? sheetName = null, [FromQuery] string? exportName = null)
     {

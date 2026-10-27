@@ -134,7 +134,7 @@ public class TaktPostSeedData : ITaktSeedDataCoordinator
     private static IEnumerable<(string PostCode, string PostName, string PostCategory, string PostLevel, int SortOrder, string DeptCode)> GetStandardPosts(string tenantCode, string companyCode)
     {
         var rootDeptCode = ResolveOrgRootDeptCode(companyCode);
-        // PostCategory：字典 sys_post_category（MGT/PRO/TEC/SUP/OPS）；PostLevel：字典 sys_post_level（P1~P4 / M1~M5）
+        // PostCategory：字典 sys_post_category（MGT/PRO/ENG/SUP/OPS）；PostLevel：字典 sys_post_level（P1~P4 / M1~M5）
         return new[]
         {
             // ===== 管理岗 =====
@@ -155,11 +155,11 @@ public class TaktPostSeedData : ITaktSeedDataCoordinator
             ("TEAM_LEADER", "班长", "MGT", "M1", 15, rootDeptCode),
             ("DEPUTY_TEAM_LEADER", "副班长", "MGT", "M1", 16, rootDeptCode),
             // ===== 技术岗 =====
-            ("LEVEL4_ENGINEER", "四级工程师", "TEC", "P4", 20, rootDeptCode),
-            ("LEVEL3_ENGINEER", "三级工程师", "TEC", "P3", 21, rootDeptCode),
-            ("LEVEL3_TECH_ENGINEER", "三级技术工程师", "TEC", "P3", 22, rootDeptCode),
-            ("LEVEL2_ENGINEER", "二级工程师", "TEC", "P2", 23, rootDeptCode),
-            ("LEVEL1_TECHNICIAN", "一级技术员", "TEC", "P1", 24, rootDeptCode),
+            ("LEVEL4_ENGINEER", "四级工程师", "ENG", "P4", 20, rootDeptCode),
+            ("LEVEL3_ENGINEER", "三级工程师", "ENG", "P3", 21, rootDeptCode),
+            ("LEVEL3_TECH_ENGINEER", "三级技术工程师", "ENG", "P3", 22, rootDeptCode),
+            ("LEVEL2_ENGINEER", "二级工程师", "ENG", "P2", 23, rootDeptCode),
+            ("LEVEL1_TECHNICIAN", "一级技术员", "ENG", "P1", 24, rootDeptCode),
             // ===== 专业岗 / 支持岗 =====
             ("LEVEL4_SPECIALIST", "四级专员", "PRO", "P4", 30, rootDeptCode),
             ("LEVEL3_SPECIALIST", "三级专员", "PRO", "P3", 31, rootDeptCode),

@@ -12,7 +12,11 @@
 
 export default {
   page: {
-    title: 'Monthly Production Defect Trend',
+    title: 'Defect trend',
+    tabs: {
+      assy: 'Assembly',
+      pcba: 'PCBA',
+    },
     periodRange: 'Period (month)',
     defectCategory: 'Defect category',
     modelCode: 'Model',

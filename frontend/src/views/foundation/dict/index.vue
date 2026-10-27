@@ -275,12 +275,12 @@ function hasExpandedDictDataList(dictTypeId: string | undefined): boolean {
 }
 
 // 行选择
-const selectedRowKeys = ref<(string | number)[]>([])
-const selectedRows = ref<DictType[]>([])
-const selectedRow = ref<DictType | null>(null)
+const selecmedRowKeys = ref<(string | number)[]>([])
+const selecmedRows = ref<DictType[]>([])
+const selecmedRow = ref<DictType | null>(null)
 
-const updateDisabled = computed(() => selectedRows.value.length !== 1)
-const deleteDisabled = computed(() => selectedRows.value.length === 0)
+const updateDisabled = computed(() => selecmedRows.value.length !== 1)
+const deleteDisabled = computed(() => selecmedRows.value.length === 0)
 
 // 表单
 const formVisible = ref(false)
@@ -537,7 +537,7 @@ const handleCreate = () => {
 
 // 编辑
 const handleUpdate = () => {
-  if (!selectedRow.value) {
+  if (!selecmedRow.value) {
     message.warning(
       t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: t('entity.dicttype._self') })
     )
@@ -545,13 +545,13 @@ const handleUpdate = () => {
   }
   
   formTitle.value = t('common.dialog.title.edit', { entity: t('entity.dicttype._self') })
-  formData.value = { ...selectedRow.value }
+  formData.value = { ...selecmedRow.value }
   formVisible.value = true
 }
 
 // 编辑单条记录（操作列使用）
 const handleEditOne = (record: DictType) => {
-  selectedRow.value = record
+  selecmedRow.value = record
   formTitle.value = t('common.dialog.title.edit', { entity: t('entity.dicttype._self') })
   formData.value = { ...record }
   formVisible.value = true
@@ -559,14 +559,14 @@ const handleEditOne = (record: DictType) => {
 
 // 删除
 const handleDelete = () => {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(
       t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: t('entity.dicttype._self') })
     )
     return
   }
   
-  const ids = selectedRows.value.map((row: DictType) => row.dictTypeId).filter(Boolean)
+  const ids = selecmedRows.value.map((row: DictType) => row.dictTypeId).filter(Boolean)
   if (ids.length === 0) {
     message.warning(t('common.validation.required', { field: t('common.page.entity.id') }))
     return
@@ -576,7 +576,7 @@ const handleDelete = () => {
     title: t('common.tip.confirm.delete.title'),
     content: t('common.tip.confirm.delete.count', {
       entity: t('entity.dicttype._self'),
-      count: selectedRows.value.length
+      count: selecmedRows.value.length
     }),
     okText: t('common.page.button.delete'),
     cancelText: t('common.page.button.cancel'),
@@ -590,9 +590,9 @@ const handleDelete = () => {
         }
         message.success(t('common.feedback.deleted'))
         await loadData()
-        selectedRowKeys.value = []
-        selectedRows.value = []
-        selectedRow.value = null
+        selecmedRowKeys.value = []
+        selecmedRows.value = []
+        selecmedRow.value = null
       } catch (error) {
         logger.error('[DictType] 删除失败', { action: 'deleteBatch' }, error)
         message.error(t('common.feedback.delete.failed'))
@@ -622,11 +622,11 @@ const handleDeleteOne = (record: DictType) => {
         await dictTypeApi.deleteDictTypeById(record.dictTypeId)
         message.success(t('common.feedback.deleted'))
         await loadData()
-        if (selectedRow.value?.dictTypeId === record.dictTypeId) {
-          selectedRow.value = null
+        if (selecmedRow.value?.dictTypeId === record.dictTypeId) {
+          selecmedRow.value = null
         }
-        selectedRowKeys.value = selectedRowKeys.value.filter(k => k !== record.dictTypeId)
-        selectedRows.value = selectedRows.value.filter((r: DictType) => r.dictTypeId !== record.dictTypeId)
+        selecmedRowKeys.value = selecmedRowKeys.value.filter(k => k !== record.dictTypeId)
+        selecmedRows.value = selecmedRows.value.filter((r: DictType) => r.dictTypeId !== record.dictTypeId)
       } catch (error) {
         logger.error('[DictType] 删除失败', { action: 'deleteOne' }, error)
         message.error(t('common.feedback.delete.failed'))
@@ -815,24 +815,24 @@ const handleResizeColumn = (w: number, col: TaktResizeColumn) => {
 
 // 行选择配置
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: DictType[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   },
-  onSelect: (record: DictType, selected: boolean) => {
-    if (selected) {
-      selectedRow.value = record
-    } else if (selectedRow.value?.dictTypeId === record?.dictTypeId) {
-      selectedRow.value = null
+  onSelect: (record: DictType, selecmed: boolean) => {
+    if (selecmed) {
+      selecmedRow.value = record
+    } else if (selecmedRow.value?.dictTypeId === record?.dictTypeId) {
+      selecmedRow.value = null
     }
   },
-  onSelectAll: (selected: boolean, selectedRowsData: DictType[]) => {
-    if (selected) {
-      selectedRow.value = selectedRowsData.length === 1 ? (selectedRowsData[0] ?? null) : null
+  onSelectAll: (selecmed: boolean, selecmedRowsData: DictType[]) => {
+    if (selecmed) {
+      selecmedRow.value = selecmedRowsData.length === 1 ? (selecmedRowsData[0] ?? null) : null
     } else {
-      selectedRow.value = null
+      selecmedRow.value = null
     }
   }
 }))

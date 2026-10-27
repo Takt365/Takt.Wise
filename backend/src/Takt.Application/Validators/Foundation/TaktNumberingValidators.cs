@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Validators.Foundation
 // 文件名称：TaktNumberingValidators.cs
-// 创建时间：2026-10-14
+// 创建时间：2026-10-27
 // 创建人：Takt365(Auto Generated)
 // 功能描述：Numbering 模块 FluentValidation 验证器（由 generate-validators-from-entity.cjs 根据 TaktNumbering 生成，请按需审阅）
 // 
@@ -56,7 +56,7 @@ public class TaktNumberingCreateValidator : AbstractValidator<TaktNumberingCreat
         RuleFor(x => x.ResetPeriod)
             .NotEmpty().WithMessage("重置周期不能为空")
             .MaximumLength(20).WithMessage("重置周期长度不能超过20个字符");
-        RuleFor(x => x.ExampleCode)
+        RuleFor(x => x.StartingNumber)
             .NotEmpty().WithMessage("起始编码不能为空")
             .MaximumLength(100).WithMessage("起始编码长度不能超过100个字符");
         RuleFor(x => x.ExtField)
@@ -109,7 +109,7 @@ public class TaktNumberingUpdateValidator : AbstractValidator<TaktNumberingUpdat
         RuleFor(x => x.ResetPeriod)
             .NotEmpty().WithMessage("重置周期不能为空")
             .MaximumLength(20).WithMessage("重置周期长度不能超过20个字符");
-        RuleFor(x => x.ExampleCode)
+        RuleFor(x => x.StartingNumber)
             .NotEmpty().WithMessage("起始编码不能为空")
             .MaximumLength(100).WithMessage("起始编码长度不能超过100个字符");
         RuleFor(x => x.ExtField)
@@ -156,7 +156,7 @@ public class TaktNumberingImportValidator : AbstractValidator<TaktNumberingImpor
         RuleFor(x => x.ResetPeriod)
             .NotEmpty().WithMessage("重置周期不能为空")
             .MaximumLength(20).WithMessage("重置周期长度不能超过20个字符");
-        RuleFor(x => x.ExampleCode)
+        RuleFor(x => x.StartingNumber)
             .NotEmpty().WithMessage("起始编码不能为空")
             .MaximumLength(100).WithMessage("起始编码长度不能超过100个字符");
         RuleFor(x => x.ExtField)

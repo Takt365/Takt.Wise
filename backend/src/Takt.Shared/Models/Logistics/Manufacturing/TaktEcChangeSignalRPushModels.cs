@@ -45,7 +45,7 @@ public class TaktEcChangeNotificationPush
     /// 设变 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号
@@ -176,7 +176,7 @@ public class TaktEcChangeClosedPush
     /// 设变 ID
     /// </summary>
     [JsonConverter(typeof(ValueToStringConverter))]
-    public long EcGijutsuId { get; set; }
+    public long EcTeId { get; set; }
 
     /// <summary>
     /// 设变单号

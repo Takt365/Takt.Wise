@@ -37,8 +37,8 @@
         :show-fullscreen="true"
         :show-refresh="true"
         :create-disabled="false"
-        :update-disabled="!selectedRow"
-        :delete-disabled="selectedRows.length === 0"
+        :update-disabled="!selecmedRow"
+        :delete-disabled="selecmedRows.length === 0"
         :create-loading="loading"
         :update-loading="loading"
         :delete-loading="loading"
@@ -268,11 +268,11 @@ const total = ref(0)
 /** 列表数据 */
 const dataSource = ref<Culture[]>([])
 /** 选中行 keys */
-const selectedRowKeys = ref<(string | number)[]>([])
+const selecmedRowKeys = ref<(string | number)[]>([])
 /** 选中行 */
-const selectedRows = ref<Culture[]>([])
+const selecmedRows = ref<Culture[]>([])
 /** 单选行 */
-const selectedRow = ref<Culture | null>(null)
+const selecmedRow = ref<Culture | null>(null)
 /** 表单弹窗 */
 const formVisible = ref(false)
 /** 表单标题 */
@@ -466,11 +466,11 @@ const columns = computed<TableColumnsType<Culture>>(() => [
 
 /** 行选择 */
 const rowSelection = computed(() => ({
-  selectedRowKeys: selectedRowKeys.value,
+  selecmedRowKeys: selecmedRowKeys.value,
   onChange: (keys: (string | number)[], rows: Culture[]) => {
-    selectedRowKeys.value = keys
-    selectedRows.value = rows
-    selectedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
+    selecmedRowKeys.value = keys
+    selecmedRows.value = rows
+    selecmedRow.value = rows.length === 1 ? (rows[0] ?? null) : null
   }
 }))
 
@@ -501,18 +501,18 @@ watch(
       queryKeyword.value = ''
       advancedQueryForm.value = createEmptyAdvancedQueryForm()
       currentPage.value = getTaktDefaultPageIndex()
-      selectedRowKeys.value = []
-      selectedRows.value = []
-      selectedRow.value = null
+      selecmedRowKeys.value = []
+      selecmedRows.value = []
+      selecmedRow.value = null
       void loadData()
     } else {
       if (document.fullscreenElement) {
         void document.exitFullscreen().catch(() => {})
       }
       isFullscreen.value = false
-      selectedRowKeys.value = []
-      selectedRows.value = []
-      selectedRow.value = null
+      selecmedRowKeys.value = []
+      selecmedRows.value = []
+      selecmedRow.value = null
       queryKeyword.value = ''
       advancedQueryForm.value = createEmptyAdvancedQueryForm()
     }
@@ -588,11 +588,11 @@ const handleCreate = () => {
 }
 
 const handleUpdate = async () => {
-  if (!selectedRow.value?.cultureId) {
+  if (!selecmedRow.value?.cultureId) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.edit'), entity: t('entity.culture._self') }))
     return
   }
-  await openEditForm(selectedRow.value.cultureId)
+  await openEditForm(selecmedRow.value.cultureId)
 }
 
 /**
@@ -619,16 +619,16 @@ const handleEditOne = async (record: Culture) => {
     message.warning(t('common.validation.invalid', { field: t('common.page.entity.id') }))
     return
   }
-  selectedRow.value = record
+  selecmedRow.value = record
   await openEditForm(record.cultureId)
 }
 
 const handleDelete = () => {
-  if (selectedRows.value.length === 0) {
+  if (selecmedRows.value.length === 0) {
     message.warning(t('common.tip.select.to.action', { action: t('common.page.button.delete'), entity: t('entity.culture._self') }))
     return
   }
-  const ids = selectedRows.value.map((row) => row.cultureId).filter(Boolean) as string[]
+  const ids = selecmedRows.value.map((row) => row.cultureId).filter(Boolean) as string[]
   if (ids.length === 0) {
     message.warning(t('common.validation.invalid', { field: t('common.page.entity.id') }))
     return
@@ -651,9 +651,9 @@ const handleDelete = () => {
         }
         message.success(t('common.feedback.deleted'))
         await loadData()
-        selectedRowKeys.value = []
-        selectedRows.value = []
-        selectedRow.value = null
+        selecmedRowKeys.value = []
+        selecmedRows.value = []
+        selecmedRow.value = null
       } catch (error) {
         logger.error('[Culture] 删除失败', undefined, error)
         message.error(t('common.feedback.delete.failed'))
@@ -683,11 +683,11 @@ const handleDeleteOne = (record: Culture) => {
         await deleteCultureById(record.cultureId)
         message.success(t('common.feedback.deleted'))
         await loadData()
-        if (selectedRow.value?.cultureId === record.cultureId) {
-          selectedRow.value = null
+        if (selecmedRow.value?.cultureId === record.cultureId) {
+          selecmedRow.value = null
         }
-        selectedRowKeys.value = selectedRowKeys.value.filter((k) => k !== record.cultureId)
-        selectedRows.value = selectedRows.value.filter((r) => r.cultureId !== record.cultureId)
+        selecmedRowKeys.value = selecmedRowKeys.value.filter((k) => k !== record.cultureId)
+        selecmedRows.value = selecmedRows.value.filter((r) => r.cultureId !== record.cultureId)
       } catch (error) {
         logger.error('[Culture] 删除失败', undefined, error)
         message.error(t('common.feedback.delete.failed'))

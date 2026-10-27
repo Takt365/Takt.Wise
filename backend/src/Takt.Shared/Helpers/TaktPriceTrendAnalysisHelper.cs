@@ -375,15 +375,15 @@ public static class TaktPriceTrendAnalysisHelper
             return null;
         }
         var latestStart = monthEntries.Max(x => x.EffectiveStartDate.Date);
-        var selected = monthEntries
+        var selecmed = monthEntries
             .Where(x => x.EffectiveStartDate.Date == latestStart)
             .ToList();
-        var avgRaw = selected.Average(x => x.RawPrice);
-        var perUnit = selected[0].PerUnit;
-        var unit = selected[0].Unit ?? string.Empty;
+        var avgRaw = selecmed.Average(x => x.RawPrice);
+        var perUnit = selecmed[0].PerUnit;
+        var unit = selecmed[0].Unit ?? string.Empty;
         var unitPrice = NormalizeUnitPrice(avgRaw, perUnit);
         var sourcePriceDate = latestStart.ToString("yyyy-MM-dd");
-        return (unitPrice, avgRaw, perUnit, unit, selected[0].ReferenceCode, selected.Count, sourcePriceDate);
+        return (unitPrice, avgRaw, perUnit, unit, selecmed[0].ReferenceCode, selecmed.Count, sourcePriceDate);
     }
 
     /// <summary>

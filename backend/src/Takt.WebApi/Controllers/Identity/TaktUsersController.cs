@@ -4,7 +4,7 @@
 // 文件名称：TaktUsersController.cs
 // 创建时间：2025-01-20
 // 创建人：Takt365(Cursor AI)
-// 功能描述：用户管理控制器（完整CRUD + 导入导出 + 状态管理 + 密码重置）
+// 功能描述：用户部门管控器（完整CRUD + 导入导出 + 状态管理 + 密码重置）
 // 
 // 版权信息：Copyright (c) 2025 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -18,7 +18,7 @@ using Takt.Shared.Constants;
 namespace Takt.WebApi.Controllers.Identity;
 
 /// <summary>
-/// 用户管理控制器
+/// 用户部门管控器
 /// </summary>
 [ApiModule(1, "身份认证")]
 [Route("api/[controller]", Name = "用户管理")]

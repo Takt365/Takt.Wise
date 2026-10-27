@@ -15,7 +15,7 @@ export type EcDeptExecMasterRow = Record<string, unknown>
 /** 执行部门页主表选中行上下文 */
 export interface EcDeptExecMasterContext {
   /** 当前选中的部门执行行 */
-  selectedMasterRow: Ref<EcDeptExecMasterRow | null>
+  selecmedMasterRow: Ref<EcDeptExecMasterRow | null>
 }
 
 const ecDeptExecMasterContextKey: InjectionKey<EcDeptExecMasterContext> = Symbol('ecDeptExecMasterContext')
@@ -25,8 +25,8 @@ const ecDeptExecMasterContextKey: InjectionKey<EcDeptExecMasterContext> = Symbol
  * @returns {EcDeptExecMasterContext} 主表上下文
  */
 export function provideEcDeptExecMasterContext(): EcDeptExecMasterContext {
-  const selectedMasterRow = ref<EcDeptExecMasterRow | null>(null)
-  const ctx: EcDeptExecMasterContext = { selectedMasterRow }
+  const selecmedMasterRow = ref<EcDeptExecMasterRow | null>(null)
+  const ctx: EcDeptExecMasterContext = { selecmedMasterRow }
   provide(ecDeptExecMasterContextKey, ctx)
   return ctx
 }

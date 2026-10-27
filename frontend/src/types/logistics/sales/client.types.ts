@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/types/logistics/sales
 // 文件名称：client.types.ts
-// 创建时间：2026-10-14
+// 创建时间：2026-10-27
 // 创建人：Takt365(Auto Generated)
 // 功能描述：logistics/sales 模块类型定义（自动生成；类型名去 Takt 前缀与末尾 Dto，如 TaktCompanyDto → Company）
 // 
@@ -29,7 +29,7 @@ export interface Client extends CompanyDtoBase {
   clientId: string;
 
   /**
-   * 客户端编码（与公司、销售组织共同唯一）
+   * 客户端编码（与租户、公司、销售组织共同唯一；前端表单选择编码规则后自动通过 TaktNumbering 客户端编码规则生成并展示，非手输；单据类型菜单：顾客信息）
    */
   clientCode: string;
 
@@ -339,7 +339,7 @@ export interface ClientQuery extends TaktPagedQuery {
   plantCode?: string;
 
   /**
-   * 客户端编码（与公司、销售组织共同唯一）
+   * 客户端编码（与租户、公司、销售组织共同唯一；前端表单选择编码规则后自动通过 TaktNumbering 客户端编码规则生成并展示，非手输；单据类型菜单：顾客信息）
    */
   clientCode?: string;
 
@@ -668,12 +668,12 @@ export interface ClientCreate {
   plantCode: string;
 
   /**
-   * 客户端编码（与公司、销售组织共同唯一；前端表单选择编码规则后自动通过 TaktNumbering 客户端编码规则生成并展示，非手输；单据类型菜单：顾客信息）
+   * 客户端编码（与租户、公司、销售组织共同唯一；前端表单选择编码规则后自动通过 TaktNumbering 客户端编码规则生成并展示，非手输；单据类型菜单：顾客信息）
    */
   clientCode: string;
 
   /**
-   * 编码规则编码（新增时选择顾客信息编码规则后取号；不落库）
+   * 编码规则编码（前端表单从 TaktNumberings/options 选择；对应 TaktNumbering.RuleCode；不落库）
    */
   numberingRuleCode?: string;
 
@@ -1040,7 +1040,7 @@ export interface ClientTemplate {
   plantCode?: string;
 
   /**
-   * 客户端编码（与公司、销售组织共同唯一）
+   * 客户端编码（与租户、公司、销售组织共同唯一；前端表单选择编码规则后自动通过 TaktNumbering 客户端编码规则生成并展示，非手输；单据类型菜单：顾客信息）
    */
   clientCode?: string;
 
@@ -1354,7 +1354,7 @@ export interface ClientImport {
   plantCode?: string;
 
   /**
-   * 客户端编码（与公司、销售组织共同唯一）
+   * 客户端编码（与租户、公司、销售组织共同唯一；前端表单选择编码规则后自动通过 TaktNumbering 客户端编码规则生成并展示，非手输；单据类型菜单：顾客信息）
    */
   clientCode?: string;
 
@@ -1668,7 +1668,7 @@ export interface ClientExport {
   cultureCode: string;
 
   /**
-   * 客户端编码（与公司、销售组织共同唯一）
+   * 客户端编码（与租户、公司、销售组织共同唯一；前端表单选择编码规则后自动通过 TaktNumbering 客户端编码规则生成并展示，非手输；单据类型菜单：顾客信息）
    */
   clientCode: string;
 

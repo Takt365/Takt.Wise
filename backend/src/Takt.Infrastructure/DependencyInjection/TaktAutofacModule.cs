@@ -12,6 +12,7 @@
 
 using Takt.Application.Services.Workflow.FlowEngine.Business;
 using Autofac;
+using SqlSugar;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -135,7 +136,7 @@ public class TaktAutofacModule : Autofac.Module
 
         builder.RegisterType<Takt.Application.Services.Logistics.Manufacturing.EngineeringChange.TaktEcExecPersistence>()
             .InstancePerLifetimeScope();
-        builder.RegisterType<Takt.Application.Services.Logistics.Manufacturing.EngineeringChange.TaktEcGijutsuStatusSynchronizer>()
+        builder.RegisterType<Takt.Application.Services.Logistics.Manufacturing.EngineeringChange.TaktEcTeStatusSynchronizer>()
             .InstancePerLifetimeScope();
         builder.RegisterType<Takt.Application.Services.Logistics.Manufacturing.EngineeringChange.TaktEcHandoffMailService>()
             .InstancePerLifetimeScope();
@@ -343,7 +344,11 @@ public class TaktAutofacModule : Autofac.Module
         })
         .AsSelf()
         .InstancePerLifetimeScope();
-        
+
+        builder.Register(ctx => ctx.Resolve<TaktSqlSugarContext>().Db)
+            .As<ISqlSugarClient>()
+            .InstancePerLifetimeScope();
+
         // ========================================
         // 12. 注册种子数据专用上下文
         // TaktSeedContext 用于种子数据初始化

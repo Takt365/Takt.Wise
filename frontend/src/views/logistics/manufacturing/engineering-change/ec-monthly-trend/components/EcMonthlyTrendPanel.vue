@@ -78,7 +78,7 @@
     </div>
     <TaktPagination
       v-if="total > 0"
-      class="mt-2 shrink-0"
+      class="shrink-0"
       :current="pageIndex"
       :page-size="pageSize"
       :total="total"
@@ -115,7 +115,7 @@ import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { taktTrendExportFileNames } from '@/utils/naming'
 import { taktOrgDeptI18nKey } from '@/utils/naming'
 import { TAKT_TABLE_SCROLL_Y_MIN } from '@/utils/tableScroll'
-import { useEcGijutsuI18n } from '@/views/logistics/manufacturing/engineering-change/ec-gijutsu/composables/useEcGijutsuI18n'
+import { useEcTeI18n } from '@/views/logistics/manufacturing/engineering-change/ec-te/composables/useEcTeI18n'
 
 type EcTrendRow = EcMonthlyTrend | EcImplementationMonthlyTrend
 
@@ -131,7 +131,7 @@ const props = defineProps<{
   /** 设变单号 */
   ecCode?: string
   /** 区分 */
-  ecScope?: number
+  ecImplScope?: number
   /** 变更状态 */
   changeStatus?: number
   /** 设变状态 */
@@ -145,7 +145,7 @@ const hasRows = defineModel<boolean>('hasRows', { default: false })
 
 const localePrefix = 'logistics.manufacturing.engineering-change.ec-monthly-trend.page'
 const { t } = useI18n()
-const gi = useEcGijutsuI18n()
+const gi = useEcTeI18n()
 
 /**
  * 部门显示名（TaktDeptI18nSeedData：org.dept.{编码小写}）
@@ -458,7 +458,7 @@ function buildIssueQuery() {
     plantCode: plant,
     ecCode: props.ecCode?.trim() || undefined,
     deptCode: props.deptCode?.trim() || undefined,
-    ecScope: props.ecScope,
+    ecImplScope: props.ecImplScope,
     changeStatus: props.changeStatus,
     ecStatus: props.ecStatus,
     trendFilter: props.trendFilter || undefined,
