@@ -17,7 +17,7 @@ DECLARE @plant_code NVARCHAR(4) = N'{{PlantCode}}';
 DECLARE @sync_user_id BIGINT = {{SyncUserId}};
 
 DECLARE @now DATETIME = GETDATE();
-DECLARE @apply_chunk INT = 20000;
+DECLARE @apply_chunk INT = 100000;
 DECLARE @merge_from_rn INT;
 DECLARE @merge_to_rn INT;
 DECLARE @merge_max_rn INT;
@@ -405,7 +405,7 @@ WHEN MATCHED AND (
   T.[deleted_at]=NULL,
   T.[ext_field]=(
     SELECT CASE WHEN LEN(x.[new_ext]) <= 4000 THEN x.[new_ext] ELSE e0.[base_ext] END
-    FROM (SELECT CASE WHEN ISJSON(NULLIF(LTRIM(RTRIM(ISNULL(T.[ext_field], N''))), N'')) = 1 THEN LTRIM(RTRIM(T.[ext_field])) ELSE N'{}' END AS [base_ext]) e0
+    FROM (SELECT CASE WHEN ISJSON(NULLIF(LTRIM(RTRIM(CAST(ISNULL(T.[ext_field], N'') AS nvarchar(max)))), N'')) = 1 THEN LTRIM(RTRIM(CAST(T.[ext_field] AS nvarchar(max)))) ELSE N'{}' END AS [base_ext]) e0
     CROSS APPLY (SELECT CASE WHEN JSON_QUERY(e0.[base_ext], N'$._sync') IS NULL THEN JSON_MODIFY(e0.[base_ext], N'lax $._sync', JSON_QUERY(N'{}')) ELSE e0.[base_ext] END AS [with_root]) e1
     CROSS APPLY (SELECT CASE
       WHEN JSON_QUERY(e1.[with_root], N'$._sync.ec') IS NULL THEN JSON_MODIFY(e1.[with_root], N'lax $._sync.ec', JSON_QUERY(N'[]'))
@@ -596,7 +596,11 @@ INNER JOIN [takt_logistics_manufacturing_ec_source] M
 
 IF EXISTS (SELECT 1 FROM #source_detail WHERE [source_ec_id] IS NULL)
 BEGIN
-  THROW 50004, N'子表存在无法关联主表的设变号', 1;
+  DECLARE @ec_map_n INT = (SELECT COUNT(*) FROM #source_detail WHERE [source_ec_id] IS NULL);
+  DECLARE @ec_map_sample NVARCHAR(80) = N'';
+  SELECT TOP 1 @ec_map_sample = [source_ec_code] FROM #source_detail WHERE [source_ec_id] IS NULL;
+  DECLARE @ec_map_msg NVARCHAR(200) = CONCAT(N'孤儿明细: n=', @ec_map_n, N', sample=', @ec_map_sample);
+  THROW 50004, @ec_map_msg, 1;
 END;
 
 -- 业务键：主表id+完成品+上阶+旧件+新件+BOM+安装位置+生效日（禁止仅按旧件料号丢行）
@@ -777,6 +781,27 @@ CREATE TABLE #detail_soft_deleted_rows (
   [source_old_material_code] NVARCHAR(100)
 );
 
+-- 先回填目标子表主外键，再按 id 同步
+SET @dml_n = 1;
+WHILE @dml_n > 0
+BEGIN
+  UPDATE TOP (@apply_chunk) D
+  SET D.[source_ec_id] = M.[id], D.[updated_by] = @sync_user_id, D.[updated_at] = @now
+  FROM [takt_logistics_manufacturing_ec_source_detail] AS D
+  INNER JOIN [takt_logistics_manufacturing_ec_source] AS M
+    ON M.[tenant_code] = D.[tenant_code]
+   AND M.[company_code] = D.[company_code]
+   AND M.[plant_code] = D.[plant_code]
+   AND M.[source_ec_code] = D.[source_ec_code]
+   AND M.[is_deleted] = 0
+  WHERE D.[tenant_code] = @tenant_code
+    AND D.[company_code] = @company_code
+    AND D.[plant_code] = @plant_code
+    AND D.[is_deleted] = 0
+    AND (D.[source_ec_id] IS NULL OR D.[source_ec_id] <> M.[id]);
+  SET @dml_n = @@ROWCOUNT;
+END
+
 -- 子表：已映射 id → UPDATE；新 id → INSERT；源无键 → 软删
 SET @merge_from_rn = 1;
 SET @merge_max_rn = ISNULL((SELECT MAX([rn]) FROM #source_detail), 0);
@@ -819,7 +844,7 @@ WHEN MATCHED AND (
   T.[deleted_at]=NULL,
   T.[ext_field]=(
     SELECT CASE WHEN LEN(x.[new_ext]) <= 4000 THEN x.[new_ext] ELSE e0.[base_ext] END
-    FROM (SELECT CASE WHEN ISJSON(NULLIF(LTRIM(RTRIM(ISNULL(T.[ext_field], N''))), N'')) = 1 THEN LTRIM(RTRIM(T.[ext_field])) ELSE N'{}' END AS [base_ext]) e0
+    FROM (SELECT CASE WHEN ISJSON(NULLIF(LTRIM(RTRIM(CAST(ISNULL(T.[ext_field], N'') AS nvarchar(max)))), N'')) = 1 THEN LTRIM(RTRIM(CAST(T.[ext_field] AS nvarchar(max)))) ELSE N'{}' END AS [base_ext]) e0
     CROSS APPLY (SELECT CASE WHEN JSON_QUERY(e0.[base_ext], N'$._sync') IS NULL THEN JSON_MODIFY(e0.[base_ext], N'lax $._sync', JSON_QUERY(N'{}')) ELSE e0.[base_ext] END AS [with_root]) e1
     CROSS APPLY (SELECT CASE
       WHEN JSON_QUERY(e1.[with_root], N'$._sync.ecd') IS NULL THEN JSON_MODIFY(e1.[with_root], N'lax $._sync.ecd', JSON_QUERY(N'[]'))

@@ -19,6 +19,7 @@ export default {
       costingMonthPlaceholder: '原価計算月を選択',
       costingMonthRequired: '原価計算月を選択してください',
       hint: 'ターゲット DB と原価計算月の両方が必須です。パラメータなしの Cron は当月、DB はタスク ExecuteParams を使用します。',
+      scope: 'このタスクは会社 {company}、工場 {plant} のみを対象にします。',
     },
     executeDb: {
       modalTitle: '同期データベースを選択',
@@ -32,6 +33,15 @@ export default {
     signalr: {
       executeSucceeded: 'タスク {code} 実行成功（{duration}ms）',
       executeFailed: 'タスク {code} 実行失敗（{duration}ms）',
+    },
+    relation: {
+      title: 'ヘッダと明細の不一致',
+      orphan: '孤立明細',
+      empty: '明細なしヘッダ',
+      businessCode: '業務コード',
+      lineNumber: '行',
+      rowId: '主キー',
+      export: '一覧を書き出す',
     },
     cron: {
       modalTitle: 'Cron 式',

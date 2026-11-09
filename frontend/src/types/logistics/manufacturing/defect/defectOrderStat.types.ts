@@ -25,7 +25,7 @@ export interface DefectOrderStatQuery {
   /** 工单 */
   prodOrderCode?: string
   /** 批次 */
-  batchCode?: string
+  prodBatch?: string
   /** 机种 */
   modelCode?: string
   /** 物料 */
@@ -63,7 +63,7 @@ export interface DefectOrderStatRow {
   /** 生产工单组 */
   prodOrderGroup?: string
   /** 批次 */
-  batchCode: string
+  prodBatch: string
   /** 机种 */
   modelCode: string
   /** 物料 */

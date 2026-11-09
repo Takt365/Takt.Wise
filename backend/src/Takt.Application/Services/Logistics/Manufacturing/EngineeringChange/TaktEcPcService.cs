@@ -150,7 +150,7 @@ public class TaktEcPcService : TaktServiceBase, ITaktEcPcService
     }
 
     /// <summary>
-    /// 更新设变生管执行（同去重键执行行一并写入可填字段；旧品处理按表单字典值保存）
+    /// 更新设变生管执行（同去重键执行行一并写入可填字段；旧品结余按设变级去重清单保存并同步同设变全部生管行）
     /// </summary>
     /// <param name="id">设变生管执行ID</param>
     /// <param name="dto">更新DTO</param>
@@ -163,15 +163,21 @@ public class TaktEcPcService : TaktServiceBase, ITaktEcPcService
             throw new TaktBusinessException("设变生管执行不存在");
         }
         dto.ScheduledBatch = TaktStringHelper.NormalizeBatchCode(dto.ScheduledBatch);
-        if (!string.IsNullOrWhiteSpace(dto.PoRemainder))
+        if (!string.IsNullOrWhiteSpace(dto.EcOldPartBalance))
         {
-            dto.PoRemainder = dto.PoRemainder.Trim();
+            dto.EcOldPartBalance = dto.EcOldPartBalance.Trim();
         }
-        if (!TaktRegexHelper.IsValidEcPoRemainder(dto.PoRemainder))
+        if (!TaktRegexHelper.IsValidEcPcOldPartBalance(dto.EcOldPartBalance))
         {
-            throw new TaktBusinessException("Po残须为空或「采购单10位-序号4位:数量」，如 4500123456-0010:18.5");
+            throw new TaktBusinessException("旧品结余须为空或按旧物料逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，如 S0111914-4300000000:0010:0;0;4;");
         }
+        // 执行行去重键由种子/同步写入，课别编辑不可改；DTO 未带回时保留原值
+        var preservedEcGrainKey = entity.EcGrainKey;
         dto.Adapt(entity);
+        if (string.IsNullOrWhiteSpace(entity.EcGrainKey))
+        {
+            entity.EcGrainKey = preservedEcGrainKey;
+        }
         var isUnique_ix_takt_logistics_manufacturing_ec_pc_unique = await _uniqueValidator.IsUniqueAsync(
             _ecPcRepository,
             x => x.EcCode == entity.EcCode && SqlFunc.ToString(x.EcGrainKey) == entity.EcGrainKey
@@ -405,9 +411,7 @@ public class TaktEcPcService : TaktServiceBase, ITaktEcPcService
                 || SqlFunc.ToString(x.IsImplemented).Contains(keywords)
                 || (x.ExecContent != null && x.ExecContent.Contains(keywords))
                 || (x.ScheduledBatch != null && x.ScheduledBatch.Contains(keywords))
-                || (x.PoRemainder != null && x.PoRemainder.Contains(keywords))
-                || SqlFunc.ToString(x.BalanceQuantity).Contains(keywords)
-                || (x.EcOldPartDisposition != null && x.EcOldPartDisposition.Contains(keywords))
+                || (x.EcOldPartBalance != null && x.EcOldPartBalance.Contains(keywords))
                 || (x.CultureCode != null && x.CultureCode.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
@@ -451,19 +455,9 @@ public class TaktEcPcService : TaktServiceBase, ITaktEcPcService
             exp = exp.And(x => x.ScheduledBatch != null && x.ScheduledBatch.Contains(queryDto.ScheduledBatch));
         }
 
-        if (!string.IsNullOrEmpty(queryDto?.PoRemainder))
+        if (!string.IsNullOrEmpty(queryDto?.EcOldPartBalance))
         {
-            exp = exp.And(x => x.PoRemainder != null && x.PoRemainder.Contains(queryDto.PoRemainder));
-        }
-
-        if (queryDto?.BalanceQuantity.HasValue == true)
-        {
-            exp = exp.And(x => x.BalanceQuantity == queryDto.BalanceQuantity);
-        }
-
-        if (!string.IsNullOrEmpty(queryDto?.EcOldPartDisposition))
-        {
-            exp = exp.And(x => x.EcOldPartDisposition != null && x.EcOldPartDisposition.Contains(queryDto.EcOldPartDisposition));
+            exp = exp.And(x => x.EcOldPartBalance != null && x.EcOldPartBalance.Contains(queryDto.EcOldPartBalance));
         }
 
         if (!string.IsNullOrEmpty(queryDto?.CultureCode))

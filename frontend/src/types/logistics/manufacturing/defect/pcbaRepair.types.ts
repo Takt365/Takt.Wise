@@ -67,7 +67,7 @@ export interface PcbaRepair extends CompanyDtoBase {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 物料编码
@@ -155,7 +155,7 @@ export interface PcbaRepairExport {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 物料编码
@@ -177,5 +177,21 @@ export interface PcbaRepairExport {
    */
   createdAt: string;
 
+}
+
+/**
+ * PCBA改修日报列表查询
+ * 对应后端 TaktPcbaRepairQueryDto
+ */
+export interface PcbaRepairQuery extends TaktPagedQuery {
+  /**
+   * 生产日期（范围查询-开始）
+   */
+  prodDateStart?: string;
+
+  /**
+   * 生产日期（范围查询-结束）
+   */
+  prodDateEnd?: string;
 }
 

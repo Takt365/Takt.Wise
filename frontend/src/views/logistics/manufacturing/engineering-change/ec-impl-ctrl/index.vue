@@ -17,13 +17,11 @@
       @reset="handleReset"
     >
       <template #leading>
-        <span class="whitespace-nowrap text-sm text-text-secondary">{{ t('logistics.manufacturing.engineering-change.ec-stat.page.entryPeriodRange') }}</span>
         <a-range-picker
           v-model:value="entryPeriod"
           picker="month"
           format="YYYY-MM"
           value-format="YYYY-MM"
-          class="w-64 min-w-56"
           :placeholder="[
             t('logistics.manufacturing.engineering-change.ec-stat.page.entryPeriodRange'),
             t('logistics.manufacturing.engineering-change.ec-stat.page.entryPeriodRange'),

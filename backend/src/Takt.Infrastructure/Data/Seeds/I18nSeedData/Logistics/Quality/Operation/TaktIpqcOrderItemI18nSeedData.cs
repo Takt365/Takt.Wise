@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Quality.Operation
 // 文件名称：TaktIpqcOrderItemI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktIpqcOrderItem 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -135,14 +135,14 @@ public class TaktIpqcOrderItemI18nSeedData : ITaktSeedDataCoordinator
             // entity.ipqcorderitem.materialdescription
             new TranslationSeedItem("entity.ipqcorderitem.materialdescription", "zh-HK", "物料描述_hk", "物料描述（冗余：按 MaterialCode 取 TaktMaterialPlant.MaterialDescription联动）"),
 
-            // entity.ipqcorderitem.batchcode
-            new TranslationSeedItem("entity.ipqcorderitem.batchcode", "en-US", "批次号_us", "批次号"),
-            // entity.ipqcorderitem.batchcode
-            new TranslationSeedItem("entity.ipqcorderitem.batchcode", "ja-JP", "批次号_jp", "批次号"),
-            // entity.ipqcorderitem.batchcode
-            new TranslationSeedItem("entity.ipqcorderitem.batchcode", "zh-CN", "批次号", "批次号"),
-            // entity.ipqcorderitem.batchcode
-            new TranslationSeedItem("entity.ipqcorderitem.batchcode", "zh-HK", "批次号_hk", "批次号"),
+            // entity.ipqcorderitem.prodbatch
+            new TranslationSeedItem("entity.ipqcorderitem.prodbatch", "en-US", "批次号_us", "批次号"),
+            // entity.ipqcorderitem.prodbatch
+            new TranslationSeedItem("entity.ipqcorderitem.prodbatch", "ja-JP", "批次号_jp", "批次号"),
+            // entity.ipqcorderitem.prodbatch
+            new TranslationSeedItem("entity.ipqcorderitem.prodbatch", "zh-CN", "批次号", "批次号"),
+            // entity.ipqcorderitem.prodbatch
+            new TranslationSeedItem("entity.ipqcorderitem.prodbatch", "zh-HK", "批次号_hk", "批次号"),
 
             // entity.ipqcorderitem.productionquantity
             new TranslationSeedItem("entity.ipqcorderitem.productionquantity", "en-US", "生产数量_us", "生产数量"),

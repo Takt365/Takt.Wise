@@ -51,7 +51,7 @@ export function applyProductionOrderFormFillToMaster(
   target.prodOrderType = fill.prodOrderType ?? ''
   target.modelCode = fill.modelCode ?? ''
   target.materialCode = fill.materialCode ?? ''
-  target.batchCode = fill.batchCode ?? ''
+  target.prodBatch = fill.prodBatch ?? ''
   target.prodOrderQty = fill.prodOrderQty
   target.serialCode = fill.serialCode ?? ''
   if (applyStdHours) {
@@ -95,6 +95,8 @@ export function mapFormFillDefaultDetailsToPcbaRows(
     completedStatus: 0,
     serialCode: '',
     defectCount: 0,
+    scrapCount: 0,
+    scrapReason: '',
     downtimeMinutes: 0,
     downtimeReason: '',
     downtimeDescription: '',

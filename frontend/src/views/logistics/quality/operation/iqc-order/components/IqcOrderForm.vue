@@ -186,10 +186,10 @@ const iqcOrderItemFormColumns = computed<TaktEditableTableColumn[]>(() => [
     width: 180,
   },
   {
-    key: 'batchCode',
-    title: iqcOrderItemPi.label('batchCode'),
+    key: 'prodBatch',
+    title: iqcOrderItemPi.label('prodBatch'),
     editor: 'input',
-    width: 140, allowClear: true, placeholder: iqcOrderItemPi.ph('batchCode'),
+    width: 140, allowClear: true, placeholder: iqcOrderItemPi.ph('prodBatch'),
   },
   {
     key: 'purchaseQuantity',
@@ -287,7 +287,7 @@ function createDefaultIqcOrderItemRow(): Record<string, unknown> {
     lineNumber: allocateNextIqcOrderItemLineNumber(),
     materialCode: '',
     materialDescription: '',
-    batchCode: '',
+    prodBatch: '',
     purchaseQuantity: 0,
     standardCode: '',
     samplingSchemeCode: '',

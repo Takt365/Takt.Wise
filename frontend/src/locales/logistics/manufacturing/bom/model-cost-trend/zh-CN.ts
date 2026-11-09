@@ -16,9 +16,10 @@ export default {
     periodRange: '核算年月',
     modelOptional: '机种（可选，空=全部）',
     modelAll: '全部机种',
+    materialTypeOptional: '物料类型（可选，空=全部）',
+    materialTypeAll: '全部物料类型',
     selectPlantRequired: '请选择工厂代码',
     selectPeriodRequired: '请选择核算期间',
-    selectMaterialTypeRequired: '请选择物料类型',
     summary:
       '{plant} / {materialType} / {period} / 机种 {model} — 成品 {productCount} 个（组件差异取 {compare}）',
     export: '导出机种成本推移',

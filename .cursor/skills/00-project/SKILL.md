@@ -181,3 +181,20 @@ description: >-
 - **主子表**：`12-crud` → `10-master-detail` → `13-vue-view` / `14-vue-form`
 - **树表**：`12-crud` → `11-tree-table` → `13-vue-view` / `14-vue-form`
 - **任意写文件**：末尾跑 `03-format-blank-lines`
+
+## OpenSpec × 00～17（强制桥接）
+
+OpenSpec / opsx 流程**不得**绕开本仓库规范。统一入口：
+
+| 用途 | Skill / 命令 |
+|------|----------------|
+| **桥接（先读）** | [openspec-takt-conventions](../openspec-takt-conventions/SKILL.md) + `openspec/config.yaml` |
+| **权威细则** | `.cursor/rules/00-project.mdc`～`17-field-length.mdc` |
+| 探索 | `openspec-explore` · `/opsx-explore` |
+| 提案 | `openspec-propose` · `/opsx-propose` |
+| 修订计划 | `openspec-update-change` · `/opsx-update` |
+| 落地实现 | `openspec-apply-change` · `/opsx-apply` |
+| 同步主规范 | `openspec-sync-specs` · `/opsx-sync` |
+| 归档 | `openspec-archive-change` · `/opsx-archive` |
+
+任一 `openspec-*` / `opsx-*` 开始时：Read 桥接 → 按主题路由 **先 Read 命中的 `.mdc`，再读同名 skill** → 再写 artifacts 或代码。

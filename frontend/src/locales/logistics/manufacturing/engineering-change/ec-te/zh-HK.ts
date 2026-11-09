@@ -21,18 +21,19 @@ export default {
       loadToForm: '載入至表單',
       plantFromCompany: '公司 {company} → 工廠 {plant}',
       companyRequired: '請先選擇公司後再錄入來源設變',
-      formTitle: '來源設變導入（請填寫負責人、管理區分並上傳附件）',
+      formTitle: '來源設變導入（請填寫負責人、管理區分、舊品處理並上傳附件）',
       attachmentRequired: '請至少添加一條附件並上傳文件',
       attachmentUploadRequired: '第 {row} 行附件尚未上傳文件',
       importSelecmed: '導入選中（{count}）',
       importSuccess: '已成功導入 {count} 條設變',
       importPartial: '導入完成：成功 {success} 條，失敗 {fail} 條',
-      detailsDeferred: '明細共 {count} 行，已改由服務端落庫（不經瀏覽器回傳），請填寫負責人與管理區分後提交',
+      detailsDeferred: '明細共 {count} 行，已改由服務端落庫（不經瀏覽器回傳），請填寫負責人、管理區分與舊品處理後提交',
     },
     attachment: {
       docCode: {
         formatInvalid: '文件編碼格式不正確（{hint}）',
         duplicate: '文件編碼「{code}」已存在，不可重複',
+        sequence: '4位序號',
         hint: {
           empty: '請輸入文件編碼',
           ec: '與設變單號一致',

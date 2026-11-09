@@ -20,28 +20,29 @@ export const SALESFORECASTITEM_SELF_I18N_KEY = buildEntitySelfI18nKey(SALESFOREC
 
 /** 列表业务列（不含主键） */
 export const SALESFORECASTITEM_LIST_FIELDS = [
+  'salesForecastId',
   'salesForecastCode',
   'lineNumber',
   'fiscalYear',
   'planMonth',
-  'planQuantity001',
-  'planQuantity002',
+  'versionNo',
+  'planQuantity',
   'planQuantityDelta',
   'convertedQuantity',
   'estimatedUnitPrice',
   'estimatedAmount',
   'isObsolete',
-  'remark',
 ] as const
 
 /** 明细右栏 panel 默认展示列（不含主键 id；含 action） */
 export const SALESFORECASTITEM_DEFAULT_VISIBLE_COLUMN_KEYS = [
+  'salesForecastId',
   'salesForecastCode',
   'lineNumber',
   'fiscalYear',
   'planMonth',
-  'planQuantity001',
-  'planQuantity002',
+  'versionNo',
+  'planQuantity',
   'planQuantityDelta',
   'convertedQuantity',
   'estimatedUnitPrice',
@@ -53,8 +54,8 @@ export const SALESFORECASTITEM_DEFAULT_VISIBLE_COLUMN_KEYS = [
 /** 明细右栏 panel 合计列（当前页 dataSource 数值字段求和） */
 export const SALESFORECASTITEM_SUMMARY_SUM_FIELDS = [
   'planMonth',
-  'planQuantity001',
-  'planQuantity002',
+  'versionNo',
+  'planQuantity',
   'planQuantityDelta',
   'convertedQuantity',
   'estimatedUnitPrice',
@@ -64,7 +65,20 @@ export const SALESFORECASTITEM_SUMMARY_SUM_FIELDS = [
 
 /** 表单控件默认占位类型（仅 UI/校验语义，不含 i18n 键） */
 export const SALESFORECASTITEM_PLACEHOLDER = {
-
+  tenantCode: 'optional',
+  companyCode: 'optional',
+  cultureCode: 'optional',
+  plantCode: 'optional',
+  lineNumber: 'select',
+  fiscalYear: 'select',
+  planMonth: 'select',
+  versionNo: 'select',
+  planQuantity: 'select',
+  planQuantityDelta: 'select',
+  convertedQuantity: 'select',
+  estimatedUnitPrice: 'select',
+  estimatedAmount: 'select',
+  isObsolete: 'select',
 } as const satisfies Record<string, EntityFieldPlaceholderKind>
 
 /** 表单 ph() 可接受的字段（与 PLACEHOLDER 键一致，避免与 LIST_FIELDS 导航列混用） */
@@ -72,16 +86,35 @@ export type SalesForecastItemField = keyof typeof SALESFORECASTITEM_PLACEHOLDER
 
 /** 高级查询可 trim 的字符串字段 */
 export const SALESFORECASTITEM_QUERY_STRING_FIELDS = [
-
+  'cultureCode',
+  'salesForecastCode',
+  'fiscalYear',
+  'createdAtStart',
+  'createdAtEnd',
+  'extField',
+  'remark',
 ] as const satisfies readonly (keyof SalesForecastItemQuery)[]
 
-export type SalesForecastItemQueryField = (typeof SALESFORECASTITEM_QUERY_STRING_FIELDS)[number]
+export type SalesForecastItemQueryField =
+  | (typeof SALESFORECASTITEM_QUERY_STRING_FIELDS)[number]
+  | 'lineNumber' | 'planMonth' | 'versionNo' | 'planQuantity' | 'planQuantityDelta' | 'convertedQuantity' | 'estimatedUnitPrice' | 'estimatedAmount' | 'isObsolete'
 
 /** 高级查询抽屉全部字段（含数值） */
-export const SALESFORECASTITEM_QUERY_FIELDS: readonly SalesForecastItemQueryField[] = [...SALESFORECASTITEM_QUERY_STRING_FIELDS]
+export const SALESFORECASTITEM_QUERY_FIELDS: readonly SalesForecastItemQueryField[] = [
+  ...SALESFORECASTITEM_QUERY_STRING_FIELDS,
+  'lineNumber',
+  'planMonth',
+  'versionNo',
+  'planQuantity',
+  'planQuantityDelta',
+  'convertedQuantity',
+  'estimatedUnitPrice',
+  'estimatedAmount',
+  'isObsolete',
+]
 
 /**
- * SalesForecastItem字段 i18n：index / sales-forecast-item-form 统一入口
+ * SalesForecastItem字段 i18n：index / SalesForecastItemForm 统一入口
  */
 export function useSalesForecastItemI18n() {
   const ef = useEntityFieldI18n(SALESFORECASTITEM_ENTITY_SLUG)

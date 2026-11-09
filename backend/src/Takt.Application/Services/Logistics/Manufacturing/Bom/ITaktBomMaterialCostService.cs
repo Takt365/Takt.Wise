@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Bom
 // 文件名称：ITaktBomMaterialCostService.cs
-// 创建时间：2026-08-11
+// 创建时间：2026-11-02
 // 创建人：Takt365(Cursor AI)
 // 功能描述：材料成本应用服务接口
 // 

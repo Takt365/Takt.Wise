@@ -115,10 +115,10 @@ public class TaktAssyBatchDefectService : TaktServiceBase, ITaktAssyBatchDefectS
         var isUnique_ix_takt_logistics_manufacturing_defect_assy_batch_unique = await _uniqueValidator.IsUniqueAsync(
             _assyBatchDefectRepository,
             x => x.ProdCategory == entity.ProdCategory
-                && x.BatchCode == entity.BatchCode);
+                && x.ProdBatch == entity.ProdBatch);
         if (!isUnique_ix_takt_logistics_manufacturing_defect_assy_batch_unique)
         {
-            throw new TaktBusinessException("组立批量不良统计的ProdCategory、BatchCode已存在");
+            throw new TaktBusinessException("组立批量不良统计的ProdCategory、ProdBatch已存在");
         }
         entity = await _assyBatchDefectRepository.CreateAsync(entity);
         return await GetAssyBatchDefectByIdAsync(entity.Id) ?? entity.Adapt<TaktAssyBatchDefectDto>();
@@ -141,11 +141,11 @@ public class TaktAssyBatchDefectService : TaktServiceBase, ITaktAssyBatchDefectS
         var isUnique_ix_takt_logistics_manufacturing_defect_assy_batch_unique = await _uniqueValidator.IsUniqueAsync(
             _assyBatchDefectRepository,
             x => x.ProdCategory == entity.ProdCategory
-                && x.BatchCode == entity.BatchCode,
+                && x.ProdBatch == entity.ProdBatch,
             id);
         if (!isUnique_ix_takt_logistics_manufacturing_defect_assy_batch_unique)
         {
-            throw new TaktBusinessException("组立批量不良统计的ProdCategory、BatchCode已存在");
+            throw new TaktBusinessException("组立批量不良统计的ProdCategory、ProdBatch已存在");
         }
         await _assyBatchDefectRepository.UpdateAsync(entity);
         return await GetAssyBatchDefectByIdAsync(id) ?? throw new TaktBusinessException("组立批量不良统计不存在");
@@ -236,18 +236,18 @@ public class TaktAssyBatchDefectService : TaktServiceBase, ITaktAssyBatchDefectS
             try
             {
                 var entity = rows[i].Adapt<TaktAssyBatchDefect>();
-                var importKey = $"{entity.ProdCategory}|{entity.BatchCode}";
+                var importKey = $"{entity.ProdCategory}|{entity.ProdBatch}";
                 if (!importSeenKeys.Add(importKey))
                 {
-                    throw new TaktBusinessException("与Excel中其他行重复（ProdCategory、BatchCode）");
+                    throw new TaktBusinessException("与Excel中其他行重复（ProdCategory、ProdBatch）");
                 }
                 var isUnique_ix_takt_logistics_manufacturing_defect_assy_batch_unique = await _uniqueValidator.IsUniqueAsync(
                     _assyBatchDefectRepository,
                     x => x.ProdCategory == entity.ProdCategory
-                        && x.BatchCode == entity.BatchCode);
+                        && x.ProdBatch == entity.ProdBatch);
                 if (!isUnique_ix_takt_logistics_manufacturing_defect_assy_batch_unique)
                 {
-                    throw new TaktBusinessException("组立批量不良统计的ProdCategory、BatchCode已存在");
+                    throw new TaktBusinessException("组立批量不良统计的ProdCategory、ProdBatch已存在");
                 }
                 await _assyBatchDefectRepository.CreateAsync(entity);
                 success += 1;
@@ -305,7 +305,7 @@ public class TaktAssyBatchDefectService : TaktServiceBase, ITaktAssyBatchDefectS
             exp = exp.And(x =>
                 (x.PlantCode != null && x.PlantCode.Contains(keywords))
                 || (x.ProdCategory != null && x.ProdCategory.Contains(keywords))
-                || (x.BatchCode != null && x.BatchCode.Contains(keywords))
+                || (x.ProdBatch != null && x.ProdBatch.Contains(keywords))
                 || (x.ProdDateGroup != null && x.ProdDateGroup.Contains(keywords))
                 || (x.ProdOrderGroup != null && x.ProdOrderGroup.Contains(keywords))
                 || (x.ModelCode != null && x.ModelCode.Contains(keywords))
@@ -337,9 +337,9 @@ public class TaktAssyBatchDefectService : TaktServiceBase, ITaktAssyBatchDefectS
             exp = exp.And(x => x.ProdCategory != null && x.ProdCategory.Contains(queryDto.ProdCategory));
         }
 
-        if (!string.IsNullOrEmpty(queryDto?.BatchCode))
+        if (!string.IsNullOrEmpty(queryDto?.ProdBatch))
         {
-            exp = exp.And(x => x.BatchCode != null && x.BatchCode.Contains(queryDto.BatchCode));
+            exp = exp.And(x => x.ProdBatch != null && x.ProdBatch.Contains(queryDto.ProdBatch));
         }
 
         if (!string.IsNullOrEmpty(queryDto?.ProdDateGroup))

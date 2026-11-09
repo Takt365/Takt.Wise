@@ -135,6 +135,7 @@ export default {
       numberingRule: "採番ルール",
       numberingCodePreview: "採番ルール選択後に自動生成",
       numberingRuleRequired: "採番ルールを選択してください",
+      periodRange: "期間",
       periodRangeMaxMonths: "照会期間は {max} か月以内にしてください",
     },
   },

@@ -60,7 +60,7 @@ export const ECLEGACYPRODUCT_PLACEHOLDER = {
   ecIsCompatible: 'optional',
   ec2ndVendor: 'select',
   ecInstruction: 'select',
-  oldProductHandling: 'select',
+  oldProductHandling: 'optional',
   ecOldPartDisposition: 'select',
   ecNewMaterialCode: 'optional',
   discontinuedStatus: 'select',

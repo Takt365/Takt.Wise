@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Mds
 // 文件名称：TaktSalesForecastService.cs
-// 创建时间：2026-08-22
+// 创建时间：2026-11-06
 // 创建人：Takt365(Cursor AI)
 // 功能描述：销售预测应用服务实现
 // 
@@ -494,8 +494,10 @@ public class TaktSalesForecastService : TaktServiceBase, ITaktSalesForecastServi
                 || (x.ModelCode != null && x.ModelCode.Contains(keywords))
                 || (x.MaterialCode != null && x.MaterialCode.Contains(keywords))
                 || (x.MaterialDescription != null && x.MaterialDescription.Contains(keywords))
+                || (x.PlannedBatch != null && x.PlannedBatch.Contains(keywords))
                 || (x.CustomerCode != null && x.CustomerCode.Contains(keywords))
                 || (x.CustomerName1 != null && x.CustomerName1.Contains(keywords))
+                || (x.PlannerGroupCode != null && x.PlannerGroupCode.Contains(keywords))
                 || (x.PlannerGroupName != null && x.PlannerGroupName.Contains(keywords))
                 || (x.PlanDescription != null && x.PlanDescription.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
@@ -563,6 +565,12 @@ public class TaktSalesForecastService : TaktServiceBase, ITaktSalesForecastServi
             exp = exp.And(x => x.MaterialDescription != null && x.MaterialDescription.Contains(materialDescription));
         }
 
+        if (!string.IsNullOrWhiteSpace(queryDto?.PlannedBatch))
+        {
+            var plannedBatch = queryDto.PlannedBatch;
+            exp = exp.And(x => x.PlannedBatch != null && x.PlannedBatch.Contains(plannedBatch));
+        }
+
         if (!string.IsNullOrWhiteSpace(queryDto?.CustomerCode))
         {
             var customerCode = queryDto.CustomerCode;
@@ -578,13 +586,13 @@ public class TaktSalesForecastService : TaktServiceBase, ITaktSalesForecastServi
         if (!string.IsNullOrWhiteSpace(queryDto?.PlannerGroupCode))
         {
             var plannerGroupCode = queryDto.PlannerGroupCode;
-            exp = exp.And(x => x.PlannerGroupCode == plannerGroupCode);
+            exp = exp.And(x => x.PlannerGroupCode != null && x.PlannerGroupCode.Contains(plannerGroupCode));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.PlannerGroupName))
         {
-            var planBy = queryDto.PlannerGroupName;
-            exp = exp.And(x => x.PlannerGroupName != null && x.PlannerGroupName.Contains(planBy));
+            var plannerGroupName = queryDto.PlannerGroupName;
+            exp = exp.And(x => x.PlannerGroupName != null && x.PlannerGroupName.Contains(plannerGroupName));
         }
 
         if (queryDto?.TotalQuantity.HasValue == true)
@@ -732,6 +740,10 @@ public class TaktSalesForecastService : TaktServiceBase, ITaktSalesForecastServi
             return true;
         }
         if (!string.IsNullOrWhiteSpace(queryDto.MaterialDescription))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.PlannedBatch))
         {
             return true;
         }

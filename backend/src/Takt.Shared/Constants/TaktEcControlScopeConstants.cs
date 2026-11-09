@@ -56,7 +56,7 @@ public static class TaktEcControlScopeConstants
     }
 
     /// <summary>
-    /// 主表部门实施范围：全仕向保留按成品/按机种/按设变；部管固定按机种；内部/技术固定按设变
+    /// 主表部门实施范围：全仕向保留按成品/按机种/按设变；部管固定按成品；内部/技术固定按设变
     /// </summary>
     /// <param name="ecImplScope">实施范围</param>
     /// <param name="ecControlScope">表单提交的部门实施范围</param>
@@ -65,7 +65,7 @@ public static class TaktEcControlScopeConstants
     {
         if (ecImplScope == TaktEcScopeConstants.MaterialControl)
         {
-            return ByModel;
+            return ByFinishedProduct;
         }
         if (ecImplScope == TaktEcScopeConstants.Internal
             || ecImplScope == TaktEcScopeConstants.Technical)
@@ -76,34 +76,28 @@ public static class TaktEcControlScopeConstants
         {
             return ecControlScope;
         }
-        return ByModel;
+        // 全仕向未选/非法时默认按成品（与来源设变导入、前端 taktEcControlScopeChoices 一致）
+        return ByFinishedProduct;
     }
 
     /// <summary>
-    /// 执行部门去重粒度。全仕向时生管与制二/制一/品管跟随主表。部管时生管按机种。采购/受检/部管/SMT 固定按设变，制技固定按机种。内部/技术按设变
+    /// 执行部门去重粒度。采购/受检固定按设变；制技固定按机种；其余部门（含部管/物料/生管/制一/制二/品管）严格跟随主表控制范围（按成品/按机种/按设变）。
+    /// Normalize：部管实施范围→按成品；内部/技术→按设变；全仕向保留所选控制范围。
     /// </summary>
     /// <param name="deptCode">部门编码</param>
     /// <param name="ecImplScope">实施范围</param>
-    /// <param name="masterDeptScope">主表制二/制一/品管实施范围</param>
-    /// <returns>该执行部门的部门实施范围</returns>
+    /// <param name="masterDeptScope">主表控制范围</param>
+    /// <returns>该执行部门的控制范围</returns>
     public static int ResolveForDept(string deptCode, int ecImplScope, int masterDeptScope)
     {
+        if (deptCode is TaktEcDeptCodes.Pur or TaktEcDeptCodes.Iqc)
+        {
+            return ByEngineeringChange;
+        }
         if (deptCode == TaktEcDeptCodes.Me)
         {
             return ByModel;
         }
-        if (ecImplScope == TaktEcScopeConstants.MaterialControl && deptCode == TaktEcDeptCodes.Pc)
-        {
-            return ByModel;
-        }
-        if (ecImplScope != TaktEcScopeConstants.AllDestination)
-        {
-            return ByEngineeringChange;
-        }
-        if (deptCode is TaktEcDeptCodes.Mfg2 or TaktEcDeptCodes.Mfg1 or TaktEcDeptCodes.Qc or TaktEcDeptCodes.Pc)
-        {
-            return Normalize(ecImplScope, masterDeptScope);
-        }
-        return ByEngineeringChange;
+        return Normalize(ecImplScope, masterDeptScope);
     }
 }

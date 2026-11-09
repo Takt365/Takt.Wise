@@ -52,6 +52,12 @@ public class TaktApsOrder : TaktCompanyEntityBase
     public string MaterialCode { get; set; } = string.Empty;
 
     /// <summary>
+    /// 计划批次（来自计划订单；释放正式工单时写入 ProdBatch）
+    /// </summary>
+    [SugarColumn(ColumnName = "planned_batch", ColumnDescription = "计划批次", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? PlannedBatch { get; set; }
+
+    /// <summary>
     /// 订单数量
     /// </summary>
     [SugarColumn(ColumnName = "order_quantity", ColumnDescription = "订单数量", ColumnDataType = "decimal", Length = 18, DecimalDigits = 4, IsNullable = false, DefaultValue = "0")]

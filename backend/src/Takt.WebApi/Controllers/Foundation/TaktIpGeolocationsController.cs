@@ -56,22 +56,36 @@ public class TaktIpGeolocationsController : TaktControllerBase
     }
 
     /// <summary>
-    /// 查询当前请求客户端 IP 归属地
+    /// 查询本机已激活网卡 IP 归属（非 HTTP RemoteIp / ::1；多网卡时 ActiveHostIps 列出全部）
     /// </summary>
-    /// <returns>归属结果 DTO</returns>
-    [TaktPermission("foundation:ip:geolocation:list", "客户端IP归属")]
+    /// <returns>优先激活 IP 的归属结果 DTO</returns>
+    [TaktPermission("foundation:ip:geolocation:list", "本机IP归属")]
     [HttpGet("client")]
     public async Task<IActionResult> SearchClientIpGeolocationAsync()
     {
         try
         {
-            var clientIp = TaktLocationHelper.ResolveClientIp(HttpContext);
-            if (string.IsNullOrWhiteSpace(clientIp))
-            {
-                return BadRequest("无法解析客户端 IP");
-            }
+            var result = await _ipGeolocationService.SearchActiveHostIpGeolocationAsync();
+            return Success(result, "查询成功");
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
 
-            var result = await _ipGeolocationService.SearchIpGeolocationAsync(clientIp);
+    /// <summary>
+    /// 查询访问者公网 IP 归属（优先请求公网地址，否则 API 进程出口；供页面自动展示）
+    /// </summary>
+    /// <returns>公网 IP 归属结果 DTO</returns>
+    [TaktPermission("foundation:ip:geolocation:list", "公网IP归属")]
+    [HttpGet("public")]
+    public async Task<IActionResult> SearchVisitorPublicIpGeolocationAsync()
+    {
+        try
+        {
+            var requestIp = TaktLocationHelper.ResolveClientIp(HttpContext);
+            var result = await _ipGeolocationService.SearchVisitorPublicIpGeolocationAsync(requestIp);
             return Success(result, "查询成功");
         }
         catch (Exception ex)

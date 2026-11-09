@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData
 // 文件名称：TaktMenuI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Cursor AI)
 // 功能描述：菜单导航国际化翻译种子（menu.* 键，与 TaktMenuLevel1~4SeedData I18nKey 对齐）
 // 
@@ -1019,14 +1019,14 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.procurement.purchase.order
             ("menu.logistics.procurement.purchase.order", "zh-HK", "采购订单_hk", "菜单导航"),
 
-            // menu.logistics.procurement.purchase.info
-            ("menu.logistics.procurement.purchase.info", "en-US", "采购信息_us", "菜单导航"),
-            // menu.logistics.procurement.purchase.info
-            ("menu.logistics.procurement.purchase.info", "ja-JP", "采购信息_jp", "菜单导航"),
-            // menu.logistics.procurement.purchase.info
-            ("menu.logistics.procurement.purchase.info", "zh-CN", "采购信息", "菜单导航"),
-            // menu.logistics.procurement.purchase.info
-            ("menu.logistics.procurement.purchase.info", "zh-HK", "采购信息_hk", "菜单导航"),
+            // menu.logistics.procurement.condition
+            ("menu.logistics.procurement.condition", "en-US", "采购条件_us", "菜单导航"),
+            // menu.logistics.procurement.condition
+            ("menu.logistics.procurement.condition", "ja-JP", "采购条件_jp", "菜单导航"),
+            // menu.logistics.procurement.condition
+            ("menu.logistics.procurement.condition", "zh-CN", "采购条件", "菜单导航"),
+            // menu.logistics.procurement.condition
+            ("menu.logistics.procurement.condition", "zh-HK", "采购条件_hk", "菜单导航"),
 
             // menu.logistics.procurement.purchase.price.trend
             ("menu.logistics.procurement.purchase.price.trend", "en-US", "采购价格推移_us", "菜单导航"),
@@ -1037,14 +1037,14 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.procurement.purchase.price.trend
             ("menu.logistics.procurement.purchase.price.trend", "zh-HK", "采购价格推移_hk", "菜单导航"),
 
-            // menu.logistics.procurement.po.price.pir.deviation
-            ("menu.logistics.procurement.po.price.pir.deviation", "en-US", "PO价偏离PIR_us", "菜单导航"),
-            // menu.logistics.procurement.po.price.pir.deviation
-            ("menu.logistics.procurement.po.price.pir.deviation", "ja-JP", "PO价偏离PIR_jp", "菜单导航"),
-            // menu.logistics.procurement.po.price.pir.deviation
-            ("menu.logistics.procurement.po.price.pir.deviation", "zh-CN", "PO价偏离PIR", "菜单导航"),
-            // menu.logistics.procurement.po.price.pir.deviation
-            ("menu.logistics.procurement.po.price.pir.deviation", "zh-HK", "PO价偏离PIR_hk", "菜单导航"),
+            // menu.logistics.procurement.purchase.price.deviation
+            ("menu.logistics.procurement.purchase.price.deviation", "en-US", "Purchase Price Deviation", "菜单导航"),
+            // menu.logistics.procurement.purchase.price.deviation
+            ("menu.logistics.procurement.purchase.price.deviation", "ja-JP", "調達価格乖離", "菜单导航"),
+            // menu.logistics.procurement.purchase.price.deviation
+            ("menu.logistics.procurement.purchase.price.deviation", "zh-CN", "采购价偏离", "菜单导航"),
+            // menu.logistics.procurement.purchase.price.deviation
+            ("menu.logistics.procurement.purchase.price.deviation", "zh-HK", "採購價偏離", "菜单导航"),
 
             // menu.logistics.procurement.purchase.invoice
             ("menu.logistics.procurement.purchase.invoice", "en-US", "采购发票_us", "菜单导航"),
@@ -1352,14 +1352,14 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.sales.price.trend
             ("menu.logistics.sales.price.trend", "zh-HK", "销售价格推移_hk", "菜单导航"),
 
-            // menu.logistics.sales.so.price.scr.deviation
-            ("menu.logistics.sales.so.price.scr.deviation", "en-US", "SO价偏离SCR_us", "菜单导航"),
-            // menu.logistics.sales.so.price.scr.deviation
-            ("menu.logistics.sales.so.price.scr.deviation", "ja-JP", "SO价偏离SCR_jp", "菜单导航"),
-            // menu.logistics.sales.so.price.scr.deviation
-            ("menu.logistics.sales.so.price.scr.deviation", "zh-CN", "SO价偏离SCR", "菜单导航"),
-            // menu.logistics.sales.so.price.scr.deviation
-            ("menu.logistics.sales.so.price.scr.deviation", "zh-HK", "SO价偏离SCR_hk", "菜单导航"),
+            // menu.logistics.sales.price.deviation
+            ("menu.logistics.sales.price.deviation", "en-US", "Sales Price Deviation", "菜单导航"),
+            // menu.logistics.sales.price.deviation
+            ("menu.logistics.sales.price.deviation", "ja-JP", "販売価格乖離", "菜单导航"),
+            // menu.logistics.sales.price.deviation
+            ("menu.logistics.sales.price.deviation", "zh-CN", "销售价偏离", "菜单导航"),
+            // menu.logistics.sales.price.deviation
+            ("menu.logistics.sales.price.deviation", "zh-HK", "銷售價偏離", "菜单导航"),
 
             // menu.logistics.sales.invoice
             ("menu.logistics.sales.invoice", "en-US", "销售发票_us", "菜单导航"),
@@ -2351,15 +2351,6 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             // menu.logistics.manufacturing.engineering.change.te
             ("menu.logistics.manufacturing.engineering.change.te", "zh-HK", "技术部门_hk", "菜单导航"),
 
-            // menu.logistics.manufacturing.engineering.change.mp
-            ("menu.logistics.manufacturing.engineering.change.mp", "en-US", "采购部门_us", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.mp
-            ("menu.logistics.manufacturing.engineering.change.mp", "ja-JP", "采购部门_jp", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.mp
-            ("menu.logistics.manufacturing.engineering.change.mp", "zh-CN", "采购部门", "菜单导航"),
-            // menu.logistics.manufacturing.engineering.change.mp
-            ("menu.logistics.manufacturing.engineering.change.mp", "zh-HK", "采购部门_hk", "菜单导航"),
-
             // menu.logistics.manufacturing.engineering.change.pc
             ("menu.logistics.manufacturing.engineering.change.pc", "en-US", "生管部门_us", "菜单导航"),
             // menu.logistics.manufacturing.engineering.change.pc
@@ -2368,6 +2359,15 @@ public class TaktMenuI18nSeedData : ITaktSeedDataCoordinator
             ("menu.logistics.manufacturing.engineering.change.pc", "zh-CN", "生管部门", "菜单导航"),
             // menu.logistics.manufacturing.engineering.change.pc
             ("menu.logistics.manufacturing.engineering.change.pc", "zh-HK", "生管部门_hk", "菜单导航"),
+
+            // menu.logistics.manufacturing.engineering.change.mp
+            ("menu.logistics.manufacturing.engineering.change.mp", "en-US", "采购部门_us", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.mp
+            ("menu.logistics.manufacturing.engineering.change.mp", "ja-JP", "采购部门_jp", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.mp
+            ("menu.logistics.manufacturing.engineering.change.mp", "zh-CN", "采购部门", "菜单导航"),
+            // menu.logistics.manufacturing.engineering.change.mp
+            ("menu.logistics.manufacturing.engineering.change.mp", "zh-HK", "采购部门_hk", "菜单导航"),
 
             // menu.logistics.manufacturing.engineering.change.iqc
             ("menu.logistics.manufacturing.engineering.change.iqc", "en-US", "受检部门_us", "菜单导航"),

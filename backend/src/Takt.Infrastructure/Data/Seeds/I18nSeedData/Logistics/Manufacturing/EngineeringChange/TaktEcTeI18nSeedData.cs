@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcTeI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEcTe 实体字段国际化种子（已对齐前端 locales：src/locales/logistics/manufacturing/engineering-change/ec-te）
 // 
@@ -163,13 +163,22 @@ public class TaktEcTeI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecte.ecimplscope", "zh-HK", "实施范围_hk", "实施范围（字典 logistics_manufacturing_ec_impl_scope_category；1=全仕向，2=部管，3=内部，4=技术）"),
 
             // entity.ecte.eccontrolscope
-            new TranslationSeedItem("entity.ecte.eccontrolscope", "en-US", "控制范围_us", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种"),
+            new TranslationSeedItem("entity.ecte.eccontrolscope", "en-US", "控制范围_us", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/电子物料/制技固定设变+机种（DictValue=2）"),
             // entity.ecte.eccontrolscope
-            new TranslationSeedItem("entity.ecte.eccontrolscope", "ja-JP", "控制范围_jp", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种"),
+            new TranslationSeedItem("entity.ecte.eccontrolscope", "ja-JP", "控制范围_jp", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/电子物料/制技固定设变+机种（DictValue=2）"),
             // entity.ecte.eccontrolscope
-            new TranslationSeedItem("entity.ecte.eccontrolscope", "zh-CN", "控制范围", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种"),
+            new TranslationSeedItem("entity.ecte.eccontrolscope", "zh-CN", "控制范围", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/电子物料/制技固定设变+机种（DictValue=2）"),
             // entity.ecte.eccontrolscope
-            new TranslationSeedItem("entity.ecte.eccontrolscope", "zh-HK", "控制范围_hk", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种"),
+            new TranslationSeedItem("entity.ecte.eccontrolscope", "zh-HK", "控制范围_hk", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/电子物料/制技固定设变+机种（DictValue=2）"),
+
+            // entity.ecte.ecoldpartdisposition
+            new TranslationSeedItem("entity.ecte.ecoldpartdisposition", "en-US", "旧品处理_us", "旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」，分号分隔；旧物料≤20；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；由明细旧物料+旧品处理聚合；ntext）"),
+            // entity.ecte.ecoldpartdisposition
+            new TranslationSeedItem("entity.ecte.ecoldpartdisposition", "ja-JP", "旧品处理_jp", "旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」，分号分隔；旧物料≤20；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；由明细旧物料+旧品处理聚合；ntext）"),
+            // entity.ecte.ecoldpartdisposition
+            new TranslationSeedItem("entity.ecte.ecoldpartdisposition", "zh-CN", "旧品处理", "旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」，分号分隔；旧物料≤20；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；由明细旧物料+旧品处理聚合；ntext）"),
+            // entity.ecte.ecoldpartdisposition
+            new TranslationSeedItem("entity.ecte.ecoldpartdisposition", "zh-HK", "旧品处理_hk", "旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」，分号分隔；旧物料≤20；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；由明细旧物料+旧品处理聚合；ntext）"),
 
             // entity.ecte.ecentrydate
             new TranslationSeedItem("entity.ecte.ecentrydate", "en-US", "录入日期_us", "录入日期"),

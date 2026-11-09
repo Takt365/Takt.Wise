@@ -200,7 +200,7 @@ function devServerUrlHintPlugin(useHttps: boolean, port: number, host: string | 
 // ---------------------------------------------------------------------------
 
 /**
- * 为代理附加 X-Forwarded-Host / X-Forwarded-Proto（OAuth returnUrl 等）
+ * 为代理附加 X-Forwarded-*（含真实客户端 IP，避免后端只看到 ::1）
  */
 function attachForwardedHeaders(entry: ProxyOptions): void {
   entry.configure = (instance) => {
@@ -212,6 +212,15 @@ function attachForwardedHeaders(entry: ProxyOptions): void {
 
       const encrypted = (req.socket as { encrypted?: boolean } | undefined)?.encrypted === true;
       proxyReq.setHeader('X-Forwarded-Proto', encrypted ? 'https' : 'http');
+
+      const existingForwarded = req.headers['x-forwarded-for'];
+      const socketIp = req.socket?.remoteAddress;
+      if (typeof existingForwarded === 'string' && existingForwarded.trim()) {
+        proxyReq.setHeader('X-Forwarded-For', existingForwarded);
+      } else if (socketIp) {
+        // Node 常见 ::ffff:127.0.0.1；原样交给后端 Normalize + 回环回退激活网卡
+        proxyReq.setHeader('X-Forwarded-For', socketIp);
+      }
 
       const userAgent = req.headers['user-agent'];
       if (typeof userAgent === 'string' && userAgent.trim()) {

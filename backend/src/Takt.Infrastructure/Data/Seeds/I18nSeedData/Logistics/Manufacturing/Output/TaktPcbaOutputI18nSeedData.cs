@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Output
 // 文件名称：TaktPcbaOutputI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPcbaOutput 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -144,14 +144,14 @@ public class TaktPcbaOutputI18nSeedData : ITaktSeedDataCoordinator
             // entity.pcbaoutput.materialcode
             new TranslationSeedItem("entity.pcbaoutput.materialcode", "zh-HK", "物料编码_hk", "物料编码（回填：随工单）"),
 
-            // entity.pcbaoutput.batchcode
-            new TranslationSeedItem("entity.pcbaoutput.batchcode", "en-US", "批次_us", "批次（回填：随工单）"),
-            // entity.pcbaoutput.batchcode
-            new TranslationSeedItem("entity.pcbaoutput.batchcode", "ja-JP", "批次_jp", "批次（回填：随工单）"),
-            // entity.pcbaoutput.batchcode
-            new TranslationSeedItem("entity.pcbaoutput.batchcode", "zh-CN", "批次", "批次（回填：随工单）"),
-            // entity.pcbaoutput.batchcode
-            new TranslationSeedItem("entity.pcbaoutput.batchcode", "zh-HK", "批次_hk", "批次（回填：随工单）"),
+            // entity.pcbaoutput.prodbatch
+            new TranslationSeedItem("entity.pcbaoutput.prodbatch", "en-US", "批次_us", "批次（回填：随工单）"),
+            // entity.pcbaoutput.prodbatch
+            new TranslationSeedItem("entity.pcbaoutput.prodbatch", "ja-JP", "批次_jp", "批次（回填：随工单）"),
+            // entity.pcbaoutput.prodbatch
+            new TranslationSeedItem("entity.pcbaoutput.prodbatch", "zh-CN", "批次", "批次（回填：随工单）"),
+            // entity.pcbaoutput.prodbatch
+            new TranslationSeedItem("entity.pcbaoutput.prodbatch", "zh-HK", "批次_hk", "批次（回填：随工单）"),
 
             // entity.pcbaoutput.prodorderqty
             new TranslationSeedItem("entity.pcbaoutput.prodorderqty", "en-US", "工单数量_us", "工单数量（回填：随工单）"),

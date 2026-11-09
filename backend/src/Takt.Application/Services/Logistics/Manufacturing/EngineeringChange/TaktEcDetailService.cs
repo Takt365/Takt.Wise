@@ -151,6 +151,7 @@ public class TaktEcDetailService : TaktServiceBase, ITaktEcDetailService
             entity.LineNumber = _lineNumberGenerator.GenerateNext(businessCode, maxLine);
         }
         entity = await _ecDetailRepository.CreateAsync(entity);
+        await RefreshEcTeOldPartDispositionAsync(entity.EcTeId);
         return await GetEcDetailByIdAsync(entity.Id) ?? entity.Adapt<TaktEcDetailDto>();
     }
 
@@ -201,6 +202,7 @@ public class TaktEcDetailService : TaktServiceBase, ITaktEcDetailService
             throw new TaktBusinessException("设变明细的EcTeId、EcRootMaterialCode、LineNumber已存在");
         }
         await _ecDetailRepository.UpdateAsync(entity);
+        await RefreshEcTeOldPartDispositionAsync(entity.EcTeId);
         return await GetEcDetailByIdAsync(id) ?? throw new TaktBusinessException("设变明细不存在");
     }
 
@@ -226,6 +228,7 @@ public class TaktEcDetailService : TaktServiceBase, ITaktEcDetailService
         }
         entity.IsObsolete = 1;
         await _ecDetailRepository.UpdateAsync(entity);
+        await RefreshEcTeOldPartDispositionAsync(entity.EcTeId);
     }
 
     /// <summary>
@@ -264,6 +267,7 @@ public class TaktEcDetailService : TaktServiceBase, ITaktEcDetailService
         }
         entity.IsObsolete = dto.IsObsolete;
         await _ecDetailRepository.UpdateAsync(entity);
+        await RefreshEcTeOldPartDispositionAsync(entity.EcTeId);
         return await GetEcDetailByIdAsync(dto.EcDetailId) ?? throw new TaktBusinessException("设变明细不存在");
     }
 
@@ -297,6 +301,7 @@ public class TaktEcDetailService : TaktServiceBase, ITaktEcDetailService
             errors.Add("Excel文件中没有数据");
             return (0, 0, errors);
         }
+        var touchedEcTeIds = new HashSet<long>();
         var importSeenKeys = new HashSet<string>(StringComparer.Ordinal);
         for (var i = 0; i < rows.Count; i++)
         {
@@ -331,6 +336,10 @@ public class TaktEcDetailService : TaktServiceBase, ITaktEcDetailService
                     entity.LineNumber = _lineNumberGenerator.GenerateNext(businessCode, maxLine);
                 }
                 await _ecDetailRepository.CreateAsync(entity);
+                if (entity.EcTeId > 0)
+                {
+                    touchedEcTeIds.Add(entity.EcTeId);
+                }
                 success += 1;
             }
             catch (Exception ex)
@@ -338,6 +347,10 @@ public class TaktEcDetailService : TaktServiceBase, ITaktEcDetailService
                 fail += 1;
                 errors.Add($"第{i + 2}行: {ex.Message}");
             }
+        }
+        foreach (var ecTeId in touchedEcTeIds)
+        {
+            await RefreshEcTeOldPartDispositionAsync(ecTeId);
         }
         return (success, fail, errors);
     }
@@ -378,6 +391,36 @@ public class TaktEcDetailService : TaktServiceBase, ITaktEcDetailService
     // ========================================
     // 主表外键同步（ManyToOne）
     // ========================================
+
+    /// <summary>
+    /// 按未作废明细回写技术课主表 EcOldPartDisposition（旧物料:处理方式;）
+    /// </summary>
+    /// <param name="ecTeId">技术课主表 Id</param>
+    /// <returns>任务</returns>
+    private async Task RefreshEcTeOldPartDispositionAsync(long ecTeId)
+    {
+        if (ecTeId <= 0)
+        {
+            return;
+        }
+
+        var master = await _ecTeRepository.GetByIdAsync(ecTeId);
+        if (master == null)
+        {
+            return;
+        }
+
+        var details = await _ecDetailRepository.GetListAsync(x => x.EcTeId == ecTeId && x.IsObsolete == 0);
+        var composed = TaktEcTeOldPartDispositionComposer.ComposeFromDetailRows(
+            details.Select(d => (d.EcOldMaterialCode, d.EcOldPartDisposition)));
+        if (string.Equals(master.EcOldPartDisposition ?? string.Empty, composed ?? string.Empty, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        master.EcOldPartDisposition = composed;
+        await _ecTeRepository.UpdateAsync(master);
+    }
 
     /// <summary>
     /// 同步设变明细主表外键（ManyToOne → 设变技术课主）

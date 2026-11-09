@@ -186,6 +186,7 @@ TaktQueryDrawer / TaktColumnDrawer / TaktImportFile（同单表）
 - 新建/审查 `index.vue`：先 `12-crud`，再按形态读本章 §二/§三/§四 + `10`/`11`
 - 脚本生成页：先 `15-codegen`，生成后按本章修正；**禁止**把树表当单表交付
 - 单表：**禁止**省略 QueryBar/ToolsBar/Pagination/Modal 标准分区
+- **禁止**页面内手写 `div.takt-query-bar`、自绘工具栏或用裸 `a-table` 当列表；查询栏、工具栏、表格一律用 `TaktQueryBar`、`TaktToolsBar`、`TaktSingleTable`（树表用 `takt-tree-*`）
 - 主子表：**禁止**主表 list 绑定全量子表；展开/窗口须 lazy + loading
 - 树表：**禁止**整树未拍平绑右表；须 `flatten` + 分页/virtual
 - 表单细节：**不**在 index 内堆字段 → 抽 `components/*Form.vue`（`14-vue-form`）

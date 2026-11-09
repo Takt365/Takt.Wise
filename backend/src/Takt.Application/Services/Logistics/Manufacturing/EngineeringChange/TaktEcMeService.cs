@@ -161,7 +161,12 @@ public class TaktEcMeService : TaktServiceBase, ITaktEcMeService
         {
             throw new TaktBusinessException("设变制技执行不存在");
         }
+        var preservedEcGrainKey = entity.EcGrainKey;
         dto.Adapt(entity);
+        if (string.IsNullOrWhiteSpace(entity.EcGrainKey))
+        {
+            entity.EcGrainKey = preservedEcGrainKey;
+        }
         var isUnique_ix_takt_logistics_manufacturing_ec_me_unique = await _uniqueValidator.IsUniqueAsync(
             _ecMeRepository,
             x => x.EcCode == entity.EcCode && SqlFunc.ToString(x.EcGrainKey) == entity.EcGrainKey,

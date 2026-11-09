@@ -12,6 +12,7 @@
 
 import type { TableColumnsType } from 'ant-design-vue'
 import type { ColumnGroupType, ColumnType } from 'ant-design-vue/es/table/interface'
+import { formatCalendarDate } from '@/utils/datetime'
 import { TAKT_LARGE_DATA_AUTO_THRESHOLD } from '@/utils/taktLargeData'
 
 /** 表格 / 树：与下拉共用大数据自动阈值（别名兼容旧引用） */
@@ -499,15 +500,51 @@ export type TaktTableBodyCellSlotData = {
 };
 
 /**
- * 表格已占用 #bodyCell 时的回退渲染：优先列 customRender，否则标量 text（禁止把对象 JSON 渲进单元格）
+ * 列 key / dataIndex 是否为日历日期列（以 Date 结尾，如发行日期、生产日期）
+ * @param column 列配置
+ * @returns {boolean} 是否按 yyyy-MM-dd 展示
+ */
+export function isTableCalendarDateColumn(
+  column: { key?: unknown; dataIndex?: unknown } | null | undefined,
+): boolean {
+  const raw = column?.key ?? column?.dataIndex;
+  if (raw == null || Array.isArray(raw)) return false;
+  return /date$/i.test(String(raw));
+}
+
+/**
+ * 日期列单元格文本：取 text，空则回退 record 上的 dataIndex / key，再格式化为 yyyy-MM-dd
+ * @param slotData bodyCell 插槽参数
+ * @returns {string} yyyy-MM-dd 或空串
+ */
+export function resolveTableCalendarDateCellText(slotData: TaktTableBodyCellSlotData): string {
+  let raw: unknown = slotData.text;
+  const column = slotData.column;
+  const record = slotData.record;
+  if ((raw == null || raw === '') && record && column) {
+    const dataIndex = column.dataIndex;
+    if (typeof dataIndex === 'string' && dataIndex in record) {
+      raw = record[dataIndex];
+    } else if (column.key != null) {
+      const key = String(column.key);
+      if (key in record) raw = record[key];
+    }
+  }
+  return formatCalendarDate(raw as string | number | Date | null | undefined);
+}
+
+/**
+ * 表格已占用 #bodyCell 时的回退渲染：优先列 customRender，否则标量 text（禁止把对象 JSON 渲进单元格）。
+ * 日期列的标量结果一律格式化为 yyyy-MM-dd。
  * @param slotData bodyCell 插槽参数
  * @returns customRender 结果、标量文本或 null
  */
 export function resolveTableBodyCellFallback(slotData: TaktTableBodyCellSlotData): unknown {
   const column = slotData.column;
   const customRender = column?.customRender;
+  let result: unknown;
   if (typeof customRender === 'function') {
-    return customRender({
+    result = customRender({
       text: slotData.text,
       value: slotData.value ?? slotData.text,
       record: slotData.record,
@@ -515,12 +552,17 @@ export function resolveTableBodyCellFallback(slotData: TaktTableBodyCellSlotData
       renderIndex: slotData.renderIndex ?? slotData.index,
       column,
     });
+  } else {
+    const text = slotData.text;
+    if (text != null && typeof text === 'object') {
+      return null;
+    }
+    result = text ?? null;
   }
-  const text = slotData.text;
-  if (text != null && typeof text === 'object') {
-    return null;
+  if (isTableCalendarDateColumn(column) && (typeof result === 'string' || typeof result === 'number')) {
+    return formatCalendarDate(result);
   }
-  return text ?? null;
+  return result;
 }
 
 /**

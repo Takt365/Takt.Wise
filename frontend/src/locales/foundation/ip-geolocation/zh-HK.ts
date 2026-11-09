@@ -25,6 +25,11 @@ export default {
       province: '省份',
       city: '城市',
       isp: 'ISP',
+      active: {
+        host: {
+          ips: '已啟用網卡',
+        },
+      },
       full: {
         address: '完整地址',
       },
@@ -44,12 +49,22 @@ export default {
         required: '請輸入 IP 地址',
       },
     },
+    visitor: {
+      loading: '正在獲取您的公網 IP…',
+      line: '您的IP：{ip},位置：{location}',
+      unknown: {
+        location: '未知',
+      },
+    },
     message: {
       search: {
         fail: 'IP 歸屬查詢失敗',
       },
       client: {
-        fail: '客戶端 IP 歸屬查詢失敗',
+        fail: '本機網卡 IP 歸屬查詢失敗',
+      },
+      visitor: {
+        fail: '無法自動獲取公網 IP，請手動輸入後查詢',
       },
       not: {
         found: '未找到該 IP 的歸屬資訊',

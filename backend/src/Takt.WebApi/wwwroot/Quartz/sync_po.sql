@@ -23,7 +23,7 @@ DECLARE @plant_code NVARCHAR(4) = N'{{PlantCode}}';
 DECLARE @sync_user_id BIGINT = {{SyncUserId}};
 
 DECLARE @batch_size INT = 0;
-DECLARE @apply_chunk INT = 20000;
+DECLARE @apply_chunk INT = 100000;
 DECLARE @merge_from_rn INT;
 DECLARE @merge_to_rn INT;
 DECLARE @merge_max_rn INT;
@@ -38,6 +38,7 @@ DECLARE @base_id BIGINT = DATEDIFF_BIG(MICROSECOND, '1970-01-01', @now) * 1000;
 -- 源明细装入：SH.id=R.purchase_order_id，并携带 SH.supplier_code+order_date
 -- 目标 FK 回填：#hdr 按 plant+code+supplier+order_date(日) 对齐（与主表唯一键一致；禁止仅 plant+code）
 -- tenant/company/plant/culture 取自各源表本列；任一层为空则丢弃，不回退任务参数
+-- 主表 tenant_code 为空时，仅当该单明细租户唯一才借用明细租户（源库 4420 张主表为空，明细均为 000）
 
 IF OBJECT_ID('tempdb..#hdr') IS NOT NULL DROP TABLE #hdr;
 IF OBJECT_ID('tempdb..#item') IS NOT NULL DROP TABLE #item;
@@ -139,7 +140,10 @@ FROM (
     SELECT
       LEFT(LTRIM(RTRIM(ISNULL(R.[company_code], N''))), 4) AS [company_code],
       LEFT(LTRIM(RTRIM(ISNULL(R.[plant_code], N''))), 4) AS [plant_code],
-      LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3) AS [tenant_code],
+      COALESCE(
+        NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3), N''),
+        IT.[tenant_code]
+      ) AS [tenant_code],
       LTRIM(RTRIM(ISNULL(R.[culture_code], N''))) AS [culture_code],
       ISNULL(NULLIF(LEFT(LTRIM(RTRIM(R.[purchase_order_code])), 20), N''), N'') AS [purchase_order_code],
       TRY_CAST(R.[purchase_request_id] AS BIGINT) AS [purchase_request_id],
@@ -190,10 +194,21 @@ FROM (
         ORDER BY R.[id]
       ) AS dup_rn
     FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_order] R
+    OUTER APPLY (
+      SELECT MIN(LEFT(LTRIM(RTRIM(ISNULL(I.[tenant_code], N''))), 3)) AS [tenant_code]
+      FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_order_item] I
+      WHERE NULLIF(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), N'') IS NULL
+        AND I.[purchase_order_id] = R.[id]
+        AND LTRIM(RTRIM(ISNULL(I.[tenant_code], N''))) <> N''
+      HAVING COUNT(DISTINCT LEFT(LTRIM(RTRIM(ISNULL(I.[tenant_code], N''))), 3)) = 1
+    ) IT
     WHERE LTRIM(RTRIM(ISNULL(R.[purchase_order_code], N''))) <> N''
       AND LTRIM(RTRIM(ISNULL(R.[supplier_code], N''))) <> N''
       AND LTRIM(RTRIM(ISNULL(R.[plant_code], N''))) <> N''
-      AND LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))) <> N''
+      AND COALESCE(
+        NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3), N''),
+        IT.[tenant_code]
+      ) <> N''
       AND LTRIM(RTRIM(ISNULL(R.[company_code], N''))) <> N''
       AND LTRIM(RTRIM(ISNULL(R.[culture_code], N''))) <> N''
   ) N
@@ -227,10 +242,21 @@ DECLARE @hdr_sap_keys INT = (
       LTRIM(RTRIM(R.[supplier_code])) AS [supplier_code],
       CAST(ISNULL(TRY_CAST(R.[order_date] AS DATETIME), CAST(CONVERT(DATE, @now) AS DATETIME)) AS DATE) AS [order_day]
     FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_order] R
+    OUTER APPLY (
+      SELECT MIN(LEFT(LTRIM(RTRIM(ISNULL(I.[tenant_code], N''))), 3)) AS [tenant_code]
+      FROM [{{SourceDatabase}}].[dbo].[takt_logistics_procurement_purchase_order_item] I
+      WHERE NULLIF(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), N'') IS NULL
+        AND I.[purchase_order_id] = R.[id]
+        AND LTRIM(RTRIM(ISNULL(I.[tenant_code], N''))) <> N''
+      HAVING COUNT(DISTINCT LEFT(LTRIM(RTRIM(ISNULL(I.[tenant_code], N''))), 3)) = 1
+    ) IT
     WHERE LTRIM(RTRIM(ISNULL(R.[purchase_order_code], N''))) <> N''
       AND LTRIM(RTRIM(ISNULL(R.[supplier_code], N''))) <> N''
       AND LTRIM(RTRIM(ISNULL(R.[plant_code], N''))) <> N''
-      AND LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))) <> N''
+      AND COALESCE(
+        NULLIF(LEFT(LTRIM(RTRIM(ISNULL(R.[tenant_code], N''))), 3), N''),
+        IT.[tenant_code]
+      ) <> N''
       AND LTRIM(RTRIM(ISNULL(R.[company_code], N''))) <> N''
       AND LTRIM(RTRIM(ISNULL(R.[culture_code], N''))) <> N''
     GROUP BY
@@ -562,6 +588,34 @@ DECLARE @item_before INT = (
   WHERE T.[is_deleted]=0
     AND EXISTS (SELECT 1 FROM #item S WHERE S.[tenant_code]=T.[tenant_code] AND S.[company_code]=T.[company_code])
 );
+
+-- 先回填目标明细外键（工厂+订单号在主表唯一），再同步
+SET @dml_n = 1;
+WHILE @dml_n > 0
+BEGIN
+  UPDATE TOP (@apply_chunk) I
+  SET I.[purchase_order_id] = U.[id], I.[updated_by] = @sync_user_id, I.[updated_at] = @now
+  FROM [takt_logistics_procurement_purchase_order_item] AS I
+  INNER JOIN (
+    SELECT
+      H.[tenant_code], H.[company_code],
+      LTRIM(RTRIM(H.[plant_code])) AS [plant_code],
+      LTRIM(RTRIM(H.[purchase_order_code])) AS [purchase_order_code],
+      MIN(H.[id]) AS [id]
+    FROM [takt_logistics_procurement_purchase_order] AS H
+    WHERE H.[is_deleted] = 0
+    GROUP BY H.[tenant_code], H.[company_code], LTRIM(RTRIM(H.[plant_code])), LTRIM(RTRIM(H.[purchase_order_code]))
+    HAVING COUNT(*) = 1
+  ) AS U
+    ON U.[tenant_code] = I.[tenant_code]
+   AND U.[company_code] = I.[company_code]
+   AND U.[plant_code] = LTRIM(RTRIM(I.[plant_code]))
+   AND U.[purchase_order_code] = LTRIM(RTRIM(I.[purchase_order_code]))
+  WHERE I.[is_deleted] = 0
+    AND EXISTS (SELECT 1 FROM #item S WHERE S.[tenant_code] = I.[tenant_code] AND S.[company_code] = I.[company_code])
+    AND (I.[purchase_order_id] IS NULL OR I.[purchase_order_id] <> U.[id]);
+  SET @dml_n = @@ROWCOUNT;
+END
 
 SET @merge_from_rn = 1;
 SET @merge_max_rn = ISNULL((SELECT MAX([rn]) FROM #item), 0);

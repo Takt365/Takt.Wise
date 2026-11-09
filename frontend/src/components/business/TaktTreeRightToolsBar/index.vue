@@ -35,11 +35,12 @@ defineOptions({ inheritAttrs: false })
 </script>
 
 <style scoped lang="css">
-/* 树表右侧工具栏占内容区 4/5，样式与边距由内部 TaktToolsBar 统一 */
+/* 树表右侧工具栏占工具行剩余宽度（吸收 gap），随视口伸缩；边距由内部 TaktToolsBar 统一 */
 .takt-tree-right-tools-bar {
-  flex: 0 0 80%;
-  width: 80%;
-  max-width: 80%;
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+  max-width: none;
   box-sizing: border-box;
 }
 </style>

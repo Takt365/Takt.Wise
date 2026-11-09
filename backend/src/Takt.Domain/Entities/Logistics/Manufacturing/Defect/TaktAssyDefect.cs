@@ -1,4 +1,4 @@
-﻿// ========================================
+// ========================================
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Domain.Entities.Logistics.Manufacturing.Defect
 // 文件名称：TaktAssyDefect.cs
@@ -82,8 +82,8 @@ public class TaktAssyDefect : TaktCompanyEntityBase
     /// <summary>
     /// 批次
     /// </summary>
-    [SugarColumn(ColumnName = "batch_code", ColumnDescription = "批次", Length = 20, ColumnDataType = "nvarchar", IsNullable = true)]
-    public string? BatchCode { get; set; }
+    [SugarColumn(ColumnName = "prod_batch", ColumnDescription = "批次", Length = 40, ColumnDataType = "nvarchar", IsNullable = true)]
+    public string? ProdBatch { get; set; }
 
     /// <summary>
     /// 物料编码

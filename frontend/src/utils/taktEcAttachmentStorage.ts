@@ -18,7 +18,7 @@ export const EC_ATTACHMENT_MENU_UPLOAD_PATH = 'uploads/logistics'
 
 /**
  * 引擎 CategoryPath。最终磁盘路径：
- * uploads/logistics/ec/{租户}/{公司}/{年}/{月}/{日}/{文件名}
+ * uploads/{租户}/{公司}/logistics/ec/{年}/{月}/{日}/{文件名}
  */
 export const EC_ATTACHMENT_CATEGORY_PATH = 'logistics/ec'
 

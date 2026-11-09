@@ -4,7 +4,7 @@
 文件名称:index.vue
 创建时间:2025-01-20
 创建人:Takt365(Cursor AI)
-功能描述:左树工具栏,仅含查询、展开/收缩两个按钮,宽度为视口的1/4
+功能描述:左树工具栏,仅含查询、展开/收缩两个按钮；宽度随父行 --takt-tree-left-width（默认 20%）伸缩
 
 版权信息:Copyright (c) 2025 Takt  All rights reserved.
 免责声明:此软件使用 MIT License,作者不承担任何使用风险。
@@ -78,13 +78,12 @@ const handleToggleExpand = () => {
 </script>
 
 <style scoped>
-/* 宽度：内容视口的 1/5（20%），与左侧树/查询栏统一 */
+/* 宽度：随父行 --takt-tree-left-width（默认 20%）伸缩，与左侧树/查询栏同一槽 */
 .takt-tree-left-tools-bar {
-  flex: 0 0 20%;
-  width: 20%;
-  min-width: 160px;
-  max-width: 20%;
-  /*margin: 4px; */
+  flex: 0 1 var(--takt-tree-left-width, 20%);
+  width: var(--takt-tree-left-width, 20%);
+  min-width: 0;
+  max-width: var(--takt-tree-left-width, 20%);
   padding: 4px;
   display: flex;
   align-items: center;

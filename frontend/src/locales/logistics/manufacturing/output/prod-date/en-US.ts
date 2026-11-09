@@ -10,6 +10,7 @@
 
 export default {
   page: {
+    periodRange: 'Production period',
     proddatelocked: 'Production date {prodDate} is locked (cannot create or edit after day {cutoffDay} of the following month).',
     proddateoutofrange: 'Production date is out of range (after day {cutoffDay} of each month, only dates from the 1st of the current month through today are selectable).',
   },

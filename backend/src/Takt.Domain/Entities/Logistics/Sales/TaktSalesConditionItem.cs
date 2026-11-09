@@ -19,8 +19,8 @@ namespace Takt.Domain.Entities.Logistics.Sales;
 /// Takt销售条件行实体（定价记录条件行；主子表：TaktSalesCondition → Items → ScaleQuantities / ScaleValues）
 /// </summary>
 [SugarTable("takt_logistics_sales_condition_item", "销售条件行表")]
-[SugarIndex("ix_sales_price_item_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
-[SugarIndex("ix_sales_price_item_is_deleted", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(IsDeleted), OrderByType.Asc, false)]
+[SugarIndex("ix_sales_condition_item_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
+[SugarIndex("ix_sales_condition_item_is_deleted", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(IsDeleted), OrderByType.Asc, false)]
 [SugarIndex("ix_takt_logistics_sales_condition_item_seq_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(SalesConditionId), OrderByType.Asc, nameof(SalesConditionSeq), OrderByType.Asc, true)]
 [SugarIndex("ix_takt_logistics_sales_condition_item_code", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(SalesConditionCode), OrderByType.Asc, false)]
 public class TaktSalesConditionItem : TaktCompanyEntityBase

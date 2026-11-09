@@ -489,7 +489,7 @@ public class TaktAssyDefectService : TaktServiceBase, ITaktAssyDefectService
                 || (x.ProdOrderType != null && x.ProdOrderType.Contains(keywords))
                 || (x.ProdOrderCode != null && x.ProdOrderCode.Contains(keywords))
                 || (x.ModelCode != null && x.ModelCode.Contains(keywords))
-                || (x.BatchCode != null && x.BatchCode.Contains(keywords))
+                || (x.ProdBatch != null && x.ProdBatch.Contains(keywords))
                 || (x.MaterialCode != null && x.MaterialCode.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
@@ -550,10 +550,10 @@ public class TaktAssyDefectService : TaktServiceBase, ITaktAssyDefectService
             exp = exp.And(x => x.ModelCode != null && x.ModelCode.Contains(modelCode));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.BatchCode))
+        if (!string.IsNullOrWhiteSpace(queryDto?.ProdBatch))
         {
-            var batchCode = queryDto.BatchCode;
-            exp = exp.And(x => x.BatchCode != null && x.BatchCode.Contains(batchCode));
+            var prodBatch = queryDto.ProdBatch;
+            exp = exp.And(x => x.ProdBatch != null && x.ProdBatch.Contains(prodBatch));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.MaterialCode))
@@ -664,7 +664,7 @@ public class TaktAssyDefectService : TaktServiceBase, ITaktAssyDefectService
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.BatchCode))
+        if (!string.IsNullOrWhiteSpace(queryDto.ProdBatch))
         {
             return true;
         }

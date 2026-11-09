@@ -88,15 +88,15 @@ public class TaktProductionOrder : TaktCompanyEntityBase
     public int Priority { get; set; } = 3;
 
     /// <summary>
- /// 工作中心（表单可选单码 TaktWorkCenters/options，故 Length=140，非单码 10）
+    /// 工作中心（表单可选单码 TaktWorkCenters/options，故 Length=140，非单码 10）
     /// </summary>
     [SugarColumn(ColumnName = "work_center", ColumnDescription = "工作中心", ColumnDataType = "nvarchar", Length = 140, IsNullable = true)]
     public string? WorkCenter { get; set; }
 
     /// <summary>
-    /// 生产批次
+    /// 生产批次（与组立不良、PCBA 检查、PCBA 改修的 ProdBatch 同名同长）
     /// </summary>
-    [SugarColumn(ColumnName = "prod_batch", ColumnDescription = "生产批次", ColumnDataType = "nvarchar", Length = 20, IsNullable = true)]
+    [SugarColumn(ColumnName = "prod_batch", ColumnDescription = "批次", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
     public string? ProdBatch { get; set; }
 
     /// <summary>

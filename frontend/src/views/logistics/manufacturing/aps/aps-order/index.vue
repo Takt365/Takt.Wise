@@ -650,6 +650,15 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getApsOrderField(record, 'materialCode') ?? ''
   },
   {
+    title: t('entity.apsorder.plannedbatch'),
+    dataIndex: 'plannedBatch',
+    key: 'plannedBatch',
+    width: 140,
+    resizable: true,
+    ellipsis: true,
+    customRender: ({ record }: { record: any }) => getApsOrderField(record, 'plannedBatch') ?? ''
+  },
+  {
     title: t('entity.apsorder.orderquantity'),
     dataIndex: 'orderQuantity',
     key: 'orderQuantity',

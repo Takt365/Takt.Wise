@@ -50,21 +50,27 @@ public sealed class TaktBomMaterialCostSumJobHandler : ITaktQuartzJobHandler
         ArgumentException.ThrowIfNullOrWhiteSpace(task.TenantCode);
         ArgumentException.ThrowIfNullOrWhiteSpace(task.CompanyCode);
         var asOfDate = TaktBomQuartzExecuteParamsHelper.ResolveAsOfDate(context.ExecuteParams);
+        var target = TaktQuartzRunScope.TargetDatabase ?? string.Empty;
         var result = await _bomCalculateService.RunScheduledBomCalculateSumAsync(asOfDate);
         if (result == null)
         {
-            context.ExecuteMessage = "成本合计无结果（目标月无明细或上下文无效）";
+            context.ExecuteMessage = $"成本合计无结果（目标库 {target}，目标月无明细或上下文无效）";
             TaktLogger.Warning(
-                "[BomMaterialCost] Quartz 合计无结果 TaskCode={TaskCode} Tenant={Tenant} Company={Company}",
+                "[BomMaterialCost] Quartz 合计无结果 Target={Target} Plant={Plant} TaskCode={TaskCode} Tenant={Tenant} Company={Company}",
+                target,
+                string.Empty,
                 task.TaskCode,
                 task.TenantCode,
                 task.CompanyCode);
             return;
         }
+        var plants = result.ProcessedPlants ?? string.Empty;
         context.ExecuteMessage =
-            $"成本合计完成（月份 {result.ProcessedMonth}）：扫描 {result.ScannedRowCount}，刷新 {result.RefreshedGroupCount}，跳过 {result.SkippedGroupCount}";
+            $"成本合计完成（目标库 {target}，工厂 {plants}，月份 {result.ProcessedMonth}）：扫描 {result.ScannedRowCount}，刷新 {result.RefreshedGroupCount}，跳过 {result.SkippedGroupCount}";
         TaktLogger.Information(
-            "[BomMaterialCost] Quartz 合计完成 Month={Month} Scanned={Scanned} Refreshed={Refreshed} Skipped={Skipped} Tenant={Tenant} Company={Company}",
+            "[BomMaterialCost] Quartz 合计完成 Target={Target} Plant={Plant} Period={Period} Scanned={Scanned} Refreshed={Refreshed} Skipped={Skipped} Tenant={Tenant} Company={Company}",
+            target,
+            plants,
             result.ProcessedMonth,
             result.ScannedRowCount,
             result.RefreshedGroupCount,

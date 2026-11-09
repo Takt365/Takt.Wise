@@ -8,8 +8,14 @@
 <!-- ======================================== -->
 
 <template>
-  <div class="takt-query-bar material-usage-query-bar">
-    <div class="material-usage-query-bar__fields min-w-0 flex flex-1 flex-nowrap items-center gap-x-3">
+  <TaktQueryBar
+    :show-keyword="false"
+    :loading="props.loading"
+    @search="emit('search')"
+    @reset="emit('reset')"
+  >
+    <template #leading>
+<div class="material-usage-query-bar__fields min-w-0 flex flex-1 flex-nowrap items-center gap-x-3">
       <div class="flex items-center gap-1">
         <span class="shrink-0 whitespace-nowrap text-sm text-text-secondary">{{ t(`${localePrefix}.costingMonth`) }}</span>
         <a-date-picker
@@ -54,36 +60,14 @@
         />
       </div>
     </div>
-    <a-space class="query-actions">
-      <a-button
-        class="takt-button-query"
-        :loading="props.loading"
-        @click="emit('search')"
-      >
-        <template #icon>
-          <RiSearchLine class="takt-remix-icon" />
-        </template>
-        {{ t('common.page.button.query') }}
-      </a-button>
-      <a-button
-        class="takt-button-reset"
-        :disabled="props.loading"
-        @click="emit('reset')"
-      >
-        <template #icon>
-          <RiRefreshLine class="takt-remix-icon" />
-        </template>
-        {{ t('common.page.button.reset') }}
-      </a-button>
-    </a-space>
-  </div>
+    </template>
+  </TaktQueryBar>
 </template>
 
 <script setup lang="ts">
 /**
  * 通用物料 / 专用物料查询栏：工厂、核算年月、机种、物料。机种与物料均可空且互斥。
  */
-import { RiRefreshLine, RiSearchLine } from '@remixicon/vue'
 import { useI18n } from 'vue-i18n'
 import {
   getBomCostOptionModelOptionsUrl,

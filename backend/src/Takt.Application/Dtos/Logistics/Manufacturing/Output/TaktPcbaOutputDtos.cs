@@ -68,7 +68,7 @@ public class TaktPcbaOutputDto : TaktCompanyDtoBase
     /// <summary>
     /// 批次（回填：随工单）
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 工单数量（回填：随工单）
@@ -156,7 +156,7 @@ public class TaktPcbaOutputQueryDto : TaktPagedQuery
     /// <summary>
     /// 批次（回填：随工单）
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 工单数量（回填：随工单）
@@ -255,7 +255,7 @@ public class TaktPcbaOutputCreateDto
     /// <summary>
     /// 批次（回填：随工单）
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 工单数量（回填：随工单）
@@ -371,7 +371,7 @@ public class TaktPcbaOutputTemplateDto
     /// <summary>
     /// 批次（回填：随工单）
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 工单数量（回填：随工单）
@@ -458,7 +458,7 @@ public class TaktPcbaOutputImportDto
     /// <summary>
     /// 批次（回填：随工单）
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 工单数量（回填：随工单）
@@ -551,7 +551,7 @@ public class TaktPcbaOutputExportDto
     /// <summary>
     /// 批次（回填：随工单）
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 工单数量（回填：随工单）

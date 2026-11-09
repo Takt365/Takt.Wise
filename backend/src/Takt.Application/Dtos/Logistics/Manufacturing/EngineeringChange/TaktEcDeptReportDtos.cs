@@ -84,9 +84,9 @@ public class TaktEcDeptReportRowDto
     public string? EcRootMaterialCodeGroup { get; set; }
 
     /// <summary>
-    /// 新物料编码
+    /// 新物料编码组（执行部门实施表 EcNewMaterialCodeGroup）
     /// </summary>
-    public string? EcNewMaterialCode { get; set; }
+    public string? EcNewMaterialCodeGroup { get; set; }
 
     /// <summary>
     /// 新品仓库
@@ -124,9 +124,14 @@ public class TaktEcDeptReportRowDto
     public string? ProductionDate { get; set; }
 
     /// <summary>
-    /// 实施批次
+    /// 生产批次
     /// </summary>
-    public string? ImplementationBatch { get; set; }
+    public string? ProductionBatch { get; set; }
+
+    /// <summary>
+    /// 进货日期（yyyy-MM-dd）。仅采购课
+    /// </summary>
+    public string? InboundDate { get; set; }
 
     /// <summary>
     /// 检验日期（yyyy-MM-dd）
@@ -137,16 +142,6 @@ public class TaktEcDeptReportRowDto
     /// 检验批次
     /// </summary>
     public string? InspectionBatch { get; set; }
-
-    /// <summary>
-    /// 采购订单发行日期（yyyy-MM-dd）
-    /// </summary>
-    public string? PurchaseOrderIssueDate { get; set; }
-
-    /// <summary>
-    /// 受检单号
-    /// </summary>
-    public string? IqcOrderCode { get; set; }
 
     /// <summary>
     /// SOP 日期（yyyy-MM-dd）

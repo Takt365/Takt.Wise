@@ -103,7 +103,12 @@ public class TaktEcLegacyProductService : TaktServiceBase, ITaktEcLegacyProductS
         {
             throw new TaktBusinessException("设变明细不存在");
         }
-        detail.DiscontinuedStatus = dto.DiscontinuedStatus;
+        detail.EcOldPartDisposition = string.IsNullOrWhiteSpace(dto.EcOldPartDisposition)
+            ? null
+            : dto.EcOldPartDisposition.Trim();
+        detail.DiscontinuedStatus = string.IsNullOrWhiteSpace(dto.DiscontinuedStatus)
+            ? "Z0"
+            : dto.DiscontinuedStatus.Trim();
         detail.Remark = dto.Remark;
         await _ecDetailRepository.UpdateAsync(detail);
         return await MapLegacyProductRowAsync(detail);
@@ -146,7 +151,7 @@ public class TaktEcLegacyProductService : TaktServiceBase, ITaktEcLegacyProductS
     /// <returns>旧品管制 DTO</returns>
     private async Task<List<TaktEcLegacyProductDto>> MapLegacyProductRowsAsync(IReadOnlyList<TaktEcDetail> details)
     {
-        var dispositions = await _ecExecDeptAccess.ListPcOldPartDispositionByDetailsAsync(details);
+        var dispositions = await _ecExecDeptAccess.ListPcOldPartBalanceByDetailsAsync(details);
         var rows = new List<TaktEcLegacyProductDto>(details.Count);
         foreach (var detail in details)
         {

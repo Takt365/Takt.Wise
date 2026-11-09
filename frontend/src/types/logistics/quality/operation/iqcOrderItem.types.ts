@@ -61,7 +61,7 @@ export interface IqcOrderItem extends CompanyDtoBase {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 进货数量
@@ -196,7 +196,7 @@ export interface IqcOrderItemQuery extends TaktPagedQuery {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 进货数量
@@ -353,7 +353,7 @@ export interface IqcOrderItemCreate {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 进货数量
@@ -545,7 +545,7 @@ export interface IqcOrderItemTemplate {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 进货数量
@@ -692,7 +692,7 @@ export interface IqcOrderItemImport {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 进货数量
@@ -826,7 +826,7 @@ export interface IqcOrderItemExport {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 进货数量

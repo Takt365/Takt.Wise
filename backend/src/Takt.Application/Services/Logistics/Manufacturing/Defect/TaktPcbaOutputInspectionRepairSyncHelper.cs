@@ -534,7 +534,7 @@ internal static class TaktPcbaOutputInspectionRepairSyncHelper
         inspection.ProdOrderCode = output.ProdOrderCode;
         inspection.ProdOrderQty = output.ProdOrderQty;
         inspection.ModelCode = output.ModelCode;
-        inspection.BatchCode = output.BatchCode;
+        inspection.ProdBatch = output.ProdBatch;
         inspection.MaterialCode = output.MaterialCode;
     }
 
@@ -555,7 +555,7 @@ internal static class TaktPcbaOutputInspectionRepairSyncHelper
         repair.ProdOrderCode = output.ProdOrderCode;
         repair.ProdOrderQty = output.ProdOrderQty;
         repair.ModelCode = output.ModelCode;
-        repair.BatchCode = output.BatchCode;
+        repair.ProdBatch = output.ProdBatch;
         repair.MaterialCode = output.MaterialCode;
     }
 

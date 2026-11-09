@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Materials
 // 文件名称：TaktMaterialDocumentItemI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktMaterialDocumentItem 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -180,14 +180,14 @@ public class TaktMaterialDocumentItemI18nSeedData : ITaktSeedDataCoordinator
             // entity.materialdocumentitem.warehousecode
             new TranslationSeedItem("entity.materialdocumentitem.warehousecode", "zh-HK", "库存地点_hk", "库存地点（选项 TaktWarehouses/options；DictValue=WarehouseCode）"),
 
-            // entity.materialdocumentitem.batchcode
-            new TranslationSeedItem("entity.materialdocumentitem.batchcode", "en-US", "批次_us", "批次"),
-            // entity.materialdocumentitem.batchcode
-            new TranslationSeedItem("entity.materialdocumentitem.batchcode", "ja-JP", "批次_jp", "批次"),
-            // entity.materialdocumentitem.batchcode
-            new TranslationSeedItem("entity.materialdocumentitem.batchcode", "zh-CN", "批次", "批次"),
-            // entity.materialdocumentitem.batchcode
-            new TranslationSeedItem("entity.materialdocumentitem.batchcode", "zh-HK", "批次_hk", "批次"),
+            // entity.materialdocumentitem.prodbatch
+            new TranslationSeedItem("entity.materialdocumentitem.prodbatch", "en-US", "批次_us", "批次"),
+            // entity.materialdocumentitem.prodbatch
+            new TranslationSeedItem("entity.materialdocumentitem.prodbatch", "ja-JP", "批次_jp", "批次"),
+            // entity.materialdocumentitem.prodbatch
+            new TranslationSeedItem("entity.materialdocumentitem.prodbatch", "zh-CN", "批次", "批次"),
+            // entity.materialdocumentitem.prodbatch
+            new TranslationSeedItem("entity.materialdocumentitem.prodbatch", "zh-HK", "批次_hk", "批次"),
 
             // entity.materialdocumentitem.stocktype
             new TranslationSeedItem("entity.materialdocumentitem.stocktype", "en-US", "库存类型_us", "库存类型（字典 logistics_stock_type）"),

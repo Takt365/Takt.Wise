@@ -259,11 +259,30 @@ export const RegexPatterns = {
   PERMISSION: /^[a-z][a-z0-9]*:[a-z0-9]+:[a-z0-9]+$/,
 
   /**
-   * 设变生管 Po残（与 TaktRegexHelper.EcPoRemainder 对齐）
-   * 空合法；非空须为「采购单10位-序号4位:数量」，数量非负整数或最多两位小数，如 4500123456-0010:18.5
+   * 设变生管/采购旧品结余单行（与 TaktRegexHelper.EcPcOldPartBalanceLine 对齐）
+   * 「旧物料-采购单10位:序号4位:数量;结余;处理方式;」— 如 S0111914-4300000000:0010:0;0;4;
    */
-  EC_PO_REMAINDER: /^\d{10}-\d{4}:\d+(?:\.\d{1,2})?$/,
-  
+  EC_PC_OLD_PART_BALANCE_LINE:
+    /^[^:\s;]{1,20}-\d{10}:\d{4}:\d+(?:\.\d{1,2})?;\d+(?:\.\d{1,2})?;(?:[1-5]|9);?$/,
+
+  /**
+   * 设变技术课主表旧品处理单段（与 TaktRegexHelper.EcTeOldPartDispositionPart 对齐）
+   * 「旧物料:处理方式」— 如 S0111914:4
+   */
+  EC_TE_OLD_PART_DISPOSITION_PART: /^[^:\s;]{1,20}:(?:[1-5]|9)$/,
+
+  /**
+   * 设变采购执行内容单行（与 TaktRegexHelper.EcPurExecLine 对齐）
+   * 「物料:采购单10位:序号4位:供应商」— 如 S0111914:4300000000:0010:H200000
+   */
+  EC_PUR_EXEC_LINE: /^[^:\s;]{1,20}:\d{10}:\d{4}:[A-Za-z0-9]{1,10}$/,
+
+  /**
+   * 设变受检执行内容单行（与 TaktRegexHelper.EcIqcExecLine 对齐）
+   * 物料:检验单10位:序号4位:PASS — 如 S0111914:4300000000:0010:PASS
+   */
+  EC_IQC_EXEC_LINE: /^[^:\s;]{1,20}:\d{10}:\d{4}:PASS$/i,
+
   /** 全角字符（全角空格、全角英数与标点、全角货币符；与 TaktRegexHelper.FullWidth 对齐。汉字与假名不在此列） */
   FULL_WIDTH: /[\u3000\uFF01-\uFF60\uFFE0-\uFFE6]/,
 
@@ -1141,15 +1160,79 @@ export class RegexHelper {
   }
 
   /**
-   * 验证设变生管 Po残。空串合法；非空须为「采购单10位-序号4位:数量」
-   * @param value Po残文本
-   * @returns {boolean} 空或格式正确时为 true
+   * 验证设变生管旧品结余。空串合法；非空须为多行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，行间换行
+   * @param value 旧品结余文本
+   * @returns {boolean} 空或每行格式正确时为 true
    */
-  static isValidEcPoRemainder(value: string | null | undefined): boolean {
+  static isValidEcPcOldPartBalance(value: string | null | undefined): boolean {
     if (value == null || typeof value !== 'string' || !value.trim()) {
       return true
     }
-    return this.test('EC_PO_REMAINDER', value.trim())
+    const parts = value
+      .split(/[\n\r]+/)
+      .map((item) => item.trim())
+      .filter(Boolean)
+    if (parts.length === 0) {
+      return false
+    }
+    return parts.every((part) => this.test('EC_PC_OLD_PART_BALANCE_LINE', part))
+  }
+
+  /**
+   * 验证设变技术课主表旧品处理。空串合法；非空须为多段「旧物料:处理方式」，以分号或换行分隔
+   * @param value 旧品结余文本
+   * @returns {boolean} 空或每段格式正确时为 true
+   */
+  static isValidEcTeOldPartDisposition(value: string | null | undefined): boolean {
+    if (value == null || typeof value !== 'string' || !value.trim()) {
+      return true
+    }
+    const parts = value
+      .split(/[;\n\r]+/)
+      .map((item) => item.trim())
+      .filter(Boolean)
+    if (parts.length === 0) {
+      return false
+    }
+    return parts.every((part) => this.test('EC_TE_OLD_PART_DISPOSITION_PART', part))
+  }
+
+  /**
+   * 验证设变采购执行内容。空串由必填规则处理；非空须为多行「物料:采购单10位:序号4位:供应商;」
+   * @param value 执行内容
+   * @returns {boolean} 空或每段格式正确时为 true
+   */
+  static isValidEcPurExecContent(value: string | null | undefined): boolean {
+    if (value == null || typeof value !== 'string' || !value.trim()) {
+      return true
+    }
+    const parts = value
+      .split(/[;\n\r]+/)
+      .map((item) => item.trim())
+      .filter(Boolean)
+    if (parts.length === 0) {
+      return false
+    }
+    return parts.every((part) => this.test('EC_PUR_EXEC_LINE', part))
+  }
+
+  /**
+   * 验证设变受检执行内容。空串由必填规则处理；非空须为多行「物料:检验单10位:序号4位:PASS;」
+   * @param value 执行内容
+   * @returns {boolean} 空或每段格式正确时为 true
+   */
+  static isValidEcIqcExecContent(value: string | null | undefined): boolean {
+    if (value == null || typeof value !== 'string' || !value.trim()) {
+      return true
+    }
+    const parts = value
+      .split(/[;\n\r]+/)
+      .map((item) => item.trim())
+      .filter(Boolean)
+    if (parts.length === 0) {
+      return false
+    }
+    return parts.every((part) => this.test('EC_IQC_EXEC_LINE', part))
   }
 
   /**
@@ -1438,7 +1521,10 @@ export const isValidCode = RegexHelper.isValidCode.bind(RegexHelper)
 export const isValidMaterialCode = RegexHelper.isValidMaterialCode.bind(RegexHelper)
 export const isValidDocumentCode = RegexHelper.isValidDocumentCode.bind(RegexHelper)
 export const isValidOrderCode = RegexHelper.isValidOrderCode.bind(RegexHelper)
-export const isValidEcPoRemainder = RegexHelper.isValidEcPoRemainder.bind(RegexHelper)
+export const isValidEcPcOldPartBalance = RegexHelper.isValidEcPcOldPartBalance.bind(RegexHelper)
+export const isValidEcTeOldPartDisposition = RegexHelper.isValidEcTeOldPartDisposition.bind(RegexHelper)
+export const isValidEcPurExecContent = RegexHelper.isValidEcPurExecContent.bind(RegexHelper)
+export const isValidEcIqcExecContent = RegexHelper.isValidEcIqcExecContent.bind(RegexHelper)
 export const isValidBatchCode = RegexHelper.isValidBatchCode.bind(RegexHelper)
 export const isValidSerialNumber = RegexHelper.isValidSerialNumber.bind(RegexHelper)
 export const isValidCodeWithDate = RegexHelper.isValidCodeWithDate.bind(RegexHelper)

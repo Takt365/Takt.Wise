@@ -612,10 +612,10 @@ const materialDocumentItemFormColumns = computed<TaktEditableTableColumn[]>(() =
     width: 140,
   },
   {
-    key: 'batchCode',
-    title: materialDocumentItemPi.label('batchCode'),
+    key: 'prodBatch',
+    title: materialDocumentItemPi.label('prodBatch'),
     editor: 'input',
-    width: 140, allowClear: true, placeholder: materialDocumentItemPi.ph('batchCode'),
+    width: 140, allowClear: true, placeholder: materialDocumentItemPi.ph('prodBatch'),
   },
   {
     key: 'stockType',
@@ -961,7 +961,7 @@ function createDefaultMaterialDocumentItemRow(): Record<string, unknown> {
     autoCreatedFlag: '',
     materialCode: '',
     warehouseCode: '',
-    batchCode: '',
+    prodBatch: '',
     stockType: '',
     restrictedStockFlag: '',
     specialStock: '',

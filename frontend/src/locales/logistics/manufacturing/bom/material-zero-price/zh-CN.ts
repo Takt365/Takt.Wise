@@ -30,10 +30,10 @@ export default {
     costSum: '计算成本',
     costRecalculate: '重算成本',
     costAverage: '计算机种平均成本',
-    purchaseInfoBackfill: '回填采购价',
-    purchaseInfoBackfillSuccess:
+    purchaseConditionBackfill: '回填采购价',
+    purchaseConditionBackfillSuccess:
       '{month} 回填采购价完成：扫描 {scanned} 行，更新 {updated}，无价格 {skipped}，未变化 {unchanged}',
-    purchaseInfoBackfillFailed: '回填采购价失败',
+    purchaseConditionBackfillFailed: '回填采购价失败',
     movingPriceBackfill: '回填移动价格',
     movingPriceBackfillBatch: '批量回填替代价格',
     movingPriceBackfillRow: '回填移动价格',

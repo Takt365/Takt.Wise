@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Aps
 // 文件名称：TaktProductionOrderI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktProductionOrder 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -190,13 +190,13 @@ public class TaktProductionOrderI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.productionorder.workcenter", "zh-HK", "工作中心_hk", "工作中心（表单可选单码 TaktWorkCenters/options，故 Length=140，非单码 10）"),
 
             // entity.productionorder.prodbatch
-            new TranslationSeedItem("entity.productionorder.prodbatch", "en-US", "生产批次_us", "生产批次"),
+            new TranslationSeedItem("entity.productionorder.prodbatch", "en-US", "批次_us", "生产批次（与组立不良、PCBA 检查、PCBA 改修的 ProdBatch 同名同长）"),
             // entity.productionorder.prodbatch
-            new TranslationSeedItem("entity.productionorder.prodbatch", "ja-JP", "生产批次_jp", "生产批次"),
+            new TranslationSeedItem("entity.productionorder.prodbatch", "ja-JP", "批次_jp", "生产批次（与组立不良、PCBA 检查、PCBA 改修的 ProdBatch 同名同长）"),
             // entity.productionorder.prodbatch
-            new TranslationSeedItem("entity.productionorder.prodbatch", "zh-CN", "生产批次", "生产批次"),
+            new TranslationSeedItem("entity.productionorder.prodbatch", "zh-CN", "批次", "生产批次（与组立不良、PCBA 检查、PCBA 改修的 ProdBatch 同名同长）"),
             // entity.productionorder.prodbatch
-            new TranslationSeedItem("entity.productionorder.prodbatch", "zh-HK", "生产批次_hk", "生产批次"),
+            new TranslationSeedItem("entity.productionorder.prodbatch", "zh-HK", "批次_hk", "生产批次（与组立不良、PCBA 检查、PCBA 改修的 ProdBatch 同名同长）"),
 
             // entity.productionorder.serialcode
             new TranslationSeedItem("entity.productionorder.serialcode", "en-US", "序列号_us", "序列号"),

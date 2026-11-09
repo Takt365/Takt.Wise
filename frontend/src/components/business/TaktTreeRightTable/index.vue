@@ -72,15 +72,24 @@
               <div
                 v-if="isTableColumnEllipsisEnabled(slotData.column)"
                 :class="TAKT_TABLE_CELL_ELLIPSIS_INNER_CLASS"
-                :title="resolveTableCellEllipsisTitle(slotData.text)"
+                :title="resolveTableCellEllipsisTitle(isTableCalendarDateColumn(slotData.column) ? resolveTableCalendarDateCellText(slotData) : slotData.text)"
               >
+                <TaktTableBodyCellFallback
+                  v-if="isTableCalendarDateColumn(slotData.column)"
+                  :slot-data="slotData"
+                />
                 <slot
+                  v-else
                   name="bodyCell"
                   v-bind="slotData"
                 >
                   <TaktTableBodyCellFallback :slot-data="slotData" />
                 </slot>
               </div>
+              <TaktTableBodyCellFallback
+                v-else-if="isTableCalendarDateColumn(slotData.column)"
+                :slot-data="slotData"
+              />
               <slot
                 v-else
                 name="bodyCell"
@@ -93,15 +102,24 @@
           <div
             v-else-if="isTableColumnEllipsisEnabled(slotData.column)"
             :class="TAKT_TABLE_CELL_ELLIPSIS_INNER_CLASS"
-            :title="resolveTableCellEllipsisTitle(slotData.text)"
+            :title="resolveTableCellEllipsisTitle(isTableCalendarDateColumn(slotData.column) ? resolveTableCalendarDateCellText(slotData) : slotData.text)"
           >
+            <TaktTableBodyCellFallback
+              v-if="isTableCalendarDateColumn(slotData.column)"
+              :slot-data="slotData"
+            />
             <slot
+              v-else
               name="bodyCell"
               v-bind="slotData"
             >
               <TaktTableBodyCellFallback :slot-data="slotData" />
             </slot>
           </div>
+          <TaktTableBodyCellFallback
+            v-else-if="isTableCalendarDateColumn(slotData.column)"
+            :slot-data="slotData"
+          />
           <slot
             v-else
             name="bodyCell"
@@ -150,7 +168,9 @@ import {
   type TaktTableLayoutMode,
 } from '@/utils/tableColumns'
 import {
+  isTableCalendarDateColumn,
   isTableColumnEllipsisEnabled,
+  resolveTableCalendarDateCellText,
   resolveTableCellEllipsisTitle,
   resolveTableScrollConfig,
   resolveVerticalScrollY,

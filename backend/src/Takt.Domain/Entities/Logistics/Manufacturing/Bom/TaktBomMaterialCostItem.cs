@@ -16,7 +16,7 @@ using Takt.Domain.Entities;
 namespace Takt.Domain.Entities.Logistics.Manufacturing.Bom;
 
 /// <summary>
-/// BOM 物料成本明细行（业务源数据：先导入/维护明细，再按工厂+产品+核算月聚合写入 TaktBomMaterialCost；无线上主表外键）
+/// BOM 物料成本明细行（业务源数据：先导入/维护明细，再按工厂+产品+核算日聚合写入 TaktBomMaterialCost；与主表按产品编码+核算日期关联，不存主表 Id）
 /// <para>软删除：本表业务上永不软删，IsDeleted 恒为 0；计算/回填勿按软删过滤明细。</para>
 /// </summary>
 [SugarTable("takt_logistics_manufacturing_bom_material_cost_item", "材料成本明细表")]
@@ -43,7 +43,6 @@ namespace Takt.Domain.Entities.Logistics.Manufacturing.Bom;
 [SugarIndex("ix_takt_logistics_manufacturing_bom_material_cost_item_costing_date", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(CostingDate), OrderByType.Asc, false)]
 public class TaktBomMaterialCostItem : TaktCompanyEntityBase
 {
-
     /// <summary>
     /// 层级（BOM 展开层级，如 01/02）
     /// </summary>
@@ -93,7 +92,7 @@ public class TaktBomMaterialCostItem : TaktCompanyEntityBase
     public decimal ComponentQuantity { get; set; } = 0;
 
     /// <summary>
-    /// 批量标识（空或 X）
+    /// 批量标识（空才参与成本合计、零价清单、移动价回填与建议替代；X 排除）
     /// </summary>
     [SugarColumn(ColumnName = "batch_indicator", ColumnDescription = "批量标识", ColumnDataType = "nvarchar", Length = 1, IsNullable = true)]
     public string? BatchIndicator { get; set; }
@@ -111,13 +110,13 @@ public class TaktBomMaterialCostItem : TaktCompanyEntityBase
     public string? PcbSectIndicator { get; set; }
 
     /// <summary>
-    /// 采购类型（F=外部采购，E=自制生产）；仅生产相关=X、PCB SECT 标识为空且 F 行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数
+    /// 采购类型（F=外部采购，E=自制生产）；仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空的行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数
     /// </summary>
     [SugarColumn(ColumnName = "purchase_type", ColumnDescription = "采购类型", ColumnDataType = "nvarchar", Length = 1, IsNullable = false, DefaultValue = "F")]
     public string PurchaseType { get; set; } = "F";
 
     /// <summary>
-    /// 特殊采购类（空或业务码，最长 50）
+    /// 特殊采购类（空才参与成本合计、零价、建议替代、价格差异与组件差异；有值则排除）
     /// </summary>
     [SugarColumn(ColumnName = "special_procurement_type", ColumnDescription = "特殊采购类", ColumnDataType = "nvarchar", Length = 50, IsNullable = true)]
     public string? SpecialProcurementType { get; set; }
@@ -187,4 +186,17 @@ public class TaktBomMaterialCostItem : TaktCompanyEntityBase
     /// </summary>
     [SugarColumn(ColumnName = "costing_date", ColumnDescription = "核算日期", ColumnDataType = "datetime", IsNullable = false)]
     public DateTime CostingDate { get; set; }
+
+    // ========================================
+    // 导航属性区域
+    // ========================================
+
+    /// <summary>
+    /// 材料成本主表（按产品编码+核算日期关联；同工厂。不存主表 Id）
+    /// </summary>
+    [Navigate(
+        NavigateType.ManyToOne,
+        nameof(PlantCode) + "," + nameof(ProductCode) + "," + nameof(CostingDate),
+        nameof(TaktBomMaterialCost.PlantCode) + "," + nameof(TaktBomMaterialCost.ProductCode) + "," + nameof(TaktBomMaterialCost.CostingDate))]
+    public TaktBomMaterialCost? BomMaterialCost { get; set; }
 }

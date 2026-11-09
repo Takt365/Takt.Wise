@@ -103,6 +103,20 @@
             </a-col>
             <a-col :span="12">
               <a-form-item
+                :label="t('entity.apsorder.plannedbatch')"
+                name="plannedBatch"
+              >
+                <a-input
+                  v-model:value="formState.plannedBatch"
+                  :placeholder="t('common.page.form.placeholder.input')"
+                  show-count
+                  :maxlength="40"
+                  allow-clear
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
                 :label="t('entity.apsorder.orderquantity')"
                 name="orderQuantity"
               >
@@ -308,7 +322,7 @@ const formContentClass = computed(() => (formFields.length > 10 ? 'takt-form-con
 /** 当前激活的 Tab key */
 const activeTab = ref('tab-0')
 /** CreateDto 字段名列表（与 formState 键对齐） */
-const formFields = ["tenantCode","companyCode","cultureCode","plantCode","apsOrderCode","plannedOrderId","plannedOrderCode","materialCode","orderQuantity","unitOfMeasure","routingCode","plannedStartTime","plannedEndTime","orderStatus","apsScheduleId","extField","remark"]
+const formFields = ["tenantCode","companyCode","cultureCode","plantCode","apsOrderCode","plannedOrderId","plannedOrderCode","materialCode","plannedBatch","orderQuantity","unitOfMeasure","routingCode","plannedStartTime","plannedEndTime","orderStatus","apsScheduleId","extField","remark"]
 
 import type { TaktEditableTableColumn } from '@/components/business/TaktEditableTable/types'
 

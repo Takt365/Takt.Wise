@@ -203,3 +203,19 @@ export interface QualityAssuranceExport {
 
 }
 
+/**
+ * 品质业务列表查询
+ * 对应后端 TaktQualityAssuranceQueryDto
+ */
+export interface QualityAssuranceQuery extends TaktPagedQuery {
+  /**
+   * 业务年月期间开始（yyyy-MM）
+   */
+  assuranceMonthStart?: string;
+
+  /**
+   * 业务年月期间结束（yyyy-MM）
+   */
+  assuranceMonthEnd?: string;
+}
+

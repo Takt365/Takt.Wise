@@ -31,27 +31,27 @@ public class TaktPurchasePriceTrendService : TaktServiceBase, ITaktPurchasePrice
     /// </summary>
     private const int MaterialNameLookupBatchSize = 500;
 
-    private readonly ITaktCompanyRepository<TaktPurchaseInfo> _purchaseInfoRepository;
+    private readonly ITaktCompanyRepository<TaktPurchaseCondition> _purchaseConditionRepository;
     private readonly ITaktCompanyRepository<TaktSupplier> _supplierRepository;
     private readonly ITaktPurchasePriceTrendMonthlyAnalysisBuilder _monthlyAnalysisBuilder;
 
     /// <summary>
     /// 构造函数
     /// </summary>
-    /// <param name="purchaseInfoRepository">采购价格仓储</param>
+    /// <param name="purchaseConditionRepository">采购价格仓储</param>
     /// <param name="supplierRepository">供应商仓储</param>
     /// <param name="monthlyAnalysisBuilder">月推移分析构建器</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktPurchasePriceTrendService(
-        ITaktCompanyRepository<TaktPurchaseInfo> purchaseInfoRepository,
+        ITaktCompanyRepository<TaktPurchaseCondition> purchaseConditionRepository,
         ITaktCompanyRepository<TaktSupplier> supplierRepository,
         ITaktPurchasePriceTrendMonthlyAnalysisBuilder monthlyAnalysisBuilder,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
     {
-        _purchaseInfoRepository = purchaseInfoRepository;
+        _purchaseConditionRepository = purchaseConditionRepository;
         _supplierRepository = supplierRepository;
         _monthlyAnalysisBuilder = monthlyAnalysisBuilder;
     }
@@ -65,7 +65,7 @@ public class TaktPurchasePriceTrendService : TaktServiceBase, ITaktPurchasePrice
     public async Task<List<TaktSelectOption>> GetPurchasePriceTrendPlantOptionsAsync(string? plantCode = null, string? keyword = null)
     {
         EnsureThreeLayerContext();
-        var list = await _purchaseInfoRepository.GetListAsync(
+        var list = await _purchaseConditionRepository.GetListAsync(
             x => x.TenantCode == CurrentTenantCode
                 && x.CompanyCode == CurrentCompanyCode
                 && x.PlantCode != null
@@ -101,7 +101,7 @@ public class TaktPurchasePriceTrendService : TaktServiceBase, ITaktPurchasePrice
         {
             return new List<TaktSelectOption>();
         }
-        var list = await _purchaseInfoRepository.GetListAsync(
+        var list = await _purchaseConditionRepository.GetListAsync(
             x => x.TenantCode == CurrentTenantCode
                 && x.CompanyCode == CurrentCompanyCode
                 && x.PlantCode == plant
@@ -134,7 +134,7 @@ public class TaktPurchasePriceTrendService : TaktServiceBase, ITaktPurchasePrice
         {
             return new List<TaktSelectOption>();
         }
-        var list = await _purchaseInfoRepository.GetListAsync(
+        var list = await _purchaseConditionRepository.GetListAsync(
             x => x.TenantCode == CurrentTenantCode
                 && x.CompanyCode == CurrentCompanyCode
                 && x.PlantCode == plant
@@ -193,14 +193,14 @@ public class TaktPurchasePriceTrendService : TaktServiceBase, ITaktPurchasePrice
             return new List<TaktSelectOption>();
         }
         var list = string.IsNullOrEmpty(supplier)
-            ? await _purchaseInfoRepository.GetListAsync(
+            ? await _purchaseConditionRepository.GetListAsync(
                 x => x.TenantCode == CurrentTenantCode
                     && x.CompanyCode == CurrentCompanyCode
                     && x.PlantCode == plant
                     && x.PriceType == type
                     && x.MaterialCode != null
                     && x.MaterialCode != string.Empty)
-            : await _purchaseInfoRepository.GetListAsync(
+            : await _purchaseConditionRepository.GetListAsync(
                 x => x.TenantCode == CurrentTenantCode
                     && x.CompanyCode == CurrentCompanyCode
                     && x.PlantCode == plant
@@ -275,7 +275,7 @@ public class TaktPurchasePriceTrendService : TaktServiceBase, ITaktPurchasePrice
             TaktPurchasePriceTrendExportHelper.WhereSelecmedPlant(built.OrderedRows, query.PlantCode));
         var columnKeys = new[]
         {
-            "plantCode", "purchaseInfoCode", "materialCode", "materialDescription", "supplierCode", "supplierName", "currencyCode", "unit",
+            "plantCode", "purchaseConditionCode", "materialCode", "materialDescription", "supplierCode", "supplierName", "currencyCode", "unit",
             "unitPrice", "validFrom", "adjacentPercent", "trend", "varianceAmount", "variancePercent",
         };
         var columnLabels = new[]

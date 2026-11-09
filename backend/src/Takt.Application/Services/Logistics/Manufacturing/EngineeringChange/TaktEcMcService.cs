@@ -94,6 +94,8 @@ public class TaktEcMcService : TaktServiceBase, ITaktEcMcService
         {
             return null;
         }
+        // 打开编辑：按设变+机种+完成品从生管刷新预定日期/预定批次
+        await _ecExecPersistence.RefreshScheduledRedundantFromPcAsync(entity);
         var dto = entity.Adapt<TaktEcMcDto>();
         await _ecExecPersistence.FillExecViewDetailsAsync(entity, dto);
         return dto;
@@ -130,12 +132,10 @@ public class TaktEcMcService : TaktServiceBase, ITaktEcMcService
         entity.IsObsolete = 0;
         var isUnique_ix_takt_logistics_manufacturing_ec_mc_unique = await _uniqueValidator.IsUniqueAsync(
             _ecMcRepository,
-            x => x.EcCode == entity.EcCode
-                && x.EcCode == entity.EcCode && SqlFunc.ToString(x.EcGrainKey) == entity.EcGrainKey
-                && x.EcNewMaterialCode == entity.EcNewMaterialCode);
+            x => x.EcCode == entity.EcCode && SqlFunc.ToString(x.EcGrainKey) == entity.EcGrainKey);
         if (!isUnique_ix_takt_logistics_manufacturing_ec_mc_unique)
         {
-            throw new TaktBusinessException("设变部管执行的设变单号、机种编码已存在");
+            throw new TaktBusinessException("设变部管执行的设变单号、执行去重键已存在");
         }
         if (entity.LineNumber <= 0)
         {
@@ -164,16 +164,19 @@ public class TaktEcMcService : TaktServiceBase, ITaktEcMcService
             throw new TaktBusinessException("设变部管执行不存在");
         }
         dto.OutboundBatch = TaktStringHelper.NormalizeBatchCode(dto.OutboundBatch);
+        var preservedEcGrainKey = entity.EcGrainKey;
         dto.Adapt(entity);
+        if (string.IsNullOrWhiteSpace(entity.EcGrainKey))
+        {
+            entity.EcGrainKey = preservedEcGrainKey;
+        }
         var isUnique_ix_takt_logistics_manufacturing_ec_mc_unique = await _uniqueValidator.IsUniqueAsync(
             _ecMcRepository,
-            x => x.EcCode == entity.EcCode
-                && x.EcCode == entity.EcCode && SqlFunc.ToString(x.EcGrainKey) == entity.EcGrainKey
-                && x.EcNewMaterialCode == entity.EcNewMaterialCode,
+            x => x.EcCode == entity.EcCode && SqlFunc.ToString(x.EcGrainKey) == entity.EcGrainKey,
             id);
         if (!isUnique_ix_takt_logistics_manufacturing_ec_mc_unique)
         {
-            throw new TaktBusinessException("设变部管执行的设变单号、机种编码已存在");
+            throw new TaktBusinessException("设变部管执行的设变单号、执行去重键已存在");
         }
         await _ecMcRepository.UpdateAsync(entity);
         await _ecExecPersistence.FanOutMcFillableByEcModelAndNewMaterialAsync(entity);
@@ -306,19 +309,17 @@ public class TaktEcMcService : TaktServiceBase, ITaktEcMcService
             try
             {
                 var entity = rows[i].Adapt<TaktEcMc>();
-                var importKey = $"{entity.EcCode}|{entity.EcModelCodeGroup}|{entity.EcGrainKey}|{entity.EcNewMaterialCode}";
+                var importKey = $"{entity.EcCode}\u001f{entity.EcGrainKey}";
                 if (!importSeenKeys.Add(importKey))
                 {
-                    throw new TaktBusinessException("与Excel中其他行重复（设变单号、机种编码、根物料编码、新物料编码）");
+                    throw new TaktBusinessException("与Excel中其他行重复（设变单号+执行去重键）");
                 }
                 var isUnique_ix_takt_logistics_manufacturing_ec_mc_unique = await _uniqueValidator.IsUniqueAsync(
                     _ecMcRepository,
-                    x => x.EcCode == entity.EcCode
-                        && x.EcCode == entity.EcCode && SqlFunc.ToString(x.EcGrainKey) == entity.EcGrainKey
-                        && x.EcNewMaterialCode == entity.EcNewMaterialCode);
+                    x => x.EcCode == entity.EcCode && SqlFunc.ToString(x.EcGrainKey) == entity.EcGrainKey);
                 if (!isUnique_ix_takt_logistics_manufacturing_ec_mc_unique)
                 {
-                    throw new TaktBusinessException("设变部管执行的设变单号、机种编码已存在");
+                    throw new TaktBusinessException("设变部管执行的设变单号、执行去重键已存在");
                 }
                 if (entity.LineNumber <= 0)
                 {

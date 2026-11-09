@@ -156,6 +156,18 @@ public class TaktPcbaOutputDetail : TaktCompanyEntityBase
     public int DefectCount { get; set; } = 0;
 
     /// <summary>
+    /// 报废台数
+    /// </summary>
+    [SugarColumn(ColumnName = "scrap_count", ColumnDescription = "报废台数", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
+    public int ScrapCount { get; set; } = 0;
+
+    /// <summary>
+    /// 报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）
+    /// </summary>
+    [SugarColumn(ColumnName = "scrap_reason", ColumnDescription = "报废原因", Length = 500, ColumnDataType = "nvarchar", IsNullable = true)]
+    public string? ScrapReason { get; set; }
+
+    /// <summary>
     /// 停线时间(分钟)
     /// </summary>
     [SugarColumn(ColumnName = "downtime_minutes", ColumnDescription = "停线时间", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]

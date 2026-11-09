@@ -203,3 +203,19 @@ export interface QualityIssueExport {
 
 }
 
+/**
+ * 品质问题列表查询
+ * 对应后端 TaktQualityIssueQueryDto
+ */
+export interface QualityIssueQuery extends TaktPagedQuery {
+  /**
+   * 问题日期（范围查询-开始）
+   */
+  issueDateStart?: string;
+
+  /**
+   * 问题日期（范围查询-结束）
+   */
+  issueDateEnd?: string;
+}
+

@@ -94,9 +94,19 @@ public class TaktMasterDemandScheduleLineDto : TaktCompanyDtoBase
     public int? SalesForecastLineNumber { get; set; }
 
     /// <summary>
+    /// 来源销售预测版本号（1～20；取该月参与 MDS 的版本）
+    /// </summary>
+    public int? SalesForecastVersionNo { get; set; }
+
+    /// <summary>
     /// 物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）
     /// </summary>
     public string MaterialCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 时间桶开始
@@ -199,9 +209,19 @@ public class TaktMasterDemandScheduleLineQueryDto : TaktPagedQuery
     public int? SalesForecastLineNumber { get; set; }
 
     /// <summary>
+    /// 来源销售预测版本号（1～20；取该月参与 MDS 的版本）
+    /// </summary>
+    public int? SalesForecastVersionNo { get; set; }
+
+    /// <summary>
     /// 物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）
     /// </summary>
     public string? MaterialCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 时间桶开始（范围查询-开始）
@@ -333,10 +353,20 @@ public class TaktMasterDemandScheduleLineCreateDto
     public int? SalesForecastLineNumber { get; set; }
 
     /// <summary>
+    /// 来源销售预测版本号（1～20；取该月参与 MDS 的版本）
+    /// </summary>
+    public int? SalesForecastVersionNo { get; set; }
+
+    /// <summary>
     /// 物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）
     /// </summary>
     [Required(ErrorMessage = "物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）不能为空")]
     public string MaterialCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 时间桶开始
@@ -492,9 +522,19 @@ public class TaktMasterDemandScheduleLineTemplateDto
     public int? SalesForecastLineNumber { get; set; }
 
     /// <summary>
+    /// 来源销售预测版本号（1～20；取该月参与 MDS 的版本）
+    /// </summary>
+    public int? SalesForecastVersionNo { get; set; }
+
+    /// <summary>
     /// 物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）
     /// </summary>
     public string? MaterialCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 时间桶开始
@@ -602,9 +642,19 @@ public class TaktMasterDemandScheduleLineImportDto
     public int? SalesForecastLineNumber { get; set; }
 
     /// <summary>
+    /// 来源销售预测版本号（1～20；取该月参与 MDS 的版本）
+    /// </summary>
+    public int? SalesForecastVersionNo { get; set; }
+
+    /// <summary>
     /// 物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）
     /// </summary>
     public string? MaterialCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 时间桶开始
@@ -718,9 +768,19 @@ public class TaktMasterDemandScheduleLineExportDto
     public int? SalesForecastLineNumber { get; set; }
 
     /// <summary>
+    /// 来源销售预测版本号（1～20；取该月参与 MDS 的版本）
+    /// </summary>
+    public int? SalesForecastVersionNo { get; set; }
+
+    /// <summary>
     /// 物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）
     /// </summary>
     public string MaterialCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 时间桶开始

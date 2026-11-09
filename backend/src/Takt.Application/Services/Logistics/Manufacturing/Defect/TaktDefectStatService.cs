@@ -138,7 +138,7 @@ public class TaktDefectStatService : TaktServiceBase, ITaktDefectStatService
         var endExclusive = endMonth.AddMonths(1);
         var plant = queryDto.PlantCode.Trim();
         var order = BlankToNull(queryDto.ProdOrderCode);
-        var batch = BlankToNull(queryDto.BatchCode);
+        var batch = BlankToNull(queryDto.ProdBatch);
         var model = BlankToNull(queryDto.ModelCode);
         var material = BlankToNull(queryDto.MaterialCode);
         var category = BlankToNull(queryDto.ProdCategory);
@@ -173,7 +173,7 @@ public class TaktDefectStatService : TaktServiceBase, ITaktDefectStatService
         }
         if (batch != null)
         {
-            query = query.Where(x => x.BatchCode == batch);
+            query = query.Where(x => x.ProdBatch == batch);
         }
         if (model != null)
         {
@@ -199,7 +199,7 @@ public class TaktDefectStatService : TaktServiceBase, ITaktDefectStatService
                 ProdDateGroup = x.ProdDateGroup ?? string.Empty,
                 ModelCode = x.ModelCode,
                 MaterialCode = x.MaterialCode,
-                BatchCode = x.BatchCode ?? string.Empty,
+                ProdBatch = x.ProdBatch ?? string.Empty,
                 ProdOrderQty = x.ProdOrderQty,
                 ProdActualQty = x.ProdActualQty,
                 ActualQty = x.ProdActualQty,
@@ -227,7 +227,7 @@ public class TaktDefectStatService : TaktServiceBase, ITaktDefectStatService
                 && x.PlantCode == plant && x.LastProdDate >= start && x.LastProdDate < endExclusive);
         if (batch != null)
         {
-            query = query.Where(x => x.BatchCode == batch);
+            query = query.Where(x => x.ProdBatch == batch);
         }
         if (model != null)
         {
@@ -243,13 +243,13 @@ public class TaktDefectStatService : TaktServiceBase, ITaktDefectStatService
         }
         var list = await query.ToListAsync();
         return list
-            .OrderBy(x => x.BatchCode, StringComparer.Ordinal)
+            .OrderBy(x => x.ProdBatch, StringComparer.Ordinal)
             .Select(x => new TaktDefectOrderStatRowDto
             {
-                RowKey = $"{x.ProdCategory}|{x.BatchCode}",
+                RowKey = $"{x.ProdCategory}|{x.ProdBatch}",
                 PlantCode = x.PlantCode,
                 ProdCategory = x.ProdCategory,
-                BatchCode = x.BatchCode,
+                ProdBatch = x.ProdBatch,
                 ProdDateGroup = x.ProdDateGroup ?? string.Empty,
                 ProdOrderGroup = x.ProdOrderGroup ?? string.Empty,
                 ModelCode = x.ModelCode,
@@ -290,7 +290,7 @@ public class TaktDefectStatService : TaktServiceBase, ITaktDefectStatService
         }
         if (batch != null)
         {
-            query = query.Where((h, d) => h.BatchCode == batch);
+            query = query.Where((h, d) => h.ProdBatch == batch);
         }
         if (model != null)
         {
@@ -318,7 +318,7 @@ public class TaktDefectStatService : TaktServiceBase, ITaktDefectStatService
                 ProdOrderCode = h.ProdOrderCode,
                 ProdOrderQty = h.ProdOrderQty,
                 ModelCode = h.ModelCode,
-                BatchCode = h.BatchCode,
+                ProdBatch = h.ProdBatch,
                 MaterialCode = h.MaterialCode,
                 Remark = h.Remark,
                 LineNumber = d.LineNumber,
@@ -370,7 +370,7 @@ public class TaktDefectStatService : TaktServiceBase, ITaktDefectStatService
         }
         if (batch != null)
         {
-            query = query.Where((h, d) => h.BatchCode == batch);
+            query = query.Where((h, d) => h.ProdBatch == batch);
         }
         if (model != null)
         {
@@ -400,7 +400,7 @@ public class TaktDefectStatService : TaktServiceBase, ITaktDefectStatService
                 ProdOrderCode = h.ProdOrderCode,
                 ProdOrderQty = h.ProdOrderQty,
                 ModelCode = h.ModelCode,
-                BatchCode = h.BatchCode,
+                ProdBatch = h.ProdBatch,
                 MaterialCode = h.MaterialCode,
                 Remark = h.Remark,
                 LineNumber = d.LineNumber,
@@ -475,7 +475,7 @@ public class TaktDefectStatService : TaktServiceBase, ITaktDefectStatService
             {
                 "plant" => await query.GroupBy(x => x.PlantCode).Select(x => x.PlantCode).ToListAsync(),
                 "order" => await query.GroupBy(x => x.ProdOrderCode).Select(x => x.ProdOrderCode).ToListAsync(),
-                "batch" => await query.Where(x => x.BatchCode != null && x.BatchCode != "").GroupBy(x => x.BatchCode).Select(x => x.BatchCode!).ToListAsync(),
+                "batch" => await query.Where(x => x.ProdBatch != null && x.ProdBatch != "").GroupBy(x => x.ProdBatch).Select(x => x.ProdBatch!).ToListAsync(),
                 "model" => await query.GroupBy(x => x.ModelCode).Select(x => x.ModelCode).ToListAsync(),
                 _ => await query.GroupBy(x => x.MaterialCode).Select(x => x.MaterialCode).ToListAsync(),
             };
@@ -494,7 +494,7 @@ public class TaktDefectStatService : TaktServiceBase, ITaktDefectStatService
         return field switch
         {
             "plant" => await batchQuery.GroupBy(x => x.PlantCode).Select(x => x.PlantCode).ToListAsync(),
-            "batch" => await batchQuery.GroupBy(x => x.BatchCode).Select(x => x.BatchCode).ToListAsync(),
+            "batch" => await batchQuery.GroupBy(x => x.ProdBatch).Select(x => x.ProdBatch).ToListAsync(),
             "order" => [],
             _ => await batchQuery.GroupBy(x => x.ModelCode).Select(x => x.ModelCode).ToListAsync(),
         };
@@ -515,7 +515,7 @@ public class TaktDefectStatService : TaktServiceBase, ITaktDefectStatService
         {
             "plant" => query.GroupBy(x => x.PlantCode).Select(x => x.PlantCode).ToListAsync(),
             "order" => query.GroupBy(x => x.ProdOrderCode).Select(x => x.ProdOrderCode).ToListAsync(),
-            "batch" => query.Where(x => x.BatchCode != null && x.BatchCode != "").GroupBy(x => x.BatchCode).Select(x => x.BatchCode!).ToListAsync(),
+            "batch" => query.Where(x => x.ProdBatch != null && x.ProdBatch != "").GroupBy(x => x.ProdBatch).Select(x => x.ProdBatch!).ToListAsync(),
             "model" => query.GroupBy(x => x.ModelCode).Select(x => x.ModelCode).ToListAsync(),
             _ => query.GroupBy(x => x.MaterialCode).Select(x => x.MaterialCode).ToListAsync(),
         };
@@ -536,7 +536,7 @@ public class TaktDefectStatService : TaktServiceBase, ITaktDefectStatService
         {
             "plant" => query.GroupBy(x => x.PlantCode).Select(x => x.PlantCode).ToListAsync(),
             "order" => query.GroupBy(x => x.ProdOrderCode).Select(x => x.ProdOrderCode).ToListAsync(),
-            "batch" => query.Where(x => x.BatchCode != null && x.BatchCode != "").GroupBy(x => x.BatchCode).Select(x => x.BatchCode!).ToListAsync(),
+            "batch" => query.Where(x => x.ProdBatch != null && x.ProdBatch != "").GroupBy(x => x.ProdBatch).Select(x => x.ProdBatch!).ToListAsync(),
             "model" => query.GroupBy(x => x.ModelCode).Select(x => x.ModelCode).ToListAsync(),
             _ => query.GroupBy(x => x.MaterialCode).Select(x => x.MaterialCode).ToListAsync(),
         };
@@ -589,23 +589,23 @@ public class TaktDefectStatService : TaktServiceBase, ITaktDefectStatService
         if (tab == TabMfg1Order)
         {
             return (
-                ["plantCode", "prodCategory", "prodOrderCode", "prodDateGroup", "modelCode", "materialCode", "batchCode", "prodOrderQty", "prodActualQty", "goodQty", "defectQty", "defectRatePercent", "yieldRatePercent", "lastProdDate", "reportCount", "orderStatus"],
+                ["plantCode", "prodCategory", "prodOrderCode", "prodDateGroup", "modelCode", "materialCode", "prodBatch", "prodOrderQty", "prodActualQty", "goodQty", "defectQty", "defectRatePercent", "yieldRatePercent", "lastProdDate", "reportCount", "orderStatus"],
                 ["工厂", "生产类别", "工单号", "生产日期组", "机种", "物料编码", "批次", "工单数量", "累计生实实绩", "累计无不良数量", "累计不良数量", "不良率", "直行率", "最近生产日期", "日报笔数", "工单状态"]);
         }
         if (tab == TabMfg1Batch)
         {
             return (
-                ["plantCode", "prodCategory", "batchCode", "prodDateGroup", "prodOrderGroup", "modelCode", "materialGroup", "batchOrderQty", "prodOrderQtyGroup", "prodActualQty", "goodQty", "defectQty", "defectRatePercent", "yieldRatePercent", "lastProdDate", "reportCount", "batchStatus"],
+                ["plantCode", "prodCategory", "prodBatch", "prodDateGroup", "prodOrderGroup", "modelCode", "materialGroup", "batchOrderQty", "prodOrderQtyGroup", "prodActualQty", "goodQty", "defectQty", "defectRatePercent", "yieldRatePercent", "lastProdDate", "reportCount", "batchStatus"],
                 ["工厂", "生产类别", "批次", "生产日期组", "生产工单组", "机种", "生产物料组", "批次工单总数量", "订单数量组", "累计生实实绩", "累计无不良数量", "累计不良数量", "不良率", "直行率", "最近生产日期", "日报笔数", "批次状态"]);
         }
         if (tab == TabMtlInspection)
         {
             return (
-                ["plantCode", "prodCategory", "prodOrderType", "prodOrderCode", "prodOrderQty", "modelCode", "batchCode", "materialCode", "remark", "lineNumber", "pcbaBoardType", "visualInspectionLine", "aoiLine", "bSideAssemblyDate", "tSideAssemblyDate", "shiftNo", "inspectorName", "dailyCompletedQty", "inspectionQty", "inspectionStatus", "teamCode", "inspectionWorkHours", "aoiWorkHours", "defectQty", "handPlacement", "serialNumber", "content", "defectLocation"],
+                ["plantCode", "prodCategory", "prodOrderType", "prodOrderCode", "prodOrderQty", "modelCode", "prodBatch", "materialCode", "remark", "lineNumber", "pcbaBoardType", "visualInspectionLine", "aoiLine", "bSideAssemblyDate", "tSideAssemblyDate", "shiftNo", "inspectorName", "dailyCompletedQty", "inspectionQty", "inspectionStatus", "teamCode", "inspectionWorkHours", "aoiWorkHours", "defectQty", "handPlacement", "serialNumber", "content", "defectLocation"],
                 ["工厂", "生产类别", "工单类别", "工单号", "工单数量", "机种", "批次", "物料编码", "备注", "行号", "PCBA板别", "目视线别", "AOI线别", "B面实装日期", "T面实装日期", "班次", "检查员名称", "当日完成数量", "检查数量", "检查状态", "生产班组", "检查工数", "AOI工数", "不良数量", "手贴", "流水号", "内容", "不良个所"]);
         }
         return (
-            ["plantCode", "prodCategory", "prodDate", "teamCode", "shiftNo", "prodOrderType", "prodOrderCode", "prodOrderQty", "modelCode", "batchCode", "materialCode", "remark", "lineNumber", "pcbaBoardType", "prodActualQty", "detailTeamCode", "cardCode", "defectSymptom", "defectEngineering", "defectReason", "defectQty", "defectResponsibility", "defectNature", "repairOperatorName"],
+            ["plantCode", "prodCategory", "prodDate", "teamCode", "shiftNo", "prodOrderType", "prodOrderCode", "prodOrderQty", "modelCode", "prodBatch", "materialCode", "remark", "lineNumber", "pcbaBoardType", "prodActualQty", "detailTeamCode", "cardCode", "defectSymptom", "defectEngineering", "defectReason", "defectQty", "defectResponsibility", "defectNature", "repairOperatorName"],
             ["工厂", "生产类别", "生产日期", "生产班组", "班次", "工单类别", "工单号", "工单数量", "机种", "批次", "物料编码", "备注", "行号", "PCBA板别", "生产实绩", "明细生产班组", "卡号", "不良症状", "检出工程", "不良原因", "不良数量", "责任归属", "不良性质", "修理员名称"]);
     }
 
@@ -622,7 +622,7 @@ public class TaktDefectStatService : TaktServiceBase, ITaktDefectStatService
             ["prodDateGroup"] = row.ProdDateGroup,
             ["modelCode"] = row.ModelCode,
             ["materialCode"] = row.MaterialCode,
-            ["batchCode"] = row.BatchCode,
+            ["prodBatch"] = row.ProdBatch,
             ["prodOrderQty"] = row.ProdOrderQty,
             ["prodActualQty"] = row.ProdActualQty,
             ["goodQty"] = row.GoodQty,
@@ -695,7 +695,7 @@ public class TaktDefectStatService : TaktServiceBase, ITaktDefectStatService
         row.VisualInspectionLine ??= string.Empty;
         row.AoiLine ??= string.Empty;
         row.InspectorName ??= string.Empty;
-        row.BatchCode ??= string.Empty;
+        row.ProdBatch ??= string.Empty;
         row.TeamCode ??= string.Empty;
         row.HandPlacement ??= string.Empty;
         row.SerialNumber ??= string.Empty;

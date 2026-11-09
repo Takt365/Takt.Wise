@@ -41,6 +41,8 @@ export const PCBAOUTPUTDETAIL_LIST_FIELDS = [
   'completedStatus',
   'serialCode',
   'defectCount',
+  'scrapCount',
+  'scrapReason',
   'downtimeMinutes',
   'downtimeReason',
   'downtimeDescription',
@@ -82,6 +84,8 @@ export const PCBAOUTPUTDETAIL_DEFAULT_VISIBLE_COLUMN_KEYS = [
   'completedStatus',
   'serialCode',
   'defectCount',
+  'scrapCount',
+  'scrapReason',
   'downtimeMinutes',
   'downtimeReason',
   'downtimeDescription',
@@ -101,10 +105,11 @@ export const PCBAOUTPUTDETAIL_DEFAULT_VISIBLE_COLUMN_KEYS = [
   'action',
 ] as const
 
-/** 明细右栏 panel 合计列：仅当日完成数、不良台数、报工工时 */
+/** 明细右栏 panel 合计列：当日完成数、不良台数、报废台数、报工工时 */
 export const PCBAOUTPUTDETAIL_SUMMARY_SUM_FIELDS = [
   'dailyCompletedQty',
   'defectCount',
+  'scrapCount',
   'confirmMinutes',
 ] as const
 
@@ -134,6 +139,8 @@ export const PCBAOUTPUTDETAIL_PLACEHOLDER = {
   completedStatus: 'optional',
   serialCode: 'required',
   defectCount: 'select',
+  scrapCount: 'select',
+  scrapReason: 'optional',
   downtimeMinutes: 'select',
   downtimeReason: 'optional',
   downtimeDescription: 'optional',
@@ -167,6 +174,7 @@ export const PCBAOUTPUTDETAIL_QUERY_STRING_FIELDS = [
   'serialCode',
   'downtimeReason',
   'downtimeDescription',
+  'scrapReason',
   'unachievedReason',
   'unachievedDescription',
   'createdAtStart',
@@ -177,7 +185,7 @@ export const PCBAOUTPUTDETAIL_QUERY_STRING_FIELDS = [
 
 export type PcbaOutputDetailQueryField =
   | (typeof PCBAOUTPUTDETAIL_QUERY_STRING_FIELDS)[number]
-  | 'lineNumber' | 'directLabor' | 'indirectLabor' | 'shiftNo' | 'stdMinutes' | 'stdLaborCapacity' | 'stdShorts' | 'stdEquipmentCapacity' | 'batchQty' | 'dailyCompletedQty' | 'totalCompletedQty' | 'completedStatus' | 'defectCount' | 'downtimeMinutes' | 'inputMinutes' | 'actualMinutes' | 'repairMinutes' | 'switchCount' | 'switchTime' | 'stopTime' | 'totalMinutes' | 'confirmMinutes' | 'mixedProd' | 'achievementRate' | 'isObsolete'
+  | 'lineNumber' | 'directLabor' | 'indirectLabor' | 'shiftNo' | 'stdMinutes' | 'stdLaborCapacity' | 'stdShorts' | 'stdEquipmentCapacity' | 'batchQty' | 'dailyCompletedQty' | 'totalCompletedQty' | 'completedStatus' | 'defectCount' | 'scrapCount' | 'downtimeMinutes' | 'inputMinutes' | 'actualMinutes' | 'repairMinutes' | 'switchCount' | 'switchTime' | 'stopTime' | 'totalMinutes' | 'confirmMinutes' | 'mixedProd' | 'achievementRate' | 'isObsolete'
 
 /** 高级查询抽屉全部字段（含数值） */
 export const PCBAOUTPUTDETAIL_QUERY_FIELDS: readonly PcbaOutputDetailQueryField[] = [
@@ -195,6 +203,7 @@ export const PCBAOUTPUTDETAIL_QUERY_FIELDS: readonly PcbaOutputDetailQueryField[
   'totalCompletedQty',
   'completedStatus',
   'defectCount',
+  'scrapCount',
   'downtimeMinutes',
   'inputMinutes',
   'actualMinutes',

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/api/logistics/manufacturing/engineering-change
 // 文件名称：ecMfg2.api.ts
-// 创建时间：2026-09-08
+// 创建时间：2026-10-29
 // 创建人：Takt365(Auto Generated)
 // 功能描述：logistics/manufacturing/engineering-change 模块 API（自动生成，请勿手改路由常量）
 // 
@@ -18,8 +18,8 @@ import type {
 import type {
   EcMfg2,
   EcMfg2Create,
-  EcMfg2Obsolete,
   EcMfg2DiscontinuedStatus,
+  EcMfg2Obsolete,
   EcMfg2Update
 } from '@/types/logistics/manufacturing/engineering-change/ecMfg2.types';
 import type {
@@ -30,7 +30,7 @@ import type {
  * API 路径前缀（相对 request baseURL，对应后端 [controller]）
  * @description TaktEcMfg2s
  */
-const EC_PCBA_API_BASE = 'TaktEcMfg2s';
+const EC_MFG2_API_BASE = 'TaktEcMfg2s';
 
 // ========================================
 // 基础 CRUD
@@ -43,7 +43,7 @@ const EC_PCBA_API_BASE = 'TaktEcMfg2s';
  */
 export function getEcMfg2List(queryDto: any): Promise<TaktPagedResult<EcMfg2>> {
   return request<TaktPagedResult<EcMfg2>>({
-    url: `${EC_PCBA_API_BASE}/list`,
+    url: `${EC_MFG2_API_BASE}/list`,
     method: 'get',
     params: queryDto,
   });
@@ -56,7 +56,7 @@ export function getEcMfg2List(queryDto: any): Promise<TaktPagedResult<EcMfg2>> {
  */
 export function getEcMfg2MasterList(queryDto: any): Promise<TaktPagedResult<EcMfg2Master>> {
   return request<TaktPagedResult<EcMfg2Master>>({
-    url: `${EC_PCBA_API_BASE}/masters`,
+    url: `${EC_MFG2_API_BASE}/masters`,
     method: 'get',
     params: queryDto,
   });
@@ -69,7 +69,7 @@ export function getEcMfg2MasterList(queryDto: any): Promise<TaktPagedResult<EcMf
  */
 export function getEcMfg2ById(id: string): Promise<EcMfg2> {
   return request<EcMfg2>({
-    url: `${EC_PCBA_API_BASE}/${id}`,
+    url: `${EC_MFG2_API_BASE}/${id}`,
     method: 'get',
   });
 }
@@ -81,7 +81,7 @@ export function getEcMfg2ById(id: string): Promise<EcMfg2> {
  */
 export function createEcMfg2(dto: EcMfg2Create): Promise<EcMfg2> {
   return request<EcMfg2>({
-    url: `${EC_PCBA_API_BASE}`,
+    url: `${EC_MFG2_API_BASE}`,
     method: 'post',
     data: dto,
   });
@@ -95,7 +95,7 @@ export function createEcMfg2(dto: EcMfg2Create): Promise<EcMfg2> {
  */
 export function updateEcMfg2(id: string, dto: EcMfg2Update): Promise<EcMfg2> {
   return request<EcMfg2>({
-    url: `${EC_PCBA_API_BASE}/${id}`,
+    url: `${EC_MFG2_API_BASE}/${id}`,
     method: 'put',
     data: dto,
   });
@@ -108,7 +108,7 @@ export function updateEcMfg2(id: string, dto: EcMfg2Update): Promise<EcMfg2> {
  */
 export function deleteEcMfg2ById(id: string): Promise<void> {
   return request({
-    url: `${EC_PCBA_API_BASE}/${id}`,
+    url: `${EC_MFG2_API_BASE}/${id}`,
     method: 'delete',
   });
 }
@@ -120,20 +120,20 @@ export function deleteEcMfg2ById(id: string): Promise<void> {
  */
 export function deleteEcMfg2Batch(ids: string[]): Promise<void> {
   return request({
-    url: `${EC_PCBA_API_BASE}/batch`,
+    url: `${EC_MFG2_API_BASE}/batch`,
     method: 'delete',
     data: ids,
   });
 }
 
 /**
- * 更新设变pcba执行停产状态
+ * 更新设变制造二课执行停产状态
  * @param {EcMfg2DiscontinuedStatus} dto 停产状态 DTO
- * @returns {Promise<EcMfg2>} 设变pcba执行DTO
+ * @returns {Promise<EcMfg2>} 设变制造二课执行DTO
  */
 export function updateEcMfg2DiscontinuedStatus(dto: EcMfg2DiscontinuedStatus): Promise<EcMfg2> {
   return request<EcMfg2>({
-    url: `${EC_PCBA_API_BASE}/discontinued-status`,
+    url: `${EC_MFG2_API_BASE}/discontinued-status`,
     method: 'put',
     data: dto,
   });
@@ -146,7 +146,7 @@ export function updateEcMfg2DiscontinuedStatus(dto: EcMfg2DiscontinuedStatus): P
  */
 export function updateEcMfg2Obsolete(dto: EcMfg2Obsolete): Promise<EcMfg2> {
   return request<EcMfg2>({
-    url: `${EC_PCBA_API_BASE}/obsolete`,
+    url: `${EC_MFG2_API_BASE}/obsolete`,
     method: 'put',
     data: dto,
   });
@@ -164,7 +164,7 @@ export function updateEcMfg2Obsolete(dto: EcMfg2Obsolete): Promise<EcMfg2> {
  */
 export function getEcMfg2Options(plantCode?: string, keyword?: string): Promise<TaktSelectOption[]> {
   return request<TaktSelectOption[]>({
-    url: `${EC_PCBA_API_BASE}/options`,
+    url: `${EC_MFG2_API_BASE}/options`,
     method: 'get',
     params: {
       plantCode,
@@ -185,7 +185,7 @@ export function getEcMfg2Options(plantCode?: string, keyword?: string): Promise<
  */
 export function getEcMfg2Template(sheetName?: string, templateName?: string): Promise<Blob> {
   return request<Blob>({
-    url: `${EC_PCBA_API_BASE}/template`,
+    url: `${EC_MFG2_API_BASE}/template`,
     method: 'get',
     params: {
       sheetName,
@@ -206,7 +206,7 @@ export function importEcMfg2(file: globalThis.File, sheetName?: string): Promise
   formData.append('file', file);
   
   return request({
-    url: `${EC_PCBA_API_BASE}/import`,
+    url: `${EC_MFG2_API_BASE}/import`,
     method: 'post',
     data: formData,
     headers: {
@@ -231,7 +231,7 @@ export function exportEcMfg2(
   exportName?: string
 ): Promise<Blob> {
   return request<Blob>({
-    url: `${EC_PCBA_API_BASE}/export`,
+    url: `${EC_MFG2_API_BASE}/export`,
     method: 'get',
     params: {
       ...query,

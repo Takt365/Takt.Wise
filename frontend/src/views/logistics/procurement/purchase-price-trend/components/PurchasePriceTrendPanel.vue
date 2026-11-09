@@ -147,7 +147,7 @@ interface PurchasePriceTrendDisplayRow {
   /** 是否组内首行 */
   isFirst: boolean
   plantCode: string
-  purchaseInfoCode: string
+  purchaseConditionCode: string
   materialCode: string
   materialDescription: string
   supplierCode: string
@@ -256,15 +256,15 @@ const columns = computed<TableColumnsType>(() => {
       fixed: 'left',
     },
     {
-      title: t('entity.purchaseinfo.code'),
-      dataIndex: 'purchaseInfoCode',
-      key: 'purchaseInfoCode',
+      title: t('entity.purchasecondition.code'),
+      dataIndex: 'purchaseConditionCode',
+      key: 'purchaseConditionCode',
       width: 120,
       ellipsis: true,
       fixed: 'left',
     },
     {
-      title: t('entity.purchaseinfo.materialcode'),
+      title: t('entity.purchasecondition.materialcode'),
       dataIndex: 'materialCode',
       key: 'materialCode',
       width: 140,
@@ -272,14 +272,14 @@ const columns = computed<TableColumnsType>(() => {
       fixed: 'left',
     },
     {
-      title: t('entity.purchaseinfo.materialdescription'),
+      title: t('entity.purchasecondition.materialdescription'),
       dataIndex: 'materialDescription',
       key: 'materialDescription',
       width: 160,
       ellipsis: true,
     },
     {
-      title: t('entity.purchaseinfo.suppliercode'),
+      title: t('entity.purchasecondition.suppliercode'),
       dataIndex: 'supplierCode',
       key: 'supplierCode',
       width: 120,
@@ -293,13 +293,13 @@ const columns = computed<TableColumnsType>(() => {
       ellipsis: true,
     },
     {
-      title: t('entity.purchaseinfoitem.conditioncurrencycode'),
+      title: t('entity.purchaseconditionitem.conditioncurrencycode'),
       dataIndex: 'currencyCode',
       key: 'currencyCode',
       width: 80,
     },
     {
-      title: t('entity.purchaseinfoitem.unitofmeasure'),
+      title: t('entity.purchaseconditionitem.unitofmeasure'),
       dataIndex: 'unit',
       key: 'unit',
       width: 80,
@@ -366,12 +366,12 @@ function createDisplayRow(
   index: number,
   isFirst: boolean,
 ): PurchasePriceTrendDisplayRow {
-  const baseKey = `${row.plantCode}|${row.purchaseInfoCode ?? ''}|${row.materialCode}|${row.supplierCode}`
+  const baseKey = `${row.plantCode}|${row.purchaseConditionCode ?? ''}|${row.materialCode}|${row.supplierCode}`
   return {
     rowKey: `${baseKey}|${point?.validFrom ?? 'none'}|${index}`,
     isFirst,
     plantCode: isFirst ? row.plantCode : '',
-    purchaseInfoCode: isFirst ? (row.purchaseInfoCode ?? '') : '',
+    purchaseConditionCode: isFirst ? (row.purchaseConditionCode ?? '') : '',
     materialCode: isFirst ? row.materialCode : '',
     materialDescription: isFirst ? (row.materialDescription ?? '') : '',
     supplierCode: isFirst ? row.supplierCode : '',

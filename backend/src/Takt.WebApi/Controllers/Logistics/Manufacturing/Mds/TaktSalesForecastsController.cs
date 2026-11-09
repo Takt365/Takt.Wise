@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.WebApi.Controllers.Logistics.Manufacturing.Mds
 // 文件名称：TaktSalesForecastsController.cs
-// 创建时间：2026-07-29
+// 创建时间：2026-11-06
 // 创建人：Takt365(Cursor AI)
 // 功能描述：销售预测控制器
 // 
@@ -62,7 +62,7 @@ public class TaktSalesForecastsController : TaktControllerBase
     /// <param name="id">销售预测ID</param>
     /// <returns>销售预测DTO</returns>
     [TaktPermission("logistics:manufacturing:mds:sales:forecast:query", "销售预测详情")]
-    [HttpGet("{id}")]
+    [HttpGet("{id:long}")]
     public async Task<IActionResult> GetSalesForecastByIdAsync(long id)
     {
         try
@@ -83,6 +83,8 @@ public class TaktSalesForecastsController : TaktControllerBase
     /// <summary>
     /// 获取销售计划选项列表
     /// </summary>
+    /// <param name="plantCode">工厂代码（可选，用于按工厂过滤）</param>
+    /// <param name="keyword">搜索关键字（可选，模糊匹配）</param>
     /// <returns>下拉选项</returns>
     [TaktPermission("logistics:manufacturing:mds:sales:forecast:query", "销售预测选项")]
     [HttpGet("options")]

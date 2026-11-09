@@ -65,7 +65,7 @@ public static class TaktEcSourceEcMapper
             EcLeader = string.Empty,
             EcLossAmount = 0,
             EcImplScope = TaktEcScopeConstants.AllDestination,
-            EcControlScope = TaktEcControlScopeConstants.ByModel,
+            EcControlScope = TaktEcControlScopeConstants.ByFinishedProduct,
             EcEntryDate = today,
             ChangeStatus = TaktEcSourceStatusMapper.MapToChangeStatusOrThrow(sourceEc.SourceStatus),
             EcStatus = 1,

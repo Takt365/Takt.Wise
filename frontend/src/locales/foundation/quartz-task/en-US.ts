@@ -19,6 +19,7 @@ export default {
       costingMonthPlaceholder: 'Select costing month',
       costingMonthRequired: 'Please select a costing month',
       hint: 'Target database and costing month are both required. Cron without params uses the current month and task ExecuteParams for the database.',
+      scope: 'This task filters only company {company} and plant {plant}.',
     },
     executeDb: {
       modalTitle: 'Select sync databases',
@@ -32,6 +33,15 @@ export default {
     signalr: {
       executeSucceeded: 'Task {code} succeeded ({duration}ms)',
       executeFailed: 'Task {code} failed ({duration}ms)',
+    },
+    relation: {
+      title: 'Header and line mismatches',
+      orphan: 'Orphan lines',
+      empty: 'Headers without lines',
+      businessCode: 'Business code',
+      lineNumber: 'Line',
+      rowId: 'Id',
+      export: 'Export list',
     },
     cron: {
       modalTitle: 'Cron Expression',

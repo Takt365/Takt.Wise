@@ -486,6 +486,7 @@ public class TaktPcbaOutputDetailService : TaktServiceBase, ITaktPcbaOutputDetai
                 || (x.DowntimeDescription != null && x.DowntimeDescription.Contains(keywords))
                 || (x.UnachievedReason != null && x.UnachievedReason.Contains(keywords))
                 || (x.UnachievedDescription != null && x.UnachievedDescription.Contains(keywords))
+                || (x.ScrapReason != null && x.ScrapReason.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
             );
@@ -627,6 +628,18 @@ public class TaktPcbaOutputDetailService : TaktServiceBase, ITaktPcbaOutputDetai
         {
             var defectCount = queryDto.DefectCount.Value;
             exp = exp.And(x => x.DefectCount == defectCount);
+        }
+
+        if (queryDto?.ScrapCount.HasValue == true)
+        {
+            var scrapCount = queryDto.ScrapCount.Value;
+            exp = exp.And(x => x.ScrapCount == scrapCount);
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.ScrapReason))
+        {
+            var scrapReason = queryDto.ScrapReason;
+            exp = exp.And(x => x.ScrapReason != null && x.ScrapReason.Contains(scrapReason));
         }
 
         if (queryDto?.DowntimeMinutes.HasValue == true)
@@ -850,6 +863,14 @@ public class TaktPcbaOutputDetailService : TaktServiceBase, ITaktPcbaOutputDetai
             return true;
         }
         if (queryDto.DefectCount.HasValue)
+        {
+            return true;
+        }
+        if (queryDto.ScrapCount.HasValue)
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.ScrapReason))
         {
             return true;
         }

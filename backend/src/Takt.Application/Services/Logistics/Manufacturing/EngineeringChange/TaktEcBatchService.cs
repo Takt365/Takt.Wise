@@ -180,7 +180,7 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
             var pcba = await _ecExecDeptAccess.Mfg2Repository.FirstAsync(x => x.EcCode == detail.EcCode && SqlFunc.ToString(x.EcGrainKey) == nikaGrain);
             if (pcba != null)
             {
-                dto.ProductionBatch = pcba.ImplementationBatch;
+                dto.ProductionBatch = pcba.ProductionBatch;
                 dto.ProductionDate = pcba.ProductionDate;
             }
         }
@@ -241,7 +241,7 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
         {
             await UpsertPcbaBatchFieldAsync(detail, pcba =>
             {
-                pcba.ImplementationBatch = productionBatch;
+                pcba.ProductionBatch = productionBatch;
                 pcba.ProductionDate = productionDate;
             });
         }
@@ -363,18 +363,18 @@ public class TaktEcBatchService : TaktServiceBase, ITaktEcBatchService
         {
             exp = exp.And(x => x.EcModelCode != null && x.EcModelCode.Contains(queryDto.EcModelCode));
         }
-        if (!string.IsNullOrEmpty(queryDto?.BatchCode))
+        if (!string.IsNullOrEmpty(queryDto?.ProdBatch))
         {
-            var batchCode = queryDto.BatchCode;
+            var prodBatch = queryDto.ProdBatch;
             exp = exp.And(x =>
                 SqlFunc.Subqueryable<TaktEcPc>()
-                    .Where(d => d.EcCode == x.EcCode && d.ScheduledBatch != null && d.ScheduledBatch.Contains(batchCode))
+                    .Where(d => d.EcCode == x.EcCode && d.ScheduledBatch != null && d.ScheduledBatch.Contains(prodBatch))
                     .Any()
                 || SqlFunc.Subqueryable<TaktEcMtl>()
-                    .Where(d => d.EcCode == x.EcCode && d.OutboundBatch != null && d.OutboundBatch.Contains(batchCode))
+                    .Where(d => d.EcCode == x.EcCode && d.OutboundBatch != null && d.OutboundBatch.Contains(prodBatch))
                     .Any()
                 || SqlFunc.Subqueryable<TaktEcMfg2>()
-                    .Where(d => d.EcCode == x.EcCode && d.ImplementationBatch != null && d.ImplementationBatch.Contains(batchCode))
+                    .Where(d => d.EcCode == x.EcCode && d.ProductionBatch != null && d.ProductionBatch.Contains(prodBatch))
                     .Any());
         }
 

@@ -16,6 +16,8 @@ import type {
   TaktSelectOption
 } from '@/types/common.types';
 import type {
+  QuartzRelationIssueQuery,
+  QuartzRelationIssueRow,
   QuartzTask,
   QuartzTaskCreate,
   QuartzTaskStatus,
@@ -213,6 +215,36 @@ export function importQuartzTask(file: globalThis.File, sheetName?: string): Pro
  * @param {string} exportName exportName
  * @returns {Promise<Blob>} Excel文件
  */
+/**
+ * 分页读取孤儿明细或空头凭证
+ * @param {QuartzRelationIssueQuery} query 脚本、源库、类型、页码
+ * @returns {Promise<TaktPagedResult<QuartzRelationIssueRow>>} 分页结果
+ */
+export function getQuartzRelationIssuePage(
+  query: QuartzRelationIssueQuery,
+): Promise<TaktPagedResult<QuartzRelationIssueRow>> {
+  return request<TaktPagedResult<QuartzRelationIssueRow>>({
+    url: `${QUARTZ_TASK_API_BASE}/relation-issues`,
+    method: 'get',
+    params: query,
+  });
+}
+
+/**
+ * 导出孤儿明细与空头凭证 CSV
+ * @param {string} script 脚本文件名
+ * @param {string} sourceDatabase 源库
+ * @returns {Promise<Blob>} CSV
+ */
+export function exportQuartzRelationIssue(script: string, sourceDatabase: string): Promise<Blob> {
+  return request<Blob>({
+    url: `${QUARTZ_TASK_API_BASE}/relation-issues/export`,
+    method: 'get',
+    params: { script, sourceDatabase },
+    responseType: 'blob',
+  });
+}
+
 export function exportQuartzTask(
   query?: any,
   sheetName?: string,

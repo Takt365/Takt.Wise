@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Foundation
 // 文件名称：TaktNumberingI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktNumbering 实体字段国际化种子（已对齐前端 locales：src/locales/foundation/numbering）
 // 
@@ -181,13 +181,13 @@ public class TaktNumberingI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.numbering.resetperiod", "zh-HK", "重置周期_hk", "重置周期（字典 sys_reset_period；DictValue=None|Annually|Monthly|Daily；须与 date_format 粒度匹配）"),
 
             // entity.numbering.startingnumber
-            new TranslationSeedItem("entity.numbering.startingnumber", "en-US", "Starting Number", "Starting number (required on create; full business code sample, e.g. SO-20250120-000001; updated to the last issued code after take)"),
+            new TranslationSeedItem("entity.numbering.startingnumber", "en-US", "起始编码_us", "起始编码（样例；空表首号形态如 …000001；取号成功后可更新为最近一次产出编码；实际流水以业务表编码 max 为准）"),
             // entity.numbering.startingnumber
-            new TranslationSeedItem("entity.numbering.startingnumber", "ja-JP", "開始番号", "開始番号（新規時必須；業務コード見本、末尾が連番。例：SO-20250120-000001；採番後は直近発行コードに更新）"),
+            new TranslationSeedItem("entity.numbering.startingnumber", "ja-JP", "起始编码_jp", "起始编码（样例；空表首号形态如 …000001；取号成功后可更新为最近一次产出编码；实际流水以业务表编码 max 为准）"),
             // entity.numbering.startingnumber
-            new TranslationSeedItem("entity.numbering.startingnumber", "zh-CN", "起始编码", "起始编码（新增时必填；完整业务编码样例，末段为流水号） 如：SO-20250120-000001；取号后更新为最近一次产出编码"),
+            new TranslationSeedItem("entity.numbering.startingnumber", "zh-CN", "起始编码", "起始编码（样例；空表首号形态如 …000001；取号成功后可更新为最近一次产出编码；实际流水以业务表编码 max 为准）"),
             // entity.numbering.startingnumber
-            new TranslationSeedItem("entity.numbering.startingnumber", "zh-HK", "起始編碼", "起始編碼（新增時必填；完整業務編碼樣例，末段為流水號） 如：SO-20250120-000001；取號後更新為最近一次產出編碼"),
+            new TranslationSeedItem("entity.numbering.startingnumber", "zh-HK", "起始编码_hk", "起始编码（样例；空表首号形态如 …000001；取号成功后可更新为最近一次产出编码；实际流水以业务表编码 max 为准）"),
 
             // entity.numbering.separator
             new TranslationSeedItem("entity.numbering.separator", "en-US", "分隔符_us", "分隔符（空=段直接拼接；-=连字符分隔，默认 -）"),

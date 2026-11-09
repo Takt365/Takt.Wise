@@ -61,7 +61,7 @@ export interface PcbaOutput extends CompanyDtoBase {
   /**
    * 批次（回填：随工单）
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 工单数量（回填：随工单）
@@ -146,7 +146,7 @@ export interface PcbaOutputQuery extends TaktPagedQuery {
   /**
    * 批次（回填：随工单）
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 工单数量（回填：随工单）
@@ -240,7 +240,7 @@ export interface PcbaOutputCreate {
   /**
    * 批次（回填：随工单）
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 工单数量（回填：随工单）
@@ -349,7 +349,7 @@ export interface PcbaOutputTemplate {
   /**
    * 批次（回填：随工单）
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 工单数量（回填：随工单）
@@ -438,7 +438,7 @@ export interface PcbaOutputImport {
   /**
    * 批次（回填：随工单）
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 工单数量（回填：随工单）
@@ -527,7 +527,7 @@ export interface PcbaOutputExport {
   /**
    * 批次（回填：随工单）
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 工单数量（回填：随工单）

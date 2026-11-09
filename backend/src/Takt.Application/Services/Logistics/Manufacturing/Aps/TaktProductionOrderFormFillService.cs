@@ -137,7 +137,7 @@ public class TaktProductionOrderFormFillService : TaktServiceBase, ITaktProducti
             ProdOrderType = order.ProdOrderType,
             ModelCode = modelCode,
             MaterialCode = order.MaterialCode,
-            BatchCode = order.ProdBatch,
+            ProdBatch = order.ProdBatch,
             ProdOrderQty = order.ProdOrderQty,
             SerialCode = order.SerialCode,
             StdMinutes = stdMinutes,

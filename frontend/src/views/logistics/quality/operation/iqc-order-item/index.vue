@@ -163,11 +163,11 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('batchCode')">
-      <a-form-item :label="t('entity.iqcorderitem.batchCode')">
+      <div v-show="isFieldVisible('prodBatch')">
+      <a-form-item :label="t('entity.iqcorderitem.prodBatch')">
         <a-input
-          v-model:value="advancedQueryForm.batchCode"
-          :placeholder="t('common.page.form.placeholder.required', { field: t('entity.iqcorderitem.batchCode') })"
+          v-model:value="advancedQueryForm.prodBatch"
+          :placeholder="t('common.page.form.placeholder.required', { field: t('entity.iqcorderitem.prodBatch') })"
           show-count
           :maxlength="50"
           allow-clear
@@ -484,7 +484,7 @@ const advancedQueryForm = ref({
   lineNumber: undefined as number | undefined,
   materialCode: '',
   materialDescription: '',
-  batchCode: '',
+  prodBatch: '',
   purchaseQuantity: undefined as number | undefined,
   standardCode: '',
   samplingSchemeCode: '',
@@ -511,7 +511,7 @@ const queryFieldsMeta = computed(() => [
   { key: 'lineNumber', label: t('entity.iqcorderitem.linenumber') },
   { key: 'materialCode', label: t('entity.iqcorderitem.materialcode') },
   { key: 'materialDescription', label: t('entity.iqcorderitem.materialdescription') },
-  { key: 'batchCode', label: t('entity.iqcorderitem.batchCode') },
+  { key: 'prodBatch', label: t('entity.iqcorderitem.prodBatch') },
   { key: 'purchaseQuantity', label: t('entity.iqcorderitem.purchasequantity') },
   { key: 'standardCode', label: t('entity.iqcorderitem.standardcode') },
   { key: 'samplingSchemeCode', label: t('entity.iqcorderitem.samplingschemecode') },
@@ -578,7 +578,7 @@ function buildListQuery(overrides?: Partial<IqcOrderItemQuery>): IqcOrderItemQue
   }
   assignTrimmed('materialCode', form.materialCode)
   assignTrimmed('materialDescription', form.materialDescription)
-  assignTrimmed('batchCode', form.batchCode)
+  assignTrimmed('prodBatch', form.prodBatch)
   if (form.purchaseQuantity !== undefined && form.purchaseQuantity !== null) {
     query.purchaseQuantity = form.purchaseQuantity
   }
@@ -727,13 +727,13 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getIqcOrderItemField(record, 'materialDescription') ?? ''
   },
   {
-    title: t('entity.iqcorderitem.batchCode'),
-    dataIndex: 'batchCode',
-    key: 'batchCode',
+    title: t('entity.iqcorderitem.prodBatch'),
+    dataIndex: 'prodBatch',
+    key: 'prodBatch',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getIqcOrderItemField(record, 'batchCode') ?? ''
+    customRender: ({ record }: { record: any }) => getIqcOrderItemField(record, 'prodBatch') ?? ''
   },
   {
     title: t('entity.iqcorderitem.purchasequantity'),
@@ -955,7 +955,7 @@ function handleReset() {
   lineNumber: undefined as number | undefined,
   materialCode: '',
   materialDescription: '',
-  batchCode: '',
+  prodBatch: '',
   purchaseQuantity: undefined as number | undefined,
   standardCode: '',
   samplingSchemeCode: '',
@@ -1173,7 +1173,7 @@ function handleAdvancedQueryReset() {
   lineNumber: undefined as number | undefined,
   materialCode: '',
   materialDescription: '',
-  batchCode: '',
+  prodBatch: '',
   purchaseQuantity: undefined as number | undefined,
   standardCode: '',
   samplingSchemeCode: '',

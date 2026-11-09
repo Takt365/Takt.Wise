@@ -4,7 +4,7 @@
 // 文件名称：TaktBomMaterialCostItemLineCostHelper.cs
 // 创建时间：2026-07-13
 // 创建人：Takt365(Cursor AI)
-// 功能描述：BOM 物料成本行金额与期间快照纯计算辅助；参与计算须 ProductionRelated=X、PcbSectIndicator 为空、PurchaseType=F；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数
+// 功能描述：BOM 物料成本行金额与期间快照纯计算辅助；参与计算须批量标识为空、ProductionRelated=X、PcbSectIndicator 为空、PurchaseType=F、特殊采购类为空；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -57,7 +57,7 @@ public static class TaktBomMaterialCostItemLineCostHelper
     public const decimal MinParticipatingComponentQuantity = 0.001m;
 
     /// <summary>
-    /// 是否参与成本合计/分析统计（资格已由 CountsTowardBomMaterialCostItem：X + PcbSectIndicator 空 + F 判定；本方法恒为 true，保留调用点兼容）
+    /// 是否参与成本合计/分析统计（资格已由 CountsTowardBomMaterialCostItem：批量标识空、生产相关=X、PCB 标识空、采购类型=F、特殊采购类空；本方法恒为 true，保留调用点兼容）
     /// </summary>
     /// <param name="row">成本明细行</param>
     /// <returns>恒为 true</returns>
@@ -68,7 +68,7 @@ public static class TaktBomMaterialCostItemLineCostHelper
     }
 
     /// <summary>
-    /// 是否列入零价清单/0价格组（仅移动平均价=0；资格由 QualifiesAsZeroPriceListLine 再筛 X+空标识+F）
+    /// 是否列入零价清单/0价格组（仅移动平均价=0；资格再筛批量标识空、生产相关=X、PCB 标识空、采购类型=F、特殊采购类空）
     /// </summary>
     /// <param name="row">成本明细行</param>
     /// <returns>是否列入零价统计</returns>
@@ -164,6 +164,26 @@ public static class TaktBomMaterialCostItemLineCostHelper
     }
 
     /// <summary>
+    /// 批量标识是否为空（空/空白才可参与成本合计、零价、移动价回填与建议替代；X 一律排除）
+    /// </summary>
+    /// <param name="batchIndicator">批量标识</param>
+    /// <returns>是否为空</returns>
+    public static bool IsBatchIndicatorEmpty(string? batchIndicator)
+    {
+        return string.IsNullOrWhiteSpace(batchIndicator);
+    }
+
+    /// <summary>
+    /// 特殊采购类是否为空（空/空白才可参与成本合计、零价、建议替代、价格差异与组件差异）
+    /// </summary>
+    /// <param name="specialProcurementType">特殊采购类</param>
+    /// <returns>是否为空</returns>
+    public static bool IsSpecialProcurementTypeEmpty(string? specialProcurementType)
+    {
+        return string.IsNullOrWhiteSpace(specialProcurementType);
+    }
+
+    /// <summary>
     /// 行是否已打 PCB SECT 标识（PcbSectIndicator=X）
     /// </summary>
     /// <param name="pcbSectIndicator">PCB SECT 标识列</param>
@@ -205,20 +225,22 @@ public static class TaktBomMaterialCostItemLineCostHelper
     }
 
     /// <summary>
-    /// 是否参与 BOM 材料成本汇总（生产相关=X 且 PCB SECT 标识为空 且 采购类型=F；比较前 Trim）
+    /// 是否参与 BOM 材料成本汇总（批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空；比较前 Trim）
     /// </summary>
     /// <param name="row">成本行</param>
     /// <returns>是否计入产品 BOM 材料成本</returns>
     public static bool CountsTowardBomMaterialCostItem(TaktBomMaterialCostItem row)
     {
         ArgumentNullException.ThrowIfNull(row);
-        return string.Equals(row.ProductionRelated?.Trim(), "X", StringComparison.OrdinalIgnoreCase)
+        return IsBatchIndicatorEmpty(row.BatchIndicator)
+            && string.Equals(row.ProductionRelated?.Trim(), "X", StringComparison.OrdinalIgnoreCase)
+            && IsPcbSectIndicatorEmpty(row.PcbSectIndicator)
             && string.Equals(row.PurchaseType?.Trim(), "F", StringComparison.OrdinalIgnoreCase)
-            && IsPcbSectIndicatorEmpty(row.PcbSectIndicator);
+            && IsSpecialProcurementTypeEmpty(row.SpecialProcurementType);
     }
 
     /// <summary>
-    /// 是否可作为零价格清单的「单行」候选：生产相关=X、PCB SECT 标识为空、采购类型=F，且移动平均价=0（与用量无关）。
+    /// 是否可作为零价格清单的「单行」候选：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空，且移动平均价=0（与用量无关）。
     /// 同一 ComponentCode 在不同 BomLevel / LineNumber / BomItemCode 上的多笔须各自判定；任一笔满足即可进入合并清单。
     /// </summary>
     /// <param name="row">成本明细行</param>
@@ -341,7 +363,7 @@ public static class TaktBomMaterialCostItemLineCostHelper
     }
 
     /// <summary>
-    /// 筛选参与 BOM 材料成本汇总的行：ProductionRelated=X 且 PcbSectIndicator 为空 且 PurchaseType=F
+    /// 筛选参与 BOM 材料成本汇总的行：批量标识为空、ProductionRelated=X、PcbSectIndicator 为空、PurchaseType=F、特殊采购类为空
     /// </summary>
     /// <param name="rows">成本行</param>
     /// <returns>可参与计算分析的行</returns>
@@ -352,7 +374,7 @@ public static class TaktBomMaterialCostItemLineCostHelper
     }
 
     /// <summary>
-    /// 计算单行组件成本（仅生产相关=X、PCB SECT 标识为空、采购类型=F：组件数量×(移动平均价÷移动价格单位)，保留 5 位小数；否则返回 0）
+    /// 计算单行组件成本（仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空：组件数量×(移动平均价÷移动价格单位)，保留 5 位小数；否则返回 0）
     /// </summary>
     /// <param name="row">成本行</param>
     /// <returns>行成本</returns>
@@ -369,7 +391,7 @@ public static class TaktBomMaterialCostItemLineCostHelper
     }
 
     /// <summary>
-    /// 计算单行最近采购成本（仅生产相关=X、PCB SECT 标识为空且 F：组件数量×(净价÷采购价格单位)，保留 5 位小数；否则返回 0）
+    /// 计算单行最近采购成本（仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空：组件数量×(净价÷采购价格单位)，保留 5 位小数；否则返回 0）
     /// </summary>
     /// <param name="row">成本行</param>
     /// <returns>行采购成本</returns>
@@ -409,7 +431,7 @@ public static class TaktBomMaterialCostItemLineCostHelper
     }
 
     /// <summary>
-    /// 取有效单价（汇总口径仅生产相关=X、PCB SECT 标识为空且 F：移动平均价原值，保留 5 位小数；与 ResolvePriceUnit 配对后得每基本计量单位价；否则返回 0）
+    /// 取有效单价（汇总口径仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空：移动平均价原值，保留 5 位小数；与 ResolvePriceUnit 配对后得每基本计量单位价；否则返回 0）
     /// </summary>
     /// <param name="row">成本行</param>
     /// <returns>移动平均价（未除以价格单位）</returns>
@@ -440,7 +462,7 @@ public static class TaktBomMaterialCostItemLineCostHelper
     }
 
     /// <summary>
-    /// 取价格单位（汇总口径仅生产相关=X、PCB SECT 标识为空且 F：移动价格单位，与移动平均价配对）
+    /// 取价格单位（汇总口径仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空：移动价格单位，与移动平均价配对）
     /// </summary>
     /// <param name="row">成本行</param>
     /// <returns>价格单位</returns>
@@ -482,7 +504,7 @@ public static class TaktBomMaterialCostItemLineCostHelper
     }
 
     /// <summary>
-    /// 取货币码（汇总口径仅生产相关=X、PCB SECT 标识为空且 F：移动价格货币）
+    /// 取货币码（汇总口径仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空：移动价格货币）
     /// </summary>
     /// <param name="row">成本行</param>
     /// <returns>货币码</returns>
@@ -515,7 +537,7 @@ public static class TaktBomMaterialCostItemLineCostHelper
     }
 
     /// <summary>
-    /// 取产品在指定工厂、指定核算日当天的参与计算快照行（CostingDate 须与明细一致；口径=生产相关=X、PCB SECT 标识为空、采购类型=F）。
+    /// 取产品在指定工厂、指定核算日当天的参与计算快照行（CostingDate 须与明细一致；口径=批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空）。
     /// </summary>
     /// <param name="rows">候选行</param>
     /// <param name="plantCode">工厂代码</param>
@@ -647,7 +669,7 @@ public static class TaktBomMaterialCostItemLineCostHelper
     }
 
     /// <summary>
-    /// 汇总产品 BOM 材料成本：先按行排除 PCB SECT 整树，再 Filter（生产相关=X、PCB SECT 标识为空、采购类型=F），
+    /// 汇总产品 BOM 材料成本：先按行排除 PCB SECT 整树，再 Filter（批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空），
     /// 行成本=组件数量×(移动平均价÷移动价格单位)（保留 5 位小数；不按用量/是否零价过滤）。
     /// 口径完全取自明细行字段，不明传工厂/价目。
     /// </summary>
@@ -663,7 +685,7 @@ public static class TaktBomMaterialCostItemLineCostHelper
     }
 
     /// <summary>
-    /// 汇总产品最近采购成本：先排除 PCB SECT 整树 → Filter（生产相关=X、PCB SECT 标识为空、采购类型=F）
+    /// 汇总产品最近采购成本：先排除 PCB SECT 整树 → Filter（批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空）
     /// → 仅用量 &gt; 0.001 且净价 ≠ 0 参与合计（行金额=组件数量×(净价÷采购价格单位)，保留 5 位小数）
     /// </summary>
     /// <param name="snapshotRows">快照行（须含全量展开以便识别 PCB SECT 父节点）</param>

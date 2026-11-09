@@ -2,7 +2,7 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/bom/model-cost-trend -->
 <!-- 文件名称：index.vue -->
-<!-- 功能描述：机种成本推移（工厂、期间、物料类型、机种可选；一行一个成品） -->
+<!-- 功能描述：机种成本推移（工厂、期间、物料类型可空、机种可空；一行一个成品） -->
 <!-- 版权信息：Copyright (c) 2026 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->
@@ -92,7 +92,6 @@ const panelRef = ref<{
 const canQuery = computed(
   () =>
     !!queryPlantCode.value?.trim()
-    && !!queryMaterialType.value?.trim()
     && !!periodRange.value?.[0]
     && !!periodRange.value?.[1],
 )
@@ -107,10 +106,6 @@ const canExport = computed(() => canQuery.value && hasRows.value)
 function validateQuery(): boolean {
   if (!queryPlantCode.value?.trim()) {
     message.warning(t(`${localePrefix}.selectPlantRequired`))
-    return false
-  }
-  if (!queryMaterialType.value?.trim()) {
-    message.warning(t(`${localePrefix}.selectMaterialTypeRequired`))
     return false
   }
   if (!periodRange.value?.[0] || !periodRange.value?.[1]) {

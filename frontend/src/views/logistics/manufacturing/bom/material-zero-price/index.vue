@@ -9,20 +9,15 @@
 
 <template>
   <div class="p-4">
-    <!-- 查询栏：工厂 + 核算月 + 可选机种（左侧固定标签，与成本差异推移一致） -->
-    <div class="takt-query-bar">
-      <div class="min-w-0 flex flex-1 flex-wrap items-center gap-x-3 gap-y-2">
-        <div class="flex items-center gap-1">
-          <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.plantCode`) }}</span>
-          <TaktSelect
-            v-model:value="queryForm.plantCode"
-            :api-url="plantOptionsUrl"
-            :placeholder="t('common.page.form.placeholder.selectonly')"
-            allow-clear
-            show-search
-            class="min-w-[160px]"
-          />
-        </div>
+    <!-- 查询栏：核算月 + 可选机种。工厂取当前公司关联工厂，不在查询栏再选 -->
+    <TaktQueryBar
+      :show-keyword="false"
+      :loading="loading"
+      @search="handleSearch"
+      @reset="handleReset"
+    >
+      <template #leading>
+<div class="min-w-0 flex flex-1 flex-wrap items-center gap-x-3 gap-y-2">
         <div class="flex items-center gap-1">
           <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.costingMonth`) }}</span>
           <a-date-picker
@@ -50,21 +45,8 @@
           />
         </div>
       </div>
-      <a-space class="shrink-0">
-        <a-button class="takt-button-query" :loading="loading" @click="handleSearch">
-          <template #icon>
-            <RiSearchLine class="takt-remix-icon" />
-          </template>
-          {{ t('common.page.button.query') }}
-        </a-button>
-        <a-button class="takt-button-reset" :disabled="loading" @click="handleReset">
-          <template #icon>
-            <RiRefreshLine class="takt-remix-icon" />
-          </template>
-          {{ t('common.page.button.reset') }}
-        </a-button>
-      </a-space>
-    </div>
+      </template>
+    </TaktQueryBar>
 
     <!-- 工具栏：前导0、PCB SECT标识、计算、回填、机种平均、批量回填替代价格、导出；右侧列设置/刷新 -->
     <TaktToolsBar
@@ -255,7 +237,6 @@ import type { ToolBarAction } from '@/components/business/TaktToolsBar/index.vue
 import { useI18n } from 'vue-i18n'
 import {
   getBomCostOptionPlantOptions,
-  getBomCostOptionPlantOptionsUrl,
   getBomCostOptionModelOptionsUrl,
 } from '@/api/logistics/manufacturing/bom/costOption.api'
 import {
@@ -270,7 +251,7 @@ import { resolveCurrentCompanyRelatedPlantCode } from '@/composables/useCompanyR
 import { useTenantStore } from '@/stores/identity/useTenantStore'
 import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import {
-  backfillBomCalculatePurchaseInfo,
+  backfillBomCalculatePurchaseCondition,
   calculateBomCalculateAverage,
   recalculateBomCalculateCost,
   sumBomCalculateCost,
@@ -292,7 +273,7 @@ import {
   formatBomMaterialCostItemRecalculateDuration,
   useBomMaterialCostItemRecalculateSignalR,
 } from '@/composables/useBomMaterialCostItemRecalculateSignalr'
-import { RiCalculatorLine, RiCoinLine, RiEditLine, RiEraserLine, RiExportLine, RiFlagLine, RiFundsLine, RiPriceTag3Line, RiRefreshLine, RiSearchLine, RiShoppingCart2Line } from '@remixicon/vue'
+import { RiCalculatorLine, RiCoinLine, RiEditLine, RiEraserLine, RiExportLine, RiFlagLine, RiFundsLine, RiPriceTag3Line, RiRefreshLine, RiShoppingCart2Line } from '@remixicon/vue'
 import {
   buildDefaultCostingMonth,
   costingMonthToDateQuery,
@@ -309,8 +290,6 @@ const { t } = useI18n()
 const tenantStore = useTenantStore()
 /** Excel 命名 */
 const excelNames = taktExcelEntityNames('TaktBomMaterialZeroPrice')
-/** 工厂下拉 */
-const plantOptionsUrl = getBomCostOptionPlantOptionsUrl()
 /** 机种下拉（本表 FERT 去重） */
 const modelOptionsUrl = getBomCostOptionModelOptionsUrl()
 /** 机种下拉刷新 key（工厂/核算月变更时重建） */
@@ -468,12 +447,12 @@ const toolbarLeftActions = computed<ToolBarAction[]>(() => [
   },
   {
     key: 'purchase-price-backfill',
-    label: t(`${localePrefix}.purchaseInfoBackfill`),
+    label: t(`${localePrefix}.purchaseConditionBackfill`),
     icon: RiShoppingCart2Line,
     buttonClass: 'takt-button-sync',
     permission: calculateUpdatePermission,
     loading: purchaseBackfillPending.value,
-    onClick: () => handlePurchaseInfoBackfill(),
+    onClick: () => handlePurchaseConditionBackfill(),
   },
   {
     key: 'latest-purchase-cost',
@@ -891,14 +870,14 @@ async function handleAverage(): Promise<void> {
 }
 
 /** 回填采购价 */
-async function handlePurchaseInfoBackfill(): Promise<void> {
+async function handlePurchaseConditionBackfill(): Promise<void> {
   const query = buildCostQuery()
   if (!query) return
   purchaseBackfillPending.value = true
   try {
-    const result = await backfillBomCalculatePurchaseInfo(query)
+    const result = await backfillBomCalculatePurchaseCondition(query)
     message.success(
-      t(`${localePrefix}.purchaseInfoBackfillSuccess`, {
+      t(`${localePrefix}.purchaseConditionBackfillSuccess`, {
         month: result.processedMonth,
         scanned: result.scannedRowCount,
         updated: result.updatedRowCount,
@@ -908,7 +887,7 @@ async function handlePurchaseInfoBackfill(): Promise<void> {
     )
   } catch (error: unknown) {
     const err = error as { message?: string }
-    message.error(err?.message || t(`${localePrefix}.purchaseInfoBackfillFailed`))
+    message.error(err?.message || t(`${localePrefix}.purchaseConditionBackfillFailed`))
   } finally {
     purchaseBackfillPending.value = false
   }

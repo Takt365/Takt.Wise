@@ -1006,10 +1006,10 @@ const salesInvoiceItemFormColumns = computed<TaktEditableTableColumn[]>(() => [
     width: 140, allowClear: true, placeholder: salesInvoiceItemPi.ph('pricingReferenceMaterialCode'),
   },
   {
-    key: 'batchCode',
-    title: salesInvoiceItemPi.label('batchCode'),
+    key: 'prodBatch',
+    title: salesInvoiceItemPi.label('prodBatch'),
     editor: 'input',
-    width: 140, allowClear: true, placeholder: salesInvoiceItemPi.ph('batchCode'),
+    width: 140, allowClear: true, placeholder: salesInvoiceItemPi.ph('prodBatch'),
   },
   {
     key: 'materialGroup',
@@ -1207,7 +1207,7 @@ function createDefaultSalesInvoiceItemRow(): Record<string, unknown> {
     salesDocumentReferenceFlag: '',
     materialCode: '',
     pricingReferenceMaterialCode: '',
-    batchCode: '',
+    prodBatch: '',
     materialGroup: '',
     salesItemCategory: '',
     productHierarchy: '',

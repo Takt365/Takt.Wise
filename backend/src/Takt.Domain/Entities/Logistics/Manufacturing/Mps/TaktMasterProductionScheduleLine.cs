@@ -58,6 +58,12 @@ public class TaktMasterProductionScheduleLine : TaktCompanyEntityBase
     public string MaterialCode { get; set; } = string.Empty;
 
     /// <summary>
+    /// 计划批次（来自 MDS 行；MRP 展开后带到计划订单，正式工单写入 ProdBatch）
+    /// </summary>
+    [SugarColumn(ColumnName = "planned_batch", ColumnDescription = "计划批次", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? PlannedBatch { get; set; }
+
+    /// <summary>
     /// 时间桶开始
     /// </summary>
     [SugarColumn(ColumnName = "bucket_start", ColumnDescription = "时间桶开始", ColumnDataType = "datetime", IsNullable = false)]

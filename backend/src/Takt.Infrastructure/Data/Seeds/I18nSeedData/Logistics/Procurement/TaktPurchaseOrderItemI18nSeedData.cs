@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Procurement
 // 文件名称：TaktPurchaseOrderItemI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPurchaseOrderItem 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -162,14 +162,14 @@ public class TaktPurchaseOrderItemI18nSeedData : ITaktSeedDataCoordinator
             // entity.purchaseorderitem.materialspecification
             new TranslationSeedItem("entity.purchaseorderitem.materialspecification", "zh-HK", "物料规格_hk", "物料规格（回填：随物料）"),
 
-            // entity.purchaseorderitem.purchaseinfocode
-            new TranslationSeedItem("entity.purchaseorderitem.purchaseinfocode", "en-US", "采购信息编码_us", "采购信息编码"),
-            // entity.purchaseorderitem.purchaseinfocode
-            new TranslationSeedItem("entity.purchaseorderitem.purchaseinfocode", "ja-JP", "采购信息编码_jp", "采购信息编码"),
-            // entity.purchaseorderitem.purchaseinfocode
-            new TranslationSeedItem("entity.purchaseorderitem.purchaseinfocode", "zh-CN", "采购信息编码", "采购信息编码"),
-            // entity.purchaseorderitem.purchaseinfocode
-            new TranslationSeedItem("entity.purchaseorderitem.purchaseinfocode", "zh-HK", "采购信息编码_hk", "采购信息编码"),
+            // entity.purchaseorderitem.purchaseconditioncode
+            new TranslationSeedItem("entity.purchaseorderitem.purchaseconditioncode", "en-US", "采购条件编码_us", "采购条件编码"),
+            // entity.purchaseorderitem.purchaseconditioncode
+            new TranslationSeedItem("entity.purchaseorderitem.purchaseconditioncode", "ja-JP", "采购条件编码_jp", "采购条件编码"),
+            // entity.purchaseorderitem.purchaseconditioncode
+            new TranslationSeedItem("entity.purchaseorderitem.purchaseconditioncode", "zh-CN", "采购条件编码", "采购条件编码"),
+            // entity.purchaseorderitem.purchaseconditioncode
+            new TranslationSeedItem("entity.purchaseorderitem.purchaseconditioncode", "zh-HK", "采购条件编码_hk", "采购条件编码"),
 
             // entity.purchaseorderitem.suppliermaterialcode
             new TranslationSeedItem("entity.purchaseorderitem.suppliermaterialcode", "en-US", "供应商物料编码_us", "供应商物料编码"),

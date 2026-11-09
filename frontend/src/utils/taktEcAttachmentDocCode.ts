@@ -102,6 +102,128 @@ export function isEcAttachmentDocCodeLockedToEcCode(
   return String(attachmentType ?? '').trim() === EcAttachmentType.EC
 }
 
+/** 文件编码分段录入：设变锁定整码、前缀+序号、前四位-后四位、自由文本 */
+export type EcAttachmentDocCodeInputMode = 'locked' | 'prefix' | 'quad' | 'plain'
+
+/** 联络 / EPP / FPP 已录入的「前缀-1～4 位数字」 */
+const PREFIXED_SEQUENCE_PATTERN = /^(?:DTS|P)-(\d{1,4})$/
+/** TCJ / 外部联络已录入的「0～4 位-0～4 位」 */
+const QUAD_PARTIAL_PATTERN = /^(\d{0,4})-(\d{0,4})$/
+
+/**
+ * 按文件类别决定文件编码控件形态（与采购执行内容 a-input-group 分段一致）
+ * @param attachmentType 文件类别 DictValue
+ * @returns locked=设变整码；prefix=固定前缀-四位序号；quad=前四位-后四位；plain=自由文本
+ */
+export function getEcAttachmentDocCodeInputMode(
+  attachmentType: string | null | undefined,
+): EcAttachmentDocCodeInputMode {
+  const type = String(attachmentType ?? '').trim()
+  if (type === EcAttachmentType.EC) {
+    return 'locked'
+  }
+  if (type === EcAttachmentType.TL || type === EcAttachmentType.EPP || type === EcAttachmentType.FPP) {
+    return 'prefix'
+  }
+  if (type === EcAttachmentType.TCJ || type === EcAttachmentType.EL) {
+    return 'quad'
+  }
+  return 'plain'
+}
+
+/**
+ * 联络固定 DTS，EPP/FPP 固定 P
+ * @param attachmentType 文件类别 DictValue
+ * @returns 固定前缀；非前缀类型返回空串
+ */
+export function getEcAttachmentDocCodePrefix(
+  attachmentType: string | null | undefined,
+): 'DTS' | 'P' | '' {
+  const type = String(attachmentType ?? '').trim()
+  if (type === EcAttachmentType.TL) {
+    return 'DTS'
+  }
+  if (type === EcAttachmentType.EPP || type === EcAttachmentType.FPP) {
+    return 'P'
+  }
+  return ''
+}
+
+/**
+ * 从「DTS-序号」或「P-序号」取出数字段（1～4 位，不补零）
+ * @param docCode 文件编码
+ * @returns 数字段；格式不符时返回空串
+ */
+export function extractEcAttachmentPrefixedSequence(docCode: string | null | undefined): string {
+  const match = PREFIXED_SEQUENCE_PATTERN.exec(String(docCode ?? '').trim())
+  return match?.[1] ?? ''
+}
+
+/**
+ * 组合固定前缀与序号。pad 为 true 时把已输入的序号左补零到 4 位
+ * @param prefix 固定前缀 DTS 或 P
+ * @param sequence 用户输入的序号
+ * @param pad 是否左补零到 4 位
+ * @returns 如 DTS-0001；序号为空时返回空串
+ */
+export function composeEcAttachmentPrefixedDocCode(
+  prefix: 'DTS' | 'P',
+  sequence: string | null | undefined,
+  pad = false,
+): string {
+  let digits = String(sequence ?? '').replace(/\D/g, '').slice(0, 4)
+  if (!digits) {
+    return ''
+  }
+  if (pad) {
+    digits = digits.padStart(4, '0')
+  }
+  return `${prefix}-${digits}`
+}
+
+/**
+ * 拆开 TCJ / 外部联络的「前四位-后四位」（允许输入过程中不足 4 位）
+ * @param docCode 文件编码
+ * @returns head 为横线前、tail 为横线后；格式不符时两侧皆空
+ */
+export function splitEcAttachmentQuadDocCode(
+  docCode: string | null | undefined,
+): { head: string; tail: string } {
+  const match = QUAD_PARTIAL_PATTERN.exec(String(docCode ?? '').trim())
+  if (!match) {
+    return { head: '', tail: '' }
+  }
+  return { head: match[1], tail: match[2] }
+}
+
+/**
+ * 组合 TCJ / 外部联络编码。两侧都空则返回空串；pad 为 true 时对已输入的一侧左补零到 4 位
+ * @param head 横线前数字
+ * @param tail 横线后数字
+ * @param pad 是否左补零到 4 位
+ * @returns 如 1234-5678；仅一侧有值时仍保留横线
+ */
+export function composeEcAttachmentQuadDocCode(
+  head: string | null | undefined,
+  tail: string | null | undefined,
+  pad = false,
+): string {
+  let nextHead = String(head ?? '').replace(/\D/g, '').slice(0, 4)
+  let nextTail = String(tail ?? '').replace(/\D/g, '').slice(0, 4)
+  if (!nextHead && !nextTail) {
+    return ''
+  }
+  if (pad) {
+    if (nextHead) {
+      nextHead = nextHead.padStart(4, '0')
+    }
+    if (nextTail) {
+      nextTail = nextTail.padStart(4, '0')
+    }
+  }
+  return `${nextHead}-${nextTail}`
+}
+
 /**
  * 是否为 PDF 附件文件名（扩展名 .pdf，大小写不敏感；与后端 TaktEcAttachmentDocCodeHelper.IsPdfFileName 对齐）
  * @param fileName 源文件名或存储文件名

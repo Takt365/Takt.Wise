@@ -51,6 +51,9 @@ const {
   buildListSwitchHandlersBlock,
   INDEX_FORM_RESET_NEXT_TICK,
   buildServerPagedListQueryBlock,
+  resolveListPeriodQuery,
+  buildListPeriodIndexFragments,
+  buildTaktQueryBarPeriodSuffix,
   buildServerPagedLoadDataBody,
   buildServerPagedExportApiCall,
   buildServerPagedOnMountedBlock,
@@ -148,7 +151,10 @@ function generateCrudIndexVue(ctx) {
   ].filter(Boolean).join('\n');
   const listSwitchHandlersBlock = buildListSwitchHandlersBlock(switchListCols, entityPascal, caps);
   const queryItems = fields.queryFields.map((f) => renderQueryFormItem(f)).join('\n');
-  const queryFactoryBlock = buildAdvancedQueryFactoryBlock(entityPascal, fields.queryFields);
+  const listPeriod = resolveListPeriodQuery(fields.queryFields);
+  const listPeriodFragments = buildListPeriodIndexFragments(listPeriod);
+  const queryBarPeriodSuffix = buildTaktQueryBarPeriodSuffix('    ', listPeriod);
+  const queryFactoryBlock = buildAdvancedQueryFactoryBlock(entityPascal, fields.queryFields, listPeriod);
   const queryInit = fields.queryFields.map((f) => {
     const val = f.type === 'number' ? 'undefined as number | undefined' : "''";
     return `  ${f.name}: ${val},`;
@@ -412,7 +418,7 @@ async function handleDelete() {
     : `    dataSource.value = []
     total.value = 0`;
   const serverPagedScriptBlock = caps.hasGetList
-    ? buildServerPagedListQueryBlock(entityPascal, fields.queryFields)
+    ? buildServerPagedListQueryBlock(entityPascal, fields.queryFields, listPeriod)
     : '';
   return `<!-- ======================================== -->
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
@@ -431,8 +437,7 @@ async function handleDelete() {
       :placeholder="searchPlaceholder"
       :loading="loading"
       @search="handleSearch"
-      @reset="handleReset"
-    />
+      @reset="handleReset"${queryBarPeriodSuffix}
 
     <!-- 工具栏 -->
     <TaktToolsBar
@@ -534,11 +539,11 @@ import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+${listPeriodFragments.importLine}import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 ${(caps.hasCreate || caps.hasUpdate) ? TAKT_FORM_MODAL_WIDTH_IMPORT : ''}${formImports}import { ${importApiNames.join(', ')} } from '@/api/${modulePath}/${toFrontendEntityFileCamel(entityKebab)}.api'
 ${mdParts.childApiImports ? `${mdParts.childApiImports}\n` : ''}${childTypeImportLines ? `${childTypeImportLines}\n` : ''}import type { ${typeImports.join(', ')} } from '@/types/${modulePath}/${toFrontendEntityFileCamel(entityKebab)}.types'
 ${indexDictImport}${excelImport}${exportImport}${importResultImport}${iconImports}
-${entityI18nIndexImport}${rowRecordTypeAlias}${singleStateBlock}
+${entityI18nIndexImport}${rowRecordTypeAlias}${singleStateBlock}${listPeriodFragments.stateBlock}
 ${indexDictSetup}${mdParts.state}
 ${serverPagedScriptBlock}${buildServerPagedOnMountedBlock(indexDictOnMounted)}
 
@@ -622,7 +627,7 @@ function handleSearch() {
 /** 重置查询条件并刷新列表 */
 function handleReset() {
   queryKeyword.value = ''
-  advancedQueryForm.value = createEmptyAdvancedQueryForm()
+${listPeriodFragments.resetLine}  advancedQueryForm.value = createEmptyAdvancedQueryForm()
   currentPage.value = getTaktDefaultPageIndex()
   loadData()
 }

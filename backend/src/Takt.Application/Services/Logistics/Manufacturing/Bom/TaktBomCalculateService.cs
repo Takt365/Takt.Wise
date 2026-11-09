@@ -13,6 +13,7 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Microsoft.Extensions.Configuration;
 using SqlSugar;
 using Takt.Application.Dtos.Logistics.Manufacturing.Bom;
 using Takt.Domain.Entities.Accounting.Financial;
@@ -59,19 +60,23 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
     /// <summary>
     /// 采购价格主表仓储
     /// </summary>
-    private readonly ITaktCompanyRepository<TaktPurchaseInfo> _purchaseInfoRepository;
+    private readonly ITaktCompanyRepository<TaktPurchaseCondition> _purchaseConditionRepository;
     /// <summary>
     /// 采购价格条件行仓储
     /// </summary>
-    private readonly ITaktCompanyRepository<TaktPurchaseInfoItem> _purchaseInfoItemRepository;
+    private readonly ITaktCompanyRepository<TaktPurchaseConditionItem> _purchaseConditionItemRepository;
     /// <summary>
     /// 采购阶梯数量仓储
     /// </summary>
-    private readonly ITaktCompanyRepository<TaktPurchaseInfoScaleQuantity> _purchaseInfoScaleQuantityRepository;
+    private readonly ITaktCompanyRepository<TaktPurchaseConditionScaleQuantity> _purchaseConditionScaleQuantityRepository;
     /// <summary>
     /// 采购阶梯价格仓储
     /// </summary>
-    private readonly ITaktCompanyRepository<TaktPurchaseInfoScaleValue> _purchaseInfoScaleValueRepository;
+    private readonly ITaktCompanyRepository<TaktPurchaseConditionScaleValue> _purchaseConditionScaleValueRepository;
+    /// <summary>
+    /// 配置（公司代码与工厂代码同序映射）
+    /// </summary>
+    private readonly IConfiguration _configuration;
 
     /// <summary>
     /// 构造函数
@@ -79,20 +84,22 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
     /// <param name="bomMaterialCostItemRepository">BOM 成本明细仓储</param>
     /// <param name="bomMaterialCostRepository">BOM 成本汇总仓储</param>
     /// <param name="companyRepository">公司仓储（RelatedPlant）</param>
-    /// <param name="purchaseInfoRepository">采购价格主表仓储</param>
-    /// <param name="purchaseInfoItemRepository">采购价格条件行仓储</param>
-    /// <param name="purchaseInfoScaleQuantityRepository">采购阶梯数量仓储</param>
-    /// <param name="purchaseInfoScaleValueRepository">采购阶梯价格仓储</param>
+    /// <param name="purchaseConditionRepository">采购价格主表仓储</param>
+    /// <param name="purchaseConditionItemRepository">采购价格条件行仓储</param>
+    /// <param name="purchaseConditionScaleQuantityRepository">采购阶梯数量仓储</param>
+    /// <param name="purchaseConditionScaleValueRepository">采购阶梯价格仓储</param>
+    /// <param name="configuration">配置（公司代码与工厂代码同序映射）</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktBomCalculateService(
         ITaktCompanyRepository<TaktBomMaterialCostItem> bomMaterialCostItemRepository,
         ITaktCompanyRepository<TaktBomMaterialCost> bomMaterialCostRepository,
         ITaktTenantRepository<TaktCompany> companyRepository,
-        ITaktCompanyRepository<TaktPurchaseInfo> purchaseInfoRepository,
-        ITaktCompanyRepository<TaktPurchaseInfoItem> purchaseInfoItemRepository,
-        ITaktCompanyRepository<TaktPurchaseInfoScaleQuantity> purchaseInfoScaleQuantityRepository,
-        ITaktCompanyRepository<TaktPurchaseInfoScaleValue> purchaseInfoScaleValueRepository,
+        ITaktCompanyRepository<TaktPurchaseCondition> purchaseConditionRepository,
+        ITaktCompanyRepository<TaktPurchaseConditionItem> purchaseConditionItemRepository,
+        ITaktCompanyRepository<TaktPurchaseConditionScaleQuantity> purchaseConditionScaleQuantityRepository,
+        ITaktCompanyRepository<TaktPurchaseConditionScaleValue> purchaseConditionScaleValueRepository,
+        IConfiguration configuration,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
@@ -100,10 +107,11 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
         _bomMaterialCostItemRepository = bomMaterialCostItemRepository;
         _bomMaterialCostRepository = bomMaterialCostRepository;
         _companyRepository = companyRepository;
-        _purchaseInfoRepository = purchaseInfoRepository;
-        _purchaseInfoItemRepository = purchaseInfoItemRepository;
-        _purchaseInfoScaleQuantityRepository = purchaseInfoScaleQuantityRepository;
-        _purchaseInfoScaleValueRepository = purchaseInfoScaleValueRepository;
+        _purchaseConditionRepository = purchaseConditionRepository;
+        _purchaseConditionItemRepository = purchaseConditionItemRepository;
+        _purchaseConditionScaleQuantityRepository = purchaseConditionScaleQuantityRepository;
+        _purchaseConditionScaleValueRepository = purchaseConditionScaleValueRepository;
+        _configuration = configuration;
     }
 
     /// <summary>
@@ -228,7 +236,7 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
     /// </summary>
     /// <param name="queryDto">工厂/物料类型/机种可选；须单个核算月</param>
     /// <returns>回填统计</returns>
-    public async Task<TaktBomCalculatePurchaseInfoBackfillResultDto> BackfillBomCalculatePurchaseInfoAsync(
+    public async Task<TaktBomCalculatePurchaseConditionBackfillResultDto> BackfillBomCalculatePurchaseConditionAsync(
         TaktBomCalculateQueryDto queryDto)
     {
         EnsureThreeLayerContext();
@@ -244,7 +252,7 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
             itemRows,
             prepared.Query);
         var yearTable = await ResolveBomItemPhysicalTableAsync(prepared.Query.CostingDateStart!.Value.Year);
-        var lookup = await LoadPurchaseInfoLookupAsync(scopedRows);
+        var lookup = await LoadPurchaseConditionLookupAsync(scopedRows);
         var updated = 0;
         var skippedNoPrice = 0;
         var unchanged = 0;
@@ -256,24 +264,24 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
                 continue;
             }
             var headers = lookup.FindHeaders(row.ComponentCode);
-            var header = TaktBomCalculatePurchaseInfoHelper.ResolveNearestHeader(headers, row.CostingDate);
+            var header = TaktBomCalculatePurchaseConditionHelper.ResolveNearestHeader(headers, row.CostingDate);
             if (header == null)
             {
                 skippedNoPrice = checked(skippedNoPrice + 1);
                 continue;
             }
-            var item = TaktBomCalculatePurchaseInfoHelper.ResolveActiveItem(lookup.FindItems(header.Id));
+            var item = TaktBomCalculatePurchaseConditionHelper.ResolveActiveItem(lookup.FindItems(header.Id));
             if (item == null)
             {
                 skippedNoPrice = checked(skippedNoPrice + 1);
                 continue;
             }
-            var netPrice = TaktBomCalculatePurchaseInfoHelper.ResolveNetPrice(
+            var netPrice = TaktBomCalculatePurchaseConditionHelper.ResolveNetPrice(
                 item,
                 lookup.FindQuantityScales(item.Id),
                 lookup.FindValueScales(item.Id),
                 row.ComponentQuantity);
-            if (!TaktBomCalculatePurchaseInfoHelper.ApplyPurchaseFields(row, header, item, netPrice))
+            if (!TaktBomCalculatePurchaseConditionHelper.ApplyPurchaseFields(row, header, item, netPrice))
             {
                 unchanged = checked(unchanged + 1);
                 continue;
@@ -281,7 +289,7 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
             await _bomMaterialCostItemRepository.UpdateAsync(row, yearTable);
             updated = checked(updated + 1);
         }
-        return new TaktBomCalculatePurchaseInfoBackfillResultDto
+        return new TaktBomCalculatePurchaseConditionBackfillResultDto
         {
             ScannedRowCount = scopedRows.Count,
             UpdatedRowCount = updated,
@@ -292,7 +300,7 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
     }
 
     /// <summary>
-    /// Quartz 计算成本：判定日所在自然月（不传工厂；按明细表行内 PlantCode 分组）
+    /// Quartz 计算成本：判定日所在自然月，只查当前公司对应工厂（2300→C100，2400→H100）
     /// </summary>
     /// <param name="asOfDate">判定日；默认今天</param>
     /// <returns>合计统计；当月无明细时仍返回统计（扫描 0）</returns>
@@ -304,7 +312,7 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
     }
 
     /// <summary>
-    /// Quartz 重算成本：判定日所在自然月（不传工厂；按明细表行内 PlantCode 分组）
+    /// Quartz 重算成本：判定日所在自然月，只查当前公司对应工厂（2300→C100，2400→H100）
     /// </summary>
     /// <param name="asOfDate">判定日；默认今天</param>
     /// <returns>重算统计</returns>
@@ -395,75 +403,39 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
             GroupsWithProductCostCount = groupsWithProductCost,
             GroupsWithoutProductCostCount = groupsWithoutProductCost,
             CostingPeriod = periodKey,
+            ProcessedPlants = plant,
         };
     }
 
     /// <summary>
-    /// Quartz 计算平均成本：判定日所在自然月（按主表行 PlantCode 去重工厂）
+    /// Quartz 计算平均成本：判定日所在自然月，只查当前公司对应工厂
     /// </summary>
     /// <param name="asOfDate">判定日；默认今天</param>
-    /// <returns>各工厂汇总；当月无主表行时返回 null</returns>
+    /// <returns>该工厂汇总；当月无主表行时返回 null</returns>
     public async Task<TaktBomCalculateAverageResultDto?> RunScheduledBomCalculateAverageAsync(DateTime? asOfDate = null)
     {
         EnsureThreeLayerContext();
+        var plant = ResolveCurrentCompanyPlantCode();
         var asOf = TaktBomMaterialCostItemLineCostHelper.NormalizeCostingDate(asOfDate ?? DateTime.Today);
         var periodKey = TaktBomMaterialCostItemLineCostHelper.ToPeriodKey(asOf);
         var periodHeaders = await _bomMaterialCostRepository.GetListAsync(
             x => x.TenantCode == CurrentTenantCode
                 && x.CompanyCode == CurrentCompanyCode
+                && x.PlantCode == plant
                 && x.CostingPeriod == periodKey,
             includeSoftDeleted: true);
         if (periodHeaders.Count == 0)
         {
             return null;
         }
-        var plantCodes = periodHeaders
-            .Select(x => x.PlantCode?.Trim() ?? string.Empty)
-            .Where(p => !string.IsNullOrWhiteSpace(p))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(p => p, StringComparer.OrdinalIgnoreCase)
-            .ToList();
-        if (plantCodes.Count == 0)
-        {
-            return null;
-        }
-        var scanned = 0;
-        var modelUpdated = 0;
-        var typeUpdated = 0;
-        var averageUpdated = 0;
-        var modelGroups = 0;
-        var positiveProductCostRows = 0;
-        var groupsWithProductCost = 0;
-        var groupsWithoutProductCost = 0;
-        foreach (var plant in plantCodes)
-        {
-            var result = await CalculateBomCalculateAverageAsync(
-                new TaktBomCalculateAverageQueryDto
-                {
-                    PlantCode = plant,
-                    CostingPeriod = periodKey,
-                });
-            scanned = checked(scanned + result.ScannedRowCount);
-            modelUpdated = checked(modelUpdated + result.ModelCodeUpdatedCount);
-            typeUpdated = checked(typeUpdated + result.MaterialTypeUpdatedCount);
-            averageUpdated = checked(averageUpdated + result.AverageUpdatedCount);
-            modelGroups = checked(modelGroups + result.ModelGroupCount);
-            positiveProductCostRows = checked(positiveProductCostRows + result.PositiveProductCostRowCount);
-            groupsWithProductCost = checked(groupsWithProductCost + result.GroupsWithProductCostCount);
-            groupsWithoutProductCost = checked(groupsWithoutProductCost + result.GroupsWithoutProductCostCount);
-        }
-        return new TaktBomCalculateAverageResultDto
-        {
-            ScannedRowCount = scanned,
-            ModelCodeUpdatedCount = modelUpdated,
-            MaterialTypeUpdatedCount = typeUpdated,
-            AverageUpdatedCount = averageUpdated,
-            ModelGroupCount = modelGroups,
-            PositiveProductCostRowCount = positiveProductCostRows,
-            GroupsWithProductCostCount = groupsWithProductCost,
-            GroupsWithoutProductCostCount = groupsWithoutProductCost,
-            CostingPeriod = periodKey,
-        };
+        var result = await CalculateBomCalculateAverageAsync(
+            new TaktBomCalculateAverageQueryDto
+            {
+                PlantCode = plant,
+                CostingPeriod = periodKey,
+            });
+        result.ProcessedPlants = plant;
+        return result;
     }
 
     /// <summary>
@@ -496,7 +468,8 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
         var processRecordCount = prepared.Query.ProcessRecordCount;
         var itemRows = await LoadItemsForCalculateQueryAsync(prepared.Query);
         TaktLogger.Information(
-            "[BomMaterialCost] 明细已加载 Month={Month} Plant={Plant} Rows={Rows} Tenant={Tenant} Company={Company}",
+            "[BomMaterialCost] 明细已加载 Target={Target} Period={Period} Plant={Plant} Rows={Rows} Tenant={Tenant} Company={Company}",
+            ResolveLogTargetDatabase(),
             periodKey,
             prepared.Query.PlantCode ?? string.Empty,
             itemRows.Count,
@@ -586,17 +559,21 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
             ResetGroupCount = forceRecalculate && !writeLatestPurchaseCost ? syncKeys.Count : 0,
             ProcessedMonthCount = 1,
             ProcessedMonth = prepared.ProcessedMonth,
+            ProcessedPlants = plantCodes.Count > 0
+                ? string.Join(",", plantCodes)
+                : prepared.Query.PlantCode?.Trim() ?? string.Empty,
         };
     }
 
     /// <summary>
-    /// Quartz：构造判定日所在自然月的计算查询（不带物料类型）
+    /// Quartz：构造判定日所在自然月的计算查询（工厂=当前公司映射工厂，不带物料类型）
     /// </summary>
     /// <param name="asOfDate">判定日；空则今天</param>
     /// <returns>查询</returns>
     private TaktBomCalculateQueryDto BuildScheduledCurrentMonthQuery(DateTime? asOfDate)
     {
         EnsureThreeLayerContext();
+        var plant = ResolveCurrentCompanyPlantCode();
         var asOf = TaktBomMaterialCostItemLineCostHelper.NormalizeCostingDate(asOfDate ?? DateTime.Today);
         var costingStart = new DateTime(asOf.Year, asOf.Month, 1);
         var costingEnd = new DateTime(
@@ -609,10 +586,32 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
             999);
         return new TaktBomCalculateQueryDto
         {
+            PlantCode = plant,
             CostingDateStart = costingStart,
             CostingDateEnd = costingEnd,
             ProcessRecordCount = 0,
         };
+    }
+
+    /// <summary>
+    /// 当前公司对应工厂（Database:CompanyCodes 与 PlantCodes 同序；2300→C100，2400→H100）
+    /// </summary>
+    /// <returns>工厂代码</returns>
+    private string ResolveCurrentCompanyPlantCode()
+    {
+        var companyCode = CurrentCompanyCode?.Trim() ?? string.Empty;
+        if (companyCode.Length == 0)
+        {
+            throw new TaktBusinessException("当前公司代码为空，无法解析工厂");
+        }
+        try
+        {
+            return _configuration.RequireDatabase().GetPlantCodeForCompanyCode(companyCode);
+        }
+        catch (InvalidOperationException ex)
+        {
+            throw new TaktBusinessException(ex.Message);
+        }
     }
 
     /// <summary>
@@ -797,7 +796,8 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
             var done = 0;
             var total = plantPeriodGroup.Count();
             TaktLogger.Information(
-                "[BomMaterialCost] 合计批次开始 Plant={Plant} Period={Period} Products={Products} ItemRows={ItemRows} Headers={Headers}",
+                "[BomMaterialCost] 合计批次开始 Target={Target} Plant={Plant} Period={Period} Products={Products} ItemRows={ItemRows} Headers={Headers}",
+                ResolveLogTargetDatabase(),
                 plant,
                 periodKey,
                 total,
@@ -833,7 +833,8 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
                 if (done == 1 || done == total || done % 50 == 0)
                 {
                     TaktLogger.Information(
-                        "[BomMaterialCost] 合计进度 Plant={Plant} Period={Period} Done={Done}/{Total}",
+                        "[BomMaterialCost] 合计进度 Target={Target} Plant={Plant} Period={Period} Done={Done}/{Total}",
+                        ResolveLogTargetDatabase(),
                         plant,
                         periodKey,
                         done,
@@ -845,7 +846,8 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
                 await RefreshModelMonthlyAverageForPeriodAsync(plant, materialType, modelCode, periodKey);
             }
             TaktLogger.Information(
-                "[BomMaterialCost] 合计批次完成 Plant={Plant} Period={Period} Products={Products} ModelAvgGroups={AvgGroups}",
+                "[BomMaterialCost] 合计批次完成 Target={Target} Plant={Plant} Period={Period} Products={Products} ModelAvgGroups={AvgGroups}",
+                ResolveLogTargetDatabase(),
                 plant,
                 periodKey,
                 total,
@@ -1706,11 +1708,11 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
     /// </summary>
     /// <param name="itemRows">待回填明细</param>
     /// <returns>查找表</returns>
-    private async Task<BomCalculatePurchaseInfoLookup> LoadPurchaseInfoLookupAsync(
+    private async Task<BomCalculatePurchaseConditionLookup> LoadPurchaseConditionLookupAsync(
         IReadOnlyList<TaktBomMaterialCostItem> itemRows)
     {
         ArgumentNullException.ThrowIfNull(itemRows);
-        var lookup = new BomCalculatePurchaseInfoLookup();
+        var lookup = new BomCalculatePurchaseConditionLookup();
         var materialCodes = itemRows
             .SelectMany(r => TaktBomMaterialCostItemLineCostHelper.ExpandProductCodeLookupVariants(r.ComponentCode))
             .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -1720,11 +1722,11 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
             return lookup;
         }
         const int chunkSize = 200;
-        var headers = new List<TaktPurchaseInfo>();
+        var headers = new List<TaktPurchaseCondition>();
         for (var i = 0; i < materialCodes.Count; i += chunkSize)
         {
             var chunk = materialCodes.Skip(i).Take(chunkSize).ToList();
-            var part = await _purchaseInfoRepository.GetListAsync(
+            var part = await _purchaseConditionRepository.GetListAsync(
                 x => x.TenantCode == CurrentTenantCode
                     && x.CompanyCode == CurrentCompanyCode
                     && chunk.Contains(x.MaterialCode));
@@ -1739,14 +1741,14 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
         {
             return lookup;
         }
-        var items = new List<TaktPurchaseInfoItem>();
+        var items = new List<TaktPurchaseConditionItem>();
         for (var i = 0; i < headerIds.Count; i += chunkSize)
         {
             var chunk = headerIds.Skip(i).Take(chunkSize).ToList();
-            var part = await _purchaseInfoItemRepository.GetListAsync(
+            var part = await _purchaseConditionItemRepository.GetListAsync(
                 x => x.TenantCode == CurrentTenantCode
                     && x.CompanyCode == CurrentCompanyCode
-                    && chunk.Contains(x.PurchaseInfoId)
+                    && chunk.Contains(x.PurchaseConditionId)
                     && x.IsObsolete == 0);
             if (part.Count > 0)
             {
@@ -1762,16 +1764,16 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
         for (var i = 0; i < itemIds.Count; i += chunkSize)
         {
             var chunk = itemIds.Skip(i).Take(chunkSize).ToList();
-            var qtyPart = await _purchaseInfoScaleQuantityRepository.GetListAsync(
+            var qtyPart = await _purchaseConditionScaleQuantityRepository.GetListAsync(
                 x => x.TenantCode == CurrentTenantCode
                     && x.CompanyCode == CurrentCompanyCode
-                    && chunk.Contains(x.PurchaseInfoItemId)
+                    && chunk.Contains(x.PurchaseConditionItemId)
                     && x.IsObsolete == 0);
             lookup.AddQuantityScales(qtyPart);
-            var valuePart = await _purchaseInfoScaleValueRepository.GetListAsync(
+            var valuePart = await _purchaseConditionScaleValueRepository.GetListAsync(
                 x => x.TenantCode == CurrentTenantCode
                     && x.CompanyCode == CurrentCompanyCode
-                    && chunk.Contains(x.PurchaseInfoItemId)
+                    && chunk.Contains(x.PurchaseConditionItemId)
                     && x.IsObsolete == 0);
             lookup.AddValueScales(valuePart);
         }
@@ -1781,30 +1783,30 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
     /// <summary>
     /// 采购价格内存查找（按物料 / 主表 Id / 条件行 Id）
     /// </summary>
-    private sealed class BomCalculatePurchaseInfoLookup
+    private sealed class BomCalculatePurchaseConditionLookup
     {
         /// <summary>
         /// 物料编码 → 主表
         /// </summary>
-        private readonly Dictionary<string, List<TaktPurchaseInfo>> _headersByMaterial = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, List<TaktPurchaseCondition>> _headersByMaterial = new(StringComparer.OrdinalIgnoreCase);
         /// <summary>
         /// 主表 Id → 条件行
         /// </summary>
-        private readonly Dictionary<long, List<TaktPurchaseInfoItem>> _itemsByHeaderId = new();
+        private readonly Dictionary<long, List<TaktPurchaseConditionItem>> _itemsByHeaderId = new();
         /// <summary>
         /// 条件行 Id → 数量等级
         /// </summary>
-        private readonly Dictionary<long, List<TaktPurchaseInfoScaleQuantity>> _quantityByItemId = new();
+        private readonly Dictionary<long, List<TaktPurchaseConditionScaleQuantity>> _quantityByItemId = new();
         /// <summary>
         /// 条件行 Id → 价值等级
         /// </summary>
-        private readonly Dictionary<long, List<TaktPurchaseInfoScaleValue>> _valueByItemId = new();
+        private readonly Dictionary<long, List<TaktPurchaseConditionScaleValue>> _valueByItemId = new();
 
         /// <summary>
         /// 登记主表（同一物料的 10/18 位编码都可命中）
         /// </summary>
         /// <param name="headers">主表</param>
-        public void AddHeaders(IReadOnlyList<TaktPurchaseInfo> headers)
+        public void AddHeaders(IReadOnlyList<TaktPurchaseCondition> headers)
         {
             ArgumentNullException.ThrowIfNull(headers);
             foreach (var header in headers)
@@ -1813,7 +1815,7 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
                 {
                     if (!_headersByMaterial.TryGetValue(code, out var list))
                     {
-                        list = new List<TaktPurchaseInfo>();
+                        list = new List<TaktPurchaseCondition>();
                         _headersByMaterial[code] = list;
                     }
                     if (!list.Exists(h => h.Id == header.Id))
@@ -1828,15 +1830,15 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
         /// 登记条件行
         /// </summary>
         /// <param name="items">条件行</param>
-        public void AddItems(IReadOnlyList<TaktPurchaseInfoItem> items)
+        public void AddItems(IReadOnlyList<TaktPurchaseConditionItem> items)
         {
             ArgumentNullException.ThrowIfNull(items);
             foreach (var item in items)
             {
-                if (!_itemsByHeaderId.TryGetValue(item.PurchaseInfoId, out var list))
+                if (!_itemsByHeaderId.TryGetValue(item.PurchaseConditionId, out var list))
                 {
-                    list = new List<TaktPurchaseInfoItem>();
-                    _itemsByHeaderId[item.PurchaseInfoId] = list;
+                    list = new List<TaktPurchaseConditionItem>();
+                    _itemsByHeaderId[item.PurchaseConditionId] = list;
                 }
                 list.Add(item);
             }
@@ -1846,15 +1848,15 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
         /// 登记数量等级
         /// </summary>
         /// <param name="rows">数量等级</param>
-        public void AddQuantityScales(IReadOnlyList<TaktPurchaseInfoScaleQuantity> rows)
+        public void AddQuantityScales(IReadOnlyList<TaktPurchaseConditionScaleQuantity> rows)
         {
             ArgumentNullException.ThrowIfNull(rows);
             foreach (var row in rows)
             {
-                if (!_quantityByItemId.TryGetValue(row.PurchaseInfoItemId, out var list))
+                if (!_quantityByItemId.TryGetValue(row.PurchaseConditionItemId, out var list))
                 {
-                    list = new List<TaktPurchaseInfoScaleQuantity>();
-                    _quantityByItemId[row.PurchaseInfoItemId] = list;
+                    list = new List<TaktPurchaseConditionScaleQuantity>();
+                    _quantityByItemId[row.PurchaseConditionItemId] = list;
                 }
                 list.Add(row);
             }
@@ -1864,15 +1866,15 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
         /// 登记价值等级
         /// </summary>
         /// <param name="rows">价值等级</param>
-        public void AddValueScales(IReadOnlyList<TaktPurchaseInfoScaleValue> rows)
+        public void AddValueScales(IReadOnlyList<TaktPurchaseConditionScaleValue> rows)
         {
             ArgumentNullException.ThrowIfNull(rows);
             foreach (var row in rows)
             {
-                if (!_valueByItemId.TryGetValue(row.PurchaseInfoItemId, out var list))
+                if (!_valueByItemId.TryGetValue(row.PurchaseConditionItemId, out var list))
                 {
-                    list = new List<TaktPurchaseInfoScaleValue>();
-                    _valueByItemId[row.PurchaseInfoItemId] = list;
+                    list = new List<TaktPurchaseConditionScaleValue>();
+                    _valueByItemId[row.PurchaseConditionItemId] = list;
                 }
                 list.Add(row);
             }
@@ -1883,10 +1885,10 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
         /// </summary>
         /// <param name="componentCode">组件编码</param>
         /// <returns>主表列表</returns>
-        public IReadOnlyList<TaktPurchaseInfo> FindHeaders(string componentCode)
+        public IReadOnlyList<TaktPurchaseCondition> FindHeaders(string componentCode)
         {
             var seen = new HashSet<long>();
-            var result = new List<TaktPurchaseInfo>();
+            var result = new List<TaktPurchaseCondition>();
             foreach (var code in TaktBomMaterialCostItemLineCostHelper.ExpandProductCodeLookupVariants(componentCode))
             {
                 if (!_headersByMaterial.TryGetValue(code, out var list))
@@ -1909,11 +1911,11 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
         /// </summary>
         /// <param name="headerId">主表 Id</param>
         /// <returns>条件行</returns>
-        public IReadOnlyList<TaktPurchaseInfoItem> FindItems(long headerId)
+        public IReadOnlyList<TaktPurchaseConditionItem> FindItems(long headerId)
         {
             return _itemsByHeaderId.TryGetValue(headerId, out var list)
                 ? list
-                : Array.Empty<TaktPurchaseInfoItem>();
+                : Array.Empty<TaktPurchaseConditionItem>();
         }
 
         /// <summary>
@@ -1921,11 +1923,11 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
         /// </summary>
         /// <param name="itemId">条件行 Id</param>
         /// <returns>数量等级</returns>
-        public IReadOnlyList<TaktPurchaseInfoScaleQuantity> FindQuantityScales(long itemId)
+        public IReadOnlyList<TaktPurchaseConditionScaleQuantity> FindQuantityScales(long itemId)
         {
             return _quantityByItemId.TryGetValue(itemId, out var list)
                 ? list
-                : Array.Empty<TaktPurchaseInfoScaleQuantity>();
+                : Array.Empty<TaktPurchaseConditionScaleQuantity>();
         }
 
         /// <summary>
@@ -1933,12 +1935,21 @@ public class TaktBomCalculateService : TaktServiceBase, ITaktBomCalculateService
         /// </summary>
         /// <param name="itemId">条件行 Id</param>
         /// <returns>价值等级</returns>
-        public IReadOnlyList<TaktPurchaseInfoScaleValue> FindValueScales(long itemId)
+        public IReadOnlyList<TaktPurchaseConditionScaleValue> FindValueScales(long itemId)
         {
             return _valueByItemId.TryGetValue(itemId, out var list)
                 ? list
-                : Array.Empty<TaktPurchaseInfoScaleValue>();
+                : Array.Empty<TaktPurchaseConditionScaleValue>();
         }
+    }
+
+    /// <summary>
+    /// 本次 Quartz 选中的目标库；页面直接计算时为空
+    /// </summary>
+    /// <returns>目标库名</returns>
+    private static string ResolveLogTargetDatabase()
+    {
+        return TaktQuartzRunScope.TargetDatabase ?? string.Empty;
     }
 
     /// <summary>

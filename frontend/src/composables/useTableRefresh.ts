@@ -4,13 +4,13 @@
 // 文件名称：useTableRefresh.ts
 // 创建时间：2026-06-06
 // 创建人：Takt365(Cursor AI)
-// 功能描述：订阅 table:refresh（租户/公司切换时由全局事件发出），刷新列表/树数据
+// 功能描述：订阅 table:refresh（租户/公司切换时由全局事件发出），仅当前可见页刷新列表/树数据
 //
 // 版权信息：Copyright (c) 2025 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
 // ========================================
 
-import { onMounted, onUnmounted } from 'vue';
+import { onActivated, onDeactivated, onMounted, onUnmounted } from 'vue';
 import { useEventBus } from '@/utils/eventBus';
 
 /**
@@ -24,6 +24,8 @@ export function useTableRefresh(
   tableName?: string,
 ): void {
   const { on, off } = useEventBus();
+  /** 当前页是否已订阅；离开缓存页时退订，避免后台刷新改写隐藏页 */
+  let listening = false;
 
   /**
    * 处理 table:refresh 事件
@@ -36,11 +38,30 @@ export function useTableRefresh(
     void reload();
   };
 
-  onMounted(() => {
+  /**
+   * 仅当前可见页订阅刷新
+   */
+  function subscribe(): void {
+    if (listening) {
+      return;
+    }
+    listening = true;
     on('table:refresh', handleTableRefresh);
-  });
+  }
 
-  onUnmounted(() => {
+  /**
+   * 离开页面或销毁时退订
+   */
+  function unsubscribe(): void {
+    if (!listening) {
+      return;
+    }
+    listening = false;
     off('table:refresh', handleTableRefresh);
-  });
+  }
+
+  onMounted(subscribe);
+  onActivated(subscribe);
+  onDeactivated(unsubscribe);
+  onUnmounted(unsubscribe);
 }

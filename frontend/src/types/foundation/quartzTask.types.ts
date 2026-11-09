@@ -945,3 +945,31 @@ export interface QuartzTaskExport {
 
 }
 
+/**
+ * 同步前主子表关系问题行（编码、行号、主键）
+ */
+export interface QuartzRelationIssueRow {
+  /** orphan 或 empty */
+  issueKind: string;
+  /** 业务编码 */
+  businessCode: string;
+  /** 明细行号 */
+  lineNumber: string;
+  /** 源表主键 */
+  rowId: string;
+  /** 表格行键 */
+  rowKey?: string;
+}
+
+/**
+ * 关系清单分页查询
+ */
+export interface QuartzRelationIssueQuery extends TaktPagedQuery {
+  /** 脚本文件名 */
+  script: string;
+  /** 源库 */
+  sourceDatabase: string;
+  /** orphan 或 empty */
+  issueKind: string;
+}
+

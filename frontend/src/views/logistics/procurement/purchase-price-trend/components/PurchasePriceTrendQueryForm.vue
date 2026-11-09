@@ -8,8 +8,14 @@
 <!-- ======================================== -->
 
 <template>
-  <div class="takt-query-bar purchase-price-trend-query-bar">
-    <div class="purchase-price-trend-query-bar__fields min-w-0 flex flex-1 flex-wrap items-center gap-x-3 gap-y-2">
+  <TaktQueryBar
+    :show-keyword="false"
+    :loading="props.loading"
+    @search="emit('search')"
+    @reset="emit('reset')"
+  >
+    <template #leading>
+<div class="purchase-price-trend-query-bar__fields min-w-0 flex flex-1 flex-wrap items-center gap-x-3 gap-y-2">
       <div class="flex items-center gap-1">
         <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.periodRange`) }}</span>
         <a-range-picker
@@ -28,7 +34,7 @@
         />
       </div>
       <div class="flex items-center gap-1">
-        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('entity.purchaseinfo.pricetype') }}</span>
+        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('entity.purchasecondition.pricetype') }}</span>
         <TaktSelect
           :key="priceTypeSelectKey"
           v-model:value="priceType"
@@ -42,7 +48,7 @@
         />
       </div>
       <div class="flex items-center gap-1">
-        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('entity.purchaseinfo.suppliercode') }}</span>
+        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('entity.purchasecondition.suppliercode') }}</span>
         <TaktSelect
           :key="supplierSelectKey"
           v-model:value="supplierCode"
@@ -56,7 +62,7 @@
         />
       </div>
       <div class="flex items-center gap-1">
-        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('entity.purchaseinfo.materialcode') }}</span>
+        <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('entity.purchasecondition.materialcode') }}</span>
         <TaktSelect
           :key="materialSelectKey"
           v-model:value="materialCode"
@@ -70,36 +76,14 @@
         />
       </div>
     </div>
-    <a-space class="query-actions">
-      <a-button
-        class="takt-button-query"
-        :loading="props.loading"
-        @click="emit('search')"
-      >
-        <template #icon>
-          <RiSearchLine class="takt-remix-icon" />
-        </template>
-        {{ t('common.page.button.query') }}
-      </a-button>
-      <a-button
-        class="takt-button-reset"
-        :disabled="props.loading"
-        @click="emit('reset')"
-      >
-        <template #icon>
-          <RiRefreshLine class="takt-remix-icon" />
-        </template>
-        {{ t('common.page.button.reset') }}
-      </a-button>
-    </a-space>
-  </div>
+    </template>
+  </TaktQueryBar>
 </template>
 
 <script setup lang="ts">
 /**
  * 采购价格推移查询栏：工厂/期间/条件类型必选；供应商、物料可选
  */
-import { RiSearchLine, RiRefreshLine } from '@remixicon/vue'
 import { useI18n } from 'vue-i18n'
 import {
   getPurchasePriceTrendMaterialOptionsUrl,

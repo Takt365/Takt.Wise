@@ -14,18 +14,31 @@ export default {
   page: {
     tabs: {
       board: 'Board',
-      impl: 'Implementation',
-      batch: 'Batch',
+      /** PC → Mfg2 → Mfg1 → Qc (same row grain) */
+      production: 'Batch',
+      pur: 'Purchasing',
+      iqc: 'IQC',
+      mc: 'MC',
+      mtl: 'Material',
     },
     kpi: {
       ecTotal: 'EC count',
     },
     charts: {
-      statusTitle: 'Implementation status',
-      deptTitle: 'Dept execution rows (done / open)',
+      statusTitle: 'Dept implemented vs not',
+      sunburstTitle: 'Sunburst: master → detail → depts → done/open',
       monthTitle: 'EC entries by month',
       implemented: 'Implemented',
       notImplemented: 'Not implemented',
+      masterRing: 'Master',
+      detailRing: 'Detail',
+      deptRing: 'Dept exec',
+      tooltipMaster: 'Master rows',
+      tooltipDetail: 'Detail rows',
+      tooltipDept: 'Dept',
+      tooltipDeptRows: 'Dept rows',
+      tooltipImplemented: 'Implemented',
+      tooltipNotImplemented: 'Not implemented',
     },
     filter: {
       implementationStatus: 'Implemented',
@@ -49,6 +62,13 @@ export default {
       me: 'MFG technology',
     },
     implemented: 'done',
+    /** Purchasing / IQC / MC / Material row summary (empty hits keep labels, blank numbers) */
+    deptCount: {
+      summary: '{rows}:{done}:{pending}',
+      empty: '',
+      tooltip: 'Detail:{rows},Done:{done},Open:{pending}',
+      tooltipEmpty: '',
+    },
     pathLabel: {
       pc: 'PC',
       pur: 'Purchasing',
@@ -74,6 +94,7 @@ export default {
       inProgress: 'In progress',
       officiallyCompleted: 'Officially completed',
       fullyCompleted: 'Fully completed',
+      deptCompleted: 'Completed',
     },
     batch: {
       group: {
@@ -99,15 +120,16 @@ export default {
         entryDate: 'Entry date',
         orderDate: 'Order date',
         orderCode: 'Order No.',
+        inboundDate: 'Inbound date',
         scheduledInput: 'Planned input',
         productionSchedule: 'Production plan',
         inspectionDate: 'Inspection date',
-        iqcOrderCode: 'IQC order',
         outboundDate: 'Outbound date',
         outboundBatch: 'Issue batch',
         productionDate: 'Production date',
         productionBatch: 'Production batch',
         sampleDate: 'Sample date',
+        sampleBatch: 'Sample batch',
         sopDate: 'SOP date',
       },
     },

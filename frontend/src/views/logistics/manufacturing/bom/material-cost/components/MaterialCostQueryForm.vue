@@ -7,8 +7,14 @@
 <!-- ======================================== -->
 
 <template>
-  <div class="takt-query-bar material-cost-query-bar">
-    <div class="material-cost-query-bar__fields min-w-0 flex flex-1 flex-wrap items-center gap-x-3 gap-y-2">
+  <TaktQueryBar
+    :show-keyword="false"
+    :loading="props.loading"
+    @search="emit('search')"
+    @reset="emit('reset')"
+  >
+    <template #leading>
+<div class="material-cost-query-bar__fields min-w-0 flex flex-1 flex-wrap items-center gap-x-3 gap-y-2">
       <div class="flex items-center gap-1">
         <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t('logistics.manufacturing.bom.material-cost.page.costingMonth') }}</span>
         <a-date-picker
@@ -49,29 +55,8 @@
         />
       </div>
     </div>
-    <a-space class="query-actions">
-      <a-button
-        class="takt-button-query"
-        :loading="props.loading"
-        @click="emit('search')"
-      >
-        <template #icon>
-          <RiSearchLine class="takt-remix-icon" />
-        </template>
-        {{ t('common.page.button.query') }}
-      </a-button>
-      <a-button
-        class="takt-button-reset"
-        :disabled="props.loading"
-        @click="emit('reset')"
-      >
-        <template #icon>
-          <RiRefreshLine class="takt-remix-icon" />
-        </template>
-        {{ t('common.page.button.reset') }}
-      </a-button>
-    </a-space>
-  </div>
+    </template>
+  </TaktQueryBar>
 </template>
 
 <script setup lang="ts">
@@ -79,7 +64,6 @@
  * 浏览页查询栏：工厂 → 期间 → 物料类型（本表去重）→ 机种（本表去重，按类型过滤）
  * 与分析/推移同源 TaktBomCostOptions/*-options，避免字典/型号目的地与汇总表脱节
  */
-import { RiSearchLine, RiRefreshLine } from '@remixicon/vue'
 import { useI18n } from 'vue-i18n'
 import { getBomCostOptionModelOptionsUrl } from '@/api/logistics/manufacturing/bom/costOption.api'
 import type { TaktSelectOption } from '@/types/common.types'

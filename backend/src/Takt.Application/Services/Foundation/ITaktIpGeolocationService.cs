@@ -25,4 +25,17 @@ public interface ITaktIpGeolocationService
     /// <param name="ip">IPv4 或 IPv6</param>
     /// <returns>归属结果；格式非法时抛业务异常；未命中时 Found=false</returns>
     Task<TaktIpGeolocationDto> SearchIpGeolocationAsync(string ip);
+
+    /// <summary>
+    /// 按本机已激活网卡 IP 查询归属（排除回环/隧道/链路本地；优先 IPv4）
+    /// </summary>
+    /// <returns>优先网卡 IP 的归属结果，并在 ActiveHostIps 中列出全部激活地址</returns>
+    Task<TaktIpGeolocationDto> SearchActiveHostIpGeolocationAsync();
+
+    /// <summary>
+    /// 解析访问者公网 IP 并查归属：优先 HTTP 侧公网地址，否则探测本进程出口公网 IP
+    /// </summary>
+    /// <param name="requestClientIp">当前请求客户端 IP（可为 ::1 / 内网）</param>
+    /// <returns>公网 IP 归属结果</returns>
+    Task<TaktIpGeolocationDto> SearchVisitorPublicIpGeolocationAsync(string? requestClientIp);
 }

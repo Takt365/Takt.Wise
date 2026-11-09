@@ -21,18 +21,19 @@ export default {
       loadToForm: '加载到表单',
       plantFromCompany: '公司 {company} → 工厂 {plant}',
       companyRequired: '请先选择公司后再录入来源设变',
-      formTitle: '来源设变导入（请填写设变担当、实施范围并上传附件）',
+      formTitle: '来源设变导入（请填写设变担当、实施范围、旧品处理并上传附件）',
       attachmentRequired: '请至少添加一条附件并上传文件',
       attachmentUploadRequired: '第 {row} 行附件尚未上传文件',
       importSelecmed: '导入选中（{count}）',
       importSuccess: '已成功导入 {count} 条设变',
       importPartial: '导入完成：成功 {success} 条，失败 {fail} 条',
-      detailsDeferred: '明细共 {count} 行，已改由服务端落库（不经浏览器回传），请填写设变担当与实施范围后提交',
+      detailsDeferred: '明细共 {count} 行，已改由服务端落库（不经浏览器回传），请填写设变担当、实施范围与旧品处理后提交',
     },
     attachment: {
       docCode: {
         formatInvalid: '文件编码格式不正确（{hint}）',
         duplicate: '文件编码「{code}」已存在，不可重复',
+        sequence: '4位序号',
         hint: {
           empty: '请输入文件编码',
           ec: '与设变单号一致',
@@ -52,6 +53,11 @@ export default {
     tabs: {
       oldNewMaterial: '旧新物料',
       scope: '实施范围',
+      oldPart: '旧品处理',
+    },
+    oldPart: {
+      empty: '明细中暂无有效旧物料（已排除空与占位「0」）',
+      dispositionRequired: '请在「旧品处理」页签为全部旧物料选择处理方式',
     },
     scopeDepts: {
       master: '控制范围',
@@ -67,6 +73,11 @@ export default {
       me: '制技',
       nonFert: '非FERT',
       discontinued: '停产',
+      oldNewMaterialGroup: '旧/新物料回填物料编码组',
+      mcNewMaterialGroup: '新物料非C003采购件回填物料编码组',
+      mtlNewMaterialGroup: '新物料C003采购件回填物料编码组',
+      purNewMaterialGroup: '新物料采购回填物料编码组',
+      iqcNewMaterialGroup: '新物料检验回填物料编码组',
     },
     persist: {
       submitted: '已提交设变 {ecCode} 后台{action}（明细 {detailCount} 行，含各部门执行派生），完成后将通知您',

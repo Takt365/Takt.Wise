@@ -14,7 +14,20 @@
       :loading="loading"
       @search="handleSearch"
       @reset="handleQueryReset"
-    />
+    >
+      <template #leading>
+        <a-range-picker
+          v-model:value="listPeriodRange"
+          picker="month"
+          format="YYYY-MM"
+          value-format="YYYY-MM"
+          :placeholder="[t('common.page.form.periodRange'), t('common.page.form.periodRange')]"
+          :disabled-date="listPeriodLimit.disabledDate"
+          @calendar-change="listPeriodLimit.onCalendarChange"
+          @open-change="listPeriodLimit.onOpenChange"
+        />
+      </template>
+    </TaktQueryBar>
     <TaktToolsBar
       create-permission="logistics:manufacturing:mds:sales:forecast:create"
       update-permission="logistics:manufacturing:mds:sales:forecast:update"
@@ -29,7 +42,7 @@
 
       :show-import="true"
       :show-export="true"
-      :show-advanced-query="false"
+      :show-advanced-query="true"
       :show-column-setting="true"
       :show-fullscreen="true"
       :import-disabled="!hasMasterSelection"
@@ -38,6 +51,7 @@
       :export-loading="loading"
       @import="handleImport"
       @export="handleExport"
+      @advanced-query="handleAdvancedQuery"
       @column-setting="handleColumnSetting"
       :create-disabled="!hasMasterSelection"
       :update-disabled="updateDisabled"
@@ -113,6 +127,193 @@
       />
     </TaktModal>
 
+    <TaktQueryDrawer
+      v-model:open="advancedQueryVisible"
+      v-model:visible-field-keys="visibleQueryFieldKeys"
+      :fields="queryFieldsMeta"
+      storage-key="takt-query-fields-logistics-manufacturing-mds-sales-forecast-sales-forecast-item"
+      :form-model="advancedQueryForm"
+      @submit="handleAdvancedQuerySubmit"
+      @reset="handleAdvancedQueryReset"
+    >
+      <template #default="{ isFieldVisible }">
+      <div v-show="isFieldVisible('cultureCode')">
+      <a-form-item :label="pi.queryLabel('cultureCode')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.cultureCode"
+          dict-type="sys_culture_code"
+          :placeholder="pi.queryPh('cultureCode', 'select')"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('salesForecastCode')">
+      <a-form-item :label="pi.queryLabel('salesForecastCode')">
+        <a-input
+          v-model:value="advancedQueryForm.salesForecastCode"
+          :placeholder="pi.queryPh('salesForecastCode', 'required')"
+          show-count
+          :maxlength="20"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('lineNumber')">
+      <a-form-item :label="pi.queryLabel('lineNumber')">
+        <a-input-number
+          v-model:value="advancedQueryForm.lineNumber"
+          :placeholder="pi.queryPh('lineNumber', 'required')"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('fiscalYear')">
+      <a-form-item :label="pi.queryLabel('fiscalYear')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.fiscalYear"
+          api-url="TaktFinancialPeriods/options"
+          :placeholder="pi.queryPh('fiscalYear', 'select')"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('planMonth')">
+      <a-form-item :label="pi.queryLabel('planMonth')">
+        <a-input-number
+          v-model:value="advancedQueryForm.planMonth"
+          :placeholder="pi.queryPh('planMonth', 'required')"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('versionNo')">
+      <a-form-item :label="pi.queryLabel('versionNo')">
+        <a-input-number
+          v-model:value="advancedQueryForm.versionNo"
+          :placeholder="pi.queryPh('versionNo', 'required')"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('planQuantity')">
+      <a-form-item :label="pi.queryLabel('planQuantity')">
+        <a-input-number
+          v-model:value="advancedQueryForm.planQuantity"
+          :placeholder="pi.queryPh('planQuantity', 'required')"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('planQuantityDelta')">
+      <a-form-item :label="pi.queryLabel('planQuantityDelta')">
+        <a-input-number
+          v-model:value="advancedQueryForm.planQuantityDelta"
+          :placeholder="pi.queryPh('planQuantityDelta', 'required')"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('convertedQuantity')">
+      <a-form-item :label="pi.queryLabel('convertedQuantity')">
+        <a-input-number
+          v-model:value="advancedQueryForm.convertedQuantity"
+          :placeholder="pi.queryPh('convertedQuantity', 'required')"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('estimatedUnitPrice')">
+      <a-form-item :label="pi.queryLabel('estimatedUnitPrice')">
+        <a-input-number
+          v-model:value="advancedQueryForm.estimatedUnitPrice"
+          :placeholder="pi.queryPh('estimatedUnitPrice', 'required')"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('estimatedAmount')">
+      <a-form-item :label="pi.queryLabel('estimatedAmount')">
+        <a-input-number
+          v-model:value="advancedQueryForm.estimatedAmount"
+          :placeholder="pi.queryPh('estimatedAmount', 'required')"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('isObsolete')">
+      <a-form-item :label="pi.queryLabel('isObsolete')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.isObsolete"
+          dict-type="sys_yes_no"
+          :placeholder="pi.queryPh('isObsolete', 'select')"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('createdAtStart')">
+      <a-form-item :label="pi.queryLabel('createdAtStart')">
+        <a-date-picker
+          v-model:value="advancedQueryForm.createdAtStart"
+          :placeholder="pi.queryPh('createdAtStart', 'select')"
+          value-format="YYYY-MM-DD HH:mm:ss"
+            show-time
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('createdAtEnd')">
+      <a-form-item :label="pi.queryLabel('createdAtEnd')">
+        <a-date-picker
+          v-model:value="advancedQueryForm.createdAtEnd"
+          :placeholder="pi.queryPh('createdAtEnd', 'select')"
+          value-format="YYYY-MM-DD HH:mm:ss"
+            show-time
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('extField')">
+      <a-form-item
+        name="extField"
+        class="takt-form-item-ext-field"
+        :label-col="{ style: { width: 'auto', maxWidth: 'none', flex: '0 0 auto' } }"
+        :wrapper-col="{ style: { flex: '1 1 0', minWidth: 0 } }"
+      >
+        <template #label>
+          <span class="takt-form-ext-field-label">
+            <a-tooltip
+              :title="t('common.page.entity.extfieldhint')"
+              placement="top"
+            >
+              <span class="takt-form-label-hint-icon"><RiQuestionLine class="takt-remix-icon" /></span>
+            </a-tooltip>
+            <span>{{ pi.queryLabel('extField') }}</span>
+          </span>
+        </template>
+        <a-textarea
+          v-model:value="advancedQueryForm.extField"
+          :placeholder="t('common.page.form.placeholder.extfield')"
+            :rows="4"
+            show-count
+            :maxlength="400"
+            allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('remark')">
+      <a-form-item :label="pi.queryLabel('remark')">
+        <a-textarea
+          v-model:value="advancedQueryForm.remark"
+          :placeholder="pi.queryPh('remark', 'optional')"
+            :rows="4"
+            show-count
+            :maxlength="400"
+            allow-clear
+        />
+      </a-form-item>
+      </div>
+      </template>
+    </TaktQueryDrawer>
     <!-- 导入对话框 -->
     <TaktModal
       v-model:open="importVisible"
@@ -157,8 +358,9 @@
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { useListPeriodQuery } from '@/composables/useListPeriodQuery'
 import { measureMasterDetailLrTableScrollY } from '@/composables/useTaktMasterDetailLrScrollY'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
 import { TAKT_TABLE_SCROLL_Y_MIN } from '@/utils/tableScroll'
 import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 import { taktExcelEntityNames } from '@/utils/naming'
@@ -172,7 +374,7 @@ import {
 } from '@/utils/tableColumns'
 import { formatSummaryValue } from '@/components/business/TaktEditableTable/editableTableUtils'
 import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
-import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
+import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 import SalesForecastItemForm from './SalesForecastItemForm.vue'
 import { useSalesForecastMasterContext } from '../composables/useSalesForecastMasterContext'
 import {
@@ -251,6 +453,21 @@ const currentPage = ref(getTaktDefaultPageIndex())
 const pageSize = ref(getTaktDefaultPageSize())
 const total = ref(0)
 const queryKeyword = ref('')
+
+/** 查询栏期间（默认当前月；创建日期） */
+const {
+  range: listPeriodRange,
+  limit: listPeriodLimit,
+  reset: resetListPeriod,
+  hasPeriod: hasListPeriod,
+  applyDateRange: applyListPeriodDate,
+} = useListPeriodQuery()
+
+/** 将查询栏期间写入 createdAtStart / createdAtEnd */
+function applyListPeriod(query: object): void {
+  applyListPeriodDate(query, 'createdAtStart', 'createdAtEnd')
+}
+
 const selecmedRow = ref<SalesForecastItem | null>(null)
 const selecmedRows = ref<SalesForecastItem[]>([])
 const selecmedRowKeys = ref<(string | number)[]>([])
@@ -262,6 +479,98 @@ const formRef = ref()
 /** 表单弹窗宽度：（视口 − 左侧菜单）× 80% */
 const formModalWidthPx = useTaktContentModalWidth()
 
+
+const advancedQueryVisible = ref(false)
+/**
+ * 是否存在任一业务查询条件（分页除外）；无参时不请求列表/导出
+ * @returns {boolean}
+ */
+function hasAnyListQueryFilter(): boolean {
+  const kw = (queryKeyword.value ?? '').trim()
+  if (kw.length > 0) {
+    return true
+  }
+  if (hasListPeriod()) {
+    return true
+  }
+  const form = advancedQueryForm.value
+  for (const key of SALESFORECASTITEM_QUERY_STRING_FIELDS) {
+    if (String(form[key] ?? '').trim().length > 0) {
+      return true
+    }
+  }
+  if (form.lineNumber !== undefined && form.lineNumber !== null) {
+    return true
+  }
+  if (form.planMonth !== undefined && form.planMonth !== null) {
+    return true
+  }
+  if (form.versionNo !== undefined && form.versionNo !== null) {
+    return true
+  }
+  if (form.planQuantity !== undefined && form.planQuantity !== null) {
+    return true
+  }
+  if (form.planQuantityDelta !== undefined && form.planQuantityDelta !== null) {
+    return true
+  }
+  if (form.convertedQuantity !== undefined && form.convertedQuantity !== null) {
+    return true
+  }
+  if (form.estimatedUnitPrice !== undefined && form.estimatedUnitPrice !== null) {
+    return true
+  }
+  if (form.estimatedAmount !== undefined && form.estimatedAmount !== null) {
+    return true
+  }
+  if (form.isObsolete !== undefined && form.isObsolete !== null) {
+    return true
+  }
+  return false
+}
+
+/**
+ * 创建空的高级查询表单（无默认填充；无参时列表保持空）
+ * @returns {Record<string, unknown>} 高级查询初始模型
+ */
+function createEmptyAdvancedQueryForm() {
+  const form = Object.fromEntries(SALESFORECASTITEM_QUERY_STRING_FIELDS.map((key) => [key, ''])) as Record<
+    (typeof SALESFORECASTITEM_QUERY_STRING_FIELDS)[number],
+    string
+  >
+  return {
+    ...form,
+    lineNumber: undefined as number | undefined,
+    planMonth: undefined as number | undefined,
+    versionNo: undefined as number | undefined,
+    planQuantity: undefined as number | undefined,
+    planQuantityDelta: undefined as number | undefined,
+    convertedQuantity: undefined as number | undefined,
+    estimatedUnitPrice: undefined as number | undefined,
+    estimatedAmount: undefined as number | undefined,
+    isObsolete: undefined as number | undefined,  }
+}
+const advancedQueryForm = ref(createEmptyAdvancedQueryForm())
+const visibleQueryFieldKeys = ref<string[]>([])
+
+/** 高级查询字段元数据 */
+const queryFieldsMeta = computed(() =>
+  SALESFORECASTITEM_QUERY_FIELDS.map((key) => ({ key, label: pi.queryLabel(key) })),
+)
+
+function handleAdvancedQuery() {
+  advancedQueryVisible.value = true
+}
+
+function handleAdvancedQuerySubmit() {
+  advancedQueryVisible.value = false
+  currentPage.value = getTaktDefaultPageIndex()
+  void loadData()
+}
+
+function handleAdvancedQueryReset() {
+  advancedQueryForm.value = createEmptyAdvancedQueryForm()
+}
 const columnSettingVisible = ref(false)
 /** 表格当前可见列 key */
 const visibleColumnKeys = ref<string[]>([...SALESFORECASTITEM_DEFAULT_VISIBLE_COLUMN_KEYS])
@@ -309,6 +618,16 @@ const columns = computed<TableColumnsType>(() => [
       String(getSalesForecastItemField(record, 'salesForecastItemId') ?? ''),
   },
   {
+    title: pi.label('salesForecastId'),
+    dataIndex: 'salesForecastId',
+    key: 'salesForecastId',
+    width: 120,
+    resizable: true,
+    ellipsis: true,
+    customRender: ({ record }: { record: SalesForecastItem }) =>
+      String(getSalesForecastItemField(record, 'salesForecastId') ?? ''),
+  },
+  {
     title: pi.label('salesForecastCode'),
     dataIndex: 'salesForecastCode',
     key: 'salesForecastCode',
@@ -349,24 +668,24 @@ const columns = computed<TableColumnsType>(() => [
       String(getSalesForecastItemField(record, 'planMonth') ?? ''),
   },
   {
-    title: pi.label('planQuantity001'),
-    dataIndex: 'planQuantity001',
-    key: 'planQuantity001',
+    title: pi.label('versionNo'),
+    dataIndex: 'versionNo',
+    key: 'versionNo',
     width: 120,
     resizable: true,
     ellipsis: true,
     customRender: ({ record }: { record: SalesForecastItem }) =>
-      String(getSalesForecastItemField(record, 'planQuantity001') ?? ''),
+      String(getSalesForecastItemField(record, 'versionNo') ?? ''),
   },
   {
-    title: pi.label('planQuantity002'),
-    dataIndex: 'planQuantity002',
-    key: 'planQuantity002',
+    title: pi.label('planQuantity'),
+    dataIndex: 'planQuantity',
+    key: 'planQuantity',
     width: 120,
     resizable: true,
     ellipsis: true,
     customRender: ({ record }: { record: SalesForecastItem }) =>
-      String(getSalesForecastItemField(record, 'planQuantity002') ?? ''),
+      String(getSalesForecastItemField(record, 'planQuantity') ?? ''),
   },
   {
     title: pi.label('planQuantityDelta'),
@@ -417,16 +736,6 @@ const columns = computed<TableColumnsType>(() => [
     ellipsis: true,
     customRender: ({ record }: { record: SalesForecastItem }) =>
       String(getSalesForecastItemField(record, 'isObsolete') ?? ''),
-  },
-  {
-    title: pi.label('remark'),
-    dataIndex: 'remark',
-    key: 'remark',
-    width: 120,
-    resizable: true,
-    ellipsis: true,
-    customRender: ({ record }: { record: SalesForecastItem }) =>
-      String(getSalesForecastItemField(record, 'remark') ?? ''),
   },
   CreateActionColumn({
     actions: [
@@ -582,6 +891,34 @@ function buildListQuery(overrides?: Partial<SalesForecastItemQuery>): SalesForec
   for (const key of SALESFORECASTITEM_QUERY_STRING_FIELDS) {
     assignTrimmed(key, form[key])
   }
+  if (form.lineNumber !== undefined && form.lineNumber !== null) {
+    query.lineNumber = form.lineNumber
+  }
+  if (form.planMonth !== undefined && form.planMonth !== null) {
+    query.planMonth = form.planMonth
+  }
+  if (form.versionNo !== undefined && form.versionNo !== null) {
+    query.versionNo = form.versionNo
+  }
+  if (form.planQuantity !== undefined && form.planQuantity !== null) {
+    query.planQuantity = form.planQuantity
+  }
+  if (form.planQuantityDelta !== undefined && form.planQuantityDelta !== null) {
+    query.planQuantityDelta = form.planQuantityDelta
+  }
+  if (form.convertedQuantity !== undefined && form.convertedQuantity !== null) {
+    query.convertedQuantity = form.convertedQuantity
+  }
+  if (form.estimatedUnitPrice !== undefined && form.estimatedUnitPrice !== null) {
+    query.estimatedUnitPrice = form.estimatedUnitPrice
+  }
+  if (form.estimatedAmount !== undefined && form.estimatedAmount !== null) {
+    query.estimatedAmount = form.estimatedAmount
+  }
+  if (form.isObsolete !== undefined && form.isObsolete !== null) {
+    query.isObsolete = form.isObsolete
+  }
+  applyListPeriod(query)
   return query
 }
 
@@ -659,6 +996,7 @@ function handleSearch() {
 
 function handleQueryReset() {
   queryKeyword.value = ''
+  resetListPeriod()
   currentPage.value = getTaktDefaultPageIndex()
   void loadData()
 }

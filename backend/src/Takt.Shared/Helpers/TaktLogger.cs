@@ -1,4 +1,4 @@
-﻿// ========================================
+// ========================================
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Shared.Helpers
 // 文件名称：TaktLogger.cs
@@ -332,6 +332,7 @@ public static class TaktLogger
         }
 
         using var scope = BeginScope(context);
+        messageTemplate = TaktQuartzRunScope.PrefixMessage(messageTemplate);
         var values = propertyValues ?? Array.Empty<object?>();
 
         if (exception == null)

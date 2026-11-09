@@ -51,6 +51,12 @@ public class TaktMaterialRequirementsPlanningItem : TaktCompanyEntityBase
     public string MaterialCode { get; set; } = string.Empty;
 
     /// <summary>
+    /// 计划批次（来自 MPS 行；发布时写入生产计划与计划订单，正式工单写入 ProdBatch）
+    /// </summary>
+    [SugarColumn(ColumnName = "planned_batch", ColumnDescription = "计划批次", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? PlannedBatch { get; set; }
+
+    /// <summary>
     /// 物料描述（冗余：按 MaterialCode 取 TaktMaterialPlant.MaterialDescription联动）
     /// </summary>
     [SugarColumn(ColumnName = "material_description", ColumnDescription = "物料描述", ColumnDataType = "nvarchar", Length = 40, IsNullable = false)]

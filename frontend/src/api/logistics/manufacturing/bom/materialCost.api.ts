@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/api/logistics/manufacturing/bom
 // 文件名称：materialCost.api.ts
-// 创建时间：2026-08-11
+// 创建时间：2026-11-02
 // 创建人：Takt365(Auto Generated)
 // 功能描述：logistics/manufacturing/bom 模块 API（自动生成，请勿手改路由常量）
 // 
@@ -51,8 +51,11 @@ export function getBomMaterialCostList(queryDto: any): Promise<TaktPagedResult<B
  */
 export function getBomMaterialCostById(id: string): Promise<BomMaterialCost> {
   return request<BomMaterialCost>({
-    url: `${BOM_MATERIAL_COST_API_BASE}/${id}`,
+    url: `${BOM_MATERIAL_COST_API_BASE}/{id:long}`,
     method: 'get',
+    params: {
+      id
+    },
   });
 }
 
@@ -114,21 +117,17 @@ export function deleteBomMaterialCostBatch(ids: string[]): Promise<void> {
 
 /**
  * 获取材料成本选项列表
+ * @param {string} plantCode 工厂代码（可选，用于按工厂过滤）
+ * @param {string} keyword 搜索关键字（可选，模糊匹配）
  * @returns {Promise<TaktSelectOption[]>} 下拉选项
  */
-export function getBomMaterialCostOptions(
-  plantCode?: string,
-  keyword?: string
-): Promise<TaktSelectOption[]> {
-  const plant = plantCode?.trim()
-  const kw = keyword?.trim()
+export function getBomMaterialCostOptions(plantCode?: string, keyword?: string): Promise<TaktSelectOption[]> {
   return request<TaktSelectOption[]>({
     url: `${BOM_MATERIAL_COST_API_BASE}/options`,
     method: 'get',
     params: {
-      
-      ...(plant ? { plantCode: plant } : {}),
-      ...(kw ? { keyword: kw } : {}),
+      plantCode,
+      keyword
     },
   });
 }

@@ -18,15 +18,14 @@ export {
   type TaktEcDeptCode as TaktEcExecCode,
 } from './ecDeptCodes.constants';
 
-/** 看板列顺序（与后端 TaktEcDeptCodes.KanbanOrder 一致；不含技术课） */
+/** 看板列顺序：与后端 KanbanOrder 展示段一致（生管→制二→制一→品管→采购→受检→部管→物料；页签不含制技） */
 export const TaktEcKanbanOrder: readonly string[] = [
   TaktEcDeptCodes.Pc,
+  TaktEcDeptCodes.Mfg2,
+  TaktEcDeptCodes.Mfg1,
+  TaktEcDeptCodes.Qc,
   TaktEcDeptCodes.Pur,
   TaktEcDeptCodes.Iqc,
   TaktEcDeptCodes.Mc,
   TaktEcDeptCodes.Mtl,
-  TaktEcDeptCodes.Mfg2,
-  TaktEcDeptCodes.Mfg1,
-  TaktEcDeptCodes.Qc,
-  TaktEcDeptCodes.Me,
 ];

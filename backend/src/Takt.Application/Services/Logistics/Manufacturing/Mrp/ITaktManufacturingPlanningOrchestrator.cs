@@ -20,6 +20,13 @@ namespace Takt.Application.Services.Logistics.Manufacturing.Mrp;
 public interface ITaktManufacturingPlanningOrchestrator
 {
     /// <summary>
+    /// 按销售预测各月最新版本生成或刷新 MDS
+    /// </summary>
+    /// <param name="dto">销售预测主键列表</param>
+    /// <returns>编排结果</returns>
+    Task<TaktManufacturingPlanningFlowResultDto> RunMdsFromSalesForecastAsync(TaktMdsRunFromSalesForecastDto dto);
+
+    /// <summary>
     /// 从 MDS 生成或刷新 MPS 明细
     /// </summary>
     /// <param name="dto">MDS 下推参数</param>

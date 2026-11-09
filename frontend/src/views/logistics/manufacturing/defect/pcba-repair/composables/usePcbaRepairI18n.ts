@@ -28,7 +28,7 @@ export const PCBAREPAIR_LIST_FIELDS = [
   'prodOrderCode',
   'prodOrderQty',
   'modelCode',
-  'batchCode',
+  'prodBatch',
   'materialCode',
   'remark',
 ] as const

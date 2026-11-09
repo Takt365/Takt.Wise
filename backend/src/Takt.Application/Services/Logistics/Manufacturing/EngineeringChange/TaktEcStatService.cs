@@ -157,7 +157,7 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
     }
 
     /// <summary>
-    /// 采购课实施行。列：机种编码组、新物料编码、实施、采购订单发行日期
+    /// 采购课实施行。列：机种编码组、新物料编码组、实施、进货日期
     /// </summary>
     private Task<(List<TaktEcDeptReportRowDto> Rows, int Total)> PagePurAsync(
         string plant, DateTime? issueStart, DateTime? issueEndExclusive, DateTime? entryStart, DateTime? entryEndExclusive, string? ecCode, string? keywords, string status, int skip, int take)
@@ -168,9 +168,9 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
             Id = x.Id,
             EcCode = x.EcCode,
             EcModelCodeGroup = x.EcModelCodeGroup,
-            EcNewMaterialCode = x.EcNewMaterialCode,
+            EcNewMaterialCodeGroup = x.EcNewMaterialCodeGroup,
             IsImplemented = x.IsImplemented,
-            PurchaseOrderIssueDate = x.PurchaseOrderIssueDate,
+            InboundDate = x.InboundDate,
         }, skip, take);
     }
 
@@ -194,7 +194,7 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
     }
 
     /// <summary>
-    /// 受检课实施行。列：机种编码组、根物料编码组、新物料编码、新品检验、实施、检验日期、受检单号
+    /// 受检课实施行。列：机种编码组、根物料编码组、新物料编码组、新品检验、实施、检验日期
     /// </summary>
     private Task<(List<TaktEcDeptReportRowDto> Rows, int Total)> PageIqcAsync(
         string plant, DateTime? issueStart, DateTime? issueEndExclusive, DateTime? entryStart, DateTime? entryEndExclusive, string? ecCode, string? keywords, string status, int skip, int take)
@@ -206,16 +206,15 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
             EcCode = x.EcCode,
             EcModelCodeGroup = x.EcModelCodeGroup,
             EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup,
-            EcNewMaterialCode = x.EcNewMaterialCode,
+            EcNewMaterialCodeGroup = x.EcNewMaterialCodeGroup,
             EcNewRequiresInspection = x.EcNewRequiresInspection,
             IsImplemented = x.IsImplemented,
             InspectionDate = x.InspectionDate,
-            IqcOrderCode = x.IqcOrderCode,
         }, skip, take);
     }
 
     /// <summary>
-    /// 部管课实施行。列：机种编码组、根物料编码组、新物料编码、新品仓库、实施、预定日期、预定批次
+    /// 部管课实施行。列：机种编码组、根物料编码组、新物料编码组、新品仓库、实施、预定日期、预定批次
     /// </summary>
     private Task<(List<TaktEcDeptReportRowDto> Rows, int Total)> PageMcAsync(
         string plant, DateTime? issueStart, DateTime? issueEndExclusive, DateTime? entryStart, DateTime? entryEndExclusive, string? ecCode, string? keywords, string status, int skip, int take)
@@ -227,7 +226,7 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
             EcCode = x.EcCode,
             EcModelCodeGroup = x.EcModelCodeGroup,
             EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup,
-            EcNewMaterialCode = x.EcNewMaterialCode,
+            EcNewMaterialCodeGroup = x.EcNewMaterialCodeGroup,
             EcNewWarehouse = x.EcNewWarehouse,
             IsImplemented = x.IsImplemented,
             ScheduledDate = x.ScheduledDate,
@@ -248,7 +247,7 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
             EcCode = x.EcCode,
             EcModelCodeGroup = x.EcModelCodeGroup,
             EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup,
-            EcNewMaterialCode = x.EcNewMaterialCode,
+            EcNewMaterialCodeGroup = x.EcNewMaterialCodeGroup,
             EcNewWarehouse = x.EcNewWarehouse,
             IsImplemented = x.IsImplemented,
             ScheduledDate = x.ScheduledDate,
@@ -257,7 +256,7 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
     }
 
     /// <summary>
-    /// 制造二课实施行。列：机种编码组、根物料编码组、实施、生产日期、实施批次
+    /// 制造二课实施行。列：机种编码组、根物料编码组、实施、生产日期、生产批次
     /// </summary>
     private Task<(List<TaktEcDeptReportRowDto> Rows, int Total)> PageMfg2Async(
         string plant, DateTime? issueStart, DateTime? issueEndExclusive, DateTime? entryStart, DateTime? entryEndExclusive, string? ecCode, string? keywords, string status, int skip, int take)
@@ -271,7 +270,7 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
             EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup,
             IsImplemented = x.IsImplemented,
             ProductionDate = x.ProductionDate,
-            ImplementationBatch = x.ImplementationBatch,
+            ProductionBatch = x.ProductionBatch,
         }, skip, take);
     }
 
@@ -290,12 +289,12 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
             EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup,
             IsImplemented = x.IsImplemented,
             ProductionDate = x.ProductionDate,
-            ImplementationBatch = x.ImplementationBatch,
+            ProductionBatch = x.ProductionBatch,
         }, skip, take);
     }
 
     /// <summary>
-    /// 品管课实施行。列：机种编码组、根物料编码组、实施、检验日期、检验批次
+    /// 品管课实施行。列：机种编码组、根物料编码组、实施、生产日期、生产批次、检验日期、检验批次
     /// </summary>
     private Task<(List<TaktEcDeptReportRowDto> Rows, int Total)> PageQcAsync(
         string plant, DateTime? issueStart, DateTime? issueEndExclusive, DateTime? entryStart, DateTime? entryEndExclusive, string? ecCode, string? keywords, string status, int skip, int take)
@@ -308,6 +307,8 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
             EcModelCodeGroup = x.EcModelCodeGroup,
             EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup,
             IsImplemented = x.IsImplemented,
+            ProductionDate = x.ProductionDate,
+            ProductionBatch = x.ProductionBatch,
             InspectionDate = x.InspectionDate,
             InspectionBatch = x.InspectionBatch,
         }, skip, take);
@@ -560,7 +561,7 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
             EcCode = line.EcCode ?? string.Empty,
             EcModelCodeGroup = line.EcModelCodeGroup,
             EcRootMaterialCodeGroup = line.EcRootMaterialCodeGroup,
-            EcNewMaterialCode = line.EcNewMaterialCode,
+            EcNewMaterialCodeGroup = line.EcNewMaterialCodeGroup,
             EcNewWarehouse = line.EcNewWarehouse,
             EcNewRequiresInspection = line.EcNewRequiresInspection,
             IsImplemented = line.IsImplemented,
@@ -568,11 +569,10 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
             ScheduledDate = FormatDate(line.ScheduledDate),
             ScheduledBatch = line.ScheduledBatch,
             ProductionDate = FormatDate(line.ProductionDate),
-            ImplementationBatch = line.ImplementationBatch,
+            ProductionBatch = line.ProductionBatch,
+            InboundDate = FormatDate(line.InboundDate),
             InspectionDate = FormatDate(line.InspectionDate),
             InspectionBatch = line.InspectionBatch,
-            PurchaseOrderIssueDate = FormatDate(line.PurchaseOrderIssueDate),
-            IqcOrderCode = line.IqcOrderCode,
             SopDate = FormatDate(line.SopDate),
         };
     }
@@ -587,23 +587,23 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
         return tab switch
         {
             TabPur => (
-                ["ecCode", "ecModelCodeGroup", "ecNewMaterialCode", "isImplemented", "purchaseOrderIssueDate"],
-                ["设变单号", "机种编码组", "新物料编码", "实施", "采购订单发行日期"]),
+                ["ecCode", "ecModelCodeGroup", "ecNewMaterialCodeGroup", "isImplemented", "inboundDate"],
+                ["设变单号", "机种编码组", "新物料编码组", "实施", "进货日期"]),
             TabPc => (
                 ["ecCode", "ecModelCodeGroup", "ecRootMaterialCodeGroup", "isImplemented", "scheduledDate", "scheduledBatch"],
                 ["设变单号", "机种编码组", "根物料编码组", "实施", "预定日期", "预定批次"]),
             TabIqc => (
-                ["ecCode", "ecModelCodeGroup", "ecRootMaterialCodeGroup", "ecNewMaterialCode", "ecNewRequiresInspection", "isImplemented", "inspectionDate", "iqcOrderCode"],
-                ["设变单号", "机种编码组", "根物料编码组", "新物料编码", "新品检验", "实施", "检验日期", "受检单号"]),
+                ["ecCode", "ecModelCodeGroup", "ecRootMaterialCodeGroup", "ecNewMaterialCodeGroup", "ecNewRequiresInspection", "isImplemented", "inspectionDate"],
+                ["设变单号", "机种编码组", "根物料编码组", "新物料编码组", "新品检验", "实施", "检验日期"]),
             TabMc or TabMtl => (
-                ["ecCode", "ecModelCodeGroup", "ecRootMaterialCodeGroup", "ecNewMaterialCode", "ecNewWarehouse", "isImplemented", "scheduledDate", "scheduledBatch"],
-                ["设变单号", "机种编码组", "根物料编码组", "新物料编码", "新品仓库", "实施", "预定日期", "预定批次"]),
+                ["ecCode", "ecModelCodeGroup", "ecRootMaterialCodeGroup", "ecNewMaterialCodeGroup", "ecNewWarehouse", "isImplemented", "scheduledDate", "scheduledBatch"],
+                ["设变单号", "机种编码组", "根物料编码组", "新物料编码组", "新品仓库", "实施", "预定日期", "预定批次"]),
             TabMfg2 or TabMfg1 => (
-                ["ecCode", "ecModelCodeGroup", "ecRootMaterialCodeGroup", "isImplemented", "productionDate", "implementationBatch"],
-                ["设变单号", "机种编码组", "根物料编码组", "实施", "生产日期", "实施批次"]),
+                ["ecCode", "ecModelCodeGroup", "ecRootMaterialCodeGroup", "isImplemented", "productionDate", "productionBatch"],
+                ["设变单号", "机种编码组", "根物料编码组", "实施", "生产日期", "生产批次"]),
             TabQc => (
-                ["ecCode", "ecModelCodeGroup", "ecRootMaterialCodeGroup", "isImplemented", "inspectionDate", "inspectionBatch"],
-                ["设变单号", "机种编码组", "根物料编码组", "实施", "检验日期", "检验批次"]),
+                ["ecCode", "ecModelCodeGroup", "ecRootMaterialCodeGroup", "isImplemented", "productionDate", "productionBatch", "inspectionDate", "inspectionBatch"],
+                ["设变单号", "机种编码组", "根物料编码组", "实施", "生产日期", "生产批次", "检验日期", "检验批次"]),
             _ => (
                 ["ecCode", "ecModelCodeGroup", "ecRootMaterialCodeGroup", "isSopUpdated", "sopDate"],
                 ["设变单号", "机种编码组", "根物料编码组", "更新SOP", "SOP日期"]),
@@ -622,7 +622,7 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
             ["ecCode"] = row.EcCode,
             ["ecModelCodeGroup"] = row.EcModelCodeGroup,
             ["ecRootMaterialCodeGroup"] = row.EcRootMaterialCodeGroup,
-            ["ecNewMaterialCode"] = row.EcNewMaterialCode,
+            ["ecNewMaterialCodeGroup"] = row.EcNewMaterialCodeGroup,
             ["ecNewWarehouse"] = row.EcNewWarehouse,
             ["ecNewRequiresInspection"] = YesNo(row.EcNewRequiresInspection),
             ["isImplemented"] = YesNo(row.IsImplemented),
@@ -630,11 +630,10 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
             ["scheduledDate"] = row.ScheduledDate,
             ["scheduledBatch"] = row.ScheduledBatch,
             ["productionDate"] = row.ProductionDate,
-            ["implementationBatch"] = row.ImplementationBatch,
+            ["productionBatch"] = row.ProductionBatch,
+            ["inboundDate"] = row.InboundDate,
             ["inspectionDate"] = row.InspectionDate,
             ["inspectionBatch"] = row.InspectionBatch,
-            ["purchaseOrderIssueDate"] = row.PurchaseOrderIssueDate,
-            ["iqcOrderCode"] = row.IqcOrderCode,
             ["sopDate"] = row.SopDate,
         };
     }
@@ -752,9 +751,9 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
         public string? EcRootMaterialCodeGroup { get; set; }
 
         /// <summary>
-        /// 新物料编码
+        /// 新物料编码组
         /// </summary>
-        public string? EcNewMaterialCode { get; set; }
+        public string? EcNewMaterialCodeGroup { get; set; }
 
         /// <summary>
         /// 新品仓库
@@ -792,9 +791,14 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
         public DateTime? ProductionDate { get; set; }
 
         /// <summary>
-        /// 实施批次
+        /// 生产批次
         /// </summary>
-        public string? ImplementationBatch { get; set; }
+        public string? ProductionBatch { get; set; }
+
+        /// <summary>
+        /// 进货日期
+        /// </summary>
+        public DateTime? InboundDate { get; set; }
 
         /// <summary>
         /// 检验日期
@@ -805,16 +809,6 @@ public class TaktEcStatService : TaktServiceBase, ITaktEcStatService
         /// 检验批次
         /// </summary>
         public string? InspectionBatch { get; set; }
-
-        /// <summary>
-        /// 采购订单发行日期
-        /// </summary>
-        public DateTime? PurchaseOrderIssueDate { get; set; }
-
-        /// <summary>
-        /// 受检单号
-        /// </summary>
-        public string? IqcOrderCode { get; set; }
 
         /// <summary>
         /// SOP 日期

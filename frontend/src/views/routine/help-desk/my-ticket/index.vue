@@ -16,24 +16,23 @@
       @search="handleSearch"
       @reset="handleReset"
     />
-    <div class="mb-2">
-      <a-button
-        v-permission="'routine:help:desk:my:ticket:list'"
-        type="primary"
-        class="takt-button-create"
-        @click="handleCreate"
-      >
-        {{ t('common.page.button.create') }}
-      </a-button>
-      <a-button
-        v-permission="'routine:help:desk:my:ticket:list'"
-        class="ml-2 takt-button-query"
-        :disabled="!selecmedRow"
-        @click="handleOpenWorkflow"
-      >
-        {{ t('routine.help-desk.ticket.page.workflow.title') }}
-      </a-button>
-    </div>
+    <TaktToolsBar
+      create-permission="routine:help:desk:my:ticket:list"
+      :show-create="true"
+      :show-update="false"
+      :show-delete="false"
+      :show-import="false"
+      :show-export="false"
+      :show-advanced-query="false"
+      :show-column-setting="false"
+      :show-fullscreen="false"
+      :show-refresh="true"
+      :create-loading="loading"
+      :refresh-loading="loading"
+      :left-actions="workflowActions"
+      @create="handleCreate"
+      @refresh="loadData"
+    />
     <TaktSingleTable
       :columns="columns"
       entity-scope="company"
@@ -168,6 +167,19 @@ const total = ref(0)
 const selecmedRow = ref<Ticket | null>(null)
 /** 选中 keys */
 const selecmedRowKeys = ref<(string | number)[]>([])
+/** 工具栏：打开工单流程 */
+const workflowActions = computed(() => [
+  {
+    key: 'workflow',
+    label: t('routine.help-desk.ticket.page.workflow.title'),
+    buttonClass: 'takt-button-query',
+    permission: 'routine:help:desk:my:ticket:list',
+    disabled: !selecmedRow.value,
+    onClick: () => {
+      handleOpenWorkflow()
+    },
+  },
+])
 /** 新建弹窗 */
 const formVisible = ref(false)
 /** 表单 loading */

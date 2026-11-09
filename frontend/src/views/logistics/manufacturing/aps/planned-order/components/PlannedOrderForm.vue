@@ -67,6 +67,20 @@
             </a-col>
             <a-col :span="24">
               <a-form-item
+                :label="pi.label('plannedBatch')"
+                name="plannedBatch"
+              >
+                <a-input
+                  v-model:value="formState.plannedBatch"
+                  :placeholder="pi.ph('plannedBatch')"
+                  show-count
+                  :maxlength="40"
+                  allow-clear
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="24">
+              <a-form-item
                 :label="pi.label('remark')"
                 name="remark"
               >

@@ -52,6 +52,10 @@ export interface MaterialRequirementsPlanningItem extends CompanyDtoBase {
    * 物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）
    */
   materialCode?: string;
+  /**
+   * 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+   */
+  plannedBatch?: string;
 
   /**
    * 物料描述（回填：随物料）
@@ -175,6 +179,10 @@ export interface MaterialRequirementsPlanningItemExport {
    * 物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）
    */
   materialCode: string;
+  /**
+   * 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+   */
+  plannedBatch?: string;
 
   /**
    * 物料描述（回填：随物料）

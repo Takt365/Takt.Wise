@@ -16,9 +16,10 @@ export default {
     periodRange: '原価年月',
     modelOptional: '機種（任意、空＝すべて）',
     modelAll: '全機種',
+    materialTypeOptional: '品目タイプ（任意、空＝すべて）',
+    materialTypeAll: '全品目タイプ',
     selectPlantRequired: '工場を選択してください',
     selectPeriodRequired: '原価期間を選択してください',
-    selectMaterialTypeRequired: '品目タイプを選択してください',
     summary:
       '{plant} / {materialType} / {period} / 機種 {model} — 製品 {productCount}（部品差異は {compare}）',
     export: '機種コスト推移を出力',

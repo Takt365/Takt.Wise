@@ -163,11 +163,11 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('batchCode')">
-      <a-form-item :label="t('entity.ipqcorderitem.batchCode')">
+      <div v-show="isFieldVisible('prodBatch')">
+      <a-form-item :label="t('entity.ipqcorderitem.prodBatch')">
         <a-input
-          v-model:value="advancedQueryForm.batchCode"
-          :placeholder="t('common.page.form.placeholder.required', { field: t('entity.ipqcorderitem.batchCode') })"
+          v-model:value="advancedQueryForm.prodBatch"
+          :placeholder="t('common.page.form.placeholder.required', { field: t('entity.ipqcorderitem.prodBatch') })"
           show-count
           :maxlength="50"
           allow-clear
@@ -484,7 +484,7 @@ const advancedQueryForm = ref({
   lineNumber: undefined as number | undefined,
   materialCode: '',
   materialDescription: '',
-  batchCode: '',
+  prodBatch: '',
   productionQuantity: undefined as number | undefined,
   standardCode: '',
   samplingSchemeCode: '',
@@ -511,7 +511,7 @@ const queryFieldsMeta = computed(() => [
   { key: 'lineNumber', label: t('entity.ipqcorderitem.linenumber') },
   { key: 'materialCode', label: t('entity.ipqcorderitem.materialcode') },
   { key: 'materialDescription', label: t('entity.ipqcorderitem.materialdescription') },
-  { key: 'batchCode', label: t('entity.ipqcorderitem.batchCode') },
+  { key: 'prodBatch', label: t('entity.ipqcorderitem.prodBatch') },
   { key: 'productionQuantity', label: t('entity.ipqcorderitem.productionquantity') },
   { key: 'standardCode', label: t('entity.ipqcorderitem.standardcode') },
   { key: 'samplingSchemeCode', label: t('entity.ipqcorderitem.samplingschemecode') },
@@ -578,7 +578,7 @@ function buildListQuery(overrides?: Partial<IpqcOrderItemQuery>): IpqcOrderItemQ
   }
   assignTrimmed('materialCode', form.materialCode)
   assignTrimmed('materialDescription', form.materialDescription)
-  assignTrimmed('batchCode', form.batchCode)
+  assignTrimmed('prodBatch', form.prodBatch)
   if (form.productionQuantity !== undefined && form.productionQuantity !== null) {
     query.productionQuantity = form.productionQuantity
   }
@@ -727,13 +727,13 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getIpqcOrderItemField(record, 'materialDescription') ?? ''
   },
   {
-    title: t('entity.ipqcorderitem.batchCode'),
-    dataIndex: 'batchCode',
-    key: 'batchCode',
+    title: t('entity.ipqcorderitem.prodBatch'),
+    dataIndex: 'prodBatch',
+    key: 'prodBatch',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getIpqcOrderItemField(record, 'batchCode') ?? ''
+    customRender: ({ record }: { record: any }) => getIpqcOrderItemField(record, 'prodBatch') ?? ''
   },
   {
     title: t('entity.ipqcorderitem.productionquantity'),
@@ -955,7 +955,7 @@ function handleReset() {
   lineNumber: undefined as number | undefined,
   materialCode: '',
   materialDescription: '',
-  batchCode: '',
+  prodBatch: '',
   productionQuantity: undefined as number | undefined,
   standardCode: '',
   samplingSchemeCode: '',
@@ -1173,7 +1173,7 @@ function handleAdvancedQueryReset() {
   lineNumber: undefined as number | undefined,
   materialCode: '',
   materialDescription: '',
-  batchCode: '',
+  prodBatch: '',
   productionQuantity: undefined as number | undefined,
   standardCode: '',
   samplingSchemeCode: '',

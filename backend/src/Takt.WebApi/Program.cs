@@ -217,6 +217,7 @@ try
     builder.Services.AddTaktValidators();
     builder.Services.AddTaktOpenApi();
     builder.Services.AddTaktServices(builder.Configuration);
+    builder.Services.AddTaktIpGeolocationHttp();
     builder.Services.AddTaktQuartz(builder.Configuration);
     builder.Services.Configure<ForwardedHeadersOptions>(options =>
     {

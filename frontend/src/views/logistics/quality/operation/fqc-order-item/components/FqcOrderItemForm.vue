@@ -275,7 +275,7 @@ const formContentClass = computed(() => (formFields.length > 10 ? 'takt-form-con
 /** 当前激活的 Tab key */
 const activeTab = ref('tab-0')
 /** CreateDto 字段名列表（与 formState 键对齐） */
-const formFields = ["tenantCode","companyCode","cultureCode","fqcOrderId","fqcOrderCode","lineNumber","materialCode","materialDescription","batchCode","warehouseQuantity","standardCode","samplingSchemeCode","inspectionMethod","sampleQuantity","qualifiedQuantity","unqualifiedQuantity","inspectionReturnQuantity","sampleSerialCode","inspectionDescription","inspectorBy","inspectionDate","judgeStatus","isObsolete","extField","remark"]
+const formFields = ["tenantCode","companyCode","cultureCode","fqcOrderId","fqcOrderCode","lineNumber","materialCode","materialDescription","prodBatch","warehouseQuantity","standardCode","samplingSchemeCode","inspectionMethod","sampleQuantity","qualifiedQuantity","unqualifiedQuantity","inspectionReturnQuantity","sampleSerialCode","inspectionDescription","inspectorBy","inspectionDate","judgeStatus","isObsolete","extField","remark"]
 
 import type { TaktEditableTableColumn } from '@/components/business/TaktEditableTable/types'
 import { resolveNextDetailLineNumber } from '@/utils/taktSequence'

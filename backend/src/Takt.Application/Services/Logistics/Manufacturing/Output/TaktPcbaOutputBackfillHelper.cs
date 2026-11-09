@@ -67,7 +67,7 @@ internal static class TaktPcbaOutputBackfillHelper
             entity.MaterialCode = order.MaterialCode;
         }
         entity.ProdOrderQty = order.ProdOrderQty;
-        entity.BatchCode = order.ProdBatch;
+        entity.ProdBatch = order.ProdBatch;
         entity.SerialCode = order.SerialCode;
         if (!string.IsNullOrWhiteSpace(entity.MaterialCode))
         {

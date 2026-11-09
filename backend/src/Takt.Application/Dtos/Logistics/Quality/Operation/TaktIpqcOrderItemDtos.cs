@@ -69,7 +69,7 @@ public class TaktIpqcOrderItemDto : TaktCompanyDtoBase
     /// <summary>
     /// 批次号
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产数量
@@ -214,7 +214,7 @@ public class TaktIpqcOrderItemQueryDto : TaktPagedQuery
     /// <summary>
     /// 批次号
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产数量
@@ -372,7 +372,7 @@ public class TaktIpqcOrderItemCreateDto
     /// <summary>
     /// 批次号
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产数量
@@ -594,7 +594,7 @@ public class TaktIpqcOrderItemTemplateDto
     /// <summary>
     /// 批次号
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产数量
@@ -737,7 +737,7 @@ public class TaktIpqcOrderItemImportDto
     /// <summary>
     /// 批次号
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产数量
@@ -886,7 +886,7 @@ public class TaktIpqcOrderItemExportDto
     /// <summary>
     /// 批次号
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产数量

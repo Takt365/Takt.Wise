@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Mrp
 // 文件名称：TaktMaterialRequirementsPlanningItemI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktMaterialRequirementsPlanningItem 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -125,6 +125,15 @@ public class TaktMaterialRequirementsPlanningItemI18nSeedData : ITaktSeedDataCoo
             new TranslationSeedItem("entity.materialrequirementsplanningitem.materialcode", "zh-CN", "物料编码", "物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）"),
             // entity.materialrequirementsplanningitem.materialcode
             new TranslationSeedItem("entity.materialrequirementsplanningitem.materialcode", "zh-HK", "物料编码_hk", "物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）"),
+
+            // entity.materialrequirementsplanningitem.plannedbatch
+            new TranslationSeedItem("entity.materialrequirementsplanningitem.plannedbatch", "en-US", "计划批次_us", "计划批次（来自 MPS 行；发布时写入生产计划与计划订单，正式工单写入 ProdBatch）"),
+            // entity.materialrequirementsplanningitem.plannedbatch
+            new TranslationSeedItem("entity.materialrequirementsplanningitem.plannedbatch", "ja-JP", "计划批次_jp", "计划批次（来自 MPS 行；发布时写入生产计划与计划订单，正式工单写入 ProdBatch）"),
+            // entity.materialrequirementsplanningitem.plannedbatch
+            new TranslationSeedItem("entity.materialrequirementsplanningitem.plannedbatch", "zh-CN", "计划批次", "计划批次（来自 MPS 行；发布时写入生产计划与计划订单，正式工单写入 ProdBatch）"),
+            // entity.materialrequirementsplanningitem.plannedbatch
+            new TranslationSeedItem("entity.materialrequirementsplanningitem.plannedbatch", "zh-HK", "计划批次_hk", "计划批次（来自 MPS 行；发布时写入生产计划与计划订单，正式工单写入 ProdBatch）"),
 
             // entity.materialrequirementsplanningitem.materialdescription
             new TranslationSeedItem("entity.materialrequirementsplanningitem.materialdescription", "en-US", "物料描述_us", "物料描述（冗余：按 MaterialCode 取 TaktMaterialPlant.MaterialDescription联动）"),

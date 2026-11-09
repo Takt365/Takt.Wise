@@ -4,7 +4,7 @@
 // 文件名称：TaktEcPur.cs
 // 创建时间：2026-06-29
 // 创建人：Takt365(Cursor AI)
-// 功能描述：设变采购课部门执行表（部门 D0510；采购类型 F 且新物料有效才落行。任何范围按设变单号+新物料去重，机种与根物料写入编码组）
+// 功能描述：设变采购课部门执行表（部门 D0510；采购类型 F 且新物料有效才落行。按设变单号去重一行；机种/根物料/新物料均写入编码组）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -17,11 +17,11 @@ using Takt.Domain.Interfaces;
 namespace Takt.Domain.Entities.Logistics.Manufacturing.EngineeringChange;
 
 /// <summary>
-/// 设变采购课（部门 D0510）执行表。采购类型 F 且新物料有效才落行。任何范围去重键为设变单号+新物料，机种与根物料写入编码组
+/// 设变采购课（部门 D0510）执行表。采购类型 F 且新物料有效才落行。按设变单号去重一行；机种/根物料/新物料写入编码组
 /// </summary>
 [SugarTable("takt_logistics_manufacturing_ec_pur", "设变采购执行表")]
 [SugarIndex("ix_ec_pur_tenant", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, false)]
-[SugarIndex("ix_takt_logistics_manufacturing_ec_pur_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcCode), OrderByType.Asc, nameof(EcNewPurchaseType), OrderByType.Asc, nameof(EcNewMaterialCode), OrderByType.Asc, true)]
+[SugarIndex("ix_takt_logistics_manufacturing_ec_pur_unique", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(EcCode), OrderByType.Asc, false)]
 [SugarIndex("ix_takt_logistics_manufacturing_ec_pur_plant_code", nameof(TenantCode), OrderByType.Asc, nameof(CompanyCode), OrderByType.Asc, nameof(PlantCode), OrderByType.Asc, false)]
 public class TaktEcPur : TaktCompanyEntityBase, ITaktEcDeptExecEntity
 {
@@ -32,7 +32,7 @@ public class TaktEcPur : TaktCompanyEntityBase, ITaktEcDeptExecEntity
     public int LineNumber { get; set; } = 0;
 
     /// <summary>
-    /// 停产状态（字典 logistics_materials_material_discontinued_status；DictValue=Z0/ZQ 等）。同设变单号+新采购类型+新物料下任意成品不是停产（空或 Z0）时为 Z0，全部停产时取保留明细状态。
+    /// 停产状态（字典 logistics_materials_material_discontinued_status；DictValue=Z0/ZQ 等）。同设变下任意成品不是停产（空或 Z0）时为 Z0，全部停产时取保留明细状态。
     /// </summary>
     [SugarColumn(ColumnName = "discontinued_status", ColumnDescription = "停产状态", ColumnDataType = "nvarchar", Length = 4, IsNullable = false)]
     public string DiscontinuedStatus { get; set; } = string.Empty;
@@ -44,42 +44,31 @@ public class TaktEcPur : TaktCompanyEntityBase, ITaktEcDeptExecEntity
     public string EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种编码组（同设变单号+新采购类型+新物料下的机种编码，分号分隔；ntext）
+    /// 机种编码组（同设变下采购类型 F 明细的机种编码，分号分隔；ntext）
     /// </summary>
     [SugarColumn(ColumnName = "ec_model_code_group", ColumnDescription = "机种编码组", ColumnDataType = "ntext", IsNullable = false)]
     public string EcModelCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
-    /// </summary>
-    [SugarColumn(ColumnName = "ec_new_material_code", ColumnDescription = "新物料编码", Length = 20, ColumnDataType = "nvarchar", IsNullable = false)]
-    public string EcNewMaterialCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 根物料编码组（同设变单号+新采购类型+新物料下的根物料编码，分号分隔；ntext）
+    /// 根物料编码组（同设变下采购类型 F 明细的根物料编码，分号分隔；ntext）
     /// </summary>
     [SugarColumn(ColumnName = "ec_root_material_code_group", ColumnDescription = "根物料编码组", ColumnDataType = "ntext", IsNullable = false)]
     public string EcRootMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）
+    /// 新物料编码组（同设变下采购类型 F 的全部新物料编码，分号分隔；ntext）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_root_material_description", ColumnDescription = "根物料描述", Length = 40, ColumnDataType = "nvarchar", IsNullable = false)]
-    public string EcRootMaterialDescription { get; set; } = string.Empty;
+    [SugarColumn(ColumnName = "ec_new_material_code_group", ColumnDescription = "新物料编码组", ColumnDataType = "ntext", IsNullable = false)]
+    public string EcNewMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）
+    /// 旧物料编码组（同设变下采购类型 F 明细的旧物料编码，分号分隔；ntext；供旧品结余按行拆分）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_new_material_description", ColumnDescription = "新物料描述", Length = 40, ColumnDataType = "nvarchar", IsNullable = false)]
-    public string EcNewMaterialDescription { get; set; } = string.Empty;
+    [SugarColumn(ColumnName = "ec_old_material_code_group", ColumnDescription = "旧物料编码组", ColumnDataType = "ntext", IsNullable = false)]
+    public string EcOldMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新品仓库（冗余：来自 TaktEcDetail.EcNewWarehouse）
-    /// </summary>
-    [SugarColumn(ColumnName = "ec_new_warehouse", ColumnDescription = "新品仓库", Length = 4, ColumnDataType = "nvarchar", IsNullable = false)]
-    public string EcNewWarehouse { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 新采购类型（冗余：来自 TaktEcDetail.EcNewPurchaseType）
+    /// 新采购类型（冗余：来自 TaktEcDetail.EcNewPurchaseType；本表落行均为 F）
     /// </summary>
     [SugarColumn(ColumnName = "ec_new_purchase_type", ColumnDescription = "新采购类型", ColumnDataType = "nvarchar", Length = 1, IsNullable = false)]
     public string EcNewPurchaseType { get; set; } = string.Empty;
@@ -91,40 +80,29 @@ public class TaktEcPur : TaktCompanyEntityBase, ITaktEcDeptExecEntity
     public int IsImplemented { get; set; } = 1;
 
     /// <summary>
-    /// 执行内容（各部门通用）
+    /// 旧品结余（可空；非空须按旧物料编码组逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，行数与旧物料组一致；旧物料与采购单用「-」，采购单后冒号，结余与处理方式各以分号分隔；采购自行维护，不从明细/生管带入；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；nvarchar Length=-1）
     /// </summary>
-    [SugarColumn(ColumnName = "exec_content", ColumnDescription = "执行内容", ColumnDataType = "nvarchar", Length = 2000, IsNullable = true)]
+    [SugarColumn(ColumnName = "ec_old_part_balance", ColumnDescription = "旧品结余", ColumnDataType = "nvarchar", Length = -1, IsNullable = true)]
+    public string? EcOldPartBalance { get; set; }
+
+    /// <summary>
+    /// 进货日期
+    /// </summary>
+    [SugarColumn(ColumnName = "inbound_date", ColumnDescription = "进货日期", ColumnDataType = "date", IsNullable = true)]
+    public DateTime? InboundDate { get; set; }
+
+    /// <summary>
+    /// 执行内容（按新物料编码组拆行：物料:采购单10位:序号4位:供应商; 多行组合；nvarchar Length=-1）
+    /// </summary>
+    [SugarColumn(ColumnName = "exec_content", ColumnDescription = "执行内容", ColumnDataType = "nvarchar", Length = -1, IsNullable = true)]
     public string? ExecContent { get; set; }
-
-    /// <summary>
-    /// 采购订单发行日期
-    /// </summary>
-    [SugarColumn(ColumnName = "purchase_order_issue_date", ColumnDescription = "采购订单发行日期", ColumnDataType = "date", IsNullable = true)]
-    public DateTime? PurchaseOrderIssueDate { get; set; }
-
-    /// <summary>
-    /// 供应商
-    /// </summary>
-    [SugarColumn(ColumnName = "supplier", ColumnDescription = "供应商", ColumnDataType = "nvarchar", Length = 200, IsNullable = true)]
-    public string? Supplier { get; set; }
-
-    /// <summary>
-    /// 采购订单号码
-    /// </summary>
-    [SugarColumn(ColumnName = "purchase_order_code", ColumnDescription = "采购订单号码", ColumnDataType = "nvarchar", Length = 20, IsNullable = true)]
-    public string? PurchaseOrderCode { get; set; }
-
-    /// <summary>
-    /// 旧品处理（采购自行选择，不从明细/生管带入；与生管去重粒不同；字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定）
-    /// </summary>
-    [SugarColumn(ColumnName = "ec_old_part_disposition", ColumnDescription = "旧品处理", Length = 4, ColumnDataType = "nvarchar", IsNullable = true)]
-    public string? EcOldPartDisposition { get; set; }
 
     /// <summary>
     /// 部门编码（TaktDept.DeptCode；本表固定课别）
     /// </summary>
     [SugarColumn(ColumnName = "dept_code", ColumnDescription = "部门编码", ColumnDataType = "varchar", Length = 6, IsNullable = false)]
     public string DeptCode { get; set; } = string.Empty;
+
     /// <summary>
     /// 部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）
     /// </summary>
@@ -136,14 +114,15 @@ public class TaktEcPur : TaktCompanyEntityBase, ITaktEcDeptExecEntity
     /// </summary>
     [SugarColumn(ColumnName = "ec_impl_scope", ColumnDescription = "实施范围", ColumnDataType = "int", IsNullable = false)]
     public int EcImplScope { get; set; }
-    /// <summary>
-    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种
-    /// </summary>
-    [SugarColumn(ColumnName = "ec_control_scope", ColumnDescription = "控制范围", ColumnDataType = "int", IsNullable = false, DefaultValue = "2")]
-    public int EcControlScope { get; set; } = 2;
 
     /// <summary>
-    /// 执行行去重键（设变单号、机种或根物料或新物料、分道；同一键的明细共用本行。ntext）
+    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理）。采购固定按设变（DictValue=3）
+    /// </summary>
+    [SugarColumn(ColumnName = "ec_control_scope", ColumnDescription = "控制范围", ColumnDataType = "int", IsNullable = false, DefaultValue = "3")]
+    public int EcControlScope { get; set; } = 3;
+
+    /// <summary>
+    /// 执行行去重键（采购为设变单号；同一键的明细共用本行。ntext）
     /// </summary>
     [SugarColumn(ColumnName = "ec_grain_key", ColumnDescription = "执行去重键", ColumnDataType = "ntext", IsNullable = false)]
     public string EcGrainKey { get; set; } = string.Empty;
@@ -153,5 +132,4 @@ public class TaktEcPur : TaktCompanyEntityBase, ITaktEcDeptExecEntity
     /// </summary>
     [SugarColumn(ColumnName = "is_obsolete", ColumnDescription = "是否作废", ColumnDataType = "int", IsNullable = false)]
     public int IsObsolete { get; set; } = 0;
-
 }

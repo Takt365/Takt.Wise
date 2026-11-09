@@ -73,6 +73,11 @@ public class TaktMasterProductionScheduleLineDto : TaktCompanyDtoBase
     public string MaterialCode { get; set; } = string.Empty;
 
     /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
+
+    /// <summary>
     /// 时间桶开始
     /// </summary>
     public DateTime BucketStart { get; set; }
@@ -180,6 +185,11 @@ public class TaktMasterProductionScheduleLineQueryDto : TaktPagedQuery
     /// 物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）
     /// </summary>
     public string? MaterialCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 时间桶开始（范围查询-开始）
@@ -319,6 +329,11 @@ public class TaktMasterProductionScheduleLineCreateDto
     /// </summary>
     [Required(ErrorMessage = "物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）不能为空")]
     public string MaterialCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 时间桶开始
@@ -483,6 +498,11 @@ public class TaktMasterProductionScheduleLineTemplateDto
     public string? MaterialCode { get; set; } = string.Empty;
 
     /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
+
+    /// <summary>
     /// 时间桶开始
     /// </summary>
     public DateTime? BucketStart { get; set; }
@@ -595,6 +615,11 @@ public class TaktMasterProductionScheduleLineImportDto
     /// 物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）
     /// </summary>
     public string? MaterialCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 时间桶开始
@@ -715,6 +740,11 @@ public class TaktMasterProductionScheduleLineExportDto
     /// 物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）
     /// </summary>
     public string MaterialCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 时间桶开始

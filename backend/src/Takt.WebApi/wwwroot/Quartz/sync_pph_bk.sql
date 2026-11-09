@@ -20,7 +20,7 @@ DECLARE @tenant_code NVARCHAR(3) = N'{{TenantCode}}';
 DECLARE @company_code NVARCHAR(4) = N'{{CompanyCode}}';
 DECLARE @sync_user_id BIGINT = {{SyncUserId}};
 DECLARE @now DATETIME = GETDATE();
-DECLARE @apply_chunk INT = 20000;
+DECLARE @apply_chunk INT = 100000;
 DECLARE @dml_n INT;
 DECLARE @item_updated INT = 0;
 
@@ -73,7 +73,38 @@ FROM src
 WHERE rn = 1
   AND [mat_key] IS NOT NULL AND [mat_key] <> N'';
 
--- ---------- ① 采购订单明细：仅空 material_description ----------
+-- ---------- ① 先回填采购订单明细外键（工厂+订单号在主表唯一） ----------
+SET @dml_n = 1;
+WHILE @dml_n > 0
+BEGIN
+  UPDATE TOP (@apply_chunk) I
+  SET I.[purchase_order_id] = U.[id], I.[updated_by] = @sync_user_id, I.[updated_at] = @now
+  FROM [dbo].[takt_logistics_procurement_purchase_order_item] AS I
+  INNER JOIN (
+    SELECT
+      H.[tenant_code], H.[company_code],
+      LTRIM(RTRIM(H.[plant_code])) AS [plant_code],
+      LTRIM(RTRIM(H.[purchase_order_code])) AS [purchase_order_code],
+      MIN(H.[id]) AS [id]
+    FROM [dbo].[takt_logistics_procurement_purchase_order] AS H
+    WHERE H.[tenant_code] = @tenant_code
+      AND H.[company_code] = @company_code
+      AND H.[is_deleted] = 0
+    GROUP BY H.[tenant_code], H.[company_code], LTRIM(RTRIM(H.[plant_code])), LTRIM(RTRIM(H.[purchase_order_code]))
+    HAVING COUNT(*) = 1
+  ) AS U
+    ON U.[tenant_code] = I.[tenant_code]
+   AND U.[company_code] = I.[company_code]
+   AND U.[plant_code] = LTRIM(RTRIM(I.[plant_code]))
+   AND U.[purchase_order_code] = LTRIM(RTRIM(I.[purchase_order_code]))
+  WHERE I.[tenant_code] = @tenant_code
+    AND I.[company_code] = @company_code
+    AND I.[is_deleted] = 0
+    AND (I.[purchase_order_id] IS NULL OR I.[purchase_order_id] <> U.[id]);
+  SET @dml_n = @@ROWCOUNT;
+END
+
+-- ---------- ② 采购订单明细：仅空 material_description ----------
 SET @dml_n = 1;
 WHILE @dml_n > 0
 BEGIN
@@ -95,8 +126,8 @@ INNER JOIN #mat_plant_desc AS m
 CROSS APPLY (
   SELECT
     CASE
-      WHEN ISJSON(NULLIF(LTRIM(RTRIM(ISNULL(t.[ext_field], N''))), N'')) = 1
-      THEN LTRIM(RTRIM(t.[ext_field]))
+      WHEN ISJSON(NULLIF(LTRIM(RTRIM(CAST(ISNULL(t.[ext_field], N'') AS nvarchar(max)))), N'')) = 1
+      THEN LTRIM(RTRIM(CAST(t.[ext_field] AS nvarchar(max))))
       ELSE N'{}'
     END AS [base_ext]
 ) AS e0

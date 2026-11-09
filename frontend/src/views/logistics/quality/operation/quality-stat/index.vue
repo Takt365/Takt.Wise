@@ -24,8 +24,15 @@
           v-if="statTab === tab.key"
           class="flex h-full min-h-0 min-w-0 flex-col"
         >
-    <div class="takt-query-bar quality-stat-query-bar shrink-0">
-      <div class="flex min-w-0 flex-1 flex-nowrap items-center gap-x-2">
+    <TaktQueryBar
+      :show-keyword="false"
+      class="shrink-0"
+      :loading="loading"
+      @search="handleSearch"
+      @reset="handleReset"
+    >
+      <template #leading>
+<div class="flex min-w-0 flex-1 flex-nowrap items-center gap-x-2">
         <div class="flex min-w-0 flex-1 items-center gap-1">
           <span class="shrink-0 whitespace-nowrap text-sm text-text-secondary">{{ t(`${localePrefix}.periodRange`) }}</span>
           <a-range-picker
@@ -55,29 +62,8 @@
           />
         </div>
       </div>
-      <a-space class="query-actions shrink-0">
-        <a-button
-          class="takt-button-query"
-          :loading="loading"
-          @click="handleSearch"
-        >
-          <template #icon>
-            <RiSearchLine class="takt-remix-icon" />
-          </template>
-          {{ t('common.page.button.query') }}
-        </a-button>
-        <a-button
-          class="takt-button-reset"
-          :disabled="loading"
-          @click="handleReset"
-        >
-          <template #icon>
-            <RiRefreshLine class="takt-remix-icon" />
-          </template>
-          {{ t('common.page.button.reset') }}
-        </a-button>
-      </a-space>
-    </div>
+      </template>
+    </TaktQueryBar>
     <TaktToolsBar
       :show-create="false"
       :show-update="false"
@@ -135,7 +121,6 @@
  */
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { RiRefreshLine, RiSearchLine } from '@remixicon/vue'
 import {
   exportQualityStat,
   getQualityStatDimensionOptionsUrl,

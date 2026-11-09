@@ -18,5 +18,9 @@ export default {
       notUpdated: '未更新',
       updated: '更新済',
     },
+    tabs: {
+      balance: '残数',
+      execContent: '実行内容',
+    },
   },
 }

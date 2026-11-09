@@ -23,7 +23,7 @@ DECLARE @plant_code NVARCHAR(4) = N'{{PlantCode}}';
 DECLARE @sync_user_id BIGINT = {{SyncUserId}};
 
 DECLARE @batch_size INT = 0;
-DECLARE @apply_chunk INT = 20000;
+DECLARE @apply_chunk INT = 100000;
 DECLARE @merge_from_rn INT;
 DECLARE @merge_to_rn INT;
 DECLARE @merge_max_rn INT;
@@ -40,7 +40,7 @@ CREATE TABLE #order_source (
   [prod_order_code] NVARCHAR(100),
   [material_code] NVARCHAR(100),
   [material_description] NVARCHAR(40),
-  [prod_batch] NVARCHAR(100),
+  [prod_batch] NVARCHAR(40),
   [prod_order_qty] DECIMAL(18,4),
   [produced_qty] DECIMAL(18,4),
   [unit_of_measure] NVARCHAR(20),
@@ -59,7 +59,7 @@ SELECT
   LTRIM(RTRIM(S.[D_SAP_COOIS_C002])),
   LTRIM(RTRIM(S.[D_SAP_COOIS_C003])),
   CAST(N'' AS NVARCHAR(40)),
-  LTRIM(RTRIM(S.[D_SAP_COOIS_C004])),
+  LEFT(LTRIM(RTRIM(ISNULL(S.[D_SAP_COOIS_C004], N''))), 40),
   COALESCE(TRY_CAST(S.[D_SAP_COOIS_C005] AS DECIMAL(18,4)), 0),
   COALESCE(TRY_CAST(S.[D_SAP_COOIS_C006] AS DECIMAL(18,4)), 0),
   CASE WHEN ISNULL(S.[D_SAP_COOIS_C004], '') LIKE '%||%' THEN 'EA' ELSE 'PC' END,
@@ -164,6 +164,105 @@ DECLARE @target_before INT = (
     AND [is_deleted] = 0
 );
 
+-- 生产批次列名统一 prod_batch，长度 nvarchar(40)（nvarchar 字节数 = 字符数 × 2）
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_aps_production_order', N'batch_code') IS NOT NULL
+   AND COL_LENGTH(N'dbo.takt_logistics_manufacturing_aps_production_order', N'prod_batch') IS NULL
+  EXEC sp_rename N'dbo.takt_logistics_manufacturing_aps_production_order.batch_code', N'prod_batch', N'COLUMN';
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_aps_production_order', N'prod_batch') < 80
+  ALTER TABLE [dbo].[takt_logistics_manufacturing_aps_production_order] ALTER COLUMN [prod_batch] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_defect_assy', N'batch_code') IS NOT NULL
+   AND COL_LENGTH(N'dbo.takt_logistics_manufacturing_defect_assy', N'prod_batch') IS NULL
+  EXEC sp_rename N'dbo.takt_logistics_manufacturing_defect_assy.batch_code', N'prod_batch', N'COLUMN';
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_defect_assy', N'prod_batch') < 80
+  ALTER TABLE [dbo].[takt_logistics_manufacturing_defect_assy] ALTER COLUMN [prod_batch] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_defect_pcba_repair', N'batch_code') IS NOT NULL
+   AND COL_LENGTH(N'dbo.takt_logistics_manufacturing_defect_pcba_repair', N'prod_batch') IS NULL
+  EXEC sp_rename N'dbo.takt_logistics_manufacturing_defect_pcba_repair.batch_code', N'prod_batch', N'COLUMN';
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_defect_pcba_repair', N'prod_batch') < 80
+  ALTER TABLE [dbo].[takt_logistics_manufacturing_defect_pcba_repair] ALTER COLUMN [prod_batch] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_defect_pcba_inspection', N'batch_code') IS NOT NULL
+   AND COL_LENGTH(N'dbo.takt_logistics_manufacturing_defect_pcba_inspection', N'prod_batch') IS NULL
+  EXEC sp_rename N'dbo.takt_logistics_manufacturing_defect_pcba_inspection.batch_code', N'prod_batch', N'COLUMN';
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_defect_pcba_inspection', N'prod_batch') < 80
+  ALTER TABLE [dbo].[takt_logistics_manufacturing_defect_pcba_inspection] ALTER COLUMN [prod_batch] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_defect_assy_order', N'batch_code') IS NOT NULL
+   AND COL_LENGTH(N'dbo.takt_logistics_manufacturing_defect_assy_order', N'prod_batch') IS NULL
+  EXEC sp_rename N'dbo.takt_logistics_manufacturing_defect_assy_order.batch_code', N'prod_batch', N'COLUMN';
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_defect_assy_order', N'prod_batch') < 80
+  ALTER TABLE [dbo].[takt_logistics_manufacturing_defect_assy_order] ALTER COLUMN [prod_batch] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_defect_assy_batch', N'batch_code') IS NOT NULL
+   AND COL_LENGTH(N'dbo.takt_logistics_manufacturing_defect_assy_batch', N'prod_batch') IS NULL
+  EXEC sp_rename N'dbo.takt_logistics_manufacturing_defect_assy_batch.batch_code', N'prod_batch', N'COLUMN';
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_defect_assy_batch', N'prod_batch') < 80
+  ALTER TABLE [dbo].[takt_logistics_manufacturing_defect_assy_batch] ALTER COLUMN [prod_batch] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_output_assy', N'batch_code') IS NOT NULL
+   AND COL_LENGTH(N'dbo.takt_logistics_manufacturing_output_assy', N'prod_batch') IS NULL
+  EXEC sp_rename N'dbo.takt_logistics_manufacturing_output_assy.batch_code', N'prod_batch', N'COLUMN';
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_output_assy', N'prod_batch') < 80
+  ALTER TABLE [dbo].[takt_logistics_manufacturing_output_assy] ALTER COLUMN [prod_batch] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_output_pcba', N'batch_code') IS NOT NULL
+   AND COL_LENGTH(N'dbo.takt_logistics_manufacturing_output_pcba', N'prod_batch') IS NULL
+  EXEC sp_rename N'dbo.takt_logistics_manufacturing_output_pcba.batch_code', N'prod_batch', N'COLUMN';
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_output_pcba', N'prod_batch') < 80
+  ALTER TABLE [dbo].[takt_logistics_manufacturing_output_pcba] ALTER COLUMN [prod_batch] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_ec_mc', N'outbound_batch') < 80
+  ALTER TABLE [dbo].[takt_logistics_manufacturing_ec_mc] ALTER COLUMN [outbound_batch] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_ec_mtl', N'outbound_batch') < 80
+  ALTER TABLE [dbo].[takt_logistics_manufacturing_ec_mtl] ALTER COLUMN [outbound_batch] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'dbo.takt_logistics_quality_iqc_order_item', N'batch_code') IS NOT NULL
+   AND COL_LENGTH(N'dbo.takt_logistics_quality_iqc_order_item', N'prod_batch') IS NULL
+  EXEC sp_rename N'dbo.takt_logistics_quality_iqc_order_item.batch_code', N'prod_batch', N'COLUMN';
+IF COL_LENGTH(N'dbo.takt_logistics_quality_ipqc_order_item', N'batch_code') IS NOT NULL
+   AND COL_LENGTH(N'dbo.takt_logistics_quality_ipqc_order_item', N'prod_batch') IS NULL
+  EXEC sp_rename N'dbo.takt_logistics_quality_ipqc_order_item.batch_code', N'prod_batch', N'COLUMN';
+IF COL_LENGTH(N'dbo.takt_logistics_quality_fqc_order_item', N'batch_code') IS NOT NULL
+   AND COL_LENGTH(N'dbo.takt_logistics_quality_fqc_order_item', N'prod_batch') IS NULL
+  EXEC sp_rename N'dbo.takt_logistics_quality_fqc_order_item.batch_code', N'prod_batch', N'COLUMN';
+IF COL_LENGTH(N'dbo.takt_logistics_quality_customer_complaint_item', N'batch_code') IS NOT NULL
+   AND COL_LENGTH(N'dbo.takt_logistics_quality_customer_complaint_item', N'prod_batch') IS NULL
+  EXEC sp_rename N'dbo.takt_logistics_quality_customer_complaint_item.batch_code', N'prod_batch', N'COLUMN';
+IF COL_LENGTH(N'dbo.takt_logistics_materials_material_document_item', N'batch_code') IS NOT NULL
+   AND COL_LENGTH(N'dbo.takt_logistics_materials_material_document_item', N'prod_batch') IS NULL
+  EXEC sp_rename N'dbo.takt_logistics_materials_material_document_item.batch_code', N'prod_batch', N'COLUMN';
+IF COL_LENGTH(N'dbo.takt_logistics_sales_invoice_item', N'batch_code') IS NOT NULL
+   AND COL_LENGTH(N'dbo.takt_logistics_sales_invoice_item', N'prod_batch') IS NULL
+  EXEC sp_rename N'dbo.takt_logistics_sales_invoice_item.batch_code', N'prod_batch', N'COLUMN';
+DECLARE @legacy_batch_table SYSNAME;
+DECLARE legacy_batch_cursor CURSOR LOCAL FAST_FORWARD FOR
+  SELECT table_name FROM (VALUES
+    (N'takt_logistics_manufacturing_aps_production_order'),
+    (N'takt_logistics_manufacturing_defect_assy'),
+    (N'takt_logistics_manufacturing_defect_pcba_repair'),
+    (N'takt_logistics_manufacturing_defect_pcba_inspection'),
+    (N'takt_logistics_manufacturing_defect_assy_order'),
+    (N'takt_logistics_manufacturing_defect_assy_batch'),
+    (N'takt_logistics_manufacturing_output_assy'),
+    (N'takt_logistics_manufacturing_output_pcba'),
+    (N'takt_logistics_quality_iqc_order_item'),
+    (N'takt_logistics_quality_ipqc_order_item'),
+    (N'takt_logistics_quality_fqc_order_item'),
+    (N'takt_logistics_quality_customer_complaint_item'),
+    (N'takt_logistics_materials_material_document_item'),
+    (N'takt_logistics_sales_invoice_item')
+  ) AS legacy_batch(table_name);
+OPEN legacy_batch_cursor;
+FETCH NEXT FROM legacy_batch_cursor INTO @legacy_batch_table;
+WHILE @@FETCH_STATUS = 0
+BEGIN
+  IF COL_LENGTH(N'dbo.' + @legacy_batch_table, N'batch_code') IS NOT NULL
+     AND COL_LENGTH(N'dbo.' + @legacy_batch_table, N'prod_batch') IS NOT NULL
+    EXEC(N'UPDATE [dbo].[' + @legacy_batch_table + N'] SET [prod_batch] = [batch_code] WHERE ([prod_batch] IS NULL OR [prod_batch] = N'''') AND [batch_code] IS NOT NULL AND [batch_code] <> N''''');
+  FETCH NEXT FROM legacy_batch_cursor INTO @legacy_batch_table;
+END
+CLOSE legacy_batch_cursor;
+DEALLOCATE legacy_batch_cursor;
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_ec_mfg1', N'production_batch') < 80
+  ALTER TABLE [dbo].[takt_logistics_manufacturing_ec_mfg1] ALTER COLUMN [production_batch] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_ec_mfg2', N'production_batch') < 80
+  ALTER TABLE [dbo].[takt_logistics_manufacturing_ec_mfg2] ALTER COLUMN [production_batch] NVARCHAR(40) NULL;
+IF COL_LENGTH(N'dbo.takt_logistics_manufacturing_ec_qc', N'production_batch') < 80
+  ALTER TABLE [dbo].[takt_logistics_manufacturing_ec_qc] ALTER COLUMN [production_batch] NVARCHAR(40) NULL;
+
 -- ON 与唯一索引一致：Tenant+Company+Plant+ProdOrderType+ProdOrderCode+Material
 SET @merge_from_rn = 1;
 SET @merge_max_rn = ISNULL((SELECT MAX([rn]) FROM #order_source), 0);
@@ -204,7 +303,7 @@ WHEN MATCHED AND (
   T.[is_deleted]=0,
   T.[ext_field]=(
     SELECT CASE WHEN LEN(x.[new_ext]) <= 4000 THEN x.[new_ext] ELSE e0.[base_ext] END
-    FROM (SELECT CASE WHEN ISJSON(NULLIF(LTRIM(RTRIM(ISNULL(T.[ext_field], N''))), N'')) = 1 THEN LTRIM(RTRIM(T.[ext_field])) ELSE N'{}' END AS [base_ext]) e0
+    FROM (SELECT CASE WHEN ISJSON(NULLIF(LTRIM(RTRIM(CAST(ISNULL(T.[ext_field], N'') AS nvarchar(max)))), N'')) = 1 THEN LTRIM(RTRIM(CAST(T.[ext_field] AS nvarchar(max)))) ELSE N'{}' END AS [base_ext]) e0
     CROSS APPLY (SELECT CASE WHEN JSON_QUERY(e0.[base_ext], N'$._sync') IS NULL THEN JSON_MODIFY(e0.[base_ext], N'lax $._sync', JSON_QUERY(N'{}')) ELSE e0.[base_ext] END AS [with_root]) e1
     CROSS APPLY (SELECT CASE
       WHEN JSON_QUERY(e1.[with_root], N'$._sync.mo') IS NULL THEN JSON_MODIFY(e1.[with_root], N'lax $._sync.mo', JSON_QUERY(N'[]'))
@@ -314,7 +413,7 @@ SET
   T.[updated_at] = @now,
   T.[ext_field]=(
     SELECT CASE WHEN LEN(x.[new_ext]) <= 4000 THEN x.[new_ext] ELSE e0.[base_ext] END
-    FROM (SELECT CASE WHEN ISJSON(NULLIF(LTRIM(RTRIM(ISNULL(T.[ext_field], N''))), N'')) = 1 THEN LTRIM(RTRIM(T.[ext_field])) ELSE N'{}' END AS [base_ext]) e0
+    FROM (SELECT CASE WHEN ISJSON(NULLIF(LTRIM(RTRIM(CAST(ISNULL(T.[ext_field], N'') AS nvarchar(max)))), N'')) = 1 THEN LTRIM(RTRIM(CAST(T.[ext_field] AS nvarchar(max)))) ELSE N'{}' END AS [base_ext]) e0
     CROSS APPLY (SELECT CASE WHEN JSON_QUERY(e0.[base_ext], N'$._sync') IS NULL THEN JSON_MODIFY(e0.[base_ext], N'lax $._sync', JSON_QUERY(N'{}')) ELSE e0.[base_ext] END AS [with_root]) e1
     CROSS APPLY (SELECT CASE
       WHEN JSON_QUERY(e1.[with_root], N'$._sync.mo') IS NULL THEN JSON_MODIFY(e1.[with_root], N'lax $._sync.mo', JSON_QUERY(N'[]'))
@@ -352,7 +451,7 @@ SET
   T.[updated_at] = @now,
   T.[ext_field]=(
     SELECT CASE WHEN LEN(x.[new_ext]) <= 4000 THEN x.[new_ext] ELSE e0.[base_ext] END
-    FROM (SELECT CASE WHEN ISJSON(NULLIF(LTRIM(RTRIM(ISNULL(T.[ext_field], N''))), N'')) = 1 THEN LTRIM(RTRIM(T.[ext_field])) ELSE N'{}' END AS [base_ext]) e0
+    FROM (SELECT CASE WHEN ISJSON(NULLIF(LTRIM(RTRIM(CAST(ISNULL(T.[ext_field], N'') AS nvarchar(max)))), N'')) = 1 THEN LTRIM(RTRIM(CAST(T.[ext_field] AS nvarchar(max)))) ELSE N'{}' END AS [base_ext]) e0
     CROSS APPLY (SELECT CASE WHEN JSON_QUERY(e0.[base_ext], N'$._sync') IS NULL THEN JSON_MODIFY(e0.[base_ext], N'lax $._sync', JSON_QUERY(N'{}')) ELSE e0.[base_ext] END AS [with_root]) e1
     CROSS APPLY (SELECT CASE
       WHEN JSON_QUERY(e1.[with_root], N'$._sync.mo') IS NULL THEN JSON_MODIFY(e1.[with_root], N'lax $._sync.mo', JSON_QUERY(N'[]'))
@@ -385,7 +484,7 @@ SET
   T.[updated_at] = @now,
   T.[ext_field]=(
     SELECT CASE WHEN LEN(x.[new_ext]) <= 4000 THEN x.[new_ext] ELSE e0.[base_ext] END
-    FROM (SELECT CASE WHEN ISJSON(NULLIF(LTRIM(RTRIM(ISNULL(T.[ext_field], N''))), N'')) = 1 THEN LTRIM(RTRIM(T.[ext_field])) ELSE N'{}' END AS [base_ext]) e0
+    FROM (SELECT CASE WHEN ISJSON(NULLIF(LTRIM(RTRIM(CAST(ISNULL(T.[ext_field], N'') AS nvarchar(max)))), N'')) = 1 THEN LTRIM(RTRIM(CAST(T.[ext_field] AS nvarchar(max)))) ELSE N'{}' END AS [base_ext]) e0
     CROSS APPLY (SELECT CASE WHEN JSON_QUERY(e0.[base_ext], N'$._sync') IS NULL THEN JSON_MODIFY(e0.[base_ext], N'lax $._sync', JSON_QUERY(N'{}')) ELSE e0.[base_ext] END AS [with_root]) e1
     CROSS APPLY (SELECT CASE
       WHEN JSON_QUERY(e1.[with_root], N'$._sync.mo') IS NULL THEN JSON_MODIFY(e1.[with_root], N'lax $._sync.mo', JSON_QUERY(N'[]'))

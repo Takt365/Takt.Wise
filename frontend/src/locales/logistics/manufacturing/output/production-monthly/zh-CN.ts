@@ -48,7 +48,7 @@ export default {
       teamCode: '生产班组',
       pcbaTeamCode: '班组',
       prodDate: '生产日期',
-      batchCode: '生产批次',
+      prodBatch: '生产批次',
       materialCode: '物料',
       modelCode: '机种',
       modelCodeOnly: '机种编码',

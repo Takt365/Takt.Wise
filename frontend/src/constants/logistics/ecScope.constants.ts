@@ -4,7 +4,7 @@
 // 文件名称：ecScope.constants.ts
 // 创建时间：2026-09-09
 // 创建人：Takt365(Cursor AI)
-// 功能描述：实施范围字典值（对齐后端 TaktEcScopeConstants / logistics_manufacturing_ec_impl_scope_category）
+// 功能描述：实施范围字典值（对齐后端 TaktEcScopeConstants / TaktEcControlScopeConstants.ResolveForDept）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -24,7 +24,7 @@ export const TaktEcScope = {
   Technical: 4,
 } as const
 
-/** 部门实施范围：1=按成品 2=按机种 3=按设变 */
+/** 控制范围：1=按成品 2=按机种 3=按设变 */
 export const TaktEcControlScope = {
   /** 按成品 */
   ByFinishedProduct: 1,
@@ -35,15 +35,15 @@ export const TaktEcControlScope = {
 } as const
 
 /**
- * 主表部门实施范围可选项。全仕向可选；部管仅按机种；内部/技术仅按设变
+ * 主表控制范围可选项。全仕向可选按成品/按机种/按设变；部管仅按成品；内部/技术仅按设变
  * @param ecImplScope 实施范围
  * @returns {allowed: readonly number[]; defaultValue: number} 可选项与默认值
  */
 export function taktEcControlScopeChoices(ecImplScope: number): { allowed: readonly number[]; defaultValue: number } {
   if (ecImplScope === TaktEcScope.MaterialControl) {
     return {
-      allowed: [TaktEcControlScope.ByModel],
-      defaultValue: TaktEcControlScope.ByModel,
+      allowed: [TaktEcControlScope.ByFinishedProduct],
+      defaultValue: TaktEcControlScope.ByFinishedProduct,
     }
   }
   if (ecImplScope === TaktEcScope.Internal || ecImplScope === TaktEcScope.Technical) {
@@ -54,49 +54,15 @@ export function taktEcControlScopeChoices(ecImplScope: number): { allowed: reado
   }
   return {
     allowed: [TaktEcControlScope.ByFinishedProduct, TaktEcControlScope.ByModel, TaktEcControlScope.ByEngineeringChange],
-    defaultValue: TaktEcControlScope.ByModel,
+    defaultValue: TaktEcControlScope.ByFinishedProduct,
   }
 }
 
 /**
- * 部门行展示：字典值，或自动填写
- * @param deptCode 部门编码
+ * 控制范围不在当前实施范围允许集合内时，改为该范围的默认项（对齐后端 Normalize）
  * @param ecImplScope 实施范围
- * @param masterDeptScope 主表制二/制一/品管实施范围
- * @returns {{ mode: 'dict'; value: number } | { mode: 'auto' }} 展示
- */
-export function taktEcDeptDedupDisplay(
-  deptCode: string,
-  ecImplScope: number,
-  masterDeptScope: number,
-): { mode: 'dict'; value: number } | { mode: 'auto' } {
-  if (deptCode === TaktEcDeptCodes.Me) {
-    return { mode: 'dict', value: TaktEcControlScope.ByModel }
-  }
-  if (ecImplScope === TaktEcScope.Internal || ecImplScope === TaktEcScope.Technical) {
-    return { mode: 'auto' }
-  }
-  if (ecImplScope === TaktEcScope.MaterialControl) {
-    if (deptCode === TaktEcDeptCodes.Mfg2 || deptCode === TaktEcDeptCodes.Mfg1 || deptCode === TaktEcDeptCodes.Qc) {
-      return { mode: 'auto' }
-    }
-    if (deptCode === TaktEcDeptCodes.Pc) {
-      return { mode: 'dict', value: TaktEcControlScope.ByModel }
-    }
-    return { mode: 'dict', value: TaktEcControlScope.ByEngineeringChange }
-  }
-  const master = taktNormalizeEcControlScope(ecImplScope, masterDeptScope)
-  if (deptCode === TaktEcDeptCodes.Pur || deptCode === TaktEcDeptCodes.Iqc || deptCode === TaktEcDeptCodes.Mc || deptCode === TaktEcDeptCodes.Mtl) {
-    return { mode: 'dict', value: TaktEcControlScope.ByEngineeringChange }
-  }
-  return { mode: 'dict', value: master }
-}
-
-/**
- * 部门实施范围不在当前实施范围允许集合内时，改为该范围的默认项
- * @param ecImplScope 实施范围
- * @param ecControlScope 当前部门实施范围
- * @returns {number} 修正后的部门实施范围
+ * @param ecControlScope 当前控制范围
+ * @returns {number} 修正后的控制范围
  */
 export function taktNormalizeEcControlScope(ecImplScope: number, ecControlScope: unknown): number {
   const { allowed, defaultValue } = taktEcControlScopeChoices(ecImplScope)
@@ -104,7 +70,72 @@ export function taktNormalizeEcControlScope(ecImplScope: number, ecControlScope:
   return allowed.includes(num) ? num : defaultValue
 }
 
-/** 技术课表单「实施范围」Tab 的部门顺序（生管、采购、受检、部管、SMT、制二、制一、品管、制技） */
+/**
+ * 执行部门实际控制范围（对齐后端 ResolveForDept：采购/受检固定按设变；制技固定按机种；其余跟随 Normalize）
+ * @param deptCode 部门编码
+ * @param ecImplScope 实施范围
+ * @param masterDeptScope 主表控制范围
+ * @returns {number} 该部门控制范围
+ */
+export function taktResolveControlScopeForDept(
+  deptCode: string,
+  ecImplScope: number,
+  masterDeptScope: number,
+): number {
+  if (deptCode === TaktEcDeptCodes.Pur || deptCode === TaktEcDeptCodes.Iqc) {
+    return TaktEcControlScope.ByEngineeringChange
+  }
+  if (deptCode === TaktEcDeptCodes.Me) {
+    return TaktEcControlScope.ByModel
+  }
+  return taktNormalizeEcControlScope(ecImplScope, masterDeptScope)
+}
+
+/**
+ * 部门行控制范围展示（对齐 ResolveForDept；一律字典值）
+ * @param deptCode 部门编码
+ * @param ecImplScope 实施范围
+ * @param masterDeptScope 主表控制范围
+ * @returns {{ mode: 'dict'; value: number }} 展示
+ */
+export function taktEcDeptDedupDisplay(
+  deptCode: string,
+  ecImplScope: number,
+  masterDeptScope: number,
+): { mode: 'dict'; value: number } {
+  return {
+    mode: 'dict',
+    value: taktResolveControlScopeForDept(deptCode, ecImplScope, masterDeptScope),
+  }
+}
+
+/**
+ * 部门物料编码组回填说明（locale scopeDepts.* 键名；无则不展示）
+ * 生管/制二/制一/品管：旧+新；部管：新物料非C003采购件；物料：新物料C003采购件；采购/受检：新物料采购/检验
+ * @param deptCode 部门编码
+ * @returns {string | null} locale 键后缀
+ */
+export function taktEcDeptMaterialGroupHintKey(deptCode: string): string | null {
+  switch (deptCode) {
+    case TaktEcDeptCodes.Pc:
+    case TaktEcDeptCodes.Mfg2:
+    case TaktEcDeptCodes.Mfg1:
+    case TaktEcDeptCodes.Qc:
+      return 'oldNewMaterialGroup'
+    case TaktEcDeptCodes.Mc:
+      return 'mcNewMaterialGroup'
+    case TaktEcDeptCodes.Mtl:
+      return 'mtlNewMaterialGroup'
+    case TaktEcDeptCodes.Pur:
+      return 'purNewMaterialGroup'
+    case TaktEcDeptCodes.Iqc:
+      return 'iqcNewMaterialGroup'
+    default:
+      return null
+  }
+}
+
+/** 技术课表单「实施范围」Tab 的部门顺序（生管、采购、受检、部管、物料、制二、制一、品管、制技） */
 export const EC_SCOPE_FORM_DEPTS: readonly { code: string; labelKey: string }[] = [
   { code: TaktEcDeptCodes.Pc, labelKey: 'logistics.manufacturing.engineering-change.ec-te.page.scopeDepts.pc' },
   { code: TaktEcDeptCodes.Pur, labelKey: 'logistics.manufacturing.engineering-change.ec-te.page.scopeDepts.pur' },
@@ -118,7 +149,7 @@ export const EC_SCOPE_FORM_DEPTS: readonly { code: string; labelKey: string }[] 
 ]
 
 /**
- * 实施范围=部管时，允许按 Z0 填报更新的执行部门 slug（采购/生管/受检/部管/SMT）
+ * 实施范围=部管时，允许按 Z0 填报更新的执行部门 slug（采购/生管/受检/部管/物料）
  */
 export const EC_SCOPE_MATERIAL_CONTROL_UPDATE_SLUGS = new Set([
   'ecpur',
@@ -136,17 +167,6 @@ export const EC_EXEC_CONTENT_PREFIX = '实施范围-'
  * @param content 执行内容
  * @returns {boolean} 是否 EOL 类文案
  */
-/**
- * 根物料描述是否显示。仅全仕向且部门实施范围为按成品；机种组或物料组不显示。
- * @param ecImplScope 实施范围
- * @param ecControlScope 部门实施范围
- * @returns {boolean} 是否显示根物料描述
- */
-export function taktShowEcRootMaterialDescription(ecImplScope: unknown, ecControlScope: unknown): boolean {
-  return Number(ecImplScope) === TaktEcScope.AllDestination
-    && Number(ecControlScope) === TaktEcControlScope.ByFinishedProduct
-}
-
 export function isEcEolExecContent(content: unknown): boolean {
   const value = String(content ?? '').trim()
   if (!value) {

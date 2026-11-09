@@ -21,19 +21,20 @@ export default {
       loadToForm: 'フォームへ読込',
       plantFromCompany: '会社 {company} → 工場 {plant}',
       companyRequired: '会社を選択してからソース設変を取込んでください',
-      formTitle: 'ソース設変取込（設変担当・実施範囲・添付を入力して保存）',
+      formTitle: 'ソース設変取込（設変担当・実施範囲・旧品処理・添付を入力して保存）',
       attachmentRequired: '添付を1件以上追加し、ファイルをアップロードしてください',
       attachmentUploadRequired: '{row} 行目：添付ファイルが未アップロードです',
       importSelecmed: '選択取込（{count}）',
       importSuccess: '{count} 件の設変を取込しました',
       importPartial: '取込完了：成功 {success} 件、失敗 {fail} 件',
       detailsDeferred:
-        '明細は {count} 行あり、サーバー側で登録します（ブラウザからは送信しません）。設変担当・実施範囲を入力して送信してください。',
+        '明細は {count} 行あり、サーバー側で登録します（ブラウザからは送信しません）。設変担当・実施範囲・旧品処理を入力して送信してください。',
     },
     attachment: {
       docCode: {
         formatInvalid: '文書コード形式が正しくありません（{hint}）',
         duplicate: '文書コード「{code}」は既に存在します',
+        sequence: '4桁',
         hint: {
           empty: '文書コードを入力してください',
           ec: '設変番号と一致させる',
@@ -53,6 +54,11 @@ export default {
     tabs: {
       oldNewMaterial: '旧新部品',
       scope: '実施範囲',
+      oldPart: '旧品処理',
+    },
+    oldPart: {
+      empty: '明細に旧品物料がありません',
+      dispositionRequired: '「旧品処理」タブですべての旧品物料に処理方式を選択してください',
     },
     scopeDepts: {
       master: '制御範囲',
@@ -68,6 +74,11 @@ export default {
       me: '製技',
       nonFert: '非FERT',
       discontinued: '生産終了',
+      oldNewMaterialGroup: '旧/新部材を部材コード組へ',
+      mcNewMaterialGroup: 'C003以外の購買新部材を部材コード組へ',
+      mtlNewMaterialGroup: 'C003購買新部材を部材コード組へ',
+      purNewMaterialGroup: '購買新部材を部材コード組へ',
+      iqcNewMaterialGroup: '検査新部材を部材コード組へ',
     },
     persist: {
       submitted: '設変 {ecCode} のバックグラウンド{action}を受付しました（明細 {detailCount} 行・部門実行派生含む）。完了後に通知します',

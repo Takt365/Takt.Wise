@@ -2356,7 +2356,7 @@ public class TaktDictDataSeedData : ITaktSeedDataCoordinator
             ("logistics_sales_pricing_procedure","标准","ZVAA97","dict.logistics.sales.pricing.procedure.zvaa97",11,11,0,"销售定价过程.ZVAA97",11,"mul","A","V"),
             ("logistics_sales_pricing_procedure","标准 - 总额 (旧)","ZVAA98","dict.logistics.sales.pricing.procedure.zvaa98",12,12,0,"销售定价过程.ZVAA98",12,"mul","A","V"),
             ("logistics_sales_pricing_procedure","标准","ZVAA99","dict.logistics.sales.pricing.procedure.zvaa99",13,13,1,"销售定价过程.ZVAA99",13,"mul","A","V"),
-            ("logistics_procurement_pricing_procedure","采购信息","ZRM001","dict.logistics.procurement.pricing.procedure.zrm001",1,1,1,"采购定价过程.ZRM001",1,"mul","A","M"),
+            ("logistics_procurement_pricing_procedure","采购条件","ZRM001","dict.logistics.procurement.pricing.procedure.zrm001",1,1,1,"采购定价过程.ZRM001",1,"mul","A","M"),
             ("logistics_procurement_pricing_procedure","库存凭证","ZRM002","dict.logistics.procurement.pricing.procedure.zrm002",2,2,0,"采购定价过程.ZRM002",2,"mul","A","M"),
             ("logistics_procurement_pricing_procedure","采购单据(大)","RM0000","dict.logistics.procurement.pricing.procedure.rm0000",3,3,0,"采购定价过程.RM0000",3,"mul","A","M"),
             ("logistics_procurement_pricing_procedure","条件补充抬头","RM0001","dict.logistics.procurement.pricing.procedure.rm0001",4,4,0,"采购定价过程.RM0001",4,"mul","A","M"),

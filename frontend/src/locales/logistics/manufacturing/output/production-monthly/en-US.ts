@@ -48,7 +48,7 @@ export default {
       teamCode: 'Team',
       pcbaTeamCode: 'Team',
       prodDate: 'Production date',
-      batchCode: 'Batch',
+      prodBatch: 'Batch',
       materialCode: 'Material',
       modelCode: 'Model',
       modelCodeOnly: 'Model',

@@ -29,16 +29,6 @@ namespace Takt.Application.Services.Logistics.Manufacturing.EngineeringChange;
 public class TaktEcKanbanService : TaktServiceBase, ITaktEcKanbanService
 {
     /// <summary>
-    /// 机种、成品列最多展示的去重个数。超出后以省略号结尾
-    /// </summary>
-    private const int IdentityLabelCap = 8;
-
-    /// <summary>
-    /// 机种、成品只抽样这么多明细行。禁止对整张明细做聚合
-    /// </summary>
-    private const int IdentitySampleRows = 80;
-
-    /// <summary>
     /// 每个部门最多带回的执行行。查询停在这个上限，不随明细行数增长
     /// </summary>
     private const int KanbanDeptLineCap = 300;
@@ -83,7 +73,7 @@ public class TaktEcKanbanService : TaktServiceBase, ITaktEcKanbanService
             thenBy: x => x.EcCode,
             thenByDesc: false);
         var page = await BuildRowsAsync(masters);
-        await FillIdentityLabelsAsync(page);
+        FillIdentityFromPcLines(page);
         return TaktPagedResult<TaktEcKanbanDto>.Create(page, total, pageIndex, pageSize);
     }
 
@@ -104,7 +94,7 @@ public class TaktEcKanbanService : TaktServiceBase, ITaktEcKanbanService
         var row = rows.FirstOrDefault();
         if (row != null)
         {
-            await FillIdentityLabelsAsync([row]);
+            FillIdentityFromPcLines([row]);
         }
         return row;
     }
@@ -128,7 +118,7 @@ public class TaktEcKanbanService : TaktServiceBase, ITaktEcKanbanService
             .OrderByDescending(x => x.EcIssueDate)
             .ThenBy(x => x.EcCode, StringComparer.Ordinal)
             .ToList();
-        await FillIdentityLabelsAsync(rows);
+        FillIdentityFromPcLines(rows);
         return await TaktExcelHelper.ExportAsync(
             rows.SelectMany(ExpandExportLines).ToList(),
             sheetName ?? "设变看板",
@@ -136,7 +126,7 @@ public class TaktEcKanbanService : TaktServiceBase, ITaktEcKanbanService
     }
 
     /// <summary>
-    /// 获取设变看板统计。主表按实施状态计数；部门表按已实施/未实施计数；录入期间按月计数
+    /// 获取设变看板统计。主表按实施状态计数；明细/部门执行仅计 FERT 根物料且停产状态=计划物料（Z0）；录入期间按月计数
     /// </summary>
     /// <param name="queryDto">查询条件</param>
     /// <returns>看板统计</returns>
@@ -148,21 +138,25 @@ public class TaktEcKanbanService : TaktServiceBase, ITaktEcKanbanService
         var inProgress = await CountByStatusAsync(baseQuery, TaktEcImplementationStatusConstants.InProgress);
         var officially = await CountByStatusAsync(baseQuery, TaktEcImplementationStatusConstants.OfficiallyCompleted);
         var fully = await CountByStatusAsync(baseQuery, TaktEcImplementationStatusConstants.FullyCompleted);
+        // 旭日图：内围主表、中围明细、外围各部门执行行 —— 均限定在当前查询主表设变号内
+        var masterCodes = await LoadBoardMasterEcCodesAsync(baseQuery);
+        var fertPlannedRootsByEc = await LoadFertPlannedRootCodesByEcAsync(masterCodes);
+        var detailTotal = await CountFertPlannedDetailRowsByEcCodesAsync(masterCodes);
         var depts = new List<TaktEcKanbanDeptStatDto>
         {
-            await CountDeptBoardAsync(TaktEcDeptCodes.Pc, () => CountDeptImplPairAsync<TaktEcPc>()),
-            await CountDeptBoardAsync(TaktEcDeptCodes.Pur, () => CountDeptImplPairAsync<TaktEcPur>()),
-            await CountDeptBoardAsync(TaktEcDeptCodes.Iqc, () => CountDeptImplPairAsync<TaktEcIqc>()),
-            await CountDeptBoardAsync(TaktEcDeptCodes.Mc, () => CountDeptImplPairAsync<TaktEcMc>()),
-            await CountDeptBoardAsync(TaktEcDeptCodes.Mtl, () => CountDeptImplPairAsync<TaktEcMtl>()),
-            await CountDeptBoardAsync(TaktEcDeptCodes.Mfg2, () => CountDeptImplPairAsync<TaktEcMfg2>()),
-            await CountDeptBoardAsync(TaktEcDeptCodes.Mfg1, () => CountDeptImplPairAsync<TaktEcMfg1>()),
-            await CountDeptBoardAsync(TaktEcDeptCodes.Qc, () => CountDeptImplPairAsync<TaktEcQc>()),
-            await CountDeptBoardAsync(TaktEcDeptCodes.Me, CountMeImplPairAsync),
+            await CountDeptBoardByCodesAsync<TaktEcPc>(TaktEcDeptCodes.Pc, masterCodes, fertPlannedRootsByEc),
+            await CountDeptBoardByCodesAsync<TaktEcMfg2>(TaktEcDeptCodes.Mfg2, masterCodes, fertPlannedRootsByEc),
+            await CountDeptBoardByCodesAsync<TaktEcMfg1>(TaktEcDeptCodes.Mfg1, masterCodes, fertPlannedRootsByEc),
+            await CountDeptBoardByCodesAsync<TaktEcQc>(TaktEcDeptCodes.Qc, masterCodes, fertPlannedRootsByEc),
+            await CountDeptBoardByCodesAsync<TaktEcPur>(TaktEcDeptCodes.Pur, masterCodes, fertPlannedRootsByEc),
+            await CountDeptBoardByCodesAsync<TaktEcIqc>(TaktEcDeptCodes.Iqc, masterCodes, fertPlannedRootsByEc),
+            await CountDeptBoardByCodesAsync<TaktEcMc>(TaktEcDeptCodes.Mc, masterCodes, fertPlannedRootsByEc),
+            await CountDeptBoardByCodesAsync<TaktEcMtl>(TaktEcDeptCodes.Mtl, masterCodes, fertPlannedRootsByEc),
         };
         return new TaktEcKanbanBoardStatDto
         {
             EcTotal = notStarted + inProgress + officially + fully,
+            DetailTotal = detailTotal,
             NotStarted = notStarted,
             InProgress = inProgress,
             OfficiallyCompleted = officially,
@@ -170,6 +164,229 @@ public class TaktEcKanbanService : TaktServiceBase, ITaktEcKanbanService
             Depts = depts,
             Months = await CountMonthsAsync(baseQuery),
         };
+    }
+
+    /// <summary>
+    /// 当前查询条件下的主表设变单号（不含实施状态过滤，与 EcTotal 同源）
+    /// </summary>
+    /// <param name="queryDto">查询</param>
+    /// <returns>去重后的设变单号</returns>
+    private async Task<List<string>> LoadBoardMasterEcCodesAsync(TaktEcKanbanQueryDto queryDto)
+    {
+        var dto = new TaktEcKanbanQueryDto
+        {
+            KeyWords = queryDto.KeyWords,
+            EcCode = queryDto.EcCode,
+            ChangeStatus = queryDto.ChangeStatus,
+            EcStatus = queryDto.EcStatus,
+            CultureCode = queryDto.CultureCode,
+            EcEntryDateStart = queryDto.EcEntryDateStart,
+            EcEntryDateEnd = queryDto.EcEntryDateEnd,
+        };
+        var tenant = CurrentTenantCode;
+        var company = CurrentCompanyCode;
+        var codes = await _db.Queryable<TaktEcTe>()
+            .Where(x => x.TenantCode == tenant && x.CompanyCode == company && x.IsDeleted == 0)
+            .Where(ListExpression(dto))
+            .Select(x => x.EcCode)
+            .ToListAsync();
+        return codes
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    /// <summary>
+    /// 明细行数：仅 FERT 根物料且停产状态为计划物料（空或 Z0）
+    /// </summary>
+    /// <param name="ecCodes">设变单号</param>
+    /// <returns>行数</returns>
+    private async Task<int> CountFertPlannedDetailRowsByEcCodesAsync(IReadOnlyList<string> ecCodes)
+    {
+        if (ecCodes.Count == 0)
+        {
+            return 0;
+        }
+        var tenant = CurrentTenantCode;
+        var company = CurrentCompanyCode;
+        var fert = TaktEcMfg1Constants.FertMaterialType;
+        var planned = TaktEcScopeConstants.PlannedMaterialStatus;
+        return await _db.Queryable<TaktEcDetail>()
+            .Where(x => x.TenantCode == tenant
+                && x.CompanyCode == company
+                && ecCodes.Contains(x.EcCode)
+                && x.IsDeleted == 0
+                && x.IsObsolete == 0
+                && x.EcRootMaterialType == fert
+                && (x.DiscontinuedStatus == null
+                    || x.DiscontinuedStatus == ""
+                    || x.DiscontinuedStatus == planned))
+            .CountAsync();
+    }
+
+    /// <summary>
+    /// 按设变号加载 FERT 且计划物料（Z0）的根物料编码集合（看板统计/过滤共用）
+    /// </summary>
+    /// <param name="ecCodes">设变单号</param>
+    /// <returns>EcCode → 根物料编码集合</returns>
+    private async Task<Dictionary<string, HashSet<string>>> LoadFertPlannedRootCodesByEcAsync(
+        IReadOnlyList<string> ecCodes)
+    {
+        var result = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+        if (ecCodes.Count == 0)
+        {
+            return result;
+        }
+        var tenant = CurrentTenantCode;
+        var company = CurrentCompanyCode;
+        var fert = TaktEcMfg1Constants.FertMaterialType;
+        var planned = TaktEcScopeConstants.PlannedMaterialStatus;
+        var rows = await _db.Queryable<TaktEcDetail>()
+            .Where(x => x.TenantCode == tenant
+                && x.CompanyCode == company
+                && ecCodes.Contains(x.EcCode)
+                && x.IsDeleted == 0
+                && x.IsObsolete == 0
+                && x.EcRootMaterialType == fert
+                && (x.DiscontinuedStatus == null
+                    || x.DiscontinuedStatus == ""
+                    || x.DiscontinuedStatus == planned))
+            .Select(x => new { x.EcCode, x.EcRootMaterialCode })
+            .ToListAsync();
+        foreach (var row in rows)
+        {
+            if (string.IsNullOrWhiteSpace(row.EcCode) || string.IsNullOrWhiteSpace(row.EcRootMaterialCode))
+            {
+                continue;
+            }
+            if (!result.TryGetValue(row.EcCode, out var set))
+            {
+                set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                result[row.EcCode] = set;
+            }
+            set.Add(row.EcRootMaterialCode.Trim());
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// 部门统计：仅 FERT+计划物料执行行；行级已实施/未实施 + 设变单级未开始/实施中/完成
+    /// （完成 = 该部门在该设变下有执行行且明细全部已实施）
+    /// </summary>
+    /// <typeparam name="TEntity">部门执行实体</typeparam>
+    /// <param name="deptCode">部门编码</param>
+    /// <param name="ecCodes">当前查询主表设变号</param>
+    /// <param name="fertPlannedRootsByEc">FERT 计划物料根编码</param>
+    /// <returns>部门统计</returns>
+    private async Task<TaktEcKanbanDeptStatDto> CountDeptBoardByCodesAsync<TEntity>(
+        string deptCode,
+        IReadOnlyList<string> ecCodes,
+        IReadOnlyDictionary<string, HashSet<string>> fertPlannedRootsByEc)
+        where TEntity : TaktCompanyEntityBase, ITaktEcDeptExecEntity, new()
+    {
+        if (ecCodes.Count == 0)
+        {
+            return new TaktEcKanbanDeptStatDto { DeptCode = deptCode };
+        }
+        var tenant = CurrentTenantCode;
+        var company = CurrentCompanyCode;
+        var entities = await _db.Queryable<TEntity>()
+            .Where(x => x.TenantCode == tenant
+                && x.CompanyCode == company
+                && ecCodes.Contains(x.EcCode)
+                && x.IsDeleted == 0
+                && x.IsObsolete == 0)
+            .ToListAsync();
+        var rows = entities
+            .Select(ProjectDeptExecForKanbanStat)
+            .Where(x => IsKanbanPlannedMaterial(x.DiscontinuedStatus)
+                && IsRootGroupAllInFertPlannedSet(x.EcCode, x.RootGroup, fertPlannedRootsByEc))
+            .ToList();
+        var implemented = rows.Count(x => x.IsImplemented == 1);
+        var notImplemented = rows.Count - implemented;
+        var byEc = rows
+            .Where(x => !string.IsNullOrWhiteSpace(x.EcCode))
+            .GroupBy(x => x.EcCode, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
+        var ecNotStarted = 0;
+        var ecInProgress = 0;
+        var ecCompleted = 0;
+        foreach (var code in ecCodes)
+        {
+            if (!byEc.TryGetValue(code, out var list) || list.Count == 0)
+            {
+                ecNotStarted++;
+                continue;
+            }
+            // 本部门明细全部已实施才算完成
+            if (list.Any(x => x.IsImplemented != 1))
+            {
+                ecInProgress++;
+            }
+            else
+            {
+                ecCompleted++;
+            }
+        }
+        return new TaktEcKanbanDeptStatDto
+        {
+            DeptCode = deptCode,
+            Implemented = implemented,
+            NotImplemented = notImplemented,
+            EcNotStarted = ecNotStarted,
+            EcInProgress = ecInProgress,
+            EcCompleted = ecCompleted,
+        };
+    }
+
+    /// <summary>
+    /// 部门执行实体投影为看板统计行字段
+    /// </summary>
+    /// <param name="entity">执行实体</param>
+    /// <returns>统计用字段</returns>
+    private static (string EcCode, int IsImplemented, string DiscontinuedStatus, string RootGroup)
+        ProjectDeptExecForKanbanStat(ITaktEcDeptExecEntity entity)
+    {
+        return entity switch
+        {
+            TaktEcPc e => (e.EcCode, e.IsImplemented, e.DiscontinuedStatus ?? string.Empty, e.EcRootMaterialCodeGroup ?? string.Empty),
+            TaktEcMfg2 e => (e.EcCode, e.IsImplemented, e.DiscontinuedStatus ?? string.Empty, e.EcRootMaterialCodeGroup ?? string.Empty),
+            TaktEcMfg1 e => (e.EcCode, e.IsImplemented, e.DiscontinuedStatus ?? string.Empty, e.EcRootMaterialCodeGroup ?? string.Empty),
+            TaktEcQc e => (e.EcCode, e.IsImplemented, e.DiscontinuedStatus ?? string.Empty, e.EcRootMaterialCodeGroup ?? string.Empty),
+            TaktEcPur e => (e.EcCode, e.IsImplemented, e.DiscontinuedStatus ?? string.Empty, e.EcRootMaterialCodeGroup ?? string.Empty),
+            TaktEcIqc e => (e.EcCode, e.IsImplemented, e.DiscontinuedStatus ?? string.Empty, e.EcRootMaterialCodeGroup ?? string.Empty),
+            TaktEcMc e => (e.EcCode, e.IsImplemented, e.DiscontinuedStatus ?? string.Empty, e.EcRootMaterialCodeGroup ?? string.Empty),
+            TaktEcMtl e => (e.EcCode, e.IsImplemented, e.DiscontinuedStatus ?? string.Empty, e.EcRootMaterialCodeGroup ?? string.Empty),
+            _ => (entity.EcCode, entity.IsImplemented, string.Empty, string.Empty),
+        };
+    }
+
+    /// <summary>
+    /// 根物料编码组是否全部落在该设变的 FERT 计划物料集合内
+    /// </summary>
+    /// <param name="ecCode">设变单号</param>
+    /// <param name="rootGroup">根物料编码组</param>
+    /// <param name="fertPlannedRootsByEc">FERT 计划物料根编码</param>
+    /// <returns>全部命中则为 true</returns>
+    private static bool IsRootGroupAllInFertPlannedSet(
+        string? ecCode,
+        string? rootGroup,
+        IReadOnlyDictionary<string, HashSet<string>> fertPlannedRootsByEc)
+    {
+        if (string.IsNullOrWhiteSpace(ecCode))
+        {
+            return false;
+        }
+        var roots = SplitGroupCodes(rootGroup);
+        if (roots.Count == 0)
+        {
+            return false;
+        }
+        if (!fertPlannedRootsByEc.TryGetValue(ecCode, out var set) || set.Count == 0)
+        {
+            return false;
+        }
+        return roots.All(r => set.Contains(r));
     }
 
     /// <summary>
@@ -192,85 +409,6 @@ public class TaktEcKanbanService : TaktServiceBase, ITaktEcKanbanService
             ImplementationStatus = status,
         };
         return await _ecTeRepository.CountAsync(ListExpression(dto));
-    }
-
-    /// <summary>
-    /// 组装部门统计行
-    /// </summary>
-    /// <param name="deptCode">部门编码</param>
-    /// <param name="pairFactory">已实施/未实施计数</param>
-    /// <returns>部门统计</returns>
-    private static async Task<TaktEcKanbanDeptStatDto> CountDeptBoardAsync(
-        string deptCode,
-        Func<Task<(int Implemented, int NotImplemented)>> pairFactory)
-    {
-        var (implemented, notImplemented) = await pairFactory();
-        return new TaktEcKanbanDeptStatDto
-        {
-            DeptCode = deptCode,
-            Implemented = implemented,
-            NotImplemented = notImplemented,
-        };
-    }
-
-    /// <summary>
-    /// 一个部门执行表：全仕向/部管、未作废行的已实施与未实施计数
-    /// </summary>
-    /// <typeparam name="TEntity">部门执行实体</typeparam>
-    /// <returns>已实施、未实施</returns>
-    private async Task<(int Implemented, int NotImplemented)> CountDeptImplPairAsync<TEntity>()
-        where TEntity : TaktCompanyEntityBase, ITaktEcDeptExecEntity, new()
-    {
-        var tenant = CurrentTenantCode;
-        var company = CurrentCompanyCode;
-        var allDestination = TaktEcScopeConstants.AllDestination;
-        var materialControl = TaktEcScopeConstants.MaterialControl;
-        var implemented = await _db.Queryable<TEntity>()
-            .Where(x => x.TenantCode == tenant
-                && x.CompanyCode == company
-                && x.IsDeleted == 0
-                && x.IsObsolete == 0
-                && (x.EcImplScope == allDestination || x.EcImplScope == materialControl)
-                && x.IsImplemented == 1)
-            .CountAsync();
-        var notImplemented = await _db.Queryable<TEntity>()
-            .Where(x => x.TenantCode == tenant
-                && x.CompanyCode == company
-                && x.IsDeleted == 0
-                && x.IsObsolete == 0
-                && (x.EcImplScope == allDestination || x.EcImplScope == materialControl)
-                && x.IsImplemented != 1)
-            .CountAsync();
-        return (implemented, notImplemented);
-    }
-
-    /// <summary>
-    /// 制技执行表：IsImplemented 不落库，按 IsSopUpdated 统计已更新/未更新
-    /// </summary>
-    /// <returns>已实施（SOP 已更新）、未实施</returns>
-    private async Task<(int Implemented, int NotImplemented)> CountMeImplPairAsync()
-    {
-        var tenant = CurrentTenantCode;
-        var company = CurrentCompanyCode;
-        var allDestination = TaktEcScopeConstants.AllDestination;
-        var materialControl = TaktEcScopeConstants.MaterialControl;
-        var implemented = await _db.Queryable<TaktEcMe>()
-            .Where(x => x.TenantCode == tenant
-                && x.CompanyCode == company
-                && x.IsDeleted == 0
-                && x.IsObsolete == 0
-                && (x.EcImplScope == allDestination || x.EcImplScope == materialControl)
-                && x.IsSopUpdated == 1)
-            .CountAsync();
-        var notImplemented = await _db.Queryable<TaktEcMe>()
-            .Where(x => x.TenantCode == tenant
-                && x.CompanyCode == company
-                && x.IsDeleted == 0
-                && x.IsObsolete == 0
-                && (x.EcImplScope == allDestination || x.EcImplScope == materialControl)
-                && x.IsSopUpdated != 1)
-            .CountAsync();
-        return (implemented, notImplemented);
     }
 
     /// <summary>
@@ -318,10 +456,11 @@ public class TaktEcKanbanService : TaktServiceBase, ITaktEcKanbanService
     }
 
     /// <summary>
-    /// 为一页设变主表组装部门实施标记。只读这些设变号的执行行，不读明细表
+    /// 为一页设变主表组装看板行。以生管执行行为标准行序；制一/制二/品管按去重键直接对齐；
+    /// 采购/受检/部管/物料/制技按成品组反向∪明细去重键聚合到对应生管行；多物料须全部实施才为是
     /// </summary>
     /// <param name="masters">当前页或导出范围内的主表</param>
-    /// <returns>转置行，顺序与主表一致</returns>
+    /// <returns>转置行，顺序与主表一致；各部门 *Lines 长度均等于生管行数</returns>
     private async Task<List<TaktEcKanbanDto>> BuildRowsAsync(IReadOnlyList<TaktEcTe> masters)
     {
         if (masters.Count == 0)
@@ -333,200 +472,1563 @@ public class TaktEcKanbanService : TaktServiceBase, ITaktEcKanbanService
             .Where(x => !string.IsNullOrWhiteSpace(x))
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
-        var execByDept = new Dictionary<string, List<int>>(StringComparer.OrdinalIgnoreCase);
-        foreach (var code in codes)
-        {
-            PutFlags(execByDept, code, TaktEcDeptCodes.Pc, await QueryFlagsAsync<TaktEcPc>(code));
-            PutFlags(execByDept, code, TaktEcDeptCodes.Pur, await QueryFlagsAsync<TaktEcPur>(code));
-            PutFlags(execByDept, code, TaktEcDeptCodes.Iqc, await QueryFlagsAsync<TaktEcIqc>(code));
-            PutFlags(execByDept, code, TaktEcDeptCodes.Mc, await QueryFlagsAsync<TaktEcMc>(code));
-            PutFlags(execByDept, code, TaktEcDeptCodes.Mtl, await QueryFlagsAsync<TaktEcMtl>(code));
-            PutFlags(execByDept, code, TaktEcDeptCodes.Mfg2, await QueryFlagsAsync<TaktEcMfg2>(code));
-            PutFlags(execByDept, code, TaktEcDeptCodes.Mfg1, await QueryFlagsAsync<TaktEcMfg1>(code));
-            PutFlags(execByDept, code, TaktEcDeptCodes.Qc, await QueryFlagsAsync<TaktEcQc>(code));
-            PutFlags(execByDept, code, TaktEcDeptCodes.Me, await QueryMeFlagsAsync(code));
-        }
-        var rows = new List<TaktEcKanbanDto>();
+        var tenant = CurrentTenantCode;
+        var company = CurrentCompanyCode;
+        var details = await _db.Queryable<TaktEcDetail>()
+            .Where(x => x.TenantCode == tenant && x.CompanyCode == company && codes.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0)
+            .Select(x => new TaktEcDetail
+            {
+                EcCode = x.EcCode,
+                EcModelCode = x.EcModelCode,
+                EcRootMaterialCode = x.EcRootMaterialCode,
+                EcNewMaterialCode = x.EcNewMaterialCode,
+                EcNewPurchaseType = x.EcNewPurchaseType,
+                EcNewRequiresInspection = x.EcNewRequiresInspection,
+                EcRootMaterialType = x.EcRootMaterialType,
+                DiscontinuedStatus = x.DiscontinuedStatus,
+                EcImplScope = x.EcImplScope,
+            })
+            .ToListAsync();
+        var detailsByCode = details
+            .GroupBy(x => x.EcCode, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => (IReadOnlyList<TaktEcDetail>)g.ToList(), StringComparer.OrdinalIgnoreCase);
+        var pcByCode = GroupExec(await QueryPcRawsAsync(codes));
+        var purFullByCode = GroupPurFull(await QueryPurFullAsync(codes));
+        var purByCode = GroupExec(FlattenPurFullToExec(purFullByCode));
+        var iqcFullByCode = GroupIqcFull(await QueryIqcFullAsync(codes));
+        var iqcByCode = GroupExec(FlattenIqcFullToExec(iqcFullByCode));
+        var mcFullByCode = GroupMcFull(await QueryMcFullAsync(codes));
+        var mcByCode = GroupExec(FlattenMcFullToExec(mcFullByCode));
+        var mtlFullByCode = GroupMtlFull(await QueryMtlFullAsync(codes));
+        var mtlByCode = GroupExec(FlattenMtlFullToExec(mtlFullByCode));
+        var mfg2ByCode = GroupExec(await QueryMfg2RawsAsync(codes));
+        var mfg1ByCode = GroupExec(await QueryMfg1RawsAsync(codes));
+        var qcByCode = GroupExec(await QueryQcRawsAsync(codes));
+        var meByCode = GroupExec(await QueryMeRawsAsync(codes));
+        var rows = new List<TaktEcKanbanDto>(masters.Count);
         foreach (var master in masters)
         {
+            detailsByCode.TryGetValue(master.EcCode ?? string.Empty, out var codeDetails);
+            codeDetails ??= [];
+            pcByCode.TryGetValue(master.EcCode ?? string.Empty, out var pcs);
+            pcs ??= [];
+            var purFull = LookupPurFull(purFullByCode, master.EcCode);
+            var iqcFull = LookupIqcFull(iqcFullByCode, master.EcCode);
+            var mcFull = LookupMcFull(mcFullByCode, master.EcCode);
+            var mtlFull = LookupMtlFull(mtlFullByCode, master.EcCode);
+            var aligned = AlignDeptsToPc(
+                master.EcControlScope,
+                codeDetails,
+                pcs,
+                Lookup(purByCode, master.EcCode),
+                Lookup(iqcByCode, master.EcCode),
+                Lookup(mcByCode, master.EcCode),
+                Lookup(mtlByCode, master.EcCode),
+                Lookup(mfg2ByCode, master.EcCode),
+                Lookup(mfg1ByCode, master.EcCode),
+                Lookup(qcByCode, master.EcCode),
+                Lookup(meByCode, master.EcCode));
             rows.Add(new TaktEcKanbanDto
             {
                 EcTeId = master.Id,
                 EcIssueDate = master.EcIssueDate,
                 EcLeader = master.EcLeader ?? string.Empty,
-                EcCode = master.EcCode,
+                EcCode = master.EcCode ?? string.Empty,
                 EcEntryDate = master.EcEntryDate,
-                PurImplemented = ExecFlags(master.EcCode, TaktEcDeptCodes.Pur, execByDept),
-                PcImplemented = ExecFlags(master.EcCode, TaktEcDeptCodes.Pc, execByDept),
-                IqcImplemented = ExecFlags(master.EcCode, TaktEcDeptCodes.Iqc, execByDept),
-                McImplemented = ExecFlags(master.EcCode, TaktEcDeptCodes.Mc, execByDept),
-                MtlImplemented = ExecFlags(master.EcCode, TaktEcDeptCodes.Mtl, execByDept),
-                Mfg2Implemented = ExecFlags(master.EcCode, TaktEcDeptCodes.Mfg2, execByDept),
-                Mfg1Implemented = ExecFlags(master.EcCode, TaktEcDeptCodes.Mfg1, execByDept),
-                QcImplemented = ExecFlags(master.EcCode, TaktEcDeptCodes.Qc, execByDept),
-                MeImplemented = ExecFlags(master.EcCode, TaktEcDeptCodes.Me, execByDept),
+                PcLines = aligned.Pc,
+                PurLines = aligned.Pur,
+                PurDetailLines = ToPurDetailLines(purFull, codeDetails),
+                IqcDetailLines = ToIqcDetailLines(iqcFull, codeDetails),
+                McDetailLines = ToMcDetailLines(mcFull, codeDetails),
+                MtlDetailLines = ToMtlDetailLines(mtlFull, codeDetails),
+                IqcLines = aligned.Iqc,
+                McLines = aligned.Mc,
+                MtlLines = aligned.Mtl,
+                Mfg2Lines = aligned.Mfg2,
+                Mfg1Lines = aligned.Mfg1,
+                QcLines = aligned.Qc,
+                MeLines = aligned.Me,
+                PcImplemented = ToFlags(aligned.Pc),
+                PurImplemented = ToFlags(aligned.Pur),
+                IqcImplemented = ToFlags(aligned.Iqc),
+                McImplemented = ToFlags(aligned.Mc),
+                MtlImplemented = ToFlags(aligned.Mtl),
+                Mfg2Implemented = ToFlags(aligned.Mfg2),
+                Mfg1Implemented = ToFlags(aligned.Mfg1),
+                QcImplemented = ToFlags(aligned.Qc),
+                MeImplemented = ToFlags(aligned.Me),
             });
         }
         return rows;
     }
 
     /// <summary>
-    /// 当前页补机种和成品。每个设变只取固定行数，不聚合整张明细
+    /// 主表兼容字段机种/成品：取第一行生管明细原样（展开行以 PcLines 各行字段为准，禁止整单明细拼组）
     /// </summary>
-    /// <param name="rows">当前页或导出的看板行</param>
-    private async Task FillIdentityLabelsAsync(IReadOnlyList<TaktEcKanbanDto> rows)
+    /// <param name="rows">看板行</param>
+    private static void FillIdentityFromPcLines(IReadOnlyList<TaktEcKanbanDto> rows)
     {
-        var tenant = CurrentTenantCode;
-        var company = CurrentCompanyCode;
         foreach (var row in rows)
         {
-            var sample = await _db.Queryable<TaktEcDetail>()
-                .Where(x => x.EcTeId == row.EcTeId && x.TenantCode == tenant && x.CompanyCode == company && x.IsDeleted == 0 && x.IsObsolete == 0)
-                .Select(x => new { x.EcModelCode, x.EcRootMaterialCode })
-                .Take(IdentitySampleRows)
-                .ToListAsync();
-            var more = sample.Count >= IdentitySampleRows;
-            row.EcModelCode = JoinSample(sample.Select(x => x.EcModelCode), more);
-            row.EcRootMaterialCode = JoinSample(sample.Select(x => x.EcRootMaterialCode), more);
+            var first = row.PcLines.FirstOrDefault();
+            row.EcModelCode = first?.EcModelCode ?? string.Empty;
+            row.EcRootMaterialCode = first?.EcRootMaterialCode ?? string.Empty;
         }
     }
 
     /// <summary>
-    /// 抽样值去重后连接。样本已满或个数超过上限时以省略号结尾
+    /// 看板执行行原始数据（含去重键，供按生管对齐）
     /// </summary>
-    /// <param name="values">抽样值</param>
-    /// <param name="sampleFull">样本是否已取满</param>
-    /// <returns>展示文本</returns>
-    private static string JoinSample(IEnumerable<string?> values, bool sampleFull)
+    private sealed class KanbanExecRaw
     {
-        var trimmed = values
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Select(x => x!.Trim())
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(x => x, StringComparer.Ordinal)
+        /// <summary>主键</summary>
+        public long Id { get; init; }
+        /// <summary>设变单号</summary>
+        public string EcCode { get; init; } = string.Empty;
+        /// <summary>执行去重键（ntext，查询须 SqlFunc.ToString）</summary>
+        public string EcGrainKey { get; init; } = string.Empty;
+        /// <summary>机种编码组（生管；ntext）</summary>
+        public string EcModelCodeGroup { get; init; } = string.Empty;
+        /// <summary>根物料编码组（生管；ntext；按成品时常为单码）</summary>
+        public string EcRootMaterialCodeGroup { get; init; } = string.Empty;
+        /// <summary>行号</summary>
+        public int LineNumber { get; init; }
+        /// <summary>是否实施（制技为是否更新 SOP）</summary>
+        public int IsImplemented { get; init; }
+        /// <summary>阶段日期</summary>
+        public DateTime? StageDate { get; init; }
+        /// <summary>批次/单号</summary>
+        public string? ProdBatch { get; init; }
+        /// <summary>停产状态（空或 Z0=计划物料）</summary>
+        public string DiscontinuedStatus { get; init; } = string.Empty;
+    }
+
+    /// <summary>
+    /// 对齐后的各部门执行行：生管/制二/制一/品管/制技长度=生管行数；采购/受检/部管/物料为本部门库表行
+    /// </summary>
+    private sealed class KanbanAlignedDepts
+    {
+        public List<TaktEcKanbanDeptLineDto> Pc { get; init; } = [];
+        public List<TaktEcKanbanDeptLineDto> Pur { get; set; } = [];
+        public List<TaktEcKanbanDeptLineDto> Iqc { get; set; } = [];
+        public List<TaktEcKanbanDeptLineDto> Mc { get; set; } = [];
+        public List<TaktEcKanbanDeptLineDto> Mtl { get; set; } = [];
+        public List<TaktEcKanbanDeptLineDto> Mfg2 { get; init; } = [];
+        public List<TaktEcKanbanDeptLineDto> Mfg1 { get; init; } = [];
+        public List<TaktEcKanbanDeptLineDto> Qc { get; init; } = [];
+        public List<TaktEcKanbanDeptLineDto> Me { get; init; } = [];
+    }
+
+    /// <summary>
+    /// 按设变单号分组执行行
+    /// </summary>
+    /// <param name="rows">原始行</param>
+    /// <returns>设变单号 → 行列表</returns>
+    private static Dictionary<string, List<KanbanExecRaw>> GroupExec(IReadOnlyList<KanbanExecRaw> rows)
+    {
+        return rows
+            .GroupBy(x => x.EcCode, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.OrderBy(x => x.LineNumber).ThenBy(x => x.EcGrainKey, StringComparer.Ordinal).ToList(), StringComparer.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// 取设变号下的执行行
+    /// </summary>
+    /// <param name="map">分组</param>
+    /// <param name="ecCode">设变单号</param>
+    /// <returns>行列表</returns>
+    private static IReadOnlyList<KanbanExecRaw> Lookup(IReadOnlyDictionary<string, List<KanbanExecRaw>> map, string? ecCode)
+    {
+        if (string.IsNullOrWhiteSpace(ecCode) || !map.TryGetValue(ecCode, out var list))
+        {
+            return [];
+        }
+        return list;
+    }
+
+    /// <summary>
+    /// 以生管行为脊柱对齐制一/制二/品管/制技（脊柱仅 FERT+计划物料）；采购/受检/部管/物料按本部门库表行过滤后回填（独立页签）
+    /// </summary>
+    /// <param name="masterControlScope">技术主表控制范围</param>
+    /// <param name="details">该设变明细</param>
+    /// <param name="pcs">生管行（已按行号排序）</param>
+    /// <param name="purs">采购行</param>
+    /// <param name="iqcs">受检行</param>
+    /// <param name="mcs">部管行</param>
+    /// <param name="mtls">物料行</param>
+    /// <param name="mfg2s">制二行</param>
+    /// <param name="mfg1s">制一行</param>
+    /// <param name="qcs">品管行</param>
+    /// <param name="mes">制技行</param>
+    /// <returns>对齐后的各部门行</returns>
+    private static KanbanAlignedDepts AlignDeptsToPc(
+        int masterControlScope,
+        IReadOnlyList<TaktEcDetail> details,
+        IReadOnlyList<KanbanExecRaw> pcs,
+        IReadOnlyList<KanbanExecRaw> purs,
+        IReadOnlyList<KanbanExecRaw> iqcs,
+        IReadOnlyList<KanbanExecRaw> mcs,
+        IReadOnlyList<KanbanExecRaw> mtls,
+        IReadOnlyList<KanbanExecRaw> mfg2s,
+        IReadOnlyList<KanbanExecRaw> mfg1s,
+        IReadOnlyList<KanbanExecRaw> qcs,
+        IReadOnlyList<KanbanExecRaw> mes)
+    {
+        // 采购等与生管粒度不同：仅 FERT+计划物料的本部门库表行
+        var purLines = ToAsStoredDeptLines(purs, details);
+        var iqcLines = ToAsStoredDeptLines(iqcs, details);
+        var mcLines = ToAsStoredDeptLines(mcs, details);
+        var mtlLines = ToAsStoredDeptLines(mtls, details);
+        // 批次标签脊柱：FERT 且计划物料（空/Z0）；禁止按空 EcGrainKey 去重
+        var spine = pcs
+            .Where(pc => IsKanbanPcSpineRow(details, pc, masterControlScope))
+            .Take(KanbanDeptLineCap)
             .ToList();
-        if (!sampleFull && trimmed.Count <= IdentityLabelCap)
+        if (spine.Count == 0)
         {
-            return string.Join("、", trimmed);
+            return new KanbanAlignedDepts
+            {
+                Pc = [EmptyDeptLine()],
+                Pur = purLines.Count > 0 ? purLines : [EmptyDeptLine()],
+                Iqc = iqcLines.Count > 0 ? iqcLines : [EmptyDeptLine()],
+                Mc = mcLines.Count > 0 ? mcLines : [EmptyDeptLine()],
+                Mtl = mtlLines.Count > 0 ? mtlLines : [EmptyDeptLine()],
+                Mfg2 = [EmptyDeptLine()],
+                Mfg1 = [EmptyDeptLine()],
+                Qc = [EmptyDeptLine()],
+                Me = [EmptyDeptLine()],
+            };
         }
-        return string.Join("、", trimmed.Take(IdentityLabelCap)) + "…";
+        var mfg2Index = IndexByGrain(mfg2s);
+        var mfg1Index = IndexByGrain(mfg1s);
+        var qcIndex = IndexByGrain(qcs);
+        var meIndex = IndexByGrain(mes);
+        var result = new KanbanAlignedDepts
+        {
+            Pc = new List<TaktEcKanbanDeptLineDto>(spine.Count),
+            Pur = purLines,
+            Iqc = iqcLines,
+            Mc = mcLines,
+            Mtl = mtlLines,
+            Mfg2 = new List<TaktEcKanbanDeptLineDto>(spine.Count),
+            Mfg1 = new List<TaktEcKanbanDeptLineDto>(spine.Count),
+            Qc = new List<TaktEcKanbanDeptLineDto>(spine.Count),
+            Me = new List<TaktEcKanbanDeptLineDto>(spine.Count),
+        };
+        for (var i = 0; i < spine.Count; i++)
+        {
+            var pc = spine[i];
+            // 设变信息机种/成品：生管该行是什么就展示什么（全仕向+按成品=单机种+单成品）
+            result.Pc.Add(ToPcDeptLine(pc));
+            // 制一/制二/品管与生管同粒，走明细去重键或同行号
+            var pcDetails = DetailsForPcRow(details, pc, masterControlScope);
+            result.Mfg2.Add(PickDirect(pcDetails, TaktEcDeptCodes.Mfg2, masterControlScope, mfg2Index, mfg2s, i));
+            result.Mfg1.Add(PickDirect(pcDetails, TaktEcDeptCodes.Mfg1, masterControlScope, mfg1Index, mfg1s, i));
+            result.Qc.Add(PickDirect(pcDetails, TaktEcDeptCodes.Qc, masterControlScope, qcIndex, qcs, i));
+            // 制技仍按命中行聚合勾叉
+            result.Me.Add(AggregateDeptForPc(pc, pcDetails, TaktEcDeptCodes.Me, masterControlScope, mes, meIndex));
+        }
+        return result;
     }
 
     /// <summary>
-    /// 写入一个部门的实施标记
+    /// 部门执行行按库表顺序映射（采购/受检/部管/物料：仅 FERT+计划物料）
     /// </summary>
-    /// <param name="execByDept">部门加设变单号到标记</param>
-    /// <param name="ecCode">设变单号</param>
-    /// <param name="deptCode">部门编码</param>
-    /// <param name="flags">实施标记</param>
-    private static void PutFlags(
-        Dictionary<string, List<int>> execByDept,
-        string ecCode,
-        string deptCode,
-        List<int> flags)
+    /// <param name="rows">同设变部门执行行</param>
+    /// <param name="details">该设变明细</param>
+    /// <returns>看板行</returns>
+    private static List<TaktEcKanbanDeptLineDto> ToAsStoredDeptLines(
+        IReadOnlyList<KanbanExecRaw> rows,
+        IReadOnlyList<TaktEcDetail> details)
     {
-        if (flags.Count > 0)
-        {
-            execByDept[DeptKey(deptCode, ecCode)] = flags;
-        }
+        return rows
+            .Where(x => IsKanbanPlannedMaterial(x.DiscontinuedStatus)
+                && IsKanbanFertPlannedRootGroup(details, x.EcRootMaterialCodeGroup))
+            .OrderBy(x => x.LineNumber)
+            .ThenBy(x => x.Id)
+            .Take(KanbanDeptLineCap)
+            .Select(ToAsStoredDeptLine)
+            .ToList();
     }
 
     /// <summary>
-    /// 一个设变在一个部门表中的实施标记。数据库只取上限行，不扫描明细
+    /// 单条部门执行行 → 看板格（含机种/成品组展示）
     /// </summary>
-    /// <typeparam name="TEntity">部门执行实体</typeparam>
-    /// <param name="ecCode">设变单号</param>
-    /// <returns>0 或 1 的列表</returns>
-    private async Task<List<int>> QueryFlagsAsync<TEntity>(string ecCode)
-        where TEntity : TaktCompanyEntityBase, ITaktEcDeptExecEntity, new()
+    /// <param name="raw">原始行</param>
+    /// <returns>DTO</returns>
+    private static TaktEcKanbanDeptLineDto ToAsStoredDeptLine(KanbanExecRaw raw)
+    {
+        var line = ToDeptLine(raw);
+        line.EcModelCode = DisplayPcGroupAsStored(raw.EcModelCodeGroup);
+        line.EcRootMaterialCode = DisplayPcGroupAsStored(raw.EcRootMaterialCodeGroup);
+        line.LineCount = 1;
+        line.ImplementedCount = raw.IsImplemented == 1 ? 1 : 0;
+        line.NotImplementedCount = raw.IsImplemented == 1 ? 0 : 1;
+        return line;
+    }
+
+    /// <summary>
+    /// 归属某一生管执行行的明细：仅按该行 EcGrainKey（与生管落行去重键一致）；不对机种/成品组做拆解
+    /// </summary>
+    /// <param name="details">该设变全部明细</param>
+    /// <param name="pc">生管执行行</param>
+    /// <param name="masterControlScope">主表控制范围</param>
+    /// <returns>该生管行覆盖的明细</returns>
+    private static List<TaktEcDetail> DetailsForPcRow(
+        IReadOnlyList<TaktEcDetail> details,
+        KanbanExecRaw pc,
+        int masterControlScope)
+    {
+        if (string.IsNullOrWhiteSpace(pc.EcGrainKey))
+        {
+            return [];
+        }
+        return details
+            .Where(d => string.Equals(
+                TaktEcScopeRowGrain.BuildExecGrainKey(d, TaktEcDeptCodes.Pc, masterControlScope),
+                pc.EcGrainKey,
+                StringComparison.OrdinalIgnoreCase))
+            .ToList();
+    }
+
+    /// <summary>
+    /// 根物料类型是否为成品 FERT
+    /// </summary>
+    /// <param name="materialType">明细 EcRootMaterialType</param>
+    /// <returns>是 FERT 则为 true</returns>
+    private static bool IsFertMaterialType(string? materialType)
+    {
+        return string.Equals(
+            materialType?.Trim(),
+            TaktEcMfg1Constants.FertMaterialType,
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// 是否计划物料停产状态（空或 Z0；非 EOL）
+    /// </summary>
+    /// <param name="discontinuedStatus">停产状态</param>
+    /// <returns>计划物料则为 true</returns>
+    private static bool IsKanbanPlannedMaterial(string? discontinuedStatus)
+    {
+        return !TaktEcScopeConstants.IsEolDiscontinued(discontinuedStatus);
+    }
+
+    /// <summary>
+    /// 明细是否为看板纳入范围：FERT 根物料且计划物料
+    /// </summary>
+    /// <param name="detail">设变明细</param>
+    /// <returns>纳入则为 true</returns>
+    private static bool IsKanbanFertPlannedDetail(TaktEcDetail detail)
+    {
+        return IsFertMaterialType(detail.EcRootMaterialType)
+            && IsKanbanPlannedMaterial(detail.DiscontinuedStatus);
+    }
+
+    /// <summary>
+    /// 根物料编码组是否全部对应 FERT+计划物料明细
+    /// </summary>
+    /// <param name="details">该设变明细</param>
+    /// <param name="rootGroup">根物料编码组</param>
+    /// <returns>全部命中则为 true</returns>
+    private static bool IsKanbanFertPlannedRootGroup(
+        IReadOnlyList<TaktEcDetail> details,
+        string? rootGroup)
+    {
+        var roots = SplitGroupCodes(rootGroup);
+        if (roots.Count == 0)
+        {
+            return false;
+        }
+        foreach (var root in roots)
+        {
+            var related = details
+                .Where(d => string.Equals(d.EcRootMaterialCode, root, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+            if (related.Count == 0 || !related.All(IsKanbanFertPlannedDetail))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// 批次/脊柱：该生管行关联明细须均为 FERT+计划物料（无明细时按根物料编码组回查）
+    /// </summary>
+    /// <param name="details">该设变明细</param>
+    /// <param name="pc">生管执行行</param>
+    /// <param name="masterControlScope">主表控制范围</param>
+    /// <returns>可进入脊柱则为 true</returns>
+    private static bool IsKanbanPcSpineRow(
+        IReadOnlyList<TaktEcDetail> details,
+        KanbanExecRaw pc,
+        int masterControlScope)
+    {
+        if (!IsKanbanPlannedMaterial(pc.DiscontinuedStatus))
+        {
+            return false;
+        }
+        var pcDetails = DetailsForPcRow(details, pc, masterControlScope);
+        IReadOnlyList<TaktEcDetail> typed = pcDetails;
+        if (typed.Count == 0)
+        {
+            var roots = SplitGroupCodes(pc.EcRootMaterialCodeGroup);
+            if (roots.Count == 0)
+            {
+                return false;
+            }
+            typed = details
+                .Where(d => roots.Any(r =>
+                    string.Equals(d.EcRootMaterialCode, r, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+        }
+        if (typed.Count == 0)
+        {
+            return false;
+        }
+        return typed.All(IsKanbanFertPlannedDetail);
+    }
+
+    /// <summary>
+    /// 生管表字段原样展示：分号仅换成顿号，不删码、不取首码、不从 GrainKey 拆
+    /// </summary>
+    /// <param name="group">生管 EcModelCodeGroup / EcRootMaterialCodeGroup</param>
+    /// <returns>展示文本</returns>
+    private static string DisplayPcGroupAsStored(string? group)
+    {
+        if (string.IsNullOrWhiteSpace(group))
+        {
+            return string.Empty;
+        }
+        return string.Join(
+            "、",
+            group.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Where(x => x.Length > 0));
+    }
+
+    /// <summary>
+    /// 去重键 → 执行行列表
+    /// </summary>
+    /// <param name="rows">执行行</param>
+    /// <returns>索引</returns>
+    private static Dictionary<string, List<KanbanExecRaw>> IndexByGrain(IReadOnlyList<KanbanExecRaw> rows)
+    {
+        var map = new Dictionary<string, List<KanbanExecRaw>>(StringComparer.OrdinalIgnoreCase);
+        foreach (var row in rows)
+        {
+            var key = row.EcGrainKey ?? string.Empty;
+            if (!map.TryGetValue(key, out var list))
+            {
+                list = [];
+                map[key] = list;
+            }
+            list.Add(row);
+        }
+        return map;
+    }
+
+    /// <summary>
+    /// 制一/制二/品管：与生管同行数直接关联；优先明细去重键，否则同行号下标
+    /// </summary>
+    /// <param name="pcDetails">归属该生管行的明细</param>
+    /// <param name="deptCode">部门编码</param>
+    /// <param name="masterControlScope">主表控制范围</param>
+    /// <param name="byGrain">去重键索引</param>
+    /// <param name="ordered">按行号排序的全量行</param>
+    /// <param name="pcIndex">生管行下标</param>
+    /// <returns>对齐后的一格</returns>
+    private static TaktEcKanbanDeptLineDto PickDirect(
+        IReadOnlyList<TaktEcDetail> pcDetails,
+        string deptCode,
+        int masterControlScope,
+        IReadOnlyDictionary<string, List<KanbanExecRaw>> byGrain,
+        IReadOnlyList<KanbanExecRaw> ordered,
+        int pcIndex)
+    {
+        var matched = MatchByDetailGrains(pcDetails, deptCode, masterControlScope, byGrain);
+        if (matched.Count > 0)
+        {
+            return AggregateLines(matched);
+        }
+        if (pcIndex >= 0 && pcIndex < ordered.Count)
+        {
+            return ToDeptLine(ordered[pcIndex]);
+        }
+        return EmptyDeptLine();
+    }
+
+    /// <summary>
+    /// 制技等：反向 ∪ 明细键命中后按全部实施才为是聚合勾叉
+    /// </summary>
+    /// <param name="pc">生管脊柱行</param>
+    /// <param name="pcDetails">归属该生管行的明细</param>
+    /// <param name="deptCode">部门编码</param>
+    /// <param name="masterControlScope">主表控制范围</param>
+    /// <param name="deptRows">同设变部门执行行</param>
+    /// <param name="byGrain">去重键索引</param>
+    /// <returns>聚合格</returns>
+    private static TaktEcKanbanDeptLineDto AggregateDeptForPc(
+        KanbanExecRaw pc,
+        IReadOnlyList<TaktEcDetail> pcDetails,
+        string deptCode,
+        int masterControlScope,
+        IReadOnlyList<KanbanExecRaw> deptRows,
+        IReadOnlyDictionary<string, List<KanbanExecRaw>> byGrain)
+    {
+        return AggregateLines(CollectDeptRowsForPc(pc, pcDetails, deptCode, masterControlScope, deptRows, byGrain));
+    }
+
+    /// <summary>
+    /// 生管行下部门执行行：成品组反向命中 ∪ 明细去重键命中（同 Id 去重）
+    /// </summary>
+    /// <param name="pc">生管行</param>
+    /// <param name="pcDetails">生管行明细</param>
+    /// <param name="deptCode">部门</param>
+    /// <param name="masterControlScope">主表控制范围</param>
+    /// <param name="deptRows">部门全量行</param>
+    /// <param name="byGrain">去重键索引</param>
+    /// <returns>命中行</returns>
+    private static List<KanbanExecRaw> CollectDeptRowsForPc(
+        KanbanExecRaw pc,
+        IReadOnlyList<TaktEcDetail> pcDetails,
+        string deptCode,
+        int masterControlScope,
+        IReadOnlyList<KanbanExecRaw> deptRows,
+        IReadOnlyDictionary<string, List<KanbanExecRaw>> byGrain)
+    {
+        var matched = new List<KanbanExecRaw>();
+        var seen = new HashSet<long>();
+        void AddRange(IEnumerable<KanbanExecRaw> rows)
+        {
+            foreach (var row in rows)
+            {
+                if (seen.Add(row.Id))
+                {
+                    matched.Add(row);
+                }
+            }
+        }
+        AddRange(MatchByPcGroups(pc, deptRows));
+        AddRange(MatchByDetailGrains(pcDetails, deptCode, masterControlScope, byGrain));
+        return matched;
+    }
+
+    /// <summary>
+    /// 生管成品/机种反向命中部门执行行（同设变；成品组含生管成品，或机种组含生管机种）
+    /// </summary>
+    /// <param name="pc">生管行</param>
+    /// <param name="deptRows">部门行</param>
+    /// <returns>命中行</returns>
+    private static List<KanbanExecRaw> MatchByPcGroups(
+        KanbanExecRaw pc,
+        IReadOnlyList<KanbanExecRaw> deptRows)
+    {
+        var pcRoots = SplitGroupCodes(pc.EcRootMaterialCodeGroup);
+        var pcModels = SplitGroupCodes(pc.EcModelCodeGroup);
+        if (pcRoots.Count == 0 && pcModels.Count == 0)
+        {
+            return [];
+        }
+        var matched = new List<KanbanExecRaw>();
+        foreach (var row in deptRows)
+        {
+            if (!string.Equals(row.EcCode, pc.EcCode, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+            if (DeptRowCoversPc(row, pcModels, pcRoots))
+            {
+                matched.Add(row);
+            }
+        }
+        return matched;
+    }
+
+    /// <summary>
+    /// 部门行是否覆盖该生管行：优先成品组含生管成品；否则机种组含生管机种（部管/物料按机种）
+    /// </summary>
+    /// <param name="dept">部门执行行</param>
+    /// <param name="pcModels">生管机种码</param>
+    /// <param name="pcRoots">生管成品码</param>
+    /// <returns>覆盖则为 true</returns>
+    private static bool DeptRowCoversPc(
+        KanbanExecRaw dept,
+        IReadOnlyList<string> pcModels,
+        IReadOnlyList<string> pcRoots)
+    {
+        if (pcRoots.Count > 0)
+        {
+            var rootHit = pcRoots.Any(root =>
+                TaktEcRootMaterialCodeGroup.ContainsCode(dept.EcRootMaterialCodeGroup, root));
+            if (rootHit)
+            {
+                if (pcModels.Count > 0 && !string.IsNullOrWhiteSpace(dept.EcModelCodeGroup))
+                {
+                    return pcModels.Any(model =>
+                        TaktEcRootMaterialCodeGroup.ContainsCode(dept.EcModelCodeGroup, model));
+                }
+                return true;
+            }
+        }
+        if (pcModels.Count == 0)
+        {
+            return false;
+        }
+        return pcModels.Any(model =>
+            TaktEcRootMaterialCodeGroup.ContainsCode(dept.EcModelCodeGroup, model));
+    }
+
+    /// <summary>
+    /// 分号编码组拆成码列表
+    /// </summary>
+    /// <param name="group">分号分隔组</param>
+    /// <returns>码列表</returns>
+    private static List<string> SplitGroupCodes(string? group)
+    {
+        if (string.IsNullOrWhiteSpace(group))
+        {
+            return [];
+        }
+        return group
+            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(x => x.Length > 0)
+            .ToList();
+    }
+
+    /// <summary>
+    /// 按生管行覆盖的明细，解析目标部门去重键并收集执行行（同键去重）
+    /// </summary>
+    /// <param name="pcDetails">生管行明细</param>
+    /// <param name="deptCode">目标部门</param>
+    /// <param name="masterControlScope">主表控制范围</param>
+    /// <param name="byGrain">去重键索引</param>
+    /// <returns>匹配到的执行行</returns>
+    private static List<KanbanExecRaw> MatchByDetailGrains(
+        IReadOnlyList<TaktEcDetail> pcDetails,
+        string deptCode,
+        int masterControlScope,
+        IReadOnlyDictionary<string, List<KanbanExecRaw>> byGrain)
+    {
+        var matched = new List<KanbanExecRaw>();
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var detail in pcDetails)
+        {
+            if (!TaktEcScopeRowGrain.IsEligible(detail, deptCode, detail.EcImplScope, null))
+            {
+                continue;
+            }
+            var grain = TaktEcScopeRowGrain.BuildExecGrainKey(detail, deptCode, masterControlScope);
+            if (!byGrain.TryGetValue(grain, out var list))
+            {
+                continue;
+            }
+            foreach (var row in list)
+            {
+                if (seen.Add(row.Id.ToString()))
+                {
+                    matched.Add(row);
+                }
+            }
+        }
+        return matched;
+    }
+
+    /// <summary>
+    /// 多执行行合成一格（勾叉）：全部实施才为是；未全部实施不回填日期/批次
+    /// </summary>
+    /// <param name="matched">匹配行</param>
+    /// <returns>聚合 DTO</returns>
+    private static TaktEcKanbanDeptLineDto AggregateLines(IReadOnlyList<KanbanExecRaw> matched)
+    {
+        if (matched.Count == 0)
+        {
+            return EmptyDeptLine();
+        }
+        if (!matched.All(x => x.IsImplemented == 1))
+        {
+            return new TaktEcKanbanDeptLineDto
+            {
+                IsImplemented = 0,
+                StageDate = null,
+                DateDisplayText = string.Empty,
+                ProdBatch = string.Empty,
+            };
+        }
+        var dates = matched
+            .Where(x => x.StageDate.HasValue)
+            .Select(x => x.StageDate!.Value.Date)
+            .Distinct()
+            .OrderBy(x => x)
+            .ToList();
+        var batches = matched
+            .Select(x => x.ProdBatch?.Trim())
+            .Where(x => !string.IsNullOrEmpty(x))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
+            .Cast<string>()
+            .ToList();
+        return new TaktEcKanbanDeptLineDto
+        {
+            IsImplemented = 1,
+            StageDate = dates.Count == 1 ? dates[0] : null,
+            DateDisplayText = string.Join("、", dates.Select(x => x.ToString("yyyyMMdd"))),
+            ProdBatch = string.Join("、", batches),
+        };
+    }
+
+    /// <summary>
+    /// 生管行 → 看板格：机种/成品 = 生管明细表 EcModelCodeGroup / EcRootMaterialCodeGroup 原样
+    /// </summary>
+    /// <param name="pc">生管原始行</param>
+    /// <returns>DTO</returns>
+    private static TaktEcKanbanDeptLineDto ToPcDeptLine(KanbanExecRaw pc)
+    {
+        var line = ToDeptLine(pc);
+        line.EcModelCode = DisplayPcGroupAsStored(pc.EcModelCodeGroup);
+        line.EcRootMaterialCode = DisplayPcGroupAsStored(pc.EcRootMaterialCodeGroup);
+        return line;
+    }
+
+    /// <summary>
+    /// 原始行 → 看板部门格（非生管不填机种/成品）
+    /// </summary>
+    /// <param name="raw">原始行</param>
+    /// <returns>DTO</returns>
+    private static TaktEcKanbanDeptLineDto ToDeptLine(KanbanExecRaw raw)
+    {
+        var date = raw.StageDate?.Date;
+        return new TaktEcKanbanDeptLineDto
+        {
+            IsImplemented = raw.IsImplemented == 1 ? 1 : 0,
+            StageDate = date,
+            DateDisplayText = date?.ToString("yyyyMMdd") ?? string.Empty,
+            ProdBatch = string.IsNullOrWhiteSpace(raw.ProdBatch) ? string.Empty : raw.ProdBatch.Trim(),
+        };
+    }
+
+    /// <summary>
+    /// 无对应执行行
+    /// </summary>
+    /// <returns>空格</returns>
+    private static TaktEcKanbanDeptLineDto EmptyDeptLine()
+    {
+        return new TaktEcKanbanDeptLineDto
+        {
+            IsImplemented = -1,
+            StageDate = null,
+            DateDisplayText = string.Empty,
+            ProdBatch = string.Empty,
+        };
+    }
+
+    /// <summary>
+    /// 从执行行提取实施标记（含 -1）
+    /// </summary>
+    /// <param name="lines">执行行</param>
+    /// <returns>标记列表</returns>
+    private static List<int> ToFlags(IReadOnlyList<TaktEcKanbanDeptLineDto> lines)
+    {
+        return lines.Select(x => x.IsImplemented).ToList();
+    }
+
+    /// <summary>
+    /// 生管原始行
+    /// </summary>
+    /// <param name="codes">设变单号</param>
+    /// <returns>原始行</returns>
+    private async Task<List<KanbanExecRaw>> QueryPcRawsAsync(IReadOnlyList<string> codes)
     {
         var tenant = CurrentTenantCode;
         var company = CurrentCompanyCode;
-        var rows = await _db.Queryable<TEntity>()
-            .Where(x => x.TenantCode == tenant && x.CompanyCode == company && x.EcCode == ecCode && x.IsDeleted == 0 && x.IsObsolete == 0)
-            .Take(KanbanDeptLineCap)
+        var rows = await _db.Queryable<TaktEcPc>()
+            .Where(x => x.TenantCode == tenant && x.CompanyCode == company && codes.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0)
+            .OrderBy(x => x.LineNumber)
+            .Select(x => new
+            {
+                x.Id,
+                x.EcCode,
+                EcGrainKey = SqlFunc.ToString(x.EcGrainKey),
+                EcModelCodeGroup = SqlFunc.ToString(x.EcModelCodeGroup),
+                EcRootMaterialCodeGroup = SqlFunc.ToString(x.EcRootMaterialCodeGroup),
+                x.LineNumber,
+                x.IsImplemented,
+                x.ScheduledDate,
+                x.ScheduledBatch,
+                x.DiscontinuedStatus,
+            })
             .ToListAsync();
-        return rows.Select(x => x.IsImplemented == 1 ? 1 : 0).ToList();
+        return rows.Select(x => new KanbanExecRaw
+        {
+            Id = x.Id,
+            EcCode = x.EcCode,
+            EcGrainKey = x.EcGrainKey ?? string.Empty,
+            EcModelCodeGroup = x.EcModelCodeGroup ?? string.Empty,
+            EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup ?? string.Empty,
+            LineNumber = x.LineNumber,
+            IsImplemented = x.IsImplemented,
+            StageDate = x.ScheduledDate,
+            ProdBatch = x.ScheduledBatch,
+            DiscontinuedStatus = x.DiscontinuedStatus ?? string.Empty,
+        }).ToList();
     }
 
     /// <summary>
-    /// 制技：按 IsSopUpdated 生成实施标记（IsImplemented 不落库）
+    /// 采购完整业务行（看板采购页签 + 精简 PurLines）
     /// </summary>
+    private sealed class KanbanPurFullRaw
+    {
+        public long Id { get; init; }
+        public int LineNumber { get; init; }
+        public string DiscontinuedStatus { get; init; } = string.Empty;
+        public string EcCode { get; init; } = string.Empty;
+        public string EcModelCodeGroup { get; init; } = string.Empty;
+        public string EcRootMaterialCodeGroup { get; init; } = string.Empty;
+        public string EcNewMaterialCodeGroup { get; init; } = string.Empty;
+        public string EcNewPurchaseType { get; init; } = string.Empty;
+        public int IsImplemented { get; init; }
+        public string? ExecContent { get; init; }
+        public string? EcOldPartBalance { get; init; }
+        public DateTime? InboundDate { get; init; }
+        public string DeptCode { get; init; } = string.Empty;
+        public string DeptName { get; init; } = string.Empty;
+        public int EcImplScope { get; init; }
+        public int EcControlScope { get; init; }
+        public string EcGrainKey { get; init; } = string.Empty;
+        public int IsObsolete { get; init; }
+    }
+
+    /// <summary>
+    /// 采购完整行按设变单号分组
+    /// </summary>
+    /// <param name="rows">完整行</param>
+    /// <returns>分组</returns>
+    private static Dictionary<string, List<KanbanPurFullRaw>> GroupPurFull(IReadOnlyList<KanbanPurFullRaw> rows)
+    {
+        return rows
+            .GroupBy(x => x.EcCode, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                g => g.Key,
+                g => g.OrderBy(x => x.LineNumber).ThenBy(x => x.Id).ToList(),
+                StringComparer.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// 取设变号下采购完整行
+    /// </summary>
+    /// <param name="map">分组</param>
     /// <param name="ecCode">设变单号</param>
-    /// <returns>0 或 1 的列表</returns>
-    private async Task<List<int>> QueryMeFlagsAsync(string ecCode)
+    /// <returns>行列表</returns>
+    private static IReadOnlyList<KanbanPurFullRaw> LookupPurFull(
+        IReadOnlyDictionary<string, List<KanbanPurFullRaw>> map,
+        string? ecCode)
+    {
+        if (string.IsNullOrWhiteSpace(ecCode) || !map.TryGetValue(ecCode, out var list))
+        {
+            return [];
+        }
+        return list;
+    }
+
+    /// <summary>
+    /// 采购完整行 → 对齐用精简执行行
+    /// </summary>
+    /// <param name="map">分组</param>
+    /// <returns>精简行</returns>
+    private static List<KanbanExecRaw> FlattenPurFullToExec(IReadOnlyDictionary<string, List<KanbanPurFullRaw>> map)
+    {
+        return map.Values
+            .SelectMany(list => list)
+            .Select(x => new KanbanExecRaw
+            {
+                Id = x.Id,
+                EcCode = x.EcCode,
+                EcGrainKey = x.EcGrainKey,
+                EcModelCodeGroup = x.EcModelCodeGroup,
+                EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup,
+                LineNumber = x.LineNumber,
+                IsImplemented = x.IsImplemented,
+                StageDate = x.InboundDate,
+                ProdBatch = string.Empty,
+                DiscontinuedStatus = x.DiscontinuedStatus,
+            })
+            .ToList();
+    }
+
+    /// <summary>
+    /// 采购完整行 → 看板采购页签 DTO（仅 FERT+计划物料）
+    /// </summary>
+    /// <param name="rows">完整行</param>
+    /// <param name="details">该设变明细</param>
+    /// <returns>DTO 列表</returns>
+    private static List<TaktEcKanbanPurLineDto> ToPurDetailLines(
+        IReadOnlyList<KanbanPurFullRaw> rows,
+        IReadOnlyList<TaktEcDetail> details)
+    {
+        return rows
+            .Where(x => IsKanbanPlannedMaterial(x.DiscontinuedStatus)
+                && IsKanbanFertPlannedRootGroup(details, x.EcRootMaterialCodeGroup))
+            .Take(KanbanDeptLineCap)
+            .Select(x => new TaktEcKanbanPurLineDto
+            {
+                EcPurId = x.Id,
+                LineNumber = x.LineNumber,
+                DiscontinuedStatus = x.DiscontinuedStatus,
+                EcCode = x.EcCode,
+                EcModelCodeGroup = x.EcModelCodeGroup,
+                EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup,
+                EcNewMaterialCodeGroup = x.EcNewMaterialCodeGroup,
+                EcNewPurchaseType = x.EcNewPurchaseType,
+                IsImplemented = x.IsImplemented,
+                ExecContent = x.ExecContent,
+                EcOldPartBalance = x.EcOldPartBalance,
+                InboundDate = x.InboundDate,
+                DeptCode = x.DeptCode,
+                DeptName = x.DeptName,
+                EcImplScope = x.EcImplScope,
+                EcControlScope = x.EcControlScope,
+                EcGrainKey = x.EcGrainKey,
+                IsObsolete = x.IsObsolete,
+            })
+            .ToList();
+    }
+
+    /// <summary>
+    /// 采购完整业务行查询（TaktEcPur 原样）
+    /// </summary>
+    /// <param name="codes">设变单号</param>
+    /// <returns>完整行</returns>
+    private async Task<List<KanbanPurFullRaw>> QueryPurFullAsync(IReadOnlyList<string> codes)
+    {
+        var tenant = CurrentTenantCode;
+        var company = CurrentCompanyCode;
+        var rows = await _db.Queryable<TaktEcPur>()
+            .Where(x => x.TenantCode == tenant && x.CompanyCode == company && codes.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0)
+            .OrderBy(x => x.LineNumber)
+            .Select(x => new
+            {
+                x.Id,
+                x.LineNumber,
+                x.DiscontinuedStatus,
+                x.EcCode,
+                EcModelCodeGroup = SqlFunc.ToString(x.EcModelCodeGroup),
+                EcRootMaterialCodeGroup = SqlFunc.ToString(x.EcRootMaterialCodeGroup),
+                EcNewMaterialCodeGroup = SqlFunc.ToString(x.EcNewMaterialCodeGroup),
+                x.EcNewPurchaseType,
+                x.IsImplemented,
+                x.ExecContent,
+                x.EcOldPartBalance,
+                x.InboundDate,
+                x.DeptCode,
+                x.DeptName,
+                x.EcImplScope,
+                x.EcControlScope,
+                EcGrainKey = SqlFunc.ToString(x.EcGrainKey),
+                x.IsObsolete,
+            })
+            .ToListAsync();
+        return rows.Select(x => new KanbanPurFullRaw
+        {
+            Id = x.Id,
+            LineNumber = x.LineNumber,
+            DiscontinuedStatus = x.DiscontinuedStatus ?? string.Empty,
+            EcCode = x.EcCode ?? string.Empty,
+            EcModelCodeGroup = x.EcModelCodeGroup ?? string.Empty,
+            EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup ?? string.Empty,
+            EcNewMaterialCodeGroup = x.EcNewMaterialCodeGroup ?? string.Empty,
+            EcNewPurchaseType = x.EcNewPurchaseType ?? string.Empty,
+            IsImplemented = x.IsImplemented,
+            ExecContent = x.ExecContent,
+            EcOldPartBalance = x.EcOldPartBalance,
+            InboundDate = x.InboundDate,
+            DeptCode = x.DeptCode ?? string.Empty,
+            DeptName = x.DeptName ?? string.Empty,
+            EcImplScope = x.EcImplScope,
+            EcControlScope = x.EcControlScope,
+            EcGrainKey = x.EcGrainKey ?? string.Empty,
+            IsObsolete = x.IsObsolete,
+        }).ToList();
+    }
+
+    /// <summary>受检完整业务行</summary>
+    private sealed class KanbanIqcFullRaw
+    {
+        public long Id { get; init; }
+        public int LineNumber { get; init; }
+        public string DiscontinuedStatus { get; init; } = string.Empty;
+        public string EcCode { get; init; } = string.Empty;
+        public string EcModelCodeGroup { get; init; } = string.Empty;
+        public string EcNewMaterialCodeGroup { get; init; } = string.Empty;
+        public string EcRootMaterialCodeGroup { get; init; } = string.Empty;
+        public int EcNewRequiresInspection { get; init; }
+        public int IsImplemented { get; init; }
+        public string? ExecContent { get; init; }
+        public DateTime? InspectionDate { get; init; }
+        public string DeptCode { get; init; } = string.Empty;
+        public string DeptName { get; init; } = string.Empty;
+        public int EcImplScope { get; init; }
+        public int EcControlScope { get; init; }
+        public string EcGrainKey { get; init; } = string.Empty;
+        public int IsObsolete { get; init; }
+    }
+
+    /// <summary>部管完整业务行</summary>
+    private sealed class KanbanMcFullRaw
+    {
+        public long Id { get; init; }
+        public int LineNumber { get; init; }
+        public string EcCode { get; init; } = string.Empty;
+        public string DiscontinuedStatus { get; init; } = string.Empty;
+        public string EcModelCodeGroup { get; init; } = string.Empty;
+        public string EcRootMaterialCodeGroup { get; init; } = string.Empty;
+        public string EcNewMaterialCodeGroup { get; init; } = string.Empty;
+                public string EcNewPurchaseType { get; init; } = string.Empty;
+        public string EcNewWarehouse { get; init; } = string.Empty;
+        public int IsImplemented { get; init; }
+        public DateTime? ScheduledDate { get; init; }
+        public string? ScheduledBatch { get; init; }
+        public string? ExecContent { get; init; }
+        public string? OutboundBatch { get; init; }
+        public DateTime? OutboundDate { get; init; }
+        public string DeptCode { get; init; } = string.Empty;
+        public string DeptName { get; init; } = string.Empty;
+        public int EcImplScope { get; init; }
+        public int EcControlScope { get; init; }
+        public string EcGrainKey { get; init; } = string.Empty;
+        public int IsObsolete { get; init; }
+    }
+
+    /// <summary>物料完整业务行</summary>
+    private sealed class KanbanMtlFullRaw
+    {
+        public long Id { get; init; }
+        public int LineNumber { get; init; }
+        public string EcCode { get; init; } = string.Empty;
+        public string DiscontinuedStatus { get; init; } = string.Empty;
+        public string EcModelCodeGroup { get; init; } = string.Empty;
+        public string EcRootMaterialCodeGroup { get; init; } = string.Empty;
+        public string EcParentMaterialCode { get; init; } = string.Empty;
+        public string EcParentMaterialDescription { get; init; } = string.Empty;
+        public string EcNewMaterialCodeGroup { get; init; } = string.Empty;
+                public string EcNewPurchaseType { get; init; } = string.Empty;
+        public string EcNewWarehouse { get; init; } = string.Empty;
+        public int IsImplemented { get; init; }
+        public DateTime? ScheduledDate { get; init; }
+        public string? ScheduledBatch { get; init; }
+        public string? ExecContent { get; init; }
+        public string? OutboundBatch { get; init; }
+        public DateTime? OutboundDate { get; init; }
+        public string DeptCode { get; init; } = string.Empty;
+        public string DeptName { get; init; } = string.Empty;
+        public int EcImplScope { get; init; }
+        public int EcControlScope { get; init; }
+        public string EcGrainKey { get; init; } = string.Empty;
+        public int IsObsolete { get; init; }
+    }
+
+    private static Dictionary<string, List<KanbanIqcFullRaw>> GroupIqcFull(IReadOnlyList<KanbanIqcFullRaw> rows) =>
+        rows.GroupBy(x => x.EcCode, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.OrderBy(x => x.LineNumber).ThenBy(x => x.Id).ToList(), StringComparer.OrdinalIgnoreCase);
+
+    private static Dictionary<string, List<KanbanMcFullRaw>> GroupMcFull(IReadOnlyList<KanbanMcFullRaw> rows) =>
+        rows.GroupBy(x => x.EcCode, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.OrderBy(x => x.LineNumber).ThenBy(x => x.Id).ToList(), StringComparer.OrdinalIgnoreCase);
+
+    private static Dictionary<string, List<KanbanMtlFullRaw>> GroupMtlFull(IReadOnlyList<KanbanMtlFullRaw> rows) =>
+        rows.GroupBy(x => x.EcCode, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.OrderBy(x => x.LineNumber).ThenBy(x => x.Id).ToList(), StringComparer.OrdinalIgnoreCase);
+
+    private static IReadOnlyList<KanbanIqcFullRaw> LookupIqcFull(IReadOnlyDictionary<string, List<KanbanIqcFullRaw>> map, string? ecCode) =>
+        string.IsNullOrWhiteSpace(ecCode) || !map.TryGetValue(ecCode, out var list) ? [] : list;
+
+    private static IReadOnlyList<KanbanMcFullRaw> LookupMcFull(IReadOnlyDictionary<string, List<KanbanMcFullRaw>> map, string? ecCode) =>
+        string.IsNullOrWhiteSpace(ecCode) || !map.TryGetValue(ecCode, out var list) ? [] : list;
+
+    private static IReadOnlyList<KanbanMtlFullRaw> LookupMtlFull(IReadOnlyDictionary<string, List<KanbanMtlFullRaw>> map, string? ecCode) =>
+        string.IsNullOrWhiteSpace(ecCode) || !map.TryGetValue(ecCode, out var list) ? [] : list;
+
+    private static List<KanbanExecRaw> FlattenIqcFullToExec(IReadOnlyDictionary<string, List<KanbanIqcFullRaw>> map) =>
+        map.Values.SelectMany(list => list).Select(x => new KanbanExecRaw
+        {
+            Id = x.Id,
+            EcCode = x.EcCode,
+            EcGrainKey = x.EcGrainKey,
+            EcModelCodeGroup = x.EcModelCodeGroup,
+            EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup,
+            LineNumber = x.LineNumber,
+            IsImplemented = x.IsImplemented,
+            StageDate = x.InspectionDate,
+            ProdBatch = null,
+            DiscontinuedStatus = x.DiscontinuedStatus,
+        }).ToList();
+
+    private static List<KanbanExecRaw> FlattenMcFullToExec(IReadOnlyDictionary<string, List<KanbanMcFullRaw>> map) =>
+        map.Values.SelectMany(list => list).Select(x => new KanbanExecRaw
+        {
+            Id = x.Id,
+            EcCode = x.EcCode,
+            EcGrainKey = x.EcGrainKey,
+            EcModelCodeGroup = x.EcModelCodeGroup,
+            EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup,
+            LineNumber = x.LineNumber,
+            IsImplemented = x.IsImplemented,
+            StageDate = x.OutboundDate,
+            ProdBatch = x.OutboundBatch,
+            DiscontinuedStatus = x.DiscontinuedStatus,
+        }).ToList();
+
+    private static List<KanbanExecRaw> FlattenMtlFullToExec(IReadOnlyDictionary<string, List<KanbanMtlFullRaw>> map) =>
+        map.Values.SelectMany(list => list).Select(x => new KanbanExecRaw
+        {
+            Id = x.Id,
+            EcCode = x.EcCode,
+            EcGrainKey = x.EcGrainKey,
+            EcModelCodeGroup = x.EcModelCodeGroup,
+            EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup,
+            LineNumber = x.LineNumber,
+            IsImplemented = x.IsImplemented,
+            StageDate = x.OutboundDate,
+            ProdBatch = x.OutboundBatch,
+            DiscontinuedStatus = x.DiscontinuedStatus,
+        }).ToList();
+
+    /// <summary>
+    /// 受检完整行 → 看板受检页签 DTO（仅 FERT+计划物料）
+    /// </summary>
+    private static List<TaktEcKanbanIqcLineDto> ToIqcDetailLines(
+        IReadOnlyList<KanbanIqcFullRaw> rows,
+        IReadOnlyList<TaktEcDetail> details) =>
+        rows
+            .Where(x => IsKanbanPlannedMaterial(x.DiscontinuedStatus)
+                && IsKanbanFertPlannedRootGroup(details, x.EcRootMaterialCodeGroup))
+            .Take(KanbanDeptLineCap)
+            .Select(x => new TaktEcKanbanIqcLineDto
+            {
+                EcIqcId = x.Id,
+                LineNumber = x.LineNumber,
+                DiscontinuedStatus = x.DiscontinuedStatus,
+                EcCode = x.EcCode,
+                EcModelCodeGroup = x.EcModelCodeGroup,
+                EcNewMaterialCodeGroup = x.EcNewMaterialCodeGroup,
+                EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup,
+                EcNewRequiresInspection = x.EcNewRequiresInspection,
+                IsImplemented = x.IsImplemented,
+                ExecContent = x.ExecContent,
+                InspectionDate = x.InspectionDate,
+                DeptCode = x.DeptCode,
+                DeptName = x.DeptName,
+                EcImplScope = x.EcImplScope,
+                EcControlScope = x.EcControlScope,
+                EcGrainKey = x.EcGrainKey,
+                IsObsolete = x.IsObsolete,
+            }).ToList();
+
+    /// <summary>
+    /// 部管完整行 → 看板部管页签 DTO（仅 FERT+计划物料）
+    /// </summary>
+    private static List<TaktEcKanbanMcLineDto> ToMcDetailLines(
+        IReadOnlyList<KanbanMcFullRaw> rows,
+        IReadOnlyList<TaktEcDetail> details) =>
+        rows
+            .Where(x => IsKanbanPlannedMaterial(x.DiscontinuedStatus)
+                && IsKanbanFertPlannedRootGroup(details, x.EcRootMaterialCodeGroup))
+            .Take(KanbanDeptLineCap)
+            .Select(x => new TaktEcKanbanMcLineDto
+            {
+                EcMcId = x.Id,
+                LineNumber = x.LineNumber,
+                EcCode = x.EcCode,
+                DiscontinuedStatus = x.DiscontinuedStatus,
+                EcModelCodeGroup = x.EcModelCodeGroup,
+                EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup,
+                EcNewMaterialCodeGroup = x.EcNewMaterialCodeGroup,
+                EcNewPurchaseType = x.EcNewPurchaseType,
+                EcNewWarehouse = x.EcNewWarehouse,
+                IsImplemented = x.IsImplemented,
+                ScheduledDate = x.ScheduledDate,
+                ScheduledBatch = x.ScheduledBatch,
+                ExecContent = x.ExecContent,
+                OutboundBatch = x.OutboundBatch,
+                OutboundDate = x.OutboundDate,
+                DeptCode = x.DeptCode,
+                DeptName = x.DeptName,
+                EcImplScope = x.EcImplScope,
+                EcControlScope = x.EcControlScope,
+                EcGrainKey = x.EcGrainKey,
+                IsObsolete = x.IsObsolete,
+            }).ToList();
+
+    /// <summary>
+    /// 物料完整行 → 看板物料页签 DTO（仅 FERT+计划物料）
+    /// </summary>
+    private static List<TaktEcKanbanMtlLineDto> ToMtlDetailLines(
+        IReadOnlyList<KanbanMtlFullRaw> rows,
+        IReadOnlyList<TaktEcDetail> details) =>
+        rows
+            .Where(x => IsKanbanPlannedMaterial(x.DiscontinuedStatus)
+                && IsKanbanFertPlannedRootGroup(details, x.EcRootMaterialCodeGroup))
+            .Take(KanbanDeptLineCap)
+            .Select(x => new TaktEcKanbanMtlLineDto
+            {
+                EcMtlId = x.Id,
+                LineNumber = x.LineNumber,
+                EcCode = x.EcCode,
+                DiscontinuedStatus = x.DiscontinuedStatus,
+                EcModelCodeGroup = x.EcModelCodeGroup,
+                EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup,
+                EcParentMaterialCode = x.EcParentMaterialCode,
+                EcParentMaterialDescription = x.EcParentMaterialDescription,
+                EcNewMaterialCodeGroup = x.EcNewMaterialCodeGroup,
+                EcNewPurchaseType = x.EcNewPurchaseType,
+                EcNewWarehouse = x.EcNewWarehouse,
+                IsImplemented = x.IsImplemented,
+                ScheduledDate = x.ScheduledDate,
+                ScheduledBatch = x.ScheduledBatch,
+                ExecContent = x.ExecContent,
+                OutboundBatch = x.OutboundBatch,
+                OutboundDate = x.OutboundDate,
+                DeptCode = x.DeptCode,
+                DeptName = x.DeptName,
+                EcImplScope = x.EcImplScope,
+                EcControlScope = x.EcControlScope,
+                EcGrainKey = x.EcGrainKey,
+                IsObsolete = x.IsObsolete,
+            }).ToList();
+
+    /// <summary>受检完整业务行查询</summary>
+    private async Task<List<KanbanIqcFullRaw>> QueryIqcFullAsync(IReadOnlyList<string> codes)
+    {
+        var tenant = CurrentTenantCode;
+        var company = CurrentCompanyCode;
+        var rows = await _db.Queryable<TaktEcIqc>()
+            .Where(x => x.TenantCode == tenant && x.CompanyCode == company && codes.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0)
+            .OrderBy(x => x.LineNumber)
+            .Select(x => new
+            {
+                x.Id,
+                x.LineNumber,
+                x.DiscontinuedStatus,
+                x.EcCode,
+                EcModelCodeGroup = SqlFunc.ToString(x.EcModelCodeGroup),
+                EcNewMaterialCodeGroup = SqlFunc.ToString(x.EcNewMaterialCodeGroup),
+                EcRootMaterialCodeGroup = SqlFunc.ToString(x.EcRootMaterialCodeGroup),
+                x.EcNewRequiresInspection,
+                x.IsImplemented,
+                x.ExecContent,
+                x.InspectionDate,
+                x.DeptCode,
+                x.DeptName,
+                x.EcImplScope,
+                x.EcControlScope,
+                EcGrainKey = SqlFunc.ToString(x.EcGrainKey),
+                x.IsObsolete,
+            })
+            .ToListAsync();
+        return rows.Select(x => new KanbanIqcFullRaw
+        {
+            Id = x.Id,
+            LineNumber = x.LineNumber,
+            DiscontinuedStatus = x.DiscontinuedStatus ?? string.Empty,
+            EcCode = x.EcCode ?? string.Empty,
+            EcModelCodeGroup = x.EcModelCodeGroup ?? string.Empty,
+            EcNewMaterialCodeGroup = x.EcNewMaterialCodeGroup ?? string.Empty,
+            EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup ?? string.Empty,
+            EcNewRequiresInspection = x.EcNewRequiresInspection,
+            IsImplemented = x.IsImplemented,
+            ExecContent = x.ExecContent,
+            InspectionDate = x.InspectionDate,
+            DeptCode = x.DeptCode ?? string.Empty,
+            DeptName = x.DeptName ?? string.Empty,
+            EcImplScope = x.EcImplScope,
+            EcControlScope = x.EcControlScope,
+            EcGrainKey = x.EcGrainKey ?? string.Empty,
+            IsObsolete = x.IsObsolete,
+        }).ToList();
+    }
+
+    /// <summary>部管完整业务行查询</summary>
+    private async Task<List<KanbanMcFullRaw>> QueryMcFullAsync(IReadOnlyList<string> codes)
+    {
+        var tenant = CurrentTenantCode;
+        var company = CurrentCompanyCode;
+        var rows = await _db.Queryable<TaktEcMc>()
+            .Where(x => x.TenantCode == tenant && x.CompanyCode == company && codes.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0)
+            .OrderBy(x => x.LineNumber)
+            .Select(x => new
+            {
+                x.Id,
+                x.LineNumber,
+                x.EcCode,
+                x.DiscontinuedStatus,
+                EcModelCodeGroup = SqlFunc.ToString(x.EcModelCodeGroup),
+                EcRootMaterialCodeGroup = SqlFunc.ToString(x.EcRootMaterialCodeGroup),
+                EcNewMaterialCodeGroup = SqlFunc.ToString(x.EcNewMaterialCodeGroup),
+                                x.EcNewPurchaseType,
+                x.EcNewWarehouse,
+                x.IsImplemented,
+                x.ScheduledDate,
+                x.ScheduledBatch,
+                x.ExecContent,
+                x.OutboundBatch,
+                x.OutboundDate,
+                x.DeptCode,
+                x.DeptName,
+                x.EcImplScope,
+                x.EcControlScope,
+                EcGrainKey = SqlFunc.ToString(x.EcGrainKey),
+                x.IsObsolete,
+            })
+            .ToListAsync();
+        return rows.Select(x => new KanbanMcFullRaw
+        {
+            Id = x.Id,
+            LineNumber = x.LineNumber,
+            EcCode = x.EcCode ?? string.Empty,
+            DiscontinuedStatus = x.DiscontinuedStatus ?? string.Empty,
+            EcModelCodeGroup = x.EcModelCodeGroup ?? string.Empty,
+            EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup ?? string.Empty,
+            EcNewMaterialCodeGroup = x.EcNewMaterialCodeGroup ?? string.Empty,
+                        EcNewPurchaseType = x.EcNewPurchaseType ?? string.Empty,
+            EcNewWarehouse = x.EcNewWarehouse ?? string.Empty,
+            IsImplemented = x.IsImplemented,
+            ScheduledDate = x.ScheduledDate,
+            ScheduledBatch = x.ScheduledBatch,
+            ExecContent = x.ExecContent,
+            OutboundBatch = x.OutboundBatch,
+            OutboundDate = x.OutboundDate,
+            DeptCode = x.DeptCode ?? string.Empty,
+            DeptName = x.DeptName ?? string.Empty,
+            EcImplScope = x.EcImplScope,
+            EcControlScope = x.EcControlScope,
+            EcGrainKey = x.EcGrainKey ?? string.Empty,
+            IsObsolete = x.IsObsolete,
+        }).ToList();
+    }
+
+    /// <summary>物料完整业务行查询</summary>
+    private async Task<List<KanbanMtlFullRaw>> QueryMtlFullAsync(IReadOnlyList<string> codes)
+    {
+        var tenant = CurrentTenantCode;
+        var company = CurrentCompanyCode;
+        var rows = await _db.Queryable<TaktEcMtl>()
+            .Where(x => x.TenantCode == tenant && x.CompanyCode == company && codes.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0)
+            .OrderBy(x => x.LineNumber)
+            .Select(x => new
+            {
+                x.Id,
+                x.LineNumber,
+                x.EcCode,
+                x.DiscontinuedStatus,
+                EcModelCodeGroup = SqlFunc.ToString(x.EcModelCodeGroup),
+                EcRootMaterialCodeGroup = SqlFunc.ToString(x.EcRootMaterialCodeGroup),
+                x.EcParentMaterialCode,
+                x.EcParentMaterialDescription,
+                EcNewMaterialCodeGroup = SqlFunc.ToString(x.EcNewMaterialCodeGroup),
+                                x.EcNewPurchaseType,
+                x.EcNewWarehouse,
+                x.IsImplemented,
+                x.ScheduledDate,
+                x.ScheduledBatch,
+                x.ExecContent,
+                x.OutboundBatch,
+                x.OutboundDate,
+                x.DeptCode,
+                x.DeptName,
+                x.EcImplScope,
+                x.EcControlScope,
+                EcGrainKey = SqlFunc.ToString(x.EcGrainKey),
+                x.IsObsolete,
+            })
+            .ToListAsync();
+        return rows.Select(x => new KanbanMtlFullRaw
+        {
+            Id = x.Id,
+            LineNumber = x.LineNumber,
+            EcCode = x.EcCode ?? string.Empty,
+            DiscontinuedStatus = x.DiscontinuedStatus ?? string.Empty,
+            EcModelCodeGroup = x.EcModelCodeGroup ?? string.Empty,
+            EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup ?? string.Empty,
+            EcParentMaterialCode = x.EcParentMaterialCode ?? string.Empty,
+            EcParentMaterialDescription = x.EcParentMaterialDescription ?? string.Empty,
+            EcNewMaterialCodeGroup = x.EcNewMaterialCodeGroup ?? string.Empty,
+                        EcNewPurchaseType = x.EcNewPurchaseType ?? string.Empty,
+            EcNewWarehouse = x.EcNewWarehouse ?? string.Empty,
+            IsImplemented = x.IsImplemented,
+            ScheduledDate = x.ScheduledDate,
+            ScheduledBatch = x.ScheduledBatch,
+            ExecContent = x.ExecContent,
+            OutboundBatch = x.OutboundBatch,
+            OutboundDate = x.OutboundDate,
+            DeptCode = x.DeptCode ?? string.Empty,
+            DeptName = x.DeptName ?? string.Empty,
+            EcImplScope = x.EcImplScope,
+            EcControlScope = x.EcControlScope,
+            EcGrainKey = x.EcGrainKey ?? string.Empty,
+            IsObsolete = x.IsObsolete,
+        }).ToList();
+    }
+
+    /// <summary>
+    /// 制二原始行
+    /// </summary>
+    /// <param name="codes">设变单号</param>
+    /// <returns>原始行</returns>
+    private async Task<List<KanbanExecRaw>> QueryMfg2RawsAsync(IReadOnlyList<string> codes)
+    {
+        var tenant = CurrentTenantCode;
+        var company = CurrentCompanyCode;
+        var rows = await _db.Queryable<TaktEcMfg2>()
+            .Where(x => x.TenantCode == tenant && x.CompanyCode == company && codes.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0)
+            .OrderBy(x => x.LineNumber)
+            .Select(x => new
+            {
+                x.Id,
+                x.EcCode,
+                EcGrainKey = SqlFunc.ToString(x.EcGrainKey),
+                x.LineNumber,
+                x.IsImplemented,
+                x.ProductionDate,
+                x.ProductionBatch,
+            })
+            .ToListAsync();
+        return rows.Select(x => new KanbanExecRaw
+        {
+            Id = x.Id,
+            EcCode = x.EcCode,
+            EcGrainKey = x.EcGrainKey ?? string.Empty,
+            LineNumber = x.LineNumber,
+            IsImplemented = x.IsImplemented,
+            StageDate = x.ProductionDate,
+            ProdBatch = x.ProductionBatch,
+        }).ToList();
+    }
+
+    /// <summary>
+    /// 制一原始行
+    /// </summary>
+    /// <param name="codes">设变单号</param>
+    /// <returns>原始行</returns>
+    private async Task<List<KanbanExecRaw>> QueryMfg1RawsAsync(IReadOnlyList<string> codes)
+    {
+        var tenant = CurrentTenantCode;
+        var company = CurrentCompanyCode;
+        var rows = await _db.Queryable<TaktEcMfg1>()
+            .Where(x => x.TenantCode == tenant && x.CompanyCode == company && codes.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0)
+            .OrderBy(x => x.LineNumber)
+            .Select(x => new
+            {
+                x.Id,
+                x.EcCode,
+                EcGrainKey = SqlFunc.ToString(x.EcGrainKey),
+                x.LineNumber,
+                x.IsImplemented,
+                x.ProductionDate,
+                x.ProductionBatch,
+            })
+            .ToListAsync();
+        return rows.Select(x => new KanbanExecRaw
+        {
+            Id = x.Id,
+            EcCode = x.EcCode,
+            EcGrainKey = x.EcGrainKey ?? string.Empty,
+            LineNumber = x.LineNumber,
+            IsImplemented = x.IsImplemented,
+            StageDate = x.ProductionDate,
+            ProdBatch = x.ProductionBatch,
+        }).ToList();
+    }
+
+    /// <summary>
+    /// 品管原始行
+    /// </summary>
+    /// <param name="codes">设变单号</param>
+    /// <returns>原始行</returns>
+    private async Task<List<KanbanExecRaw>> QueryQcRawsAsync(IReadOnlyList<string> codes)
+    {
+        var tenant = CurrentTenantCode;
+        var company = CurrentCompanyCode;
+        var rows = await _db.Queryable<TaktEcQc>()
+            .Where(x => x.TenantCode == tenant && x.CompanyCode == company && codes.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0)
+            .OrderBy(x => x.LineNumber)
+            .Select(x => new
+            {
+                x.Id,
+                x.EcCode,
+                EcGrainKey = SqlFunc.ToString(x.EcGrainKey),
+                x.LineNumber,
+                x.IsImplemented,
+                x.InspectionDate,
+                x.InspectionBatch,
+            })
+            .ToListAsync();
+        return rows.Select(x => new KanbanExecRaw
+        {
+            Id = x.Id,
+            EcCode = x.EcCode,
+            EcGrainKey = x.EcGrainKey ?? string.Empty,
+            LineNumber = x.LineNumber,
+            IsImplemented = x.IsImplemented,
+            StageDate = x.InspectionDate,
+            ProdBatch = x.InspectionBatch,
+        }).ToList();
+    }
+
+    /// <summary>
+    /// 制技原始行
+    /// </summary>
+    /// <param name="codes">设变单号</param>
+    /// <returns>原始行</returns>
+    private async Task<List<KanbanExecRaw>> QueryMeRawsAsync(IReadOnlyList<string> codes)
     {
         var tenant = CurrentTenantCode;
         var company = CurrentCompanyCode;
         var rows = await _db.Queryable<TaktEcMe>()
-            .Where(x => x.TenantCode == tenant && x.CompanyCode == company && x.EcCode == ecCode && x.IsDeleted == 0 && x.IsObsolete == 0)
-            .Take(KanbanDeptLineCap)
+            .Where(x => x.TenantCode == tenant && x.CompanyCode == company && codes.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0)
+            .OrderBy(x => x.LineNumber)
+            .Select(x => new
+            {
+                x.Id,
+                x.EcCode,
+                EcGrainKey = SqlFunc.ToString(x.EcGrainKey),
+                EcModelCodeGroup = SqlFunc.ToString(x.EcModelCodeGroup),
+                EcRootMaterialCodeGroup = SqlFunc.ToString(x.EcRootMaterialCodeGroup),
+                x.LineNumber,
+                x.IsSopUpdated,
+                x.SopDate,
+            })
             .ToListAsync();
-        return rows.Select(x => x.IsSopUpdated == 1 ? 1 : 0).ToList();
+        return rows.Select(x => new KanbanExecRaw
+        {
+            Id = x.Id,
+            EcCode = x.EcCode,
+            EcGrainKey = x.EcGrainKey ?? string.Empty,
+            EcModelCodeGroup = x.EcModelCodeGroup ?? string.Empty,
+            EcRootMaterialCodeGroup = x.EcRootMaterialCodeGroup ?? string.Empty,
+            LineNumber = x.LineNumber,
+            IsImplemented = x.IsSopUpdated,
+            StageDate = x.SopDate,
+            ProdBatch = null,
+        }).ToList();
     }
 
     /// <summary>
-    /// 该部门已取回的实施标记
-    /// </summary>
-    /// <param name="ecCode">设变单号</param>
-    /// <param name="deptCode">部门编码</param>
-    /// <param name="execByDept">部门加设变单号到标记</param>
-    /// <returns>实施标记列表</returns>
-    private static List<int> ExecFlags(
-        string ecCode,
-        string deptCode,
-        IReadOnlyDictionary<string, List<int>> execByDept)
-    {
-        return execByDept.TryGetValue(DeptKey(deptCode, ecCode), out var list) ? list : [];
-    }
-
-    /// <summary>
-    /// 部门与设变单号索引
-    /// </summary>
-    /// <param name="deptCode">部门编码</param>
-    /// <param name="ecCode">设变单号</param>
-    /// <returns>索引键</returns>
-    private static string DeptKey(string deptCode, string ecCode)
-    {
-        return string.Concat(deptCode, "\u001f", ecCode);
-    }
-
-    /// <summary>
-    /// 按各部门执行行展开导出。某一行已实施时该格为勾
+    /// 按生管行数展开导出。某一行已实施时该格为勾
     /// </summary>
     /// <param name="row">转置行</param>
     /// <returns>导出行</returns>
     private static IEnumerable<TaktEcKanbanExportDto> ExpandExportLines(TaktEcKanbanDto row)
     {
-        IReadOnlyList<int>[] groups =
-        [
-            row.PcImplemented,
-            row.PurImplemented,
-            row.IqcImplemented,
-            row.McImplemented,
-            row.MtlImplemented,
-            row.Mfg2Implemented,
-            row.Mfg1Implemented,
-            row.QcImplemented,
-            row.MeImplemented,
-        ];
-        var lineCount = 1;
-        foreach (var group in groups)
-        {
-            if (group != null && group.Count > lineCount)
-            {
-                lineCount = group.Count;
-            }
-        }
+        var lineCount = Math.Max(1, row.PcLines?.Count ?? row.PcImplemented?.Count ?? 0);
         for (var index = 0; index < lineCount; index++)
         {
+            var pc = index < (row.PcLines?.Count ?? 0) ? row.PcLines![index] : null;
             yield return new TaktEcKanbanExportDto
             {
                 EcIssueDate = row.EcIssueDate.ToString("yyyy-MM-dd"),
                 EcLeader = row.EcLeader,
                 EcCode = row.EcCode,
-                EcModelCode = row.EcModelCode,
-                EcRootMaterialCode = row.EcRootMaterialCode,
+                EcModelCode = pc?.EcModelCode ?? row.EcModelCode,
+                EcRootMaterialCode = pc?.EcRootMaterialCode ?? row.EcRootMaterialCode,
                 EcEntryDate = row.EcEntryDate.ToString("yyyy-MM-dd"),
                 PcImplemented = FlagText(row.PcImplemented, index),
                 PurImplemented = FlagText(row.PurImplemented, index),

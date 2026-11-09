@@ -83,7 +83,7 @@
         }"
       >
         <div class="layout-content-inner">
-          <RouterView :key="businessScopeRouteKey" />
+          <TaktCachedRouterView :key="businessScopeRouteKey" />
         </div>
       </a-layout-content>
       <TaktFooter :height="40" />
@@ -99,13 +99,14 @@ import { useUserStore } from '@/stores/identity/useUserStore'
 import { useMenuStore } from '@/stores/identity/useMenuStore'
 import { ensureMenuAndRoutesLoaded } from '@/router'
 import { useBusinessScopeRouteKey } from '@/composables/useBusinessScopeRouteKey'
+import TaktCachedRouterView from './TaktCachedRouterView.vue'
 type HeaderHeight = 32 | 40 | 48
 
 const themeStore = useThemeStore()
 const { setting } = storeToRefs(useSettingStore())
 const userStore = useUserStore()
 const menuStore = useMenuStore()
-/** 租户/公司切换时重建 RouterView，触发各业务页重新拉数 */
+/** 租户/公司切换时丢弃页面缓存并重建，触发各业务页重新拉数 */
 const businessScopeRouteKey = useBusinessScopeRouteKey()
 
 // 首次登录后若布局先于守卫完成挂载，可能出现左侧菜单为空；挂载时补救一次

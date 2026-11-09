@@ -82,7 +82,7 @@ export interface EcLegacyProduct extends CompanyDtoBase {
   ecNewMaterialCode?: string;
 
   /**
-   * 生管旧品处理（TaktEcPc.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）
+   * 生管旧品结余（TaktEcPc.EcOldPartBalance；ntext「旧物料-采购单10位:序号4位:数量;结余;处理方式;」）
    */
   oldProductHandling?: string;
 
@@ -134,9 +134,9 @@ export interface EcLegacyProductUpdate {
   ecDetailId: string;
 
   /**
-   * 生管旧品处理（TaktEcPc.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）
+   * 明细旧品处理（TaktEcDetail.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition）
    */
-  oldProductHandling?: string;
+  ecOldPartDisposition?: string;
 
   /**
    * 停产状态（字典 logistics_materials_material_discontinued_status）

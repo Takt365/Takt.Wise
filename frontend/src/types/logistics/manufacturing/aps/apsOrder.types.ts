@@ -48,6 +48,10 @@ export interface ApsOrder extends CompanyDtoBase {
    * 物料编码（关联 TaktGeneralMaterial.MaterialCode，选项 TaktGeneralMaterials/options）
    */
   materialCode: string;
+  /**
+   * 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+   */
+  plannedBatch?: string;
 
   /**
    * 订单数量
@@ -138,6 +142,10 @@ export interface ApsOrderQuery extends TaktPagedQuery {
    * 物料编码（关联 TaktGeneralMaterial.MaterialCode，选项 TaktGeneralMaterials/options）
    */
   materialCode?: string;
+  /**
+   * 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+   */
+  plannedBatch?: string;
 
   /**
    * 订单数量
@@ -255,6 +263,10 @@ export interface ApsOrderCreate {
    * 物料编码（关联 TaktGeneralMaterial.MaterialCode，选项 TaktGeneralMaterials/options）
    */
   materialCode: string;
+  /**
+   * 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+   */
+  plannedBatch?: string;
 
   /**
    * 订单数量
@@ -383,6 +395,10 @@ export interface ApsOrderTemplate {
    * 物料编码（关联 TaktGeneralMaterial.MaterialCode，选项 TaktGeneralMaterials/options）
    */
   materialCode?: string;
+  /**
+   * 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+   */
+  plannedBatch?: string;
 
   /**
    * 订单数量
@@ -485,6 +501,10 @@ export interface ApsOrderImport {
    * 物料编码（关联 TaktGeneralMaterial.MaterialCode，选项 TaktGeneralMaterials/options）
    */
   materialCode?: string;
+  /**
+   * 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+   */
+  plannedBatch?: string;
 
   /**
    * 订单数量
@@ -579,6 +599,10 @@ export interface ApsOrderExport {
    * 物料编码（关联 TaktGeneralMaterial.MaterialCode，选项 TaktGeneralMaterials/options）
    */
   materialCode: string;
+  /**
+   * 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+   */
+  plannedBatch?: string;
 
   /**
    * 订单数量

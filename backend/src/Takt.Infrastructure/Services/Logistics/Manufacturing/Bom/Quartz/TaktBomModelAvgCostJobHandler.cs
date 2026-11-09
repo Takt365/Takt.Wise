@@ -50,21 +50,27 @@ public sealed class TaktBomModelAvgCostJobHandler : ITaktQuartzJobHandler
         ArgumentException.ThrowIfNullOrWhiteSpace(task.TenantCode);
         ArgumentException.ThrowIfNullOrWhiteSpace(task.CompanyCode);
         var asOfDate = TaktBomQuartzExecuteParamsHelper.ResolveAsOfDate(context.ExecuteParams);
+        var target = TaktQuartzRunScope.TargetDatabase ?? string.Empty;
         var result = await _bomCalculateService.RunScheduledBomCalculateAverageAsync(asOfDate: asOfDate);
         if (result == null)
         {
-            context.ExecuteMessage = "机种平均成本无结果（目标月无主表行或上下文无效）";
+            context.ExecuteMessage = $"机种平均成本无结果（目标库 {target}，目标月无主表行或上下文无效）";
             TaktLogger.Warning(
-                "[BomModelAvgCost] Quartz 无结果 TaskCode={TaskCode} Tenant={Tenant} Company={Company}",
+                "[BomModelAvgCost] Quartz 无结果 Target={Target} Plant={Plant} TaskCode={TaskCode} Tenant={Tenant} Company={Company}",
+                target,
+                string.Empty,
                 task.TaskCode,
                 task.TenantCode,
                 task.CompanyCode);
             return;
         }
+        var plants = result.ProcessedPlants ?? string.Empty;
         context.ExecuteMessage =
-            $"机种平均成本完成（期间 {result.CostingPeriod}）：扫描 {result.ScannedRowCount}（产品月成本>0共 {result.PositiveProductCostRowCount}），机种更新 {result.ModelCodeUpdatedCount}，物料类型更新 {result.MaterialTypeUpdatedCount}，月均更新 {result.AverageUpdatedCount}，有成本组 {result.GroupsWithProductCostCount}/{result.ModelGroupCount}，无成本组 {result.GroupsWithoutProductCostCount}";
+            $"机种平均成本完成（目标库 {target}，工厂 {plants}，期间 {result.CostingPeriod}）：扫描 {result.ScannedRowCount}（产品月成本>0共 {result.PositiveProductCostRowCount}），机种更新 {result.ModelCodeUpdatedCount}，物料类型更新 {result.MaterialTypeUpdatedCount}，月均更新 {result.AverageUpdatedCount}，有成本组 {result.GroupsWithProductCostCount}/{result.ModelGroupCount}，无成本组 {result.GroupsWithoutProductCostCount}";
         TaktLogger.Information(
-            "[BomModelAvgCost] Quartz 完成 Period={Period} Scanned={Scanned} PositivePc={PositivePc} ModelUpdated={ModelUpdated} TypeUpdated={TypeUpdated} AvgUpdated={AvgUpdated} GroupsWithCost={GroupsWithCost}/{Groups} NoCost={NoCost} Tenant={Tenant} Company={Company}",
+            "[BomModelAvgCost] Quartz 完成 Target={Target} Plant={Plant} Period={Period} Scanned={Scanned} PositivePc={PositivePc} ModelUpdated={ModelUpdated} TypeUpdated={TypeUpdated} AvgUpdated={AvgUpdated} GroupsWithCost={GroupsWithCost}/{Groups} NoCost={NoCost} Tenant={Tenant} Company={Company}",
+            target,
+            plants,
             result.CostingPeriod,
             result.ScannedRowCount,
             result.PositiveProductCostRowCount,

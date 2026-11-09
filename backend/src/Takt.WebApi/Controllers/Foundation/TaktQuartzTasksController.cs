@@ -26,14 +26,19 @@ namespace Takt.WebApi.Controllers.Foundation;
 public class TaktQuartzTasksController : TaktControllerBase
 {
     private readonly ITaktQuartzTaskService _quartzTaskService;
+    private readonly ITaktQuartzRelationIssueService _relationIssueService;
 
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="quartzTaskService">定时任务服务</param>
-    public TaktQuartzTasksController(ITaktQuartzTaskService quartzTaskService)
+    /// <param name="relationIssueService">主子表关系清单</param>
+    public TaktQuartzTasksController(
+        ITaktQuartzTaskService quartzTaskService,
+        ITaktQuartzRelationIssueService relationIssueService)
     {
         _quartzTaskService = quartzTaskService;
+        _relationIssueService = relationIssueService;
     }
 
     /// <summary>
@@ -196,6 +201,57 @@ public class TaktQuartzTasksController : TaktControllerBase
         }
         catch (Exception ex)
         {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// 分页读取同步前的孤儿明细或空头凭证（只含编码、行号、主键）
+    /// </summary>
+    /// <param name="query">脚本、源库、类型、页码</param>
+    /// <returns>分页结果</returns>
+    [TaktPermission("foundation:quartz:task:execute", "主子表关系清单")]
+    [HttpGet("relation-issues")]
+    public async Task<IActionResult> GetRelationIssuePageAsync([FromQuery] TaktQuartzRelationIssueQueryDto query)
+    {
+        try
+        {
+            var result = await _relationIssueService.GetRelationIssuePageAsync(query, HttpContext.RequestAborted);
+            return Success(result.Data, result.Total, result.PageIndex, result.PageSize, "查询成功");
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// 导出孤儿明细与空头凭证（CSV，按主键分批）
+    /// </summary>
+    /// <param name="script">脚本文件名</param>
+    /// <param name="sourceDatabase">源库</param>
+    /// <returns>CSV 文件</returns>
+    [TaktPermission("foundation:quartz:task:execute", "导出主子表关系清单")]
+    [HttpGet("relation-issues/export")]
+    public async Task<IActionResult> ExportRelationIssueAsync([FromQuery] string script, [FromQuery] string? sourceDatabase)
+    {
+        var path = string.Empty;
+        try
+        {
+            var (fileName, tempPath) = await _relationIssueService.ExportRelationIssueCsvAsync(
+                script,
+                sourceDatabase,
+                HttpContext.RequestAborted);
+            path = tempPath;
+            var stream = new FileStream(tempPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.DeleteOnClose);
+            return File(stream, "text/csv", fileName);
+        }
+        catch (Exception ex)
+        {
+            if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path))
+            {
+                System.IO.File.Delete(path);
+            }
             return HandleException(ex);
         }
     }

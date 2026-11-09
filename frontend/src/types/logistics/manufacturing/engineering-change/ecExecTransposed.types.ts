@@ -55,7 +55,7 @@ export interface EcExecTransposedResult {
 export interface EcExecBatchTransposedStageLine {
   stageDate?: string | null;
   dateDisplayText?: string | null;
-  batchCode?: string | null;
+  prodBatch?: string | null;
 }
 
 /** 设变批次转置阶段单元格。lines 的长度等于该部门执行行数 */
@@ -63,7 +63,7 @@ export interface EcExecBatchTransposedStage {
   stageCode: string;
   lines?: EcExecBatchTransposedStageLine[];
   stageDate?: string | null;
-  batchCode?: string | null;
+  prodBatch?: string | null;
   dateDisplayText?: string | null;
 }
 
@@ -94,7 +94,7 @@ export interface EcExecBatchTransposedQuery extends TaktPagedQuery {
   ecEntryDateStart?: string;
   /** 录入日期止，yyyy-MM-dd */
   ecEntryDateEnd?: string;
-  batchCode?: string;
+  prodBatch?: string;
 }
 
 /** 设变批次转置分页结果 */

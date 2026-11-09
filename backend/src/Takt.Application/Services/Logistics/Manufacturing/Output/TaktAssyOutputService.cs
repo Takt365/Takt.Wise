@@ -963,7 +963,7 @@ public class TaktAssyOutputService : TaktServiceBase, ITaktAssyOutputService
                 || (x.ProdOrderCode != null && x.ProdOrderCode.Contains(keywords))
                 || (x.ModelCode != null && x.ModelCode.Contains(keywords))
                 || (x.MaterialCode != null && x.MaterialCode.Contains(keywords))
-                || (x.BatchCode != null && x.BatchCode.Contains(keywords))
+                || (x.ProdBatch != null && x.ProdBatch.Contains(keywords))
                 || SqlFunc.ToString(x.ProdOrderQty).Contains(keywords)
                 || (x.SerialCode != null && x.SerialCode.Contains(keywords))
                 || SqlFunc.ToString(x.StdMinutes).Contains(keywords)
@@ -1026,9 +1026,9 @@ public class TaktAssyOutputService : TaktServiceBase, ITaktAssyOutputService
             exp = exp.And(x => x.MaterialCode != null && x.MaterialCode.Contains(queryDto.MaterialCode));
         }
 
-        if (!string.IsNullOrEmpty(queryDto?.BatchCode))
+        if (!string.IsNullOrEmpty(queryDto?.ProdBatch))
         {
-            exp = exp.And(x => x.BatchCode != null && x.BatchCode.Contains(queryDto.BatchCode));
+            exp = exp.And(x => x.ProdBatch != null && x.ProdBatch.Contains(queryDto.ProdBatch));
         }
 
         if (queryDto?.ProdOrderQty.HasValue == true)

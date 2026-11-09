@@ -485,7 +485,7 @@ public class TaktPcbaInspectionService : TaktServiceBase, ITaktPcbaInspectionSer
                 || (x.ProdOrderType != null && x.ProdOrderType.Contains(keywords))
                 || (x.ProdOrderCode != null && x.ProdOrderCode.Contains(keywords))
                 || (x.ModelCode != null && x.ModelCode.Contains(keywords))
-                || (x.BatchCode != null && x.BatchCode.Contains(keywords))
+                || (x.ProdBatch != null && x.ProdBatch.Contains(keywords))
                 || (x.MaterialCode != null && x.MaterialCode.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
@@ -534,10 +534,10 @@ public class TaktPcbaInspectionService : TaktServiceBase, ITaktPcbaInspectionSer
             exp = exp.And(x => x.ModelCode != null && x.ModelCode.Contains(modelCode));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.BatchCode))
+        if (!string.IsNullOrWhiteSpace(queryDto?.ProdBatch))
         {
-            var batchCode = queryDto.BatchCode;
-            exp = exp.And(x => x.BatchCode != null && x.BatchCode.Contains(batchCode));
+            var prodBatch = queryDto.ProdBatch;
+            exp = exp.And(x => x.ProdBatch != null && x.ProdBatch.Contains(prodBatch));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.MaterialCode))
@@ -556,6 +556,47 @@ public class TaktPcbaInspectionService : TaktServiceBase, ITaktPcbaInspectionSer
         {
             var remark = queryDto.Remark;
             exp = exp.And(x => x.Remark != null && x.Remark.Contains(remark));
+        }
+
+        if (queryDto?.ProdDateStart.HasValue == true && queryDto.ProdDateEnd.HasValue)
+        {
+            var prodDateStart = queryDto.ProdDateStart.Value;
+            var prodDateEnd = queryDto.ProdDateEnd.Value;
+            exp = exp.And(x => SqlFunc.Subqueryable<TaktPcbaInspectionDetail>()
+                .Where(d =>
+                    d.PcbaInspectionId == x.Id
+                    && d.IsDeleted == 0
+                    && d.IsObsolete == 0
+                    && (
+                        (d.TSideAssemblyDate != null && d.TSideAssemblyDate >= prodDateStart && d.TSideAssemblyDate <= prodDateEnd)
+                        || (d.BSideAssemblyDate != null && d.BSideAssemblyDate >= prodDateStart && d.BSideAssemblyDate <= prodDateEnd)))
+                .Any());
+        }
+        else if (queryDto?.ProdDateStart.HasValue == true)
+        {
+            var prodDateStart = queryDto.ProdDateStart.Value;
+            exp = exp.And(x => SqlFunc.Subqueryable<TaktPcbaInspectionDetail>()
+                .Where(d =>
+                    d.PcbaInspectionId == x.Id
+                    && d.IsDeleted == 0
+                    && d.IsObsolete == 0
+                    && (
+                        (d.TSideAssemblyDate != null && d.TSideAssemblyDate >= prodDateStart)
+                        || (d.BSideAssemblyDate != null && d.BSideAssemblyDate >= prodDateStart)))
+                .Any());
+        }
+        else if (queryDto?.ProdDateEnd.HasValue == true)
+        {
+            var prodDateEnd = queryDto.ProdDateEnd.Value;
+            exp = exp.And(x => SqlFunc.Subqueryable<TaktPcbaInspectionDetail>()
+                .Where(d =>
+                    d.PcbaInspectionId == x.Id
+                    && d.IsDeleted == 0
+                    && d.IsObsolete == 0
+                    && (
+                        (d.TSideAssemblyDate != null && d.TSideAssemblyDate <= prodDateEnd)
+                        || (d.BSideAssemblyDate != null && d.BSideAssemblyDate <= prodDateEnd)))
+                .Any());
         }
 
         if (queryDto?.CreatedAtStart.HasValue == true)
@@ -616,7 +657,7 @@ public class TaktPcbaInspectionService : TaktServiceBase, ITaktPcbaInspectionSer
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.BatchCode))
+        if (!string.IsNullOrWhiteSpace(queryDto.ProdBatch))
         {
             return true;
         }
@@ -629,6 +670,10 @@ public class TaktPcbaInspectionService : TaktServiceBase, ITaktPcbaInspectionSer
             return true;
         }
         if (!string.IsNullOrWhiteSpace(queryDto.Remark))
+        {
+            return true;
+        }
+        if (queryDto.ProdDateStart.HasValue || queryDto.ProdDateEnd.HasValue)
         {
             return true;
         }

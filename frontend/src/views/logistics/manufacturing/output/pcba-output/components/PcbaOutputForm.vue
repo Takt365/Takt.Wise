@@ -138,14 +138,14 @@
             </a-col>
             <a-col :span="12">
               <a-form-item
-                :label="pi.label('batchCode')"
-                name="batchCode"
+                :label="pi.label('prodBatch')"
+                name="prodBatch"
               >
                 <a-input
-                  v-model:value="formState.batchCode"
-                  :placeholder="pi.ph('batchCode')"
+                  v-model:value="formState.prodBatch"
+                  :placeholder="pi.ph('prodBatch')"
                   show-count
-                  :maxlength="20"
+                  :maxlength="40"
                   disabled
                 />
               </a-form-item>
@@ -440,7 +440,7 @@ const formContentClass = computed(() => (formFields.length > 10 ? 'takt-form-con
 /** 当前激活的 Tab key */
 const activeTab = ref('tab-0')
 /** CreateDto 字段名列表（与 formState 键对齐） */
-const formFields = ["tenantCode","companyCode","cultureCode","plantCode","prodCategory","prodDate","prodOrderType","prodOrderCode","modelCode","materialCode","batchCode","prodOrderQty","serialCode","extField","remark"]
+const formFields = ["tenantCode","companyCode","cultureCode","plantCode","prodCategory","prodDate","prodOrderType","prodOrderCode","modelCode","materialCode","prodBatch","prodOrderQty","serialCode","extField","remark"]
 
 import type { TaktEditableTableColumn } from '@/components/business/TaktEditableTable/types'
 import { resolveNextDetailLineNumber } from '@/utils/taktSequence'
@@ -524,10 +524,11 @@ function allocateNextPcbaOutputDetailLineNumber(): number {
   return resolveNextDetailLineNumber(0, rows)
 }
 
-/** 子表数值列合计：仅当日完成数、不良台数、报工工时 */
+/** 子表数值列合计：当日完成数、不良台数、报废台数、报工工时 */
 const PCBA_DETAIL_FORM_SUMMARY_SUM_KEYS = new Set([
   'dailyCompletedQty',
   'defectCount',
+  'scrapCount',
   'confirmMinutes',
 ])
 
@@ -636,6 +637,15 @@ const pcbaOutputDetailFormColumns = computed<TaktEditableTableColumn[]>(() => [
     width: 140,
   },
   buildPcbaDetailNumberColumn('defectCount'),
+  buildPcbaDetailNumberColumn('scrapCount'),
+  {
+    key: 'scrapReason',
+    title: pcbaOutputDetailPi.label('scrapReason'),
+    editor: 'input',
+    width: 180,
+    allowClear: true,
+    placeholder: pcbaOutputDetailPi.ph('scrapReason'),
+  },
   buildPcbaDetailNumberColumn('downtimeMinutes'),
   {
     key: 'downtimeReason',
@@ -734,6 +744,8 @@ function createDefaultPcbaOutputDetailRow(): Record<string, unknown> {
     completedStatus: 0,
     serialCode: '',
     defectCount: 0,
+    scrapCount: 0,
+    scrapReason: '',
     downtimeMinutes: 0,
     downtimeReason: '',
     downtimeDescription: '',
@@ -895,7 +907,7 @@ watch(
       formState.prodOrderType = ''
       formState.modelCode = ''
       formState.materialCode = ''
-      formState.batchCode = ''
+      formState.prodBatch = ''
       formState.prodOrderQty = undefined
       formState.serialCode = ''
       childPcbaOutputDetailRows.value = []

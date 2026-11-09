@@ -428,7 +428,7 @@ public class TaktMaterialDocumentItemService : TaktServiceBase, ITaktMaterialDoc
                 || (x.AutoCreatedFlag != null && x.AutoCreatedFlag.Contains(keywords))
                 || (x.MaterialCode != null && x.MaterialCode.Contains(keywords))
                 || (x.WarehouseCode != null && x.WarehouseCode.Contains(keywords))
-                || (x.BatchCode != null && x.BatchCode.Contains(keywords))
+                || (x.ProdBatch != null && x.ProdBatch.Contains(keywords))
                 || (x.StockType != null && x.StockType.Contains(keywords))
                 || (x.RestrictedStockFlag != null && x.RestrictedStockFlag.Contains(keywords))
                 || (x.SpecialStock != null && x.SpecialStock.Contains(keywords))
@@ -549,10 +549,10 @@ public class TaktMaterialDocumentItemService : TaktServiceBase, ITaktMaterialDoc
             exp = exp.And(x => x.WarehouseCode != null && x.WarehouseCode.Contains(warehouseCode));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.BatchCode))
+        if (!string.IsNullOrWhiteSpace(queryDto?.ProdBatch))
         {
-            var batchCode = queryDto.BatchCode;
-            exp = exp.And(x => x.BatchCode != null && x.BatchCode.Contains(batchCode));
+            var prodBatch = queryDto.ProdBatch;
+            exp = exp.And(x => x.ProdBatch != null && x.ProdBatch.Contains(prodBatch));
         }
 
         if (!string.IsNullOrWhiteSpace(queryDto?.StockType))
@@ -987,7 +987,7 @@ public class TaktMaterialDocumentItemService : TaktServiceBase, ITaktMaterialDoc
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.BatchCode))
+        if (!string.IsNullOrWhiteSpace(queryDto.ProdBatch))
         {
             return true;
         }

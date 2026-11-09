@@ -23,7 +23,7 @@ DECLARE @plant_code NVARCHAR(4) = N'{{PlantCode}}';
 DECLARE @sync_user_id BIGINT = {{SyncUserId}};
 
 DECLARE @batch_size INT = 0;
-DECLARE @apply_chunk INT = 20000;
+DECLARE @apply_chunk INT = 100000;
 DECLARE @merge_from_rn INT;
 DECLARE @merge_to_rn INT;
 DECLARE @merge_max_rn INT;
@@ -63,7 +63,7 @@ IF OBJECT_ID('tempdb..#hdr_soft') IS NOT NULL DROP TABLE #hdr_soft;
 IF OBJECT_ID('tempdb..#item_soft') IS NOT NULL DROP TABLE #item_soft;
 
 CREATE TABLE #hdr (
-  [rn] INT, [id] BIGINT, [plant_code] NVARCHAR(4),
+  [rn] INT NOT NULL PRIMARY KEY CLUSTERED, [id] BIGINT, [plant_code] NVARCHAR(4),
   [material_document_code] NVARCHAR(10), [material_document_year] NVARCHAR(4),
   [transaction_event_type] NVARCHAR(2), [document_type] NVARCHAR(2), [revaluation_type] NVARCHAR(2),
   [document_date] DATETIME, [posting_date] DATETIME,
@@ -76,12 +76,12 @@ CREATE TABLE #hdr (
   [is_deleted] INT);
 
 CREATE TABLE #item (
-  [rn] INT, [id] BIGINT, [material_document_id] BIGINT,
+  [rn] INT NOT NULL PRIMARY KEY CLUSTERED, [id] BIGINT, [material_document_id] BIGINT,
   [material_document_year] NVARCHAR(4), [material_document_code] NVARCHAR(10), [line_number] INT,
   [plant_code] NVARCHAR(4),
   [line_id] NVARCHAR(6), [parent_line_id] NVARCHAR(6), [line_depth] NVARCHAR(2),
   [movement_type] NVARCHAR(3), [auto_created_flag] NVARCHAR(1),
-  [material_code] NVARCHAR(20), [warehouse_code] NVARCHAR(4), [batch_code] NVARCHAR(10),
+  [material_code] NVARCHAR(20), [warehouse_code] NVARCHAR(4), [prod_batch] NVARCHAR(10),
   [stock_type] NVARCHAR(1), [restricted_stock_flag] NVARCHAR(1), [special_stock] NVARCHAR(1),
   [supplier_code] NVARCHAR(10), [customer_code] NVARCHAR(10),
   [debit_credit_indicator] NVARCHAR(1), [currency_code] NVARCHAR(3),
@@ -172,6 +172,7 @@ FROM (
   WHERE N.dup_rn = 1
 ) S
 WHERE @batch_size = 0 OR S.rn <= @batch_size;
+CREATE NONCLUSTERED INDEX ix_hdr_code ON #hdr ([material_document_year], [material_document_code]) INCLUDE ([id]);
 
 DECLARE @hdr_source INT = (SELECT COUNT(*) FROM #hdr);
 SELECT
@@ -336,7 +337,7 @@ SELECT S.rn, @base_id+1000000000+S.rn, 0,
   S.[material_document_year], S.[material_document_code], S.[line_number], S.[plant_code],
   S.[line_id], S.[parent_line_id], S.[line_depth],
   S.[movement_type], S.[auto_created_flag],
-  S.[material_code], S.[warehouse_code], S.[batch_code],
+  S.[material_code], S.[warehouse_code], S.[prod_batch],
   S.[stock_type], S.[restricted_stock_flag], S.[special_stock],
   S.[supplier_code], S.[customer_code],
   S.[debit_credit_indicator], S.[currency_code],
@@ -364,7 +365,7 @@ SELECT S.rn, @base_id+1000000000+S.rn, 0,
   S.[tenant_code], S.[company_code], S.[culture_code], S.[ext_field], S.[remark],
   S.[created_by], S.[created_at], S.[updated_by], S.[updated_at], S.[deleted_by], S.[deleted_at], S.[is_deleted]
 FROM (
-  SELECT N.*, ROW_NUMBER() OVER (ORDER BY N.[material_document_year], N.[material_document_code], N.[line_number]) AS rn
+  SELECT N.*, ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS rn
   FROM (
     SELECT
       ISNULL(NULLIF(LEFT(LTRIM(RTRIM(SH.[material_document_year])), 4), N''), N'') AS [material_document_year],
@@ -385,7 +386,7 @@ FROM (
         ELSE ISNULL(NULLIF(LEFT(LTRIM(RTRIM(R.[material_code])), 20), N''), N'')
       END AS [material_code],
       NULLIF(LEFT(LTRIM(RTRIM(R.[warehouse_code])), 4), N'') AS [warehouse_code],
-      NULLIF(LEFT(LTRIM(RTRIM(R.[batch_code])), 10), N'') AS [batch_code],
+      NULLIF(LEFT(LTRIM(RTRIM(R.[batch_code])), 10), N'') AS [prod_batch],
       NULLIF(LEFT(LTRIM(RTRIM(R.[stock_type])), 1), N'') AS [stock_type],
       NULLIF(LEFT(LTRIM(RTRIM(R.[restricted_stock_flag])), 1), N'') AS [restricted_stock_flag],
       NULLIF(LEFT(LTRIM(RTRIM(R.[special_stock])), 1), N'') AS [special_stock],
@@ -463,7 +464,7 @@ FROM (
         ORDER BY COALESCE(TRY_CAST(R.[line_number] AS INT), 0)
       ) AS dup_rn
     FROM [{{SourceDatabase}}].[dbo].[takt_logistics_materials_material_document_item] R
-    INNER JOIN [{{SourceDatabase}}].[dbo].[takt_logistics_materials_material_document] SH
+    INNER HASH JOIN [{{SourceDatabase}}].[dbo].[takt_logistics_materials_material_document] SH
       ON LTRIM(RTRIM(SH.[material_document_code])) = LTRIM(RTRIM(R.[material_document_code]))
     WHERE LTRIM(RTRIM(ISNULL(SH.[material_document_year], N'')))<>N''
       AND LTRIM(RTRIM(ISNULL(R.[material_document_code], N'')))<>N''
@@ -506,7 +507,7 @@ DECLARE @item_sap_keys INT = (
   SELECT COUNT(*) FROM (
     SELECT LTRIM(RTRIM(SH.[material_document_year])) AS [material_document_year], LTRIM(RTRIM(R.[material_document_code])) AS [material_document_code], COALESCE(TRY_CAST(R.[line_number] AS INT),0) AS [line_number]
     FROM [{{SourceDatabase}}].[dbo].[takt_logistics_materials_material_document_item] R
-    INNER JOIN [{{SourceDatabase}}].[dbo].[takt_logistics_materials_material_document] SH
+    INNER HASH JOIN [{{SourceDatabase}}].[dbo].[takt_logistics_materials_material_document] SH
       ON LTRIM(RTRIM(SH.[material_document_code])) = LTRIM(RTRIM(R.[material_document_code]))
     WHERE LTRIM(RTRIM(ISNULL(SH.[material_document_year], N'')))<>N''
       AND LTRIM(RTRIM(ISNULL(R.[material_document_code], N'')))<>N''
@@ -534,6 +535,39 @@ DECLARE @item_before INT = (
     )
 );
 
+-- 先回填目标明细外键（凭证号+会计年度；年度空则只按凭证号且主表唯一），再同步
+SET @dml_n = 1;
+WHILE @dml_n > 0
+BEGIN
+  UPDATE TOP (@apply_chunk) I
+  SET I.[material_document_id] = H.[id], I.[updated_by] = @sync_user_id, I.[updated_at] = @now
+  FROM [takt_logistics_materials_material_document_item] AS I
+  INNER JOIN [takt_logistics_materials_material_document] AS H
+    ON H.[tenant_code] = I.[tenant_code]
+   AND H.[company_code] = I.[company_code]
+   AND LTRIM(RTRIM(H.[material_document_code])) = LTRIM(RTRIM(I.[material_document_code]))
+   AND (
+         NULLIF(LTRIM(RTRIM(ISNULL(I.[fiscal_year], N''))), N'') IS NULL
+         OR LTRIM(RTRIM(I.[fiscal_year])) = LTRIM(RTRIM(H.[material_document_year]))
+       )
+   AND H.[is_deleted] = 0
+  WHERE I.[is_deleted] = 0
+    AND EXISTS (SELECT 1 FROM #item S WHERE S.[tenant_code] = I.[tenant_code] AND S.[company_code] = I.[company_code])
+    AND (I.[material_document_id] IS NULL OR I.[material_document_id] <> H.[id])
+    AND (
+      NULLIF(LTRIM(RTRIM(ISNULL(I.[fiscal_year], N''))), N'') IS NOT NULL
+      OR (
+        SELECT COUNT(*)
+        FROM [takt_logistics_materials_material_document] AS H2
+        WHERE H2.[tenant_code] = I.[tenant_code]
+          AND H2.[company_code] = I.[company_code]
+          AND LTRIM(RTRIM(H2.[material_document_code])) = LTRIM(RTRIM(I.[material_document_code]))
+          AND H2.[is_deleted] = 0
+      ) = 1
+    );
+  SET @dml_n = @@ROWCOUNT;
+END
+
 SET @merge_from_rn = 1;
 SET @merge_max_rn = ISNULL((SELECT MAX([rn]) FROM #item), 0);
 WHILE @merge_from_rn <= @merge_max_rn
@@ -553,7 +587,7 @@ WHEN MATCHED AND (
   OR ISNULL(T.[auto_created_flag],N'')<>ISNULL(S.[auto_created_flag],N'')
   OR ISNULL(T.[material_code],N'')<>ISNULL(S.[material_code],N'')
   OR ISNULL(T.[warehouse_code],N'')<>ISNULL(S.[warehouse_code],N'')
-  OR ISNULL(T.[batch_code],N'')<>ISNULL(S.[batch_code],N'')
+  OR ISNULL(T.[prod_batch],N'')<>ISNULL(S.[prod_batch],N'')
   OR ISNULL(T.[stock_type],N'')<>ISNULL(S.[stock_type],N'')
   OR ISNULL(T.[restricted_stock_flag],N'')<>ISNULL(S.[restricted_stock_flag],N'')
   OR ISNULL(T.[special_stock],N'')<>ISNULL(S.[special_stock],N'')
@@ -632,7 +666,7 @@ WHEN MATCHED AND (
   T.[auto_created_flag]=S.[auto_created_flag],
   T.[material_code]=S.[material_code],
   T.[warehouse_code]=S.[warehouse_code],
-  T.[batch_code]=S.[batch_code],
+  T.[prod_batch]=S.[prod_batch],
   T.[stock_type]=S.[stock_type],
   T.[restricted_stock_flag]=S.[restricted_stock_flag],
   T.[special_stock]=S.[special_stock],
@@ -701,8 +735,8 @@ WHEN MATCHED AND (
   T.[deleted_by]=S.[deleted_by],
   T.[deleted_at]=S.[deleted_at]
 WHEN NOT MATCHED THEN
-  INSERT ([id],[material_document_id],[plant_code],[material_document_code],[line_number],[line_id],[parent_line_id],[line_depth],[movement_type],[auto_created_flag],[material_code],[warehouse_code],[batch_code],[stock_type],[restricted_stock_flag],[special_stock],[supplier_code],[customer_code],[debit_credit_indicator],[currency_code],[local_currency_amount],[alternative_amount],[quantity],[base_unit],[entry_quantity],[entry_unit],[po_price_quantity],[po_price_unit],[purchase_order_code],[purchase_order_item],[reference_document_year],[reference_document_code],[reference_document_item],[original_material_document_year],[original_material_document_code],[original_line_number],[delivery_completed_flag],[item_text],[equipment_code],[goods_recipient],[unloading_point],[business_area_code],[controlling_area_code],[trading_partner_business_area],[production_order_code],[asset_code],[asset_sub_code],[fiscal_year],[post_to_previous_period_flag],[post_to_previous_year_flag],[accounting_document_code],[accounting_document_item],[revaluation_document_code],[revaluation_document_item],[reservation_code],[reservation_item],[final_issue_flag],[reservation_quantity],[receiving_material_code],[receiving_plant_code],[receiving_warehouse_code],[profit_center_code],[valuated_stock_quantity],[total_valuated_stock_value],[price_control],[manufacturer_part_material_code],[mkpf_reference_code],[im_delivery_code],[im_delivery_item],[is_obsolete],[tenant_code],[company_code],[culture_code],[ext_field],[remark],[created_by],[created_at],[updated_by],[updated_at],[is_deleted],[deleted_by],[deleted_at])
-  VALUES (S.[id],S.[material_document_id],S.[plant_code],S.[material_document_code],S.[line_number],S.[line_id],S.[parent_line_id],S.[line_depth],S.[movement_type],S.[auto_created_flag],S.[material_code],S.[warehouse_code],S.[batch_code],S.[stock_type],S.[restricted_stock_flag],S.[special_stock],S.[supplier_code],S.[customer_code],S.[debit_credit_indicator],S.[currency_code],S.[local_currency_amount],S.[alternative_amount],S.[quantity],S.[base_unit],S.[entry_quantity],S.[entry_unit],S.[po_price_quantity],S.[po_price_unit],S.[purchase_order_code],S.[purchase_order_item],S.[reference_document_year],S.[reference_document_code],S.[reference_document_item],S.[original_material_document_year],S.[original_material_document_code],S.[original_line_number],S.[delivery_completed_flag],S.[item_text],S.[equipment_code],S.[goods_recipient],S.[unloading_point],S.[business_area_code],S.[controlling_area_code],S.[trading_partner_business_area],S.[production_order_code],S.[asset_code],S.[asset_sub_code],S.[fiscal_year],S.[post_to_previous_period_flag],S.[post_to_previous_year_flag],S.[accounting_document_code],S.[accounting_document_item],S.[revaluation_document_code],S.[revaluation_document_item],S.[reservation_code],S.[reservation_item],S.[final_issue_flag],S.[reservation_quantity],S.[receiving_material_code],S.[receiving_plant_code],S.[receiving_warehouse_code],S.[profit_center_code],S.[valuated_stock_quantity],S.[total_valuated_stock_value],S.[price_control],S.[manufacturer_part_material_code],S.[mkpf_reference_code],S.[im_delivery_code],S.[im_delivery_item],S.[is_obsolete],S.[tenant_code],S.[company_code],S.[culture_code],S.[ext_field],S.[remark],COALESCE(S.[created_by],@sync_user_id),COALESCE(S.[created_at],@now),S.[updated_by],S.[updated_at],S.[is_deleted],S.[deleted_by],S.[deleted_at])
+  INSERT ([id],[material_document_id],[plant_code],[material_document_code],[line_number],[line_id],[parent_line_id],[line_depth],[movement_type],[auto_created_flag],[material_code],[warehouse_code],[prod_batch],[stock_type],[restricted_stock_flag],[special_stock],[supplier_code],[customer_code],[debit_credit_indicator],[currency_code],[local_currency_amount],[alternative_amount],[quantity],[base_unit],[entry_quantity],[entry_unit],[po_price_quantity],[po_price_unit],[purchase_order_code],[purchase_order_item],[reference_document_year],[reference_document_code],[reference_document_item],[original_material_document_year],[original_material_document_code],[original_line_number],[delivery_completed_flag],[item_text],[equipment_code],[goods_recipient],[unloading_point],[business_area_code],[controlling_area_code],[trading_partner_business_area],[production_order_code],[asset_code],[asset_sub_code],[fiscal_year],[post_to_previous_period_flag],[post_to_previous_year_flag],[accounting_document_code],[accounting_document_item],[revaluation_document_code],[revaluation_document_item],[reservation_code],[reservation_item],[final_issue_flag],[reservation_quantity],[receiving_material_code],[receiving_plant_code],[receiving_warehouse_code],[profit_center_code],[valuated_stock_quantity],[total_valuated_stock_value],[price_control],[manufacturer_part_material_code],[mkpf_reference_code],[im_delivery_code],[im_delivery_item],[is_obsolete],[tenant_code],[company_code],[culture_code],[ext_field],[remark],[created_by],[created_at],[updated_by],[updated_at],[is_deleted],[deleted_by],[deleted_at])
+  VALUES (S.[id],S.[material_document_id],S.[plant_code],S.[material_document_code],S.[line_number],S.[line_id],S.[parent_line_id],S.[line_depth],S.[movement_type],S.[auto_created_flag],S.[material_code],S.[warehouse_code],S.[prod_batch],S.[stock_type],S.[restricted_stock_flag],S.[special_stock],S.[supplier_code],S.[customer_code],S.[debit_credit_indicator],S.[currency_code],S.[local_currency_amount],S.[alternative_amount],S.[quantity],S.[base_unit],S.[entry_quantity],S.[entry_unit],S.[po_price_quantity],S.[po_price_unit],S.[purchase_order_code],S.[purchase_order_item],S.[reference_document_year],S.[reference_document_code],S.[reference_document_item],S.[original_material_document_year],S.[original_material_document_code],S.[original_line_number],S.[delivery_completed_flag],S.[item_text],S.[equipment_code],S.[goods_recipient],S.[unloading_point],S.[business_area_code],S.[controlling_area_code],S.[trading_partner_business_area],S.[production_order_code],S.[asset_code],S.[asset_sub_code],S.[fiscal_year],S.[post_to_previous_period_flag],S.[post_to_previous_year_flag],S.[accounting_document_code],S.[accounting_document_item],S.[revaluation_document_code],S.[revaluation_document_item],S.[reservation_code],S.[reservation_item],S.[final_issue_flag],S.[reservation_quantity],S.[receiving_material_code],S.[receiving_plant_code],S.[receiving_warehouse_code],S.[profit_center_code],S.[valuated_stock_quantity],S.[total_valuated_stock_value],S.[price_control],S.[manufacturer_part_material_code],S.[mkpf_reference_code],S.[im_delivery_code],S.[im_delivery_item],S.[is_obsolete],S.[tenant_code],S.[company_code],S.[culture_code],S.[ext_field],S.[remark],COALESCE(S.[created_by],@sync_user_id),COALESCE(S.[created_at],@now),S.[updated_by],S.[updated_at],S.[is_deleted],S.[deleted_by],S.[deleted_at])
 OUTPUT S.rn, $action, INSERTED.[id], INSERTED.[material_document_code], INSERTED.[line_number]
 INTO #item_delta (rn, oper_type, id, [material_document_code], [line_number]);
   SET @dml_n = @@ROWCOUNT;

@@ -63,7 +63,7 @@ public class TaktPcbaInspectionDto : TaktCompanyDtoBase
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码
@@ -136,12 +136,22 @@ public class TaktPcbaInspectionQueryDto : TaktPagedQuery
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码
     /// </summary>
     public string? MaterialCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 生产期间开始（主表无生产日期；按明细 B 面/T 面实装日期落入区间）
+    /// </summary>
+    public DateTime? ProdDateStart { get; set; }
+
+    /// <summary>
+    /// 生产期间结束（主表无生产日期；按明细 B 面/T 面实装日期落入区间）
+    /// </summary>
+    public DateTime? ProdDateEnd { get; set; }
 
     /// <summary>
     /// 创建时间（范围查询-开始）
@@ -224,7 +234,7 @@ public class TaktPcbaInspectionCreateDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码
@@ -331,7 +341,7 @@ public class TaktPcbaInspectionTemplateDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码
@@ -408,7 +418,7 @@ public class TaktPcbaInspectionImportDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码
@@ -491,7 +501,7 @@ public class TaktPcbaInspectionExportDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码

@@ -189,15 +189,6 @@ public class TaktEcDeptI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecdept.poremainder
             new TranslationSeedItem("entity.ecdept.poremainder", "zh-HK", "Po残_hk", "Po残（采购订单残）"),
 
-            // entity.ecdept.balancequantity
-            new TranslationSeedItem("entity.ecdept.balancequantity", "en-US", "结余数量_us", "结余数量"),
-            // entity.ecdept.balancequantity
-            new TranslationSeedItem("entity.ecdept.balancequantity", "ja-JP", "结余数量_jp", "结余数量"),
-            // entity.ecdept.balancequantity
-            new TranslationSeedItem("entity.ecdept.balancequantity", "zh-CN", "结余数量", "结余数量"),
-            // entity.ecdept.balancequantity
-            new TranslationSeedItem("entity.ecdept.balancequantity", "zh-HK", "结余数量_hk", "结余数量"),
-
             // entity.ecdept.oldproducthandling
             new TranslationSeedItem("entity.ecdept.oldproducthandling", "en-US", "旧品处理_us", "旧品处理"),
             // entity.ecdept.oldproducthandling
@@ -324,23 +315,7 @@ public class TaktEcDeptI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecdept.implementationbatch
             new TranslationSeedItem("entity.ecdept.implementationbatch", "zh-HK", "实施批次_hk", "实施批次"),
 
-            // entity.ecdept.inspectionbatch
-            new TranslationSeedItem("entity.ecdept.inspectionbatch", "en-US", "检验批次_us", "检验批次"),
-            // entity.ecdept.inspectionbatch
-            new TranslationSeedItem("entity.ecdept.inspectionbatch", "ja-JP", "检验批次_jp", "检验批次"),
-            // entity.ecdept.inspectionbatch
-            new TranslationSeedItem("entity.ecdept.inspectionbatch", "zh-CN", "检验批次", "检验批次"),
-            // entity.ecdept.inspectionbatch
-            new TranslationSeedItem("entity.ecdept.inspectionbatch", "zh-HK", "检验批次_hk", "检验批次"),
 
-            // entity.ecdept.samplingCode
-            new TranslationSeedItem("entity.ecdept.samplingCode", "en-US", "抽样号码_us", "抽样号码"),
-            // entity.ecdept.samplingCode
-            new TranslationSeedItem("entity.ecdept.samplingCode", "ja-JP", "抽样号码_jp", "抽样号码"),
-            // entity.ecdept.samplingCode
-            new TranslationSeedItem("entity.ecdept.samplingCode", "zh-CN", "抽样号码", "抽样号码"),
-            // entity.ecdept.samplingCode
-            new TranslationSeedItem("entity.ecdept.samplingCode", "zh-HK", "抽样号码_hk", "抽样号码"),
 
             // entity.ecdept.sopdate
             new TranslationSeedItem("entity.ecdept.sopdate", "en-US", "SOP日期_us", "SOP日期"),

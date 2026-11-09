@@ -186,10 +186,10 @@ const ipqcOrderItemFormColumns = computed<TaktEditableTableColumn[]>(() => [
     width: 180,
   },
   {
-    key: 'batchCode',
-    title: ipqcOrderItemPi.label('batchCode'),
+    key: 'prodBatch',
+    title: ipqcOrderItemPi.label('prodBatch'),
     editor: 'input',
-    width: 140, allowClear: true, placeholder: ipqcOrderItemPi.ph('batchCode'),
+    width: 140, allowClear: true, placeholder: ipqcOrderItemPi.ph('prodBatch'),
   },
   {
     key: 'productionQuantity',
@@ -287,7 +287,7 @@ function createDefaultIpqcOrderItemRow(): Record<string, unknown> {
     lineNumber: allocateNextIpqcOrderItemLineNumber(),
     materialCode: '',
     materialDescription: '',
-    batchCode: '',
+    prodBatch: '',
     productionQuantity: 0,
     standardCode: '',
     samplingSchemeCode: '',

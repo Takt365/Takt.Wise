@@ -71,7 +71,7 @@ export interface AssyDefect extends CompanyDtoBase {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 物料编码
@@ -171,7 +171,7 @@ export interface AssyDefectQuery extends TaktPagedQuery {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 物料编码
@@ -280,7 +280,7 @@ export interface AssyDefectCreate {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 物料编码
@@ -404,7 +404,7 @@ export interface AssyDefectTemplate {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 物料编码
@@ -508,7 +508,7 @@ export interface AssyDefectImport {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 物料编码
@@ -612,7 +612,7 @@ export interface AssyDefectExport {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 物料编码

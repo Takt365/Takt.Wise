@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/api/logistics/manufacturing/engineering-change
 // 文件名称：ecQc.api.ts
-// 创建时间：2026-09-08
+// 创建时间：2026-10-29
 // 创建人：Takt365(Auto Generated)
 // 功能描述：logistics/manufacturing/engineering-change 模块 API（自动生成，请勿手改路由常量）
 // 
@@ -19,18 +19,20 @@ import type {
   EcQc,
   EcQcCreate,
   EcQcObsolete,
-  EcQcDiscontinuedStatus,
   EcQcUpdate
 } from '@/types/logistics/manufacturing/engineering-change/ecQc.types';
 import type {
+  EcQcDiscontinuedStatus
+} from '@/types/logistics/manufacturing/engineering-change/ecQcDiscontinuedStatus.types';
+import type {
   EcQcMaster
-} from '@/types/logistics/manufacturing/engineering-change/ecQc.types-master';
+} from '@/types/logistics/manufacturing/engineering-change/ecQcMaster.types';
 
 /**
  * API 路径前缀（相对 request baseURL，对应后端 [controller]）
  * @description TaktEcQcs
  */
-const EC_QA_API_BASE = 'TaktEcQcs';
+const EC_QC_API_BASE = 'TaktEcQcs';
 
 // ========================================
 // 基础 CRUD
@@ -43,7 +45,7 @@ const EC_QA_API_BASE = 'TaktEcQcs';
  */
 export function getEcQcList(queryDto: any): Promise<TaktPagedResult<EcQc>> {
   return request<TaktPagedResult<EcQc>>({
-    url: `${EC_QA_API_BASE}/list`,
+    url: `${EC_QC_API_BASE}/list`,
     method: 'get',
     params: queryDto,
   });
@@ -56,7 +58,7 @@ export function getEcQcList(queryDto: any): Promise<TaktPagedResult<EcQc>> {
  */
 export function getEcQcMasterList(queryDto: any): Promise<TaktPagedResult<EcQcMaster>> {
   return request<TaktPagedResult<EcQcMaster>>({
-    url: `${EC_QA_API_BASE}/masters`,
+    url: `${EC_QC_API_BASE}/masters`,
     method: 'get',
     params: queryDto,
   });
@@ -69,7 +71,7 @@ export function getEcQcMasterList(queryDto: any): Promise<TaktPagedResult<EcQcMa
  */
 export function getEcQcById(id: string): Promise<EcQc> {
   return request<EcQc>({
-    url: `${EC_QA_API_BASE}/${id}`,
+    url: `${EC_QC_API_BASE}/${id}`,
     method: 'get',
   });
 }
@@ -81,7 +83,7 @@ export function getEcQcById(id: string): Promise<EcQc> {
  */
 export function createEcQc(dto: EcQcCreate): Promise<EcQc> {
   return request<EcQc>({
-    url: `${EC_QA_API_BASE}`,
+    url: `${EC_QC_API_BASE}`,
     method: 'post',
     data: dto,
   });
@@ -95,7 +97,7 @@ export function createEcQc(dto: EcQcCreate): Promise<EcQc> {
  */
 export function updateEcQc(id: string, dto: EcQcUpdate): Promise<EcQc> {
   return request<EcQc>({
-    url: `${EC_QA_API_BASE}/${id}`,
+    url: `${EC_QC_API_BASE}/${id}`,
     method: 'put',
     data: dto,
   });
@@ -108,7 +110,7 @@ export function updateEcQc(id: string, dto: EcQcUpdate): Promise<EcQc> {
  */
 export function deleteEcQcById(id: string): Promise<void> {
   return request({
-    url: `${EC_QA_API_BASE}/${id}`,
+    url: `${EC_QC_API_BASE}/${id}`,
     method: 'delete',
   });
 }
@@ -120,20 +122,20 @@ export function deleteEcQcById(id: string): Promise<void> {
  */
 export function deleteEcQcBatch(ids: string[]): Promise<void> {
   return request({
-    url: `${EC_QA_API_BASE}/batch`,
+    url: `${EC_QC_API_BASE}/batch`,
     method: 'delete',
     data: ids,
   });
 }
 
 /**
- * 更新设变qa执行停产状态
+ * 更新设变品管执行停产状态
  * @param {EcQcDiscontinuedStatus} dto 停产状态 DTO
- * @returns {Promise<EcQc>} 设变qa执行DTO
+ * @returns {Promise<EcQc>} 设变品管执行DTO
  */
 export function updateEcQcDiscontinuedStatus(dto: EcQcDiscontinuedStatus): Promise<EcQc> {
   return request<EcQc>({
-    url: `${EC_QA_API_BASE}/discontinued-status`,
+    url: `${EC_QC_API_BASE}/discontinued-status`,
     method: 'put',
     data: dto,
   });
@@ -146,7 +148,7 @@ export function updateEcQcDiscontinuedStatus(dto: EcQcDiscontinuedStatus): Promi
  */
 export function updateEcQcObsolete(dto: EcQcObsolete): Promise<EcQc> {
   return request<EcQc>({
-    url: `${EC_QA_API_BASE}/obsolete`,
+    url: `${EC_QC_API_BASE}/obsolete`,
     method: 'put',
     data: dto,
   });
@@ -164,7 +166,7 @@ export function updateEcQcObsolete(dto: EcQcObsolete): Promise<EcQc> {
  */
 export function getEcQcOptions(plantCode?: string, keyword?: string): Promise<TaktSelectOption[]> {
   return request<TaktSelectOption[]>({
-    url: `${EC_QA_API_BASE}/options`,
+    url: `${EC_QC_API_BASE}/options`,
     method: 'get',
     params: {
       plantCode,
@@ -185,7 +187,7 @@ export function getEcQcOptions(plantCode?: string, keyword?: string): Promise<Ta
  */
 export function getEcQcTemplate(sheetName?: string, templateName?: string): Promise<Blob> {
   return request<Blob>({
-    url: `${EC_QA_API_BASE}/template`,
+    url: `${EC_QC_API_BASE}/template`,
     method: 'get',
     params: {
       sheetName,
@@ -206,7 +208,7 @@ export function importEcQc(file: globalThis.File, sheetName?: string): Promise<{
   formData.append('file', file);
   
   return request({
-    url: `${EC_QA_API_BASE}/import`,
+    url: `${EC_QC_API_BASE}/import`,
     method: 'post',
     data: formData,
     headers: {
@@ -231,7 +233,7 @@ export function exportEcQc(
   exportName?: string
 ): Promise<Blob> {
   return request<Blob>({
-    url: `${EC_QA_API_BASE}/export`,
+    url: `${EC_QC_API_BASE}/export`,
     method: 'get',
     params: {
       ...query,

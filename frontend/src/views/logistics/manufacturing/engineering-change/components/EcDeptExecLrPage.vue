@@ -37,13 +37,11 @@
           @reset="handleTeReset"
         >
           <template #leading>
-            <span class="whitespace-nowrap text-sm text-text-secondary">{{ t('logistics.manufacturing.engineering-change.ec-stat.page.entryPeriodRange') }}</span>
             <a-range-picker
               v-model:value="teEntryPeriod"
               picker="month"
               format="YYYY-MM"
               value-format="YYYY-MM"
-              class="w-64 min-w-56"
               :placeholder="[
                 t('logistics.manufacturing.engineering-change.ec-stat.page.entryPeriodRange'),
                 t('logistics.manufacturing.engineering-change.ec-stat.page.entryPeriodRange'),
@@ -171,8 +169,17 @@
                     <template v-else-if="column.key === 'ecNewPurchaseType'">
                       <TaktDictTag dict-type="logistics_procurement_type" :value="record.ecNewPurchaseType" />
                     </template>
-                    <template v-else-if="column.key === 'ecOldPartDisposition'">
-                      <TaktDictTag dict-type="logistics_manufacturing_ec_old_part_disposition" :value="record.ecOldPartDisposition" />
+                    <template v-else-if="column.key === 'ecOldPartBalance'">
+                      <span
+                        v-if="String(record.ecOldPartBalance ?? '').includes(':')"
+                        class="truncate"
+                        :title="String(record.ecOldPartBalance ?? '')"
+                      >{{ record.ecOldPartBalance }}</span>
+                      <TaktDictTag
+                        v-else
+                        dict-type="logistics_manufacturing_ec_old_part_disposition"
+                        :value="record.ecOldPartBalance"
+                      />
                     </template>
                     <template v-else-if="column.key === 'ecImplScope'">
                       <TaktDictTag dict-type="logistics_manufacturing_ec_impl_scope_category" :value="record.ecImplScope" />
@@ -180,7 +187,7 @@
                     <template v-else-if="column.key === 'ecControlScope'">
                       <TaktDictTag dict-type="logistics_manufacturing_ec_control_scope_category" :value="record.ecControlScope" />
                     </template>
-                    <template v-else-if="column.key === 'techLeader' || column.key === 'sopLeader'">
+                    <template v-else-if="column.key === 'sopLeader'">
                       <TaktDictTag
                         v-if="record[String(column.key)]"
                         :value="record[String(column.key)]"
@@ -279,7 +286,6 @@ import {
   TaktEcScope,
 } from '@/constants/logistics/ecScope.constants'
 import { useEcExecSignalRGroup } from '@/composables/useEcDeptSignalrGroup'
-import { taktShowEcRootMaterialDescription } from '@/constants/logistics/ecScope.constants'
 import { useEcDeptViewI18n } from '../composables/useEcDeptViewI18n'
 import { ECENG_LIST_FIELDS, useEcTeI18n } from '../ec-te/composables/useEcTeI18n'
 import { ECDETAIL_SELF_I18N_KEY } from '../ec-te/composables/useEcDetailI18n'
@@ -549,13 +555,18 @@ function masterColumnWidth(field: string): number {
   if (field === 'execContent' || field === 'supplier') {
     return 180
   }
-  if (field === 'ecRootMaterialDescription' || field === 'ecParentMaterialDescription' || field === 'deptName') {
+  if (field === 'ecParentMaterialDescription' || field === 'deptName') {
     return 160
   }
   if (YES_NO_FIELDS.has(field) || field === 'productionTeam' || field === 'lineNumber' || field === 'deptCode') {
     return 100
   }
-  if (field === 'ecRootMaterialCodeGroup' || field === 'ecModelCodeGroup') {
+  if (
+    field === 'ecRootMaterialCodeGroup'
+    || field === 'ecModelCodeGroup'
+    || field === 'ecOldMaterialCodeGroup'
+    || field === 'ecNewMaterialCodeGroup'
+  ) {
     return 220
   }
   if (field.endsWith('Date') || field.endsWith('Code') || field.endsWith('Batch') || field === 'ecRootMaterialCode') {
@@ -693,8 +704,6 @@ const teColumns = computed<TableColumnsType>(() => [
 /** 主表列（部门执行实体字段 + 停产/在产操作；数据列一律 ellipsis，禁止长文本撑高行） */
 const columns = computed<TableColumnsType>(() => {
   const fieldCols = getEcDeptExecLineFields(props.deptSlug)
-    .filter((field) => field !== 'ecRootMaterialDescription'
-      || dataSource.value.some((row) => taktShowEcRootMaterialDescription(row.ecImplScope, row.ecControlScope)))
     .map((field) => ({
     title: pi.label(field),
     dataIndex: field,

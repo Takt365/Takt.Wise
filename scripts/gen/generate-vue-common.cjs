@@ -1174,15 +1174,148 @@ const pi = ${hookName}()
 /**
  * 列表/导出：无业务查询条件时表格为空、不请求接口（与后端 HasAnyListQueryFilter 对齐）。
  * 有条件时正常分页查询（过滤生效，不是解锁全表）。
+ * 单表/主子表查询栏默认带当前月期间，该期间计入「有条件」。
  */
+
+/** 查询栏期间优先的业务日期（小写属性名，不含 Start/End） */
+const LIST_PERIOD_PRIORITY = ['proddate', 'inspectiondate', 'incidentdate', 'issuedate', 'effectivedate', 'validfrom'];
+
+/** 不作为查询栏期间的审计时间 */
+const LIST_PERIOD_SKIP_BASES = new Set(['updatedat', 'deletedat', 'modifiedat', 'lastmodifiedat']);
+
+/**
+ * 从查询字段选出查询栏期间：优先业务日期范围，没有则用创建日期。
+ * 树表不调用。年月字符串（业务年月）不视为日期。
+ * @param {Array<{ name: string, doc?: string }>} queryFields
+ * @returns {{ base: string, start: string, end: string, isCreated: boolean } | null}
+ */
+function resolveListPeriodQuery(queryFields) {
+  const fields = queryFields || [];
+  const byName = new Map(fields.map((field) => [field.name, field]));
+  const candidates = [];
+  for (const field of fields) {
+    if (!field?.name || !field.name.endsWith('Start')) {
+      continue;
+    }
+    const base = field.name.slice(0, -'Start'.length);
+    const endName = `${base}End`;
+    if (!base || !byName.has(endName)) {
+      continue;
+    }
+    const baseKey = base.toLowerCase();
+    if (LIST_PERIOD_SKIP_BASES.has(baseKey)) {
+      continue;
+    }
+    const doc = String(field.doc || '');
+    if (/年月/.test(doc) && !/日期/.test(doc)) {
+      continue;
+    }
+    if (/month$/i.test(base)) {
+      continue;
+    }
+    const isCreated = baseKey === 'createdat';
+    const isDateName = /date$/i.test(base) || /(?:valid|effective)from$/i.test(base) || isCreated;
+    const isRangeDoc = /范围查询/.test(doc);
+    if (!isDateName && !isRangeDoc) {
+      continue;
+    }
+    candidates.push({
+      base,
+      start: field.name,
+      end: endName,
+      isCreated,
+    });
+  }
+  const business = candidates.filter((item) => !item.isCreated);
+  const rank = (item) => {
+    const index = LIST_PERIOD_PRIORITY.indexOf(item.base.toLowerCase());
+    if (index >= 0) {
+      return index;
+    }
+    if (/date$/i.test(item.base)) {
+      return 40;
+    }
+    if (/from$/i.test(item.base)) {
+      return 50;
+    }
+    return 60;
+  };
+  if (business.length > 0) {
+    business.sort((left, right) => rank(left) - rank(right) || left.base.localeCompare(right.base));
+    return business[0];
+  }
+  return candidates.find((item) => item.isCreated) || null;
+}
+
+/**
+ * index.vue / 子表面板：期间状态、写入查询、重置
+ * @param {{ base: string, start: string, end: string, isCreated: boolean } | null} listPeriod
+ * @returns {{ importLine: string, stateBlock: string, resetLine: string }}
+ */
+function buildListPeriodIndexFragments(listPeriod) {
+  if (!listPeriod) {
+    return { importLine: '', stateBlock: '', resetLine: '' };
+  }
+  const sourceLabel = listPeriod.isCreated ? '创建日期' : listPeriod.base;
+  return {
+    importLine: "import { useListPeriodQuery } from '@/composables/useListPeriodQuery'\n",
+    stateBlock: `
+/** 查询栏期间（默认当前月；${sourceLabel}） */
+const {
+  range: listPeriodRange,
+  limit: listPeriodLimit,
+  reset: resetListPeriod,
+  hasPeriod: hasListPeriod,
+  applyDateRange: applyListPeriodDate,
+} = useListPeriodQuery()
+
+/** 将查询栏期间写入 ${listPeriod.start} / ${listPeriod.end} */
+function applyListPeriod(query: object): void {
+  applyListPeriodDate(query, '${listPeriod.start}', '${listPeriod.end}')
+}
+`,
+    resetLine: '  resetListPeriod()\n',
+  };
+}
+
+/**
+ * TaktQueryBar 收尾：无期间时自闭合，有期间时 #leading 放月份区间（占位提示、控件默认宽度，关键字占剩余宽）
+ * @param {string} barIndent 查询栏标签缩进
+ * @param {{ base: string } | null} listPeriod
+ * @returns {string}
+ */
+function buildTaktQueryBarPeriodSuffix(barIndent, listPeriod) {
+  if (!listPeriod) {
+    return `\n${barIndent}/>`;
+  }
+  const slotIndent = `${barIndent}  `;
+  const pickerIndent = `${slotIndent}  `;
+  const attrIndent = `${pickerIndent}  `;
+  return `
+${barIndent}>
+${slotIndent}<template #leading>
+${pickerIndent}<a-range-picker
+${attrIndent}v-model:value="listPeriodRange"
+${attrIndent}picker="month"
+${attrIndent}format="YYYY-MM"
+${attrIndent}value-format="YYYY-MM"
+${attrIndent}:placeholder="[t('common.page.form.periodRange'), t('common.page.form.periodRange')]"
+${attrIndent}:disabled-date="listPeriodLimit.disabledDate"
+${attrIndent}@calendar-change="listPeriodLimit.onCalendarChange"
+${attrIndent}@open-change="listPeriodLimit.onOpenChange"
+${pickerIndent}/>
+${slotIndent}</template>
+${barIndent}</TaktQueryBar>`;
+}
 
 /**
  * index.vue：高级查询 createEmptyAdvancedQueryForm + hasAnyListQueryFilter
  * @param {string} entityPascal
  * @param {object[]} queryFields
+ * @param {{ start: string } | null} [listPeriod] 单表/主子表传入；树表不传
  * @returns {string}
  */
-function buildAdvancedQueryFactoryBlock(entityPascal, queryFields = []) {
+function buildAdvancedQueryFactoryBlock(entityPascal, queryFields = [], listPeriod = null) {
   const prefix = entityI18nConstPrefix(entityPascal);
   const numberFields = (queryFields || []).filter((f) => f.type === 'number');
   const numberInitLines = numberFields.map((f) => `    ${f.name}: undefined as number | undefined,`).join('\n');
@@ -1190,6 +1323,12 @@ function buildAdvancedQueryFactoryBlock(entityPascal, queryFields = []) {
     ? numberFields.map((f) => `  if (form.${f.name} !== undefined && form.${f.name} !== null) {
     return true
   }`).join('\n')
+    : '';
+  const periodCheck = listPeriod
+    ? `  if (hasListPeriod()) {
+    return true
+  }
+`
     : '';
   return `/**
  * 是否存在任一业务查询条件（分页除外）；无参时不请求列表/导出
@@ -1200,7 +1339,7 @@ function hasAnyListQueryFilter(): boolean {
   if (kw.length > 0) {
     return true
   }
-  const form = advancedQueryForm.value
+${periodCheck}  const form = advancedQueryForm.value
   for (const key of ${prefix}_QUERY_STRING_FIELDS) {
     if (String(form[key] ?? '').trim().length > 0) {
       return true
@@ -4804,18 +4943,20 @@ function buildGeneratedFormVueScriptFragments(options) {
 
 /**
  * index.vue：buildListQuery 函数（列表/导出共用；空查询项不下发，避免 DateTime? 绑定 400）
- * 无参不补默认条件；由 hasAnyListQueryFilter 决定是否请求
+ * 无参不补默认条件；由 hasAnyListQueryFilter 决定是否请求。传入 listPeriod 时查询栏期间覆盖同名字段。
  * @param {string} entityPascal
  * @param {object[]} [queryFields]
+ * @param {{ start: string, end: string } | null} [listPeriod] 单表/主子表传入；树表不传
  * @returns {string}
  */
-function buildServerPagedListQueryBlock(entityPascal, queryFields = []) {
+function buildServerPagedListQueryBlock(entityPascal, queryFields = [], listPeriod = null) {
   const numberFields = (queryFields || []).filter((f) => f.type === 'number');
   const constName = `${entityI18nConstPrefix(entityPascal)}_QUERY_STRING_FIELDS`;
   const numberAssign = numberFields.map((f) => `  if (form.${f.name} !== undefined && form.${f.name} !== null) {
     query.${f.name} = form.${f.name}
   }`).join('\n');
   const numberAssignBlock = numberAssign ? `\n${numberAssign}` : '';
+  const periodApply = listPeriod ? '  applyListPeriod(query)\n' : '';
   return `
 /**
  * 构建列表/导出查询参数（空字符串与未填数值/日期不下发，避免后端 DateTime? 模型绑定 400；无参不补默认）
@@ -4842,7 +4983,7 @@ function buildListQuery(overrides?: Partial<${entityPascal}Query>): ${entityPasc
   for (const key of ${constName}) {
     assignTrimmed(key, form[key])
   }${numberAssignBlock}
-  return query
+${periodApply}  return query
 }
 `;
 }
@@ -5111,6 +5252,9 @@ module.exports = {
   buildFormTabLabelAttr,
   buildFormContentClassComputedExpr,
   buildFormContentClassExpr,
+  resolveListPeriodQuery,
+  buildListPeriodIndexFragments,
+  buildTaktQueryBarPeriodSuffix,
   buildAdvancedQueryFactoryBlock,
   buildListColumnsGeneratorBlock,
   resolveScopeFormFieldPresence,

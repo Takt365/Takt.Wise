@@ -125,7 +125,7 @@ public partial class TaktProductionMonthlyTrendService
         var headers = await headersQuery
             .OrderBy(h => h.ProdDate, OrderByType.Desc)
             .OrderBy(h => h.TeamCode, OrderByType.Asc)
-            .OrderBy(h => h.BatchCode, OrderByType.Asc)
+            .OrderBy(h => h.ProdBatch, OrderByType.Asc)
             .Skip(pageOnly ? skip : 0)
             .Take(pageOnly ? take : MaxStatLines)
             .ToListAsync();
@@ -143,7 +143,7 @@ public partial class TaktProductionMonthlyTrendService
                 PlantCode = h.PlantCode,
                 TeamCode = h.TeamCode,
                 ProdDate = h.ProdDate,
-                BatchCode = h.BatchCode ?? string.Empty,
+                ProdBatch = h.ProdBatch ?? string.Empty,
                 MaterialCode = h.MaterialCode,
                 ModelCode = h.ModelCode,
                 StdMinutes = h.StdMinutes,
@@ -241,14 +241,14 @@ public partial class TaktProductionMonthlyTrendService
         var rows = await lineQuery
             .OrderBy((d, h) => h.ProdDate, OrderByType.Desc)
             .OrderBy((d, h) => d.TeamCode, OrderByType.Asc)
-            .OrderBy((d, h) => h.BatchCode, OrderByType.Asc)
+            .OrderBy((d, h) => h.ProdBatch, OrderByType.Asc)
             .Select((d, h) => new TaktProductionStatLineDto
             {
                 RowKey = SqlFunc.ToString(d.Id),
                 PlantCode = h.PlantCode,
                 TeamCode = d.TeamCode,
                 ProdDate = h.ProdDate,
-                BatchCode = h.BatchCode ?? string.Empty,
+                ProdBatch = h.ProdBatch ?? string.Empty,
                 MaterialCode = h.MaterialCode,
                 ModelCode = h.ModelCode,
                 LotQty = d.BatchQty,
@@ -281,14 +281,14 @@ public partial class TaktProductionMonthlyTrendService
                 keys.Add("teamCode");
                 labels.Add("班组");
             }
-            keys.AddRange(["prodDate", "batchCode", "lotQty", "modelCode", "pcbBoardType", "panelSide", "actualQty", "cumulativeQty", "completedStatus", "defectQty"]);
+            keys.AddRange(["prodDate", "prodBatch", "lotQty", "modelCode", "pcbBoardType", "panelSide", "actualQty", "cumulativeQty", "completedStatus", "defectQty"]);
             labels.AddRange(["生产日期", "生产批次", "LOT数量", "机种", "Pcb类别", "板面", "生产实绩", "累计生产", "完成状态", scope.GroupByTeam ? "不良台数" : "不良数量"]);
             return (keys, labels);
         }
         if (scope.GroupByTeam)
         {
             return (
-                ["teamCode", "prodDate", "batchCode", "materialCode", "modelCode", "stdMinutes", "planQty", "directLabor", "indirectLabor", "laborMinutes", "actualQty", "actualStdMinutes", "stdDiff", "qtyDiff", "achievementRate"],
+                ["teamCode", "prodDate", "prodBatch", "materialCode", "modelCode", "stdMinutes", "planQty", "directLabor", "indirectLabor", "laborMinutes", "actualQty", "actualStdMinutes", "stdDiff", "qtyDiff", "achievementRate"],
                 ["生产班组", "生产日期", "生产批次", "物料", "机种", "ST", "计划台数", "直接", "间接", "工数", "实绩台数", "实绩ST", "ST差异", "台数差异", "达成率"]);
         }
         return (
@@ -308,7 +308,7 @@ public partial class TaktProductionMonthlyTrendService
         {
             ["teamCode"] = row.TeamCode,
             ["prodDate"] = row.ProdDate.ToString("yyyy-MM-dd"),
-            ["batchCode"] = row.BatchCode,
+            ["prodBatch"] = row.ProdBatch,
             ["materialCode"] = row.MaterialCode,
             ["modelCode"] = row.ModelCode,
             ["stdMinutes"] = row.StdMinutes,

@@ -104,7 +104,7 @@ public class TaktMaterialDocumentItemDto : TaktCompanyDtoBase
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 库存类型（字典 logistics_stock_type）
@@ -488,7 +488,7 @@ public class TaktMaterialDocumentItemQueryDto : TaktPagedQuery
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 库存类型（字典 logistics_stock_type）
@@ -886,7 +886,7 @@ public class TaktMaterialDocumentItemCreateDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 库存类型（字典 logistics_stock_type）
@@ -1316,7 +1316,7 @@ public class TaktMaterialDocumentItemTemplateDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 库存类型（字典 logistics_stock_type）
@@ -1699,7 +1699,7 @@ public class TaktMaterialDocumentItemImportDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 库存类型（字典 logistics_stock_type）
@@ -2088,7 +2088,7 @@ public class TaktMaterialDocumentItemExportDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 库存类型（字典 logistics_stock_type）

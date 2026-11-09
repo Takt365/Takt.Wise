@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomMaterialCostService.cs
-// 创建时间：2026-08-11
+// 创建时间：2026-11-02
 // 创建人：Takt365(Cursor AI)
 // 功能描述：材料成本应用服务实现
 // 
@@ -66,13 +66,10 @@ public class TaktBomMaterialCostService : TaktServiceBase, ITaktBomMaterialCostS
                 queryDto.PageSize);
         }
         var predicate = QueryExpression(queryDto);
-        // 默认按核算期间（yyyy-MM）降序，最近期间在前
         var (data, total) = await _bomMaterialCostRepository.GetPagedAsync(
-            predicate,
             queryDto.PageIndex,
             queryDto.PageSize,
-            x => x.CostingPeriod,
-            isDesc: true);
+            predicate);
         return TaktPagedResult<TaktBomMaterialCostDto>.Create(
             data.Adapt<List<TaktBomMaterialCostDto>>(),
             total,
@@ -123,15 +120,11 @@ public class TaktBomMaterialCostService : TaktServiceBase, ITaktBomMaterialCostS
     public async Task<TaktBomMaterialCostDto> CreateBomMaterialCostAsync(TaktBomMaterialCostCreateDto dto)
     {
         var entity = dto.Adapt<TaktBomMaterialCost>();
-        entity.CostingDate = entity.CostingDate.Date;
-        var dayStart = entity.CostingDate;
-        var dayEnd = dayStart.AddDays(1);
         var isUnique_ix_takt_logistics_manufacturing_bom_material_cost_unique = await _uniqueValidator.IsUniqueAsync(
             _bomMaterialCostRepository,
             x => x.PlantCode == entity.PlantCode
                 && x.ProductCode == entity.ProductCode
-                && x.CostingDate >= dayStart
-                && x.CostingDate < dayEnd);
+                && x.CostingDate == entity.CostingDate);
         if (!isUnique_ix_takt_logistics_manufacturing_bom_material_cost_unique)
         {
             throw new TaktBusinessException("材料成本的PlantCode、ProductCode、CostingDate已存在");
@@ -154,15 +147,11 @@ public class TaktBomMaterialCostService : TaktServiceBase, ITaktBomMaterialCostS
             throw new TaktBusinessException("材料成本不存在");
         }
         dto.Adapt(entity);
-        entity.CostingDate = entity.CostingDate.Date;
-        var dayStart = entity.CostingDate;
-        var dayEnd = dayStart.AddDays(1);
         var isUnique_ix_takt_logistics_manufacturing_bom_material_cost_unique = await _uniqueValidator.IsUniqueAsync(
             _bomMaterialCostRepository,
             x => x.PlantCode == entity.PlantCode
                 && x.ProductCode == entity.ProductCode
-                && x.CostingDate >= dayStart
-                && x.CostingDate < dayEnd,
+                && x.CostingDate == entity.CostingDate,
             id);
         if (!isUnique_ix_takt_logistics_manufacturing_bom_material_cost_unique)
         {
@@ -240,20 +229,16 @@ public class TaktBomMaterialCostService : TaktServiceBase, ITaktBomMaterialCostS
             try
             {
                 var entity = rows[i].Adapt<TaktBomMaterialCost>();
-                entity.CostingDate = entity.CostingDate.Date;
-                var importKey = $"{entity.PlantCode}|{entity.ProductCode}|{entity.CostingDate:yyyy-MM-dd}";
+                var importKey = $"{entity.PlantCode}|{entity.ProductCode}|{entity.CostingDate}";
                 if (!importSeenKeys.Add(importKey))
                 {
                     throw new TaktBusinessException("与Excel中其他行重复（PlantCode、ProductCode、CostingDate）");
                 }
-                var dayStart = entity.CostingDate;
-                var dayEnd = dayStart.AddDays(1);
                 var isUnique_ix_takt_logistics_manufacturing_bom_material_cost_unique = await _uniqueValidator.IsUniqueAsync(
                     _bomMaterialCostRepository,
                     x => x.PlantCode == entity.PlantCode
                         && x.ProductCode == entity.ProductCode
-                        && x.CostingDate >= dayStart
-                        && x.CostingDate < dayEnd);
+                        && x.CostingDate == entity.CostingDate);
                 if (!isUnique_ix_takt_logistics_manufacturing_bom_material_cost_unique)
                 {
                     throw new TaktBusinessException("材料成本的PlantCode、ProductCode、CostingDate已存在");
@@ -296,9 +281,6 @@ public class TaktBomMaterialCostService : TaktServiceBase, ITaktBomMaterialCostS
                 sheetName ?? "材料成本数据",
                 fileName ?? "材料成本导出.xlsx");
         }
-        list = list
-            .OrderByDescending(x => x.CostingPeriod, StringComparer.Ordinal)
-            .ToList();
         var exportData = list.Adapt<List<TaktBomMaterialCostExportDto>>();
         return await TaktExcelHelper.ExportAsync(
             exportData,

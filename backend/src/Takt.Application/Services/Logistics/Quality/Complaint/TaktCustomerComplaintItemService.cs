@@ -436,7 +436,7 @@ public class TaktCustomerComplaintItemService : TaktServiceBase, ITaktCustomerCo
                 || (x.CustomerComplaintCode != null && x.CustomerComplaintCode.Contains(keywords))
                 || (x.ProductCode != null && x.ProductCode.Contains(keywords))
                 || (x.ProductName != null && x.ProductName.Contains(keywords))
-                || (x.BatchCode != null && x.BatchCode.Contains(keywords))
+                || (x.ProdBatch != null && x.ProdBatch.Contains(keywords))
                 || (x.DefectDescription != null && x.DefectDescription.Contains(keywords))
                 || (x.DefectLevel != null && x.DefectLevel.Contains(keywords))
                 || (x.CauseAnalysis != null && x.CauseAnalysis.Contains(keywords))
@@ -491,10 +491,10 @@ public class TaktCustomerComplaintItemService : TaktServiceBase, ITaktCustomerCo
             exp = exp.And(x => x.ProductName != null && x.ProductName.Contains(productName));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.BatchCode))
+        if (!string.IsNullOrWhiteSpace(queryDto?.ProdBatch))
         {
-            var batchCode = queryDto.BatchCode;
-            exp = exp.And(x => x.BatchCode != null && x.BatchCode.Contains(batchCode));
+            var prodBatch = queryDto.ProdBatch;
+            exp = exp.And(x => x.ProdBatch != null && x.ProdBatch.Contains(prodBatch));
         }
 
         if (queryDto?.ItemType.HasValue == true)
@@ -663,7 +663,7 @@ public class TaktCustomerComplaintItemService : TaktServiceBase, ITaktCustomerCo
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.BatchCode))
+        if (!string.IsNullOrWhiteSpace(queryDto.ProdBatch))
         {
             return true;
         }

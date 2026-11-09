@@ -8,8 +8,14 @@
 <!-- ======================================== -->
 
 <template>
-  <div class="takt-query-bar price-delta-trend-query-bar">
-    <div class="price-delta-trend-query-bar__fields min-w-0 flex flex-1 flex-wrap items-center gap-x-3 gap-y-2">
+  <TaktQueryBar
+    :show-keyword="false"
+    :loading="props.loading"
+    @search="emit('search')"
+    @reset="emit('reset')"
+  >
+    <template #leading>
+<div class="price-delta-trend-query-bar__fields min-w-0 flex flex-1 flex-wrap items-center gap-x-3 gap-y-2">
       <div class="flex items-center gap-1">
         <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.periodRange`) }}</span>
         <a-range-picker
@@ -117,29 +123,8 @@
         />
       </div>
     </div>
-    <a-space class="query-actions">
-      <a-button
-        class="takt-button-query"
-        :loading="props.loading"
-        @click="emit('search')"
-      >
-        <template #icon>
-          <RiSearchLine class="takt-remix-icon" />
-        </template>
-        {{ t('common.page.button.query') }}
-      </a-button>
-      <a-button
-        class="takt-button-reset"
-        :disabled="props.loading"
-        @click="emit('reset')"
-      >
-        <template #icon>
-          <RiRefreshLine class="takt-remix-icon" />
-        </template>
-        {{ t('common.page.button.reset') }}
-      </a-button>
-    </a-space>
-  </div>
+    </template>
+  </TaktQueryBar>
 </template>
 
 <script setup lang="ts">
@@ -149,7 +134,6 @@
  * → 后端按基准月/比较月算差异与 0价格组 / 价格差异组（两月须在期间列内，可不相邻）
  * → 差异选项：全部=不过滤；>=1/>=5/>=10/>=50/>=100=仅保留 |基准月−比较月|≥该值的产品行（分页总数变化）。阈值选项四语同一符号，不翻译
  */
-import { RiSearchLine, RiRefreshLine } from '@remixicon/vue'
 import { useI18n } from 'vue-i18n'
 import {
   getBomCostOptionModelOptionsUrl,

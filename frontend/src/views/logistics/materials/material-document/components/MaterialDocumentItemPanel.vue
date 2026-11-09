@@ -228,11 +228,11 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('batchCode')">
-      <a-form-item :label="pi.queryLabel('batchCode')">
+      <div v-show="isFieldVisible('prodBatch')">
+      <a-form-item :label="pi.queryLabel('prodBatch')">
         <a-input
-          v-model:value="advancedQueryForm.batchCode"
-          :placeholder="pi.queryPh('batchCode', 'required')"
+          v-model:value="advancedQueryForm.prodBatch"
+          :placeholder="pi.queryPh('prodBatch', 'required')"
           show-count
           :maxlength="20"
           allow-clear
@@ -1327,14 +1327,14 @@ const columns = computed<TableColumnsType>(() => [
       String(getMaterialDocumentItemField(record, 'warehouseCode') ?? ''),
   },
   {
-    title: pi.label('batchCode'),
-    dataIndex: 'batchCode',
-    key: 'batchCode',
+    title: pi.label('prodBatch'),
+    dataIndex: 'prodBatch',
+    key: 'prodBatch',
     width: 120,
     resizable: true,
     ellipsis: true,
     customRender: ({ record }: { record: MaterialDocumentItem }) =>
-      String(getMaterialDocumentItemField(record, 'batchCode') ?? ''),
+      String(getMaterialDocumentItemField(record, 'prodBatch') ?? ''),
   },
   {
     title: pi.label('stockType'),

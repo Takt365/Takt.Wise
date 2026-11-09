@@ -67,8 +67,17 @@
           <template v-else-if="column.key === 'ecNewPurchaseType'">
             <TaktDictTag dict-type="logistics_procurement_type" :value="record.ecNewPurchaseType" />
           </template>
-          <template v-else-if="column.key === 'ecOldPartDisposition'">
-            <TaktDictTag dict-type="logistics_manufacturing_ec_old_part_disposition" :value="record.ecOldPartDisposition" />
+          <template v-else-if="column.key === 'ecOldPartBalance'">
+            <span
+              v-if="String(record.ecOldPartBalance ?? '').includes(':')"
+              class="truncate"
+              :title="String(record.ecOldPartBalance ?? '')"
+            >{{ record.ecOldPartBalance }}</span>
+            <TaktDictTag
+              v-else
+              dict-type="logistics_manufacturing_ec_old_part_disposition"
+              :value="record.ecOldPartBalance"
+            />
           </template>
           <template v-else-if="column.key === 'ecNewRequiresInspection' || column.key === 'isObsolete'">
             <TaktDictTag dict-type="sys_yes_no" :value="record[String(column.key)]" />

@@ -53,7 +53,12 @@ public class TaktIpGeolocationDto
     public string Isp { get; set; } = string.Empty;
 
     /// <summary>
-    /// 完整地址信息（国家|区域|省份|城市|ISP）
+    /// ISO 3166-1 alpha-2（xdb 第五段）
+    /// </summary>
+    public string IsoCountryCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 完整地址原文（国家|省份|城市|ISP|ISO）
     /// </summary>
     public string FullAddress { get; set; } = string.Empty;
 
@@ -61,4 +66,9 @@ public class TaktIpGeolocationDto
     /// 格式化地址（用于显示）
     /// </summary>
     public string FormattedAddress { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 本机已激活网卡上的全部有效 IP（仅「查询本机」接口填充；IPv4 在前）
+    /// </summary>
+    public List<string> ActiveHostIps { get; set; } = new();
 }

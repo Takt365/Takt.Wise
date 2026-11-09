@@ -606,7 +606,7 @@ const importVisible = ref(false)
 const entityIdName = 'bomMaterialCostItemId'
 
 /**
- * 由选中产品行推导 Item 查询范围（工厂 + 产品 + 核算月）
+ * 由选中产品行推导明细范围（工厂 + 产品编码 + 核算日期）
  * @returns 业务键与月起止；未选中或期间非法时为 null
  */
 function resolveProductItemScope(
@@ -632,7 +632,6 @@ function resolveProductItemScope(
   const month = Number(match[2])
   if (!Number.isFinite(year) || month < 1 || month > 12) return null
   const pad = (n: number) => String(n).padStart(2, '0')
-  const lastDay = new Date(year, month, 0).getDate()
   const costingDateRaw = row.costingDate != null ? String(row.costingDate) : ''
   const costingDate =
     costingDateRaw.length >= 10 ? costingDateRaw.slice(0, 10) : `${year}-${pad(month)}-01`
@@ -642,9 +641,9 @@ function resolveProductItemScope(
     productDescription: String(row.productDescription ?? ''),
     costingPeriod,
     costingDate,
-    costingDateStart: `${year}-${pad(month)}-01`,
-    costingDateEnd: `${year}-${pad(month)}-${pad(lastDay)}`,
-    scopeKey: `${plantCode}|${productCode}|${costingPeriod}`,
+    costingDateStart: `${costingDate}T00:00:00`,
+    costingDateEnd: `${costingDate}T23:59:59`,
+    scopeKey: `${plantCode}|${productCode}|${costingDate}`,
   }
 }
 

@@ -55,8 +55,8 @@ public class TaktAssyOrderDefect : TaktCompanyEntityBase
     /// <summary>
     /// 批次（一工单一批次，取最近日报）
     /// </summary>
-    [SugarColumn(ColumnName = "batch_code", ColumnDescription = "批次", Length = 20, ColumnDataType = "nvarchar", IsNullable = true)]
-    public string? BatchCode { get; set; }
+    [SugarColumn(ColumnName = "prod_batch", ColumnDescription = "批次", Length = 40, ColumnDataType = "nvarchar", IsNullable = true)]
+    public string? ProdBatch { get; set; }
     /// <summary>
     /// 工单数量（取最近日报）
     /// </summary>

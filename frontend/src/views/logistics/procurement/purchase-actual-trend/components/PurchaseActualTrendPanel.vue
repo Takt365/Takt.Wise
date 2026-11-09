@@ -422,7 +422,7 @@ const detailColumns = computed<TableColumnsType>(() => [
     ellipsis: true,
   },
   {
-    title: t('entity.purchaseinfo.suppliercode'),
+    title: t('entity.purchasecondition.suppliercode'),
     dataIndex: 'supplierCode',
     key: 'supplierCode',
     width: 120,
@@ -436,13 +436,13 @@ const detailColumns = computed<TableColumnsType>(() => [
     ellipsis: true,
   },
   {
-    title: t('entity.purchaseinfoitem.conditioncurrencycode'),
+    title: t('entity.purchaseconditionitem.conditioncurrencycode'),
     dataIndex: 'currencyCode',
     key: 'currencyCode',
     width: 80,
   },
   {
-    title: t('entity.purchaseinfoitem.unitofmeasure'),
+    title: t('entity.purchaseconditionitem.unitofmeasure'),
     dataIndex: 'unit',
     key: 'unit',
     width: 80,

@@ -78,7 +78,7 @@ public class TaktPcbaRepairDto : TaktCompanyDtoBase
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码
@@ -171,7 +171,7 @@ public class TaktPcbaRepairQueryDto : TaktPagedQuery
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码
@@ -275,7 +275,7 @@ public class TaktPcbaRepairCreateDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码
@@ -397,7 +397,7 @@ public class TaktPcbaRepairTemplateDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码
@@ -489,7 +489,7 @@ public class TaktPcbaRepairImportDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码
@@ -587,7 +587,7 @@ public class TaktPcbaRepairExportDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码

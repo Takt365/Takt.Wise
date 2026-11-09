@@ -48,6 +48,10 @@ export interface PlannedOrder extends CompanyDtoBase {
    * 物料编码（关联 TaktGeneralMaterial.MaterialCode，选项 TaktGeneralMaterials/options）
    */
   materialCode?: string;
+  /**
+   * 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+   */
+  plannedBatch?: string;
 
   /**
    * 计划数量
@@ -136,6 +140,10 @@ export interface PlannedOrderExport {
    * 物料编码（关联 TaktGeneralMaterial.MaterialCode，选项 TaktGeneralMaterials/options）
    */
   materialCode: string;
+  /**
+   * 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+   */
+  plannedBatch?: string;
 
   /**
    * 计划数量

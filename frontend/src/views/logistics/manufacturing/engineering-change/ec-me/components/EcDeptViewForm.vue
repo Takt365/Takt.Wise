@@ -2,7 +2,7 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/ec-me/components -->
 <!-- 文件名称：EcDeptViewForm.vue -->
-<!-- 功能描述：设变制造技术课表单；冗余字段 disabled；IsSopUpdated/IsImplemented/ExecContent/课别填报可编辑；defineExpose validate/getValues/resetFields -->
+<!-- 功能描述：设变制造技术课表单；冗余字段 disabled；IsSopUpdated/SopLeader/SopDate/ExecContent 可编辑；defineExpose validate/getValues/resetFields -->
 <!-- 版权信息：Copyright (c) 2026 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->
@@ -19,21 +19,10 @@
     <TaktFormTabs v-model:active-key="activeTab">
       <a-tab-pane key="tab-0" :tab="pi.t('common.page.form.tabs.basicinfo') + ' (1/2)'" force-render>
         <a-row :gutter="24">
-      <a-col :span="12"><a-form-item :label="pi.label('ecMeId')"><a-input v-model:value="formState.ecMeId" disabled /></a-form-item></a-col>
-      <a-col :span="12"><a-form-item :label="pi.label('tenantCode')"><a-input v-model:value="formState.tenantCode" disabled /></a-form-item></a-col>
-      <a-col :span="12"><a-form-item :label="pi.label('companyCode')"><a-input v-model:value="formState.companyCode" disabled /></a-form-item></a-col>
-      <a-col :span="12"><a-form-item :label="pi.label('cultureCode')"><a-input v-model:value="formState.cultureCode" disabled /></a-form-item></a-col>
       <a-col :span="12"><a-form-item :label="pi.label('plantCode')"><a-input v-model:value="formState.plantCode" disabled /></a-form-item></a-col>
-      <a-col :span="12"><a-form-item :label="pi.label('lineNumber')"><a-input-number v-model:value="formState.lineNumber" class="w-full" disabled /></a-form-item></a-col>
       <a-col :span="12"><a-form-item :label="pi.label('ecCode')"><a-input v-model:value="formState.ecCode" disabled /></a-form-item></a-col>
-      <a-col :span="12">
-        <a-form-item :label="pi.label('discontinuedStatus')">
-          <TaktSelect v-model:value="formState.discontinuedStatus" dict-type="logistics_materials_material_discontinued_status" disabled />
-        </a-form-item>
-      </a-col>
       <a-col :span="24"><a-form-item :label="pi.label('ecModelCodeGroup')"><a-textarea v-model:value="formState.ecModelCodeGroup" :rows="2" disabled /></a-form-item></a-col>
       <a-col :span="24"><a-form-item :label="pi.label('ecRootMaterialCodeGroup')"><a-textarea v-model:value="formState.ecRootMaterialCodeGroup" :rows="2" disabled /></a-form-item></a-col>
-      <a-col v-if="showRootMaterialDescription" :span="12"><a-form-item :label="pi.label('ecRootMaterialDescription')"><a-input v-model:value="formState.ecRootMaterialDescription" disabled /></a-form-item></a-col>
       <a-col :span="12"><a-form-item name="isSopUpdated" :label="pi.label('isSopUpdated')"><TaktSelect v-model:value="formState.isSopUpdated" dict-type="sys_yes_no" /></a-form-item></a-col>
       <a-col :span="12">
         <a-form-item name="sopLeader" :label="pi.label('sopLeader')">
@@ -41,11 +30,6 @@
         </a-form-item>
       </a-col>
       <a-col :span="12"><a-form-item name="sopDate" :label="pi.label('sopDate')"><a-date-picker v-model:value="formState.sopDate" value-format="YYYY-MM-DD" class="w-full" /></a-form-item></a-col>
-      <a-col :span="12">
-        <a-form-item name="techLeader" :label="pi.label('techLeader')">
-          <TaktSelect v-model:value="formState.techLeader" api-url="TaktEcGroups/options" :api-params="{ ecGroupCategory: 1 }" allow-clear />
-        </a-form-item>
-      </a-col>
       <a-col :span="24">
         <a-form-item name="execContent" :label="pi.label('execContent')">
           <a-textarea v-model:value="formState.execContent" :rows="3" />
@@ -60,6 +44,16 @@
       </a-tab-pane>
       <a-tab-pane key="tab-1" :tab="pi.t('common.page.form.tabs.basicinfo') + ' (2/2)'" force-render>
         <a-row :gutter="24">
+      <a-col :span="12"><a-form-item :label="pi.label('ecMeId')"><a-input v-model:value="formState.ecMeId" disabled /></a-form-item></a-col>
+      <a-col :span="12"><a-form-item :label="pi.label('tenantCode')"><a-input v-model:value="formState.tenantCode" disabled /></a-form-item></a-col>
+      <a-col :span="12"><a-form-item :label="pi.label('companyCode')"><a-input v-model:value="formState.companyCode" disabled /></a-form-item></a-col>
+      <a-col :span="12"><a-form-item :label="pi.label('cultureCode')"><a-input v-model:value="formState.cultureCode" disabled /></a-form-item></a-col>
+      <a-col :span="12"><a-form-item :label="pi.label('lineNumber')"><a-input-number v-model:value="formState.lineNumber" class="w-full" disabled /></a-form-item></a-col>
+      <a-col :span="12">
+        <a-form-item :label="pi.label('discontinuedStatus')">
+          <TaktSelect v-model:value="formState.discontinuedStatus" dict-type="logistics_materials_material_discontinued_status" disabled />
+        </a-form-item>
+      </a-col>
       <a-col :span="12"><a-form-item :label="pi.label('deptCode')"><a-input v-model:value="formState.deptCode" disabled /></a-form-item></a-col>
       <a-col :span="12"><a-form-item :label="pi.label('deptName')"><a-input v-model:value="formState.deptName" disabled /></a-form-item></a-col>
       <a-col :span="12">
@@ -85,7 +79,6 @@
 
 <script setup lang="ts">
 import type { EcMe, EcMeUpdate } from '@/types/logistics/manufacturing/engineering-change/ecMe.types'
-import { taktShowEcRootMaterialDescription } from '@/constants/logistics/ecScope.constants'
 import { useEcDeptViewI18n } from '../../composables/useEcDeptViewI18n'
 import { useEcDeptViewFormRules } from '../../composables/useEcDeptViewFormRules'
 
@@ -104,13 +97,12 @@ const formState = reactive<{
   lineNumber?: number;
   ecModelCodeGroup?: string;
   ecRootMaterialCodeGroup?: string;
-  ecRootMaterialDescription?: string;
   discontinuedStatus?: string;
   execContent?: string;
   sopDate?: string;
   sopLeader?: string;
-  techLeader?: string;
   isSopUpdated: number;
+  ecGrainKey?: string;
   ecDetailId?: string;
   deptCode?: string;
   deptName?: string;
@@ -118,13 +110,11 @@ const formState = reactive<{
   ecControlScope?: number;
   isObsolete: number;
   remark?: string;
-}>({ isSopUpdated: 0, execContent: '', discontinuedStatus: 'Z0', isObsolete: 0 });
-
-/** 仅全仕向且按成品显示根物料描述 */
-const showRootMaterialDescription = computed(() => taktShowEcRootMaterialDescription(formState.ecImplScope, formState.ecControlScope))
+}>({ isSopUpdated: 1, execContent: '', discontinuedStatus: 'Z0', isObsolete: 0 });
 
 watch(() => props.formData, (val) => {
   if (!val) { resetFields(); return; }
+  // 制技无预定/出库批次；执行内容沿用已存值（无批次可套「从{批次}开始」）
   Object.assign(formState, {
     ecMeId: val.ecMeId,
     tenantCode: val.tenantCode,
@@ -135,13 +125,13 @@ watch(() => props.formData, (val) => {
     lineNumber: val.lineNumber,
     ecModelCodeGroup: val.ecModelCodeGroup,
     ecRootMaterialCodeGroup: val.ecRootMaterialCodeGroup,
-    ecRootMaterialDescription: val.ecRootMaterialDescription,
     discontinuedStatus: val.discontinuedStatus ?? 'Z0',
     execContent: val.execContent ?? '',
     sopDate: val.sopDate,
     sopLeader: val.sopLeader,
-    techLeader: val.techLeader,
-    isSopUpdated: val.isSopUpdated ?? 0,
+    /** 派生：在产 FERT=0，非 FERT/停产=1；禁止用实施默认把 0 改成 1 */
+    isSopUpdated: val.isSopUpdated == null ? 0 : Number(val.isSopUpdated),
+    ecGrainKey: (val as { ecGrainKey?: string }).ecGrainKey ?? '',
     ecDetailId: val.ecDetailId,
     deptCode: val.deptCode,
     deptName: val.deptName,
@@ -162,10 +152,10 @@ function resetFields() {
     ecMeId: '',
     tenantCode: '', companyCode: '', cultureCode: '', plantCode: '',
     ecCode: '', lineNumber: undefined, ecModelCodeGroup: '',
-    ecRootMaterialCodeGroup: '', ecRootMaterialDescription: '',
+    ecRootMaterialCodeGroup: '',
     discontinuedStatus: 'Z0', execContent: '',
-    sopDate: undefined, sopLeader: undefined, techLeader: undefined, isSopUpdated: 0,
-    ecDetailId: '', deptCode: '', deptName: '',
+    sopDate: undefined, sopLeader: undefined, isSopUpdated: 1,
+    ecGrainKey: '', ecDetailId: '', deptCode: '', deptName: '',
     ecImplScope: undefined, ecControlScope: undefined, isObsolete: 0, remark: undefined,
   });
 }

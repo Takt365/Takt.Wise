@@ -77,12 +77,6 @@
             :value="legacyProductDictCellValue(slotData.record, 'ecInstruction', slotData.text)"
           />
         </template>
-        <template v-else-if="isLegacyProductColumn(slotData.column, 'oldProductHandling')">
-          <TaktDictTag
-            dict-type="logistics_manufacturing_ec_old_part_disposition"
-            :value="legacyProductDictCellValue(slotData.record, 'oldProductHandling', slotData.text)"
-          />
-        </template>
         <template v-else-if="isLegacyProductColumn(slotData.column, 'ecOldPartDisposition')">
           <TaktDictTag
             dict-type="logistics_manufacturing_ec_old_part_disposition"

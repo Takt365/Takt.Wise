@@ -74,9 +74,9 @@ export interface PurchaseOrderItem extends CompanyDtoBase {
   materialSpecification?: string;
 
   /**
-   * 采购信息编码
+   * 采购条件编码
    */
-  purchaseInfoCode?: string;
+  purchaseConditionCode?: string;
 
   /**
    * 供应商物料编码
@@ -259,9 +259,9 @@ export interface PurchaseOrderItemQuery extends TaktPagedQuery {
   materialSpecification?: string;
 
   /**
-   * 采购信息编码
+   * 采购条件编码
    */
-  purchaseInfoCode?: string;
+  purchaseConditionCode?: string;
 
   /**
    * 供应商物料编码
@@ -468,9 +468,9 @@ export interface PurchaseOrderItemCreate {
   materialSpecification?: string;
 
   /**
-   * 采购信息编码
+   * 采购条件编码
    */
-  purchaseInfoCode?: string;
+  purchaseConditionCode?: string;
 
   /**
    * 供应商物料编码
@@ -715,9 +715,9 @@ export interface PurchaseOrderItemTemplate {
   materialSpecification?: string;
 
   /**
-   * 采购信息编码
+   * 采购条件编码
    */
-  purchaseInfoCode?: string;
+  purchaseConditionCode?: string;
 
   /**
    * 供应商物料编码
@@ -909,9 +909,9 @@ export interface PurchaseOrderItemImport {
   materialSpecification?: string;
 
   /**
-   * 采购信息编码
+   * 采购条件编码
    */
-  purchaseInfoCode?: string;
+  purchaseConditionCode?: string;
 
   /**
    * 供应商物料编码
@@ -1103,9 +1103,9 @@ export interface PurchaseOrderItemExport {
   materialSpecification?: string;
 
   /**
-   * 采购信息编码
+   * 采购条件编码
    */
-  purchaseInfoCode?: string;
+  purchaseConditionCode?: string;
 
   /**
    * 供应商物料编码

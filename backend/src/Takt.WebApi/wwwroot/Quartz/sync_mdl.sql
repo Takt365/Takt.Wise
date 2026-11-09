@@ -23,7 +23,7 @@ DECLARE @plant_code NVARCHAR(4) = N'{{PlantCode}}';
 DECLARE @sync_user_id BIGINT = {{SyncUserId}};
 
 DECLARE @batch_size INT = 0;
-DECLARE @apply_chunk INT = 20000;
+DECLARE @apply_chunk INT = 100000;
 DECLARE @merge_from_rn INT;
 DECLARE @merge_to_rn INT;
 DECLARE @merge_max_rn INT;
@@ -193,7 +193,7 @@ WHEN MATCHED AND (
   T.[is_deleted]=0,
   T.[ext_field]=(
     SELECT CASE WHEN LEN(x.[new_ext]) <= 4000 THEN x.[new_ext] ELSE e0.[base_ext] END
-    FROM (SELECT CASE WHEN ISJSON(NULLIF(LTRIM(RTRIM(ISNULL(T.[ext_field], N''))), N'')) = 1 THEN LTRIM(RTRIM(T.[ext_field])) ELSE N'{}' END AS [base_ext]) e0
+    FROM (SELECT CASE WHEN ISJSON(NULLIF(LTRIM(RTRIM(CAST(ISNULL(T.[ext_field], N'') AS nvarchar(max)))), N'')) = 1 THEN LTRIM(RTRIM(CAST(T.[ext_field] AS nvarchar(max)))) ELSE N'{}' END AS [base_ext]) e0
     CROSS APPLY (SELECT CASE WHEN JSON_QUERY(e0.[base_ext], N'$._sync') IS NULL THEN JSON_MODIFY(e0.[base_ext], N'lax $._sync', JSON_QUERY(N'{}')) ELSE e0.[base_ext] END AS [with_root]) e1
     CROSS APPLY (SELECT CASE
       WHEN JSON_QUERY(e1.[with_root], N'$._sync.mdl') IS NULL THEN JSON_MODIFY(e1.[with_root], N'lax $._sync.mdl', JSON_QUERY(N'[]'))

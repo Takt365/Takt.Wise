@@ -31,20 +31,20 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
     /// </summary>
     private const int MaterialNameLookupBatchSize = 500;
 
-    private readonly ITaktCompanyRepository<TaktPurchaseInfo> _purchaseInfoRepository;
-    private readonly ITaktCompanyRepository<TaktPurchaseInfoItem> _purchaseInfoItemRepository;
+    private readonly ITaktCompanyRepository<TaktPurchaseCondition> _purchaseConditionRepository;
+    private readonly ITaktCompanyRepository<TaktPurchaseConditionItem> _purchaseConditionItemRepository;
     private readonly ITaktCompanyRepository<TaktSupplier> _supplierRepository;
 
     public TaktPurchasePriceTrendMonthlyAnalysisBuilder(
-        ITaktCompanyRepository<TaktPurchaseInfo> purchaseInfoRepository,
-        ITaktCompanyRepository<TaktPurchaseInfoItem> purchaseInfoItemRepository,
+        ITaktCompanyRepository<TaktPurchaseCondition> purchaseConditionRepository,
+        ITaktCompanyRepository<TaktPurchaseConditionItem> purchaseConditionItemRepository,
         ITaktCompanyRepository<TaktSupplier> supplierRepository,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
     {
-        _purchaseInfoRepository = purchaseInfoRepository;
-        _purchaseInfoItemRepository = purchaseInfoItemRepository;
+        _purchaseConditionRepository = purchaseConditionRepository;
+        _purchaseConditionItemRepository = purchaseConditionItemRepository;
         _supplierRepository = supplierRepository;
     }
 
@@ -71,7 +71,7 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
             priceTypeFilter,
             rangeStart,
             rangeEndExclusive);
-        var masters = (await _purchaseInfoRepository.GetListAsync(masterExp))
+        var masters = (await _purchaseConditionRepository.GetListAsync(masterExp))
             .Where(m => string.Equals(m.PlantCode?.Trim(), plantCode, StringComparison.OrdinalIgnoreCase))
             .ToList();
         if (masters.Count == 0)
@@ -79,10 +79,10 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
             return TaktPurchasePriceTrendAnalysisBuilt.Empty();
         }
         var items = await LoadPurchasePriceTrendItemsByCodeAsync(
-            masters.Select(m => m.PurchaseInfoCode).ToList());
+            masters.Select(m => m.PurchaseConditionCode).ToList());
         var itemsByCode = items
-            .Where(i => !string.IsNullOrWhiteSpace(i.PurchaseInfoCode))
-            .GroupBy(i => i.PurchaseInfoCode.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Where(i => !string.IsNullOrWhiteSpace(i.PurchaseConditionCode))
+            .GroupBy(i => i.PurchaseConditionCode.Trim(), StringComparer.OrdinalIgnoreCase)
             .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
         var allRows = new List<TaktPurchasePriceTrendDto>();
         foreach (var master in masters)
@@ -91,7 +91,7 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
             {
                 continue;
             }
-            var code = master.PurchaseInfoCode?.Trim() ?? string.Empty;
+            var code = master.PurchaseConditionCode?.Trim() ?? string.Empty;
             if (code.Length == 0)
             {
                 continue;
@@ -139,7 +139,7 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
     /// <param name="validFromStart">有效起始日区间起（含）</param>
     /// <param name="validFromEndExclusive">有效起始日区间止（不含）</param>
     /// <returns>表达式</returns>
-    private Expression<Func<TaktPurchaseInfo, bool>> BuildPurchasePriceTrendMasterExpression(
+    private Expression<Func<TaktPurchaseCondition, bool>> BuildPurchasePriceTrendMasterExpression(
         string plantCode,
         string? supplierFilter,
         string? materialFilter,
@@ -147,7 +147,7 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
         DateTime validFromStart,
         DateTime validFromEndExclusive)
     {
-        var exp = Expressionable.Create<TaktPurchaseInfo>();
+        var exp = Expressionable.Create<TaktPurchaseCondition>();
         exp = exp.And(x =>
             x.TenantCode == CurrentTenantCode
             && x.CompanyCode == CurrentCompanyCode
@@ -172,15 +172,15 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
     }
 
     /// <summary>
-    /// 按定价记录号分批加载明细（与采购信息头左连接键一致：purchase_info_code）
+    /// 按定价记录号分批加载明细（与采购条件头左连接键一致：purchase_condition_code）
     /// </summary>
-    /// <param name="purchaseInfoCodes">所选工厂采购信息头的定价记录号</param>
+    /// <param name="purchaseConditionCodes">所选工厂采购条件头的定价记录号</param>
     /// <returns>价格明细</returns>
-    private async Task<List<TaktPurchaseInfoItem>> LoadPurchasePriceTrendItemsByCodeAsync(
-        IReadOnlyList<string> purchaseInfoCodes)
+    private async Task<List<TaktPurchaseConditionItem>> LoadPurchasePriceTrendItemsByCodeAsync(
+        IReadOnlyList<string> purchaseConditionCodes)
     {
-        var items = new List<TaktPurchaseInfoItem>();
-        var codes = purchaseInfoCodes
+        var items = new List<TaktPurchaseConditionItem>();
+        var codes = purchaseConditionCodes
             .Where(c => !string.IsNullOrWhiteSpace(c))
             .Select(c => c.Trim())
             .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -192,12 +192,12 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
         for (var offset = 0; offset < codes.Count; offset = checked(offset + MaterialNameLookupBatchSize))
         {
             var batch = codes.Skip(offset).Take(MaterialNameLookupBatchSize).ToList();
-            var batchItems = await _purchaseInfoItemRepository.GetListAsync(
+            var batchItems = await _purchaseConditionItemRepository.GetListAsync(
                 x => x.TenantCode == CurrentTenantCode
                     && x.CompanyCode == CurrentCompanyCode
-                    && batch.Contains(x.PurchaseInfoCode));
+                    && batch.Contains(x.PurchaseConditionCode));
             items.AddRange(batchItems.Where(i =>
-                batch.Contains(i.PurchaseInfoCode?.Trim() ?? string.Empty, StringComparer.OrdinalIgnoreCase)));
+                batch.Contains(i.PurchaseConditionCode?.Trim() ?? string.Empty, StringComparer.OrdinalIgnoreCase)));
         }
         return items;
     }
@@ -210,7 +210,7 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
     private static (DateTime RangeStart, DateTime RangeEndExclusive) ResolvePurchasePriceTrendDateBounds(
         TaktPurchasePriceTrendQueryDto queryDto)
     {
-        var (periodStart, periodEnd) = NormalizePurchaseInfoPeriodBounds(
+        var (periodStart, periodEnd) = NormalizePurchaseConditionPeriodBounds(
             queryDto.PeriodDateStart,
             queryDto.PeriodDateEnd);
         if (periodStart.HasValue || periodEnd.HasValue)
@@ -238,7 +238,7 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
     /// <param name="periodDateStart">期间起</param>
     /// <param name="periodDateEnd">期间止</param>
     /// <returns>月初起止</returns>
-    private static (DateTime? Start, DateTime? End) NormalizePurchaseInfoPeriodBounds(
+    private static (DateTime? Start, DateTime? End) NormalizePurchaseConditionPeriodBounds(
         DateTime? periodDateStart,
         DateTime? periodDateEnd)
     {
@@ -290,7 +290,7 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
         var row = new TaktPurchasePriceTrendDto
         {
             PlantCode = key.PlantCode,
-            PurchaseInfoCode = key.PurchaseInfoCode,
+            PurchaseConditionCode = key.PurchaseConditionCode,
             MaterialCode = key.MaterialCode,
             SupplierCode = key.SupplierCode,
             MaterialDescription = groupRows
@@ -322,7 +322,7 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
                 row.Unit = pair.Value.Unit;
             }
         }
-        ApplyPurchaseInfoValidFromTrend(row);
+        ApplyPurchaseConditionValidFromTrend(row);
         return row;
     }
 
@@ -445,7 +445,7 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
     /// 按该行第 n 笔有效起始日自早到晚：相邻逐比；期间涨跌=第 1 笔对末笔
     /// </summary>
     /// <param name="row">转置行</param>
-    private static void ApplyPurchaseInfoValidFromTrend(TaktPurchasePriceTrendDto row)
+    private static void ApplyPurchaseConditionValidFromTrend(TaktPurchasePriceTrendDto row)
     {
         var points = row.PeriodPoints ?? new List<TaktPurchasePriceTrendPointDto>();
         row.PeriodPoints = points;
@@ -459,7 +459,7 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
         {
             var previous = points[i - 1];
             var current = points[i];
-            var adjacent = ComputePurchaseInfoVariance(previous.UnitPrice, current.UnitPrice);
+            var adjacent = ComputePurchaseConditionVariance(previous.UnitPrice, current.UnitPrice);
             current.AdjacentTrend = adjacent.Trend;
             current.AdjacentVarianceAmount = adjacent.Amount;
             current.AdjacentVariancePercent = adjacent.Percent;
@@ -475,7 +475,7 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
         }
         var first = points[0];
         var last = points[^1];
-        var overall = ComputePurchaseInfoVariance(first.UnitPrice, last.UnitPrice);
+        var overall = ComputePurchaseConditionVariance(first.UnitPrice, last.UnitPrice);
         row.BasePeriod = first.ValidFrom;
         row.ComparePeriod = last.ValidFrom;
         row.VarianceAmount = overall.Amount;
@@ -489,7 +489,7 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
     /// <param name="basePrice">基准单价</param>
     /// <param name="comparePrice">对比单价</param>
     /// <returns>差额、变动率、涨跌码</returns>
-    private static (decimal Amount, decimal? Percent, string Trend) ComputePurchaseInfoVariance(
+    private static (decimal Amount, decimal? Percent, string Trend) ComputePurchaseConditionVariance(
         decimal basePrice,
         decimal comparePrice)
     {
@@ -565,14 +565,14 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
         Math.Round(value, 5, MidpointRounding.AwayFromZero);
 
     /// <summary>
-    /// 采购信息头左连接一条明细（工厂、物料、供应商、定价记录号取自头；单价取自明细）
+    /// 采购条件头左连接一条明细（工厂、物料、供应商、定价记录号取自头；单价取自明细）
     /// </summary>
-    /// <param name="master">所选工厂的采购信息头</param>
+    /// <param name="master">所选工厂的采购条件头</param>
     /// <param name="item">同一条定价记录号的明细</param>
     /// <returns>推移行</returns>
     private static TaktPurchasePriceTrendDto BuildPurchasePriceTrendJoinedLine(
-        TaktPurchaseInfo master,
-        TaktPurchaseInfoItem item)
+        TaktPurchaseCondition master,
+        TaktPurchaseConditionItem item)
     {
         var validFrom = master.ValidFrom.ToString("yyyy-MM-dd");
         var unitPrice = RoundPurchasePriceUnitPrice(
@@ -585,7 +585,7 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
         return new TaktPurchasePriceTrendDto
         {
             PlantCode = master.PlantCode.Trim(),
-            PurchaseInfoCode = master.PurchaseInfoCode.Trim(),
+            PurchaseConditionCode = master.PurchaseConditionCode.Trim(),
             MaterialCode = master.MaterialCode.Trim(),
             MaterialDescription = master.MaterialDescription?.Trim() ?? string.Empty,
             SupplierCode = master.SupplierCode.Trim(),
@@ -606,16 +606,16 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
     }
 
     /// <summary>
-    /// 无明细的采购信息头（左连接保留一行，单价为空）
+    /// 无明细的采购条件头（左连接保留一行，单价为空）
     /// </summary>
-    /// <param name="master">所选工厂的采购信息头</param>
+    /// <param name="master">所选工厂的采购条件头</param>
     /// <returns>推移行</returns>
-    private static TaktPurchasePriceTrendDto BuildPurchasePriceTrendHeaderLine(TaktPurchaseInfo master)
+    private static TaktPurchasePriceTrendDto BuildPurchasePriceTrendHeaderLine(TaktPurchaseCondition master)
     {
         return new TaktPurchasePriceTrendDto
         {
             PlantCode = master.PlantCode.Trim(),
-            PurchaseInfoCode = master.PurchaseInfoCode.Trim(),
+            PurchaseConditionCode = master.PurchaseConditionCode.Trim(),
             MaterialCode = master.MaterialCode.Trim(),
             MaterialDescription = master.MaterialDescription?.Trim() ?? string.Empty,
             SupplierCode = master.SupplierCode.Trim(),
@@ -640,13 +640,13 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
             var priced = group
                 .Where(r => r.PeriodPoints.Count > 0)
                 .OrderBy(r => r.PeriodPoints[0].ValidFrom, StringComparer.Ordinal)
-                .ThenBy(r => r.PurchaseInfoCode, StringComparer.Ordinal)
+                .ThenBy(r => r.PurchaseConditionCode, StringComparer.Ordinal)
                 .ToList();
             for (var i = 1; i < priced.Count; i++)
             {
                 var previous = priced[i - 1].PeriodPoints[0];
                 var current = priced[i].PeriodPoints[0];
-                var adjacent = ComputePurchaseInfoVariance(previous.UnitPrice, current.UnitPrice);
+                var adjacent = ComputePurchaseConditionVariance(previous.UnitPrice, current.UnitPrice);
                 current.AdjacentTrend = adjacent.Trend;
                 current.AdjacentVarianceAmount = adjacent.Amount;
                 current.AdjacentVariancePercent = adjacent.Percent;
@@ -658,7 +658,7 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
             }
             var first = priced[0].PeriodPoints[0];
             var last = priced[^1].PeriodPoints[0];
-            var overall = ComputePurchaseInfoVariance(first.UnitPrice, last.UnitPrice);
+            var overall = ComputePurchaseConditionVariance(first.UnitPrice, last.UnitPrice);
             foreach (var row in priced)
             {
                 row.BasePeriod = first.ValidFrom;
@@ -674,14 +674,14 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
     /// 采购价格推移行键（一笔定价记录的一行，不按物料合并）
     /// </summary>
     /// <param name="PlantCode">工厂代码</param>
-    /// <param name="PurchaseInfoCode">定价记录号</param>
-    /// <param name="PurchaseInfoSeq">定价序号</param>
+    /// <param name="PurchaseConditionCode">定价记录号</param>
+    /// <param name="PurchaseConditionSeq">定价序号</param>
     /// <param name="MaterialCode">物料编码</param>
     /// <param name="SupplierCode">供应商编码</param>
     private sealed record PurchasePriceTrendRowKey(
         string PlantCode,
-        string PurchaseInfoCode,
-        int PurchaseInfoSeq,
+        string PurchaseConditionCode,
+        int PurchaseConditionSeq,
         string MaterialCode,
         string SupplierCode);
 
@@ -708,8 +708,8 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
                 return false;
             }
             return string.Equals(x.PlantCode, y.PlantCode, StringComparison.OrdinalIgnoreCase)
-                && string.Equals(x.PurchaseInfoCode, y.PurchaseInfoCode, StringComparison.OrdinalIgnoreCase)
-                && x.PurchaseInfoSeq == y.PurchaseInfoSeq
+                && string.Equals(x.PurchaseConditionCode, y.PurchaseConditionCode, StringComparison.OrdinalIgnoreCase)
+                && x.PurchaseConditionSeq == y.PurchaseConditionSeq
                 && string.Equals(x.MaterialCode, y.MaterialCode, StringComparison.OrdinalIgnoreCase)
                 && string.Equals(x.SupplierCode, y.SupplierCode, StringComparison.OrdinalIgnoreCase);
         }
@@ -722,8 +722,8 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
         public int GetHashCode(PurchasePriceTrendRowKey obj) =>
             HashCode.Combine(
                 StringComparer.OrdinalIgnoreCase.GetHashCode(obj.PlantCode),
-                StringComparer.OrdinalIgnoreCase.GetHashCode(obj.PurchaseInfoCode),
-                obj.PurchaseInfoSeq,
+                StringComparer.OrdinalIgnoreCase.GetHashCode(obj.PurchaseConditionCode),
+                obj.PurchaseConditionSeq,
                 StringComparer.OrdinalIgnoreCase.GetHashCode(obj.MaterialCode),
                 StringComparer.OrdinalIgnoreCase.GetHashCode(obj.SupplierCode));
     }
@@ -736,11 +736,11 @@ public class TaktPurchasePriceTrendMonthlyAnalysisBuilder : TaktServiceBase, ITa
         /// <summary>
         /// 采购价格主表
         /// </summary>
-        public TaktPurchaseInfo Master { get; init; } = null!;
+        public TaktPurchaseCondition Master { get; init; } = null!;
 
         /// <summary>
-        /// 采购信息行
+        /// 采购条件行
         /// </summary>
-        public TaktPurchaseInfoItem Item { get; init; } = null!;
+        public TaktPurchaseConditionItem Item { get; init; } = null!;
     }
 }

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcMeI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEcMe 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -136,13 +136,13 @@ public class TaktEcMeI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecme.ecrootmaterialcodegroup", "zh-HK", "根物料编码组_hk", "根物料编码组（同去重键下的根物料编码，分号分隔；ntext）"),
 
             // entity.ecme.issopupdated
-            new TranslationSeedItem("entity.ecme.issopupdated", "en-US", "更新SOP_us", "是否更新 SOP（字典 sys_yes_no；0=否 1=是）"),
+            new TranslationSeedItem("entity.ecme.issopupdated", "en-US", "更新SOP_us", "是否更新 SOP（字典 sys_yes_no；0=否 1=是；派生：同机种组存在未停产 FERT 时为 0，非 FERT 或已停产为 1）"),
             // entity.ecme.issopupdated
-            new TranslationSeedItem("entity.ecme.issopupdated", "ja-JP", "更新SOP_jp", "是否更新 SOP（字典 sys_yes_no；0=否 1=是）"),
+            new TranslationSeedItem("entity.ecme.issopupdated", "ja-JP", "更新SOP_jp", "是否更新 SOP（字典 sys_yes_no；0=否 1=是；派生：同机种组存在未停产 FERT 时为 0，非 FERT 或已停产为 1）"),
             // entity.ecme.issopupdated
-            new TranslationSeedItem("entity.ecme.issopupdated", "zh-CN", "更新SOP", "是否更新 SOP（字典 sys_yes_no；0=否 1=是）"),
+            new TranslationSeedItem("entity.ecme.issopupdated", "zh-CN", "更新SOP", "是否更新 SOP（字典 sys_yes_no；0=否 1=是；派生：同机种组存在未停产 FERT 时为 0，非 FERT 或已停产为 1）"),
             // entity.ecme.issopupdated
-            new TranslationSeedItem("entity.ecme.issopupdated", "zh-HK", "更新SOP_hk", "是否更新 SOP（字典 sys_yes_no；0=否 1=是）"),
+            new TranslationSeedItem("entity.ecme.issopupdated", "zh-HK", "更新SOP_hk", "是否更新 SOP（字典 sys_yes_no；0=否 1=是；派生：同机种组存在未停产 FERT 时为 0，非 FERT 或已停产为 1）"),
 
             // entity.ecme.sopleader
             new TranslationSeedItem("entity.ecme.sopleader", "en-US", "SOP担当_us", "SOP担当（选项 TaktEcGroups/options?ecGroupCategory=2；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
@@ -162,14 +162,14 @@ public class TaktEcMeI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecme.sopdate
             new TranslationSeedItem("entity.ecme.sopdate", "zh-HK", "SOP日期_hk", "SOP日期"),
 
-            // entity.ecme.techleader
-            new TranslationSeedItem("entity.ecme.techleader", "en-US", "设变EC担当_us", "设变EC担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
-            // entity.ecme.techleader
-            new TranslationSeedItem("entity.ecme.techleader", "ja-JP", "设变EC担当_jp", "设变EC担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
-            // entity.ecme.techleader
-            new TranslationSeedItem("entity.ecme.techleader", "zh-CN", "设变EC担当", "设变EC担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
-            // entity.ecme.techleader
-            new TranslationSeedItem("entity.ecme.techleader", "zh-HK", "设变EC担当_hk", "设变EC担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）"),
+            // entity.ecme.execcontent
+            new TranslationSeedItem("entity.ecme.execcontent", "en-US", "执行内容_us", "执行内容（各部门通用；nvarchar Length=-1）"),
+            // entity.ecme.execcontent
+            new TranslationSeedItem("entity.ecme.execcontent", "ja-JP", "执行内容_jp", "执行内容（各部门通用；nvarchar Length=-1）"),
+            // entity.ecme.execcontent
+            new TranslationSeedItem("entity.ecme.execcontent", "zh-CN", "执行内容", "执行内容（各部门通用；nvarchar Length=-1）"),
+            // entity.ecme.execcontent
+            new TranslationSeedItem("entity.ecme.execcontent", "zh-HK", "执行内容_hk", "执行内容（各部门通用；nvarchar Length=-1）"),
 
             // entity.ecme.isimplemented
             new TranslationSeedItem("entity.ecme.isimplemented", "en-US", "是否实施_us", "是否实施（制技不落库，不参与页签。页签按是否更新 IsSopUpdated：0=未更新，1=已更新）"),
@@ -179,24 +179,6 @@ public class TaktEcMeI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecme.isimplemented", "zh-CN", "是否实施", "是否实施（制技不落库，不参与页签。页签按是否更新 IsSopUpdated：0=未更新，1=已更新）"),
             // entity.ecme.isimplemented
             new TranslationSeedItem("entity.ecme.isimplemented", "zh-HK", "是否实施_hk", "是否实施（制技不落库，不参与页签。页签按是否更新 IsSopUpdated：0=未更新，1=已更新）"),
-
-            // entity.ecme.execcontent
-            new TranslationSeedItem("entity.ecme.execcontent", "en-US", "执行内容_us", "执行内容（制技不落库；仅满足 ITaktEcDeptExecEntity）"),
-            // entity.ecme.execcontent
-            new TranslationSeedItem("entity.ecme.execcontent", "ja-JP", "执行内容_jp", "执行内容（制技不落库；仅满足 ITaktEcDeptExecEntity）"),
-            // entity.ecme.execcontent
-            new TranslationSeedItem("entity.ecme.execcontent", "zh-CN", "执行内容", "执行内容（制技不落库；仅满足 ITaktEcDeptExecEntity）"),
-            // entity.ecme.execcontent
-            new TranslationSeedItem("entity.ecme.execcontent", "zh-HK", "执行内容_hk", "执行内容（制技不落库；仅满足 ITaktEcDeptExecEntity）"),
-
-            // entity.ecme.ecrootmaterialdescription
-            new TranslationSeedItem("entity.ecme.ecrootmaterialdescription", "en-US", "根物料描述_us", "根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）"),
-            // entity.ecme.ecrootmaterialdescription
-            new TranslationSeedItem("entity.ecme.ecrootmaterialdescription", "ja-JP", "根物料描述_jp", "根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）"),
-            // entity.ecme.ecrootmaterialdescription
-            new TranslationSeedItem("entity.ecme.ecrootmaterialdescription", "zh-CN", "根物料描述", "根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）"),
-            // entity.ecme.ecrootmaterialdescription
-            new TranslationSeedItem("entity.ecme.ecrootmaterialdescription", "zh-HK", "根物料描述_hk", "根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）"),
 
             // entity.ecme.deptcode
             new TranslationSeedItem("entity.ecme.deptcode", "en-US", "部门编码_us", "部门编码（TaktDept.DeptCode；本表固定课别）"),
@@ -226,13 +208,13 @@ public class TaktEcMeI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecme.ecimplscope", "zh-HK", "实施范围_hk", "实施范围（冗余：来自 TaktEcDetail.EcImplScope）"),
 
             // entity.ecme.eccontrolscope
-            new TranslationSeedItem("entity.ecme.eccontrolscope", "en-US", "控制范围_us", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种"),
+            new TranslationSeedItem("entity.ecme.eccontrolscope", "en-US", "控制范围_us", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；制技固定设变+机种 DictValue=2，无按成品）"),
             // entity.ecme.eccontrolscope
-            new TranslationSeedItem("entity.ecme.eccontrolscope", "ja-JP", "控制范围_jp", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种"),
+            new TranslationSeedItem("entity.ecme.eccontrolscope", "ja-JP", "控制范围_jp", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；制技固定设变+机种 DictValue=2，无按成品）"),
             // entity.ecme.eccontrolscope
-            new TranslationSeedItem("entity.ecme.eccontrolscope", "zh-CN", "控制范围", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种"),
+            new TranslationSeedItem("entity.ecme.eccontrolscope", "zh-CN", "控制范围", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；制技固定设变+机种 DictValue=2，无按成品）"),
             // entity.ecme.eccontrolscope
-            new TranslationSeedItem("entity.ecme.eccontrolscope", "zh-HK", "控制范围_hk", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种"),
+            new TranslationSeedItem("entity.ecme.eccontrolscope", "zh-HK", "控制范围_hk", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；制技固定设变+机种 DictValue=2，无按成品）"),
 
             // entity.ecme.ecgrainkey
             new TranslationSeedItem("entity.ecme.ecgrainkey", "en-US", "执行去重键_us", "执行行去重键（设变单号、机种或根物料或新物料、分道；同一键的明细共用本行。ntext）"),

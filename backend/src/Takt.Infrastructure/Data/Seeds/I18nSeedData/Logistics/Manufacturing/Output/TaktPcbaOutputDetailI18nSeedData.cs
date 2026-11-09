@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Output
 // 文件名称：TaktPcbaOutputDetailI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPcbaOutputDetail 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -278,6 +278,24 @@ public class TaktPcbaOutputDetailI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.pcbaoutputdetail.defectcount", "zh-CN", "不良台数", "不良台数"),
             // entity.pcbaoutputdetail.defectcount
             new TranslationSeedItem("entity.pcbaoutputdetail.defectcount", "zh-HK", "不良台数_hk", "不良台数"),
+
+            // entity.pcbaoutputdetail.scrapcount
+            new TranslationSeedItem("entity.pcbaoutputdetail.scrapcount", "en-US", "报废台数_us", "报废台数"),
+            // entity.pcbaoutputdetail.scrapcount
+            new TranslationSeedItem("entity.pcbaoutputdetail.scrapcount", "ja-JP", "报废台数_jp", "报废台数"),
+            // entity.pcbaoutputdetail.scrapcount
+            new TranslationSeedItem("entity.pcbaoutputdetail.scrapcount", "zh-CN", "报废台数", "报废台数"),
+            // entity.pcbaoutputdetail.scrapcount
+            new TranslationSeedItem("entity.pcbaoutputdetail.scrapcount", "zh-HK", "报废台数_hk", "报废台数"),
+
+            // entity.pcbaoutputdetail.scrapreason
+            new TranslationSeedItem("entity.pcbaoutputdetail.scrapreason", "en-US", "报废原因_us", "报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）"),
+            // entity.pcbaoutputdetail.scrapreason
+            new TranslationSeedItem("entity.pcbaoutputdetail.scrapreason", "ja-JP", "报废原因_jp", "报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）"),
+            // entity.pcbaoutputdetail.scrapreason
+            new TranslationSeedItem("entity.pcbaoutputdetail.scrapreason", "zh-CN", "报废原因", "报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）"),
+            // entity.pcbaoutputdetail.scrapreason
+            new TranslationSeedItem("entity.pcbaoutputdetail.scrapreason", "zh-HK", "报废原因_hk", "报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）"),
 
             // entity.pcbaoutputdetail.downtimeminutes
             new TranslationSeedItem("entity.pcbaoutputdetail.downtimeminutes", "en-US", "停线时间_us", "停线时间(分钟)"),

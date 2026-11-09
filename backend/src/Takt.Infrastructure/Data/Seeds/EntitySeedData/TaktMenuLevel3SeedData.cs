@@ -876,17 +876,17 @@ public class TaktMenuLevel3SeedData
             insertCount += insert08;
             updateCount += update08;
 
-            var (insert08Price, update08Price) = await CreateOrUpdateMenuAsync(menuRepository, seedContext, tenantCode, "LOGISTICS_PROCUREMENT_PURCHASE_INFO", menu =>
+            var (insert08Price, update08Price) = await CreateOrUpdateMenuAsync(menuRepository, seedContext, tenantCode, "LOGISTICS_PROCUREMENT_CONDITION", menu =>
             {
-                menu.MenuName = "采购信息";
-                menu.MenuCode = "LOGISTICS_PROCUREMENT_PURCHASE_INFO";
-                menu.I18nKey = "menu.logistics.procurement.purchase.info";
+                menu.MenuName = "采购条件";
+                menu.MenuCode = "LOGISTICS_PROCUREMENT_CONDITION";
+                menu.I18nKey = "menu.logistics.procurement.condition";
                 menu.Icon = "RiPriceTag3Line";
                 menu.ParentId = logisticsProcurementMenu.Id;
                 menu.MenuType = 1;
-                menu.Permission = "logistics:procurement:purchase:info:list";
-                menu.RoutePath = "/logistics/procurement/purchase-info";
-                menu.ComponentPath = "logistics/procurement/purchase-info/index";
+                menu.Permission = "logistics:procurement:condition:list";
+                menu.RoutePath = "/logistics/procurement/condition";
+                menu.ComponentPath = "logistics/procurement/condition/index";
                 menu.SortOrder = 5;
                 menu.MenuStatus = 1;
                 menu.IsVisible = 1;
@@ -916,25 +916,25 @@ public class TaktMenuLevel3SeedData
             insertCount += insert08PriceTrend;
             updateCount += update08PriceTrend;
 
-            var (insert08PirDev, update08PirDev) = await CreateOrUpdateMenuAsync(menuRepository, seedContext, tenantCode, "LOGISTICS_PROCUREMENT_PO_PRICE_PIR_DEVIATION", menu =>
+            var (insert08PurchasePriceDev, update08PurchasePriceDev) = await CreateOrUpdateMenuAsync(menuRepository, seedContext, tenantCode, "LOGISTICS_PROCUREMENT_PURCHASE_PRICE_DEVIATION", menu =>
             {
-                menu.MenuName = "PO价偏离PIR";
-                menu.MenuCode = "LOGISTICS_PROCUREMENT_PO_PRICE_PIR_DEVIATION";
-                menu.I18nKey = "menu.logistics.procurement.po.price.pir.deviation";
+                menu.MenuName = "采购价偏离";
+                menu.MenuCode = "LOGISTICS_PROCUREMENT_PURCHASE_PRICE_DEVIATION";
+                menu.I18nKey = "menu.logistics.procurement.purchase.price.deviation";
                 menu.Icon = "RiErrorWarningLine";
                 menu.ParentId = logisticsProcurementMenu.Id;
                 menu.MenuType = 1;
-                menu.Permission = "logistics:procurement:po:price:pir:deviation:list";
-                menu.RoutePath = "/logistics/procurement/po-price-pir-deviation";
-                menu.ComponentPath = "logistics/procurement/po-price-pir-deviation/index";
+                menu.Permission = "logistics:procurement:purchase:price:deviation:list";
+                menu.RoutePath = "/logistics/procurement/purchase-price-deviation";
+                menu.ComponentPath = "logistics/procurement/purchase-price-deviation/index";
                 menu.SortOrder = 7;
                 menu.MenuStatus = 1;
                 menu.IsVisible = 1;
                 menu.IsCached = 0;
                 menu.IsExternal = 0;
             });
-            insertCount += insert08PirDev;
-            updateCount += update08PirDev;
+            insertCount += insert08PurchasePriceDev;
+            updateCount += update08PurchasePriceDev;
 
             var (insert09, update09) = await CreateOrUpdateMenuAsync(menuRepository, seedContext, tenantCode, "LOGISTICS_PROCUREMENT_PURCHASE_INVOICE", menu =>
             {
@@ -1628,25 +1628,25 @@ public class TaktMenuLevel3SeedData
             insertCount += insertLS4Trend;
             updateCount += updateLS4Trend;
 
-            var (insertLS5ScrDev, updateLS5ScrDev) = await CreateOrUpdateMenuAsync(menuRepository, seedContext, tenantCode, "LOGISTICS_SALES_SO_PRICE_SCR_DEVIATION", menu =>
+            var (insertLS5SalesPriceDev, updateLS5SalesPriceDev) = await CreateOrUpdateMenuAsync(menuRepository, seedContext, tenantCode, "LOGISTICS_SALES_PRICE_DEVIATION", menu =>
             {
-                menu.MenuName = "SO价偏离SCR";
-                menu.MenuCode = "LOGISTICS_SALES_SO_PRICE_SCR_DEVIATION";
-                menu.I18nKey = "menu.logistics.sales.so.price.scr.deviation";
+                menu.MenuName = "销售价偏离";
+                menu.MenuCode = "LOGISTICS_SALES_PRICE_DEVIATION";
+                menu.I18nKey = "menu.logistics.sales.price.deviation";
                 menu.Icon = "RiErrorWarningLine";
                 menu.ParentId = logisticsSalesMenu.Id;
                 menu.MenuType = 1;
-                menu.Permission = "logistics:sales:so:price:scr:deviation:list";
-                menu.RoutePath = "/logistics/sales/so-price-scr-deviation";
-                menu.ComponentPath = "logistics/sales/so-price-scr-deviation/index";
+                menu.Permission = "logistics:sales:price:deviation:list";
+                menu.RoutePath = "/logistics/sales/sales-price-deviation";
+                menu.ComponentPath = "logistics/sales/sales-price-deviation/index";
                 menu.SortOrder = 5;
                 menu.MenuStatus = 1;
                 menu.IsVisible = 1;
                 menu.IsCached = 0;
                 menu.IsExternal = 0;
             });
-            insertCount += insertLS5ScrDev;
-            updateCount += updateLS5ScrDev;
+            insertCount += insertLS5SalesPriceDev;
+            updateCount += updateLS5SalesPriceDev;
 
             var (insertLS6, updateLS6) = await CreateOrUpdateMenuAsync(menuRepository, seedContext, tenantCode, "LOGISTICS_SALES_INVOICE", menu =>
             {

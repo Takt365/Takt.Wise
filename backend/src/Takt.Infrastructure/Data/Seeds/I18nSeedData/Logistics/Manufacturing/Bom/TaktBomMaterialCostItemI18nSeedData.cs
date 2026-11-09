@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomMaterialCostItemI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktBomMaterialCostItem 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -163,13 +163,13 @@ public class TaktBomMaterialCostItemI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.bommaterialcostitem.componentquantity", "zh-HK", "组件数量_hk", "组件数量"),
 
             // entity.bommaterialcostitem.batchindicator
-            new TranslationSeedItem("entity.bommaterialcostitem.batchindicator", "en-US", "批量标识_us", "批量标识（空或 X）"),
+            new TranslationSeedItem("entity.bommaterialcostitem.batchindicator", "en-US", "批量标识_us", "批量标识（空才参与成本合计、零价清单、移动价回填与建议替代；X 排除）"),
             // entity.bommaterialcostitem.batchindicator
-            new TranslationSeedItem("entity.bommaterialcostitem.batchindicator", "ja-JP", "批量标识_jp", "批量标识（空或 X）"),
+            new TranslationSeedItem("entity.bommaterialcostitem.batchindicator", "ja-JP", "批量标识_jp", "批量标识（空才参与成本合计、零价清单、移动价回填与建议替代；X 排除）"),
             // entity.bommaterialcostitem.batchindicator
-            new TranslationSeedItem("entity.bommaterialcostitem.batchindicator", "zh-CN", "批量标识", "批量标识（空或 X）"),
+            new TranslationSeedItem("entity.bommaterialcostitem.batchindicator", "zh-CN", "批量标识", "批量标识（空才参与成本合计、零价清单、移动价回填与建议替代；X 排除）"),
             // entity.bommaterialcostitem.batchindicator
-            new TranslationSeedItem("entity.bommaterialcostitem.batchindicator", "zh-HK", "批量标识_hk", "批量标识（空或 X）"),
+            new TranslationSeedItem("entity.bommaterialcostitem.batchindicator", "zh-HK", "批量标识_hk", "批量标识（空才参与成本合计、零价清单、移动价回填与建议替代；X 排除）"),
 
             // entity.bommaterialcostitem.productionrelated
             new TranslationSeedItem("entity.bommaterialcostitem.productionrelated", "en-US", "生产相关_us", "生产相关（空或 X）"),
@@ -190,22 +190,22 @@ public class TaktBomMaterialCostItemI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.bommaterialcostitem.pcbsectindicator", "zh-HK", "PCB SECT标识_hk", "PCB SECT 标识（空才可参与成本合计与零价清单；非空一律排除；打标写入 X）"),
 
             // entity.bommaterialcostitem.purchasetype
-            new TranslationSeedItem("entity.bommaterialcostitem.purchasetype", "en-US", "采购类型_us", "采购类型（F=外部采购，E=自制生产）；仅生产相关=X、PCB SECT 标识为空且 F 行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数"),
+            new TranslationSeedItem("entity.bommaterialcostitem.purchasetype", "en-US", "采购类型_us", "采购类型（F=外部采购，E=自制生产）；仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空的行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数"),
             // entity.bommaterialcostitem.purchasetype
-            new TranslationSeedItem("entity.bommaterialcostitem.purchasetype", "ja-JP", "采购类型_jp", "采购类型（F=外部采购，E=自制生产）；仅生产相关=X、PCB SECT 标识为空且 F 行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数"),
+            new TranslationSeedItem("entity.bommaterialcostitem.purchasetype", "ja-JP", "采购类型_jp", "采购类型（F=外部采购，E=自制生产）；仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空的行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数"),
             // entity.bommaterialcostitem.purchasetype
-            new TranslationSeedItem("entity.bommaterialcostitem.purchasetype", "zh-CN", "采购类型", "采购类型（F=外部采购，E=自制生产）；仅生产相关=X、PCB SECT 标识为空且 F 行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数"),
+            new TranslationSeedItem("entity.bommaterialcostitem.purchasetype", "zh-CN", "采购类型", "采购类型（F=外部采购，E=自制生产）；仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空的行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数"),
             // entity.bommaterialcostitem.purchasetype
-            new TranslationSeedItem("entity.bommaterialcostitem.purchasetype", "zh-HK", "采购类型_hk", "采购类型（F=外部采购，E=自制生产）；仅生产相关=X、PCB SECT 标识为空且 F 行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数"),
+            new TranslationSeedItem("entity.bommaterialcostitem.purchasetype", "zh-HK", "采购类型_hk", "采购类型（F=外部采购，E=自制生产）；仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空的行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数"),
 
             // entity.bommaterialcostitem.specialprocurementtype
-            new TranslationSeedItem("entity.bommaterialcostitem.specialprocurementtype", "en-US", "特殊采购类_us", "特殊采购类（空或业务码，最长 50）"),
+            new TranslationSeedItem("entity.bommaterialcostitem.specialprocurementtype", "en-US", "特殊采购类_us", "特殊采购类（空才参与成本合计、零价、建议替代、价格差异与组件差异；有值则排除）"),
             // entity.bommaterialcostitem.specialprocurementtype
-            new TranslationSeedItem("entity.bommaterialcostitem.specialprocurementtype", "ja-JP", "特殊采购类_jp", "特殊采购类（空或业务码，最长 50）"),
+            new TranslationSeedItem("entity.bommaterialcostitem.specialprocurementtype", "ja-JP", "特殊采购类_jp", "特殊采购类（空才参与成本合计、零价、建议替代、价格差异与组件差异；有值则排除）"),
             // entity.bommaterialcostitem.specialprocurementtype
-            new TranslationSeedItem("entity.bommaterialcostitem.specialprocurementtype", "zh-CN", "特殊采购类", "特殊采购类（空或业务码，最长 50）"),
+            new TranslationSeedItem("entity.bommaterialcostitem.specialprocurementtype", "zh-CN", "特殊采购类", "特殊采购类（空才参与成本合计、零价、建议替代、价格差异与组件差异；有值则排除）"),
             // entity.bommaterialcostitem.specialprocurementtype
-            new TranslationSeedItem("entity.bommaterialcostitem.specialprocurementtype", "zh-HK", "特殊采购类_hk", "特殊采购类（空或业务码，最长 50）"),
+            new TranslationSeedItem("entity.bommaterialcostitem.specialprocurementtype", "zh-HK", "特殊采购类_hk", "特殊采购类（空才参与成本合计、零价、建议替代、价格差异与组件差异；有值则排除）"),
 
             // entity.bommaterialcostitem.profitcentercode
             new TranslationSeedItem("entity.bommaterialcostitem.profitcentercode", "en-US", "利润中心_us", "利润中心（选项 TaktProfitCenters/options；DictValue=Id）"),
@@ -305,6 +305,15 @@ public class TaktBomMaterialCostItemI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.bommaterialcostitem.costingdate", "zh-CN", "核算日期", "核算日期"),
             // entity.bommaterialcostitem.costingdate
             new TranslationSeedItem("entity.bommaterialcostitem.costingdate", "zh-HK", "核算日期_hk", "核算日期"),
+
+            // entity.bommaterialcostitem.bommaterialcost
+            new TranslationSeedItem("entity.bommaterialcostitem.bommaterialcost", "en-US", "材料成本主表_us", "材料成本主表（按产品编码+核算日期关联；同工厂。不存主表 Id）"),
+            // entity.bommaterialcostitem.bommaterialcost
+            new TranslationSeedItem("entity.bommaterialcostitem.bommaterialcost", "ja-JP", "材料成本主表_jp", "材料成本主表（按产品编码+核算日期关联；同工厂。不存主表 Id）"),
+            // entity.bommaterialcostitem.bommaterialcost
+            new TranslationSeedItem("entity.bommaterialcostitem.bommaterialcost", "zh-CN", "材料成本主表", "材料成本主表（按产品编码+核算日期关联；同工厂。不存主表 Id）"),
+            // entity.bommaterialcostitem.bommaterialcost
+            new TranslationSeedItem("entity.bommaterialcostitem.bommaterialcost", "zh-HK", "材料成本主表_hk", "材料成本主表（按产品编码+核算日期关联；同工厂。不存主表 Id）"),
         };
     }
 

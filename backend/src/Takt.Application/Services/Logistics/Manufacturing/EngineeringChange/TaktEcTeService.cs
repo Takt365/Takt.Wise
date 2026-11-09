@@ -51,6 +51,7 @@ public class TaktEcTeService : TaktServiceBase, ITaktEcTeService
     private readonly ITaktUniqueValidator _uniqueValidator;
     private readonly ITaktNumberingGenerator _numberingGenerator;
     private readonly IConfiguration _configuration;
+    private readonly ISqlSugarClient _db;
 
     /// <summary>
     /// 构造函数
@@ -72,6 +73,7 @@ public class TaktEcTeService : TaktServiceBase, ITaktEcTeService
     /// <param name="uniqueValidator">唯一性验证器</param>
     /// <param name="numberingGenerator">业务编码生成器</param>
     /// <param name="configuration">应用配置</param>
+    /// <param name="db">SqlSugar 客户端（延后草稿去重旧物料、批量回写明细旧品处理）</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktEcTeService(
@@ -92,6 +94,7 @@ public class TaktEcTeService : TaktServiceBase, ITaktEcTeService
         ITaktUniqueValidator uniqueValidator,
         ITaktNumberingGenerator numberingGenerator,
         IConfiguration configuration,
+        ISqlSugarClient db,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
@@ -113,6 +116,7 @@ public class TaktEcTeService : TaktServiceBase, ITaktEcTeService
         _uniqueValidator = uniqueValidator;
         _numberingGenerator = numberingGenerator;
         _configuration = configuration;
+        _db = db;
     }
 
     /// <summary>
@@ -179,10 +183,19 @@ public class TaktEcTeService : TaktServiceBase, ITaktEcTeService
     public async Task<TaktEcTeDto> CreateEcTeAsync(TaktEcTeCreateDto dto)
     {
         await MaterializeEcDetailsFromSourceIfNeededAsync(dto);
+        ApplyEcTeOldPartDispositionToDetailDtos(dto);
+        SyncEcTeOldPartDispositionTextFromDetails(dto);
         await EnsureEcTeCreateReadyAsync(dto);
+        NormalizeAndValidateEcTeOldPartDisposition(dto);
         var entity = dto.Adapt<TaktEcTe>();
         entity.EcControlScope = TaktEcControlScopeConstants.Normalize(entity.EcImplScope, entity.EcControlScope);
         entity.EcStatus = TaktEcTeStatusConstants.Issued;
+        entity.ExtField = TaktEcExtFieldHistoryHelper.AppendOldPartDispositionHistory(
+            entity.ExtField,
+            fromValue: null,
+            toValue: entity.EcOldPartDisposition,
+            CurrentUserId,
+            CurrentUserName);
         entity = await _ecTeRepository.CreateAsync(entity);
         TaktLogger.Information(
             "[EcTePersist] 主表已落库 EcCode={EcCode} Id={Id} DetailCount={DetailCount}",
@@ -190,6 +203,7 @@ public class TaktEcTeService : TaktServiceBase, ITaktEcTeService
             entity.Id,
             dto.EcDetails?.Count ?? 0);
         await SaveEcTeChildrenAsync(entity, dto);
+        await RefreshEcTeOldPartDispositionFromDetailsAsync(entity, dto.EcDetails);
         TaktLogger.Information(
             "[EcTePersist] 子表（明细/附件）已落库 EcCode={EcCode}",
             entity.EcCode);
@@ -233,12 +247,24 @@ public class TaktEcTeService : TaktServiceBase, ITaktEcTeService
     public async Task<TaktEcTeDto> UpdateEcTeAsync(long id, TaktEcTeUpdateDto dto)
     {
         await EnsureEcTeUpdateReadyAsync(id, dto);
+        NormalizeAndValidateEcTeOldPartDisposition(dto);
+        ApplyEcTeOldPartDispositionToDetailDtos(dto);
+        SyncEcTeOldPartDispositionTextFromDetails(dto);
         var entity = await _ecTeRepository.GetByIdAsync(id)
             ?? throw new TaktBusinessException("设变技术课主不存在");
         var previousEcStatus = entity.EcStatus;
         var previousEcImplScope = entity.EcImplScope;
         var previousEcControlScope = entity.EcControlScope;
+        var previousOldPartDisposition = entity.EcOldPartDisposition;
+        var previousExtField = entity.ExtField;
         dto.Adapt(entity);
+        // 客户端 ExtField 不得覆盖服务端履历；旧品处理变更时追加 _bk.opd
+        entity.ExtField = TaktEcExtFieldHistoryHelper.AppendOldPartDispositionHistory(
+            previousExtField,
+            previousOldPartDisposition,
+            entity.EcOldPartDisposition,
+            CurrentUserId,
+            CurrentUserName);
         entity.EcControlScope = TaktEcControlScopeConstants.Normalize(entity.EcImplScope, entity.EcControlScope);
         entity.EcStatus = previousEcStatus;
         if (previousEcStatus == TaktEcTeStatusConstants.Completed)
@@ -253,7 +279,12 @@ public class TaktEcTeService : TaktServiceBase, ITaktEcTeService
             entity.EcCode,
             entity.Id,
             dto.EcDetails?.Count ?? 0);
+        if (dto.EcDetails is not { Count: > 0 })
+        {
+            await ApplyEcTeOldPartDispositionToPersistedDetailsAsync(entity.Id, dto.EcOldPartDisposition);
+        }
         await SaveEcTeChildrenAsync(entity, dto);
+        await RefreshEcTeOldPartDispositionFromDetailsAsync(entity, dto.EcDetails);
         TaktLogger.Information(
             "[EcTePersist] 子表（明细/附件）已更新 EcCode={EcCode}",
             entity.EcCode);
@@ -484,6 +515,7 @@ public class TaktEcTeService : TaktServiceBase, ITaktEcTeService
         }
         // 明细走独立分页 API，禁止 GetById 全量拉 EcDetails
         dto.EcDetails = [];
+        dto.EcOldMaterialCodeGroup = await BuildEcTeOldMaterialCodeGroupAsync(entity.Id);
         var attachments = await _ecAttachmentRepository.GetListAsync(x => x.EcTeId == entity.Id);
         dto.Attachments = attachments.Adapt<List<TaktEcAttachmentDto>>();
         var notifications = await _ecNotificationRepository.GetListAsync(x => x.EcTeId == entity.Id);
@@ -701,6 +733,189 @@ public class TaktEcTeService : TaktServiceBase, ITaktEcTeService
             }
             await _ecNotificationRepository.CreateRangeAsync(notifications);
         }
+    }
+
+    /// <summary>
+    /// 规范化并校验主表旧品处理（可空；非空须「旧物料:处理方式;」）
+    /// </summary>
+    /// <param name="dto">创建/更新 DTO</param>
+    private static void NormalizeAndValidateEcTeOldPartDisposition(TaktEcTeCreateDto dto)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+        if (!string.IsNullOrWhiteSpace(dto.EcOldPartDisposition))
+        {
+            dto.EcOldPartDisposition = dto.EcOldPartDisposition.Trim();
+        }
+
+        if (!TaktRegexHelper.IsValidEcTeOldPartDisposition(dto.EcOldPartDisposition))
+        {
+            throw new TaktBusinessException("旧品处理须为空或按旧物料逐段「旧物料:处理方式;」，如 S0111914:4;");
+        }
+    }
+
+    /// <summary>
+    /// 将主表 EcOldPartDisposition 写回本次提交的明细行（同旧物料编码），并追加明细 ExtField._bk.opd 履历。
+    /// </summary>
+    /// <param name="dto">创建/更新 DTO</param>
+    private void ApplyEcTeOldPartDispositionToDetailDtos(TaktEcTeCreateDto dto)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+        if (dto.EcDetails is not { Count: > 0 })
+        {
+            return;
+        }
+
+        var map = TaktEcTeOldPartDispositionComposer.ParseToMap(dto.EcOldPartDisposition);
+        if (map.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var detail in dto.EcDetails)
+        {
+            var code = detail.EcOldMaterialCode?.Trim() ?? string.Empty;
+            if (!TaktEcScopeConstants.HasEffectiveMaterialCode(code) || !map.TryGetValue(code, out var mode))
+            {
+                continue;
+            }
+
+            var from = detail.EcOldPartDisposition;
+            if (string.Equals(from?.Trim() ?? string.Empty, mode, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            detail.EcOldPartDisposition = mode;
+            detail.ExtField = TaktEcExtFieldHistoryHelper.AppendOldPartDispositionHistory(
+                detail.ExtField,
+                from,
+                mode,
+                CurrentUserId,
+                CurrentUserName,
+                code);
+        }
+    }
+
+    /// <summary>
+    /// 有明细载荷时用明细聚合结果覆盖主表 EcOldPartDisposition（保证主表与明细一致）。
+    /// </summary>
+    /// <param name="dto">创建/更新 DTO</param>
+    private static void SyncEcTeOldPartDispositionTextFromDetails(TaktEcTeCreateDto dto)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+        if (dto.EcDetails is not { Count: > 0 })
+        {
+            return;
+        }
+
+        var composed = TaktEcTeOldPartDispositionComposer.ComposeFromDetailRows(
+            dto.EcDetails.Select(d => (d.EcOldMaterialCode, d.EcOldPartDisposition)));
+        if (!string.IsNullOrWhiteSpace(composed))
+        {
+            dto.EcOldPartDisposition = composed;
+        }
+    }
+
+    /// <summary>
+    /// 编辑主表且未提交明细载荷时，按主表旧品处理回写库内未作废明细，并追加明细 ExtField 履历。
+    /// </summary>
+    /// <param name="ecTeId">技术课主表 Id</param>
+    /// <param name="dispositionText">「旧物料:处理方式;…」</param>
+    /// <returns>任务</returns>
+    private async Task ApplyEcTeOldPartDispositionToPersistedDetailsAsync(long ecTeId, string? dispositionText)
+    {
+        if (ecTeId <= 0)
+        {
+            return;
+        }
+
+        var map = TaktEcTeOldPartDispositionComposer.ParseToMap(dispositionText);
+        if (map.Count == 0)
+        {
+            return;
+        }
+
+        var details = await _ecDetailRepository.GetListAsync(x => x.EcTeId == ecTeId && x.IsObsolete == 0);
+        var toUpdate = new List<TaktEcDetail>();
+        foreach (var detail in details)
+        {
+            var code = detail.EcOldMaterialCode?.Trim() ?? string.Empty;
+            if (!TaktEcScopeConstants.HasEffectiveMaterialCode(code) || !map.TryGetValue(code, out var mode))
+            {
+                continue;
+            }
+
+            var from = detail.EcOldPartDisposition;
+            if (string.Equals(from?.Trim() ?? string.Empty, mode, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            detail.EcOldPartDisposition = mode;
+            detail.ExtField = TaktEcExtFieldHistoryHelper.AppendOldPartDispositionHistory(
+                detail.ExtField,
+                from,
+                mode,
+                CurrentUserId,
+                CurrentUserName,
+                code);
+            toUpdate.Add(detail);
+        }
+
+        if (toUpdate.Count == 0)
+        {
+            return;
+        }
+
+        await _ecDetailRepository.UpdateRangeColumnsAsync(
+            toUpdate,
+            nameof(TaktEcDetail.EcOldPartDisposition),
+            nameof(TaktEcDetail.ExtField));
+    }
+
+    /// <summary>
+    /// 按未作废明细旧物料+旧品处理回写主表 EcOldPartDisposition，变更时追加主表 ExtField._bk.opd 履历。
+    /// 本次提交了明细载荷时直接从 DTO 聚合；否则查库内未作废明细。
+    /// </summary>
+    /// <param name="entity">技术课主表实体（须已有 Id）</param>
+    /// <param name="submittedDetails">本次提交的明细（可空；空则读库）</param>
+    /// <returns>任务</returns>
+    private async Task RefreshEcTeOldPartDispositionFromDetailsAsync(
+        TaktEcTe entity,
+        IReadOnlyList<TaktEcDetailCreateDto>? submittedDetails)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+        if (entity.Id <= 0)
+        {
+            return;
+        }
+
+        IEnumerable<(string? MaterialCode, string? Disposition)> rows;
+        if (submittedDetails is { Count: > 0 })
+        {
+            rows = submittedDetails.Select(d => (d.EcOldMaterialCode, d.EcOldPartDisposition));
+        }
+        else
+        {
+            var details = await _ecDetailRepository.GetListAsync(x => x.EcTeId == entity.Id && x.IsObsolete == 0);
+            rows = details.Select(d => (d.EcOldMaterialCode, d.EcOldPartDisposition));
+        }
+
+        var composed = TaktEcTeOldPartDispositionComposer.ComposeFromDetailRows(rows);
+        var previous = entity.EcOldPartDisposition;
+        if (string.Equals(previous ?? string.Empty, composed ?? string.Empty, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        entity.ExtField = TaktEcExtFieldHistoryHelper.AppendOldPartDispositionHistory(
+            entity.ExtField,
+            previous,
+            composed,
+            CurrentUserId,
+            CurrentUserName);
+        entity.EcOldPartDisposition = composed;
+        await _ecTeRepository.UpdateAsync(entity);
     }
 
     /// <summary>
@@ -1010,15 +1225,19 @@ public class TaktEcTeService : TaktServiceBase, ITaktEcTeService
                 DateTime.Today);
             headerOnly.EcLeader = string.Empty;
             headerOnly.EcImplScope = TaktEcScopeConstants.AllDestination;
-            headerOnly.EcControlScope = TaktEcControlScopeConstants.ByModel;
+            headerOnly.EcControlScope = TaktEcControlScopeConstants.ByFinishedProduct;
             headerOnly.EcDetails = [];
             headerOnly.SourceEcId = sourceEc.Id.ToString(CultureInfo.InvariantCulture);
             headerOnly.DetailsDeferred = true;
             headerOnly.DeferredDetailCount = detailCount;
+            headerOnly.EcOldMaterialCodeGroup = await BuildSourceEcOldMaterialCodeGroupAsync(sourceEc.Id);
             TaktLogger.Information(
-                "[EcTePersist] 来源草稿省略明细 SourceEcId={SourceEcId} DeferredDetailCount={Count}",
+                "[EcTePersist] 来源草稿省略明细 SourceEcId={SourceEcId} DeferredDetailCount={Count} OldMaterialCount={OldCount}",
                 headerOnly.SourceEcId,
-                detailCount);
+                detailCount,
+                string.IsNullOrEmpty(headerOnly.EcOldMaterialCodeGroup)
+                    ? 0
+                    : headerOnly.EcOldMaterialCodeGroup.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Length);
             return headerOnly;
         }
         var sourceDetails = await _sourceEcDetailRepository.GetListAsync(x => x.SourceEcId == sourceEc.Id);
@@ -1030,7 +1249,7 @@ public class TaktEcTeService : TaktServiceBase, ITaktEcTeService
             DateTime.Today);
         createDto.EcLeader = string.Empty;
         createDto.EcImplScope = TaktEcScopeConstants.AllDestination;
-        createDto.EcControlScope = TaktEcControlScopeConstants.ByModel;
+        createDto.EcControlScope = TaktEcControlScopeConstants.ByFinishedProduct;
         createDto.SourceEcId = sourceEc.Id.ToString(CultureInfo.InvariantCulture);
         return createDto;
     }
@@ -1093,6 +1312,65 @@ public class TaktEcTeService : TaktServiceBase, ITaktEcTeService
             dto.SourceEcId,
             dto.EcDetails?.Count ?? 0,
             dto.EcCode);
+    }
+
+    /// <summary>
+    /// 从来源明细去重旧物料编码，拼为分号分隔清单（延后草稿旧品处理页签用；排除空与「0」）。
+    /// </summary>
+    /// <param name="sourceEcId">来源设变主表 Id</param>
+    /// <returns>「旧物料;旧物料;…」；无有效编码返回空串</returns>
+    private async Task<string> BuildSourceEcOldMaterialCodeGroupAsync(long sourceEcId)
+    {
+        if (sourceEcId <= 0)
+        {
+            return string.Empty;
+        }
+
+        var codes = await _db.Queryable<TaktSourceEcDetail>()
+            .Where(x => x.SourceEcId == sourceEcId && x.IsDeleted == 0)
+            .Where(x => x.SourceOldMaterialCode != null && x.SourceOldMaterialCode != string.Empty)
+            .Select(x => x.SourceOldMaterialCode)
+            .Distinct()
+            .ToListAsync();
+        return JoinEffectiveOldMaterialCodes(codes);
+    }
+
+    /// <summary>
+    /// 从已落库设变明细去重旧物料编码，拼为分号分隔清单（编辑态旧品处理页签用；排除空与「0」）。
+    /// </summary>
+    /// <param name="ecTeId">技术课主表 Id</param>
+    /// <returns>「旧物料;旧物料;…」；无有效编码返回空串</returns>
+    private async Task<string> BuildEcTeOldMaterialCodeGroupAsync(long ecTeId)
+    {
+        if (ecTeId <= 0)
+        {
+            return string.Empty;
+        }
+
+        var codes = await _db.Queryable<TaktEcDetail>()
+            .Where(x => x.EcTeId == ecTeId && x.IsObsolete == 0 && x.IsDeleted == 0)
+            .Where(x => x.EcOldMaterialCode != null && x.EcOldMaterialCode != string.Empty)
+            .Select(x => x.EcOldMaterialCode)
+            .Distinct()
+            .ToListAsync();
+        return JoinEffectiveOldMaterialCodes(codes);
+    }
+
+    /// <summary>
+    /// 有效旧物料编码去重排序后拼成分号分隔组（排除空与占位「0」）。
+    /// </summary>
+    /// <param name="codes">原始编码集合</param>
+    /// <returns>「旧物料;旧物料;…」或空串</returns>
+    private static string JoinEffectiveOldMaterialCodes(IEnumerable<string?> codes)
+    {
+        ArgumentNullException.ThrowIfNull(codes);
+        var ordered = codes
+            .Where(TaktEcScopeConstants.HasEffectiveMaterialCode)
+            .Select(x => x!.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        return ordered.Count == 0 ? string.Empty : string.Join(";", ordered) + ";";
     }
 
     /// <summary>
@@ -1206,7 +1484,7 @@ public class TaktEcTeService : TaktServiceBase, ITaktEcTeService
             EcLeader = string.Empty,
             EcLossAmount = sourceEc.SourceUnitCost + sourceEc.SourceMoldModificationCost,
             EcImplScope = TaktEcScopeConstants.AllDestination,
-            EcControlScope = TaktEcControlScopeConstants.ByModel,
+            EcControlScope = TaktEcControlScopeConstants.ByFinishedProduct,
             EcEntryDate = entryDate,
             EcStatus = 1,
             EcDetails = ecDetails,
@@ -1619,6 +1897,8 @@ public class TaktEcTeService : TaktServiceBase, ITaktEcTeService
                 || (x.EcLeader != null && x.EcLeader.Contains(keywords))
                 || SqlFunc.ToString(x.EcLossAmount).Contains(keywords)
                 || SqlFunc.ToString(x.EcImplScope).Contains(keywords)
+                || SqlFunc.ToString(x.EcControlScope).Contains(keywords)
+                || (x.EcOldPartDisposition != null && x.EcOldPartDisposition.Contains(keywords))
                 || SqlFunc.ToString(x.EcStatus).Contains(keywords)
                 || (x.CultureCode != null && x.CultureCode.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
@@ -1672,6 +1952,11 @@ public class TaktEcTeService : TaktServiceBase, ITaktEcTeService
         if (queryDto?.EcControlScope.HasValue == true)
         {
             exp = exp.And(x => x.EcControlScope == queryDto.EcControlScope);
+        }
+
+        if (!string.IsNullOrEmpty(queryDto?.EcOldPartDisposition))
+        {
+            exp = exp.And(x => x.EcOldPartDisposition != null && x.EcOldPartDisposition.Contains(queryDto.EcOldPartDisposition));
         }
 
         if (queryDto?.EcStatus.HasValue == true)

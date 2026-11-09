@@ -79,9 +79,9 @@ public class TaktPurchasePriceTrendDto
     public string PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 定价记录号（与采购信息头一致；只来自所选工厂）
+    /// 定价记录号（与采购条件头一致；只来自所选工厂）
     /// </summary>
-    public string PurchaseInfoCode { get; set; } = string.Empty;
+    public string PurchaseConditionCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码

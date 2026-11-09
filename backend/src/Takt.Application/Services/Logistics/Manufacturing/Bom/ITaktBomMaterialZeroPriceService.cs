@@ -15,13 +15,13 @@ using Takt.Application.Dtos.Logistics.Manufacturing.Bom;
 namespace Takt.Application.Services.Logistics.Manufacturing.Bom;
 
 /// <summary>
-/// BOM 组件零价格清单服务（FERT+未删除；X+F+移动平均价=0；建议代替末字母逆推）
+/// BOM 组件零价格清单服务（FERT+未删除；批量标识空、生产相关=X、PCB 标识空、采购类型=F、特殊采购类空、移动平均价=0；建议代替末字母逆推）
 /// 查询栏工厂/机种选项统一走 ITaktBomCostOptionService。
 /// </summary>
 public interface ITaktBomMaterialZeroPriceService
 {
     /// <summary>
-    /// 组件零价格合并清单（工厂+核算月；机种可选多选空=全部；仅主表 MaterialType=FERT 且未删除；X+F 且移动平均价=0；建议代替按末字母逆推）
+    /// 组件零价格合并清单（工厂+核算月；机种可选多选空=全部；仅主表 MaterialType=FERT 且未删除；批量标识空、生产相关=X、PCB 标识空、采购类型=F、特殊采购类空且移动平均价=0；建议代替按末字母逆推）
     /// </summary>
     /// <param name="queryDto">查询</param>
     /// <returns>分页合并结果</returns>
@@ -41,7 +41,7 @@ public interface ITaktBomMaterialZeroPriceService
         string? fileName = null);
 
     /// <summary>
-    /// 按当前条件回填移动平均价（PcbSectIndicator=X 或用量≤0 永不回填；ComponentCode 空=批量）
+    /// 按当前条件回填移动平均价（不满足成本参与条件或用量≤0 永不回填；ComponentCode 空=批量）
     /// </summary>
     /// <param name="dto">工厂+核算月；组件可选；机种可选</param>
     /// <returns>回填统计</returns>
@@ -49,7 +49,7 @@ public interface ITaktBomMaterialZeroPriceService
         TaktBomMaterialZeroPriceMovingBackfillDto dto);
 
     /// <summary>
-    /// 手工替换更新移动平均价（PcbSectIndicator=X 或用量≤0 永不回填；主表产品/机种月成本+ExtField）
+    /// 手工替换更新移动平均价（不满足成本参与条件或用量≤0 永不回填；主表产品/机种月成本+ExtField）
     /// </summary>
     /// <param name="dto">工厂+核算月+原组件+新组件+价/单位/币种</param>
     /// <returns>更新统计</returns>
@@ -73,7 +73,7 @@ public interface ITaktBomMaterialZeroPriceService
         TaktBomMaterialZeroPriceStripLeadingZeroDto dto);
 
     /// <summary>
-    /// Quartz：判定日所在自然月，按明细/主表行内 PlantCode 回填零价移动价
+    /// Quartz：判定日所在自然月，只回填当前公司对应工厂
     /// </summary>
     /// <param name="asOfDate">判定日；默认今天</param>
     /// <returns>回填统计；无工厂数据时 null</returns>

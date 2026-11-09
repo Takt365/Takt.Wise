@@ -23,7 +23,7 @@ DECLARE @plant_code NVARCHAR(4) = N'{{PlantCode}}';
 DECLARE @sync_user_id BIGINT = {{SyncUserId}};
 
 DECLARE @batch_size INT = 0;
-DECLARE @apply_chunk INT = 20000;
+DECLARE @apply_chunk INT = 100000;
 DECLARE @merge_from_rn INT;
 DECLARE @merge_to_rn INT;
 DECLARE @merge_max_rn INT;
@@ -625,6 +625,26 @@ INNER JOIN #hdr H
  AND H.[sales_condition_code]=I.[sales_condition_code];
 DELETE FROM #item WHERE [sales_condition_id]=0 OR [sales_condition_id] IS NULL;
 
+-- 先回填目标明细外键，再按 sales_condition_id + seq 同步
+SET @dml_n = 1;
+WHILE @dml_n > 0
+BEGIN
+  UPDATE TOP (@apply_chunk) I
+  SET I.[sales_condition_id] = H.[id], I.[updated_by] = @sync_user_id, I.[updated_at] = @now
+  FROM [takt_logistics_sales_condition_item] AS I
+  INNER JOIN [takt_logistics_sales_condition] AS H
+    ON H.[tenant_code] = I.[tenant_code]
+   AND H.[company_code] = I.[company_code]
+   AND LTRIM(RTRIM(H.[plant_code])) = LTRIM(RTRIM(I.[plant_code]))
+   AND LTRIM(RTRIM(H.[sales_condition_code])) = LTRIM(RTRIM(I.[sales_condition_code]))
+   AND H.[is_deleted] = 0
+  WHERE I.[tenant_code] = @tenant_code
+    AND I.[is_deleted] = 0
+    AND EXISTS (SELECT 1 FROM #hdr S0 WHERE S0.[company_code] = I.[company_code])
+    AND (I.[sales_condition_id] IS NULL OR I.[sales_condition_id] <> H.[id]);
+  SET @dml_n = @@ROWCOUNT;
+END
+
 SET @merge_from_rn = 1;
 SET @merge_max_rn = ISNULL((SELECT MAX([rn]) FROM #item), 0);
 WHILE @merge_from_rn <= @merge_max_rn
@@ -761,6 +781,27 @@ INNER JOIN #item I
  AND I.[sales_condition_seq]=Q.[sales_condition_seq];
 DELETE FROM #sq WHERE [sales_condition_item_id]=0 OR [sales_condition_item_id] IS NULL;
 
+-- 先回填目标数量等级外键，再同步
+SET @dml_n = 1;
+WHILE @dml_n > 0
+BEGIN
+  UPDATE TOP (@apply_chunk) Q
+  SET Q.[sales_condition_item_id] = I.[id], Q.[updated_by] = @sync_user_id, Q.[updated_at] = @now
+  FROM [takt_logistics_sales_condition_scale_quantity] AS Q
+  INNER JOIN [takt_logistics_sales_condition_item] AS I
+    ON I.[tenant_code] = Q.[tenant_code]
+   AND I.[company_code] = Q.[company_code]
+   AND LTRIM(RTRIM(I.[plant_code])) = LTRIM(RTRIM(Q.[plant_code]))
+   AND LTRIM(RTRIM(I.[sales_condition_code])) = LTRIM(RTRIM(Q.[sales_condition_code]))
+   AND I.[sales_condition_seq] = Q.[sales_condition_seq]
+   AND I.[is_deleted] = 0
+  WHERE Q.[tenant_code] = @tenant_code
+    AND Q.[is_deleted] = 0
+    AND EXISTS (SELECT 1 FROM #hdr S0 WHERE S0.[company_code] = Q.[company_code])
+    AND (Q.[sales_condition_item_id] IS NULL OR Q.[sales_condition_item_id] <> I.[id]);
+  SET @dml_n = @@ROWCOUNT;
+END
+
 UPDATE V SET V.[sales_condition_item_id]=I.[id]
 FROM #sv V
 INNER JOIN #item I
@@ -769,6 +810,27 @@ INNER JOIN #item I
  AND I.[sales_condition_code]=V.[sales_condition_code]
  AND I.[sales_condition_seq]=V.[sales_condition_seq];
 DELETE FROM #sv WHERE [sales_condition_item_id]=0 OR [sales_condition_item_id] IS NULL;
+
+-- 先回填目标价值等级外键，再同步
+SET @dml_n = 1;
+WHILE @dml_n > 0
+BEGIN
+  UPDATE TOP (@apply_chunk) V
+  SET V.[sales_condition_item_id] = I.[id], V.[updated_by] = @sync_user_id, V.[updated_at] = @now
+  FROM [takt_logistics_sales_condition_scale_value] AS V
+  INNER JOIN [takt_logistics_sales_condition_item] AS I
+    ON I.[tenant_code] = V.[tenant_code]
+   AND I.[company_code] = V.[company_code]
+   AND LTRIM(RTRIM(I.[plant_code])) = LTRIM(RTRIM(V.[plant_code]))
+   AND LTRIM(RTRIM(I.[sales_condition_code])) = LTRIM(RTRIM(V.[sales_condition_code]))
+   AND I.[sales_condition_seq] = V.[sales_condition_seq]
+   AND I.[is_deleted] = 0
+  WHERE V.[tenant_code] = @tenant_code
+    AND V.[is_deleted] = 0
+    AND EXISTS (SELECT 1 FROM #hdr S0 WHERE S0.[company_code] = V.[company_code])
+    AND (V.[sales_condition_item_id] IS NULL OR V.[sales_condition_item_id] <> I.[id]);
+  SET @dml_n = @@ROWCOUNT;
+END
 
 SET @merge_from_rn = 1;
 SET @merge_max_rn = ISNULL((SELECT MAX([rn]) FROM #sq), 0);

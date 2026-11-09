@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomMaterialCostDtos.cs
-// 创建时间：2026-08-11
+// 创建时间：2026-11-02
 // 创建人：Takt365(Auto Generated)
 // 功能描述：BomMaterialCost 模块 DTO（由 generate-dtos-from-entity.cjs 根据 TaktBomMaterialCost 生成，请按需审阅）
 // 
@@ -22,7 +22,7 @@ namespace Takt.Application.Dtos.Logistics.Manufacturing.Bom;
 // ========================================
 
 /// <summary>
-/// BOM 物料成本汇总表（由明细按工厂+机种+产品+核算月聚合写入；UI 机种组→产品行→Item，实体不拆分，无对明细导航）
+/// BOM 物料成本汇总表（由明细按工厂+产品+核算日聚合写入；UI 机种组→产品行→Item，实体不拆分，无对明细导航） <para>业务唯一键（新增/更新匹配）：TenantCode+CompanyCode+PlantCode+ProductCode+CostingDate；ModelCode/CostingPeriod 为业务字段，不参与唯一匹配。</para> <para>软删除：本表 IsDeleted 可为 0/1；列表读隔离不显示已删；合计/重算/机种平均须 includeSoftDeleted 含已删主表。</para>
 /// 对应前端 TaktBomMaterialCostDto
 /// 继承 TaktCompanyDtoBase
 /// </summary>
@@ -35,14 +35,13 @@ public class TaktBomMaterialCostDto : TaktCompanyDtoBase
     [JsonConverter(typeof(ValueToStringConverter))]
     public long BomMaterialCostId { get; set; }
 
-
     /// <summary>
     /// 机种编码（选项 TaktModelDestinations/model-options；DictValue=ModelCode） <para>分析/成本推移查询栏「机种」下拉：须用 TaktBomCostOptions/model-options（本表 ModelCode 去重，可按 PlantCode/MaterialType 过滤），❌ 勿用 TaktModelDestinations/model-options。</para>
     /// </summary>
     public string ModelCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种月平均材料成本（同工厂+物料类型+机种+核算月份下各产品月成本算术平均）
+    /// 机种月平均材料成本（同工厂+核算月+机种+物料类型下各产品金额算术平均； 固定口径：核算月 &lt; 2026-06 用产品月成本，≥ 2026-06 用产品月计算；比较后有变化才更新并记 ExtField 前后值）
     /// </summary>
     public decimal ModelMonthlyAverageCost { get; set; }
 
@@ -62,17 +61,17 @@ public class TaktBomMaterialCostDto : TaktCompanyDtoBase
     public string ProductDescription { get; set; } = string.Empty;
 
     /// <summary>
- /// 产品月成本
+    /// 产品月成本（外部系统计算后的月成本；合计/重算/零价回填不得覆盖）
     /// </summary>
     public decimal ProductMonthlyCost { get; set; }
 
     /// <summary>
-    /// 产品月计算（本系统按明细合计：生产相关=X、PCB SECT 标识为空、采购类型=F）
+    /// 产品月计算（本系统按明细合计：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数）
     /// </summary>
     public decimal ProductMonthlyCalculation { get; set; }
 
     /// <summary>
-    /// 最近采购成本（与产品月计算同一快照口径；行金额=组件数量×(净价÷采购价格单位)）
+    /// 最近采购成本（与产品月计算同一快照口径：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空、用量 &gt; 0.001；行金额=组件数量×(净价÷采购价格单位)）
     /// </summary>
     public decimal LatestPurchaseCost { get; set; }
 
@@ -82,12 +81,12 @@ public class TaktBomMaterialCostDto : TaktCompanyDtoBase
     public string CurrencyCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 核算期间（yyyy-MM；由核算日期推导；与工厂+机种+产品构成唯一键，同月仅一行）
+    /// 核算期间（yyyy-MM；由核算日期推导；展示/筛选用，不参与唯一匹配）
     /// </summary>
     public string CostingPeriod { get; set; } = string.Empty;
 
     /// <summary>
-    /// 核算日期（必须与本次成本合计/重算所用明细 TaktBomMaterialCostItem.CostingDate 一致；同月多日时取最后核算日）
+    /// 核算日期（必须与本次成本合计/重算所用明细 TaktBomMaterialCostItem.CostingDate 一致；与 ProductCode 构成业务唯一键之一）
     /// </summary>
     public DateTime CostingDate { get; set; }
 
@@ -109,7 +108,7 @@ public class TaktBomMaterialCostQueryDto : TaktPagedQuery
     public string? TenantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 公司代码
+    /// 公司（选项 TaktCompanies/options；DictValue=CompanyCode）
     /// </summary>
     public string? CompanyCode { get; set; } = string.Empty;
 
@@ -129,7 +128,7 @@ public class TaktBomMaterialCostQueryDto : TaktPagedQuery
     public string? ModelCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种月平均材料成本（同工厂+物料类型+机种+核算月份下各产品月成本算术平均）
+    /// 机种月平均材料成本（同工厂+核算月+机种+物料类型下各产品金额算术平均； 固定口径：核算月 &lt; 2026-06 用产品月成本，≥ 2026-06 用产品月计算；比较后有变化才更新并记 ExtField 前后值）
     /// </summary>
     public decimal? ModelMonthlyAverageCost { get; set; }
 
@@ -149,17 +148,17 @@ public class TaktBomMaterialCostQueryDto : TaktPagedQuery
     public string? ProductDescription { get; set; } = string.Empty;
 
     /// <summary>
- /// 产品月成本
+    /// 产品月成本（外部系统计算后的月成本；合计/重算/零价回填不得覆盖）
     /// </summary>
     public decimal? ProductMonthlyCost { get; set; }
 
     /// <summary>
-    /// 产品月计算（本系统按明细合计：生产相关=X、PCB SECT 标识为空、采购类型=F）
+    /// 产品月计算（本系统按明细合计：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数）
     /// </summary>
     public decimal? ProductMonthlyCalculation { get; set; }
 
     /// <summary>
-    /// 最近采购成本（与产品月计算同一快照口径；行金额=组件数量×(净价÷采购价格单位)）
+    /// 最近采购成本（与产品月计算同一快照口径：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空、用量 &gt; 0.001；行金额=组件数量×(净价÷采购价格单位)）
     /// </summary>
     public decimal? LatestPurchaseCost { get; set; }
 
@@ -169,17 +168,17 @@ public class TaktBomMaterialCostQueryDto : TaktPagedQuery
     public string? CurrencyCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 核算期间（yyyy-MM；由核算日期推导；与工厂+机种+产品构成唯一键，同月仅一行）
+    /// 核算期间（yyyy-MM；由核算日期推导；展示/筛选用，不参与唯一匹配）
     /// </summary>
     public string? CostingPeriod { get; set; } = string.Empty;
 
     /// <summary>
-    /// 核算日期（必须与本次成本合计/重算所用明细 TaktBomMaterialCostItem.CostingDate 一致；同月多日时取最后核算日）（范围查询-开始）
+    /// 核算日期（必须与本次成本合计/重算所用明细 TaktBomMaterialCostItem.CostingDate 一致；与 ProductCode 构成业务唯一键之一）（范围查询-开始）
     /// </summary>
     public DateTime? CostingDateStart { get; set; }
 
     /// <summary>
-    /// 核算日期（必须与本次成本合计/重算所用明细 TaktBomMaterialCostItem.CostingDate 一致；同月多日时取最后核算日）（范围查询-结束）
+    /// 核算日期（必须与本次成本合计/重算所用明细 TaktBomMaterialCostItem.CostingDate 一致；与 ProductCode 构成业务唯一键之一）（范围查询-结束）
     /// </summary>
     public DateTime? CostingDateEnd { get; set; }
 
@@ -229,9 +228,8 @@ public class TaktBomMaterialCostCreateDto
     public string CultureCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 工厂代码（选项 TaktPlants/options；DictValue=PlantCode）
+    /// 工厂代码（选项 TaktPlants/options；DictValue=PlantCode；空则仓储按公司 RelatedPlant 注入）
     /// </summary>
-    [Required(ErrorMessage = "工厂代码（选项 TaktPlants/options；DictValue=PlantCode）不能为空")]
     public string PlantCode { get; set; } = string.Empty;
 
     /// <summary>
@@ -241,7 +239,7 @@ public class TaktBomMaterialCostCreateDto
     public string ModelCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种月平均材料成本（同工厂+物料类型+机种+核算月份下各产品月成本算术平均）
+    /// 机种月平均材料成本（同工厂+核算月+机种+物料类型下各产品金额算术平均； 固定口径：核算月 &lt; 2026-06 用产品月成本，≥ 2026-06 用产品月计算；比较后有变化才更新并记 ExtField 前后值）
     /// </summary>
     public decimal ModelMonthlyAverageCost { get; set; }
 
@@ -264,17 +262,17 @@ public class TaktBomMaterialCostCreateDto
     public string ProductDescription { get; set; } = string.Empty;
 
     /// <summary>
- /// 产品月成本
+    /// 产品月成本（外部系统计算后的月成本；合计/重算/零价回填不得覆盖）
     /// </summary>
     public decimal ProductMonthlyCost { get; set; }
 
     /// <summary>
-    /// 产品月计算（本系统按明细合计：生产相关=X、PCB SECT 标识为空、采购类型=F）
+    /// 产品月计算（本系统按明细合计：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数）
     /// </summary>
     public decimal ProductMonthlyCalculation { get; set; }
 
     /// <summary>
-    /// 最近采购成本（与产品月计算同一快照口径；行金额=组件数量×(净价÷采购价格单位)）
+    /// 最近采购成本（与产品月计算同一快照口径：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空、用量 &gt; 0.001；行金额=组件数量×(净价÷采购价格单位)）
     /// </summary>
     public decimal LatestPurchaseCost { get; set; }
 
@@ -285,13 +283,13 @@ public class TaktBomMaterialCostCreateDto
     public string CurrencyCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 核算期间（yyyy-MM；由核算日期推导；与工厂+机种+产品构成唯一键，同月仅一行）
+    /// 核算期间（yyyy-MM；由核算日期推导；展示/筛选用，不参与唯一匹配）
     /// </summary>
-    [Required(ErrorMessage = "核算期间（yyyy-MM；由核算日期推导；与工厂+机种+产品构成唯一键，同月仅一行）不能为空")]
+    [Required(ErrorMessage = "核算期间（yyyy-MM；由核算日期推导；展示/筛选用，不参与唯一匹配）不能为空")]
     public string CostingPeriod { get; set; } = string.Empty;
 
     /// <summary>
-    /// 核算日期（必须与本次成本合计/重算所用明细 TaktBomMaterialCostItem.CostingDate 一致；同月多日时取最后核算日）
+    /// 核算日期（必须与本次成本合计/重算所用明细 TaktBomMaterialCostItem.CostingDate 一致；与 ProductCode 构成业务唯一键之一）
     /// </summary>
     public DateTime CostingDate { get; set; }
 
@@ -352,7 +350,7 @@ public class TaktBomMaterialCostTemplateDto
     public string? CultureCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 工厂代码（选项 TaktPlants/options；DictValue=PlantCode）
+    /// 工厂代码（选项 TaktPlants/options；DictValue=PlantCode；空则仓储按公司 RelatedPlant 注入）
     /// </summary>
     public string? PlantCode { get; set; } = string.Empty;
 
@@ -362,7 +360,7 @@ public class TaktBomMaterialCostTemplateDto
     public string? ModelCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种月平均材料成本（同工厂+物料类型+机种+核算月份下各产品月成本算术平均）
+    /// 机种月平均材料成本（同工厂+核算月+机种+物料类型下各产品金额算术平均； 固定口径：核算月 &lt; 2026-06 用产品月成本，≥ 2026-06 用产品月计算；比较后有变化才更新并记 ExtField 前后值）
     /// </summary>
     public decimal? ModelMonthlyAverageCost { get; set; }
 
@@ -382,17 +380,17 @@ public class TaktBomMaterialCostTemplateDto
     public string? ProductDescription { get; set; } = string.Empty;
 
     /// <summary>
- /// 产品月成本
+    /// 产品月成本（外部系统计算后的月成本；合计/重算/零价回填不得覆盖）
     /// </summary>
     public decimal? ProductMonthlyCost { get; set; }
 
     /// <summary>
-    /// 产品月计算（本系统按明细合计：生产相关=X、PCB SECT 标识为空、采购类型=F）
+    /// 产品月计算（本系统按明细合计：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数）
     /// </summary>
     public decimal? ProductMonthlyCalculation { get; set; }
 
     /// <summary>
-    /// 最近采购成本（与产品月计算同一快照口径；行金额=组件数量×(净价÷采购价格单位)）
+    /// 最近采购成本（与产品月计算同一快照口径：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空、用量 &gt; 0.001；行金额=组件数量×(净价÷采购价格单位)）
     /// </summary>
     public decimal? LatestPurchaseCost { get; set; }
 
@@ -402,12 +400,12 @@ public class TaktBomMaterialCostTemplateDto
     public string? CurrencyCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 核算期间（yyyy-MM；由核算日期推导；与工厂+机种+产品构成唯一键，同月仅一行）
+    /// 核算期间（yyyy-MM；由核算日期推导；展示/筛选用，不参与唯一匹配）
     /// </summary>
     public string? CostingPeriod { get; set; } = string.Empty;
 
     /// <summary>
-    /// 核算日期（必须与本次成本合计/重算所用明细 TaktBomMaterialCostItem.CostingDate 一致；同月多日时取最后核算日）
+    /// 核算日期（必须与本次成本合计/重算所用明细 TaktBomMaterialCostItem.CostingDate 一致；与 ProductCode 构成业务唯一键之一）
     /// </summary>
     public DateTime? CostingDate { get; set; }
 
@@ -444,7 +442,7 @@ public class TaktBomMaterialCostImportDto
     public string? CultureCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 工厂代码（选项 TaktPlants/options；DictValue=PlantCode）
+    /// 工厂代码（选项 TaktPlants/options；DictValue=PlantCode；空则仓储按公司 RelatedPlant 注入）
     /// </summary>
     public string? PlantCode { get; set; } = string.Empty;
 
@@ -454,7 +452,7 @@ public class TaktBomMaterialCostImportDto
     public string? ModelCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种月平均材料成本（同工厂+物料类型+机种+核算月份下各产品月成本算术平均）
+    /// 机种月平均材料成本（同工厂+核算月+机种+物料类型下各产品金额算术平均； 固定口径：核算月 &lt; 2026-06 用产品月成本，≥ 2026-06 用产品月计算；比较后有变化才更新并记 ExtField 前后值）
     /// </summary>
     public decimal? ModelMonthlyAverageCost { get; set; }
 
@@ -474,17 +472,17 @@ public class TaktBomMaterialCostImportDto
     public string? ProductDescription { get; set; } = string.Empty;
 
     /// <summary>
- /// 产品月成本
+    /// 产品月成本（外部系统计算后的月成本；合计/重算/零价回填不得覆盖）
     /// </summary>
     public decimal? ProductMonthlyCost { get; set; }
 
     /// <summary>
-    /// 产品月计算（本系统按明细合计：生产相关=X、PCB SECT 标识为空、采购类型=F）
+    /// 产品月计算（本系统按明细合计：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数）
     /// </summary>
     public decimal? ProductMonthlyCalculation { get; set; }
 
     /// <summary>
-    /// 最近采购成本（与产品月计算同一快照口径；行金额=组件数量×(净价÷采购价格单位)）
+    /// 最近采购成本（与产品月计算同一快照口径：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空、用量 &gt; 0.001；行金额=组件数量×(净价÷采购价格单位)）
     /// </summary>
     public decimal? LatestPurchaseCost { get; set; }
 
@@ -494,12 +492,12 @@ public class TaktBomMaterialCostImportDto
     public string? CurrencyCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 核算期间（yyyy-MM；由核算日期推导；与工厂+机种+产品构成唯一键，同月仅一行）
+    /// 核算期间（yyyy-MM；由核算日期推导；展示/筛选用，不参与唯一匹配）
     /// </summary>
     public string? CostingPeriod { get; set; } = string.Empty;
 
     /// <summary>
-    /// 核算日期（必须与本次成本合计/重算所用明细 TaktBomMaterialCostItem.CostingDate 一致；同月多日时取最后核算日）
+    /// 核算日期（必须与本次成本合计/重算所用明细 TaktBomMaterialCostItem.CostingDate 一致；与 ProductCode 构成业务唯一键之一）
     /// </summary>
     public DateTime? CostingDate { get; set; }
 
@@ -542,12 +540,17 @@ public class TaktBomMaterialCostExportDto
     public string PlantCode { get; set; } = string.Empty;
 
     /// <summary>
+    /// 区域文化编码（业务字段；字典 sys_culture_code；BCP47 如 zh-CN、en-US、ja-JP；DictData 另可用 mul=多种语言内容）
+    /// </summary>
+    public string CultureCode { get; set; } = string.Empty;
+
+    /// <summary>
     /// 机种编码（选项 TaktModelDestinations/model-options；DictValue=ModelCode） <para>分析/成本推移查询栏「机种」下拉：须用 TaktBomCostOptions/model-options（本表 ModelCode 去重，可按 PlantCode/MaterialType 过滤），❌ 勿用 TaktModelDestinations/model-options。</para>
     /// </summary>
     public string ModelCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 机种月平均材料成本（同工厂+物料类型+机种+核算月份下各产品月成本算术平均）
+    /// 机种月平均材料成本（同工厂+核算月+机种+物料类型下各产品金额算术平均； 固定口径：核算月 &lt; 2026-06 用产品月成本，≥ 2026-06 用产品月计算；比较后有变化才更新并记 ExtField 前后值）
     /// </summary>
     public decimal ModelMonthlyAverageCost { get; set; }
 
@@ -567,17 +570,17 @@ public class TaktBomMaterialCostExportDto
     public string ProductDescription { get; set; } = string.Empty;
 
     /// <summary>
- /// 产品月成本
+    /// 产品月成本（外部系统计算后的月成本；合计/重算/零价回填不得覆盖）
     /// </summary>
     public decimal ProductMonthlyCost { get; set; }
 
     /// <summary>
-    /// 产品月计算（本系统按明细合计：生产相关=X、PCB SECT 标识为空、采购类型=F）
+    /// 产品月计算（本系统按明细合计：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数）
     /// </summary>
     public decimal ProductMonthlyCalculation { get; set; }
 
     /// <summary>
-    /// 最近采购成本（与产品月计算同一快照口径；行金额=组件数量×(净价÷采购价格单位)）
+    /// 最近采购成本（与产品月计算同一快照口径：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空、用量 &gt; 0.001；行金额=组件数量×(净价÷采购价格单位)）
     /// </summary>
     public decimal LatestPurchaseCost { get; set; }
 
@@ -587,12 +590,12 @@ public class TaktBomMaterialCostExportDto
     public string CurrencyCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 核算期间（yyyy-MM；由核算日期推导；与工厂+机种+产品构成唯一键，同月仅一行）
+    /// 核算期间（yyyy-MM；由核算日期推导；展示/筛选用，不参与唯一匹配）
     /// </summary>
     public string CostingPeriod { get; set; } = string.Empty;
 
     /// <summary>
-    /// 核算日期（必须与本次成本合计/重算所用明细 TaktBomMaterialCostItem.CostingDate 一致；同月多日时取最后核算日）
+    /// 核算日期（必须与本次成本合计/重算所用明细 TaktBomMaterialCostItem.CostingDate 一致；与 ProductCode 构成业务唯一键之一）
     /// </summary>
     public DateTime CostingDate { get; set; }
 

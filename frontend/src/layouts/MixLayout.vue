@@ -72,7 +72,7 @@
           :class="['layout-content', `content-width-${settingSafe.contentWidth}`]"
           :style="{ marginBottom: '2px', maxWidth: settingSafe.contentWidth === 'fixed' ? '1200px' : 'none', marginLeft: settingSafe.contentWidth === 'fixed' ? 'auto' : '0', marginRight: settingSafe.contentWidth === 'fixed' ? 'auto' : '0', maxHeight: contentMaxHeight }"
         >
-          <RouterView :key="businessScopeRouteKey" />
+          <TaktCachedRouterView :key="businessScopeRouteKey" />
         </a-layout-content>
         <TaktFooter :height="40" />
       </a-layout>
@@ -88,13 +88,14 @@ import { useUserStore } from '@/stores/identity/useUserStore'
 import { useMenuStore } from '@/stores/identity/useMenuStore'
 import { ensureMenuAndRoutesLoaded } from '@/router'
 import { useBusinessScopeRouteKey } from '@/composables/useBusinessScopeRouteKey'
+import TaktCachedRouterView from './TaktCachedRouterView.vue'
 type HeaderHeight = 32 | 40 | 48
 
 const themeStore = useThemeStore()
 const { setting } = storeToRefs(useSettingStore())
 const userStore = useUserStore()
 const menuStore = useMenuStore()
-/** 租户/公司切换时重建 RouterView，触发各业务页重新拉数 */
+/** 租户/公司切换时丢弃页面缓存并重建，触发各业务页重新拉数 */
 const businessScopeRouteKey = useBusinessScopeRouteKey()
 
 onMounted(async () => {

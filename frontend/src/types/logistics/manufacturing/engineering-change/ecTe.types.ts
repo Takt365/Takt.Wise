@@ -67,9 +67,19 @@ export interface EcTe extends CompanyDtoBase {
   ecImplScope: number;
 
   /**
-   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种
+   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/电子物料/制技固定设变+机种（DictValue=2）
    */
   ecControlScope: number;
+
+  /**
+   * 旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」；由明细聚合；ntext）
+   */
+  ecOldPartDisposition?: string;
+
+  /**
+   * 明细去重旧物料编码清单（分号分隔；排除空与占位「0」；详情旧品处理页签用）
+   */
+  ecOldMaterialCodeGroup?: string;
 
   /**
    * 录入日期
@@ -174,9 +184,14 @@ export interface EcTeQuery extends TaktPagedQuery {
   ecImplScope?: number;
 
   /**
-   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种
+   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/电子物料/制技固定设变+机种（DictValue=2）
    */
   ecControlScope?: number;
+
+  /**
+   * 旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」）
+   */
+  ecOldPartDisposition?: string;
 
   /**
    * 录入日期（范围查询-开始）
@@ -286,9 +301,14 @@ export interface EcTeCreate {
   ecImplScope: number;
 
   /**
-   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种
+   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/电子物料/制技固定设变+机种（DictValue=2）
    */
   ecControlScope: number;
+
+  /**
+   * 旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」；由明细聚合；ntext）
+   */
+  ecOldPartDisposition?: string;
 
   /**
    * 录入日期
@@ -319,6 +339,11 @@ export interface EcTeCreate {
    * 省略时的明细行数
    */
   deferredDetailCount?: number;
+
+  /**
+   * 来源导入延后明细时的旧物料编码清单（分号分隔；仅草稿旧品处理页签用）
+   */
+  ecOldMaterialCodeGroup?: string;
 
   /**
    * 设变附件列表（一个设变可对应多个附件）（子表，级联保存）
@@ -434,9 +459,14 @@ export interface EcTeTemplate {
   ecImplScope?: number;
 
   /**
-   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种
+   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/电子物料/制技固定设变+机种（DictValue=2）
    */
   ecControlScope?: number;
+
+  /**
+   * 旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」）
+   */
+  ecOldPartDisposition?: string;
 
   /**
    * 录入日期
@@ -541,9 +571,14 @@ export interface EcTeImport {
   ecImplScope?: number;
 
   /**
-   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种
+   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/电子物料/制技固定设变+机种（DictValue=2）
    */
   ecControlScope?: number;
+
+  /**
+   * 旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」）
+   */
+  ecOldPartDisposition?: string;
 
   /**
    * 录入日期
@@ -640,9 +675,14 @@ export interface EcTeExport {
   ecImplScope: number;
 
   /**
-   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种
+   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/电子物料/制技固定设变+机种（DictValue=2）
    */
   ecControlScope: number;
+
+  /**
+   * 旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」；由明细聚合；ntext）
+   */
+  ecOldPartDisposition?: string;
 
   /**
    * 录入日期

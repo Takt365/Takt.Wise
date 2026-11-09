@@ -33,6 +33,16 @@ public static class TaktValidationI18nKeys
     public const string InvalidFormat = "common.validation.format.invalid";
 
     /// <summary>
+    /// 设变采购执行内容格式（物料:采购单10位:序号4位:供应商;）
+    /// </summary>
+    public const string FormatPurExec = "common.validation.format.pur.exec.invalid";
+
+    /// <summary>
+    /// 设变受检执行内容格式（物料:检验单10位:序号4位:PASS;）
+    /// </summary>
+    public const string FormatIqcExec = "common.validation.format.iqc.exec.invalid";
+
+    /// <summary>
     /// 不能包含全角字符
     /// </summary>
     public const string FullWidthForbidden = "common.validation.fullwidth.forbidden";

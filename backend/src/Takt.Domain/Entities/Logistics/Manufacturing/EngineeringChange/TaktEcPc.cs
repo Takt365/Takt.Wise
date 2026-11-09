@@ -50,6 +50,16 @@ public class TaktEcPc : TaktCompanyEntityBase, ITaktEcDeptControlledEntity
     /// </summary>
     [SugarColumn(ColumnName = "ec_root_material_code_group", ColumnDescription = "根物料编码组", ColumnDataType = "ntext", IsNullable = false)]
     public string EcRootMaterialCodeGroup { get; set; } = string.Empty;
+    /// <summary>
+    /// 新物料编码组（同去重键下的新物料编码，分号分隔；ntext）
+    /// </summary>
+    [SugarColumn(ColumnName = "ec_new_material_code_group", ColumnDescription = "新物料编码组", ColumnDataType = "ntext", IsNullable = false)]
+    public string EcNewMaterialCodeGroup { get; set; } = string.Empty;
+    /// <summary>
+    /// 旧物料编码组（生管结余用：同一设变下旧物料去重清单，分号分隔；ntext；不按完成品拆分）
+    /// </summary>
+    [SugarColumn(ColumnName = "ec_old_material_code_group", ColumnDescription = "旧物料编码组", ColumnDataType = "ntext", IsNullable = false)]
+    public string EcOldMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
     /// 是否实施（0=否 1=是，字典 sys_yes_no）
@@ -67,30 +77,16 @@ public class TaktEcPc : TaktCompanyEntityBase, ITaktEcDeptControlledEntity
     [SugarColumn(ColumnName = "scheduled_batch", ColumnDescription = "预定批次", ColumnDataType = "nvarchar", Length = 20, IsNullable = true)]
     public string? ScheduledBatch { get; set; }
     /// <summary>
-    /// 执行内容（各部门通用）
+    /// 旧品结余（可空；非空须按旧物料编码组逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，行数与旧物料组一致；旧物料与采购单用「-」，采购单后冒号，结余与处理方式各以分号分隔；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；nvarchar Length=-1；含原 Po残）
     /// </summary>
-    [SugarColumn(ColumnName = "exec_content", ColumnDescription = "执行内容", ColumnDataType = "nvarchar", Length = 2000, IsNullable = true)]
+    [SugarColumn(ColumnName = "ec_old_part_balance", ColumnDescription = "旧品结余", ColumnDataType = "nvarchar", Length = -1, IsNullable = true)]
+    public string? EcOldPartBalance { get; set; }
+
+    /// <summary>
+    /// 执行内容（各部门通用；nvarchar Length=-1）
+    /// </summary>
+    [SugarColumn(ColumnName = "exec_content", ColumnDescription = "执行内容", ColumnDataType = "nvarchar", Length = -1, IsNullable = true)]
     public string? ExecContent { get; set; }
-    /// <summary>
-    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
-    /// </summary>
-    [SugarColumn(ColumnName = "po_remainder", ColumnDescription = "Po残", ColumnDataType = "nvarchar", Length = 200, IsNullable = true)]
-    public string? PoRemainder { get; set; }
-    /// <summary>
-    /// 结余数量
-    /// </summary>
-    [SugarColumn(ColumnName = "balance_quantity", ColumnDescription = "结余数量", ColumnDataType = "decimal", Length = 18, DecimalDigits = 2, IsNullable = true)]
-    public decimal? BalanceQuantity { get; set; }
-    /// <summary>
-    /// 旧品处理（生管自行选择，不从明细带入；字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定）
-    /// </summary>
-    [SugarColumn(ColumnName = "ec_old_part_disposition", ColumnDescription = "旧品处理", Length = 4, ColumnDataType = "nvarchar", IsNullable = true)]
-    public string? EcOldPartDisposition { get; set; }
-    /// <summary>
-    /// 根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）
-    /// </summary>
-    [SugarColumn(ColumnName = "ec_root_material_description", ColumnDescription = "根物料描述", Length = 40, ColumnDataType = "nvarchar", IsNullable = false)]
-    public string EcRootMaterialDescription { get; set; } = string.Empty;
 
     /// <summary>
     /// 部门编码（TaktDept.DeptCode；本表固定课别）
@@ -109,7 +105,7 @@ public class TaktEcPc : TaktCompanyEntityBase, ITaktEcDeptControlledEntity
     [SugarColumn(ColumnName = "ec_impl_scope", ColumnDescription = "实施范围", ColumnDataType = "int", IsNullable = false)]
     public int EcImplScope { get; set; }
     /// <summary>
-    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种
+    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/电子物料/制技固定设变+机种（DictValue=2）
     /// </summary>
     [SugarColumn(ColumnName = "ec_control_scope", ColumnDescription = "控制范围", ColumnDataType = "int", IsNullable = false, DefaultValue = "2")]
     public int EcControlScope { get; set; } = 2;

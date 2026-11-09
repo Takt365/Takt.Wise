@@ -23,7 +23,7 @@ DECLARE @plant_code NVARCHAR(4) = N'{{PlantCode}}';
 DECLARE @sync_user_id BIGINT = {{SyncUserId}};
 
 DECLARE @batch_size INT = 0;
-DECLARE @apply_chunk INT = 20000;
+DECLARE @apply_chunk INT = 100000;
 DECLARE @merge_from_rn INT;
 DECLARE @merge_to_rn INT;
 DECLARE @merge_max_rn INT;
@@ -133,7 +133,7 @@ CREATE TABLE #item (
   [material_code] NVARCHAR(20),
   [material_description] NVARCHAR(40),
   [pricing_reference_material_code] NVARCHAR(20),
-  [batch_code] NVARCHAR(10),
+  [prod_batch] NVARCHAR(10),
   [material_group] NVARCHAR(9),
   [sales_item_category] NVARCHAR(4),
   [product_hierarchy] NVARCHAR(18),
@@ -561,7 +561,7 @@ SELECT
   S.[material_code],
   S.[material_description],
   S.[pricing_reference_material_code],
-  S.[batch_code],
+  S.[prod_batch],
   S.[material_group],
   S.[sales_item_category],
   S.[product_hierarchy],
@@ -647,7 +647,7 @@ FROM (
         THEN RIGHT(LTRIM(RTRIM(R.[pricing_reference_material_code])), 10)
         ELSE NULLIF(LEFT(LTRIM(RTRIM(R.[pricing_reference_material_code])), 20), N'')
       END AS [pricing_reference_material_code],
-      NULLIF(LEFT(LTRIM(RTRIM(R.[batch_code])), 10), N'') AS [batch_code],
+      NULLIF(LEFT(LTRIM(RTRIM(R.[batch_code])), 10), N'') AS [prod_batch],
       NULLIF(LEFT(LTRIM(RTRIM(R.[material_group])), 9), N'') AS [material_group],
       NULLIF(LEFT(LTRIM(RTRIM(R.[sales_item_category])), 4), N'') AS [sales_item_category],
       NULLIF(LEFT(LTRIM(RTRIM(R.[product_hierarchy])), 18), N'') AS [product_hierarchy],
@@ -782,6 +782,24 @@ DECLARE @item_before INT = (
     AND EXISTS (SELECT 1 FROM #item S WHERE S.[tenant_code]=T.[tenant_code] AND S.[company_code]=T.[company_code])
 );
 
+-- 先回填目标明细外键（开票凭证号），再同步
+SET @dml_n = 1;
+WHILE @dml_n > 0
+BEGIN
+  UPDATE TOP (@apply_chunk) I
+  SET I.[sales_invoice_id] = H.[id], I.[updated_by] = @sync_user_id, I.[updated_at] = @now
+  FROM [takt_logistics_sales_invoice_item] AS I
+  INNER JOIN [takt_logistics_sales_invoice] AS H
+    ON H.[tenant_code] = I.[tenant_code]
+   AND H.[company_code] = I.[company_code]
+   AND LTRIM(RTRIM(H.[billing_document_code])) = LTRIM(RTRIM(I.[billing_document_code]))
+   AND H.[is_deleted] = 0
+  WHERE I.[is_deleted] = 0
+    AND EXISTS (SELECT 1 FROM #item S WHERE S.[tenant_code] = I.[tenant_code] AND S.[company_code] = I.[company_code])
+    AND (I.[sales_invoice_id] IS NULL OR I.[sales_invoice_id] <> H.[id]);
+  SET @dml_n = @@ROWCOUNT;
+END
+
 SET @merge_from_rn = 1;
 SET @merge_max_rn = ISNULL((SELECT MAX([rn]) FROM #item), 0);
 WHILE @merge_from_rn <= @merge_max_rn
@@ -818,7 +836,7 @@ WHEN MATCHED AND (
   OR ISNULL(T.[material_code], N'') <> ISNULL(S.[material_code], N'')
   OR ISNULL(T.[material_description], N'') <> ISNULL(S.[material_description], N'')
   OR ISNULL(T.[pricing_reference_material_code], N'') <> ISNULL(S.[pricing_reference_material_code], N'')
-  OR ISNULL(T.[batch_code], N'') <> ISNULL(S.[batch_code], N'')
+  OR ISNULL(T.[prod_batch], N'') <> ISNULL(S.[prod_batch], N'')
   OR ISNULL(T.[material_group], N'') <> ISNULL(S.[material_group], N'')
   OR ISNULL(T.[sales_item_category], N'') <> ISNULL(S.[sales_item_category], N'')
   OR ISNULL(T.[product_hierarchy], N'') <> ISNULL(S.[product_hierarchy], N'')
@@ -886,7 +904,7 @@ WHEN MATCHED AND (
   T.[material_code]=S.[material_code],
   T.[material_description]=S.[material_description],
   T.[pricing_reference_material_code]=S.[pricing_reference_material_code],
-  T.[batch_code]=S.[batch_code],
+  T.[prod_batch]=S.[prod_batch],
   T.[material_group]=S.[material_group],
   T.[sales_item_category]=S.[sales_item_category],
   T.[product_hierarchy]=S.[product_hierarchy],
@@ -928,8 +946,8 @@ WHEN MATCHED AND (
   T.[deleted_by]=S.[deleted_by],
   T.[deleted_at]=S.[deleted_at]
 WHEN NOT MATCHED THEN
-  INSERT ([id],[sales_invoice_id],[plant_code],[billing_document_code],[line_number],[billing_quantity],[sales_unit],[base_unit],[scale_quantity],[billing_quantity_sku],[net_weight],[gross_weight],[weight_unit],[business_area_code],[pricing_date],[service_rendered_date],[pricing_exchange_rate],[net_amount],[reference_document_code],[reference_document_item],[reference_document_category],[sales_document_code],[sales_document_item],[sales_document_reference_flag],[material_code],[material_description],[pricing_reference_material_code],[batch_code],[material_group],[sales_item_category],[product_hierarchy],[shipping_point],[division],[partner_item],[departure_country],[plant_region],[pricing_flag],[warehouse_code],[cost_amount],[subtotal1],[subtotal2],[subtotal3],[subtotal4],[subtotal5],[subtotal6],[statistics_exchange_rate],[profit_center_code],[credit_price],[customer_group_sales_order],[destination_country_order],[region_order],[sales_organization_order],[distribution_channel_order],[document_category],[tax_amount],[gross_amount],[exchange_rate_date],[is_obsolete],[tenant_code],[company_code],[culture_code],[ext_field],[remark],[created_by],[created_at],[updated_by],[updated_at],[is_deleted],[deleted_by],[deleted_at])
-  VALUES (S.[id],S.[sales_invoice_id],S.[plant_code],S.[billing_document_code],S.[line_number],S.[billing_quantity],S.[sales_unit],S.[base_unit],S.[scale_quantity],S.[billing_quantity_sku],S.[net_weight],S.[gross_weight],S.[weight_unit],S.[business_area_code],S.[pricing_date],S.[service_rendered_date],S.[pricing_exchange_rate],S.[net_amount],S.[reference_document_code],S.[reference_document_item],S.[reference_document_category],S.[sales_document_code],S.[sales_document_item],S.[sales_document_reference_flag],S.[material_code],S.[material_description],S.[pricing_reference_material_code],S.[batch_code],S.[material_group],S.[sales_item_category],S.[product_hierarchy],S.[shipping_point],S.[division],S.[partner_item],S.[departure_country],S.[plant_region],S.[pricing_flag],S.[warehouse_code],S.[cost_amount],S.[subtotal1],S.[subtotal2],S.[subtotal3],S.[subtotal4],S.[subtotal5],S.[subtotal6],S.[statistics_exchange_rate],S.[profit_center_code],S.[credit_price],S.[customer_group_sales_order],S.[destination_country_order],S.[region_order],S.[sales_organization_order],S.[distribution_channel_order],S.[document_category],S.[tax_amount],S.[gross_amount],S.[exchange_rate_date],S.[is_obsolete],S.[tenant_code],S.[company_code],S.[culture_code],S.[ext_field],S.[remark],COALESCE(S.[created_by],@sync_user_id),COALESCE(S.[created_at],@now),S.[updated_by],S.[updated_at],S.[is_deleted],S.[deleted_by],S.[deleted_at])
+  INSERT ([id],[sales_invoice_id],[plant_code],[billing_document_code],[line_number],[billing_quantity],[sales_unit],[base_unit],[scale_quantity],[billing_quantity_sku],[net_weight],[gross_weight],[weight_unit],[business_area_code],[pricing_date],[service_rendered_date],[pricing_exchange_rate],[net_amount],[reference_document_code],[reference_document_item],[reference_document_category],[sales_document_code],[sales_document_item],[sales_document_reference_flag],[material_code],[material_description],[pricing_reference_material_code],[prod_batch],[material_group],[sales_item_category],[product_hierarchy],[shipping_point],[division],[partner_item],[departure_country],[plant_region],[pricing_flag],[warehouse_code],[cost_amount],[subtotal1],[subtotal2],[subtotal3],[subtotal4],[subtotal5],[subtotal6],[statistics_exchange_rate],[profit_center_code],[credit_price],[customer_group_sales_order],[destination_country_order],[region_order],[sales_organization_order],[distribution_channel_order],[document_category],[tax_amount],[gross_amount],[exchange_rate_date],[is_obsolete],[tenant_code],[company_code],[culture_code],[ext_field],[remark],[created_by],[created_at],[updated_by],[updated_at],[is_deleted],[deleted_by],[deleted_at])
+  VALUES (S.[id],S.[sales_invoice_id],S.[plant_code],S.[billing_document_code],S.[line_number],S.[billing_quantity],S.[sales_unit],S.[base_unit],S.[scale_quantity],S.[billing_quantity_sku],S.[net_weight],S.[gross_weight],S.[weight_unit],S.[business_area_code],S.[pricing_date],S.[service_rendered_date],S.[pricing_exchange_rate],S.[net_amount],S.[reference_document_code],S.[reference_document_item],S.[reference_document_category],S.[sales_document_code],S.[sales_document_item],S.[sales_document_reference_flag],S.[material_code],S.[material_description],S.[pricing_reference_material_code],S.[prod_batch],S.[material_group],S.[sales_item_category],S.[product_hierarchy],S.[shipping_point],S.[division],S.[partner_item],S.[departure_country],S.[plant_region],S.[pricing_flag],S.[warehouse_code],S.[cost_amount],S.[subtotal1],S.[subtotal2],S.[subtotal3],S.[subtotal4],S.[subtotal5],S.[subtotal6],S.[statistics_exchange_rate],S.[profit_center_code],S.[credit_price],S.[customer_group_sales_order],S.[destination_country_order],S.[region_order],S.[sales_organization_order],S.[distribution_channel_order],S.[document_category],S.[tax_amount],S.[gross_amount],S.[exchange_rate_date],S.[is_obsolete],S.[tenant_code],S.[company_code],S.[culture_code],S.[ext_field],S.[remark],COALESCE(S.[created_by],@sync_user_id),COALESCE(S.[created_at],@now),S.[updated_by],S.[updated_at],S.[is_deleted],S.[deleted_by],S.[deleted_at])
 OUTPUT
   S.rn, $action, INSERTED.[id], INSERTED.[billing_document_code], INSERTED.[line_number]
 INTO #item_delta (rn, oper_type, id, [billing_document_code], [line_number]);

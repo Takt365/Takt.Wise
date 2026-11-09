@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcPcI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktEcPc 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -135,6 +135,24 @@ public class TaktEcPcI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecpc.ecrootmaterialcodegroup
             new TranslationSeedItem("entity.ecpc.ecrootmaterialcodegroup", "zh-HK", "根物料编码组_hk", "根物料编码组（同去重键下的根物料编码，分号分隔；ntext，按机种/部管时同机种根物料可能很多）"),
 
+            // entity.ecpc.ecnewmaterialcodegroup
+            new TranslationSeedItem("entity.ecpc.ecnewmaterialcodegroup", "en-US", "新物料编码组_us", "新物料编码组（同去重键下的新物料编码，分号分隔；ntext）"),
+            // entity.ecpc.ecnewmaterialcodegroup
+            new TranslationSeedItem("entity.ecpc.ecnewmaterialcodegroup", "ja-JP", "新物料编码组_jp", "新物料编码组（同去重键下的新物料编码，分号分隔；ntext）"),
+            // entity.ecpc.ecnewmaterialcodegroup
+            new TranslationSeedItem("entity.ecpc.ecnewmaterialcodegroup", "zh-CN", "新物料编码组", "新物料编码组（同去重键下的新物料编码，分号分隔；ntext）"),
+            // entity.ecpc.ecnewmaterialcodegroup
+            new TranslationSeedItem("entity.ecpc.ecnewmaterialcodegroup", "zh-HK", "新物料编码组_hk", "新物料编码组（同去重键下的新物料编码，分号分隔；ntext）"),
+
+            // entity.ecpc.ecoldmaterialcodegroup
+            new TranslationSeedItem("entity.ecpc.ecoldmaterialcodegroup", "en-US", "旧物料编码组_us", "旧物料编码组（同去重键下的旧物料编码，分号分隔；ntext）"),
+            // entity.ecpc.ecoldmaterialcodegroup
+            new TranslationSeedItem("entity.ecpc.ecoldmaterialcodegroup", "ja-JP", "旧物料编码组_jp", "旧物料编码组（同去重键下的旧物料编码，分号分隔；ntext）"),
+            // entity.ecpc.ecoldmaterialcodegroup
+            new TranslationSeedItem("entity.ecpc.ecoldmaterialcodegroup", "zh-CN", "旧物料编码组", "旧物料编码组（同去重键下的旧物料编码，分号分隔；ntext）"),
+            // entity.ecpc.ecoldmaterialcodegroup
+            new TranslationSeedItem("entity.ecpc.ecoldmaterialcodegroup", "zh-HK", "旧物料编码组_hk", "旧物料编码组（同去重键下的旧物料编码，分号分隔；ntext）"),
+
             // entity.ecpc.isimplemented
             new TranslationSeedItem("entity.ecpc.isimplemented", "en-US", "实施_us", "是否实施（0=否 1=是，字典 sys_yes_no）"),
             // entity.ecpc.isimplemented
@@ -162,50 +180,23 @@ public class TaktEcPcI18nSeedData : ITaktSeedDataCoordinator
             // entity.ecpc.scheduledbatch
             new TranslationSeedItem("entity.ecpc.scheduledbatch", "zh-HK", "预定批次_hk", "预定批次"),
 
-            // entity.ecpc.execcontent
-            new TranslationSeedItem("entity.ecpc.execcontent", "en-US", "执行内容_us", "执行内容（各部门通用）"),
-            // entity.ecpc.execcontent
-            new TranslationSeedItem("entity.ecpc.execcontent", "ja-JP", "执行内容_jp", "执行内容（各部门通用）"),
-            // entity.ecpc.execcontent
-            new TranslationSeedItem("entity.ecpc.execcontent", "zh-CN", "执行内容", "执行内容（各部门通用）"),
-            // entity.ecpc.execcontent
-            new TranslationSeedItem("entity.ecpc.execcontent", "zh-HK", "执行内容_hk", "执行内容（各部门通用）"),
+            // entity.ecpc.ecoldpartbalance
+            new TranslationSeedItem("entity.ecpc.ecoldpartbalance", "en-US", "旧品结余_us", "旧品结余（可空；非空须按旧物料编码组逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，行数与旧物料组一致；旧物料与采购单用「-」，采购单后冒号，结余与处理方式各以分号分隔；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；nvarchar Length=-1；含原 Po残）"),
+            // entity.ecpc.ecoldpartbalance
+            new TranslationSeedItem("entity.ecpc.ecoldpartbalance", "ja-JP", "旧品结余_jp", "旧品结余（可空；非空须按旧物料编码组逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，行数与旧物料组一致；旧物料与采购单用「-」，采购单后冒号，结余与处理方式各以分号分隔；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；nvarchar Length=-1；含原 Po残）"),
+            // entity.ecpc.ecoldpartbalance
+            new TranslationSeedItem("entity.ecpc.ecoldpartbalance", "zh-CN", "旧品结余", "旧品结余（可空；非空须按旧物料编码组逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，行数与旧物料组一致；旧物料与采购单用「-」，采购单后冒号，结余与处理方式各以分号分隔；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；nvarchar Length=-1；含原 Po残）"),
+            // entity.ecpc.ecoldpartbalance
+            new TranslationSeedItem("entity.ecpc.ecoldpartbalance", "zh-HK", "旧品结余_hk", "旧品结余（可空；非空须按旧物料编码组逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，行数与旧物料组一致；旧物料与采购单用「-」，采购单后冒号，结余与处理方式各以分号分隔；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；nvarchar Length=-1；含原 Po残）"),
 
-            // entity.ecpc.poremainder
-            new TranslationSeedItem("entity.ecpc.poremainder", "en-US", "Po残_us", "Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）"),
-            // entity.ecpc.poremainder
-            new TranslationSeedItem("entity.ecpc.poremainder", "ja-JP", "Po残_jp", "Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）"),
-            // entity.ecpc.poremainder
-            new TranslationSeedItem("entity.ecpc.poremainder", "zh-CN", "Po残", "Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）"),
-            // entity.ecpc.poremainder
-            new TranslationSeedItem("entity.ecpc.poremainder", "zh-HK", "Po残_hk", "Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）"),
-
-            // entity.ecpc.balancequantity
-            new TranslationSeedItem("entity.ecpc.balancequantity", "en-US", "结余数量_us", "结余数量"),
-            // entity.ecpc.balancequantity
-            new TranslationSeedItem("entity.ecpc.balancequantity", "ja-JP", "结余数量_jp", "结余数量"),
-            // entity.ecpc.balancequantity
-            new TranslationSeedItem("entity.ecpc.balancequantity", "zh-CN", "结余数量", "结余数量"),
-            // entity.ecpc.balancequantity
-            new TranslationSeedItem("entity.ecpc.balancequantity", "zh-HK", "结余数量_hk", "结余数量"),
-
-            // entity.ecpc.ecoldpartdisposition
-            new TranslationSeedItem("entity.ecpc.ecoldpartdisposition", "en-US", "旧品处理_us", "旧品处理（生管自行选择，不从明细带入；字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定）"),
-            // entity.ecpc.ecoldpartdisposition
-            new TranslationSeedItem("entity.ecpc.ecoldpartdisposition", "ja-JP", "旧品处理_jp", "旧品处理（生管自行选择，不从明细带入；字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定）"),
-            // entity.ecpc.ecoldpartdisposition
-            new TranslationSeedItem("entity.ecpc.ecoldpartdisposition", "zh-CN", "旧品处理", "旧品处理（生管自行选择，不从明细带入；字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定）"),
-            // entity.ecpc.ecoldpartdisposition
-            new TranslationSeedItem("entity.ecpc.ecoldpartdisposition", "zh-HK", "旧品处理_hk", "旧品处理（生管自行选择，不从明细带入；字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定）"),
-
-            // entity.ecpc.ecrootmaterialdescription
-            new TranslationSeedItem("entity.ecpc.ecrootmaterialdescription", "en-US", "根物料描述_us", "根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）"),
-            // entity.ecpc.ecrootmaterialdescription
-            new TranslationSeedItem("entity.ecpc.ecrootmaterialdescription", "ja-JP", "根物料描述_jp", "根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）"),
-            // entity.ecpc.ecrootmaterialdescription
-            new TranslationSeedItem("entity.ecpc.ecrootmaterialdescription", "zh-CN", "根物料描述", "根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）"),
-            // entity.ecpc.ecrootmaterialdescription
-            new TranslationSeedItem("entity.ecpc.ecrootmaterialdescription", "zh-HK", "根物料描述_hk", "根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）"),
+            // entity.ecpc.execcontent
+            new TranslationSeedItem("entity.ecpc.execcontent", "en-US", "执行内容_us", "执行内容（各部门通用；nvarchar Length=-1）"),
+            // entity.ecpc.execcontent
+            new TranslationSeedItem("entity.ecpc.execcontent", "ja-JP", "执行内容_jp", "执行内容（各部门通用；nvarchar Length=-1）"),
+            // entity.ecpc.execcontent
+            new TranslationSeedItem("entity.ecpc.execcontent", "zh-CN", "执行内容", "执行内容（各部门通用；nvarchar Length=-1）"),
+            // entity.ecpc.execcontent
+            new TranslationSeedItem("entity.ecpc.execcontent", "zh-HK", "执行内容_hk", "执行内容（各部门通用；nvarchar Length=-1）"),
 
             // entity.ecpc.deptcode
             new TranslationSeedItem("entity.ecpc.deptcode", "en-US", "部门编码_us", "部门编码（TaktDept.DeptCode；本表固定课别）"),
@@ -235,13 +226,13 @@ public class TaktEcPcI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.ecpc.ecimplscope", "zh-HK", "实施范围_hk", "实施范围（冗余：来自 TaktEcDetail.EcImplScope）"),
 
             // entity.ecpc.eccontrolscope
-            new TranslationSeedItem("entity.ecpc.eccontrolscope", "en-US", "控制范围_us", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种"),
+            new TranslationSeedItem("entity.ecpc.eccontrolscope", "en-US", "控制范围_us", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/电子物料/制技固定设变+机种（DictValue=2）"),
             // entity.ecpc.eccontrolscope
-            new TranslationSeedItem("entity.ecpc.eccontrolscope", "ja-JP", "控制范围_jp", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种"),
+            new TranslationSeedItem("entity.ecpc.eccontrolscope", "ja-JP", "控制范围_jp", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/电子物料/制技固定设变+机种（DictValue=2）"),
             // entity.ecpc.eccontrolscope
-            new TranslationSeedItem("entity.ecpc.eccontrolscope", "zh-CN", "控制范围", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种"),
+            new TranslationSeedItem("entity.ecpc.eccontrolscope", "zh-CN", "控制范围", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/电子物料/制技固定设变+机种（DictValue=2）"),
             // entity.ecpc.eccontrolscope
-            new TranslationSeedItem("entity.ecpc.eccontrolscope", "zh-HK", "控制范围_hk", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种"),
+            new TranslationSeedItem("entity.ecpc.eccontrolscope", "zh-HK", "控制范围_hk", "控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/电子物料/制技固定设变+机种（DictValue=2）"),
 
             // entity.ecpc.ecgrainkey
             new TranslationSeedItem("entity.ecpc.ecgrainkey", "en-US", "执行去重键_us", "执行行去重键（设变单号、机种或根物料或新物料、分道；同一键的明细共用本行。ntext）"),

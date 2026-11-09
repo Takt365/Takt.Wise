@@ -20,7 +20,9 @@ TaktWise · フロント／バックエンド分離型エンタープライズ�
 | 対応 UI 言語 | 4 | `zh-CN` / `zh-HK` / `en-US` / `ja-JP` |
 | Cursor rules / skills | 18 / 18 | `.cursor/rules/`、`.cursor/skills/`（00～17） |
 
-**認証・権限、基盤プラットフォーム、人事、物流・製造、カスタマーサービス、会計、日常業務、ワークフロー、統計ログ／クイッククエリ、コード生成** 等の業務ドメインをカバー。DDD レイヤリング + マルチテナント DB 分離 + 会社単位データ分離を採用。
+**認証・権限、基盤プラットフォーム、人事、后勤管理（生産実行 / 品目 / 購買 / 販売 / 品質など）、カスタマーサービス、会計、日常業務、ワークフロー、統計ログ／クイッククエリ、コード生成** 等の業務ドメインをカバー。DDD レイヤリング + マルチテナント DB 分離 + 会社単位データ分離を採用。
+
+> 注：コード／メニュー接頭辞 `Logistics` / `logistics` は本プロジェクトでは **后勤**（`menu.logistics._self` = 后勤管理）を指し、輸送の「物流」ではない。
 
 ---
 
@@ -169,14 +171,14 @@ Takt.Shared          → ページング、例外、Options、ヘルパ、Enums/
 | **Identity** | ユーザ、ロール、メニュー、テナント、RBAC、認証 | ログイン、権限付与、マルチテナント／会社 |
 | **Foundation** | 辞書、翻訳、システムプロパティ、採番、メッセージ、オンライン、文化、行政区、ファイル | 基盤マスタ、社内メッセージ、動的 i18n |
 | **HumanResource** | Organization、Personnel、Attendance、Talent、Benefits、Compensation、Performance、Training | 組織、人事、勤怠、給与福利、業績・研修 |
-| **Logistics · Materials** | 品目、仕入先、メーカ、工場など | 品目マスタ |
-| **Logistics · Procurement** | 購買依頼／発注／価格など | 購買 |
-| **Logistics · Sales** | 得意先、受注／価格など | 販売 |
-| **Logistics · CustomerService** | 依頼／注文／チケット／契約＋ Stat | CS と統計 |
-| **Logistics · Quality** | Operation（IQC/IPQC/FQC）、Complaint、Cost；独立 Trend | 検査、クレーム、品質コスト／トレンド |
-| **Logistics · Manufacturing** | Bom（Explosion／原価分析 Trend）、Aps、Mds/Mps/Mrp、Output、Defect、EngineeringChange、LaborHour、Sop | 製造、計画、出来高、不良、ECN |
-| **Logistics · Serial** | 製品シリアル入出庫 | シリアル追跡 |
-| **Logistics · Maintenance** | 設備、保全作業指示 | 設備保全 |
+| **Logistics（后勤）· Materials** | 品目、仕入先、メーカ、工場など | 品目管理 |
+| **Logistics（后勤）· Procurement** | 購買依頼／発注／価格など | 購買管理 |
+| **Logistics（后勤）· Sales** | 得意先、受注／価格など | 販売管理 |
+| **Logistics（后勤）· CustomerService** | 依頼／注文／チケット／契約＋ Stat | 顧客サービスと統計 |
+| **Logistics（后勤）· Quality** | Operation（IQC/IPQC/FQC）、Complaint、Cost；独立 Trend | 品質管理（検査、クレーム、品質コスト／トレンド） |
+| **Logistics（后勤）· Manufacturing** | Bom（Explosion／原価分析 Trend）、Aps、Mds/Mps/Mrp、Output、Defect、EngineeringChange、LaborHour、Sop | 生産実行（計画、出来高、不良、設変など） |
+| **Logistics（后勤）· Serial** | 製品シリアル入出庫 | シリアル管理 |
+| **Logistics（后勤）· Maintenance** | 設備、保全作業指示 | 工場保全 |
 | **Accounting** | Financial、Controlling | 会計／原価マスタ |
 | **Routine** | Announcement、NewsCenter、HelpDesk、DocumentCenter、**MeetingCenter**、VisitorCenter | お知らせ、ニュース、ヘルプデスク、文書、会議、来訪 |
 | **Workflow** | 方案／フォーム／インスタンス／タスク／変数／加算＋ **Engine** | 承認定義とランタイム |

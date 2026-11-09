@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/api/logistics/manufacturing/mds
 // 文件名称：salesForecast.api.ts
-// 创建时间：2026-07-29
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：logistics/manufacturing/mds 模块 API（自动生成，请勿手改路由常量）
 // 
@@ -52,8 +52,11 @@ export function getSalesForecastList(queryDto: any): Promise<TaktPagedResult<Sal
  */
 export function getSalesForecastById(id: string): Promise<SalesForecast> {
   return request<SalesForecast>({
-    url: `${SALES_FORECAST_API_BASE}/${id}`,
+    url: `${SALES_FORECAST_API_BASE}/{id:long}`,
     method: 'get',
+    params: {
+      id
+    },
   });
 }
 
@@ -128,21 +131,17 @@ export function updateSalesForecastStatus(dto: SalesForecastStatus): Promise<Sal
 
 /**
  * 获取销售计划选项列表
+ * @param {string} plantCode 工厂代码（可选，用于按工厂过滤）
+ * @param {string} keyword 搜索关键字（可选，模糊匹配）
  * @returns {Promise<TaktSelectOption[]>} 下拉选项
  */
-export function getSalesForecastOptions(
-  plantCode?: string,
-  keyword?: string
-): Promise<TaktSelectOption[]> {
-  const plant = plantCode?.trim()
-  const kw = keyword?.trim()
+export function getSalesForecastOptions(plantCode?: string, keyword?: string): Promise<TaktSelectOption[]> {
   return request<TaktSelectOption[]>({
     url: `${SALES_FORECAST_API_BASE}/options`,
     method: 'get',
     params: {
-      
-      ...(plant ? { plantCode: plant } : {}),
-      ...(kw ? { keyword: kw } : {}),
+      plantCode,
+      keyword
     },
   });
 }

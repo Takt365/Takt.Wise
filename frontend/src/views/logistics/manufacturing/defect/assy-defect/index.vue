@@ -38,7 +38,20 @@
           :loading="loading"
           @search="handleSearch"
           @reset="handleReset"
-        />
+        >
+          <template #leading>
+            <a-range-picker
+              v-model:value="prodPeriodRange"
+              picker="month"
+              format="YYYY-MM"
+              value-format="YYYY-MM"
+              :placeholder="[t(PROD_PERIOD_I18N_KEY), t(PROD_PERIOD_I18N_KEY)]"
+              :disabled-date="prodPeriodLimit.disabledDate"
+              @calendar-change="prodPeriodLimit.onCalendarChange"
+              @open-change="prodPeriodLimit.onOpenChange"
+            />
+          </template>
+        </TaktQueryBar>
         <TaktToolsBar
       create-permission="logistics:manufacturing:defect:mfg1:create"
       update-permission="logistics:manufacturing:defect:mfg1:update"
@@ -225,13 +238,13 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('batchCode')">
-      <a-form-item :label="pi.queryLabel('batchCode')">
+      <div v-show="isFieldVisible('prodBatch')">
+      <a-form-item :label="pi.queryLabel('prodBatch')">
         <a-input
-          v-model:value="advancedQueryForm.batchCode"
-          :placeholder="pi.queryPh('batchCode', 'required')"
+          v-model:value="advancedQueryForm.prodBatch"
+          :placeholder="pi.queryPh('prodBatch', 'required')"
           show-count
-          :maxlength="20"
+          :maxlength="40"
           allow-clear
         />
       </a-form-item>
@@ -376,6 +389,7 @@ import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
+import { PROD_PERIOD_I18N_KEY, useProdPeriodQuery } from '@/views/logistics/manufacturing/composables/useProdPeriodQuery'
 import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
 import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 import AssyDefectForm from './components/AssyDefectForm.vue'
@@ -411,6 +425,14 @@ const searchPlaceholder = computed(
 
 /** 快捷查询关键字 */
 const queryKeyword = ref('')
+/** 生产期间：默认当前月，查询栏在关键字之前 */
+const {
+  range: prodPeriodRange,
+  limit: prodPeriodLimit,
+  reset: resetProdPeriod,
+  hasPeriod: hasProdPeriod,
+  applyToQuery: applyProdPeriodToQuery,
+} = useProdPeriodQuery()
 /** 列表 loading */
 const loading = ref(false)
 /** 分页列表数据 */
@@ -448,6 +470,9 @@ const advancedQueryVisible = ref(false)
  * @returns {boolean}
  */
 function hasAnyListQueryFilter(): boolean {
+  if (hasProdPeriod()) {
+    return true
+  }
   const kw = (queryKeyword.value ?? '').trim()
   if (kw.length > 0) {
     return true
@@ -553,6 +578,7 @@ function buildListQuery(overrides?: Partial<AssyDefectQuery>): AssyDefectQuery {
   if (form.goodQuantity !== undefined && form.goodQuantity !== null) {
     query.goodQuantity = form.goodQuantity
   }
+  applyProdPeriodToQuery(query)
   return query
 }
 /** 页面挂载：租户上下文就绪后加载分页配置；无查询条件时 loadData 保持空表 */
@@ -695,13 +721,13 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getAssyDefectField(record, 'modelCode') ?? ''
   },
   {
-    title: pi.label('batchCode'),
-    dataIndex: 'batchCode',
-    key: 'batchCode',
+    title: pi.label('prodBatch'),
+    dataIndex: 'prodBatch',
+    key: 'prodBatch',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getAssyDefectField(record, 'batchCode') ?? ''
+    customRender: ({ record }: { record: any }) => getAssyDefectField(record, 'prodBatch') ?? ''
   },
   {
     title: pi.label('materialCode'),
@@ -840,6 +866,7 @@ function handleSearch() {
 /** 重置查询条件并刷新列表 */
 function handleReset() {
   queryKeyword.value = ''
+  resetProdPeriod()
   advancedQueryForm.value = {
   cultureCode: '',
   plantCode: '',
@@ -852,7 +879,7 @@ function handleReset() {
   prodOrderCode: '',
   prodOrderQty: undefined as number | undefined,
   modelCode: '',
-  batchCode: '',
+  prodBatch: '',
   materialCode: '',
   prodActualQty: undefined as number | undefined,
   goodQuantity: undefined as number | undefined,
@@ -1068,7 +1095,7 @@ function handleAdvancedQueryReset() {
   prodOrderCode: '',
   prodOrderQty: undefined as number | undefined,
   modelCode: '',
-  batchCode: '',
+  prodBatch: '',
   materialCode: '',
   prodActualQty: undefined as number | undefined,
   goodQuantity: undefined as number | undefined,

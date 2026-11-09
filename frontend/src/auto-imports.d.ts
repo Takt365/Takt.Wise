@@ -13,12 +13,14 @@ declare global {
   const EC_TE_TABLE_NAME: typeof import('./composables/useEcTePersistSignalr').EC_TE_TABLE_NAME
   const EffectScope: typeof import('vue').EffectScope
   const Modal: typeof import('ant-design-vue').Modal
+  const PROD_PERIOD_I18N_KEY: typeof import('./composables/useListPeriodQuery').PROD_PERIOD_I18N_KEY
   const QUARTZ_TABLE_NAME: typeof import('./composables/useQuartzSignalrRefresh').QUARTZ_TABLE_NAME
   const TAKT_CAPTCHA_BEHAVIOR_TRACK_HEIGHT: typeof import('./composables/useTaktCaptchaBehavior').TAKT_CAPTCHA_BEHAVIOR_TRACK_HEIGHT
   const TAKT_CAPTCHA_SLIDER_TRACK_HEIGHT: typeof import('./composables/useTaktCaptchaSlider').TAKT_CAPTCHA_SLIDER_TRACK_HEIGHT
   const TAKT_MASTER_DETAIL_LR_SCROLL_Y_KEY: typeof import('./composables/useTaktMasterDetailLrScrollY').TAKT_MASTER_DETAIL_LR_SCROLL_Y_KEY
   const WORKFLOW_TABLE_NAMES: typeof import('./composables/useWorkflowSignalrRefresh').WORKFLOW_TABLE_NAMES
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
+  const buildCurrentMonthPeriodRange: typeof import('./composables/useListPeriodQuery').buildCurrentMonthPeriodRange
   const computed: typeof import('vue').computed
   const createApp: typeof import('vue').createApp
   const createLogger: typeof import('@/utils/logger').createLogger
@@ -72,6 +74,7 @@ declare global {
   const onUpdated: typeof import('vue').onUpdated
   const onWatcherCleanup: typeof import('vue').onWatcherCleanup
   const probeSessionCaptchaRequiredAsync: typeof import('./composables/useTaktLoginCaptcha').probeSessionCaptchaRequiredAsync
+  const prodPeriodRangeToQuery: typeof import('./composables/useListPeriodQuery').prodPeriodRangeToQuery
   const provide: typeof import('vue').provide
   const provideTaktMasterDetailLrScrollY: typeof import('./composables/useTaktMasterDetailLrScrollY').provideTaktMasterDetailLrScrollY
   const reactive: typeof import('vue').reactive
@@ -109,8 +112,10 @@ declare global {
   const useGsap: typeof import('./composables/useGsap').useGsap
   const useId: typeof import('vue').useId
   const useLink: typeof import('vue-router').useLink
+  const useListPeriodQuery: typeof import('./composables/useListPeriodQuery').useListPeriodQuery
   const useLoginFieldSync: typeof import('./composables/useLoginFieldSync').useLoginFieldSync
   const useModel: typeof import('vue').useModel
+  const useProdPeriodQuery: typeof import('./composables/useListPeriodQuery').useProdPeriodQuery
   const useQuartzSignalRRefresh: typeof import('./composables/useQuartzSignalrRefresh').useQuartzSignalRRefresh
   const useRoute: typeof import('vue-router').useRoute
   const useRouter: typeof import('vue-router').useRouter
@@ -176,12 +181,14 @@ declare module 'vue' {
     readonly EC_TE_TABLE_NAME: UnwrapRef<typeof import('./composables/useEcTePersistSignalr')['EC_TE_TABLE_NAME']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly Modal: UnwrapRef<typeof import('ant-design-vue')['Modal']>
+    readonly PROD_PERIOD_I18N_KEY: UnwrapRef<typeof import('./composables/useListPeriodQuery')['PROD_PERIOD_I18N_KEY']>
     readonly QUARTZ_TABLE_NAME: UnwrapRef<typeof import('./composables/useQuartzSignalrRefresh')['QUARTZ_TABLE_NAME']>
     readonly TAKT_CAPTCHA_BEHAVIOR_TRACK_HEIGHT: UnwrapRef<typeof import('./composables/useTaktCaptchaBehavior')['TAKT_CAPTCHA_BEHAVIOR_TRACK_HEIGHT']>
     readonly TAKT_CAPTCHA_SLIDER_TRACK_HEIGHT: UnwrapRef<typeof import('./composables/useTaktCaptchaSlider')['TAKT_CAPTCHA_SLIDER_TRACK_HEIGHT']>
     readonly TAKT_MASTER_DETAIL_LR_SCROLL_Y_KEY: UnwrapRef<typeof import('./composables/useTaktMasterDetailLrScrollY')['TAKT_MASTER_DETAIL_LR_SCROLL_Y_KEY']>
     readonly WORKFLOW_TABLE_NAMES: UnwrapRef<typeof import('./composables/useWorkflowSignalrRefresh')['WORKFLOW_TABLE_NAMES']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
+    readonly buildCurrentMonthPeriodRange: UnwrapRef<typeof import('./composables/useListPeriodQuery')['buildCurrentMonthPeriodRange']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createLogger: UnwrapRef<typeof import('@/utils/logger')['createLogger']>
@@ -235,6 +242,7 @@ declare module 'vue' {
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
     readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
     readonly probeSessionCaptchaRequiredAsync: UnwrapRef<typeof import('./composables/useTaktLoginCaptcha')['probeSessionCaptchaRequiredAsync']>
+    readonly prodPeriodRangeToQuery: UnwrapRef<typeof import('./composables/useListPeriodQuery')['prodPeriodRangeToQuery']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly provideTaktMasterDetailLrScrollY: UnwrapRef<typeof import('./composables/useTaktMasterDetailLrScrollY')['provideTaktMasterDetailLrScrollY']>
     readonly reactive: UnwrapRef<typeof import('vue')['reactive']>
@@ -272,8 +280,10 @@ declare module 'vue' {
     readonly useGsap: UnwrapRef<typeof import('./composables/useGsap')['useGsap']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
+    readonly useListPeriodQuery: UnwrapRef<typeof import('./composables/useListPeriodQuery')['useListPeriodQuery']>
     readonly useLoginFieldSync: UnwrapRef<typeof import('./composables/useLoginFieldSync')['useLoginFieldSync']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
+    readonly useProdPeriodQuery: UnwrapRef<typeof import('./composables/useListPeriodQuery')['useProdPeriodQuery']>
     readonly useQuartzSignalRRefresh: UnwrapRef<typeof import('./composables/useQuartzSignalrRefresh')['useQuartzSignalRRefresh']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>

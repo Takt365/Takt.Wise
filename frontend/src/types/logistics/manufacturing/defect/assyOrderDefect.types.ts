@@ -52,7 +52,7 @@ export interface AssyOrderDefect extends CompanyDtoBase {
   /**
    * 批次（一工单一批次，取最近日报）
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 工单数量（取最近日报）
@@ -160,7 +160,7 @@ export interface AssyOrderDefectExport {
   /**
    * 批次（一工单一批次，取最近日报）
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 工单数量（取最近日报）

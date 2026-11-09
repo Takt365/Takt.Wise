@@ -14,18 +14,31 @@ export default {
   page: {
     tabs: {
       board: '看板',
-      impl: '实施',
-      batch: '批次',
+      /** 生管 → 制二 → 制一 → 品管（行数一致，同生管脊柱） */
+      production: '批次',
+      pur: '采购',
+      iqc: '受检',
+      mc: '部管',
+      mtl: '物料',
     },
     kpi: {
       ecTotal: '设变单数',
     },
     charts: {
-      statusTitle: '实施状态分布',
-      deptTitle: '各部门执行行（已实施 / 未实施）',
+      statusTitle: '各部门已实施 / 未实施对照',
+      sunburstTitle: '旭日图：主表 → 明细 → 各部门 → 实施/未实施',
       monthTitle: '按月录入设变',
       implemented: '已实施',
       notImplemented: '未实施',
+      masterRing: '主表',
+      detailRing: '明细',
+      deptRing: '部门执行',
+      tooltipMaster: '主表记录数',
+      tooltipDetail: '明细行数',
+      tooltipDept: '部门',
+      tooltipDeptRows: '部门行数',
+      tooltipImplemented: '已实施',
+      tooltipNotImplemented: '未实施',
     },
     filter: {
       implementationStatus: '实施',
@@ -49,6 +62,13 @@ export default {
       me: '制技',
     },
     implemented: '实施',
+    /** 采购/受检/部管/物料：格内 明细:实施:未实施；滑过再展开文案 */
+    deptCount: {
+      summary: '{rows}:{done}:{pending}',
+      empty: '',
+      tooltip: '明细:{rows},实施:{done},未实施:{pending}',
+      tooltipEmpty: '',
+    },
     pathLabel: {
       pc: '生管',
       pur: '采购',
@@ -74,6 +94,8 @@ export default {
       inProgress: '实施中',
       officiallyCompleted: '正式完成',
       fullyCompleted: '全部完成',
+      /** 部门视角：该部门明细全部已实施 */
+      deptCompleted: '已完成',
     },
     batch: {
       group: {
@@ -99,15 +121,16 @@ export default {
         entryDate: '登入日期',
         orderDate: '订单日期',
         orderCode: '订单号码',
+        inboundDate: '进货日期',
         scheduledInput: '预定投入',
         productionSchedule: '生产预定',
         inspectionDate: '检验日期',
-        iqcOrderCode: '受检单号',
         outboundDate: '出库日期',
         outboundBatch: '出库批次',
         productionDate: '生产日期',
         productionBatch: '生产批次',
         sampleDate: '检样日期',
+        sampleBatch: '检校批次',
         sopDate: 'SOP日期',
       },
     },

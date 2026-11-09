@@ -4,7 +4,7 @@
 // 文件名称：TaktEcMtlQueryHelper.cs
 // 创建时间：2026-09-08
 // 创建人：Takt365(Cursor AI)
-// 功能描述：SMT主表/子表可见明细：F+C003；同一设变、机种、新物料只显示一行
+// 功能描述：SMT主表/子表可见明细：F+C003；按控制范围去重键 EcGrainKey（新物料写入编码组）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -23,7 +23,7 @@ namespace Takt.Application.Services.Logistics.Manufacturing.EngineeringChange;
 internal static class TaktEcMtlQueryHelper
 {
     /// <summary>
-    /// 新采购类型 F、新品仓库 C003。同设变单号+机种的明细全部保留，不按机种收成一行
+    /// 新采购类型 F、新品仓库 C003。同去重键明细全部保留供编码组汇总
     /// </summary>
     /// <returns>明细过滤表达式</returns>
     internal static Expression<Func<TaktEcDetail, bool>> VisibleDetailExpression()
@@ -37,7 +37,7 @@ internal static class TaktEcMtlQueryHelper
     }
 
     /// <summary>
-    /// SMT 执行列表可见：F+C003。同一设变单号、机种、新物料只留 Id 最大的一行。
+    /// SMT 执行列表可见：F+C003。同一 EcGrainKey（按成品/按机种/按设变）只留 Id 最大的一行。
     /// </summary>
     /// <returns>执行表过滤表达式</returns>
     internal static Expression<Func<TaktEcMtl, bool>> VisibleExecExpression()
@@ -57,8 +57,7 @@ internal static class TaktEcMtlQueryHelper
                     && s.IsDeleted == 0
                     && s.IsObsolete == 0
                     && s.EcCode == x.EcCode
-                    && SqlFunc.ToString(s.EcModelCodeGroup) == SqlFunc.ToString(x.EcModelCodeGroup)
-                    && s.EcNewMaterialCode == x.EcNewMaterialCode
+                    && SqlFunc.ToString(s.EcGrainKey) == SqlFunc.ToString(x.EcGrainKey)
                     && s.Id > x.Id)
                 .Any();
     }

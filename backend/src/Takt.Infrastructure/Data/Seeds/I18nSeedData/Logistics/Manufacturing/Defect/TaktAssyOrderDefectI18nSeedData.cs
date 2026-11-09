@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Defect
 // 文件名称：TaktAssyOrderDefectI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktAssyOrderDefect 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -135,14 +135,14 @@ public class TaktAssyOrderDefectI18nSeedData : ITaktSeedDataCoordinator
             // entity.assyorderdefect.materialcode
             new TranslationSeedItem("entity.assyorderdefect.materialcode", "zh-HK", "物料编码_hk", "物料编码（取最近日报）"),
 
-            // entity.assyorderdefect.batchcode
-            new TranslationSeedItem("entity.assyorderdefect.batchcode", "en-US", "批次_us", "批次（一工单一批次，取最近日报）"),
-            // entity.assyorderdefect.batchcode
-            new TranslationSeedItem("entity.assyorderdefect.batchcode", "ja-JP", "批次_jp", "批次（一工单一批次，取最近日报）"),
-            // entity.assyorderdefect.batchcode
-            new TranslationSeedItem("entity.assyorderdefect.batchcode", "zh-CN", "批次", "批次（一工单一批次，取最近日报）"),
-            // entity.assyorderdefect.batchcode
-            new TranslationSeedItem("entity.assyorderdefect.batchcode", "zh-HK", "批次_hk", "批次（一工单一批次，取最近日报）"),
+            // entity.assyorderdefect.prodbatch
+            new TranslationSeedItem("entity.assyorderdefect.prodbatch", "en-US", "批次_us", "批次（一工单一批次，取最近日报）"),
+            // entity.assyorderdefect.prodbatch
+            new TranslationSeedItem("entity.assyorderdefect.prodbatch", "ja-JP", "批次_jp", "批次（一工单一批次，取最近日报）"),
+            // entity.assyorderdefect.prodbatch
+            new TranslationSeedItem("entity.assyorderdefect.prodbatch", "zh-CN", "批次", "批次（一工单一批次，取最近日报）"),
+            // entity.assyorderdefect.prodbatch
+            new TranslationSeedItem("entity.assyorderdefect.prodbatch", "zh-HK", "批次_hk", "批次（一工单一批次，取最近日报）"),
 
             // entity.assyorderdefect.prodorderqty
             new TranslationSeedItem("entity.assyorderdefect.prodorderqty", "en-US", "工单数量_us", "工单数量（取最近日报）"),

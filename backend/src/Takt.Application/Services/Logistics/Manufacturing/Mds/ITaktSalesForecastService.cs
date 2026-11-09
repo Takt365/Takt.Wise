@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Mds
 // 文件名称：ITaktSalesForecastService.cs
-// 创建时间：2026-08-22
+// 创建时间：2026-11-06
 // 创建人：Takt365(Cursor AI)
 // 功能描述：销售预测应用服务接口
 // 

@@ -81,7 +81,7 @@ export interface AssyOutput extends CompanyDtoBase {
   /**
    * 批次（回填：随工单）
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 工单数量（回填：随工单）
@@ -196,7 +196,7 @@ export interface AssyOutputQuery extends TaktPagedQuery {
   /**
    * 批次（回填：随工单）
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 工单数量（回填：随工单）
@@ -320,7 +320,7 @@ export interface AssyOutputCreate {
   /**
    * 批次（回填：随工单）
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 工单数量（回填：随工单）
@@ -459,7 +459,7 @@ export interface AssyOutputTemplate {
   /**
    * 批次（回填：随工单）
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 工单数量（回填：随工单）
@@ -578,7 +578,7 @@ export interface AssyOutputImport {
   /**
    * 批次（回填：随工单）
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 工单数量（回填：随工单）
@@ -697,7 +697,7 @@ export interface AssyOutputExport {
   /**
    * 批次（回填：随工单）
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 工单数量（回填：随工单）

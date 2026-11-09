@@ -349,14 +349,14 @@ const columns = computed<TableColumnsType>(() => [
       String(getFqcOrderItemField(record, 'materialDescription') ?? ''),
   },
   {
-    title: pi.label('batchCode'),
-    dataIndex: 'batchCode',
-    key: 'batchCode',
+    title: pi.label('prodBatch'),
+    dataIndex: 'prodBatch',
+    key: 'prodBatch',
     width: 120,
     resizable: true,
     ellipsis: true,
     customRender: ({ record }: { record: FqcOrderItem }) =>
-      String(getFqcOrderItemField(record, 'batchCode') ?? ''),
+      String(getFqcOrderItemField(record, 'prodBatch') ?? ''),
   },
   {
     title: pi.label('warehouseQuantity'),

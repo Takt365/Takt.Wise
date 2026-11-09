@@ -135,6 +135,7 @@ export default {
       numberingRule: "编码规则",
       numberingCodePreview: "选择编码规则后自动生成",
       numberingRuleRequired: "请选择编码规则",
+      periodRange: "期间",
       periodRangeMaxMonths: "查询期间不能超过 {max} 个月",
     },
   },

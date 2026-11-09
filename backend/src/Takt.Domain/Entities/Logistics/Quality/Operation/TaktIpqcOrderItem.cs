@@ -52,8 +52,8 @@ public class TaktIpqcOrderItem : TaktCompanyEntityBase
     /// <summary>
     /// 批次号
     /// </summary>
-    [SugarColumn(ColumnName = "batch_code", ColumnDescription = "批次号", ColumnDataType = "nvarchar", Length = 20, IsNullable = true)]
-    public string? BatchCode { get; set; }
+    [SugarColumn(ColumnName = "prod_batch", ColumnDescription = "批次号", ColumnDataType = "nvarchar", Length = 20, IsNullable = true)]
+    public string? ProdBatch { get; set; }
     /// <summary>
     /// 生产数量
     /// </summary>

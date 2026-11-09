@@ -40,37 +40,30 @@ internal static class TaktEcDeptExecRedundantBinder
                 ApplyEcImplScope(pur, detail, assignControlScope, masterControlScope);
                 pur.DiscontinuedStatus = detail.DiscontinuedStatus ?? string.Empty;
                 pur.EcModelCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcModelCode]);
-                pur.EcNewMaterialCode = detail.EcNewMaterialCode ?? string.Empty;
                 pur.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
-                pur.EcRootMaterialDescription = ResolveRootMaterialDescription(pur.EcImplScope, pur.EcControlScope, detail.EcRootMaterialDescription);
-                pur.EcNewMaterialDescription = detail.EcNewMaterialDescription ?? string.Empty;
-                pur.EcNewWarehouse = detail.EcNewWarehouse ?? string.Empty;
+                pur.EcNewMaterialCodeGroup = TaktEcRootMaterialCodeGroup.JoinMaterialCodes([detail.EcNewMaterialCode]);
+                pur.EcOldMaterialCodeGroup = TaktEcRootMaterialCodeGroup.JoinMaterialCodes([detail.EcOldMaterialCode]);
                 pur.EcNewPurchaseType = detail.EcNewPurchaseType ?? string.Empty;
-                // EcOldPartDisposition：采购自行维护，不从明细/生管带入（与生管去重粒不同）
+                // EcOldPartBalance：采购自行维护（ntext 多行格式同生管），不从明细/生管带入（与生管去重粒不同）
                 break;
             case TaktEcIqc iqc:
                 ApplyIdentity(iqc, detail, lineNumberForCreate);
                 ApplyEcImplScope(iqc, detail, assignControlScope, masterControlScope);
                 iqc.DiscontinuedStatus = detail.DiscontinuedStatus ?? string.Empty;
                 iqc.EcModelCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcModelCode]);
-                iqc.EcNewMaterialCode = detail.EcNewMaterialCode ?? string.Empty;
                 iqc.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
-                iqc.EcRootMaterialDescription = ResolveRootMaterialDescription(iqc.EcImplScope, iqc.EcControlScope, detail.EcRootMaterialDescription);
-                iqc.EcNewMaterialDescription = detail.EcNewMaterialDescription ?? string.Empty;
-                iqc.EcNewWarehouse = detail.EcNewWarehouse ?? string.Empty;
+                iqc.EcNewMaterialCodeGroup = TaktEcRootMaterialCodeGroup.JoinMaterialCodes([detail.EcNewMaterialCode]);
                 iqc.EcNewRequiresInspection = detail.EcNewRequiresInspection;
                 break;
             case TaktEcMc mc:
                 ApplyIdentity(mc, detail, lineNumberForCreate);
                 ApplyEcImplScope(mc, detail, assignControlScope, masterControlScope);
                 mc.DiscontinuedStatus = detail.DiscontinuedStatus ?? string.Empty;
-                mc.EcNewMaterialCode = detail.EcNewMaterialCode ?? string.Empty;
-                mc.EcNewMaterialDescription = detail.EcNewMaterialDescription ?? string.Empty;
                 mc.EcNewPurchaseType = detail.EcNewPurchaseType ?? string.Empty;
                 mc.EcNewWarehouse = detail.EcNewWarehouse ?? string.Empty;
                 mc.EcModelCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcModelCode]);
                 mc.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
-                mc.EcRootMaterialDescription = ResolveRootMaterialDescription(mc.EcImplScope, mc.EcControlScope, detail.EcRootMaterialDescription);
+                mc.EcNewMaterialCodeGroup = TaktEcRootMaterialCodeGroup.JoinMaterialCodes([detail.EcNewMaterialCode]);
                 break;
             case TaktEcMtl mtl:
                 ApplyIdentity(mtl, detail, lineNumberForCreate);
@@ -78,27 +71,22 @@ internal static class TaktEcDeptExecRedundantBinder
                 mtl.EcParentMaterialCode = detail.EcParentMaterialCode ?? string.Empty;
                 mtl.EcParentMaterialDescription = detail.EcParentMaterialDescription ?? string.Empty;
                 mtl.DiscontinuedStatus = detail.DiscontinuedStatus ?? string.Empty;
-                mtl.EcNewMaterialCode = detail.EcNewMaterialCode ?? string.Empty;
-                mtl.EcNewMaterialDescription = detail.EcNewMaterialDescription ?? string.Empty;
                 mtl.EcNewPurchaseType = detail.EcNewPurchaseType ?? string.Empty;
                 mtl.EcNewWarehouse = detail.EcNewWarehouse ?? string.Empty;
                 mtl.EcModelCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcModelCode]);
                 mtl.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
-                mtl.EcRootMaterialDescription = ResolveRootMaterialDescription(mtl.EcImplScope, mtl.EcControlScope, detail.EcRootMaterialDescription);
+                mtl.EcNewMaterialCodeGroup = TaktEcRootMaterialCodeGroup.JoinMaterialCodes([detail.EcNewMaterialCode]);
                 break;
             case TaktEcMfg2 mfg2:
                 ApplyIdentity(mfg2, detail, lineNumberForCreate);
                 ApplyEcImplScope(mfg2, detail, assignControlScope, masterControlScope);
-                mfg2.EcParentMaterialCode = detail.EcParentMaterialCode ?? string.Empty;
-                mfg2.EcParentMaterialDescription = detail.EcParentMaterialDescription ?? string.Empty;
                 mfg2.DiscontinuedStatus = detail.DiscontinuedStatus ?? string.Empty;
                 mfg2.EcModelCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcModelCode]);
-                mfg2.EcNewMaterialCode = detail.EcNewMaterialCode ?? string.Empty;
-                mfg2.EcNewMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcNewMaterialCode]);
-                mfg2.EcNewMaterialDescription = detail.EcNewMaterialDescription ?? string.Empty;
-                mfg2.EcParentMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcParentMaterialCode]);
                 mfg2.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
-                mfg2.EcRootMaterialDescription = ResolveRootMaterialDescription(mfg2.EcImplScope, mfg2.EcControlScope, detail.EcRootMaterialDescription);
+                mfg2.EcParentMaterialCode = detail.EcParentMaterialCode ?? string.Empty;
+                mfg2.EcParentMaterialDescription = detail.EcParentMaterialDescription ?? string.Empty;
+                mfg2.EcOldMaterialCodeGroup = TaktEcRootMaterialCodeGroup.JoinMaterialCodes([detail.EcOldMaterialCode]);
+                mfg2.EcNewMaterialCodeGroup = TaktEcRootMaterialCodeGroup.JoinMaterialCodes([detail.EcNewMaterialCode]);
                 break;
             case TaktEcPc pc:
                 ApplyIdentity(pc, detail, lineNumberForCreate);
@@ -106,7 +94,8 @@ internal static class TaktEcDeptExecRedundantBinder
                 pc.DiscontinuedStatus = detail.DiscontinuedStatus ?? string.Empty;
                 pc.EcModelCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcModelCode]);
                 pc.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
-                pc.EcRootMaterialDescription = ResolveRootMaterialDescription(pc.EcImplScope, pc.EcControlScope, detail.EcRootMaterialDescription);
+                pc.EcOldMaterialCodeGroup = TaktEcRootMaterialCodeGroup.JoinMaterialCodes([detail.EcOldMaterialCode]);
+                pc.EcNewMaterialCodeGroup = TaktEcRootMaterialCodeGroup.JoinMaterialCodes([detail.EcNewMaterialCode]);
                 break;
             case TaktEcMfg1 mfg1:
                 ApplyIdentity(mfg1, detail, lineNumberForCreate);
@@ -114,7 +103,8 @@ internal static class TaktEcDeptExecRedundantBinder
                 mfg1.DiscontinuedStatus = detail.DiscontinuedStatus ?? string.Empty;
                 mfg1.EcModelCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcModelCode]);
                 mfg1.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
-                mfg1.EcRootMaterialDescription = ResolveRootMaterialDescription(mfg1.EcImplScope, mfg1.EcControlScope, detail.EcRootMaterialDescription);
+                mfg1.EcOldMaterialCodeGroup = TaktEcRootMaterialCodeGroup.JoinMaterialCodes([detail.EcOldMaterialCode]);
+                mfg1.EcNewMaterialCodeGroup = TaktEcRootMaterialCodeGroup.JoinMaterialCodes([detail.EcNewMaterialCode]);
                 break;
             case TaktEcQc qc:
                 ApplyIdentity(qc, detail, lineNumberForCreate);
@@ -122,7 +112,8 @@ internal static class TaktEcDeptExecRedundantBinder
                 qc.DiscontinuedStatus = detail.DiscontinuedStatus ?? string.Empty;
                 qc.EcModelCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcModelCode]);
                 qc.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
-                qc.EcRootMaterialDescription = ResolveRootMaterialDescription(qc.EcImplScope, qc.EcControlScope, detail.EcRootMaterialDescription);
+                qc.EcOldMaterialCodeGroup = TaktEcRootMaterialCodeGroup.JoinMaterialCodes([detail.EcOldMaterialCode]);
+                qc.EcNewMaterialCodeGroup = TaktEcRootMaterialCodeGroup.JoinMaterialCodes([detail.EcNewMaterialCode]);
                 break;
             case TaktEcMe me:
                 ApplyIdentity(me, detail, lineNumberForCreate);
@@ -130,7 +121,6 @@ internal static class TaktEcDeptExecRedundantBinder
                 me.DiscontinuedStatus = detail.DiscontinuedStatus ?? string.Empty;
                 me.EcModelCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcModelCode]);
                 me.EcRootMaterialCodeGroup = TaktEcRootMaterialCodeGroup.Join([detail.EcRootMaterialCode]);
-                me.EcRootMaterialDescription = ResolveRootMaterialDescription(me.EcImplScope, me.EcControlScope, detail.EcRootMaterialDescription);
                 break;
             default:
                 if (exec is ITaktEcDeptExecEntity identity)
@@ -237,20 +227,4 @@ internal static class TaktEcDeptExecRedundantBinder
         }
     }
 
-    /// <summary>
-    /// 根物料描述仅在全仕向且按成品时保留；按机种、按设变等机种组或物料组为空
-    /// </summary>
-    /// <param name="ecImplScope">实施范围</param>
-    /// <param name="ecControlScope">部门实施范围</param>
-    /// <param name="description">明细根物料描述</param>
-    /// <returns>写入执行行的描述</returns>
-    private static string ResolveRootMaterialDescription(int ecImplScope, int ecControlScope, string? description)
-    {
-        if (ecImplScope == TaktEcScopeConstants.AllDestination
-            && ecControlScope == TaktEcControlScopeConstants.ByFinishedProduct)
-        {
-            return description ?? string.Empty;
-        }
-        return string.Empty;
-    }
 }

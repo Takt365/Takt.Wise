@@ -792,10 +792,10 @@ const purchaseOrderItemFormColumns = computed<TaktEditableTableColumn[]>(() => [
     width: 140,
   },
   {
-    key: 'purchaseInfoCode',
-    title: purchaseOrderItemPi.label('purchaseInfoCode'),
+    key: 'purchaseConditionCode',
+    title: purchaseOrderItemPi.label('purchaseConditionCode'),
     editor: 'input',
-    width: 140, allowClear: true, placeholder: purchaseOrderItemPi.ph('purchaseInfoCode'),
+    width: 140, allowClear: true, placeholder: purchaseOrderItemPi.ph('purchaseConditionCode'),
   },
   {
     key: 'supplierMaterialCode',
@@ -919,7 +919,7 @@ function createDefaultPurchaseOrderItemRow(): Record<string, unknown> {
     requestCode: '',
     requestLineNumber: 0,
     materialCode: '',
-    purchaseInfoCode: '',
+    purchaseConditionCode: '',
     supplierMaterialCode: '',
     purchaseUnit: '',
     orderQuantity: 0,

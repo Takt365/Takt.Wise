@@ -161,7 +161,7 @@ export interface SalesInvoiceItem extends CompanyDtoBase {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 物料组
@@ -486,7 +486,7 @@ export interface SalesInvoiceItemQuery extends TaktPagedQuery {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 物料组
@@ -820,7 +820,7 @@ export interface SalesInvoiceItemCreate {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 物料组
@@ -1173,7 +1173,7 @@ export interface SalesInvoiceItemTemplate {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 物料组
@@ -1492,7 +1492,7 @@ export interface SalesInvoiceItemImport {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 物料组
@@ -1811,7 +1811,7 @@ export interface SalesInvoiceItemExport {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 物料组

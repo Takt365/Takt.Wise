@@ -64,7 +64,7 @@ public class TaktAssyOrderDefectDto : TaktCompanyDtoBase
     /// <summary>
     /// 批次（一工单一批次，取最近日报）
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 工单数量（取最近日报）
@@ -171,7 +171,7 @@ public class TaktAssyOrderDefectQueryDto : TaktPagedQuery
     /// <summary>
     /// 批次（一工单一批次，取最近日报）
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 工单数量（取最近日报）
@@ -306,7 +306,7 @@ public class TaktAssyOrderDefectCreateDto
     /// <summary>
     /// 批次（一工单一批次，取最近日报）
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 工单数量（取最近日报）
@@ -466,7 +466,7 @@ public class TaktAssyOrderDefectTemplateDto
     /// <summary>
     /// 批次（一工单一批次，取最近日报）
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 工单数量（取最近日报）
@@ -578,7 +578,7 @@ public class TaktAssyOrderDefectImportDto
     /// <summary>
     /// 批次（一工单一批次，取最近日报）
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 工单数量（取最近日报）
@@ -691,7 +691,7 @@ public class TaktAssyOrderDefectExportDto
     /// <summary>
     /// 批次（一工单一批次，取最近日报）
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 工单数量（取最近日报）

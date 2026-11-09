@@ -10,6 +10,7 @@
 
 export default {
   page: {
+    periodRange: '生産期間',
     proddatelocked: '生産日 {prodDate} はロック済み（翌月 {cutoffDay} 日以降は新規・変更不可）。',
     proddateoutofrange: '生産日が選択可能範囲外です（毎月 {cutoffDay} 日以降は当月1日から今日までのみ選択可）。',
   },

@@ -184,16 +184,13 @@ const summaryText = computed(() => {
   if (!queryPlantCode.value?.trim()) {
     return t(`${localePrefix}.selectPlantRequired`)
   }
-  if (!queryMaterialType.value?.trim()) {
-    return t(`${localePrefix}.selectMaterialTypeRequired`)
-  }
   if (!periodRange.value?.[0] || !periodRange.value?.[1]) {
     return t(`${localePrefix}.selectPeriodRequired`)
   }
   const model = queryModelCode.value?.trim()
   return t(`${localePrefix}.summary`, {
     plant: queryPlantCode.value,
-    materialType: queryMaterialType.value,
+    materialType: queryMaterialType.value?.trim() || t(`${localePrefix}.materialTypeAll`),
     period: `${periodRange.value[0]} ~ ${periodRange.value[1]}`,
     model: model || t(`${localePrefix}.modelAll`),
     productCount: productCount.value,
@@ -321,14 +318,14 @@ function periodCost(record: BomMaterialCostItemModelCostTrend, columnKey: string
  */
 function buildQuery() {
   const plantCode = queryPlantCode.value?.trim()
-  const materialType = queryMaterialType.value?.trim()
-  if (!plantCode || !materialType || !periodRange.value?.[0] || !periodRange.value?.[1]) {
+  if (!plantCode || !periodRange.value?.[0] || !periodRange.value?.[1]) {
     return null
   }
   const model = queryModelCode.value?.trim()
+  const materialType = queryMaterialType.value?.trim()
   return {
     plantCode,
-    materialType,
+    materialType: materialType || undefined,
     modelCode: model || undefined,
     pageIndex: pageIndex.value,
     pageSize: pageSize.value,

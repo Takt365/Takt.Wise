@@ -9,82 +9,56 @@
 
 <template>
   <div class="flex h-full min-h-0 flex-col p-4">
-    <div class="takt-query-bar">
-      <div class="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-2">
-        <div class="flex items-center gap-1">
-          <span class="shrink-0 whitespace-nowrap text-sm text-text-secondary">{{ t(`${localePrefix}.periodRange`) }}</span>
-          <a-range-picker
-            v-model:value="periodRange"
-            picker="month"
-            format="YYYY-MM"
-            value-format="YYYY-MM"
-            class="w-56"
-            :placeholder="[t(`${localePrefix}.periodRange`), t(`${localePrefix}.periodRange`)]"
-            :disabled-date="disabledDate"
-            @calendar-change="onCalendarChange"
-            @open-change="onOpenChange"
-          />
-        </div>
-        <div class="flex items-center gap-1">
-          <span class="shrink-0 whitespace-nowrap text-sm text-text-secondary">{{ t('entity.productionchangeover.prodcategory') }}</span>
-          <TaktSelect
-            v-model:value="prodCategory"
-            dict-type="logistics_manufacturing_prod_category"
-            class="w-36"
-            allow-clear
-            show-search
-            :placeholder="t('common.page.form.placeholder.selectonly')"
-          />
-        </div>
-        <div class="flex items-center gap-1">
-          <span class="shrink-0 whitespace-nowrap text-sm text-text-secondary">{{ t('entity.productionchangeover.changeovercategory') }}</span>
-          <TaktSelect
-            v-model:value="changeoverCategory"
-            dict-type="logistics_manufacturing_changeover_category"
-            class="w-36"
-            allow-clear
-            show-search
-            :placeholder="t('common.page.form.placeholder.selectonly')"
-          />
-        </div>
-        <div class="flex items-center gap-1">
-          <span class="shrink-0 whitespace-nowrap text-sm text-text-secondary">{{ t('entity.productionchangeover.teamcode') }}</span>
-          <TaktSelect
-            :key="plantCode || 'team'"
-            v-model:value="teamCode"
-            :api-url="teamOptionsUrl"
-            :api-params="teamApiParams"
-            :disabled="!plantCode?.trim()"
-            class="w-36"
-            allow-clear
-            show-search
-            :placeholder="t('common.page.form.placeholder.selectonly')"
-          />
-        </div>
-      </div>
-      <a-space class="query-actions">
-        <a-button
-          class="takt-button-query"
-          :loading="loading"
-          @click="handleSearch"
-        >
-          <template #icon>
-            <RiSearchLine class="takt-remix-icon" />
-          </template>
-          {{ t('common.page.button.query') }}
-        </a-button>
-        <a-button
-          class="takt-button-reset"
-          :disabled="loading"
-          @click="handleReset"
-        >
-          <template #icon>
-            <RiRefreshLine class="takt-remix-icon" />
-          </template>
-          {{ t('common.page.button.reset') }}
-        </a-button>
-      </a-space>
-    </div>
+    <TaktQueryBar
+      :show-keyword="false"
+      class="shrink-0"
+      :loading="loading"
+      @search="handleSearch"
+      @reset="handleReset"
+    >
+      <template #leading>
+        <a-range-picker
+          v-model:value="periodRange"
+          picker="month"
+          format="YYYY-MM"
+          value-format="YYYY-MM"
+          :placeholder="[t(`${localePrefix}.periodRange`), t(`${localePrefix}.periodRange`)]"
+          :disabled-date="disabledDate"
+          @calendar-change="onCalendarChange"
+          @open-change="onOpenChange"
+        />
+        <span class="shrink-0 whitespace-nowrap text-sm text-text-secondary">{{ t('entity.productionchangeover.prodcategory') }}</span>
+        <TaktSelect
+          v-model:value="prodCategory"
+          dict-type="logistics_manufacturing_prod_category"
+          class="min-w-0 flex-1"
+          allow-clear
+          show-search
+          :placeholder="t('common.page.form.placeholder.selectonly')"
+        />
+        <span class="shrink-0 whitespace-nowrap text-sm text-text-secondary">{{ t('entity.productionchangeover.changeovercategory') }}</span>
+        <TaktSelect
+          v-model:value="changeoverCategory"
+          dict-type="logistics_manufacturing_changeover_category"
+          class="min-w-0 flex-1"
+          allow-clear
+          show-search
+          :placeholder="t('common.page.form.placeholder.selectonly')"
+        />
+        <span class="shrink-0 whitespace-nowrap text-sm text-text-secondary">{{ t('entity.productionchangeover.teamcode') }}</span>
+        <TaktSelect
+          :key="plantCode || 'team'"
+          v-model:value="teamCode"
+          :api-url="teamOptionsUrl"
+          :api-params="teamApiParams"
+          :disabled="!plantCode?.trim()"
+          class="min-w-0 flex-1"
+          allow-clear
+          show-search
+          :placeholder="t('common.page.form.placeholder.selectonly')"
+        />
+      </template>
+    </TaktQueryBar>
     <TaktToolsBar
       class="mt-2"
       :show-create="false"
@@ -161,7 +135,6 @@
  */
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { RiRefreshLine, RiSearchLine } from '@remixicon/vue'
 import {
   exportChangeoverStat,
   getChangeoverStatList,

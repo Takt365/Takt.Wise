@@ -35,7 +35,10 @@ description: >-
 | MDS·销售预测·MPS·MRP | 20 |
 | 生产类别 / 班组 / 工单类别 | 4 / 8 / 4 |
 | 机种 | 40 |
-| 批次字符串标识（`prod_batch` / `batch_code` / `scheduled_batch` / `outbound_batch` / `implementation_batch` / `inspection_batch` / `lot`） | 20 |
+| 生产批次（制造 `ProdBatch`/`prod_batch`；设变 `production_batch`） | **40** |
+| 计划批次（`PlannedBatch`/`planned_batch`，释放正式工单写入 `ProdBatch`） | **40** |
+| 设变部管/物料出库批次 `outbound_batch` | **40** |
+| 其它批次（`scheduled_batch` / `implementation_batch` / `inspection_batch` / `lot`；品质/物料凭证/销售 `prod_batch`） | 20 |
 | 销售/采购订单·报价·询价·价格 | 20 |
 | 客户 / 供应商 | 10 / 10 |
 | 设备编码 | 18 |

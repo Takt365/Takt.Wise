@@ -172,7 +172,8 @@ public static class TaktEcScopeConstants
     }
 
     /// <summary>
-    /// 是否为按物料类型生成的执行内容，如「全仕向:按成品:HALB」。
+    /// 是否为按物料类型生成的执行内容。
+    /// 现行：不管理只写 HALB/ROH（或单独 HALB、ROH）；历史兼容「全仕向:按成品:HALB」三段文案。
     /// </summary>
     /// <param name="content">执行内容</param>
     /// <returns>是否物料类型文案</returns>
@@ -183,13 +184,14 @@ public static class TaktEcScopeConstants
             return false;
         }
         var value = content.Trim();
-        if (!TryReadScopeDeptSuffix(value, out var materialType))
+        if (TryReadScopeDeptSuffix(value, out var materialType))
         {
-            return false;
+            return materialType.Length > 0
+                && !string.Equals(materialType, EolExecContent, StringComparison.OrdinalIgnoreCase)
+                && IsMaterialTypeSuffix(materialType);
         }
-        return materialType.Length > 0
-            && !string.Equals(materialType, EolExecContent, StringComparison.OrdinalIgnoreCase)
-            && IsMaterialTypeSuffix(materialType);
+        return !string.Equals(value, EolExecContent, StringComparison.OrdinalIgnoreCase)
+            && IsMaterialTypeSuffix(value);
     }
 
     /// <summary>
@@ -227,6 +229,11 @@ public static class TaktEcScopeConstants
     public const string EolExecContent = "EOL";
 
     /// <summary>
+    /// 不管理（非 FERT）自动填写值：执行内容与预定/出库/生产/检验批次统一为 HALB/ROH
+    /// </summary>
+    public const string NonFertBatchMarker = "HALB/ROH";
+
+    /// <summary>
     /// 尚未填写时的执行内容后缀
     /// </summary>
     public const string NotApplicableExecSuffix = "N/A";
@@ -247,19 +254,74 @@ public static class TaktEcScopeConstants
     }
 
     /// <summary>
-    /// 新物料编码是否有效（空或占位「0」视为无新物料；采购/受检/部管不得因此生成执行行）
+    /// 从自动执行内容映射批次写入值。
+    /// 停产（EOL / 「…:EOL」）→ EOL；不管理（HALB/ROH 或历史三段物料类型）→ HALB/ROH。
     /// </summary>
-    /// <param name="ecNewMaterialCode">新物料编码</param>
-    /// <returns>是否有效新物料</returns>
-    public static bool HasEffectiveNewMaterialCode(string? ecNewMaterialCode)
+    /// <param name="execContentMarker">自动执行内容或 HALB/ROH</param>
+    /// <returns>批次字段值</returns>
+    public static string ResolveBatchMarkerFromExecContent(string execContentMarker)
     {
-        var code = ecNewMaterialCode?.Trim() ?? string.Empty;
+        ArgumentException.ThrowIfNullOrWhiteSpace(execContentMarker);
+        var value = execContentMarker.Trim();
+        var suffix = TryReadScopeDeptSuffix(value, out var scopeSuffix) ? scopeSuffix : value;
+        if (string.Equals(suffix, EolExecContent, StringComparison.OrdinalIgnoreCase))
+        {
+            return EolExecContent;
+        }
+        if (IsMaterialTypeSuffix(suffix)
+            || string.Equals(suffix, NonFertBatchMarker, StringComparison.OrdinalIgnoreCase))
+        {
+            return NonFertBatchMarker;
+        }
+        return suffix;
+    }
+
+    /// <summary>
+    /// 是否为自动关闭写入的批次标记（EOL，或非完成品 HALB/ROH；含历史三段文案与单独物料类型）
+    /// </summary>
+    /// <param name="batch">批次</param>
+    /// <returns>是否自动批次标记</returns>
+    public static bool IsAutoCloseBatchMarker(string? batch)
+    {
+        if (string.IsNullOrWhiteSpace(batch))
+        {
+            return false;
+        }
+        var value = batch.Trim();
+        if (string.Equals(value, EolExecContent, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(value, NonFertBatchMarker, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+        if (IsEolExecContent(value) || IsDeptMaterialTypeExecContent(value))
+        {
+            return true;
+        }
+        return IsMaterialTypeSuffix(value);
+    }
+
+    /// <summary>
+    /// 旧/新物料编码是否有效（空或占位「0」视为无效；派生编码组与采购/受检/部管落行均排除）
+    /// </summary>
+    /// <param name="materialCode">旧物料或新物料编码</param>
+    /// <returns>是否有效物料编码</returns>
+    public static bool HasEffectiveMaterialCode(string? materialCode)
+    {
+        var code = materialCode?.Trim() ?? string.Empty;
         if (string.IsNullOrEmpty(code))
         {
             return false;
         }
         return !string.Equals(code, "0", StringComparison.Ordinal);
     }
+
+    /// <summary>
+    /// 新物料编码是否有效（空或占位「0」视为无新物料；采购/受检/部管不得因此生成执行行）
+    /// </summary>
+    /// <param name="ecNewMaterialCode">新物料编码</param>
+    /// <returns>是否有效新物料</returns>
+    public static bool HasEffectiveNewMaterialCode(string? ecNewMaterialCode)
+        => HasEffectiveMaterialCode(ecNewMaterialCode);
 
     /// <summary>
     /// 是否采购/受检/部管课（依赖有效新物料编码才生成执行行）
@@ -464,6 +526,8 @@ public static class TaktEcScopeConstants
             || string.Equals(value, TaktEcIqcConstants.NotRelatedToIqcExecContent, StringComparison.Ordinal)
             || string.Equals(value, TaktEcMcConstants.NotRelatedToMaterialControlExecContent, StringComparison.Ordinal)
             || IsDeptMaterialTypeExecContent(value)
-            || IsEolExecContent(value);
+            || IsEolExecContent(value)
+            || string.Equals(value, NonFertBatchMarker, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(value, EolExecContent, StringComparison.OrdinalIgnoreCase);
     }
 }

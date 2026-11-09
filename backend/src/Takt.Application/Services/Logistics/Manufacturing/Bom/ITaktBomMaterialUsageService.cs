@@ -50,7 +50,7 @@ public interface ITaktBomMaterialUsageService
         string? fileName = null);
 
     /// <summary>
-    /// 物料下拉：TaktBomMaterialCostItem.ComponentCode 去重（工厂 + 核算年月；采购类型 F、生产相关 X、PCB SECT 标识为空）
+    /// 物料下拉：TaktBomMaterialCostItem.ComponentCode 去重（工厂 + 核算年月；采购类型 F、生产相关 X、批量标识为空、PCB SECT 标识为空、特殊采购类为空）
     /// </summary>
     /// <param name="plantCode">工厂</param>
     /// <param name="costingPeriod">核算年月 yyyy-MM</param>

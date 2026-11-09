@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/api/logistics/manufacturing/engineering-change
 // 文件名称：ecMtl.api.ts
-// 创建时间：2026-09-08
+// 创建时间：2026-10-29
 // 创建人：Takt365(Auto Generated)
 // 功能描述：logistics/manufacturing/engineering-change 模块 API（自动生成，请勿手改路由常量）
 // 
@@ -18,8 +18,8 @@ import type {
 import type {
   EcMtl,
   EcMtlCreate,
-  EcMtlObsolete,
   EcMtlDiscontinuedStatus,
+  EcMtlObsolete,
   EcMtlUpdate
 } from '@/types/logistics/manufacturing/engineering-change/ecMtl.types';
 import type {
@@ -30,7 +30,7 @@ import type {
  * API 路径前缀（相对 request baseURL，对应后端 [controller]）
  * @description TaktEcMtls
  */
-const EC_SMT_API_BASE = 'TaktEcMtls';
+const EC_MTL_API_BASE = 'TaktEcMtls';
 
 // ========================================
 // 基础 CRUD
@@ -43,7 +43,7 @@ const EC_SMT_API_BASE = 'TaktEcMtls';
  */
 export function getEcMtlList(queryDto: any): Promise<TaktPagedResult<EcMtl>> {
   return request<TaktPagedResult<EcMtl>>({
-    url: `${EC_SMT_API_BASE}/list`,
+    url: `${EC_MTL_API_BASE}/list`,
     method: 'get',
     params: queryDto,
   });
@@ -56,7 +56,7 @@ export function getEcMtlList(queryDto: any): Promise<TaktPagedResult<EcMtl>> {
  */
 export function getEcMtlMasterList(queryDto: any): Promise<TaktPagedResult<EcMtlMaster>> {
   return request<TaktPagedResult<EcMtlMaster>>({
-    url: `${EC_SMT_API_BASE}/masters`,
+    url: `${EC_MTL_API_BASE}/masters`,
     method: 'get',
     params: queryDto,
   });
@@ -69,7 +69,7 @@ export function getEcMtlMasterList(queryDto: any): Promise<TaktPagedResult<EcMtl
  */
 export function getEcMtlById(id: string): Promise<EcMtl> {
   return request<EcMtl>({
-    url: `${EC_SMT_API_BASE}/${id}`,
+    url: `${EC_MTL_API_BASE}/${id}`,
     method: 'get',
   });
 }
@@ -81,7 +81,7 @@ export function getEcMtlById(id: string): Promise<EcMtl> {
  */
 export function createEcMtl(dto: EcMtlCreate): Promise<EcMtl> {
   return request<EcMtl>({
-    url: `${EC_SMT_API_BASE}`,
+    url: `${EC_MTL_API_BASE}`,
     method: 'post',
     data: dto,
   });
@@ -95,7 +95,7 @@ export function createEcMtl(dto: EcMtlCreate): Promise<EcMtl> {
  */
 export function updateEcMtl(id: string, dto: EcMtlUpdate): Promise<EcMtl> {
   return request<EcMtl>({
-    url: `${EC_SMT_API_BASE}/${id}`,
+    url: `${EC_MTL_API_BASE}/${id}`,
     method: 'put',
     data: dto,
   });
@@ -108,7 +108,7 @@ export function updateEcMtl(id: string, dto: EcMtlUpdate): Promise<EcMtl> {
  */
 export function deleteEcMtlById(id: string): Promise<void> {
   return request({
-    url: `${EC_SMT_API_BASE}/${id}`,
+    url: `${EC_MTL_API_BASE}/${id}`,
     method: 'delete',
   });
 }
@@ -120,20 +120,20 @@ export function deleteEcMtlById(id: string): Promise<void> {
  */
 export function deleteEcMtlBatch(ids: string[]): Promise<void> {
   return request({
-    url: `${EC_SMT_API_BASE}/batch`,
+    url: `${EC_MTL_API_BASE}/batch`,
     method: 'delete',
     data: ids,
   });
 }
 
 /**
- * 更新设变smt执行停产状态
+ * 更新设变SMT执行停产状态
  * @param {EcMtlDiscontinuedStatus} dto 停产状态 DTO
- * @returns {Promise<EcMtl>} 设变smt执行DTO
+ * @returns {Promise<EcMtl>} 设变SMT执行DTO
  */
 export function updateEcMtlDiscontinuedStatus(dto: EcMtlDiscontinuedStatus): Promise<EcMtl> {
   return request<EcMtl>({
-    url: `${EC_SMT_API_BASE}/discontinued-status`,
+    url: `${EC_MTL_API_BASE}/discontinued-status`,
     method: 'put',
     data: dto,
   });
@@ -146,7 +146,7 @@ export function updateEcMtlDiscontinuedStatus(dto: EcMtlDiscontinuedStatus): Pro
  */
 export function updateEcMtlObsolete(dto: EcMtlObsolete): Promise<EcMtl> {
   return request<EcMtl>({
-    url: `${EC_SMT_API_BASE}/obsolete`,
+    url: `${EC_MTL_API_BASE}/obsolete`,
     method: 'put',
     data: dto,
   });
@@ -164,7 +164,7 @@ export function updateEcMtlObsolete(dto: EcMtlObsolete): Promise<EcMtl> {
  */
 export function getEcMtlOptions(plantCode?: string, keyword?: string): Promise<TaktSelectOption[]> {
   return request<TaktSelectOption[]>({
-    url: `${EC_SMT_API_BASE}/options`,
+    url: `${EC_MTL_API_BASE}/options`,
     method: 'get',
     params: {
       plantCode,
@@ -185,7 +185,7 @@ export function getEcMtlOptions(plantCode?: string, keyword?: string): Promise<T
  */
 export function getEcMtlTemplate(sheetName?: string, templateName?: string): Promise<Blob> {
   return request<Blob>({
-    url: `${EC_SMT_API_BASE}/template`,
+    url: `${EC_MTL_API_BASE}/template`,
     method: 'get',
     params: {
       sheetName,
@@ -206,7 +206,7 @@ export function importEcMtl(file: globalThis.File, sheetName?: string): Promise<
   formData.append('file', file);
   
   return request({
-    url: `${EC_SMT_API_BASE}/import`,
+    url: `${EC_MTL_API_BASE}/import`,
     method: 'post',
     data: formData,
     headers: {
@@ -231,7 +231,7 @@ export function exportEcMtl(
   exportName?: string
 ): Promise<Blob> {
   return request<Blob>({
-    url: `${EC_SMT_API_BASE}/export`,
+    url: `${EC_MTL_API_BASE}/export`,
     method: 'get',
     params: {
       ...query,

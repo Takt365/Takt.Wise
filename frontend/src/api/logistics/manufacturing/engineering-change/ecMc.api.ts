@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/api/logistics/manufacturing/engineering-change
 // 文件名称：ecMc.api.ts
-// 创建时间：2026-09-08
+// 创建时间：2026-10-29
 // 创建人：Takt365(Auto Generated)
 // 功能描述：logistics/manufacturing/engineering-change 模块 API（自动生成，请勿手改路由常量）
 // 
@@ -18,8 +18,8 @@ import type {
 import type {
   EcMc,
   EcMcCreate,
-  EcMcObsolete,
   EcMcDiscontinuedStatus,
+  EcMcObsolete,
   EcMcUpdate
 } from '@/types/logistics/manufacturing/engineering-change/ecMc.types';
 import type {
@@ -127,9 +127,9 @@ export function deleteEcMcBatch(ids: string[]): Promise<void> {
 }
 
 /**
- * 更新设变mc执行停产状态
+ * 更新设变部管执行停产状态
  * @param {EcMcDiscontinuedStatus} dto 停产状态 DTO
- * @returns {Promise<EcMc>} 设变mc执行DTO
+ * @returns {Promise<EcMc>} 设变部管执行DTO
  */
 export function updateEcMcDiscontinuedStatus(dto: EcMcDiscontinuedStatus): Promise<EcMc> {
   return request<EcMc>({

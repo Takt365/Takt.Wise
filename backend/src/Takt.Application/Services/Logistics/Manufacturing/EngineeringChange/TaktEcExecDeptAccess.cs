@@ -94,7 +94,7 @@ public sealed class TaktEcBatchStageLine
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; init; }
+    public string? ProdBatch { get; init; }
 }
 
 /// <summary>
@@ -295,8 +295,8 @@ public class TaktEcExecDeptAccess
                     EcCode = x.EcCode,
                     StageCode = TaktEcBatchStageCodes.PurchaseOrder,
                     EcGrainKey = x.EcGrainKey ?? string.Empty,
-                    StageDate = x.PurchaseOrderIssueDate,
-                    BatchCode = x.PurchaseOrderCode,
+                    StageDate = x.InboundDate,
+                    ProdBatch = string.Empty,
                 }));
             rows.AddRange((await _pcRepository.GetListAsync(x => chunk.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0))
                 .Select(x => new TaktEcBatchStageLine
@@ -305,7 +305,7 @@ public class TaktEcExecDeptAccess
                     StageCode = TaktEcBatchStageCodes.Scheduled,
                     EcGrainKey = x.EcGrainKey ?? string.Empty,
                     StageDate = x.ScheduledDate,
-                    BatchCode = x.ScheduledBatch,
+                    ProdBatch = x.ScheduledBatch,
                 }));
             rows.AddRange((await _iqcRepository.GetListAsync(x => chunk.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0))
                 .Select(x => new TaktEcBatchStageLine
@@ -314,7 +314,7 @@ public class TaktEcExecDeptAccess
                     StageCode = TaktEcBatchStageCodes.IncomingInspection,
                     EcGrainKey = x.EcGrainKey ?? string.Empty,
                     StageDate = x.InspectionDate,
-                    BatchCode = x.IqcOrderCode,
+                    ProdBatch = null,
                 }));
             rows.AddRange((await _mcRepository.GetListAsync(x => chunk.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0))
                 .Select(x => new TaktEcBatchStageLine
@@ -323,7 +323,7 @@ public class TaktEcExecDeptAccess
                     StageCode = TaktEcBatchStageCodes.Outbound,
                     EcGrainKey = x.EcGrainKey ?? string.Empty,
                     StageDate = x.OutboundDate,
-                    BatchCode = x.OutboundBatch,
+                    ProdBatch = x.OutboundBatch,
                 }));
             rows.AddRange((await _smtRepository.GetListAsync(x => chunk.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0))
                 .Select(x => new TaktEcBatchStageLine
@@ -332,7 +332,7 @@ public class TaktEcExecDeptAccess
                     StageCode = TaktEcBatchStageCodes.ElectronicOutbound,
                     EcGrainKey = x.EcGrainKey ?? string.Empty,
                     StageDate = x.OutboundDate,
-                    BatchCode = x.OutboundBatch,
+                    ProdBatch = x.OutboundBatch,
                 }));
             rows.AddRange((await _pcbaRepository.GetListAsync(x => chunk.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0))
                 .Select(x => new TaktEcBatchStageLine
@@ -341,7 +341,7 @@ public class TaktEcExecDeptAccess
                     StageCode = TaktEcBatchStageCodes.Mfg2Production,
                     EcGrainKey = x.EcGrainKey ?? string.Empty,
                     StageDate = x.ProductionDate,
-                    BatchCode = x.ImplementationBatch,
+                    ProdBatch = x.ProductionBatch,
                 }));
             rows.AddRange((await _assyRepository.GetListAsync(x => chunk.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0))
                 .Select(x => new TaktEcBatchStageLine
@@ -350,7 +350,7 @@ public class TaktEcExecDeptAccess
                     StageCode = TaktEcBatchStageCodes.Mfg1Production,
                     EcGrainKey = x.EcGrainKey ?? string.Empty,
                     StageDate = x.ProductionDate,
-                    BatchCode = x.ImplementationBatch,
+                    ProdBatch = x.ProductionBatch,
                 }));
             rows.AddRange((await _qaRepository.GetListAsync(x => chunk.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0))
                 .Select(x => new TaktEcBatchStageLine
@@ -359,6 +359,7 @@ public class TaktEcExecDeptAccess
                     StageCode = TaktEcBatchStageCodes.SampleInspection,
                     EcGrainKey = x.EcGrainKey ?? string.Empty,
                     StageDate = x.InspectionDate,
+                    ProdBatch = x.InspectionBatch,
                 }));
             rows.AddRange((await _teRepository.GetListAsync(x => chunk.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0))
                 .Select(x => new TaktEcBatchStageLine
@@ -373,7 +374,8 @@ public class TaktEcExecDeptAccess
     }
 
     /// <summary>
-    /// 设变单号下是否存在任一部门已输入（实施=是，或执行内容为人工填写；系统按实施范围写入的文案不算输入）。仅查首行，不拉全表
+    /// 设变单号下是否存在任一部门已输入（实施=是，或执行内容为人工填写；系统按实施范围写入的文案不算输入）。仅查首行，不拉全表。
+    /// ExecContent 各部门统一 nvarchar(Length=-1)，可直接与字符串比较。
     /// </summary>
     /// <param name="ecCode">设变单号</param>
     /// <returns>存在已输入行时 true</returns>
@@ -521,12 +523,11 @@ public class TaktEcExecDeptAccess
                 x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0
                 && (x.SopDate != null
                     || x.IsSopUpdated == 1
-                    || (x.TechLeader != null && x.TechLeader != "")
                     || (x.SopLeader != null && x.SopLeader != ""))) != null;
     }
 
     /// <summary>
-    /// 设变单号下是否仍有未完成的执行部门行（无人工输入）。没有未完成行且已有输入时主表为完成
+    /// 设变单号下是否仍有未完成的执行部门行（无人工输入）。没有未完成行且已有输入时主表为完成。
     /// </summary>
     /// <param name="ecCode">设变单号</param>
     /// <returns>存在未完成行时 true</returns>
@@ -674,7 +675,6 @@ public class TaktEcExecDeptAccess
                 x.EcCode == code && x.IsDeleted == 0 && x.IsObsolete == 0
                 && x.SopDate == null
                 && x.IsSopUpdated != 1
-                && (x.TechLeader == null || x.TechLeader == "")
                 && (x.SopLeader == null || x.SopLeader == "")) != null;
     }
 
@@ -913,8 +913,8 @@ public class TaktEcExecDeptAccess
     /// 按明细关联生管执行行，读取旧品处理。
     /// </summary>
     /// <param name="details">设变明细</param>
-    /// <returns>明细 ID → 生管 EcOldPartDisposition</returns>
-    public async Task<Dictionary<long, string?>> ListPcOldPartDispositionByDetailsAsync(
+    /// <returns>明细 ID → 生管 EcOldPartBalance</returns>
+    public async Task<Dictionary<long, string?>> ListPcOldPartBalanceByDetailsAsync(
         IReadOnlyList<TaktEcDetail> details)
     {
         ArgumentNullException.ThrowIfNull(details);
@@ -925,7 +925,7 @@ public class TaktEcExecDeptAccess
         }
         var mastersById = await LoadMastersByIdAsync(details);
         var mastersByCode = await LoadMastersByCodeAsync(details, mastersById);
-        var pcByGrain = await LoadPcDispositionByGrainAsync(details);
+        var pcByGrain = await LoadPcBalanceByGrainAsync(details);
         foreach (var detail in details)
         {
             var scope = NormalizeControlScope(ResolveMaster(detail, mastersById, mastersByCode)?.EcControlScope);
@@ -1025,8 +1025,8 @@ public class TaktEcExecDeptAccess
     /// 按设变单号加去重键索引未作废生管行的旧品处理。
     /// </summary>
     /// <param name="details">设变明细</param>
-    /// <returns>单号与去重键 → EcOldPartDisposition</returns>
-    private async Task<Dictionary<string, string?>> LoadPcDispositionByGrainAsync(IReadOnlyList<TaktEcDetail> details)
+    /// <returns>单号与去重键 → EcOldPartBalance</returns>
+    private async Task<Dictionary<string, string?>> LoadPcBalanceByGrainAsync(IReadOnlyList<TaktEcDetail> details)
     {
         var map = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
         var codes = details
@@ -1041,7 +1041,7 @@ public class TaktEcExecDeptAccess
             var rows = await _pcRepository.GetListAsync(x => chunk.Contains(x.EcCode) && x.IsDeleted == 0 && x.IsObsolete == 0);
             foreach (var row in rows.OrderBy(x => x.Id))
             {
-                map.TryAdd(DispositionKey(row.EcCode, row.EcGrainKey), row.EcOldPartDisposition);
+                map.TryAdd(DispositionKey(row.EcCode, row.EcGrainKey), row.EcOldPartBalance);
             }
         }
         return map;

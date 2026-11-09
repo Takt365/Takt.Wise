@@ -141,7 +141,7 @@
             v-bind="resolveCellNavAttrs(index, String(column.key))"
           >
             <template v-if="isReadonlyColumn(String(column.key)) || isRowObsolete(record)">
-              <span class="text-sm">{{ record[resolveDataIndex(String(column.key))] }}</span>
+              <span class="text-sm">{{ displayReadonlyCell(String(column.key), record) }}</span>
             </template>
             <template v-else-if="resolveEditor(String(column.key)) === 'inputNumber'">
               <a-input-number
@@ -212,11 +212,13 @@ import {
   type TaktEditableValidateError,
 } from './editableTableUtils'
 import {
+  isTableCalendarDateColumn,
   resolveTableScrollConfig,
   resolveVerticalScrollY,
   shouldUseTableVirtualScroll,
   type TaktTableScrollLayout,
 } from '@/utils/tableScroll'
+import { formatCalendarDate } from '@/utils/datetime'
 import { resolveTableSummaryLabelColumnKey } from '@/utils/tableColumns'
 import { useTaktTableViewportScrollY } from '@/composables/useTaktTableViewportScrollY'
 import {
@@ -869,6 +871,22 @@ function resolveTextareaProps(key: string, row: TaktEditableRow): Record<string,
 }
 
 /**
+ * 只读单元格展示：日期列固定 yyyy-MM-dd，其余原样
+ * @param key 列 key
+ * @param record 行数据
+ * @returns {string} 展示文本
+ */
+function displayReadonlyCell(key: string, record: TaktEditableRow): string {
+  const dataIndex = resolveDataIndex(key)
+  const value = record[dataIndex]
+  if (isTableCalendarDateColumn({ key, dataIndex })) {
+    return formatCalendarDate(value as string | number | Date | null | undefined)
+  }
+  if (value == null) return ''
+  return String(value)
+}
+
+/**
  * 解析 a-date-picker props
  * @param key 列 key
  * @param row 行数据
@@ -876,10 +894,11 @@ function resolveTextareaProps(key: string, row: TaktEditableRow): Record<string,
  */
 function resolveDatePickerProps(key: string, row: TaktEditableRow): Record<string, unknown> {
   const col = resolveColumn(key)
+  const calendarDate = isTableCalendarDateColumn({ key, dataIndex: resolveDataIndex(key) })
   return {
     placeholder: col ? resolvePlaceholder(col) : '',
-    valueFormat: col?.valueFormat ?? 'YYYY-MM-DD HH:mm:ss',
-    showTime: col?.showTime ?? true,
+    valueFormat: col?.valueFormat ?? (calendarDate ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss'),
+    showTime: col?.showTime ?? !calendarDate,
     size: props.size,
     disabled: isRowEditingDisabled(row),
     style: { width: '100%' },

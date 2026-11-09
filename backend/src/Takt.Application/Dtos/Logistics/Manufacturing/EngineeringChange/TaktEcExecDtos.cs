@@ -98,20 +98,12 @@ public class TaktEcExecDto : TaktCompanyDtoBase
     /// </summary>
     public string? ScheduledBatch { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
-    /// </summary>
-    public string? PoRemainder { get; set; } = string.Empty;
+
 
     /// <summary>
-    /// 结余数量
+    /// 旧品结余（生管/采购：ntext「旧物料-采购单10位:序号4位:数量;结余;处理方式;」）
     /// </summary>
-    public decimal? BalanceQuantity { get; set; }
-
-    /// <summary>
-    /// 旧品处理（字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
-    /// </summary>
-    public string? EcOldPartDisposition { get; set; } = string.Empty;
+    public string? EcOldPartBalance { get; set; } = string.Empty;
 
     /// <summary>
     /// 采购订单发行日期
@@ -138,15 +130,15 @@ public class TaktEcExecDto : TaktCompanyDtoBase
     /// </summary>
     public DateTime? InspectionDate { get; set; }
 
-    /// <summary>
-    /// 出库批次
-    /// </summary>
-    public string? OutboundBatch { get; set; } = string.Empty;
-
+    
     /// <summary>
     /// 出库日期
     /// </summary>
     public DateTime? OutboundDate { get; set; }
+/// <summary>
+    /// 出库批次
+    /// </summary>
+    public string? OutboundBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产日期
@@ -172,21 +164,6 @@ public class TaktEcExecDto : TaktCompanyDtoBase
     /// 实施日期
     /// </summary>
     public DateTime? ImplementationDate { get; set; }
-
-    /// <summary>
-    /// 实施批次
-    /// </summary>
-    public string? ImplementationBatch { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 检验批次
-    /// </summary>
-    public string? InspectionBatch { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 抽样号码
-    /// </summary>
-    public string? SamplingNo { get; set; } = string.Empty;
 
     /// <summary>
     /// SOP日期
@@ -292,20 +269,12 @@ public class TaktEcExecQueryDto : TaktPagedQuery
     /// </summary>
     public string? ScheduledBatch { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
-    /// </summary>
-    public string? PoRemainder { get; set; } = string.Empty;
+
 
     /// <summary>
-    /// 结余数量
+    /// 旧品结余（生管/采购：ntext「旧物料-采购单10位:序号4位:数量;结余;处理方式;」）
     /// </summary>
-    public decimal? BalanceQuantity { get; set; }
-
-    /// <summary>
-    /// 旧品处理（字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
-    /// </summary>
-    public string? EcOldPartDisposition { get; set; } = string.Empty;
+    public string? EcOldPartBalance { get; set; } = string.Empty;
 
     /// <summary>
     /// 采购订单发行日期（范围查询-开始）
@@ -391,21 +360,6 @@ public class TaktEcExecQueryDto : TaktPagedQuery
     /// 实施日期（范围查询-结束）
     /// </summary>
     public DateTime? ImplementationDateEnd { get; set; }
-
-    /// <summary>
-    /// 实施批次
-    /// </summary>
-    public string? ImplementationBatch { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 检验批次
-    /// </summary>
-    public string? InspectionBatch { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 抽样号码
-    /// </summary>
-    public string? SamplingNo { get; set; } = string.Empty;
 
     /// <summary>
     /// SOP日期（范围查询-开始）
@@ -521,20 +475,12 @@ public class TaktEcExecCreateDto
     /// </summary>
     public string? ScheduledBatch { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
-    /// </summary>
-    public string? PoRemainder { get; set; } = string.Empty;
+
 
     /// <summary>
-    /// 结余数量
+    /// 旧品结余（生管/采购：ntext「旧物料-采购单10位:序号4位:数量;结余;处理方式;」）
     /// </summary>
-    public decimal? BalanceQuantity { get; set; }
-
-    /// <summary>
-    /// 旧品处理（字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
-    /// </summary>
-    public string? EcOldPartDisposition { get; set; } = string.Empty;
+    public string? EcOldPartBalance { get; set; } = string.Empty;
 
     /// <summary>
     /// 采购订单发行日期
@@ -561,15 +507,15 @@ public class TaktEcExecCreateDto
     /// </summary>
     public DateTime? InspectionDate { get; set; }
 
-    /// <summary>
-    /// 出库批次
-    /// </summary>
-    public string? OutboundBatch { get; set; } = string.Empty;
-
+    
     /// <summary>
     /// 出库日期
     /// </summary>
     public DateTime? OutboundDate { get; set; }
+/// <summary>
+    /// 出库批次
+    /// </summary>
+    public string? OutboundBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产日期
@@ -595,21 +541,6 @@ public class TaktEcExecCreateDto
     /// 实施日期
     /// </summary>
     public DateTime? ImplementationDate { get; set; }
-
-    /// <summary>
-    /// 实施批次
-    /// </summary>
-    public string? ImplementationBatch { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 检验批次
-    /// </summary>
-    public string? InspectionBatch { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 抽样号码
-    /// </summary>
-    public string? SamplingNo { get; set; } = string.Empty;
 
     /// <summary>
     /// SOP日期
@@ -729,20 +660,12 @@ public class TaktEcTemplateDto
     /// </summary>
     public string? ScheduledBatch { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
-    /// </summary>
-    public string? PoRemainder { get; set; } = string.Empty;
+
 
     /// <summary>
-    /// 结余数量
+    /// 旧品结余（生管/采购：ntext「旧物料-采购单10位:序号4位:数量;结余;处理方式;」）
     /// </summary>
-    public decimal? BalanceQuantity { get; set; }
-
-    /// <summary>
-    /// 旧品处理（字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
-    /// </summary>
-    public string? EcOldPartDisposition { get; set; } = string.Empty;
+    public string? EcOldPartBalance { get; set; } = string.Empty;
 
     /// <summary>
     /// 采购订单发行日期
@@ -769,15 +692,15 @@ public class TaktEcTemplateDto
     /// </summary>
     public DateTime? InspectionDate { get; set; }
 
-    /// <summary>
-    /// 出库批次
-    /// </summary>
-    public string? OutboundBatch { get; set; } = string.Empty;
-
+    
     /// <summary>
     /// 出库日期
     /// </summary>
     public DateTime? OutboundDate { get; set; }
+/// <summary>
+    /// 出库批次
+    /// </summary>
+    public string? OutboundBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产日期
@@ -803,21 +726,6 @@ public class TaktEcTemplateDto
     /// 实施日期
     /// </summary>
     public DateTime? ImplementationDate { get; set; }
-
-    /// <summary>
-    /// 实施批次
-    /// </summary>
-    public string? ImplementationBatch { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 检验批次
-    /// </summary>
-    public string? InspectionBatch { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 抽样号码
-    /// </summary>
-    public string? SamplingNo { get; set; } = string.Empty;
 
     /// <summary>
     /// SOP日期（范围查询-开始）
@@ -918,20 +826,12 @@ public class TaktEcExecImportDto
     /// </summary>
     public string? ScheduledBatch { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
-    /// </summary>
-    public string? PoRemainder { get; set; } = string.Empty;
+
 
     /// <summary>
-    /// 结余数量
+    /// 旧品结余（生管/采购：ntext「旧物料-采购单10位:序号4位:数量;结余;处理方式;」）
     /// </summary>
-    public decimal? BalanceQuantity { get; set; }
-
-    /// <summary>
-    /// 旧品处理（字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
-    /// </summary>
-    public string? EcOldPartDisposition { get; set; } = string.Empty;
+    public string? EcOldPartBalance { get; set; } = string.Empty;
 
     /// <summary>
     /// 采购订单发行日期
@@ -958,15 +858,15 @@ public class TaktEcExecImportDto
     /// </summary>
     public DateTime? InspectionDate { get; set; }
 
-    /// <summary>
-    /// 出库批次
-    /// </summary>
-    public string? OutboundBatch { get; set; } = string.Empty;
-
+    
     /// <summary>
     /// 出库日期
     /// </summary>
     public DateTime? OutboundDate { get; set; }
+/// <summary>
+    /// 出库批次
+    /// </summary>
+    public string? OutboundBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产日期
@@ -992,21 +892,6 @@ public class TaktEcExecImportDto
     /// 实施日期
     /// </summary>
     public DateTime? ImplementationDate { get; set; }
-
-    /// <summary>
-    /// 实施批次
-    /// </summary>
-    public string? ImplementationBatch { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 检验批次
-    /// </summary>
-    public string? InspectionBatch { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 抽样号码
-    /// </summary>
-    public string? SamplingNo { get; set; } = string.Empty;
 
     /// <summary>
     /// SOP日期（范围查询-开始）
@@ -1113,20 +998,12 @@ public class TaktEcExecExportDto
     /// </summary>
     public string? ScheduledBatch { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
-    /// </summary>
-    public string? PoRemainder { get; set; } = string.Empty;
+
 
     /// <summary>
-    /// 结余数量
+    /// 旧品结余（生管/采购：ntext「旧物料-采购单10位:序号4位:数量;结余;处理方式;」）
     /// </summary>
-    public decimal? BalanceQuantity { get; set; }
-
-    /// <summary>
-    /// 旧品处理（字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
-    /// </summary>
-    public string? EcOldPartDisposition { get; set; } = string.Empty;
+    public string? EcOldPartBalance { get; set; } = string.Empty;
 
     /// <summary>
     /// 采购订单发行日期
@@ -1153,15 +1030,15 @@ public class TaktEcExecExportDto
     /// </summary>
     public DateTime? InspectionDate { get; set; }
 
-    /// <summary>
-    /// 出库批次
-    /// </summary>
-    public string? OutboundBatch { get; set; } = string.Empty;
-
+    
     /// <summary>
     /// 出库日期
     /// </summary>
     public DateTime? OutboundDate { get; set; }
+/// <summary>
+    /// 出库批次
+    /// </summary>
+    public string? OutboundBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产日期
@@ -1187,21 +1064,6 @@ public class TaktEcExecExportDto
     /// 实施日期
     /// </summary>
     public DateTime? ImplementationDate { get; set; }
-
-    /// <summary>
-    /// 实施批次
-    /// </summary>
-    public string? ImplementationBatch { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 检验批次
-    /// </summary>
-    public string? InspectionBatch { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 抽样号码
-    /// </summary>
-    public string? SamplingNo { get; set; } = string.Empty;
 
     /// <summary>
     /// SOP日期
@@ -1401,9 +1263,9 @@ public class TaktEcExecBatchTransposedStageDto
     public string? DateDisplayText { get; set; }
 
     /// <summary>
-    /// BatchCode
+    /// ProdBatch
     /// </summary>
-    public string BatchCode { get; set; } = string.Empty;
+    public string ProdBatch { get; set; } = string.Empty;
 }
 
 /// <summary>
@@ -1422,7 +1284,7 @@ public class TaktEcExecBatchTransposedStageLineDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string BatchCode { get; set; } = string.Empty;
+    public string ProdBatch { get; set; } = string.Empty;
 }
 
 /// <summary>
@@ -1531,7 +1393,7 @@ public class TaktEcExecBatchTransposedQueryDto : TaktPagedQuery
     /// <summary>
     /// 批次号（预定/出库/生产批次模糊）
     /// </summary>
-    public string BatchCode { get; set; } = string.Empty;
+    public string ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 设变单号

@@ -2125,7 +2125,7 @@ public class TaktBomPriceDeltaTrendService : TaktServiceBase, ITaktBomPriceDelta
             .ToString("0.#####", CultureInfo.InvariantCulture);
 
     /// <summary>
-    /// 加载产品 BOM 明细：先拉全量展开，再 Filter（生产相关=X、PCB SECT 标识为空、采购类型=F）。
+    /// 加载产品 BOM 明细：先拉全量展开，再 Filter（批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空）。
     /// 与零价格清单同口径；分块仅查询，Filter 合并后执行一次。
     /// </summary>
     /// <param name="plantCode">工厂</param>

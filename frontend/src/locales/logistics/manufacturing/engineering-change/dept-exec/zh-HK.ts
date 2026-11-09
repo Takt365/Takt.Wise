@@ -18,5 +18,9 @@ export default {
       notUpdated: '未更新',
       updated: '已更新',
     },
+    tabs: {
+      balance: '結餘',
+      execContent: '執行內容',
+    },
   },
 }

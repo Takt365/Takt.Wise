@@ -135,6 +135,7 @@ export default {
       numberingRule: "Numbering rule",
       numberingCodePreview: "Auto-generated after selecting a rule",
       numberingRuleRequired: "Please select a numbering rule",
+      periodRange: "Period",
       periodRangeMaxMonths: "The query period cannot exceed {max} months",
     },
   },

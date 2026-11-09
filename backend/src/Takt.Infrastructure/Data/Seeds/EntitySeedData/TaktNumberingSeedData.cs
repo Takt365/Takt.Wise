@@ -63,7 +63,7 @@ public class TaktNumberingSeedData : ITaktSeedDataCoordinator
     private const string MenuSalesCondition = "LOGISTICS_SALES_CONDITION";
     private const string MenuSalesQuotation = "LOGISTICS_SALES_QUOTATION";
     private const string MenuPurchaseOrder = "LOGISTICS_PROCUREMENT_PURCHASE_ORDER";
-    private const string MenuPurchaseInfo = "LOGISTICS_PROCUREMENT_PURCHASE_INFO";
+    private const string MenuPurchaseCondition = "LOGISTICS_PROCUREMENT_CONDITION";
     private const string MenuPurchaseRequest = "LOGISTICS_PROCUREMENT_PURCHASE_REQUEST";
     private const string MenuSupplier = "LOGISTICS_PROCUREMENT_SUPPLIER";
     private const string MenuVendor = "LOGISTICS_PROCUREMENT_VENDOR";
@@ -671,13 +671,13 @@ public class TaktNumberingSeedData : ITaktSeedDataCoordinator
             new NumberingSeedTemplate(
                 "LG-PUR-PRC",
                 "采购价格编码",
-                MenuPurchaseInfo,
+                MenuPurchaseCondition,
                 IsoC,
                 "PRC",
                 "yyyy",
                 "Annually",
                 SegmentsCompanyLevel,
-                "内置：TaktPurchaseInfo.PurchaseInfoCode"),
+                "内置：TaktPurchaseCondition.PurchaseConditionCode"),
             new NumberingSeedTemplate(
                 "LG-PUR-REQ",
                 "采购申请编码",

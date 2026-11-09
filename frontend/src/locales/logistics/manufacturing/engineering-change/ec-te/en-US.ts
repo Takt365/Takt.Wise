@@ -21,19 +21,20 @@ export default {
       loadToForm: 'Load to Form',
       plantFromCompany: 'Company {company} → Plant {plant}',
       companyRequired: 'Select a company before importing source EC',
-      formTitle: 'Import from Source EC (fill EC assignee, implementation scope, upload attachments)',
+      formTitle: 'Import from Source EC (fill EC assignee, implementation scope, old-part disposition, upload attachments)',
       attachmentRequired: 'Add at least one attachment and upload the file',
       attachmentUploadRequired: 'Row {row}: attachment file not uploaded',
       importSelecmed: 'Import Selecmed ({count})',
       importSuccess: 'Successfully imported {count} EC record(s)',
       importPartial: 'Import finished: {success} succeeded, {fail} failed',
       detailsDeferred:
-        '{count} detail rows will be persisted on the server (not posted from the browser). Fill EC assignee and implementation scope, then submit.',
+        '{count} detail rows will be persisted on the server (not posted from the browser). Fill EC assignee, implementation scope and old-part disposition, then submit.',
     },
     attachment: {
       docCode: {
         formatInvalid: 'Invalid document code format ({hint})',
         duplicate: 'Document code "{code}" already exists',
+        sequence: '4 digits',
         hint: {
           empty: 'Enter document code',
           ec: 'Must match EC number',
@@ -53,6 +54,11 @@ export default {
     tabs: {
       oldNewMaterial: 'Old / New Material',
       scope: 'Implementation Scope',
+      oldPart: 'Old Part Disposition',
+    },
+    oldPart: {
+      empty: 'No old materials found in details',
+      dispositionRequired: 'Select a disposition for every old material on the Old Part Disposition tab',
     },
     scopeDepts: {
       master: 'Control scope',
@@ -68,6 +74,11 @@ export default {
       me: 'Manufacturing Tech',
       nonFert: 'Non-FERT',
       discontinued: 'Discontinued',
+      oldNewMaterialGroup: 'Old/new materials → material code group',
+      mcNewMaterialGroup: 'Non-C003 purchased new materials → material code group',
+      mtlNewMaterialGroup: 'C003 purchased new materials → material code group',
+      purNewMaterialGroup: 'Purchased new materials → material code group',
+      iqcNewMaterialGroup: 'Inspected new materials → material code group',
     },
     persist: {
       submitted: 'Submitted EC {ecCode} for background {action} ({detailCount} detail lines, incl. dept exec sync). You will be notified when done.',

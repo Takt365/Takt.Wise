@@ -109,17 +109,13 @@ public class TaktEcDeptViewDto : TaktCompanyDtoBase
     /// </summary>
     public string? ScheduledBatch { get; set; }
     /// <summary>
-    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
-    /// </summary>
-    public string? PoRemainder { get; set; }
-    /// <summary>
-    /// 结余数量
-    /// </summary>
-    public decimal? BalanceQuantity { get; set; }
-    /// <summary>
-    /// 旧品处理（生管/采购执行行存字典 logistics_manufacturing_ec_old_part_disposition；视图字段名兼容）
+    /// 旧品处理（生管/采购：ntext「旧物料-采购单10位:序号4位:数量;结余;处理方式;」；视图字段名兼容）
     /// </summary>
     public string? OldProductHandling { get; set; }
+    /// <summary>
+    /// 进货日期（采购）
+    /// </summary>
+    public DateTime? InboundDate { get; set; }
     /// <summary>
     /// 采购订单发行日期
     /// </summary>
@@ -140,14 +136,14 @@ public class TaktEcDeptViewDto : TaktCompanyDtoBase
     /// 检验日期
     /// </summary>
     public DateTime? InspectionDate { get; set; }
-    /// <summary>
-    /// 出库批次
-    /// </summary>
-    public string? OutboundBatch { get; set; }
-    /// <summary>
+        /// <summary>
     /// 出库日期
     /// </summary>
     public DateTime? OutboundDate { get; set; }
+/// <summary>
+    /// 出库批次
+    /// </summary>
+    public string? OutboundBatch { get; set; }
     /// <summary>
     /// 生产日期
     /// </summary>
@@ -168,18 +164,6 @@ public class TaktEcDeptViewDto : TaktCompanyDtoBase
     /// 实施日期
     /// </summary>
     public DateTime? ImplementationDate { get; set; }
-    /// <summary>
-    /// 实施批次
-    /// </summary>
-    public string? ImplementationBatch { get; set; }
-    /// <summary>
-    /// 检验批次
-    /// </summary>
-    public string? InspectionBatch { get; set; }
-    /// <summary>
-    /// 抽样号码
-    /// </summary>
-    public string? SamplingNo { get; set; }
     /// <summary>
     /// SOP日期
     /// </summary>
@@ -204,11 +188,6 @@ public class TaktEcDeptViewDto : TaktCompanyDtoBase
     /// OutboundOrderCode
     /// </summary>
     public string? OutboundOrderCode { get; set; }
-
-    /// <summary>
-    /// SamplingCode
-    /// </summary>
-    public string? SamplingCode { get; set; }
 }
 
 /// <summary>
@@ -278,17 +257,13 @@ public class TaktEcDeptViewUpdateDto
     /// </summary>
     public string? ScheduledBatch { get; set; }
     /// <summary>
-    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
-    /// </summary>
-    public string? PoRemainder { get; set; }
-    /// <summary>
-    /// 结余数量
-    /// </summary>
-    public decimal? BalanceQuantity { get; set; }
-    /// <summary>
-    /// 旧品处理（生管/采购执行行存字典 logistics_manufacturing_ec_old_part_disposition；视图字段名兼容）
+    /// 旧品处理（生管/采购：ntext「旧物料-采购单10位:序号4位:数量;结余;处理方式;」；视图字段名兼容）
     /// </summary>
     public string? OldProductHandling { get; set; }
+    /// <summary>
+    /// 进货日期（采购）
+    /// </summary>
+    public DateTime? InboundDate { get; set; }
     /// <summary>
     /// 采购订单发行日期
     /// </summary>
@@ -309,14 +284,14 @@ public class TaktEcDeptViewUpdateDto
     /// 检验日期
     /// </summary>
     public DateTime? InspectionDate { get; set; }
-    /// <summary>
-    /// 出库批次
-    /// </summary>
-    public string? OutboundBatch { get; set; }
-    /// <summary>
+        /// <summary>
     /// 出库日期
     /// </summary>
     public DateTime? OutboundDate { get; set; }
+/// <summary>
+    /// 出库批次
+    /// </summary>
+    public string? OutboundBatch { get; set; }
     /// <summary>
     /// 生产日期
     /// </summary>
@@ -337,18 +312,6 @@ public class TaktEcDeptViewUpdateDto
     /// 实施日期
     /// </summary>
     public DateTime? ImplementationDate { get; set; }
-    /// <summary>
-    /// 实施批次
-    /// </summary>
-    public string? ImplementationBatch { get; set; }
-    /// <summary>
-    /// 检验批次
-    /// </summary>
-    public string? InspectionBatch { get; set; }
-    /// <summary>
-    /// 抽样号码
-    /// </summary>
-    public string? SamplingNo { get; set; }
     /// <summary>
     /// SOP日期
     /// </summary>
@@ -377,11 +340,6 @@ public class TaktEcDeptViewUpdateDto
     /// OutboundOrderCode
     /// </summary>
     public string? OutboundOrderCode { get; set; }
-
-    /// <summary>
-    /// SamplingCode
-    /// </summary>
-    public string? SamplingCode { get; set; }
 }
 
 /// <summary>
@@ -427,17 +385,13 @@ public class TaktEcDeptViewTemplateDto
     /// </summary>
     public string? ScheduledBatch { get; set; }
     /// <summary>
-    /// Po残（可空；非空须为采购单10位-序号4位:数量，如 4500123456-0010:18.5）
-    /// </summary>
-    public string? PoRemainder { get; set; }
-    /// <summary>
-    /// 结余数量
-    /// </summary>
-    public decimal? BalanceQuantity { get; set; }
-    /// <summary>
-    /// 旧品处理（生管/采购执行行存字典 logistics_manufacturing_ec_old_part_disposition；视图字段名兼容）
+    /// 旧品处理（生管/采购：ntext「旧物料-采购单10位:序号4位:数量;结余;处理方式;」；视图字段名兼容）
     /// </summary>
     public string? OldProductHandling { get; set; }
+    /// <summary>
+    /// 进货日期（采购）
+    /// </summary>
+    public DateTime? InboundDate { get; set; }
     /// <summary>
     /// 采购订单发行日期
     /// </summary>
@@ -458,14 +412,14 @@ public class TaktEcDeptViewTemplateDto
     /// 检验日期
     /// </summary>
     public DateTime? InspectionDate { get; set; }
-    /// <summary>
-    /// 出库批次
-    /// </summary>
-    public string? OutboundBatch { get; set; }
-    /// <summary>
+        /// <summary>
     /// 出库日期
     /// </summary>
     public DateTime? OutboundDate { get; set; }
+/// <summary>
+    /// 出库批次
+    /// </summary>
+    public string? OutboundBatch { get; set; }
     /// <summary>
     /// 生产日期
     /// </summary>
@@ -486,18 +440,6 @@ public class TaktEcDeptViewTemplateDto
     /// 实施日期
     /// </summary>
     public DateTime? ImplementationDate { get; set; }
-    /// <summary>
-    /// 实施批次
-    /// </summary>
-    public string? ImplementationBatch { get; set; }
-    /// <summary>
-    /// 检验批次
-    /// </summary>
-    public string? InspectionBatch { get; set; }
-    /// <summary>
-    /// 抽样号码
-    /// </summary>
-    public string? SamplingNo { get; set; }
     /// <summary>
     /// SOP日期
     /// </summary>
@@ -539,11 +481,6 @@ public class TaktEcDeptViewImportDto : TaktEcDeptViewTemplateDto
     /// OutboundOrderCode
     /// </summary>
     public string? OutboundOrderCode { get; set; }
-
-    /// <summary>
-    /// SamplingCode
-    /// </summary>
-    public string? SamplingCode { get; set; }
 }
 
 // ========================================
@@ -551,7 +488,7 @@ public class TaktEcDeptViewImportDto : TaktEcDeptViewTemplateDto
 // ========================================
 
 /// <summary>
-/// 设变看板转置行（一行一个设变号；各部门列是该部门每一条执行行的实施标记）
+/// 设变看板转置行（一行一个设变号；生管脊柱对齐制一/制二/品管/制技；采购等为本部门库表行）
 /// </summary>
 public class TaktEcKanbanDto : TaktCompanyDtoBase
 {
@@ -573,52 +510,60 @@ public class TaktEcKanbanDto : TaktCompanyDtoBase
     /// </summary>
     public string EcCode { get; set; } = string.Empty;
     /// <summary>
-    /// 机种编码
+    /// 机种编码（兼容：取 PcLines 首行）
     /// </summary>
     public string EcModelCode { get; set; } = string.Empty;
     /// <summary>
-    /// 成品（根物料编码）
+    /// 成品（根物料编码；兼容：取 PcLines 首行）
     /// </summary>
     public string EcRootMaterialCode { get; set; } = string.Empty;
     /// <summary>
     /// 技术课（技术主表录入日期）
     /// </summary>
     public DateTime EcEntryDate { get; set; }
-    /// <summary>
-    /// 采购课每一行的实施标记（字典 sys_yes_no；0=否 1=是）。行数即列表长度
-    /// </summary>
+    /// <summary>生管课对齐行</summary>
+    public List<TaktEcKanbanDeptLineDto> PcLines { get; set; } = [];
+    /// <summary>采购课对齐格</summary>
+    public List<TaktEcKanbanDeptLineDto> PurLines { get; set; } = [];
+    /// <summary>采购课完整业务行</summary>
+    public List<TaktEcKanbanPurLineDto> PurDetailLines { get; set; } = [];
+    /// <summary>受检课对齐格</summary>
+    public List<TaktEcKanbanDeptLineDto> IqcLines { get; set; } = [];
+    /// <summary>受检课完整业务行</summary>
+    public List<TaktEcKanbanIqcLineDto> IqcDetailLines { get; set; } = [];
+    /// <summary>部管课对齐格</summary>
+    public List<TaktEcKanbanDeptLineDto> McLines { get; set; } = [];
+    /// <summary>部管课完整业务行</summary>
+    public List<TaktEcKanbanMcLineDto> McDetailLines { get; set; } = [];
+    /// <summary>物料对齐格</summary>
+    public List<TaktEcKanbanDeptLineDto> MtlLines { get; set; } = [];
+    /// <summary>物料完整业务行</summary>
+    public List<TaktEcKanbanMtlLineDto> MtlDetailLines { get; set; } = [];
+    /// <summary>制二课对齐行</summary>
+    public List<TaktEcKanbanDeptLineDto> Mfg2Lines { get; set; } = [];
+    /// <summary>制一课对齐行</summary>
+    public List<TaktEcKanbanDeptLineDto> Mfg1Lines { get; set; } = [];
+    /// <summary>品管课对齐行</summary>
+    public List<TaktEcKanbanDeptLineDto> QcLines { get; set; } = [];
+    /// <summary>制技对齐行</summary>
+    public List<TaktEcKanbanDeptLineDto> MeLines { get; set; } = [];
+    /// <summary>采购课实施标记</summary>
     public List<int> PurImplemented { get; set; } = [];
-    /// <summary>
-    /// 生管课每一行的实施标记（字典 sys_yes_no；0=否 1=是）
-    /// </summary>
+    /// <summary>生管课实施标记</summary>
     public List<int> PcImplemented { get; set; } = [];
-    /// <summary>
-    /// 受检课每一行的实施标记（字典 sys_yes_no；0=否 1=是）
-    /// </summary>
+    /// <summary>受检课实施标记</summary>
     public List<int> IqcImplemented { get; set; } = [];
-    /// <summary>
-    /// 部管课每一行的实施标记（字典 sys_yes_no；0=否 1=是）
-    /// </summary>
+    /// <summary>部管课实施标记</summary>
     public List<int> McImplemented { get; set; } = [];
-    /// <summary>
-    /// 制二课每一行的实施标记（字典 sys_yes_no；0=否 1=是）
-    /// </summary>
+    /// <summary>制二课实施标记</summary>
     public List<int> Mfg2Implemented { get; set; } = [];
-    /// <summary>
-    /// 制一课每一行的实施标记（字典 sys_yes_no；0=否 1=是）
-    /// </summary>
+    /// <summary>制一课实施标记</summary>
     public List<int> Mfg1Implemented { get; set; } = [];
-    /// <summary>
-    /// 品管课每一行的实施标记（字典 sys_yes_no；0=否 1=是）
-    /// </summary>
+    /// <summary>品管课实施标记</summary>
     public List<int> QcImplemented { get; set; } = [];
-    /// <summary>
-    /// 物料每一行的实施标记（字典 sys_yes_no；0=否 1=是）
-    /// </summary>
+    /// <summary>物料实施标记</summary>
     public List<int> MtlImplemented { get; set; } = [];
-    /// <summary>
-    /// 制技每一行的更新 SOP 标记（字典 sys_yes_no；0=否 1=是）
-    /// </summary>
+    /// <summary>制技更新 SOP 标记</summary>
     public List<int> MeImplemented { get; set; } = [];
 }
 
@@ -752,6 +697,11 @@ public class TaktEcKanbanBoardStatDto
     public int EcTotal { get; set; }
 
     /// <summary>
+    /// 明细行总数（当前查询条件）
+    /// </summary>
+    public int DetailTotal { get; set; }
+
+    /// <summary>
     /// 未开始
     /// </summary>
     public int NotStarted { get; set; }
@@ -801,6 +751,21 @@ public class TaktEcKanbanDeptStatDto
     /// 未实施行数
     /// </summary>
     public int NotImplemented { get; set; }
+
+    /// <summary>
+    /// 该部门视角：设变未开始数
+    /// </summary>
+    public int EcNotStarted { get; set; }
+
+    /// <summary>
+    /// 该部门视角：设变实施中数
+    /// </summary>
+    public int EcInProgress { get; set; }
+
+    /// <summary>
+    /// 该部门视角：设变已完成数
+    /// </summary>
+    public int EcCompleted { get; set; }
 }
 
 /// <summary>
@@ -896,7 +861,7 @@ public class TaktEcBatchQueryDto : TaktPagedQuery
     /// <summary>
     /// 批次号（预定/生产批次模糊）
     /// </summary>
-    public string BatchCode { get; set; } = string.Empty;
+    public string ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 区域文化编码（业务字段；字典 sys_culture_code；BCP47 如 zh-CN、en-US、ja-JP；DictData 另可用 mul=多种语言内容）
@@ -1160,7 +1125,7 @@ public class TaktEcLegacyProductDto : TaktCompanyDtoBase
     /// </summary>
     public string? EcNewMaterialCode { get; set; }
     /// <summary>
-    /// 生管旧品处理（TaktEcPc.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition；按明细去重键关联生管执行行）
+    /// 生管旧品结余（TaktEcPc.EcOldPartBalance；ntext「旧物料-采购单10位:序号4位:数量;结余;处理方式;」；按明细去重键关联生管执行行）
     /// </summary>
     public string? OldProductHandling { get; set; }
     /// <summary>
@@ -1211,9 +1176,9 @@ public class TaktEcLegacyProductUpdateDto
     [JsonConverter(typeof(ValueToStringConverter))]
     public long EcDetailId { get; set; }
     /// <summary>
-    /// 生管旧品处理（TaktEcPc.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition；与明细 EcOldPartDisposition 同字典，存执行行）
+    /// 明细旧品处理（TaktEcDetail.EcOldPartDisposition；字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定）
     /// </summary>
-    public string? OldProductHandling { get; set; }
+    public string? EcOldPartDisposition { get; set; }
     /// <summary>
     /// 停产状态（字典 logistics_materials_material_discontinued_status；DictValue=01/Z0 等；默认 Z0=计划物料）
     /// </summary>

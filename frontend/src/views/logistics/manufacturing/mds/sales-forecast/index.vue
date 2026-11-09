@@ -38,7 +38,20 @@
           :loading="loading"
           @search="handleSearch"
           @reset="handleReset"
-        />
+        >
+          <template #leading>
+            <a-range-picker
+              v-model:value="listPeriodRange"
+              picker="month"
+              format="YYYY-MM"
+              value-format="YYYY-MM"
+              :placeholder="[t('common.page.form.periodRange'), t('common.page.form.periodRange')]"
+              :disabled-date="listPeriodLimit.disabledDate"
+              @calendar-change="listPeriodLimit.onCalendarChange"
+              @open-change="listPeriodLimit.onOpenChange"
+            />
+          </template>
+        </TaktQueryBar>
         <TaktToolsBar
       create-permission="logistics:manufacturing:mds:sales:forecast:create"
       update-permission="logistics:manufacturing:mds:sales:forecast:update"
@@ -130,7 +143,405 @@
       @reset="handleAdvancedQueryReset"
     >
       <template #default="{ isFieldVisible }">
-
+      <div v-show="isFieldVisible('cultureCode')">
+      <a-form-item :label="pi.queryLabel('cultureCode')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.cultureCode"
+          dict-type="sys_culture_code"
+          :placeholder="pi.queryPh('cultureCode', 'select')"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('salesForecastCode')">
+      <a-form-item :label="pi.queryLabel('salesForecastCode')">
+        <a-input
+          v-model:value="advancedQueryForm.salesForecastCode"
+          :placeholder="pi.queryPh('salesForecastCode', 'required')"
+          show-count
+          :maxlength="20"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('planDateStart')">
+      <a-form-item :label="pi.queryLabel('planDateStart')">
+        <a-date-picker
+          v-model:value="advancedQueryForm.planDateStart"
+          :placeholder="pi.queryPh('planDateStart', 'select')"
+          value-format="YYYY-MM-DD"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('planDateEnd')">
+      <a-form-item :label="pi.queryLabel('planDateEnd')">
+        <a-date-picker
+          v-model:value="advancedQueryForm.planDateEnd"
+          :placeholder="pi.queryPh('planDateEnd', 'select')"
+          value-format="YYYY-MM-DD"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('receiveDateStart')">
+      <a-form-item :label="pi.queryLabel('receiveDateStart')">
+        <a-date-picker
+          v-model:value="advancedQueryForm.receiveDateStart"
+          :placeholder="pi.queryPh('receiveDateStart', 'select')"
+          value-format="YYYY-MM-DD"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('receiveDateEnd')">
+      <a-form-item :label="pi.queryLabel('receiveDateEnd')">
+        <a-date-picker
+          v-model:value="advancedQueryForm.receiveDateEnd"
+          :placeholder="pi.queryPh('receiveDateEnd', 'select')"
+          value-format="YYYY-MM-DD"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('receiveVersionNo')">
+      <a-form-item :label="pi.queryLabel('receiveVersionNo')">
+        <a-input-number
+          v-model:value="advancedQueryForm.receiveVersionNo"
+          :placeholder="pi.queryPh('receiveVersionNo', 'required')"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('salesProduct')">
+      <a-form-item :label="pi.queryLabel('salesProduct')">
+        <a-input
+          v-model:value="advancedQueryForm.salesProduct"
+          :placeholder="pi.queryPh('salesProduct', 'required')"
+          show-count
+          :maxlength="7"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('productCategoryCode')">
+      <a-form-item :label="pi.queryLabel('productCategoryCode')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.productCategoryCode"
+          dict-type="logistics_manufacturing_mds_product_category"
+          :placeholder="pi.queryPh('productCategoryCode', 'select')"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('profitCenterCode')">
+      <a-form-item :label="pi.queryLabel('profitCenterCode')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.profitCenterCode"
+          api-url="TaktProfitCenters/options"
+          :placeholder="pi.queryPh('profitCenterCode', 'select')"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('modelCode')">
+      <a-form-item :label="pi.queryLabel('modelCode')">
+        <a-input
+          v-model:value="advancedQueryForm.modelCode"
+          :placeholder="pi.queryPh('modelCode', 'required')"
+          show-count
+          :maxlength="40"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('materialCode')">
+      <a-form-item :label="pi.queryLabel('materialCode')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.materialCode"
+          api-url="TaktMaterialPlants/options"
+          :placeholder="pi.queryPh('materialCode', 'select')"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('materialDescription')">
+      <a-form-item :label="pi.queryLabel('materialDescription')">
+        <a-textarea
+          v-model:value="advancedQueryForm.materialDescription"
+          :placeholder="pi.queryPh('materialDescription', 'optional')"
+          :rows="2"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('plannedBatch')">
+      <a-form-item :label="pi.queryLabel('plannedBatch')">
+        <a-input
+          v-model:value="advancedQueryForm.plannedBatch"
+          :placeholder="pi.queryPh('plannedBatch', 'required')"
+          show-count
+          :maxlength="40"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('customerCode')">
+      <a-form-item :label="pi.queryLabel('customerCode')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.customerCode"
+          api-url="TaktCustomers/options"
+          :placeholder="pi.queryPh('customerCode', 'select')"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('customerName1')">
+      <a-form-item :label="pi.queryLabel('customerName1')">
+        <a-input
+          v-model:value="advancedQueryForm.customerName1"
+          :placeholder="pi.queryPh('customerName1', 'required')"
+          show-count
+          :maxlength="140"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('plannerGroupCode')">
+      <a-form-item :label="pi.queryLabel('plannerGroupCode')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.plannerGroupCode"
+          api-url="TaktApsGroups/options"
+          :api-params="{ apsGroupCategory: 1 }"
+          :placeholder="pi.queryPh('plannerGroupCode', 'select')"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('plannerGroupName')">
+      <a-form-item :label="pi.queryLabel('plannerGroupName')">
+        <a-input
+          v-model:value="advancedQueryForm.plannerGroupName"
+          :placeholder="pi.queryPh('plannerGroupName', 'required')"
+          show-count
+          :maxlength="80"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('totalQuantity')">
+      <a-form-item :label="pi.queryLabel('totalQuantity')">
+        <a-input-number
+          v-model:value="advancedQueryForm.totalQuantity"
+          :placeholder="pi.queryPh('totalQuantity', 'required')"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('totalAmount')">
+      <a-form-item :label="pi.queryLabel('totalAmount')">
+        <a-input-number
+          v-model:value="advancedQueryForm.totalAmount"
+          :placeholder="pi.queryPh('totalAmount', 'required')"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('convertedQuantity')">
+      <a-form-item :label="pi.queryLabel('convertedQuantity')">
+        <a-input-number
+          v-model:value="advancedQueryForm.convertedQuantity"
+          :placeholder="pi.queryPh('convertedQuantity', 'required')"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('convertedAmount')">
+      <a-form-item :label="pi.queryLabel('convertedAmount')">
+        <a-input-number
+          v-model:value="advancedQueryForm.convertedAmount"
+          :placeholder="pi.queryPh('convertedAmount', 'required')"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('planStatus')">
+      <a-form-item :label="pi.queryLabel('planStatus')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.planStatus"
+          dict-type="sys_normal_disable"
+          :placeholder="pi.queryPh('planStatus', 'select')"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('convertedStatus')">
+      <a-form-item :label="pi.queryLabel('convertedStatus')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.convertedStatus"
+          dict-type="sys_convert_status"
+          :placeholder="pi.queryPh('convertedStatus', 'select')"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('planDescription')">
+      <a-form-item :label="pi.queryLabel('planDescription')">
+        <a-textarea
+          v-model:value="advancedQueryForm.planDescription"
+          :placeholder="pi.queryPh('planDescription', 'optional')"
+          :rows="2"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('approvalStatus')">
+      <a-form-item :label="pi.queryLabel('approvalStatus')">
+        <TaktSelect
+          v-model:value="advancedQueryForm.approvalStatus"
+          dict-type="sys_approval_status"
+          :placeholder="pi.queryPh('approvalStatus', 'select')"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('initiatorId')">
+      <a-form-item :label="pi.queryLabel('initiatorId')">
+        <a-input
+          v-model:value="advancedQueryForm.initiatorId"
+          :placeholder="pi.queryPh('initiatorId', 'required')"
+          show-count
+          :maxlength="20"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('initiatedAtStart')">
+      <a-form-item :label="pi.queryLabel('initiatedAtStart')">
+        <a-input
+          v-model:value="advancedQueryForm.initiatedAtStart"
+          :placeholder="pi.queryPh('initiatedAtStart', 'required')"
+          show-count
+          :maxlength="20"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('initiatedAtEnd')">
+      <a-form-item :label="pi.queryLabel('initiatedAtEnd')">
+        <a-date-picker
+          v-model:value="advancedQueryForm.initiatedAtEnd"
+          :placeholder="pi.queryPh('initiatedAtEnd', 'select')"
+          value-format="YYYY-MM-DD"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('approvedBy')">
+      <a-form-item :label="pi.queryLabel('approvedBy')">
+        <a-input
+          v-model:value="advancedQueryForm.approvedBy"
+          :placeholder="pi.queryPh('approvedBy', 'required')"
+          show-count
+          :maxlength="20"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('approvedAtStart')">
+      <a-form-item :label="pi.queryLabel('approvedAtStart')">
+        <a-input
+          v-model:value="advancedQueryForm.approvedAtStart"
+          :placeholder="pi.queryPh('approvedAtStart', 'required')"
+          show-count
+          :maxlength="20"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('approvedAtEnd')">
+      <a-form-item :label="pi.queryLabel('approvedAtEnd')">
+        <a-date-picker
+          v-model:value="advancedQueryForm.approvedAtEnd"
+          :placeholder="pi.queryPh('approvedAtEnd', 'select')"
+          value-format="YYYY-MM-DD"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('flowInstanceId')">
+      <a-form-item :label="pi.queryLabel('flowInstanceId')">
+        <a-input
+          v-model:value="advancedQueryForm.flowInstanceId"
+          :placeholder="pi.queryPh('flowInstanceId', 'required')"
+          show-count
+          :maxlength="20"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('createdAtStart')">
+      <a-form-item :label="pi.queryLabel('createdAtStart')">
+        <a-date-picker
+          v-model:value="advancedQueryForm.createdAtStart"
+          :placeholder="pi.queryPh('createdAtStart', 'select')"
+          value-format="YYYY-MM-DD HH:mm:ss"
+            show-time
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('createdAtEnd')">
+      <a-form-item :label="pi.queryLabel('createdAtEnd')">
+        <a-date-picker
+          v-model:value="advancedQueryForm.createdAtEnd"
+          :placeholder="pi.queryPh('createdAtEnd', 'select')"
+          value-format="YYYY-MM-DD HH:mm:ss"
+            show-time
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('extField')">
+      <a-form-item
+        name="extField"
+        class="takt-form-item-ext-field"
+        :label-col="{ style: { width: 'auto', maxWidth: 'none', flex: '0 0 auto' } }"
+        :wrapper-col="{ style: { flex: '1 1 0', minWidth: 0 } }"
+      >
+        <template #label>
+          <span class="takt-form-ext-field-label">
+            <a-tooltip
+              :title="t('common.page.entity.extfieldhint')"
+              placement="top"
+            >
+              <span class="takt-form-label-hint-icon"><RiQuestionLine class="takt-remix-icon" /></span>
+            </a-tooltip>
+            <span>{{ pi.queryLabel('extField') }}</span>
+          </span>
+        </template>
+        <a-textarea
+          v-model:value="advancedQueryForm.extField"
+          :placeholder="t('common.page.form.placeholder.extfield')"
+            :rows="4"
+            show-count
+            :maxlength="400"
+            allow-clear
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('remark')">
+      <a-form-item :label="pi.queryLabel('remark')">
+        <a-textarea
+          v-model:value="advancedQueryForm.remark"
+          :placeholder="pi.queryPh('remark', 'optional')"
+            :rows="4"
+            show-count
+            :maxlength="400"
+            allow-clear
+        />
+      </a-form-item>
+      </div>
       </template>
     </TaktQueryDrawer>
 
@@ -180,8 +591,9 @@ import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
-import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
+import { useListPeriodQuery } from '@/composables/useListPeriodQuery'
 import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
+import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
 import SalesForecastForm from './components/SalesForecastForm.vue'
 import SalesForecastItemPanel from './components/SalesForecastItemPanel.vue'
 import { provideSalesForecastMasterContext, type SalesForecastRowRecord } from './composables/useSalesForecastMasterContext'
@@ -191,7 +603,7 @@ import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
 import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
 import { normalizeImportResult, type TaktImportResult } from '@/utils/taktImportResult'
-import { RiEditLine, RiDeleteBinLine } from '@remixicon/vue'
+import { RiEditLine, RiDeleteBinLine, RiQuestionLine } from '@remixicon/vue'
 
 import {
   useSalesForecastI18n,
@@ -256,13 +668,39 @@ function hasAnyListQueryFilter(): boolean {
   if (kw.length > 0) {
     return true
   }
+  if (hasListPeriod()) {
+    return true
+  }
   const form = advancedQueryForm.value
   for (const key of SALESFORECAST_QUERY_STRING_FIELDS) {
     if (String(form[key] ?? '').trim().length > 0) {
       return true
     }
   }
-
+  if (form.receiveVersionNo !== undefined && form.receiveVersionNo !== null) {
+    return true
+  }
+  if (form.totalQuantity !== undefined && form.totalQuantity !== null) {
+    return true
+  }
+  if (form.totalAmount !== undefined && form.totalAmount !== null) {
+    return true
+  }
+  if (form.convertedQuantity !== undefined && form.convertedQuantity !== null) {
+    return true
+  }
+  if (form.convertedAmount !== undefined && form.convertedAmount !== null) {
+    return true
+  }
+  if (form.planStatus !== undefined && form.planStatus !== null) {
+    return true
+  }
+  if (form.convertedStatus !== undefined && form.convertedStatus !== null) {
+    return true
+  }
+  if (form.approvalStatus !== undefined && form.approvalStatus !== null) {
+    return true
+  }
   return false
 }
 
@@ -277,7 +715,14 @@ function createEmptyAdvancedQueryForm() {
   >
   return {
     ...form,
-  }
+    receiveVersionNo: undefined as number | undefined,
+    totalQuantity: undefined as number | undefined,
+    totalAmount: undefined as number | undefined,
+    convertedQuantity: undefined as number | undefined,
+    convertedAmount: undefined as number | undefined,
+    planStatus: undefined as number | undefined,
+    convertedStatus: undefined as number | undefined,
+    approvalStatus: undefined as number | undefined,  }
 }
 /** 高级查询表单模型 */
 const advancedQueryForm = ref(createEmptyAdvancedQueryForm())
@@ -299,6 +744,20 @@ const entityIdName = 'salesForecastId'
 const updateDisabled = computed(() => selecmedRows.value.length !== 1)
 /** 工具栏「删除」是否禁用（未选中任何行） */
 const deleteDisabled = computed(() => selecmedRows.value.length === 0)
+
+/** 查询栏期间（默认当前月；planDate） */
+const {
+  range: listPeriodRange,
+  limit: listPeriodLimit,
+  reset: resetListPeriod,
+  hasPeriod: hasListPeriod,
+  applyDateRange: applyListPeriodDate,
+} = useListPeriodQuery()
+
+/** 将查询栏期间写入 planDateStart / planDateEnd */
+function applyListPeriod(query: object): void {
+  applyListPeriodDate(query, 'planDateStart', 'planDateEnd')
+}
 
 /** Pinia：字典缓存（列表/查询 dict-type 渲染前预热） */
 const dictDataStore = useDictDataStore()
@@ -331,6 +790,31 @@ function buildListQuery(overrides?: Partial<SalesForecastQuery>): SalesForecastQ
   for (const key of SALESFORECAST_QUERY_STRING_FIELDS) {
     assignTrimmed(key, form[key])
   }
+  if (form.receiveVersionNo !== undefined && form.receiveVersionNo !== null) {
+    query.receiveVersionNo = form.receiveVersionNo
+  }
+  if (form.totalQuantity !== undefined && form.totalQuantity !== null) {
+    query.totalQuantity = form.totalQuantity
+  }
+  if (form.totalAmount !== undefined && form.totalAmount !== null) {
+    query.totalAmount = form.totalAmount
+  }
+  if (form.convertedQuantity !== undefined && form.convertedQuantity !== null) {
+    query.convertedQuantity = form.convertedQuantity
+  }
+  if (form.convertedAmount !== undefined && form.convertedAmount !== null) {
+    query.convertedAmount = form.convertedAmount
+  }
+  if (form.planStatus !== undefined && form.planStatus !== null) {
+    query.planStatus = form.planStatus
+  }
+  if (form.convertedStatus !== undefined && form.convertedStatus !== null) {
+    query.convertedStatus = form.convertedStatus
+  }
+  if (form.approvalStatus !== undefined && form.approvalStatus !== null) {
+    query.approvalStatus = form.approvalStatus
+  }
+  applyListPeriod(query)
   return query
 }
 /** 页面挂载：租户上下文就绪后加载分页配置；无查询条件时 loadData 保持空表 */
@@ -339,6 +823,7 @@ onMounted(async () => {
   void dictDataStore.loadAllDictDataAsync()
   loadData()
 })
+
 
 /** 主表行点击选中 key（左右主子表高亮） */
 const selecmedMasterKey = ref('')
@@ -492,6 +977,15 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getSalesForecastField(record, 'materialDescription') ?? ''
   },
   {
+    title: pi.label('plannedBatch'),
+    dataIndex: 'plannedBatch',
+    key: 'plannedBatch',
+    width: 120,
+    resizable: true,
+    ellipsis: true,
+    customRender: ({ record }: { record: any }) => getSalesForecastField(record, 'plannedBatch') ?? ''
+  },
+  {
     title: pi.label('customerCode'),
     dataIndex: 'customerCode',
     key: 'customerCode',
@@ -519,13 +1013,13 @@ const columns = computed<TableColumnsType>(() => [
     customRender: ({ record }: { record: any }) => getSalesForecastField(record, 'plannerGroupCode') ?? ''
   },
   {
-    title: pi.label('planBy'),
-    dataIndex: 'planBy',
-    key: 'planBy',
+    title: pi.label('plannerGroupName'),
+    dataIndex: 'plannerGroupName',
+    key: 'plannerGroupName',
     width: 120,
     resizable: true,
     ellipsis: true,
-    customRender: ({ record }: { record: any }) => getSalesForecastField(record, 'planBy') ?? ''
+    customRender: ({ record }: { record: any }) => getSalesForecastField(record, 'plannerGroupName') ?? ''
   },
   {
     title: pi.label('totalQuantity'),
@@ -588,15 +1082,6 @@ const columns = computed<TableColumnsType>(() => [
     ellipsis: true,
     customRender: ({ record }: { record: any }) => getSalesForecastField(record, 'planDescription') ?? ''
   },
-  {
-    title: pi.label('remark'),
-    dataIndex: 'remark',
-    key: 'remark',
-    width: 120,
-    resizable: true,
-    ellipsis: true,
-    customRender: ({ record }: { record: any }) => getSalesForecastField(record, 'remark') ?? ''
-  },
   CreateActionColumn({
     actions: [
       {
@@ -651,6 +1136,8 @@ const toSalesForecastNumber = (value: string | number | undefined | null): numbe
   const num = Number(value ?? 0)
   return Number.isFinite(num) ? num : 0
 }
+
+
 
 /** 行选择配置 */
 const rowSelection = computed(() => ({
@@ -714,8 +1201,45 @@ function handleSearch() {
 /** 重置查询条件并刷新列表 */
 function handleReset() {
   queryKeyword.value = ''
+  resetListPeriod()
   advancedQueryForm.value = {
-
+  cultureCode: '',
+  salesForecastCode: '',
+  planDateStart: '',
+  planDateEnd: '',
+  receiveDateStart: '',
+  receiveDateEnd: '',
+  receiveVersionNo: undefined as number | undefined,
+  salesProduct: '',
+  productCategoryCode: '',
+  profitCenterCode: '',
+  modelCode: '',
+  materialCode: '',
+  materialDescription: '',
+  plannedBatch: '',
+  customerCode: '',
+  customerName1: '',
+  plannerGroupCode: '',
+  plannerGroupName: '',
+  totalQuantity: undefined as number | undefined,
+  totalAmount: undefined as number | undefined,
+  convertedQuantity: undefined as number | undefined,
+  convertedAmount: undefined as number | undefined,
+  planStatus: undefined as number | undefined,
+  convertedStatus: undefined as number | undefined,
+  planDescription: '',
+  approvalStatus: undefined as number | undefined,
+  initiatorId: '',
+  initiatedAtStart: '',
+  initiatedAtEnd: '',
+  approvedBy: '',
+  approvedAtStart: '',
+  approvedAtEnd: '',
+  flowInstanceId: '',
+  createdAtStart: '',
+  createdAtEnd: '',
+  extField: '',
+  remark: '',
   }
   currentPage.value = getTaktDefaultPageIndex()
   loadData()
@@ -937,7 +1461,43 @@ function handleAdvancedQuerySubmit() {
 
 function handleAdvancedQueryReset() {
   advancedQueryForm.value = {
-
+  cultureCode: '',
+  salesForecastCode: '',
+  planDateStart: '',
+  planDateEnd: '',
+  receiveDateStart: '',
+  receiveDateEnd: '',
+  receiveVersionNo: undefined as number | undefined,
+  salesProduct: '',
+  productCategoryCode: '',
+  profitCenterCode: '',
+  modelCode: '',
+  materialCode: '',
+  materialDescription: '',
+  plannedBatch: '',
+  customerCode: '',
+  customerName1: '',
+  plannerGroupCode: '',
+  plannerGroupName: '',
+  totalQuantity: undefined as number | undefined,
+  totalAmount: undefined as number | undefined,
+  convertedQuantity: undefined as number | undefined,
+  convertedAmount: undefined as number | undefined,
+  planStatus: undefined as number | undefined,
+  convertedStatus: undefined as number | undefined,
+  planDescription: '',
+  approvalStatus: undefined as number | undefined,
+  initiatorId: '',
+  initiatedAtStart: '',
+  initiatedAtEnd: '',
+  approvedBy: '',
+  approvedAtStart: '',
+  approvedAtEnd: '',
+  flowInstanceId: '',
+  createdAtStart: '',
+  createdAtEnd: '',
+  extField: '',
+  remark: '',
   }
 }
 

@@ -4,13 +4,14 @@
 // 文件名称：TaktBomMaterialZeroPriceService.cs
 // 创建时间：2026-08-13
 // 创建人：Takt365(Cursor AI)
-// 功能描述：BOM 组件零价格清单（视图只含生产相关=X、PCB SECT 标识为空、采购类型=F、移动平均价=0；FERT+建议代替末字母逆推）
+// 功能描述：BOM 组件零价格清单（视图只含批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空、移动平均价=0；FERT+建议代替末字母逆推）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
 // ========================================
 
 using System.Linq.Expressions;
+using Microsoft.Extensions.Configuration;
 using SqlSugar;
 using Takt.Application.Dtos.Logistics.Manufacturing.Bom;
 using Takt.Application.Services.Foundation;
@@ -47,6 +48,10 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
     private readonly ITaktCompanyRepository<TaktBomMaterialCostItem> _bomMaterialCostItemRepository;
     private readonly ITaktCompanyRepository<TaktBomMaterialCost> _bomMaterialCostRepository;
     private readonly ITaktCompanyRepository<TaktMaterialMovingPrice> _materialMovingPriceRepository;
+    /// <summary>
+    /// 配置（公司代码与工厂代码同序映射）
+    /// </summary>
+    private readonly IConfiguration _configuration;
 
     /// <summary>
     /// 构造函数
@@ -54,12 +59,14 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
     /// <param name="bomMaterialCostItemRepository">BOM 成本明细仓储</param>
     /// <param name="bomMaterialCostRepository">BOM 成本汇总仓储</param>
     /// <param name="materialMovingPriceRepository">移动价格仓储</param>
+    /// <param name="configuration">配置（公司代码与工厂代码同序映射）</param>
     /// <param name="userContext">用户上下文</param>
     /// <param name="localizationService">本地化服务</param>
     public TaktBomMaterialZeroPriceService(
         ITaktCompanyRepository<TaktBomMaterialCostItem> bomMaterialCostItemRepository,
         ITaktCompanyRepository<TaktBomMaterialCost> bomMaterialCostRepository,
         ITaktCompanyRepository<TaktMaterialMovingPrice> materialMovingPriceRepository,
+        IConfiguration configuration,
         ITaktUserContext? userContext = null,
         ITaktLocalizationService? localizationService = null)
         : base(userContext, localizationService)
@@ -67,6 +74,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
         _bomMaterialCostItemRepository = bomMaterialCostItemRepository;
         _bomMaterialCostRepository = bomMaterialCostRepository;
         _materialMovingPriceRepository = materialMovingPriceRepository;
+        _configuration = configuration;
     }
 
     /// <summary>
@@ -247,6 +255,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             return new TaktBomMaterialZeroPriceMovingBackfillResultDto
             {
                 ProcessedMonth = costingPeriod,
+                ProcessedPlants = plantCode,
                 ItemPhysicalTable = await ResolveBomItemTableLabelAsync(costingStart),
             };
         }
@@ -323,14 +332,15 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
     }
 
     /// <summary>
-    /// Quartz：判定日所在自然月，按表内 PlantCode 批量回填零价移动价（不显式传工厂）
+    /// Quartz：判定日所在自然月，只回填当前公司对应工厂（2300→C100，2400→H100）
     /// </summary>
     /// <param name="asOfDate">判定日；默认今天</param>
-    /// <returns>回填统计；无工厂数据时 null</returns>
+    /// <returns>回填统计；该工厂当月无主表行时 null</returns>
     public async Task<TaktBomMaterialZeroPriceMovingBackfillResultDto?> RunScheduledBomMaterialZeroPriceMovingBackfillAsync(
         DateTime? asOfDate = null)
     {
         EnsureThreeLayerContext();
+        var plant = ResolveCurrentCompanyPlantCode();
         var asOf = TaktBomMaterialCostItemLineCostHelper.NormalizeCostingDate(asOfDate ?? DateTime.Today);
         var costingStart = new DateTime(asOf.Year, asOf.Month, 1);
         var costingEnd = new DateTime(
@@ -347,62 +357,52 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
         var periodHeaders = await _bomMaterialCostRepository.GetListAsync(
             x => x.TenantCode == tenantCode
                 && x.CompanyCode == companyCode
+                && x.PlantCode == plant
                 && x.CostingPeriod == periodKey,
             includeSoftDeleted: true);
-        var plantCodes = periodHeaders
-            .Select(x => x.PlantCode?.Trim() ?? string.Empty)
-            .Where(p => !string.IsNullOrEmpty(p))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(p => p, StringComparer.OrdinalIgnoreCase)
-            .ToList();
-        if (plantCodes.Count == 0)
+        if (periodHeaders.Count == 0)
         {
             return null;
         }
-
         var monthEndExclusive = costingStart.AddMonths(1);
         var fertType = TaktBomMaterialCostItemLineCostHelper.FertMaterialTypeCode;
-        TaktBomMaterialZeroPriceMovingBackfillResultDto? aggregate = null;
-        foreach (var code in plantCodes)
+        var plantHeaders = periodHeaders
+            .Where(h => string.Equals((h.MaterialType ?? string.Empty).Trim(), fertType, StringComparison.OrdinalIgnoreCase)
+                && h.CostingDate >= costingStart
+                && h.CostingDate < monthEndExclusive
+                && !string.IsNullOrWhiteSpace(h.ProductCode))
+            .ToList();
+        var part = await BackfillBomMaterialZeroPriceMovingCoreAsync(
+            new TaktBomMaterialZeroPriceMovingBackfillDto
+            {
+                PlantCode = plant,
+                CostingDateStart = costingStart,
+                CostingDateEnd = costingEnd,
+            },
+            plantHeaders);
+        part.ProcessedPlants = plant;
+        return part;
+    }
+
+    /// <summary>
+    /// 当前公司对应工厂（Database:CompanyCodes 与 PlantCodes 同序；2300→C100，2400→H100）
+    /// </summary>
+    /// <returns>工厂代码</returns>
+    private string ResolveCurrentCompanyPlantCode()
+    {
+        var companyCode = CurrentCompanyCode?.Trim() ?? string.Empty;
+        if (companyCode.Length == 0)
         {
-            // 主表行已从当前连接（选中库）取出，按工厂+FERT+核算月在内存筛选，避免再查时条件被丢掉
-            var plantHeaders = periodHeaders
-                .Where(h => string.Equals(h.PlantCode?.Trim(), code, StringComparison.OrdinalIgnoreCase)
-                    && string.Equals((h.MaterialType ?? string.Empty).Trim(), fertType, StringComparison.OrdinalIgnoreCase)
-                    && h.CostingDate >= costingStart
-                    && h.CostingDate < monthEndExclusive
-                    && !string.IsNullOrWhiteSpace(h.ProductCode))
-                .ToList();
-            var part = await BackfillBomMaterialZeroPriceMovingCoreAsync(
-                new TaktBomMaterialZeroPriceMovingBackfillDto
-                {
-                    PlantCode = code,
-                    CostingDateStart = costingStart,
-                    CostingDateEnd = costingEnd,
-                },
-                plantHeaders);
-            if (aggregate == null)
-            {
-                aggregate = part;
-                continue;
-            }
-            aggregate.ScannedRowCount = checked(aggregate.ScannedRowCount + part.ScannedRowCount);
-            aggregate.UpdatedRowCount = checked(aggregate.UpdatedRowCount + part.UpdatedRowCount);
-            aggregate.SkippedNoPriceCount = checked(aggregate.SkippedNoPriceCount + part.SkippedNoPriceCount);
-            aggregate.UnchangedRowCount = checked(aggregate.UnchangedRowCount + part.UnchangedRowCount);
-            aggregate.ComponentProcessedCount =
-                checked(aggregate.ComponentProcessedCount + part.ComponentProcessedCount);
-            aggregate.ProductMonthlyCostUpdatedCount =
-                checked(aggregate.ProductMonthlyCostUpdatedCount + part.ProductMonthlyCostUpdatedCount);
-            aggregate.ModelMonthlyAverageUpdatedCount =
-                checked(aggregate.ModelMonthlyAverageUpdatedCount + part.ModelMonthlyAverageUpdatedCount);
-            aggregate.ProcessedMonth = part.ProcessedMonth;
-            if (string.IsNullOrWhiteSpace(aggregate.ItemPhysicalTable))
-            {
-                aggregate.ItemPhysicalTable = part.ItemPhysicalTable;
-            }
+            throw new TaktBusinessException("当前公司代码为空，无法解析工厂");
         }
-        return aggregate;
+        try
+        {
+            return _configuration.RequireDatabase().GetPlantCodeForCompanyCode(companyCode);
+        }
+        catch (InvalidOperationException ex)
+        {
+            throw new TaktBusinessException(ex.Message);
+        }
     }
 
     /// <summary>
@@ -550,6 +550,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             return new TaktBomMaterialZeroPriceMovingBackfillResultDto
             {
                 ProcessedMonth = costingPeriod,
+                ProcessedPlants = plantCode.Trim(),
             };
         }
 
@@ -564,7 +565,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
         SuggestedMovingSource? firstSource = null;
 
         // ----------------------------------------
-        // 步骤1：工厂 + 日期 + 组件 → 更新明细移动价格（PcbSectIndicator 已标记则永不回填）
+        // 步骤1：工厂 + 日期 + 组件 → 更新明细移动价格（PcbSectIndicator=X 或批量标识非空则永不回填）
         // ----------------------------------------
         foreach (var (componentCodeRaw, source) in componentSources)
         {
@@ -589,8 +590,8 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             var rowsToUpdate = new List<TaktBomMaterialCostItem>();
             foreach (var row in items)
             {
-                // 标记存在：永不回填价格（Mark 由人工控制）
-                if (TaktBomMaterialCostItemLineCostHelper.HasPcbSectIndicatorMark(row.PcbSectIndicator))
+                // 批量标识、生产相关、PCB SECT、采购类型、特殊采购类任一不满足则不回填
+                if (!TaktBomMaterialCostItemLineCostHelper.CountsTowardBomMaterialCostItem(row))
                 {
                     continue;
                 }
@@ -673,6 +674,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             UnchangedRowCount = unchanged,
             SkippedNoPriceCount = 0,
             ComponentProcessedCount = componentProcessed,
+            ProcessedPlants = plantCode.Trim(),
             SourceComponentCode = firstSource?.SourceComponentCode,
             ValuationPeriod = firstSource?.ValuationPeriod,
             PriceInfo = firstSource == null
@@ -1075,7 +1077,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
     /// <param name="productCodes">产品编码</param>
     /// <param name="costingMonthStart">核算月初</param>
     /// <param name="costingMonthEnd">核算月末（同月初则整月）</param>
-    /// <param name="zeroPriceViewScope">true=只查生产相关=X、PCB SECT 标识为空、采购类型=F、移动平均价=0</param>
+    /// <param name="zeroPriceViewScope">true=只查批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空、移动平均价=0</param>
     /// <returns>明细行</returns>
     private async Task<List<TaktBomMaterialCostItem>> LoadBomCostItemsRawForProductsAsync(
         string plantCode,
@@ -1127,7 +1129,9 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
                     && (x.ProductionRelated == "X" || x.ProductionRelated == "x")
                     && x.PurchaseType != null
                     && (x.PurchaseType == "F" || x.PurchaseType == "f")
-                    && (x.PcbSectIndicator == null || x.PcbSectIndicator == ""));
+                    && (x.BatchIndicator == null || x.BatchIndicator == "")
+                    && (x.PcbSectIndicator == null || x.PcbSectIndicator == "")
+                    && (x.SpecialProcurementType == null || x.SpecialProcurementType == ""));
             }
             string? yearTable;
             try
@@ -1367,7 +1371,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             productCodes,
             costingStart,
             costingStart);
-        // 视图只保留：生产相关=X、PCB SECT 标识为空、采购类型=F、移动平均价=0
+        // 视图只保留：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空、移动平均价=0
         var zeroItems = items
             .Where(TaktBomMaterialCostItemLineCostHelper.QualifiesAsZeroPriceListLine)
             .ToList();
@@ -1435,7 +1439,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
     }
 
     /// <summary>
-    /// 为零价组件填充建议移动价格：先用本组件自身，从核算月往前取最近一次移动价大于 0 的月份（当月无记录或价格不大于 0 视为没有购买，继续前推，直到 19 年内确认没有价）。自身仍无价时，再按末字母逆推替代编码，同样按月前推。
+    /// 为零价组件填充建议移动价格。清单来自当前核算月 BOM 明细（采购类型 F、生产相关 X、批量标识空、PCB SECT 标识空、特殊采购类空、移动平均价 0）。建议价只查物料移动价格表：末字母前一版本先查同一期间，该期间没有大于 0 的价格再按月向前，直到遇到有价月份。
     /// </summary>
     /// <param name="plantCode">工厂代码</param>
     /// <param name="costingPeriod">核算月 yyyy-MM</param>
@@ -1473,8 +1477,11 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             {
                 continue;
             }
-            var candidates = new List<string> { componentCode };
-            candidates.AddRange(EnumeratePreviousLetterRevisions(componentCode));
+            var candidates = EnumeratePreviousLetterRevisions(componentCode).ToList();
+            if (candidates.Count == 0)
+            {
+                continue;
+            }
             candidatesByComponent[componentCode] = candidates;
             foreach (var code in candidates)
             {
@@ -1502,16 +1509,10 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
                 && x.PlantCode == plantCode
                 && chunk.Contains(x.MaterialCode)
                 && x.MovingPrice > 0;
-            var remaining = MaxRowLoad - Math.Max(samePeriodByMaterial.Count, priceByMaterial.Count);
-            if (remaining <= 0)
-            {
-                break;
-            }
             var part = await GetMovingPriceListForRangeAsync(
                 predicate,
                 lookbackStart,
-                periodKey,
-                remaining);
+                periodKey);
             foreach (var price in part)
             {
                 if (string.IsNullOrWhiteSpace(price.MaterialCode) || price.MovingPrice <= 0m)
@@ -1565,25 +1566,13 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
             foreach (var candidate in list)
             {
                 decimal? suggestedPrice = null;
-                foreach (var variant in TaktBomMaterialCostItemLineCostHelper.ExpandProductCodeLookupVariants(candidate))
+                if (TryGetIndexedUnitPrice(samePeriodByMaterial, candidate, out var exactMaster))
                 {
-                    if (samePeriodByMaterial.TryGetValue(variant, out var exact) && exact > 0m)
-                    {
-                        suggestedPrice = exact;
-                        break;
-                    }
+                    suggestedPrice = exactMaster;
                 }
-                if (!suggestedPrice.HasValue)
+                else if (TryGetLookbackUnitPrice(priceByMaterial, candidate, out var lookbackMaster))
                 {
-                    foreach (var variant in TaktBomMaterialCostItemLineCostHelper.ExpandProductCodeLookupVariants(candidate))
-                    {
-                        if (!priceByMaterial.TryGetValue(variant, out var hit))
-                        {
-                            continue;
-                        }
-                        suggestedPrice = hit.Price;
-                        break;
-                    }
+                    suggestedPrice = lookbackMaster;
                 }
                 if (!suggestedPrice.HasValue)
                 {
@@ -1594,6 +1583,47 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
                 break;
             }
         }
+    }
+
+    /// <summary>
+    /// 移动价格主表同期间单价
+    /// </summary>
+    private static bool TryGetIndexedUnitPrice(
+        Dictionary<string, decimal> index,
+        string candidate,
+        out decimal unitPrice)
+    {
+        foreach (var variant in TaktBomMaterialCostItemLineCostHelper.ExpandProductCodeLookupVariants(candidate))
+        {
+            if (index.TryGetValue(variant, out var exact) && exact > 0m)
+            {
+                unitPrice = exact;
+                return true;
+            }
+        }
+        unitPrice = 0m;
+        return false;
+    }
+
+    /// <summary>
+    /// 移动价格主表向前最近有价月的单价
+    /// </summary>
+    private static bool TryGetLookbackUnitPrice(
+        Dictionary<string, (string Period, decimal Price)> index,
+        string candidate,
+        out decimal unitPrice)
+    {
+        foreach (var variant in TaktBomMaterialCostItemLineCostHelper.ExpandProductCodeLookupVariants(candidate))
+        {
+            if (!index.TryGetValue(variant, out var hit) || hit.Price <= 0m)
+            {
+                continue;
+            }
+            unitPrice = hit.Price;
+            return true;
+        }
+        unitPrice = 0m;
+        return false;
     }
 
     /// <summary>
@@ -1655,7 +1685,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
     }
 
     /// <summary>
-    /// 零价格视图取数：只查生产相关=X、PCB SECT 标识为空、采购类型=F、移动平均价=0
+    /// 零价格视图取数：只查批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空、移动平均价=0
     /// </summary>
     /// <param name="plantCode">工厂</param>
     /// <param name="productCodes">产品编码</param>
@@ -2022,7 +2052,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
     }
 
     /// <summary>
-    /// 逆推建议代替源：末字母前推；优先核算月同 ValuationPeriod，否则核算月及以前最近有价月；返回移动价原值/单位/币种
+    /// 逆推建议代替源：只查物料移动价格表。末字母前一版本先查同一期间，该期间没有大于 0 的价格再按月向前，直到遇到有价月份。返回原值/单位/币种
     /// </summary>
     /// <param name="plantCode">工厂</param>
     /// <param name="costingPeriod">核算月 yyyy-MM</param>
@@ -2048,7 +2078,7 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
         {
             return null;
         }
-        var lookbackStart = costingMonth.AddMonths(-24).ToString("yyyy-MM");
+        var lookbackStart = costingMonth.AddYears(-19).ToString("yyyy-MM");
         var candidateSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var code in candidates)
         {
@@ -2071,16 +2101,10 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
                 && x.PlantCode == plantCode
                 && chunk.Contains(x.MaterialCode)
                 && x.MovingPrice > 0;
-            var remaining = MaxRowLoad - Math.Max(samePeriod.Count, anyPeriod.Count);
-            if (remaining <= 0)
-            {
-                break;
-            }
             var part = await GetMovingPriceListForRangeAsync(
                 predicate,
                 lookbackStart,
-                periodKey,
-                remaining);
+                periodKey);
             foreach (var price in part)
             {
                 if (string.IsNullOrWhiteSpace(price.MaterialCode) || price.MovingPrice <= 0m)
@@ -2127,25 +2151,38 @@ public class TaktBomMaterialZeroPriceService : TaktServiceBase, ITaktBomMaterial
         }
         foreach (var candidate in candidates)
         {
-            foreach (var variant in TaktBomMaterialCostItemLineCostHelper.ExpandProductCodeLookupVariants(candidate))
+            if (TryTakeMovingSource(samePeriod, candidate, out var exactMaster))
             {
-                if (samePeriod.TryGetValue(variant, out var exact))
-                {
-                    exact.SourceComponentCode = candidate;
-                    return exact;
-                }
+                return exactMaster;
             }
-            foreach (var variant in TaktBomMaterialCostItemLineCostHelper.ExpandProductCodeLookupVariants(candidate))
+            if (TryTakeMovingSource(anyPeriod, candidate, out var lookbackMaster))
             {
-                if (!anyPeriod.TryGetValue(variant, out var hit))
-                {
-                    continue;
-                }
-                hit.SourceComponentCode = candidate;
-                return hit;
+                return lookbackMaster;
             }
         }
         return null;
+    }
+
+    /// <summary>
+    /// 按候选编码取建议价源，并把来源编码写成该候选（末字母逆推结果）
+    /// </summary>
+    private static bool TryTakeMovingSource(
+        Dictionary<string, SuggestedMovingSource> index,
+        string candidate,
+        out SuggestedMovingSource source)
+    {
+        foreach (var variant in TaktBomMaterialCostItemLineCostHelper.ExpandProductCodeLookupVariants(candidate))
+        {
+            if (!index.TryGetValue(variant, out var hit))
+            {
+                continue;
+            }
+            hit.SourceComponentCode = candidate;
+            source = hit;
+            return true;
+        }
+        source = new SuggestedMovingSource();
+        return false;
     }
 
     /// <summary>

@@ -36,12 +36,6 @@ const ENTITY_FIELD_I18N_SEGMENT: Readonly<Record<string, string>> = {
   dictCode: 'code',
   typeCode: 'code',
   themeCode: 'code',
-  // *GroupCategory 去 slug 后会落成 category；种子统一用 groupcategory
-  defectGroupCategory: 'groupcategory',
-  ecGroupCategory: 'groupcategory',
-  qualityGroupCategory: 'groupcategory',
-  purchaseGroupCategory: 'groupcategory',
-  salesGroupCategory: 'groupcategory',
 }
 
 /** 按实体 slug 覆盖末段 */

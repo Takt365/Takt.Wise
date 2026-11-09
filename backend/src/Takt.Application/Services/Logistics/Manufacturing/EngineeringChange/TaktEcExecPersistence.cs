@@ -257,11 +257,11 @@ public partial class TaktEcExecPersistence
     }
 
     /// <summary>
-    /// 读取技术课主表控制范围。明细不保存该字段，新建执行行时按部门解析。
+    /// 按明细定位技术课主表
     /// </summary>
     /// <param name="detail">设变明细</param>
-    /// <returns>1=按成品，2=按机种，3=按设变，4=不管理；缺主表时按机种</returns>
-    private async Task<int> GetMasterControlScopeAsync(TaktEcDetail detail)
+    /// <returns>主表；无则 null</returns>
+    private async Task<TaktEcTe?> GetMasterTeAsync(TaktEcDetail detail)
     {
         TaktEcTe? te = null;
         if (detail.EcTeId > 0)
@@ -272,6 +272,17 @@ public partial class TaktEcExecPersistence
         {
             te = await _ecTeRepository.FirstAsync(x => x.EcCode == detail.EcCode);
         }
+        return te;
+    }
+
+    /// <summary>
+    /// 读取技术课主表控制范围。明细不保存该字段，新建执行行时按部门解析。
+    /// </summary>
+    /// <param name="detail">设变明细</param>
+    /// <returns>1=按成品，2=按机种，3=按设变，4=不管理；缺主表时按机种</returns>
+    private async Task<int> GetMasterControlScopeAsync(TaktEcDetail detail)
+    {
+        var te = await GetMasterTeAsync(detail);
         var raw = te?.EcControlScope ?? TaktEcControlScopeConstants.ByModel;
         return raw is TaktEcControlScopeConstants.ByFinishedProduct
             or TaktEcControlScopeConstants.ByModel
@@ -279,6 +290,28 @@ public partial class TaktEcExecPersistence
             or TaktEcControlScopeConstants.NotManaged
             ? raw
             : TaktEcControlScopeConstants.ByModel;
+    }
+
+    /// <summary>
+    /// 品管行绑定制一生产班组/实施批次（同设变+同去重键）
+    /// </summary>
+    /// <param name="qc">品管执行行</param>
+    /// <param name="detail">设变明细</param>
+    /// <param name="masterControlScope">主表控制范围</param>
+    /// <returns>任务</returns>
+    private async Task BindQcTeamBatchFromMfg1Async(TaktEcQc qc, TaktEcDetail detail, int masterControlScope)
+    {
+        ArgumentNullException.ThrowIfNull(qc);
+        ArgumentNullException.ThrowIfNull(detail);
+        var grainKey = TaktEcScopeRowGrain.BuildExecGrainKey(detail, TaktEcDeptCodes.Mfg1, masterControlScope);
+        var ecCode = detail.EcCode ?? string.Empty;
+        var mfg1 = await _assyRepository.FirstAsync(x =>
+            x.EcCode == ecCode && SqlFunc.ToString(x.EcGrainKey) == grainKey && x.IsObsolete == 0);
+        if (mfg1 == null)
+        {
+            return;
+        }
+        ApplyMfg1RedundantToQc(qc, mfg1);
     }
     /// <summary>
     /// 取与执行行去重键相同的一条未作废明细。
@@ -407,7 +440,7 @@ public partial class TaktEcExecPersistence
     }
 
     /// <summary>
-    /// 采购课：将可填字段同步到同设变单号+新物料且新采购类型为 F 的全部未作废执行行（不含当前行）。
+    /// 采购课：将可填字段同步到同设变单号（按设变仅一行）的其它未作废执行行（不含当前行；通常无扇出目标）。
     /// 源明细非 F 时不扇出，避免覆盖「采购无关」自动完成行。
     /// </summary>
     /// <param name="source">已写入当前行的采购执行实体</param>
@@ -427,14 +460,12 @@ public partial class TaktEcExecPersistence
         var purchaseTypeF = TaktEcScopeConstants.PurchaseTypeExternal;
         var siblingDetails = await _ecDetailRepository.GetListAsync(x =>
             x.EcCode == detail.EcCode
-            && x.EcNewMaterialCode == detail.EcNewMaterialCode
             && x.EcNewPurchaseType == purchaseTypeF
             && x.IsObsolete == 0);
         if (siblingDetails.Count == 0)
         {
             return;
         }
-        var detailIds = siblingDetails.Select(x => x.Id).ToList();
         var rows = await _mpRepository.GetListAsync(x =>
             x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
         if (rows.Count == 0)
@@ -445,16 +476,14 @@ public partial class TaktEcExecPersistence
         {
             row.IsImplemented = source.IsImplemented;
             row.ExecContent = source.ExecContent;
-            row.PurchaseOrderIssueDate = source.PurchaseOrderIssueDate;
-            row.Supplier = source.Supplier;
-            row.PurchaseOrderCode = source.PurchaseOrderCode;
-            row.EcOldPartDisposition = source.EcOldPartDisposition;
+            row.EcOldPartBalance = source.EcOldPartBalance;
+            row.InboundDate = source.InboundDate;
         }
         await _mpRepository.UpdateRangeAsync(rows);
     }
 
     /// <summary>
-    /// 受检课：将可填字段同步到同设变单号+新物料且新品需检验=1 的全部未作废执行行（不含当前行）。
+    /// 受检课：将可填字段同步到同设变单号（新品需检验=1）的全部未作废执行行（不含当前行）。
     /// 源明细无需检验时不扇出，避免覆盖「跟 IQC 无关」自动完成行。
     /// </summary>
     /// <param name="source">已写入当前行的受检执行实体</param>
@@ -471,16 +500,6 @@ public partial class TaktEcExecPersistence
         {
             return;
         }
-        var siblingDetails = await _ecDetailRepository.GetListAsync(x =>
-            x.EcCode == detail.EcCode
-            && x.EcNewMaterialCode == detail.EcNewMaterialCode
-            && x.EcNewRequiresInspection == 1
-            && x.IsObsolete == 0);
-        if (siblingDetails.Count == 0)
-        {
-            return;
-        }
-        var detailIds = siblingDetails.Select(x => x.Id).ToList();
         var rows = await _iqcRepository.GetListAsync(x =>
             x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
         if (rows.Count == 0)
@@ -491,14 +510,13 @@ public partial class TaktEcExecPersistence
         {
             row.IsImplemented = source.IsImplemented;
             row.ExecContent = source.ExecContent;
-            row.IqcOrderCode = source.IqcOrderCode;
             row.InspectionDate = source.InspectionDate;
         }
         await _iqcRepository.UpdateRangeAsync(rows);
     }
 
     /// <summary>
-    /// 部管课：将可填字段同步到同设变单号+机种且采购类型 F、仓库非 C003 的全部未作废执行行（不含当前行）。
+    /// 部管课：将可填字段同步到同设变单号（F 非 C003）的全部未作废执行行（不含当前行）。
     /// 源明细不可见时不扇出，避免覆盖「跟部管无关」自动完成行。
     /// </summary>
     /// <param name="source">已写入当前行的部管执行实体</param>
@@ -515,25 +533,6 @@ public partial class TaktEcExecPersistence
         {
             return;
         }
-        var purchaseTypeF = TaktEcScopeConstants.PurchaseTypeExternal;
-        var warehouseC003 = TaktEcScopeConstants.NewWarehousePcbaGate;
-        var model = detail.EcModelCode ?? string.Empty;
-        var siblingDetails = await _ecDetailRepository.GetListAsync(x =>
-            x.EcCode == detail.EcCode
-            && x.EcModelCode == model
-            && x.EcNewPurchaseType == purchaseTypeF
-            && (x.EcNewWarehouse == null || x.EcNewWarehouse != warehouseC003)
-            && x.IsObsolete == 0);
-        var mcKind = TaktEcScopeRowGrain.ResolveKind(TaktEcDeptCodes.Mc, source.EcControlScope);
-        var mcKey = TaktEcScopeRowGrain.BuildKey(detail, mcKind);
-        siblingDetails = siblingDetails
-            .Where(x => string.Equals(TaktEcScopeRowGrain.BuildKey(x, mcKind), mcKey, StringComparison.OrdinalIgnoreCase))
-            .ToList();
-        if (siblingDetails.Count == 0)
-        {
-            return;
-        }
-        var detailIds = siblingDetails.Select(x => x.Id).ToList();
         var rows = await _mcRepository.GetListAsync(x =>
             x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
         if (rows.Count == 0)
@@ -544,8 +543,8 @@ public partial class TaktEcExecPersistence
         {
             row.IsImplemented = source.IsImplemented;
             row.ExecContent = source.ExecContent;
-            row.OutboundBatch = source.OutboundBatch;
             row.OutboundDate = source.OutboundDate;
+            row.OutboundBatch = source.OutboundBatch;
         }
         await _mcRepository.UpdateRangeAsync(rows);
         if (source.IsImplemented != 1)
@@ -559,9 +558,9 @@ public partial class TaktEcExecPersistence
     }
 
     /// <summary>
-    /// SMT：将可填字段同步到同设变单号+机种且 F+C003 的全部未作废执行行（不含当前行）。
+    /// 物料：将可填字段同步到同 EcGrainKey（控制范围去重键）且 F+C003 的全部未作废执行行（不含当前行）。
     /// </summary>
-    /// <param name="source">已写入当前行的 SMT执行实体</param>
+    /// <param name="source">已写入当前行的物料执行实体</param>
     /// <returns>任务</returns>
     public async Task FanOutSmtFillableByEcAndParentMaterialAsync(TaktEcMtl source)
     {
@@ -576,26 +575,6 @@ public partial class TaktEcExecPersistence
         {
             return;
         }
-        var purchaseTypeF = TaktEcScopeConstants.PurchaseTypeExternal;
-        var warehouseC003 = TaktEcScopeConstants.NewWarehousePcbaGate;
-        var model = detail.EcModelCode ?? string.Empty;
-        var siblingDetails = await _ecDetailRepository.GetListAsync(x =>
-            x.EcCode == detail.EcCode
-            && x.EcModelCode == model
-            && x.EcNewPurchaseType == purchaseTypeF
-            && x.EcNewWarehouse != null
-            && x.EcNewWarehouse == warehouseC003
-            && x.IsObsolete == 0);
-        var smtKind = TaktEcScopeRowGrain.ResolveKind(TaktEcDeptCodes.Mtl, source.EcControlScope);
-        var smtKey = TaktEcScopeRowGrain.BuildKey(detail, smtKind);
-        siblingDetails = siblingDetails
-            .Where(x => string.Equals(TaktEcScopeRowGrain.BuildKey(x, smtKind), smtKey, StringComparison.OrdinalIgnoreCase))
-            .ToList();
-        if (siblingDetails.Count == 0)
-        {
-            return;
-        }
-        var detailIds = siblingDetails.Select(x => x.Id).ToList();
         var rows = await _smtRepository.GetListAsync(x =>
             x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
         if (rows.Count == 0)
@@ -606,8 +585,8 @@ public partial class TaktEcExecPersistence
         {
             row.IsImplemented = source.IsImplemented;
             row.ExecContent = source.ExecContent;
-            row.OutboundBatch = source.OutboundBatch;
             row.OutboundDate = source.OutboundDate;
+            row.OutboundBatch = source.OutboundBatch;
         }
         await _smtRepository.UpdateRangeAsync(rows);
         if (source.IsImplemented != 1)
@@ -661,13 +640,13 @@ public partial class TaktEcExecPersistence
             row.ExecContent = source.ExecContent;
             row.ProductionTeam = source.ProductionTeam;
             row.ProductionDate = source.ProductionDate;
-            row.ImplementationBatch = source.ImplementationBatch;
+            row.ProductionBatch = source.ProductionBatch;
         }
         await _pcbaRepository.UpdateRangeAsync(rows);
     }
 
     /// <summary>
-    /// 生管课：将可填字段同步到同设变单号+机种+根物料编码的全部未作废执行行（不含当前行）。
+    /// 生管课：可填字段同步。预定/实施/执行内容仍按同设变+机种+完成品扇出；旧品结余与旧物料编码组按整单设变同步（同一旧料只结余一次）。
     /// </summary>
     /// <param name="source">已写入当前行的生管执行实体</param>
     /// <returns>任务</returns>
@@ -688,70 +667,317 @@ public partial class TaktEcExecPersistence
             && x.EcModelCode == detail.EcModelCode
             && x.EcRootMaterialCode == detail.EcRootMaterialCode
             && x.IsObsolete == 0);
-        if (siblingDetails.Count == 0)
+        if (siblingDetails.Count > 0)
         {
-            return;
-        }
-        var detailIds = siblingDetails.Select(x => x.Id).ToList();
-        var rows = await _pcRepository.GetListAsync(x =>
-            x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
-        if (rows.Count > 0)
-        {
-            foreach (var row in rows)
+            var rows = await _pcRepository.GetListAsync(x =>
+                x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
+            if (rows.Count > 0)
             {
-                row.IsImplemented = source.IsImplemented;
-                row.ExecContent = source.ExecContent;
-                row.ScheduledDate = source.ScheduledDate;
-                row.ScheduledBatch = source.ScheduledBatch;
-                row.PoRemainder = source.PoRemainder;
-                row.BalanceQuantity = source.BalanceQuantity;
-                row.EcOldPartDisposition = source.EcOldPartDisposition;
+                foreach (var row in rows)
+                {
+                    row.IsImplemented = source.IsImplemented;
+                    row.ExecContent = source.ExecContent;
+                    row.ScheduledDate = source.ScheduledDate;
+                    row.ScheduledBatch = source.ScheduledBatch;
+                }
+                await _pcRepository.UpdateRangeAsync(rows);
             }
-            await _pcRepository.UpdateRangeAsync(rows);
         }
-        // 去重后常仅一行生管：预定日期/批次冗余到除采购/受检外的执行表
-        await SyncPcScheduledRedundantToSiblingDeptsAsync(source.EcCode, source.ScheduledDate, source.ScheduledBatch);
+        await SyncPcOldPartBalanceAcrossEcAsync(source);
+        // 预定日期/批次仅冗余到同设变+机种+完成品的部管/制一/制二/SMT
+        await SyncPcScheduledRedundantToSiblingDeptsAsync(source);
     }
 
     /// <summary>
-    /// 生管预定日期/预定批次 → 部管/制一/制二/SMT/品管（不含采购、受检、制技）。
+    /// 生管旧品结余：同步到同设变全部未作废生管行，并统一旧物料编码组为设变级去重清单。
     /// </summary>
-    private async Task SyncPcScheduledRedundantToSiblingDeptsAsync(
-        string ecCode,
-        DateTime? scheduledDate,
-        string? scheduledBatch)
+    /// <param name="source">已写入的生管执行行</param>
+    /// <returns>任务</returns>
+    private async Task SyncPcOldPartBalanceAcrossEcAsync(TaktEcPc source)
     {
-        if (string.IsNullOrWhiteSpace(ecCode))
+        ArgumentNullException.ThrowIfNull(source);
+        if (string.IsNullOrWhiteSpace(source.EcCode))
         {
             return;
         }
-        async Task SyncAsync<T>(ITaktCompanyRepository<T> repo, Action<T, DateTime?, string?> apply)
+        var ecCode = source.EcCode;
+        var details = await _ecDetailRepository.GetListAsync(x => x.EcCode == ecCode && x.IsObsolete == 0);
+        var oldGroup = TaktEcScopeRowGrain.BuildEcLevelOldMaterialGroup(details);
+        source.EcOldMaterialCodeGroup = oldGroup;
+        var rows = await _pcRepository.GetListAsync(x => x.EcCode == ecCode && x.IsObsolete == 0);
+        if (rows.Count == 0)
+        {
+            return;
+        }
+        var balance = source.EcOldPartBalance;
+        var changed = new List<TaktEcPc>(rows.Count);
+        foreach (var row in rows)
+        {
+            var needUpdate = false;
+            if (!string.Equals(row.EcOldPartBalance, balance, StringComparison.Ordinal))
+            {
+                row.EcOldPartBalance = balance;
+                needUpdate = true;
+            }
+            if (!string.Equals(row.EcOldMaterialCodeGroup, oldGroup, StringComparison.Ordinal))
+            {
+                row.EcOldMaterialCodeGroup = oldGroup;
+                needUpdate = true;
+            }
+            if (needUpdate)
+            {
+                changed.Add(row);
+            }
+        }
+        if (changed.Count > 0)
+        {
+            await _pcRepository.UpdateRangeAsync(changed);
+        }
+    }
+
+    /// <summary>
+    /// 生管预定日期/预定批次 → 部管/制一/制二/SMT（不含采购、受检、制技、品管）。
+    /// 仅同步同设变且机种编码组、根物料（完成品）编码组与生管行对应的执行行，禁止整单广播。
+    /// </summary>
+    /// <param name="source">已写入的生管执行行</param>
+    /// <returns>任务</returns>
+    private async Task SyncPcScheduledRedundantToSiblingDeptsAsync(TaktEcPc source)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        if (string.IsNullOrWhiteSpace(source.EcCode))
+        {
+            return;
+        }
+        var ecCode = source.EcCode;
+        var scheduledDate = source.ScheduledDate;
+        var scheduledBatch = source.ScheduledBatch;
+        var modelGroup = source.EcModelCodeGroup;
+        var rootGroup = source.EcRootMaterialCodeGroup;
+        var grainKey = source.EcGrainKey ?? string.Empty;
+
+        async Task SyncAsync<T>(
+            ITaktCompanyRepository<T> repo,
+            Func<T, string?> getModelGroup,
+            Func<T, string?> getRootGroup,
+            Action<T, DateTime?, string?> apply)
             where T : TaktCompanyEntityBase, ITaktEcDeptExecEntity, new()
         {
             var rows = await repo.GetListAsync(x => x.EcCode == ecCode && x.IsObsolete == 0);
-            if (rows.Count == 0)
+            var matched = rows
+                .Where(row => MatchesPcModelAndRootGrain(
+                    grainKey,
+                    modelGroup,
+                    rootGroup,
+                    row.EcGrainKey,
+                    getModelGroup(row),
+                    getRootGroup(row)))
+                .ToList();
+            if (matched.Count == 0)
             {
                 return;
             }
-            foreach (var row in rows)
+            foreach (var row in matched)
             {
                 apply(row, scheduledDate, scheduledBatch);
             }
-            await repo.UpdateRangeAsync(rows);
+            await repo.UpdateRangeAsync(matched);
         }
-        await SyncAsync(_mcRepository, (TaktEcMc r, DateTime? d, string? b) => { r.ScheduledDate = d; r.ScheduledBatch = b; });
-        await SyncAsync(_assyRepository, (TaktEcMfg1 r, DateTime? d, string? b) =>
-        {
-            if (IsAssyNotRelatedDefault(r))
+
+        await SyncAsync(
+            _mcRepository,
+            r => r.EcModelCodeGroup,
+            r => r.EcRootMaterialCodeGroup,
+            (TaktEcMc r, DateTime? d, string? b) => { r.ScheduledDate = d; r.ScheduledBatch = b; });
+        await SyncAsync(
+            _assyRepository,
+            r => r.EcModelCodeGroup,
+            r => r.EcRootMaterialCodeGroup,
+            (TaktEcMfg1 r, DateTime? d, string? b) =>
             {
-                return;
-            }
-            r.ScheduledDate = d;
-            r.ScheduledBatch = b;
-        });
-        await SyncAsync(_pcbaRepository, (TaktEcMfg2 r, DateTime? d, string? b) => { r.ScheduledDate = d; r.ScheduledBatch = b; });
-        await SyncAsync(_smtRepository, (TaktEcMtl r, DateTime? d, string? b) => { r.ScheduledDate = d; r.ScheduledBatch = b; });
-        await SyncAsync(_qaRepository, (TaktEcQc r, DateTime? d, string? b) => { r.ScheduledDate = d; r.ScheduledBatch = b; });
+                if (IsAssyNotRelatedDefault(r))
+                {
+                    return;
+                }
+                r.ScheduledDate = d;
+                r.ScheduledBatch = b;
+            });
+        await SyncAsync(
+            _pcbaRepository,
+            r => r.EcModelCodeGroup,
+            r => r.EcRootMaterialCodeGroup,
+            (TaktEcMfg2 r, DateTime? d, string? b) => { r.ScheduledDate = d; r.ScheduledBatch = b; });
+        await SyncAsync(
+            _smtRepository,
+            r => r.EcModelCodeGroup,
+            r => r.EcRootMaterialCodeGroup,
+            (TaktEcMtl r, DateTime? d, string? b) => { r.ScheduledDate = d; r.ScheduledBatch = b; });
+    }
+
+    /// <summary>
+    /// 生管与其它部门执行行是否同一业务粒：优先同 EcGrainKey；否则机种与完成品（根物料）编码组有交集即对应。
+    /// </summary>
+    /// <param name="sourceGrainKey">生管去重键</param>
+    /// <param name="sourceModelGroup">生管机种编码组</param>
+    /// <param name="sourceRootGroup">生管根物料编码组</param>
+    /// <param name="targetGrainKey">目标去重键</param>
+    /// <param name="targetModelGroup">目标机种编码组</param>
+    /// <param name="targetRootGroup">目标根物料编码组</param>
+    /// <returns>对应则为 true</returns>
+    private static bool MatchesPcModelAndRootGrain(
+        string? sourceGrainKey,
+        string? sourceModelGroup,
+        string? sourceRootGroup,
+        string? targetGrainKey,
+        string? targetModelGroup,
+        string? targetRootGroup)
+    {
+        if (!string.IsNullOrWhiteSpace(sourceGrainKey)
+            && string.Equals(sourceGrainKey, targetGrainKey, StringComparison.Ordinal))
+        {
+            return true;
+        }
+        var sourceModels = SplitCodeGroup(sourceModelGroup);
+        var sourceRoots = SplitCodeGroup(sourceRootGroup);
+        var targetModels = SplitCodeGroup(targetModelGroup);
+        var targetRoots = SplitCodeGroup(targetRootGroup);
+        if (sourceModels.Count == 0 || sourceRoots.Count == 0 || targetModels.Count == 0 || targetRoots.Count == 0)
+        {
+            return false;
+        }
+        var modelHit = sourceModels.Any(code => targetModels.Contains(code, StringComparer.OrdinalIgnoreCase));
+        var rootHit = sourceRoots.Any(code => targetRoots.Contains(code, StringComparer.OrdinalIgnoreCase));
+        return modelHit && rootHit;
+    }
+
+    /// <summary>
+    /// 分号编码组拆分为去重后的编码列表
+    /// </summary>
+    /// <param name="group">编码组</param>
+    /// <returns>编码列表</returns>
+    private static List<string> SplitCodeGroup(string? group)
+    {
+        return (group ?? string.Empty)
+            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(code => code.Length > 0)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    /// <summary>
+    /// 打开部管/物料/制一/制二编辑前：按设变+机种+完成品从生管刷新预定日期/预定批次（有则带入，无匹配则清空）
+    /// </summary>
+    /// <param name="ecCode">设变单号</param>
+    /// <param name="grainKey">本行去重键</param>
+    /// <param name="modelGroup">本行机种编码组</param>
+    /// <param name="rootGroup">本行根物料编码组</param>
+    /// <returns>匹配到的生管预定；无匹配时 date/batch 均为空</returns>
+    private async Task<(DateTime? ScheduledDate, string? ScheduledBatch)> ResolvePcScheduledForGrainAsync(
+        string ecCode,
+        string? grainKey,
+        string? modelGroup,
+        string? rootGroup)
+    {
+        var pcs = await _pcRepository.GetListAsync(x => x.EcCode == ecCode && x.IsObsolete == 0);
+        var pc = pcs.FirstOrDefault(p => MatchesPcModelAndRootGrain(
+            p.EcGrainKey,
+            p.EcModelCodeGroup,
+            p.EcRootMaterialCodeGroup,
+            grainKey,
+            modelGroup,
+            rootGroup));
+        return pc == null ? (null, null) : (pc.ScheduledDate, pc.ScheduledBatch);
+    }
+
+    /// <summary>
+    /// 部管：从对应生管行刷新预定日期/预定批次
+    /// </summary>
+    /// <param name="row">部管执行行</param>
+    /// <returns>任务</returns>
+    public async Task RefreshScheduledRedundantFromPcAsync(TaktEcMc row)
+    {
+        ArgumentNullException.ThrowIfNull(row);
+        if (string.IsNullOrWhiteSpace(row.EcCode))
+        {
+            return;
+        }
+        var (date, batch) = await ResolvePcScheduledForGrainAsync(
+            row.EcCode, row.EcGrainKey, row.EcModelCodeGroup, row.EcRootMaterialCodeGroup);
+        if (row.ScheduledDate == date && string.Equals(row.ScheduledBatch, batch, StringComparison.Ordinal))
+        {
+            return;
+        }
+        row.ScheduledDate = date;
+        row.ScheduledBatch = batch;
+        await _mcRepository.UpdateAsync(row);
+    }
+
+    /// <summary>
+    /// 物料：从对应生管行刷新预定日期/预定批次
+    /// </summary>
+    /// <param name="row">物料执行行</param>
+    /// <returns>任务</returns>
+    public async Task RefreshScheduledRedundantFromPcAsync(TaktEcMtl row)
+    {
+        ArgumentNullException.ThrowIfNull(row);
+        if (string.IsNullOrWhiteSpace(row.EcCode))
+        {
+            return;
+        }
+        var (date, batch) = await ResolvePcScheduledForGrainAsync(
+            row.EcCode, row.EcGrainKey, row.EcModelCodeGroup, row.EcRootMaterialCodeGroup);
+        if (row.ScheduledDate == date && string.Equals(row.ScheduledBatch, batch, StringComparison.Ordinal))
+        {
+            return;
+        }
+        row.ScheduledDate = date;
+        row.ScheduledBatch = batch;
+        await _smtRepository.UpdateAsync(row);
+    }
+
+    /// <summary>
+    /// 制一：从对应生管行刷新预定日期/预定批次
+    /// </summary>
+    /// <param name="row">制一执行行</param>
+    /// <returns>任务</returns>
+    public async Task RefreshScheduledRedundantFromPcAsync(TaktEcMfg1 row)
+    {
+        ArgumentNullException.ThrowIfNull(row);
+        if (string.IsNullOrWhiteSpace(row.EcCode))
+        {
+            return;
+        }
+        var (date, batch) = await ResolvePcScheduledForGrainAsync(
+            row.EcCode, row.EcGrainKey, row.EcModelCodeGroup, row.EcRootMaterialCodeGroup);
+        if (row.ScheduledDate == date && string.Equals(row.ScheduledBatch, batch, StringComparison.Ordinal))
+        {
+            return;
+        }
+        row.ScheduledDate = date;
+        row.ScheduledBatch = batch;
+        await _assyRepository.UpdateAsync(row);
+    }
+
+    /// <summary>
+    /// 制二：从对应生管行刷新预定日期/预定批次
+    /// </summary>
+    /// <param name="row">制二执行行</param>
+    /// <returns>任务</returns>
+    public async Task RefreshScheduledRedundantFromPcAsync(TaktEcMfg2 row)
+    {
+        ArgumentNullException.ThrowIfNull(row);
+        if (string.IsNullOrWhiteSpace(row.EcCode))
+        {
+            return;
+        }
+        var (date, batch) = await ResolvePcScheduledForGrainAsync(
+            row.EcCode, row.EcGrainKey, row.EcModelCodeGroup, row.EcRootMaterialCodeGroup);
+        if (row.ScheduledDate == date && string.Equals(row.ScheduledBatch, batch, StringComparison.Ordinal))
+        {
+            return;
+        }
+        row.ScheduledDate = date;
+        row.ScheduledBatch = batch;
+        await _pcbaRepository.UpdateAsync(row);
     }
 
     /// <summary>
@@ -762,40 +988,126 @@ public partial class TaktEcExecPersistence
     public async Task FanOutAssyFillableByEcModelAndRootMaterialAsync(TaktEcMfg1 source)
     {
         ArgumentNullException.ThrowIfNull(source);
-        if (await ShouldSkipConditionFanOutAsync(source.EcCode))
+        // 兄弟行扇出可跳过；制一→品管冗余必须始终执行（仅一行制一时旧逻辑会提前 return 导致品管永远带不出）
+        if (!await ShouldSkipConditionFanOutAsync(source.EcCode))
+        {
+            var detail = await FirstDetailForExecAsync(source);
+            if (detail != null)
+            {
+                var siblingDetails = await _ecDetailRepository.GetListAsync(x =>
+                    x.EcCode == detail.EcCode
+                    && x.EcModelCode == detail.EcModelCode
+                    && x.EcRootMaterialCode == detail.EcRootMaterialCode
+                    && x.IsObsolete == 0);
+                if (siblingDetails.Count > 0)
+                {
+                    var rows = await _assyRepository.GetListAsync(x =>
+                        x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
+                    if (rows.Count > 0)
+                    {
+                        foreach (var row in rows)
+                        {
+                            row.IsImplemented = source.IsImplemented;
+                            row.ExecContent = source.ExecContent;
+                            row.ProductionTeam = source.ProductionTeam;
+                            row.ProductionDate = source.ProductionDate;
+                            row.ProductionBatch = source.ProductionBatch;
+                        }
+                        await _assyRepository.UpdateRangeAsync(rows);
+                    }
+                }
+            }
+        }
+        // 生产班组/生产批次/生产日期 → 品管冗余（空则空）
+        await SyncMfg1TeamBatchToQcAsync(source);
+    }
+
+    /// <summary>
+    /// 制一生产班组/生产批次/生产日期 → 同设变+机种+完成品的品管 ProductionTeam/ProductionBatch/ProductionDate（只读冗余；空则清空）
+    /// </summary>
+    /// <param name="source">已写入的制一执行行</param>
+    /// <returns>任务</returns>
+    private async Task SyncMfg1TeamBatchToQcAsync(TaktEcMfg1 source)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        if (string.IsNullOrWhiteSpace(source.EcCode))
         {
             return;
         }
-        var detail = await FirstDetailForExecAsync(source);
-        if (detail == null)
+        var rows = await _qaRepository.GetListAsync(x => x.EcCode == source.EcCode && x.IsObsolete == 0);
+        var matched = rows
+            .Where(row => MatchesPcModelAndRootGrain(
+                source.EcGrainKey,
+                source.EcModelCodeGroup,
+                source.EcRootMaterialCodeGroup,
+                row.EcGrainKey,
+                row.EcModelCodeGroup,
+                row.EcRootMaterialCodeGroup))
+            .ToList();
+        if (matched.Count == 0)
         {
             return;
         }
-        var siblingDetails = await _ecDetailRepository.GetListAsync(x =>
-            x.EcCode == detail.EcCode
-            && x.EcModelCode == detail.EcModelCode
-            && x.EcRootMaterialCode == detail.EcRootMaterialCode
-            && x.IsObsolete == 0);
-        if (siblingDetails.Count == 0)
+        foreach (var row in matched)
+        {
+            ApplyMfg1RedundantToQc(row, source);
+        }
+        await _qaRepository.UpdateRangeAsync(matched);
+    }
+
+    /// <summary>
+    /// 将制一生产班组/生产批次/生产日期写入品管冗余字段（空则空）
+    /// </summary>
+    /// <param name="qc">品管行</param>
+    /// <param name="mfg1">制一行</param>
+    private static void ApplyMfg1RedundantToQc(TaktEcQc qc, TaktEcMfg1 mfg1)
+    {
+        ArgumentNullException.ThrowIfNull(qc);
+        ArgumentNullException.ThrowIfNull(mfg1);
+        qc.ProductionTeam = mfg1.ProductionTeam;
+        qc.ProductionBatch = mfg1.ProductionBatch;
+        qc.ProductionDate = mfg1.ProductionDate;
+    }
+
+    /// <summary>
+    /// 编辑品管前：按设变+机种+完成品从制一刷新生产班组/生产批次/生产日期（有则带入，无匹配则清空）；有变更则回写库
+    /// </summary>
+    /// <param name="qc">品管执行行</param>
+    /// <returns>任务</returns>
+    public async Task RefreshQcRedundantFromMfg1Async(TaktEcQc qc)
+    {
+        ArgumentNullException.ThrowIfNull(qc);
+        if (string.IsNullOrWhiteSpace(qc.EcCode))
         {
             return;
         }
-        var detailIds = siblingDetails.Select(x => x.Id).ToList();
-        var rows = await _assyRepository.GetListAsync(x =>
-            x.EcCode == source.EcCode && SqlFunc.ToString(x.EcGrainKey) == source.EcGrainKey && x.IsObsolete == 0 && x.Id != source.Id);
-        if (rows.Count == 0)
+        var mfg1Rows = await _assyRepository.GetListAsync(x => x.EcCode == qc.EcCode && x.IsObsolete == 0);
+        var mfg1 = mfg1Rows.FirstOrDefault(row => MatchesPcModelAndRootGrain(
+            row.EcGrainKey,
+            row.EcModelCodeGroup,
+            row.EcRootMaterialCodeGroup,
+            qc.EcGrainKey,
+            qc.EcModelCodeGroup,
+            qc.EcRootMaterialCodeGroup));
+        var beforeTeam = qc.ProductionTeam;
+        var beforeBatch = qc.ProductionBatch;
+        var beforeDate = qc.ProductionDate;
+        if (mfg1 == null)
         {
-            return;
+            qc.ProductionTeam = null;
+            qc.ProductionBatch = null;
+            qc.ProductionDate = null;
         }
-        foreach (var row in rows)
+        else
         {
-            row.IsImplemented = source.IsImplemented;
-            row.ExecContent = source.ExecContent;
-            row.ProductionTeam = source.ProductionTeam;
-            row.ProductionDate = source.ProductionDate;
-            row.ImplementationBatch = source.ImplementationBatch;
+            ApplyMfg1RedundantToQc(qc, mfg1);
         }
-        await _assyRepository.UpdateRangeAsync(rows);
+        if (!string.Equals(beforeTeam, qc.ProductionTeam, StringComparison.Ordinal)
+            || !string.Equals(beforeBatch, qc.ProductionBatch, StringComparison.Ordinal)
+            || beforeDate != qc.ProductionDate)
+        {
+            await _qaRepository.UpdateAsync(qc);
+        }
     }
 
     /// <summary>
@@ -835,10 +1147,9 @@ public partial class TaktEcExecPersistence
         {
             row.IsImplemented = source.IsImplemented;
             row.ExecContent = source.ExecContent;
-            row.ProductionTeam = source.ProductionTeam;
             row.InspectionDate = source.InspectionDate;
             row.InspectionBatch = source.InspectionBatch;
-            row.SamplingCode = source.SamplingCode;
+            // ProductionTeam/ProductionBatch/ProductionDate 由制一冗余写入，品管扇出不覆盖
         }
         await _qaRepository.UpdateRangeAsync(rows);
     }
@@ -953,8 +1264,36 @@ public partial class TaktEcExecPersistence
             ApplyAutoCloseDeptExec(exec, isNew, autoCloseContent);
         }
         await ApplyNonFertDeptControlledAsync(exec, detail, deptCode, ecImplScope);
+        if (exec is TaktEcMe meRow)
+        {
+            await ApplyMeSopUpdatedDefaultAsync(meRow, detail, isNew);
+        }
         // 批量派生时不在此刷新主表状态（技术课导入路径不按子表重算；部门填报 CRUD 自行 Refresh）
         return await SaveEntityAsync(exec, deptCode, isNew);
+    }
+
+    /// <summary>
+    /// 单行落库时制技 SOP 更新标记：拉同设变明细后按「在产 FERT→0，其它→1」派生
+    /// </summary>
+    /// <param name="row">制技执行行</param>
+    /// <param name="detail">当前明细</param>
+    /// <param name="isNew">是否新建</param>
+    private async Task ApplyMeSopUpdatedDefaultAsync(TaktEcMe row, TaktEcDetail detail, bool isNew)
+    {
+        var ecCode = detail.EcCode?.Trim() ?? string.Empty;
+        var siblings = string.IsNullOrWhiteSpace(ecCode)
+            ? new List<TaktEcDetail> { detail }
+            : await _ecDetailRepository.GetListAsync(x => x.EcCode == ecCode && x.IsObsolete == 0);
+        if (siblings.Count == 0)
+        {
+            siblings = new List<TaktEcDetail> { detail };
+        }
+        var masterControlScope = await GetMasterControlScopeAsync(detail);
+        var ecControlScope = TaktEcControlScopeConstants.ResolveForDept(
+            TaktEcDeptCodes.Me,
+            detail.EcImplScope,
+            masterControlScope);
+        ApplyMeSopUpdatedDefault(row, siblings, detail, ecControlScope, null, isNew);
     }
 
     /// <summary>
@@ -1141,6 +1480,22 @@ public partial class TaktEcExecPersistence
         }
         var groups = TaktEcScopeRowGrain.BuildRootGroups(siblings, deptCode, deptScope, fertRootKeys);
         var modelGroups = TaktEcScopeRowGrain.BuildModelGroups(siblings, deptCode, deptScope, fertRootKeys);
+        var needsOldMaterialGroups = deptCode is TaktEcDeptCodes.Pc
+            or TaktEcDeptCodes.Mfg1
+            or TaktEcDeptCodes.Mfg2
+            or TaktEcDeptCodes.Qc
+            or TaktEcDeptCodes.Pur;
+        var needsNewMaterialGroups = needsOldMaterialGroups
+            || deptCode is TaktEcDeptCodes.Pur
+                or TaktEcDeptCodes.Iqc
+                or TaktEcDeptCodes.Mc
+                or TaktEcDeptCodes.Mtl;
+        var oldMaterialGroups = needsOldMaterialGroups && deptCode != TaktEcDeptCodes.Pc
+            ? TaktEcScopeRowGrain.BuildOldMaterialGroups(siblings, deptCode, deptScope, fertRootKeys)
+            : null;
+        var newMaterialGroups = needsNewMaterialGroups
+            ? TaktEcScopeRowGrain.BuildNewMaterialGroups(siblings, deptCode, deptScope, fertRootKeys)
+            : null;
         var kind = TaktEcScopeRowGrain.ResolveKind(deptCode, deptScope);
         var groupKey = TaktEcScopeRowGrain.BuildKey(detail, kind, deptCode);
         if (groups.TryGetValue(groupKey, out var rootGroup))
@@ -1150,6 +1505,21 @@ public partial class TaktEcExecPersistence
         if (modelGroups.TryGetValue(groupKey, out var modelGroup))
         {
             AssignModelCodeGroup(exec, modelGroup);
+        }
+        // 生管：旧物料编码组按设变去重（同一旧料只结余一次）；其它部门仍按执行去重键
+        if (deptCode == TaktEcDeptCodes.Pc)
+        {
+            AssignOldMaterialCodeGroup(exec, TaktEcScopeRowGrain.BuildEcLevelOldMaterialGroup(siblings));
+        }
+        else if (oldMaterialGroups != null
+            && oldMaterialGroups.TryGetValue(groupKey, out var oldMaterialGroup))
+        {
+            AssignOldMaterialCodeGroup(exec, oldMaterialGroup);
+        }
+        if (newMaterialGroups != null
+            && newMaterialGroups.TryGetValue(groupKey, out var newMaterialGroup))
+        {
+            AssignNewMaterialCodeGroup(exec, newMaterialGroup);
         }
         if (deptCode is TaktEcDeptCodes.Pur or TaktEcDeptCodes.Iqc)
         {
@@ -1162,16 +1532,6 @@ public partial class TaktEcExecPersistence
             SetDiscontinuedStatusIfPresent(
                 exec,
                 TaktEcScopeRowGrain.ResolveRootGroupDiscontinuedStatus(siblings, detail, deptCode, deptScope, fertRootKeys));
-        }
-        if (deptCode == TaktEcDeptCodes.Mfg2)
-        {
-            var newMaterialGroups = TaktEcScopeRowGrain.BuildCodeGroups(siblings, deptCode, deptScope, fertRootKeys, item => item.EcNewMaterialCode);
-            var parentMaterialGroups = TaktEcScopeRowGrain.BuildCodeGroups(siblings, deptCode, deptScope, fertRootKeys, item => item.EcParentMaterialCode);
-            if (newMaterialGroups.TryGetValue(groupKey, out var newMaterialGroup)
-                && parentMaterialGroups.TryGetValue(groupKey, out var parentMaterialGroup))
-            {
-                AssignPcbaMaterialGroups(exec, newMaterialGroup, parentMaterialGroup);
-            }
         }
     }
 
@@ -1252,7 +1612,7 @@ public partial class TaktEcExecPersistence
     }
 
     /// <summary>
-    /// 采购课可见组（采购类型 F）内是否存在更大 Id 的同设变+新物料明细
+    /// 采购课可见组（采购类型 F）内是否存在更大 Id 的同设变明细
     /// </summary>
     /// <param name="detail">当前明细</param>
     /// <returns>存在更大 Id 兄弟则 true</returns>
@@ -1263,18 +1623,16 @@ public partial class TaktEcExecPersistence
             return false;
         }
         var purchaseTypeF = TaktEcScopeConstants.PurchaseTypeExternal;
-        var material = detail.EcNewMaterialCode ?? string.Empty;
         var newer = await _ecDetailRepository.FirstAsync(s =>
             s.IsObsolete == 0
             && s.EcCode == detail.EcCode
-            && s.EcNewMaterialCode == material
             && s.EcNewPurchaseType == purchaseTypeF
             && s.Id > detail.Id);
         return newer != null;
     }
 
     /// <summary>
-    /// 受检课可见组（需检验=1）内是否存在更大 Id 的同设变+新物料明细
+    /// 受检课可见组（需检验=1）内是否存在更大 Id 的同设变明细
     /// </summary>
     /// <param name="detail">当前明细</param>
     /// <returns>存在更大 Id 兄弟则 true</returns>
@@ -1284,11 +1642,9 @@ public partial class TaktEcExecPersistence
         {
             return false;
         }
-        var material = detail.EcNewMaterialCode ?? string.Empty;
         var newer = await _ecDetailRepository.FirstAsync(s =>
             s.IsObsolete == 0
             && s.EcCode == detail.EcCode
-            && s.EcNewMaterialCode == material
             && s.EcNewRequiresInspection == 1
             && s.Id > detail.Id);
         return newer != null;
@@ -1626,48 +1982,49 @@ public partial class TaktEcExecPersistence
             case TaktEcPc pc:
                 pc.ScheduledDate = dto.ScheduledDate;
                 pc.ScheduledBatch = dto.ScheduledBatch;
-                var poRemainder = string.IsNullOrWhiteSpace(dto.PoRemainder) ? null : dto.PoRemainder.Trim();
-                if (!TaktRegexHelper.IsValidEcPoRemainder(poRemainder))
+                var oldPartDisposition = string.IsNullOrWhiteSpace(dto.OldProductHandling)
+                    ? null
+                    : dto.OldProductHandling.Trim();
+                if (!TaktRegexHelper.IsValidEcPcOldPartBalance(oldPartDisposition))
                 {
-                    throw new TaktBusinessException("Po残须为空或「采购单10位-序号4位:数量」，如 4500123456-0010:18.5");
+                    throw new TaktBusinessException("旧品结余须为空或按旧物料逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，如 S0111914-4300000000:0010:0;0;4;");
                 }
-                pc.PoRemainder = poRemainder;
-                pc.BalanceQuantity = dto.BalanceQuantity;
-                pc.EcOldPartDisposition = dto.OldProductHandling;
+                pc.EcOldPartBalance = oldPartDisposition;
                 break;
             case TaktEcPur pur:
-                pur.PurchaseOrderIssueDate = dto.PurchaseOrderIssueDate;
-                pur.Supplier = dto.Supplier;
-                pur.PurchaseOrderCode = dto.PurchaseOrderCode;
-                pur.EcOldPartDisposition = dto.OldProductHandling;
+                var purOldPartDisposition = string.IsNullOrWhiteSpace(dto.OldProductHandling)
+                    ? null
+                    : dto.OldProductHandling.Trim();
+                if (!TaktRegexHelper.IsValidEcPcOldPartBalance(purOldPartDisposition))
+                {
+                    throw new TaktBusinessException("旧品结余须为空或按旧物料逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，如 S0111914-4300000000:0010:0;0;4;");
+                }
+                pur.EcOldPartBalance = purOldPartDisposition;
+                pur.InboundDate = dto.InboundDate;
                 break;
             case TaktEcIqc iqc:
-                iqc.IqcOrderCode = dto.IqcOrderCode;
                 iqc.InspectionDate = dto.InspectionDate;
                 break;
+            case TaktEcQc qc:
+                qc.InspectionDate = dto.InspectionDate;
+                break;
             case TaktEcMc mc:
-                mc.OutboundBatch = dto.OutboundBatch;
                 mc.OutboundDate = dto.OutboundDate;
+                mc.OutboundBatch = dto.OutboundBatch;
                 break;
             case TaktEcMtl electronic:
-                electronic.OutboundBatch = dto.OutboundBatch;
                 electronic.OutboundDate = dto.OutboundDate;
+                electronic.OutboundBatch = dto.OutboundBatch;
                 break;
             case TaktEcMfg2 mfg2:
                 mfg2.ProductionDate = dto.ProductionDate;
                 mfg2.ProductionTeam = dto.ProductionTeam;
-                mfg2.ImplementationBatch = dto.ImplementationBatch ?? dto.ProductionBatch;
+                mfg2.ProductionBatch = dto.ProductionBatch;
                 break;
             case TaktEcMfg1 mfg1:
                 mfg1.ProductionTeam = dto.ProductionTeam;
                 mfg1.ProductionDate = dto.ProductionDate;
-                mfg1.ImplementationBatch = dto.ImplementationBatch;
-                break;
-            case TaktEcQc qc:
-                qc.ProductionTeam = dto.ProductionTeam;
-                qc.InspectionDate = dto.InspectionDate;
-                qc.InspectionBatch = dto.InspectionBatch;
-                qc.SamplingCode = dto.SamplingCode;
+                mfg1.ProductionBatch = dto.ProductionBatch;
                 break;
             case TaktEcMe me:
                 me.SopDate = dto.SopDate;
@@ -1867,6 +2224,10 @@ public partial class TaktEcExecPersistence
         };
         var controlScope = masterControlScope ?? await GetMasterControlScopeAsync(detail);
         TaktEcDeptExecRedundantBinder.Apply(exec, detail, isNew ? lineNumber : null, controlScope);
+        if (exec is TaktEcQc qc)
+        {
+            await BindQcTeamBatchFromMfg1Async(qc, detail, controlScope);
+        }
         EnsureDeptName(exec);
         if (applyNotRelatedAuto)
         {
@@ -2082,17 +2443,32 @@ public partial class TaktEcExecPersistence
         switch (savedExec)
         {
             case TaktEcPc e when dto is TaktEcPcDto d:
-                d.EcDetails = (await _ecDetailRepository.GetListAsync(x =>
+                {
+                    var pcDetails = await _ecDetailRepository.GetListAsync(x =>
                         x.EcCode == e.EcCode
-                        && x.IsObsolete == 0))
-                    .Where(x => TaktEcRootMaterialCodeGroup.ContainsCode(e.EcModelCodeGroup, x.EcModelCode)
-                        && TaktEcRootMaterialCodeGroup.ContainsCode(e.EcRootMaterialCodeGroup, x.EcRootMaterialCode))
-                    .Adapt<List<TaktEcDetailDto>>();
-                break;
+                        && x.IsObsolete == 0);
+                    d.EcDetails = pcDetails
+                        .Where(x => TaktEcRootMaterialCodeGroup.ContainsCode(e.EcModelCodeGroup, x.EcModelCode)
+                            && TaktEcRootMaterialCodeGroup.ContainsCode(e.EcRootMaterialCodeGroup, x.EcRootMaterialCode))
+                        .Adapt<List<TaktEcDetailDto>>();
+                    // 结余 Tab：旧物料按整单设变去重；结余文本取本行或同设变其它生管行已填内容
+                    d.EcOldMaterialCodeGroup = TaktEcScopeRowGrain.BuildEcLevelOldMaterialGroup(pcDetails);
+                    if (string.IsNullOrWhiteSpace(d.EcOldPartBalance))
+                    {
+                        var siblingBalance = (await _pcRepository.GetListAsync(x =>
+                                x.EcCode == e.EcCode && x.IsObsolete == 0 && x.Id != e.Id))
+                            .Select(x => x.EcOldPartBalance)
+                            .FirstOrDefault(x => !string.IsNullOrWhiteSpace(x));
+                        if (!string.IsNullOrWhiteSpace(siblingBalance))
+                        {
+                            d.EcOldPartBalance = siblingBalance;
+                        }
+                    }
+                    break;
+                }
             case TaktEcPur e when dto is TaktEcPurDto d:
                 d.EcDetails = (await _ecDetailRepository.GetListAsync(x =>
                         x.EcCode == e.EcCode
-                        && x.EcNewMaterialCode == e.EcNewMaterialCode
                         && x.EcNewPurchaseType == purchaseTypeF
                         && x.IsObsolete == 0))
                     .Adapt<List<TaktEcDetailDto>>();
@@ -2100,7 +2476,6 @@ public partial class TaktEcExecPersistence
             case TaktEcIqc e when dto is TaktEcIqcDto d:
                 d.EcDetails = (await _ecDetailRepository.GetListAsync(x =>
                         x.EcCode == e.EcCode
-                        && x.EcNewMaterialCode == e.EcNewMaterialCode
                         && x.EcNewRequiresInspection == 1
                         && x.IsObsolete == 0))
                     .Adapt<List<TaktEcDetailDto>>();
@@ -2111,17 +2486,18 @@ public partial class TaktEcExecPersistence
                         && x.EcNewPurchaseType == purchaseTypeF
                         && (x.EcNewWarehouse == null || x.EcNewWarehouse != warehouseC003)
                         && x.IsObsolete == 0))
-                    .Where(x => TaktEcRootMaterialCodeGroup.ContainsCode(e.EcModelCodeGroup, x.EcModelCode))
+                    .Where(x => TaktEcRootMaterialCodeGroup.ContainsCode(e.EcModelCodeGroup, x.EcModelCode)
+                        && TaktEcRootMaterialCodeGroup.ContainsCode(e.EcRootMaterialCodeGroup, x.EcRootMaterialCode))
                     .Adapt<List<TaktEcDetailDto>>();
                 break;
             case TaktEcMtl e when dto is TaktEcMtlDto d:
                 d.EcDetails = (await _ecDetailRepository.GetListAsync(x =>
                         x.EcCode == e.EcCode
+                        && x.EcParentMaterialCode == e.EcParentMaterialCode
                         && x.EcNewPurchaseType == purchaseTypeF
                         && x.EcNewWarehouse != null
                         && x.EcNewWarehouse == warehouseC003
                         && x.IsObsolete == 0))
-                    .Where(x => TaktEcRootMaterialCodeGroup.ContainsCode(e.EcModelCodeGroup, x.EcModelCode))
                     .Adapt<List<TaktEcDetailDto>>();
                 break;
             case TaktEcMfg2 e when dto is TaktEcMfg2Dto d:

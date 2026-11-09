@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.Mds
 // 文件名称：TaktSalesForecastItemDtos.cs
-// 创建时间：2026-08-22
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：SalesForecastItem 模块 DTO（由 generate-dtos-from-entity.cjs 根据 TaktSalesForecastItem 生成，请按需审阅）
 // 
@@ -22,7 +22,7 @@ namespace Takt.Application.Dtos.Logistics.Manufacturing.Mds;
 // ========================================
 
 /// <summary>
-/// Takt销售预测明细（一行 = 主表物料在某财年某月的 001/002 计划量；产品/类别/利润中心/机种/物料在主表）
+/// Takt销售预测明细（一行 = 主表物料在某财年某月的一个版本；版本号 1～20；产品/类别/利润中心/机种/物料在主表）
 /// 对应前端 TaktSalesForecastItemDto
 /// 继承 TaktCompanyDtoBase
 /// </summary>
@@ -47,7 +47,7 @@ public class TaktSalesForecastItemDto : TaktCompanyDtoBase
     public string? SalesForecastName { get; set; }
 
     /// <summary>
-    /// 销售预测编码（冗余字段，便于查询）
+    /// 销售预测编码（冗余：按对应 Id 取主数据名称联动）
     /// </summary>
     public string SalesForecastCode { get; set; } = string.Empty;
 
@@ -67,17 +67,17 @@ public class TaktSalesForecastItemDto : TaktCompanyDtoBase
     public int PlanMonth { get; set; } = 0;
 
     /// <summary>
-    /// 计划数量版本001
+    /// 版本号（同一财年同一月 1～20；每个版本一行，挂在销售预测主表下）
     /// </summary>
-    public decimal PlanQuantity001 { get; set; }
+    public int VersionNo { get; set; } = 0;
 
     /// <summary>
-    /// 计划数量版本002
+    /// 计划数量（本版本）
     /// </summary>
-    public decimal PlanQuantity002 { get; set; }
+    public decimal PlanQuantity { get; set; }
 
     /// <summary>
-    /// 计划增减（版本002 − 版本001；可为负表示减量；服务层写入，禁止手改）
+    /// 计划增减（本版本数量 − 同月上一版本数量；版本 1 相对 0；服务层写入，禁止手改）
     /// </summary>
     public decimal PlanQuantityDelta { get; set; }
 
@@ -140,7 +140,7 @@ public class TaktSalesForecastItemQueryDto : TaktPagedQuery
     public long? SalesForecastId { get; set; }
 
     /// <summary>
-    /// 销售预测编码（冗余字段，便于查询）
+    /// 销售预测编码（冗余：按对应 Id 取主数据名称联动）
     /// </summary>
     public string? SalesForecastCode { get; set; } = string.Empty;
 
@@ -160,17 +160,17 @@ public class TaktSalesForecastItemQueryDto : TaktPagedQuery
     public int? PlanMonth { get; set; }
 
     /// <summary>
-    /// 计划数量版本001
+    /// 版本号（同一财年同一月 1～20；每个版本一行，挂在销售预测主表下）
     /// </summary>
-    public decimal? PlanQuantity001 { get; set; }
+    public int? VersionNo { get; set; }
 
     /// <summary>
-    /// 计划数量版本002
+    /// 计划数量（本版本）
     /// </summary>
-    public decimal? PlanQuantity002 { get; set; }
+    public decimal? PlanQuantity { get; set; }
 
     /// <summary>
-    /// 计划增减（版本002 − 版本001；可为负表示减量；服务层写入，禁止手改）
+    /// 计划增减（本版本数量 − 同月上一版本数量；版本 1 相对 0；服务层写入，禁止手改）
     /// </summary>
     public decimal? PlanQuantityDelta { get; set; }
 
@@ -251,7 +251,7 @@ public class TaktSalesForecastItemCreateDto
     public long SalesForecastId { get; set; }
 
     /// <summary>
-    /// 销售预测编码（冗余字段，便于查询）
+    /// 销售预测编码（冗余：按对应 Id 取主数据名称联动）
     /// </summary>
     public string SalesForecastCode { get; set; } = string.Empty;
 
@@ -272,17 +272,17 @@ public class TaktSalesForecastItemCreateDto
     public int PlanMonth { get; set; } = 0;
 
     /// <summary>
-    /// 计划数量版本001
+    /// 版本号（同一财年同一月 1～20；每个版本一行，挂在销售预测主表下）
     /// </summary>
-    public decimal PlanQuantity001 { get; set; }
+    public int VersionNo { get; set; } = 0;
 
     /// <summary>
-    /// 计划数量版本002
+    /// 计划数量（本版本）
     /// </summary>
-    public decimal PlanQuantity002 { get; set; }
+    public decimal PlanQuantity { get; set; }
 
     /// <summary>
-    /// 计划增减（版本002 − 版本001；可为负表示减量；服务层写入，禁止手改）
+    /// 计划增减（本版本数量 − 同月上一版本数量；版本 1 相对 0；服务层写入，禁止手改）
     /// </summary>
     public decimal PlanQuantityDelta { get; set; }
 
@@ -397,7 +397,7 @@ public class TaktSalesForecastItemTemplateDto
     public long? SalesForecastId { get; set; }
 
     /// <summary>
-    /// 销售预测编码（冗余字段，便于查询）
+    /// 销售预测编码（冗余：按对应 Id 取主数据名称联动）
     /// </summary>
     public string? SalesForecastCode { get; set; } = string.Empty;
 
@@ -417,17 +417,17 @@ public class TaktSalesForecastItemTemplateDto
     public int? PlanMonth { get; set; }
 
     /// <summary>
-    /// 计划数量版本001
+    /// 版本号（同一财年同一月 1～20；每个版本一行，挂在销售预测主表下）
     /// </summary>
-    public decimal? PlanQuantity001 { get; set; }
+    public int? VersionNo { get; set; }
 
     /// <summary>
-    /// 计划数量版本002
+    /// 计划数量（本版本）
     /// </summary>
-    public decimal? PlanQuantity002 { get; set; }
+    public decimal? PlanQuantity { get; set; }
 
     /// <summary>
-    /// 计划增减（版本002 − 版本001；可为负表示减量；服务层写入，禁止手改）
+    /// 计划增减（本版本数量 − 同月上一版本数量；版本 1 相对 0；服务层写入，禁止手改）
     /// </summary>
     public decimal? PlanQuantityDelta { get; set; }
 
@@ -495,7 +495,7 @@ public class TaktSalesForecastItemImportDto
     public long? SalesForecastId { get; set; }
 
     /// <summary>
-    /// 销售预测编码（冗余字段，便于查询）
+    /// 销售预测编码（冗余：按对应 Id 取主数据名称联动）
     /// </summary>
     public string? SalesForecastCode { get; set; } = string.Empty;
 
@@ -515,17 +515,17 @@ public class TaktSalesForecastItemImportDto
     public int? PlanMonth { get; set; }
 
     /// <summary>
-    /// 计划数量版本001
+    /// 版本号（同一财年同一月 1～20；每个版本一行，挂在销售预测主表下）
     /// </summary>
-    public decimal? PlanQuantity001 { get; set; }
+    public int? VersionNo { get; set; }
 
     /// <summary>
-    /// 计划数量版本002
+    /// 计划数量（本版本）
     /// </summary>
-    public decimal? PlanQuantity002 { get; set; }
+    public decimal? PlanQuantity { get; set; }
 
     /// <summary>
-    /// 计划增减（版本002 − 版本001；可为负表示减量；服务层写入，禁止手改）
+    /// 计划增减（本版本数量 − 同月上一版本数量；版本 1 相对 0；服务层写入，禁止手改）
     /// </summary>
     public decimal? PlanQuantityDelta { get; set; }
 
@@ -599,7 +599,7 @@ public class TaktSalesForecastItemExportDto
     public long SalesForecastId { get; set; }
 
     /// <summary>
-    /// 销售预测编码（冗余字段，便于查询）
+    /// 销售预测编码（冗余：按对应 Id 取主数据名称联动）
     /// </summary>
     public string SalesForecastCode { get; set; } = string.Empty;
 
@@ -619,17 +619,17 @@ public class TaktSalesForecastItemExportDto
     public int PlanMonth { get; set; } = 0;
 
     /// <summary>
-    /// 计划数量版本001
+    /// 版本号（同一财年同一月 1～20；每个版本一行，挂在销售预测主表下）
     /// </summary>
-    public decimal PlanQuantity001 { get; set; }
+    public int VersionNo { get; set; } = 0;
 
     /// <summary>
-    /// 计划数量版本002
+    /// 计划数量（本版本）
     /// </summary>
-    public decimal PlanQuantity002 { get; set; }
+    public decimal PlanQuantity { get; set; }
 
     /// <summary>
-    /// 计划增减（版本002 − 版本001；可为负表示减量；服务层写入，禁止手改）
+    /// 计划增减（本版本数量 − 同月上一版本数量；版本 1 相对 0；服务层写入，禁止手改）
     /// </summary>
     public decimal PlanQuantityDelta { get; set; }
 

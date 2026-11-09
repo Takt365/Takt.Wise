@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Mrp
 // 文件名称：TaktProductionPlanItemI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktProductionPlanItem 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -161,6 +161,15 @@ public class TaktProductionPlanItemI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.productionplanitem.materialcode", "zh-CN", "物料编码", "物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）"),
             // entity.productionplanitem.materialcode
             new TranslationSeedItem("entity.productionplanitem.materialcode", "zh-HK", "物料编码_hk", "物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）"),
+
+            // entity.productionplanitem.plannedbatch
+            new TranslationSeedItem("entity.productionplanitem.plannedbatch", "en-US", "计划批次_us", "计划批次（来自 MRP 明细；释放计划订单后带入 APS，正式工单写入 ProdBatch）"),
+            // entity.productionplanitem.plannedbatch
+            new TranslationSeedItem("entity.productionplanitem.plannedbatch", "ja-JP", "计划批次_jp", "计划批次（来自 MRP 明细；释放计划订单后带入 APS，正式工单写入 ProdBatch）"),
+            // entity.productionplanitem.plannedbatch
+            new TranslationSeedItem("entity.productionplanitem.plannedbatch", "zh-CN", "计划批次", "计划批次（来自 MRP 明细；释放计划订单后带入 APS，正式工单写入 ProdBatch）"),
+            // entity.productionplanitem.plannedbatch
+            new TranslationSeedItem("entity.productionplanitem.plannedbatch", "zh-HK", "计划批次_hk", "计划批次（来自 MRP 明细；释放计划订单后带入 APS，正式工单写入 ProdBatch）"),
 
             // entity.productionplanitem.materialdescription
             new TranslationSeedItem("entity.productionplanitem.materialdescription", "en-US", "物料描述_us", "物料描述（冗余：按 MaterialCode 取 TaktMaterialPlant.MaterialDescription联动）"),

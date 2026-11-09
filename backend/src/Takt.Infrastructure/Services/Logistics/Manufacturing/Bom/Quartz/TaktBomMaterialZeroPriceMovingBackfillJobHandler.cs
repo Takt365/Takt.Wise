@@ -50,12 +50,15 @@ public sealed class TaktBomMaterialZeroPriceMovingBackfillJobHandler : ITaktQuar
         ArgumentException.ThrowIfNullOrWhiteSpace(task.TenantCode);
         ArgumentException.ThrowIfNullOrWhiteSpace(task.CompanyCode);
         var asOfDate = TaktBomQuartzExecuteParamsHelper.ResolveAsOfDate(context.ExecuteParams);
+        var target = TaktQuartzRunScope.TargetDatabase ?? string.Empty;
         var result = await _zeroPriceService.RunScheduledBomMaterialZeroPriceMovingBackfillAsync(asOfDate);
         if (result == null)
         {
-            context.ExecuteMessage = "零价格回填无结果（无关联工厂或上下文无效）";
+            context.ExecuteMessage = $"零价格回填无结果（目标库 {target}，无关联工厂或上下文无效）";
             TaktLogger.Warning(
-                "[BomZeroPriceMpBk] Quartz 无结果 TaskCode={TaskCode} Tenant={Tenant} Company={Company}",
+                "[BomZeroPriceMpBk] Quartz 无结果 Target={Target} Plant={Plant} TaskCode={TaskCode} Tenant={Tenant} Company={Company}",
+                target,
+                string.Empty,
                 task.TaskCode,
                 task.TenantCode,
                 task.CompanyCode);
@@ -64,10 +67,13 @@ public sealed class TaktBomMaterialZeroPriceMovingBackfillJobHandler : ITaktQuar
         var itemTable = string.IsNullOrWhiteSpace(result.ItemPhysicalTable)
             ? string.Empty
             : $"，明细表 {result.ItemPhysicalTable.Trim()}";
+        var plants = result.ProcessedPlants ?? string.Empty;
         context.ExecuteMessage =
-            $"零价格回填完成（月份 {result.ProcessedMonth}）：组件 {result.ComponentProcessedCount}，扫描 {result.ScannedRowCount}，更新 {result.UpdatedRowCount}，无建议价跳过 {result.SkippedNoPriceCount}，未变 {result.UnchangedRowCount}，产品月成本 {result.ProductMonthlyCostUpdatedCount}，机种月均 {result.ModelMonthlyAverageUpdatedCount}{itemTable}";
+            $"零价格回填完成（目标库 {target}，工厂 {plants}，月份 {result.ProcessedMonth}）：组件 {result.ComponentProcessedCount}，扫描 {result.ScannedRowCount}，更新 {result.UpdatedRowCount}，无建议价跳过 {result.SkippedNoPriceCount}，未变 {result.UnchangedRowCount}，产品月成本 {result.ProductMonthlyCostUpdatedCount}，机种月均 {result.ModelMonthlyAverageUpdatedCount}{itemTable}";
         TaktLogger.Information(
-            "[BomZeroPriceMpBk] Quartz 完成 Month={Month} Components={Components} Scanned={Scanned} Updated={Updated} SkippedNoPrice={Skipped} Unchanged={Unchanged} Pc={Pc} ModelAvg={ModelAvg} Tenant={Tenant} Company={Company}",
+            "[BomZeroPriceMpBk] Quartz 完成 Target={Target} Plant={Plant} Period={Period} Components={Components} Scanned={Scanned} Updated={Updated} SkippedNoPrice={Skipped} Unchanged={Unchanged} Pc={Pc} ModelAvg={ModelAvg} Tenant={Tenant} Company={Company}",
+            target,
+            plants,
             result.ProcessedMonth,
             result.ComponentProcessedCount,
             result.ScannedRowCount,

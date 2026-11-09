@@ -18,5 +18,9 @@ export default {
       notUpdated: 'Not updated',
       updated: 'Updated',
     },
+    tabs: {
+      balance: 'Balance',
+      execContent: 'Exec Content',
+    },
   },
 }

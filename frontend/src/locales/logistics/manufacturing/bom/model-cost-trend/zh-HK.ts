@@ -16,9 +16,10 @@ export default {
     periodRange: '核算年月',
     modelOptional: '機種（可選，空=全部）',
     modelAll: '全部機種',
+    materialTypeOptional: '物料類型（可選，空=全部）',
+    materialTypeAll: '全部物料類型',
     selectPlantRequired: '請選擇工廠代碼',
     selectPeriodRequired: '請選擇核算期間',
-    selectMaterialTypeRequired: '請選擇物料類型',
     summary:
       '{plant} / {materialType} / {period} / 機種 {model} — 成品 {productCount} 個（組件差異取 {compare}）',
     export: '導出機種成本推移',

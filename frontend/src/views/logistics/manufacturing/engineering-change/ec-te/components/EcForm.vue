@@ -2,7 +2,7 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/ec-te/components -->
 <!-- 文件名称：EcForm.vue -->
-<!-- 功能描述：设变维护弹窗内嵌表单；主表仅 ecLeader/ecContent/ecStatus/remark 可编辑；实施范围单独 Tab：全仕向时部门实施范围可选，部管锁定按机种，内部/技术锁定按设变；制二/制一/品管跟随主表，采购/受检/部管/SMT 固定按设变，制技固定按机种；来源导入时 ecEntryDate 只读且固定当天，设变状态默认发行；明细 Tab 客户端分页，表高按弹出窗体 × 5/4 且不超过 Tab 剩余区（仅表格滚动、弹出窗体无滚动条）；附件 Tab 工具栏增删改（来源导入无预置行，须手工维护） -->
+<!-- 功能描述：设变维护弹窗内嵌表单；主表仅 ecLeader/ecContent/ecStatus/remark 可编辑；实施范围单独 Tab；旧品处理独立 Tab（按明细去重旧物料选处理方式，写入 ecOldPartDisposition「旧物料:处理方式;」并回写明细）；来源导入时 ecEntryDate 只读且固定当天，设变状态默认发行；明细 Tab 客户端分页；附件 Tab 工具栏增删改（来源导入无预置行，须手工维护） -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->
@@ -293,6 +293,57 @@
         </div>
       </a-tab-pane>
       <a-tab-pane
+        key="tab-oldpart"
+        :tab="t('logistics.manufacturing.engineering-change.ec-te.page.tabs.oldPart')"
+        force-render
+      >
+        <div :class="formContentClass">
+          <a-form-item
+            name="ecOldPartDisposition"
+            :label="gi.label('ecOldPartDisposition')"
+          >
+            <div
+              v-if="oldPartLines.length === 0"
+              class="text-text-secondary text-sm"
+            >
+              {{ t('logistics.manufacturing.engineering-change.ec-te.page.oldPart.empty') }}
+            </div>
+            <div
+              v-else
+              class="flex flex-col gap-2 w-full"
+            >
+              <a-input-group
+                v-for="(line, index) in oldPartLines"
+                :key="`te-old-part-${line.materialCode}-${index}`"
+                compact
+                class="w-full"
+              >
+                <a-input
+                  :value="line.materialCode"
+                  class="!w-[40%] text-center"
+                  disabled
+                />
+                <a-input
+                  class="!w-6 text-center"
+                  style="pointer-events: none"
+                  placeholder=":"
+                  disabled
+                />
+                <TaktSelect
+                  :value="line.disposition"
+                  dict-type="logistics_manufacturing_ec_old_part_disposition"
+                  class="!w-[calc(60%-1.5rem)]"
+                  :apply-dict-default="false"
+                  :placeholder="t('common.page.form.placeholder.select', { field: gi.label('ecOldPartDisposition') })"
+                  :disabled="loading"
+                  @update:value="(value) => onOldPartDispositionInput(index, value)"
+                />
+              </a-input-group>
+            </div>
+          </a-form-item>
+        </div>
+      </a-tab-pane>
+      <a-tab-pane
         key="tab-2"
         :tab="pi.self()"
         force-render
@@ -443,10 +494,12 @@ import {
   EC_SCOPE_FORM_DEPTS,
   TaktEcScope,
   taktEcDeptDedupDisplay,
+  taktEcDeptMaterialGroupHintKey,
   taktEcControlScopeChoices,
   taktNormalizeEcControlScope,
 } from '@/constants/logistics/ecScope.constants'
 import { translateLocaleMessage } from '@/utils/taktI18nMessage'
+import { RegexPatterns } from '@/utils/regex'
 
 /** i18n 翻译函数 */
 const { t } = useI18n()
@@ -492,9 +545,213 @@ const formContentClass = computed(() => (formFields.length > 10 ? 'takt-form-con
 /** 当前激活的 Tab key */
 const activeTab = ref('tab-0')
 /** CreateDto 字段名列表（与 formState 键对齐） */
-const formFields = ["tenantCode","companyCode","cultureCode","plantCode","ecNo","ecIssueDate","changeStatus","ecTitle","ecContent","ecLeader","ecLossAmount","ecImplScope","ecControlScope","ecEntryDate","ecStatus","remark"]
+const formFields = ["tenantCode","companyCode","cultureCode","plantCode","ecNo","ecIssueDate","changeStatus","ecTitle","ecContent","ecLeader","ecLossAmount","ecImplScope","ecControlScope","ecOldPartDisposition","ecEntryDate","ecStatus","remark"]
 
 const childEcDetailRows = ref<Record<string, unknown>[]>([])
+
+/** 旧品处理行（按明细旧物料去重） */
+interface TeOldPartLine {
+  /** 旧物料编码 */
+  materialCode: string
+  /** 处理方式字典值 */
+  disposition: string
+}
+
+/** 旧品处理页签行（唯一旧物料） */
+const oldPartLines = ref<TeOldPartLine[]>([])
+
+/**
+ * 明细旧品处理为空或非法时的默认值（字典 logistics_manufacturing_ec_old_part_disposition；5=无处理）
+ */
+const DEFAULT_EC_OLD_PART_DISPOSITION = '5'
+
+/** 合法旧品处理字典值：1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定 */
+const VALID_EC_OLD_PART_DISPOSITIONS = new Set(['1', '2', '3', '4', '5', '9'])
+
+/**
+ * 旧品处理字典值是否合法；非法或空视为需回落默认 5
+ * @param disposition 处理方式
+ * @returns 是否为 1～5 或 9
+ */
+function isValidEcOldPartDispositionCode(disposition: string | null | undefined): boolean {
+  const mode = String(disposition ?? '').trim()
+  return VALID_EC_OLD_PART_DISPOSITIONS.has(mode)
+}
+
+/**
+ * 解析明细/主表旧品处理；空或非字典合法值回落默认 5
+ * @param disposition 原始处理方式
+ * @returns 合法字典值
+ */
+function resolveEcOldPartDispositionOrDefault(disposition: string | null | undefined): string {
+  const mode = String(disposition ?? '').trim()
+  return isValidEcOldPartDispositionCode(mode) ? mode : DEFAULT_EC_OLD_PART_DISPOSITION
+}
+
+/**
+ * 旧物料编码是否有效（与后端 TaktEcScopeConstants.HasEffectiveMaterialCode 对齐：排除空与占位「0」）
+ * @param materialCode 旧物料编码
+ * @returns 是否有效
+ */
+function isEffectiveOldMaterialCode(materialCode: string | null | undefined): boolean {
+  const code = String(materialCode ?? '').trim()
+  return code.length > 0 && code !== '0'
+}
+
+/**
+ * 收集去重有效旧物料编码（排除空与「0」）
+ * @param codes 输出编码列表（保持首次出现的大小写）
+ * @param seen 已见键（大写）
+ * @param rawCode 原始编码
+ */
+function collectEffectiveOldMaterialCode(
+  codes: string[],
+  seen: Set<string>,
+  rawCode: string | null | undefined,
+): void {
+  const code = String(rawCode ?? '').trim()
+  if (!isEffectiveOldMaterialCode(code)) {
+    return
+  }
+  const key = code.toUpperCase()
+  if (seen.has(key)) {
+    return
+  }
+  seen.add(key)
+  codes.push(code)
+}
+
+/**
+ * 解析主表旧品处理文本为物料→处理方式映射
+ * @param content 「旧物料:处理方式;…」
+ * @returns 映射
+ */
+function parseTeOldPartDispositionMap(content: string | null | undefined): Map<string, string> {
+  const map = new Map<string, string>()
+  if (!content || typeof content !== 'string' || !content.trim()) {
+    return map
+  }
+  for (const raw of content.split(/[;\n\r]+/)) {
+    const part = raw.trim()
+    if (!part || !RegexPatterns.EC_TE_OLD_PART_DISPOSITION_PART.test(part)) {
+      continue
+    }
+    const sep = part.lastIndexOf(':')
+    if (sep <= 0) {
+      continue
+    }
+    const material = part.slice(0, sep).trim()
+    if (!isEffectiveOldMaterialCode(material)) {
+      continue
+    }
+    map.set(material.toUpperCase(), part.slice(sep + 1).trim())
+  }
+  return map
+}
+
+/**
+ * 聚合旧品处理行为主表 ntext
+ * @param lines 旧品处理行
+ * @returns 「旧物料:处理方式;…」或空串
+ */
+function composeTeOldPartDisposition(lines: readonly TeOldPartLine[]): string {
+  const parts: string[] = []
+  const seen = new Set<string>()
+  for (const line of lines) {
+    const material = String(line.materialCode ?? '').trim()
+    const mode = String(line.disposition ?? '').trim()
+    if (!isEffectiveOldMaterialCode(material) || !mode) {
+      continue
+    }
+    const key = material.toUpperCase()
+    if (seen.has(key)) {
+      continue
+    }
+    const segment = `${material}:${mode}`
+    if (!RegexPatterns.EC_TE_OLD_PART_DISPOSITION_PART.test(segment)) {
+      continue
+    }
+    seen.add(key)
+    parts.push(segment)
+  }
+  return parts.length === 0 ? '' : `${parts.join(';')};`
+}
+
+/**
+ * 从当前设变明细去重有效旧物料（排除「0」）；无内存明细时用后端旧物料组
+ * @returns 旧品处理行
+ */
+function rebuildTeOldPartLines(): TeOldPartLine[] {
+  const masterMap = parseTeOldPartDispositionMap(String(formState.ecOldPartDisposition ?? ''))
+  const codes: string[] = []
+  const seen = new Set<string>()
+  const dispositionByCode = new Map<string, string>()
+
+  for (const row of childEcDetailRows.value) {
+    const code = String(row.ecOldMaterialCode ?? '').trim()
+    collectEffectiveOldMaterialCode(codes, seen, code)
+    if (!isEffectiveOldMaterialCode(code)) {
+      continue
+    }
+    const key = code.toUpperCase()
+    const rowDisp = String(row.ecOldPartDisposition ?? '').trim()
+    // 仅收录合法字典值；非法值（非 1～5/9）不入 map，重建时回落默认 5
+    if (isValidEcOldPartDispositionCode(rowDisp) && !dispositionByCode.has(key)) {
+      dispositionByCode.set(key, rowDisp)
+    }
+  }
+
+  // 明细未内嵌（延后导入 / 编辑态服务端分页）：用后端去重旧物料组，保证列出全部有效旧物料
+  if (codes.length === 0) {
+    const group = String(formState.ecOldMaterialCodeGroup ?? props.formData?.ecOldMaterialCodeGroup ?? '')
+    for (const raw of group.split(/[;\n\r]+/)) {
+      collectEffectiveOldMaterialCode(codes, seen, raw)
+    }
+  }
+
+  codes.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+  return codes.map((materialCode) => {
+    const key = materialCode.toUpperCase()
+    const fromDetailOrMaster = dispositionByCode.get(key) ?? masterMap.get(key) ?? ''
+    return {
+      materialCode,
+      // 空或非 1/2/3/4/5/9 时默认无处理（5）
+      disposition: resolveEcOldPartDispositionOrDefault(fromDetailOrMaster),
+    }
+  })
+}
+
+/** 将旧品处理行同步到主表 ntext 与内存明细行 */
+function syncTeOldPartDispositionFromLines() {
+  const composed = composeTeOldPartDisposition(oldPartLines.value)
+  formState.ecOldPartDisposition = composed
+  const map = parseTeOldPartDispositionMap(composed)
+  for (const row of childEcDetailRows.value) {
+    const code = String(row.ecOldMaterialCode ?? '').trim()
+    if (!isEffectiveOldMaterialCode(code)) {
+      continue
+    }
+    const mode = map.get(code.toUpperCase())
+    if (mode) {
+      row.ecOldPartDisposition = mode
+    }
+  }
+}
+
+/**
+ * 旧品处理方式变更
+ * @param index 行下标
+ * @param value 字典值
+ */
+function onOldPartDispositionInput(index: number, value: string | number | null | undefined) {
+  const line = oldPartLines.value[index]
+  if (!line) {
+    return
+  }
+  line.disposition = value == null ? '' : String(value)
+  syncTeOldPartDispositionFromLines()
+}
+
 /** 明细子表当前页 */
 const ecDetailCurrentPage = ref(getTaktDefaultPageIndex())
 /** 明细子表每页条数 */
@@ -1190,6 +1447,7 @@ function handleAttachmentDeleteOne(record: Record<string, unknown>) {
 
 /** 组装 Create/Update 载荷（主表 + 子表数组） */
 function buildSubmitPayload() {
+  syncTeOldPartDispositionFromLines()
   const masterId = String(props.formData?.ecTeId ?? '').trim()
   const ecIdForChild = masterId || '0'
   const masterEcCode = String(formState.ecCode ?? formState.ecNo ?? '').trim()
@@ -1200,6 +1458,7 @@ function buildSubmitPayload() {
     ecCode: masterEcCode,
     cultureCode: masterCulture,
     plantCode: masterPlant,
+    ecOldPartDisposition: formState.ecOldPartDisposition ?? '',
     ecDetails: childEcDetailRows.value.map((rest) => {
       const { __rowKey, ecNo, docNo, ...row } = rest
       return {
@@ -1328,7 +1587,7 @@ function scopeDictOptions(dictType: string, includeValues?: readonly number[]) {
 /** 实施范围下拉 */
 const ecImplScopeSelectOptions = computed(() => scopeDictOptions('logistics_manufacturing_ec_impl_scope_category'))
 
-/** 部门范围可选项（全仕向三项可选；部管仅按机种；内部/技术仅按设变） */
+/** 部门范围可选项（全仕向三项可选；部管仅按成品；内部/技术仅按设变） */
 const ecControlScopeIncludeValues = computed(() => taktEcControlScopeChoices(Number(formState.ecImplScope)).allowed)
 
 /** 部管、内部、技术的部门实施范围只有一项，下拉不可改 */
@@ -1344,17 +1603,22 @@ const ecControlScopeSelectOptions = computed(() => scopeDictOptions(
 ))
 
 /**
- * 实施范围对照表。制技之下，全仕向与部管追加非 FERT、停产两行，文案为自动填写。内部与技术不追加。
+ * 实施范围对照表：各部门实际控制范围（ResolveForDept）+ 物料编码组回填说明。
+ * 全仕向与部管追加非 FERT、停产两行（自动填写）。内部与技术不追加。
  */
 const deptScopeRows = computed(() => {
   const ecImplScope = Number(formState.ecImplScope)
   const ecControlScope = Number(formState.ecControlScope)
   const autoFill = t('logistics.manufacturing.engineering-change.ec-te.page.scopeDepts.autoFill')
+  const scopeOptions = scopeDictOptions('logistics_manufacturing_ec_control_scope_category')
   const rows = EC_SCOPE_FORM_DEPTS.map((dept) => {
     const display = taktEcDeptDedupDisplay(dept.code, ecImplScope, ecControlScope)
-    const text = display.mode === 'dict'
-      ? (scopeDictOptions('logistics_manufacturing_ec_control_scope_category').find((item) => item.value === display.value)?.label ?? '')
-      : autoFill
+    const scopeLabel = scopeOptions.find((item) => item.value === display.value)?.label ?? ''
+    const hintKey = taktEcDeptMaterialGroupHintKey(dept.code)
+    const hint = hintKey
+      ? t(`logistics.manufacturing.engineering-change.ec-te.page.scopeDepts.${hintKey}`)
+      : ''
+    const text = hint ? `${scopeLabel}；${hint}` : scopeLabel
     return { ...dept, text }
   })
   if (ecImplScope === TaktEcScope.AllDestination || ecImplScope === TaktEcScope.MaterialControl) {
@@ -1395,7 +1659,7 @@ function applyDefaultEcImplScope(target: Record<string, unknown>) {
   target.ecControlScope = taktNormalizeEcControlScope(scope, target.ecControlScope)
 }
 
-/** 表单字段默认值（来源导入时录入日期固定当天，设变状态默认发行，实施范围默认全仕向） */
+/** 表单字段默认值（来源导入时录入日期固定当天，设变状态默认发行，实施范围默认全仕向，控制范围默认按成品） */
 function applyFormDefaults(target: Record<string, unknown>) {
   applySourceImportEntryDate(target)
   applySourceImportEcStatus(target)
@@ -1496,6 +1760,23 @@ watch(
       ecDetailCurrentPage.value = maxPage
     }
   },
+)
+
+/** 明细旧物料清单或延后旧物料组变化时重建旧品处理页签行 */
+watch(
+  () => [
+    childEcDetailRows.value.length,
+    String(formState.ecOldMaterialCodeGroup ?? ''),
+    String(props.formData?.ecOldMaterialCodeGroup ?? ''),
+    String(props.formData?.ecTeId ?? ''),
+    String(props.formData?.ecOldPartDisposition ?? ''),
+  ] as const,
+  () => {
+    oldPartLines.value = rebuildTeOldPartLines()
+    // 空处理默认 4 后写回主表 ntext 与内存明细，保证提交落库
+    syncTeOldPartDispositionFromLines()
+  },
+  { immediate: true },
 )
 
 /** 公司/租户切换时，新增态表单同步隔离字段 */
@@ -1616,6 +1897,16 @@ const rules = computed<Record<string, Rule[]>>(() => ({
 
 /** 校验表单（失败 throw，供父级 handleFormSubmit 捕获） */
 async function validate() {
+  syncTeOldPartDispositionFromLines()
+  if (props.sourceImportMode) {
+    const incomplete = oldPartLines.value.some((line) => !String(line.disposition ?? '').trim())
+    if (oldPartLines.value.length === 0 || incomplete) {
+      activeTab.value = 'tab-oldpart'
+      const msg = t('logistics.manufacturing.engineering-change.ec-te.page.oldPart.dispositionRequired')
+      message.warning(msg)
+      throw new Error(msg)
+    }
+  }
   await formRef.value?.validate()
   const attachmentRows = childEcAttachmentRows.value
   if (props.sourceImportMode && attachmentRows.length === 0) {
@@ -1730,6 +2021,8 @@ function resetFields() {
   }
   attachmentFormVisible.value = false
   attachmentFormData.value = {}
+  oldPartLines.value = rebuildTeOldPartLines()
+  syncTeOldPartDispositionFromLines()
   activeTab.value = 'tab-0'
   formRef.value?.clearValidate()
 }

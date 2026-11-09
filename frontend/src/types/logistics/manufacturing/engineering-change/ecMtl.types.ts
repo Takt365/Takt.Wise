@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/types/logistics/manufacturing/engineering-change
 // 文件名称：ecMtl.types.ts
-// 创建时间：2026-09-08
+// 创建时间：2026-10-29
 // 创建人：Takt365(Auto Generated)
 // 功能描述：logistics/manufacturing/engineering-change 模块类型定义（自动生成；类型名去 Takt 前缀与末尾 Dto，如 TaktCompanyDto → Company）
 // 
@@ -16,7 +16,7 @@ import type {
 } from '@/types/common.types';
 
 /**
- * 设变SMT（D0430）部门执行表
+ * 设变物料（部门 D0625）执行表。采购类型 F 且仓库 C003、新物料有效才落行。按设变单号+上阶物料去重一行；该上阶下全部 F+C003 新物料写入编码组
  * 对应前端 TaktEcMtlDto
  * 继承 TaktCompanyDtoBase
  * 对应前端 EcMtl
@@ -29,92 +29,54 @@ export interface EcMtl extends CompanyDtoBase {
   ecMtlId: string;
 
   /**
-   * 设变明细 ID（TaktEcDetail 主键；去重组内代表/种子明细 Id；同组多明细按业务键 FanOut）
-   */
-  ecDetailId: string;
-
-  /**
-   * 设变明细 名称（填充字段）
-   */
-  ecDetailName?: string;
-
-  /**
-   * 设变单号（冗余，便于查询）
-   */
-  ecCode: string;
-
-  /**
    * 行号（项号/序号，固定步长=10）
    */
   lineNumber: number;
 
   /**
-   * 机种编码组（单个或多个机种，分号分隔；ntext）
+   * 设变单号（冗余：来自 TaktEcDetail.EcCode）
    */
-  ecModelCodeGroup?: string;
+  ecCode: string;
 
   /**
-   * 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔）
+   * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
    */
-  ecRootMaterialCodeGroup?: string;
-  /** 根物料描述（仅全仕向且按成品时有值） */
-  ecRootMaterialDescription?: string;
+  discontinuedStatus: string;
 
   /**
-   * 上阶物料编码（冗余：来自 TaktEcDetail.EcParentMaterialCode）
+   * 机种编码组（同去重键下的机种编码，分号分隔；ntext）
+   */
+  ecModelCodeGroup: string;
+
+  /**
+   * 根物料编码组（同去重键下的根物料编码，分号分隔；ntext）
+   */
+  ecRootMaterialCodeGroup: string;
+
+  /**
+   * 新物料编码组（该上阶物料下采购类型 F、仓库 C003 的全部新物料编码，分号分隔；ntext）
+   */
+  ecNewMaterialCodeGroup: string;
+
+  /**
+   * 上阶物料编码（去重键组成部分；冗余：来自 TaktEcDetail.EcParentMaterialCode）
    */
   ecParentMaterialCode: string;
 
   /**
    * 上阶物料描述（冗余：来自 TaktEcDetail.EcParentMaterialDescription）
    */
-  ecParentMaterialDescription?: string;
+  ecParentMaterialDescription: string;
 
   /**
-   * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
+   * 新采购类型（冗余：来自保留明细；落行均为 F）
    */
-  discontinuedStatus: string;
-  /**
-   * 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
-   */
-  ecImplScope: number;
-  /** 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种 */
-  ecControlScope?: number;
+  ecNewPurchaseType: string;
 
   /**
-   * 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
+   * 新品仓库（冗余：来自保留明细；均为 C003）
    */
-  ecNewMaterialCode?: string;
-
-  /**
-   * 新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）
-   */
-  ecNewMaterialDescription?: string;
-
-  /**
-   * 新采购类型（F=外部采购，E=自制生产；冗余：来自 TaktEcDetail.EcNewPurchaseType）
-   */
-  ecNewPurchaseType?: string;
-
-  /**
-   * 新品仓库（选项 TaktWarehouses/options；DictValue=WarehouseCode；冗余：来自 TaktEcDetail.EcNewWarehouse；本表仅 C003）
-   */
-  ecNewWarehouse?: string;
-
-  /**
-   * 部门编码（TaktDept.DeptCode；本表固定课别）
-   */
-  deptCode: string;
-
-  /**
-   * 部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）
-   */
-  deptName?: string;
-
-  /**
-   * 是否实施（0=否 1=是，字典 sys_yes_no）
-   */
-  isImplemented: number;
+  ecNewWarehouse: string;
 
   /**
    * 预定日期（冗余：来自 TaktEcPc.ScheduledDate）
@@ -127,14 +89,9 @@ export interface EcMtl extends CompanyDtoBase {
   scheduledBatch?: string;
 
   /**
-   * 执行内容（各部门通用）
+   * 是否实施（0=否 1=是，字典 sys_yes_no）
    */
-  execContent?: string;
-
-  /**
-   * 出库批次
-   */
-  outboundBatch?: string;
+  isImplemented: number;
 
   /**
    * 出库日期
@@ -142,12 +99,47 @@ export interface EcMtl extends CompanyDtoBase {
   outboundDate?: string;
 
   /**
-   * 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
+   * 出库批次
+   */
+  outboundBatch?: string;
+
+  /**
+   * 执行内容（各部门通用；ntext）
+   */
+  execContent?: string;
+
+  /**
+   * 部门编码（固定 D0625 物料）
+   */
+  deptCode: string;
+
+  /**
+   * 部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）
+   */
+  deptName: string;
+
+  /**
+   * 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
+   */
+  ecImplScope: number;
+
+  /**
+   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品 2=按机种 3=按设变；跟随主表选中值）
+   */
+  ecControlScope: number;
+
+  /**
+   * 执行行去重键（按控制范围：按成品/按机种/按设变；同一键的明细共用本行。ntext）
+   */
+  ecGrainKey: string;
+
+  /**
+   * 是否作废（字典 sys_yes_no；0=否 1=是）
    */
   isObsolete: number;
 
   /**
-   * 设变明细列表（视图主从：执行表为主；一对多；业务键 EcCode + EcParentMaterialCode）
+   * 设变明细列表（视图主从：执行表为主；一对多；业务键 EcCode + EcModelCode + EcRootMaterialCode）
    */
   ecDetails?: EcDetail[];
 
@@ -182,34 +174,37 @@ export interface EcMtlQuery extends TaktPagedQuery {
   plantCode?: string;
 
   /**
-   * 设变明细 ID（TaktEcDetail 主键；去重组内代表/种子明细 Id；同组多明细按业务键 FanOut）
-   */
-  ecDetailId?: string;
-
-  /**
-   * 设变单号（冗余，便于查询）
-   */
-  ecCode?: string;
-
-  /**
    * 行号（项号/序号，固定步长=10）
    */
   lineNumber?: number;
 
   /**
-   * 机种编码组（单个或多个机种，分号分隔；ntext）
+   * 设变单号（冗余：来自 TaktEcDetail.EcCode）
+   */
+  ecCode?: string;
+
+  /**
+   * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
+   */
+  discontinuedStatus?: string;
+
+  /**
+   * 机种编码组（同去重键下的机种编码，分号分隔；ntext）
    */
   ecModelCodeGroup?: string;
 
   /**
-   * 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔）
+   * 根物料编码组（同去重键下的根物料编码，分号分隔；ntext）
    */
   ecRootMaterialCodeGroup?: string;
-  /** 根物料描述（仅全仕向且按成品时有值） */
-  ecRootMaterialDescription?: string;
 
   /**
-   * 上阶物料编码（冗余：来自 TaktEcDetail.EcParentMaterialCode）
+   * 新物料编码组（该上阶物料下采购类型 F、仓库 C003 的全部新物料编码，分号分隔；ntext）
+   */
+  ecNewMaterialCodeGroup?: string;
+
+  /**
+   * 上阶物料编码（去重键组成部分；冗余：来自 TaktEcDetail.EcParentMaterialCode）
    */
   ecParentMaterialCode?: string;
 
@@ -219,58 +214,34 @@ export interface EcMtlQuery extends TaktPagedQuery {
   ecParentMaterialDescription?: string;
 
   /**
-   * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
-   */
-  discontinuedStatus?: string;
-  /**
-   * 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
-   */
-  ecImplScope?: number;
-
-  /**
-   * 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
-   */
-  ecNewMaterialCode?: string;
-
-  /**
-   * 新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）
-   */
-  ecNewMaterialDescription?: string;
-
-  /**
-   * 新采购类型（F=外部采购，E=自制生产；冗余：来自 TaktEcDetail.EcNewPurchaseType）
+   * 新采购类型（冗余：来自保留明细；落行均为 F）
    */
   ecNewPurchaseType?: string;
 
   /**
-   * 新品仓库（选项 TaktWarehouses/options；DictValue=WarehouseCode；冗余：来自 TaktEcDetail.EcNewWarehouse；本表仅 C003）
+   * 新品仓库（冗余：来自保留明细；均为 C003）
    */
   ecNewWarehouse?: string;
 
   /**
-   * 部门编码（TaktDept.DeptCode；本表固定课别）
+   * 预定日期（冗余：来自 TaktEcPc.ScheduledDate）（范围查询-开始）
    */
-  deptCode?: string;
+  scheduledDateStart?: string;
 
   /**
-   * 部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）
+   * 预定日期（冗余：来自 TaktEcPc.ScheduledDate）（范围查询-结束）
    */
-  deptName?: string;
+  scheduledDateEnd?: string;
+
+  /**
+   * 预定批次（冗余：来自 TaktEcPc.ScheduledBatch）
+   */
+  scheduledBatch?: string;
 
   /**
    * 是否实施（0=否 1=是，字典 sys_yes_no）
    */
   isImplemented?: number;
-
-  /**
-   * 执行内容（各部门通用）
-   */
-  execContent?: string;
-
-  /**
-   * 出库批次
-   */
-  outboundBatch?: string;
 
   /**
    * 出库日期（范围查询-开始）
@@ -283,7 +254,42 @@ export interface EcMtlQuery extends TaktPagedQuery {
   outboundDateEnd?: string;
 
   /**
-   * 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
+   * 出库批次
+   */
+  outboundBatch?: string;
+
+  /**
+   * 执行内容（各部门通用；ntext）
+   */
+  execContent?: string;
+
+  /**
+   * 部门编码（固定 D0625 物料）
+   */
+  deptCode?: string;
+
+  /**
+   * 部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）
+   */
+  deptName?: string;
+
+  /**
+   * 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
+   */
+  ecImplScope?: number;
+
+  /**
+   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品 2=按机种 3=按设变；跟随主表选中值）
+   */
+  ecControlScope?: number;
+
+  /**
+   * 执行行去重键（按控制范围：按成品/按机种/按设变；同一键的明细共用本行。ntext）
+   */
+  ecGrainKey?: string;
+
+  /**
+   * 是否作废（字典 sys_yes_no；0=否 1=是）
    */
   isObsolete?: number;
 
@@ -337,87 +343,54 @@ export interface EcMtlCreate {
   plantCode: string;
 
   /**
-   * 设变明细 ID（TaktEcDetail 主键；去重组内代表/种子明细 Id；同组多明细按业务键 FanOut）
-   */
-  ecDetailId: string;
-
-  /**
-   * 设变单号（冗余，便于查询）
-   */
-  ecCode: string;
-
-  /**
    * 行号（项号/序号，固定步长=10）
    */
   lineNumber: number;
 
   /**
-   * 机种编码组（单个或多个机种，分号分隔；ntext）
+   * 设变单号（冗余：来自 TaktEcDetail.EcCode）
    */
-  ecModelCodeGroup?: string;
+  ecCode: string;
 
   /**
-   * 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔）
+   * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
    */
-  ecRootMaterialCodeGroup?: string;
-  /** 根物料描述（仅全仕向且按成品时有值） */
-  ecRootMaterialDescription?: string;
+  discontinuedStatus: string;
 
   /**
-   * 上阶物料编码（冗余：来自 TaktEcDetail.EcParentMaterialCode）
+   * 机种编码组（同去重键下的机种编码，分号分隔；ntext）
+   */
+  ecModelCodeGroup: string;
+
+  /**
+   * 根物料编码组（同去重键下的根物料编码，分号分隔；ntext）
+   */
+  ecRootMaterialCodeGroup: string;
+
+  /**
+   * 新物料编码组（该上阶物料下采购类型 F、仓库 C003 的全部新物料编码，分号分隔；ntext）
+   */
+  ecNewMaterialCodeGroup: string;
+
+  /**
+   * 上阶物料编码（去重键组成部分；冗余：来自 TaktEcDetail.EcParentMaterialCode）
    */
   ecParentMaterialCode: string;
 
   /**
    * 上阶物料描述（冗余：来自 TaktEcDetail.EcParentMaterialDescription）
    */
-  ecParentMaterialDescription?: string;
+  ecParentMaterialDescription: string;
 
   /**
-   * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
+   * 新采购类型（冗余：来自保留明细；落行均为 F）
    */
-  discontinuedStatus: string;
-  /**
-   * 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
-   */
-  ecImplScope: number;
-  /** 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种 */
-  ecControlScope?: number;
+  ecNewPurchaseType: string;
 
   /**
-   * 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
+   * 新品仓库（冗余：来自保留明细；均为 C003）
    */
-  ecNewMaterialCode?: string;
-
-  /**
-   * 新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）
-   */
-  ecNewMaterialDescription?: string;
-
-  /**
-   * 新采购类型（F=外部采购，E=自制生产；冗余：来自 TaktEcDetail.EcNewPurchaseType）
-   */
-  ecNewPurchaseType?: string;
-
-  /**
-   * 新品仓库（选项 TaktWarehouses/options；DictValue=WarehouseCode；冗余：来自 TaktEcDetail.EcNewWarehouse；本表仅 C003）
-   */
-  ecNewWarehouse?: string;
-
-  /**
-   * 部门编码（TaktDept.DeptCode；本表固定课别）
-   */
-  deptCode: string;
-
-  /**
-   * 部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）
-   */
-  deptName?: string;
-
-  /**
-   * 是否实施（0=否 1=是，字典 sys_yes_no）
-   */
-  isImplemented: number;
+  ecNewWarehouse: string;
 
   /**
    * 预定日期（冗余：来自 TaktEcPc.ScheduledDate）
@@ -430,14 +403,9 @@ export interface EcMtlCreate {
   scheduledBatch?: string;
 
   /**
-   * 执行内容（各部门通用）
+   * 是否实施（0=否 1=是，字典 sys_yes_no）
    */
-  execContent?: string;
-
-  /**
-   * 出库批次
-   */
-  outboundBatch?: string;
+  isImplemented: number;
 
   /**
    * 出库日期
@@ -445,7 +413,42 @@ export interface EcMtlCreate {
   outboundDate?: string;
 
   /**
-   * 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
+   * 出库批次
+   */
+  outboundBatch?: string;
+
+  /**
+   * 执行内容（各部门通用；ntext）
+   */
+  execContent?: string;
+
+  /**
+   * 部门编码（固定 D0625 物料）
+   */
+  deptCode: string;
+
+  /**
+   * 部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）
+   */
+  deptName: string;
+
+  /**
+   * 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
+   */
+  ecImplScope: number;
+
+  /**
+   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品 2=按机种 3=按设变；跟随主表选中值）
+   */
+  ecControlScope: number;
+
+  /**
+   * 执行行去重键（按控制范围：按成品/按机种/按设变；同一键的明细共用本行。ntext）
+   */
+  ecGrainKey: string;
+
+  /**
+   * 是否作废（字典 sys_yes_no；0=否 1=是）
    */
   isObsolete: number;
 
@@ -478,31 +481,7 @@ export interface EcMtlUpdate extends EcMtlCreate {
 
 
 /**
- * EcMtl 状态更新 DTO
- * 对应前端 EcMtlStatus
- * @description 对应后端 TaktEcMtlStatusDto
- */
-export interface EcMtlStatus {
-  /**
-   * EcMtlID
-   */
-  ecMtlId: string;
-
-  /**
-   * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
-   */
-  discontinuedStatus: string;
-  /**
-   * 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
-   */
-  ecImplScope: number;
-  /** 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种 */
-  ecControlScope?: number;
-
-}
-
-
-/**
+ * EcMtl 停产状态更新 DTO
  * 对应前端 EcMtlDiscontinuedStatus
  * @description 对应后端 TaktEcMtlDiscontinuedStatusDto
  */
@@ -511,17 +490,24 @@ export interface EcMtlDiscontinuedStatus {
    * EcMtlID
    */
   ecMtlId: string;
+
   /**
    * 根物料停产状态（字典 logistics_materials_material_discontinued_status；Z0=在产；停产按钮默认 ZQ）
    */
   discontinuedStatus: string;
+
   /**
    * 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
    */
   ecImplScope: number;
-  /** 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种 */
-  ecControlScope?: number;
+
+  /**
+   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category）
+   */
+  ecControlScope: number;
+
 }
+
 
 /**
  * EcMtl 作废/撤销作废 DTO
@@ -569,34 +555,37 @@ export interface EcMtlTemplate {
   plantCode?: string;
 
   /**
-   * 设变明细 ID（TaktEcDetail 主键；去重组内代表/种子明细 Id；同组多明细按业务键 FanOut）
-   */
-  ecDetailId?: string;
-
-  /**
-   * 设变单号（冗余，便于查询）
-   */
-  ecCode?: string;
-
-  /**
    * 行号（项号/序号，固定步长=10）
    */
   lineNumber?: number;
 
   /**
-   * 机种编码组（单个或多个机种，分号分隔；ntext）
+   * 设变单号（冗余：来自 TaktEcDetail.EcCode）
+   */
+  ecCode?: string;
+
+  /**
+   * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
+   */
+  discontinuedStatus?: string;
+
+  /**
+   * 机种编码组（同去重键下的机种编码，分号分隔；ntext）
    */
   ecModelCodeGroup?: string;
 
   /**
-   * 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔）
+   * 根物料编码组（同去重键下的根物料编码，分号分隔；ntext）
    */
   ecRootMaterialCodeGroup?: string;
-  /** 根物料描述（仅全仕向且按成品时有值） */
-  ecRootMaterialDescription?: string;
 
   /**
-   * 上阶物料编码（冗余：来自 TaktEcDetail.EcParentMaterialCode）
+   * 新物料编码组（该上阶物料下采购类型 F、仓库 C003 的全部新物料编码，分号分隔；ntext）
+   */
+  ecNewMaterialCodeGroup?: string;
+
+  /**
+   * 上阶物料编码（去重键组成部分；冗余：来自 TaktEcDetail.EcParentMaterialCode）
    */
   ecParentMaterialCode?: string;
 
@@ -606,36 +595,47 @@ export interface EcMtlTemplate {
   ecParentMaterialDescription?: string;
 
   /**
-   * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
-   */
-  discontinuedStatus?: string;
-  /**
-   * 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
-   */
-  ecImplScope?: number;
-
-  /**
-   * 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
-   */
-  ecNewMaterialCode?: string;
-
-  /**
-   * 新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）
-   */
-  ecNewMaterialDescription?: string;
-
-  /**
-   * 新采购类型（F=外部采购，E=自制生产；冗余：来自 TaktEcDetail.EcNewPurchaseType）
+   * 新采购类型（冗余：来自保留明细；落行均为 F）
    */
   ecNewPurchaseType?: string;
 
   /**
-   * 新品仓库（选项 TaktWarehouses/options；DictValue=WarehouseCode；冗余：来自 TaktEcDetail.EcNewWarehouse；本表仅 C003）
+   * 新品仓库（冗余：来自保留明细；均为 C003）
    */
   ecNewWarehouse?: string;
 
   /**
-   * 部门编码（TaktDept.DeptCode；本表固定课别）
+   * 预定日期（冗余：来自 TaktEcPc.ScheduledDate）
+   */
+  scheduledDate?: string;
+
+  /**
+   * 预定批次（冗余：来自 TaktEcPc.ScheduledBatch）
+   */
+  scheduledBatch?: string;
+
+  /**
+   * 是否实施（0=否 1=是，字典 sys_yes_no）
+   */
+  isImplemented?: number;
+
+  /**
+   * 出库日期
+   */
+  outboundDate?: string;
+
+  /**
+   * 出库批次
+   */
+  outboundBatch?: string;
+
+  /**
+   * 执行内容（各部门通用；ntext）
+   */
+  execContent?: string;
+
+  /**
+   * 部门编码（固定 D0625 物料）
    */
   deptCode?: string;
 
@@ -645,27 +645,22 @@ export interface EcMtlTemplate {
   deptName?: string;
 
   /**
-   * 是否实施（0=否 1=是，字典 sys_yes_no）
+   * 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
    */
-  isImplemented?: number;
+  ecImplScope?: number;
 
   /**
-   * 执行内容（各部门通用）
+   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品 2=按机种 3=按设变；跟随主表选中值）
    */
-  execContent?: string;
+  ecControlScope?: number;
 
   /**
-   * 出库批次
+   * 执行行去重键（按控制范围：按成品/按机种/按设变；同一键的明细共用本行。ntext）
    */
-  outboundBatch?: string;
+  ecGrainKey?: string;
 
   /**
-   * 出库日期
-   */
-  outboundDate?: string;
-
-  /**
-   * 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
+   * 是否作废（字典 sys_yes_no；0=否 1=是）
    */
   isObsolete?: number;
 
@@ -709,34 +704,37 @@ export interface EcMtlImport {
   plantCode?: string;
 
   /**
-   * 设变明细 ID（TaktEcDetail 主键；去重组内代表/种子明细 Id；同组多明细按业务键 FanOut）
-   */
-  ecDetailId?: string;
-
-  /**
-   * 设变单号（冗余，便于查询）
-   */
-  ecCode?: string;
-
-  /**
    * 行号（项号/序号，固定步长=10）
    */
   lineNumber?: number;
 
   /**
-   * 机种编码组（单个或多个机种，分号分隔；ntext）
+   * 设变单号（冗余：来自 TaktEcDetail.EcCode）
+   */
+  ecCode?: string;
+
+  /**
+   * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
+   */
+  discontinuedStatus?: string;
+
+  /**
+   * 机种编码组（同去重键下的机种编码，分号分隔；ntext）
    */
   ecModelCodeGroup?: string;
 
   /**
-   * 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔）
+   * 根物料编码组（同去重键下的根物料编码，分号分隔；ntext）
    */
   ecRootMaterialCodeGroup?: string;
-  /** 根物料描述（仅全仕向且按成品时有值） */
-  ecRootMaterialDescription?: string;
 
   /**
-   * 上阶物料编码（冗余：来自 TaktEcDetail.EcParentMaterialCode）
+   * 新物料编码组（该上阶物料下采购类型 F、仓库 C003 的全部新物料编码，分号分隔；ntext）
+   */
+  ecNewMaterialCodeGroup?: string;
+
+  /**
+   * 上阶物料编码（去重键组成部分；冗余：来自 TaktEcDetail.EcParentMaterialCode）
    */
   ecParentMaterialCode?: string;
 
@@ -746,36 +744,47 @@ export interface EcMtlImport {
   ecParentMaterialDescription?: string;
 
   /**
-   * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
-   */
-  discontinuedStatus?: string;
-  /**
-   * 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
-   */
-  ecImplScope?: number;
-
-  /**
-   * 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
-   */
-  ecNewMaterialCode?: string;
-
-  /**
-   * 新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）
-   */
-  ecNewMaterialDescription?: string;
-
-  /**
-   * 新采购类型（F=外部采购，E=自制生产；冗余：来自 TaktEcDetail.EcNewPurchaseType）
+   * 新采购类型（冗余：来自保留明细；落行均为 F）
    */
   ecNewPurchaseType?: string;
 
   /**
-   * 新品仓库（选项 TaktWarehouses/options；DictValue=WarehouseCode；冗余：来自 TaktEcDetail.EcNewWarehouse；本表仅 C003）
+   * 新品仓库（冗余：来自保留明细；均为 C003）
    */
   ecNewWarehouse?: string;
 
   /**
-   * 部门编码（TaktDept.DeptCode；本表固定课别）
+   * 预定日期（冗余：来自 TaktEcPc.ScheduledDate）
+   */
+  scheduledDate?: string;
+
+  /**
+   * 预定批次（冗余：来自 TaktEcPc.ScheduledBatch）
+   */
+  scheduledBatch?: string;
+
+  /**
+   * 是否实施（0=否 1=是，字典 sys_yes_no）
+   */
+  isImplemented?: number;
+
+  /**
+   * 出库日期
+   */
+  outboundDate?: string;
+
+  /**
+   * 出库批次
+   */
+  outboundBatch?: string;
+
+  /**
+   * 执行内容（各部门通用；ntext）
+   */
+  execContent?: string;
+
+  /**
+   * 部门编码（固定 D0625 物料）
    */
   deptCode?: string;
 
@@ -785,27 +794,22 @@ export interface EcMtlImport {
   deptName?: string;
 
   /**
-   * 是否实施（0=否 1=是，字典 sys_yes_no）
+   * 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
    */
-  isImplemented?: number;
+  ecImplScope?: number;
 
   /**
-   * 执行内容（各部门通用）
+   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品 2=按机种 3=按设变；跟随主表选中值）
    */
-  execContent?: string;
+  ecControlScope?: number;
 
   /**
-   * 出库批次
+   * 执行行去重键（按控制范围：按成品/按机种/按设变；同一键的明细共用本行。ntext）
    */
-  outboundBatch?: string;
+  ecGrainKey?: string;
 
   /**
-   * 出库日期
-   */
-  outboundDate?: string;
-
-  /**
-   * 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
+   * 是否作废（字典 sys_yes_no；0=否 1=是）
    */
   isObsolete?: number;
 
@@ -849,87 +853,54 @@ export interface EcMtlExport {
   cultureCode: string;
 
   /**
-   * 设变明细 ID（TaktEcDetail 主键；去重组内代表/种子明细 Id；同组多明细按业务键 FanOut）
-   */
-  ecDetailId: string;
-
-  /**
-   * 设变单号（冗余，便于查询）
-   */
-  ecCode: string;
-
-  /**
    * 行号（项号/序号，固定步长=10）
    */
   lineNumber: number;
 
   /**
-   * 机种编码组（单个或多个机种，分号分隔；ntext）
+   * 设变单号（冗余：来自 TaktEcDetail.EcCode）
    */
-  ecModelCodeGroup?: string;
+  ecCode: string;
 
   /**
-   * 根物料编码组（同设变单号+机种编码下可见明细的根物料编码，分号分隔）
+   * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
    */
-  ecRootMaterialCodeGroup?: string;
-  /** 根物料描述（仅全仕向且按成品时有值） */
-  ecRootMaterialDescription?: string;
+  discontinuedStatus: string;
 
   /**
-   * 上阶物料编码（冗余：来自 TaktEcDetail.EcParentMaterialCode）
+   * 机种编码组（同去重键下的机种编码，分号分隔；ntext）
+   */
+  ecModelCodeGroup: string;
+
+  /**
+   * 根物料编码组（同去重键下的根物料编码，分号分隔；ntext）
+   */
+  ecRootMaterialCodeGroup: string;
+
+  /**
+   * 新物料编码组（该上阶物料下采购类型 F、仓库 C003 的全部新物料编码，分号分隔；ntext）
+   */
+  ecNewMaterialCodeGroup: string;
+
+  /**
+   * 上阶物料编码（去重键组成部分；冗余：来自 TaktEcDetail.EcParentMaterialCode）
    */
   ecParentMaterialCode: string;
 
   /**
    * 上阶物料描述（冗余：来自 TaktEcDetail.EcParentMaterialDescription）
    */
-  ecParentMaterialDescription?: string;
+  ecParentMaterialDescription: string;
 
   /**
-   * 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
+   * 新采购类型（冗余：来自保留明细；落行均为 F）
    */
-  discontinuedStatus: string;
-  /**
-   * 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
-   */
-  ecImplScope: number;
-  /** 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种 */
-  ecControlScope?: number;
+  ecNewPurchaseType: string;
 
   /**
-   * 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
+   * 新品仓库（冗余：来自保留明细；均为 C003）
    */
-  ecNewMaterialCode?: string;
-
-  /**
-   * 新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）
-   */
-  ecNewMaterialDescription?: string;
-
-  /**
-   * 新采购类型（F=外部采购，E=自制生产；冗余：来自 TaktEcDetail.EcNewPurchaseType）
-   */
-  ecNewPurchaseType?: string;
-
-  /**
-   * 新品仓库（选项 TaktWarehouses/options；DictValue=WarehouseCode；冗余：来自 TaktEcDetail.EcNewWarehouse；本表仅 C003）
-   */
-  ecNewWarehouse?: string;
-
-  /**
-   * 部门编码（TaktDept.DeptCode；本表固定课别）
-   */
-  deptCode: string;
-
-  /**
-   * 部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）
-   */
-  deptName?: string;
-
-  /**
-   * 是否实施（0=否 1=是，字典 sys_yes_no）
-   */
-  isImplemented: number;
+  ecNewWarehouse: string;
 
   /**
    * 预定日期（冗余：来自 TaktEcPc.ScheduledDate）
@@ -942,14 +913,9 @@ export interface EcMtlExport {
   scheduledBatch?: string;
 
   /**
-   * 执行内容（各部门通用）
+   * 是否实施（0=否 1=是，字典 sys_yes_no）
    */
-  execContent?: string;
-
-  /**
-   * 出库批次
-   */
-  outboundBatch?: string;
+  isImplemented: number;
 
   /**
    * 出库日期
@@ -957,7 +923,42 @@ export interface EcMtlExport {
   outboundDate?: string;
 
   /**
-   * 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
+   * 出库批次
+   */
+  outboundBatch?: string;
+
+  /**
+   * 执行内容（各部门通用；ntext）
+   */
+  execContent?: string;
+
+  /**
+   * 部门编码（固定 D0625 物料）
+   */
+  deptCode: string;
+
+  /**
+   * 部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）
+   */
+  deptName: string;
+
+  /**
+   * 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
+   */
+  ecImplScope: number;
+
+  /**
+   * 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品 2=按机种 3=按设变；跟随主表选中值）
+   */
+  ecControlScope: number;
+
+  /**
+   * 执行行去重键（按控制范围：按成品/按机种/按设变；同一键的明细共用本行。ntext）
+   */
+  ecGrainKey: string;
+
+  /**
+   * 是否作废（字典 sys_yes_no；0=否 1=是）
    */
   isObsolete: number;
 

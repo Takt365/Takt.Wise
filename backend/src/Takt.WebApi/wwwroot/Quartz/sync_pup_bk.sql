@@ -20,7 +20,7 @@ DECLARE @tenant_code NVARCHAR(3) = N'{{TenantCode}}';
 DECLARE @company_code NVARCHAR(4) = N'{{CompanyCode}}';
 DECLARE @sync_user_id BIGINT = {{SyncUserId}};
 DECLARE @now DATETIME = GETDATE();
-DECLARE @apply_chunk INT = 20000;
+DECLARE @apply_chunk INT = 100000;
 DECLARE @merge_from_rn INT;
 DECLARE @merge_to_rn INT;
 DECLARE @merge_max_rn INT;
@@ -28,11 +28,12 @@ DECLARE @dml_n INT;
 DECLARE @desc_updated INT = 0;
 
 -- =============================================================================
--- QT_SYNC_PUP_BK：采购信息主表物料描述回填（❌ 仅空字段，禁止全局覆盖）
--- 唯一写入目标：takt_logistics_procurement_purchase_info.material_description
---   （实体 TaktPurchaseInfo.MaterialDescription；Length=40）
+-- QT_SYNC_PUP_BK：采购条件主表物料描述回填（❌ 仅空字段，禁止全局覆盖）
+-- 顺序：先回填子表外键，再回填主表空物料描述
+--   1) purchase_condition_item.purchase_condition_id
+--   2) purchase_condition_scale_quantity / scale_value.purchase_condition_item_id
+--   3) purchase_condition.material_description（Length=40；仅空）
 -- 来源只读：takt_logistics_materials_material_description（culture_code 固定 ja-JP）
--- ❌ 不回填：purchase_info_item / scale_* / 销售条件 / 机种目的地 / 物料规格型号长描述等
 -- ❌ 不改写：material_code、price_type、供应商及其它业务列（仅顺带写 updated_by/updated_at）
 -- 规则：仅当目标 material_description 为空时写入；已有描述一律保留
 -- 本次写入合并到 ext_field：$._bk.pup = { at, material_description }
@@ -40,10 +41,68 @@ DECLARE @desc_updated INT = 0;
 -- 建议：在 QT_SYNC_PUP / 物料描述就绪之后执行
 -- =============================================================================
 
+-- ---------- ① 子表外键（业务键对齐后再写描述） ----------
+SET @dml_n = 1;
+WHILE @dml_n > 0
+BEGIN
+  UPDATE TOP (@apply_chunk) I
+  SET I.[purchase_condition_id] = H.[id], I.[updated_by] = @sync_user_id, I.[updated_at] = @now
+  FROM [dbo].[takt_logistics_procurement_purchase_condition_item] AS I
+  INNER JOIN [dbo].[takt_logistics_procurement_purchase_condition] AS H
+    ON H.[tenant_code] = I.[tenant_code]
+   AND H.[company_code] = I.[company_code]
+   AND LTRIM(RTRIM(H.[plant_code])) = LTRIM(RTRIM(I.[plant_code]))
+   AND LTRIM(RTRIM(H.[purchase_condition_code])) = LTRIM(RTRIM(I.[purchase_condition_code]))
+   AND H.[is_deleted] = 0
+  WHERE I.[tenant_code] = @tenant_code
+    AND I.[company_code] = @company_code
+    AND I.[is_deleted] = 0
+    AND (I.[purchase_condition_id] IS NULL OR I.[purchase_condition_id] <> H.[id]);
+  SET @dml_n = @@ROWCOUNT;
+END
+SET @dml_n = 1;
+WHILE @dml_n > 0
+BEGIN
+  UPDATE TOP (@apply_chunk) Q
+  SET Q.[purchase_condition_item_id] = I.[id], Q.[updated_by] = @sync_user_id, Q.[updated_at] = @now
+  FROM [dbo].[takt_logistics_procurement_purchase_condition_scale_quantity] AS Q
+  INNER JOIN [dbo].[takt_logistics_procurement_purchase_condition_item] AS I
+    ON I.[tenant_code] = Q.[tenant_code]
+   AND I.[company_code] = Q.[company_code]
+   AND LTRIM(RTRIM(I.[plant_code])) = LTRIM(RTRIM(Q.[plant_code]))
+   AND LTRIM(RTRIM(I.[purchase_condition_code])) = LTRIM(RTRIM(Q.[purchase_condition_code]))
+   AND I.[purchase_condition_seq] = Q.[purchase_condition_seq]
+   AND I.[is_deleted] = 0
+  WHERE Q.[tenant_code] = @tenant_code
+    AND Q.[company_code] = @company_code
+    AND Q.[is_deleted] = 0
+    AND (Q.[purchase_condition_item_id] IS NULL OR Q.[purchase_condition_item_id] <> I.[id]);
+  SET @dml_n = @@ROWCOUNT;
+END
+SET @dml_n = 1;
+WHILE @dml_n > 0
+BEGIN
+  UPDATE TOP (@apply_chunk) V
+  SET V.[purchase_condition_item_id] = I.[id], V.[updated_by] = @sync_user_id, V.[updated_at] = @now
+  FROM [dbo].[takt_logistics_procurement_purchase_condition_scale_value] AS V
+  INNER JOIN [dbo].[takt_logistics_procurement_purchase_condition_item] AS I
+    ON I.[tenant_code] = V.[tenant_code]
+   AND I.[company_code] = V.[company_code]
+   AND LTRIM(RTRIM(I.[plant_code])) = LTRIM(RTRIM(V.[plant_code]))
+   AND LTRIM(RTRIM(I.[purchase_condition_code])) = LTRIM(RTRIM(V.[purchase_condition_code]))
+   AND I.[purchase_condition_seq] = V.[purchase_condition_seq]
+   AND I.[is_deleted] = 0
+  WHERE V.[tenant_code] = @tenant_code
+    AND V.[company_code] = @company_code
+    AND V.[is_deleted] = 0
+    AND (V.[purchase_condition_item_id] IS NULL OR V.[purchase_condition_item_id] <> I.[id]);
+  SET @dml_n = @@ROWCOUNT;
+END
+
 IF OBJECT_ID('tempdb..#mat_key') IS NOT NULL DROP TABLE #mat_key;
 IF OBJECT_ID('tempdb..#mat_desc_ja') IS NOT NULL DROP TABLE #mat_desc_ja;
 
--- 仅收集「描述为空」的采购信息物料键（非全表）
+-- 仅收集「描述为空」的采购条件物料键（非全表）
 ;WITH keys AS (
   SELECT DISTINCT
     CASE
@@ -52,7 +111,7 @@ IF OBJECT_ID('tempdb..#mat_desc_ja') IS NOT NULL DROP TABLE #mat_desc_ja;
       THEN RIGHT(LTRIM(RTRIM(t.[material_code])), 10)
       ELSE LTRIM(RTRIM(t.[material_code]))
     END AS [mat_key]
-  FROM [dbo].[takt_logistics_procurement_purchase_info] AS t
+  FROM [dbo].[takt_logistics_procurement_purchase_condition] AS t
   WHERE t.[tenant_code] = @tenant_code
     AND t.[company_code] = @company_code
     AND t.[is_deleted] = 0
@@ -106,7 +165,7 @@ SET
   t.[ext_field] = LEFT(x.[new_ext], 4000),
   t.[updated_by] = @sync_user_id,
   t.[updated_at] = @now
-FROM [dbo].[takt_logistics_procurement_purchase_info] AS t
+FROM [dbo].[takt_logistics_procurement_purchase_condition] AS t
 INNER JOIN #mat_desc_ja AS m
   ON m.[mat_key] = CASE
     WHEN LEN(LTRIM(RTRIM(t.[material_code]))) = 18
@@ -117,8 +176,8 @@ INNER JOIN #mat_desc_ja AS m
 CROSS APPLY (
   SELECT
     CASE
-      WHEN ISJSON(NULLIF(LTRIM(RTRIM(ISNULL(t.[ext_field], N''))), N'')) = 1
-      THEN LTRIM(RTRIM(t.[ext_field]))
+      WHEN ISJSON(NULLIF(LTRIM(RTRIM(CAST(ISNULL(t.[ext_field], N'') AS nvarchar(max)))), N'')) = 1
+      THEN LTRIM(RTRIM(CAST(t.[ext_field] AS nvarchar(max))))
       ELSE N'{}'
     END AS [base_ext]
 ) AS e0

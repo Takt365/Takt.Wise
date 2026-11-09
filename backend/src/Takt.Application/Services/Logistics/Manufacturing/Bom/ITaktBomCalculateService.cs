@@ -55,7 +55,7 @@ public interface ITaktBomCalculateService
     /// </summary>
     /// <param name="queryDto">工厂/物料类型/机种可选；须单个核算月</param>
     /// <returns>回填统计</returns>
-    Task<TaktBomCalculatePurchaseInfoBackfillResultDto> BackfillBomCalculatePurchaseInfoAsync(
+    Task<TaktBomCalculatePurchaseConditionBackfillResultDto> BackfillBomCalculatePurchaseConditionAsync(
         TaktBomCalculateQueryDto queryDto);
 
     /// <summary>
@@ -67,23 +67,23 @@ public interface ITaktBomCalculateService
         TaktBomCalculateQueryDto queryDto);
 
     /// <summary>
-    /// Quartz 计算成本：判定日所在自然月（按明细表 PlantCode 分组处理；不限定物料类型）
+    /// Quartz 计算成本：判定日所在自然月，只查当前公司对应工厂
     /// </summary>
     /// <param name="asOfDate">判定日；默认今天</param>
     /// <returns>合计统计</returns>
     Task<TaktBomCalculateCostResultDto?> RunScheduledBomCalculateSumAsync(DateTime? asOfDate = null);
 
     /// <summary>
-    /// Quartz 重算成本：判定日所在自然月（按明细表 PlantCode 分组处理）
+    /// Quartz 重算成本：判定日所在自然月，只查当前公司对应工厂
     /// </summary>
     /// <param name="asOfDate">判定日；默认今天</param>
     /// <returns>重算统计</returns>
     Task<TaktBomCalculateCostResultDto?> RunScheduledBomCalculateRecalculateAsync(DateTime? asOfDate = null);
 
     /// <summary>
-    /// Quartz 计算平均成本：判定日所在自然月（按主表 PlantCode 去重工厂）
+    /// Quartz 计算平均成本：判定日所在自然月，只查当前公司对应工厂
     /// </summary>
     /// <param name="asOfDate">判定日；默认今天</param>
-    /// <returns>各工厂汇总；当月无主表行时返回 null</returns>
+    /// <returns>该工厂汇总；当月无主表行时返回 null</returns>
     Task<TaktBomCalculateAverageResultDto?> RunScheduledBomCalculateAverageAsync(DateTime? asOfDate = null);
 }

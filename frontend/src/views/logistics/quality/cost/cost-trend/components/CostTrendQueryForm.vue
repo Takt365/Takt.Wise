@@ -8,8 +8,15 @@
 <!-- ======================================== -->
 
 <template>
-  <div class="takt-query-bar cost-trend-query-bar shrink-0">
-    <div class="flex min-w-0 flex-1 flex-nowrap items-center gap-x-2">
+  <TaktQueryBar
+    :show-keyword="false"
+    class="shrink-0"
+    :loading="props.loading"
+    @search="emit('search')"
+    @reset="emit('reset')"
+  >
+    <template #leading>
+<div class="flex min-w-0 flex-1 flex-nowrap items-center gap-x-2">
       <div class="flex min-w-0 flex-1 items-center gap-1">
         <span class="shrink-0 text-sm text-text-secondary whitespace-nowrap">{{ t(`${localePrefix}.periodRange`) }}</span>
         <a-range-picker
@@ -38,36 +45,14 @@
         />
       </div>
     </div>
-    <a-space class="query-actions">
-      <a-button
-        class="takt-button-query"
-        :loading="props.loading"
-        @click="emit('search')"
-      >
-        <template #icon>
-          <RiSearchLine class="takt-remix-icon" />
-        </template>
-        {{ t('common.page.button.query') }}
-      </a-button>
-      <a-button
-        class="takt-button-reset"
-        :disabled="props.loading"
-        @click="emit('reset')"
-      >
-        <template #icon>
-          <RiRefreshLine class="takt-remix-icon" />
-        </template>
-        {{ t('common.page.button.reset') }}
-      </a-button>
-    </a-space>
-  </div>
+    </template>
+  </TaktQueryBar>
 </template>
 
 <script setup lang="ts">
 /**
  * 质量成本推移查询栏：工厂 + 期间 + 币种。成本类别由页签决定
  */
-import { RiSearchLine, RiRefreshLine } from '@remixicon/vue'
 import { useI18n } from 'vue-i18n'
 import { useAnalysisPeriodRangeLimit } from '@/composables/useAnalysisPeriodRangeLimit'
 

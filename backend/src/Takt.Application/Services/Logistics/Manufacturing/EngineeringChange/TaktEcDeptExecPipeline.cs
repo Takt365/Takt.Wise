@@ -224,9 +224,7 @@ internal static class TaktEcExecNotRelated
             return;
         }
         mp.ExecContent = TaktEcPurConstants.NotPurchasingRelatedExecContent;
-        mp.PurchaseOrderIssueDate = null;
-        mp.Supplier = null;
-        mp.PurchaseOrderCode = null;
+        mp.InboundDate = null;
         mp.IsImplemented = 1;
     }
 
@@ -240,7 +238,6 @@ internal static class TaktEcExecNotRelated
             return;
         }
         iqc.ExecContent = TaktEcIqcConstants.NotRelatedToIqcExecContent;
-        iqc.IqcOrderCode = null;
         iqc.InspectionDate = null;
         iqc.IsImplemented = 1;
     }

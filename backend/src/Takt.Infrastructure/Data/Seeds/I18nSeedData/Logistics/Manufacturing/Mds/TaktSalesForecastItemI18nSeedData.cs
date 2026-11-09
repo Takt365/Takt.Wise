@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Mds
 // 文件名称：TaktSalesForecastItemI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSalesForecastItem 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -135,32 +135,32 @@ public class TaktSalesForecastItemI18nSeedData : ITaktSeedDataCoordinator
             // entity.salesforecastitem.planmonth
             new TranslationSeedItem("entity.salesforecastitem.planmonth", "zh-HK", "计划月份_hk", "计划月份（1～12）"),
 
-            // entity.salesforecastitem.planquantity001
-            new TranslationSeedItem("entity.salesforecastitem.planquantity001", "en-US", "计划数量版本001_us", "计划数量版本001"),
-            // entity.salesforecastitem.planquantity001
-            new TranslationSeedItem("entity.salesforecastitem.planquantity001", "ja-JP", "计划数量版本001_jp", "计划数量版本001"),
-            // entity.salesforecastitem.planquantity001
-            new TranslationSeedItem("entity.salesforecastitem.planquantity001", "zh-CN", "计划数量版本001", "计划数量版本001"),
-            // entity.salesforecastitem.planquantity001
-            new TranslationSeedItem("entity.salesforecastitem.planquantity001", "zh-HK", "计划数量版本001_hk", "计划数量版本001"),
+            // entity.salesforecastitem.versionno
+            new TranslationSeedItem("entity.salesforecastitem.versionno", "en-US", "版本号_us", "版本号（同一财年同一月 1～20；每个版本一行，挂在销售预测主表下）"),
+            // entity.salesforecastitem.versionno
+            new TranslationSeedItem("entity.salesforecastitem.versionno", "ja-JP", "版本号_jp", "版本号（同一财年同一月 1～20；每个版本一行，挂在销售预测主表下）"),
+            // entity.salesforecastitem.versionno
+            new TranslationSeedItem("entity.salesforecastitem.versionno", "zh-CN", "版本号", "版本号（同一财年同一月 1～20；每个版本一行，挂在销售预测主表下）"),
+            // entity.salesforecastitem.versionno
+            new TranslationSeedItem("entity.salesforecastitem.versionno", "zh-HK", "版本号_hk", "版本号（同一财年同一月 1～20；每个版本一行，挂在销售预测主表下）"),
 
-            // entity.salesforecastitem.planquantity002
-            new TranslationSeedItem("entity.salesforecastitem.planquantity002", "en-US", "计划数量版本002_us", "计划数量版本002"),
-            // entity.salesforecastitem.planquantity002
-            new TranslationSeedItem("entity.salesforecastitem.planquantity002", "ja-JP", "计划数量版本002_jp", "计划数量版本002"),
-            // entity.salesforecastitem.planquantity002
-            new TranslationSeedItem("entity.salesforecastitem.planquantity002", "zh-CN", "计划数量版本002", "计划数量版本002"),
-            // entity.salesforecastitem.planquantity002
-            new TranslationSeedItem("entity.salesforecastitem.planquantity002", "zh-HK", "计划数量版本002_hk", "计划数量版本002"),
+            // entity.salesforecastitem.planquantity
+            new TranslationSeedItem("entity.salesforecastitem.planquantity", "en-US", "计划数量_us", "计划数量（本版本）"),
+            // entity.salesforecastitem.planquantity
+            new TranslationSeedItem("entity.salesforecastitem.planquantity", "ja-JP", "计划数量_jp", "计划数量（本版本）"),
+            // entity.salesforecastitem.planquantity
+            new TranslationSeedItem("entity.salesforecastitem.planquantity", "zh-CN", "计划数量", "计划数量（本版本）"),
+            // entity.salesforecastitem.planquantity
+            new TranslationSeedItem("entity.salesforecastitem.planquantity", "zh-HK", "计划数量_hk", "计划数量（本版本）"),
 
             // entity.salesforecastitem.planquantitydelta
-            new TranslationSeedItem("entity.salesforecastitem.planquantitydelta", "en-US", "计划增减_us", "计划增减（版本002 − 版本001；可为负表示减量；服务层写入，禁止手改）"),
+            new TranslationSeedItem("entity.salesforecastitem.planquantitydelta", "en-US", "计划增减_us", "计划增减（本版本数量 − 同月上一版本数量；版本 1 相对 0；服务层写入，禁止手改）"),
             // entity.salesforecastitem.planquantitydelta
-            new TranslationSeedItem("entity.salesforecastitem.planquantitydelta", "ja-JP", "计划增减_jp", "计划增减（版本002 − 版本001；可为负表示减量；服务层写入，禁止手改）"),
+            new TranslationSeedItem("entity.salesforecastitem.planquantitydelta", "ja-JP", "计划增减_jp", "计划增减（本版本数量 − 同月上一版本数量；版本 1 相对 0；服务层写入，禁止手改）"),
             // entity.salesforecastitem.planquantitydelta
-            new TranslationSeedItem("entity.salesforecastitem.planquantitydelta", "zh-CN", "计划增减", "计划增减（版本002 − 版本001；可为负表示减量；服务层写入，禁止手改）"),
+            new TranslationSeedItem("entity.salesforecastitem.planquantitydelta", "zh-CN", "计划增减", "计划增减（本版本数量 − 同月上一版本数量；版本 1 相对 0；服务层写入，禁止手改）"),
             // entity.salesforecastitem.planquantitydelta
-            new TranslationSeedItem("entity.salesforecastitem.planquantitydelta", "zh-HK", "计划增减_hk", "计划增减（版本002 − 版本001；可为负表示减量；服务层写入，禁止手改）"),
+            new TranslationSeedItem("entity.salesforecastitem.planquantitydelta", "zh-HK", "计划增减_hk", "计划增减（本版本数量 − 同月上一版本数量；版本 1 相对 0；服务层写入，禁止手改）"),
 
             // entity.salesforecastitem.convertedquantity
             new TranslationSeedItem("entity.salesforecastitem.convertedquantity", "en-US", "已转生产销售数量_us", "已转生产/销售数量（基本单位数量）"),

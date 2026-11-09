@@ -169,7 +169,7 @@ public class TaktSalesInvoiceItemDto : TaktCompanyDtoBase
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料组
@@ -498,7 +498,7 @@ public class TaktSalesInvoiceItemQueryDto : TaktPagedQuery
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料组
@@ -836,7 +836,7 @@ public class TaktSalesInvoiceItemCreateDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料组
@@ -1201,7 +1201,7 @@ public class TaktSalesInvoiceItemTemplateDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料组
@@ -1519,7 +1519,7 @@ public class TaktSalesInvoiceItemImportDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料组
@@ -1843,7 +1843,7 @@ public class TaktSalesInvoiceItemExportDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料组

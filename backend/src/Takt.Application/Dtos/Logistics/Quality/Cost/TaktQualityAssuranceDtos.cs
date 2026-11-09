@@ -160,6 +160,16 @@ public class TaktQualityAssuranceQueryDto : TaktPagedQuery
     public string? AssuranceMonth { get; set; } = string.Empty;
 
     /// <summary>
+    /// 业务年月期间开始（yyyy-MM，含当月）
+    /// </summary>
+    public string? AssuranceMonthStart { get; set; }
+
+    /// <summary>
+    /// 业务年月期间结束（yyyy-MM，含当月）
+    /// </summary>
+    public string? AssuranceMonthEnd { get; set; }
+
+    /// <summary>
     /// 客户名称1（冗余，与 TaktCustomer.CustomerName1 对齐）
     /// </summary>
     public string? CustomerName1 { get; set; } = string.Empty;

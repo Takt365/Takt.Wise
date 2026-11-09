@@ -131,7 +131,69 @@
                 :label="ai.label('docCode')"
                 name="docCode"
               >
+                <a-form-item-rest v-if="docCodeInputMode === 'prefix'">
+                <a-input-group
+                  compact
+                  class="w-full"
+                >
+                  <a-input
+                    :value="docCodeFixedPrefix"
+                    class="!w-24 text-center"
+                    disabled
+                  />
+                  <a-input
+                    class="!w-8 text-center"
+                    style="pointer-events: none"
+                    placeholder="-"
+                    disabled
+                  />
+                  <a-input
+                    :value="docCodeSequence"
+                    class="!w-[calc(100%-8rem)] text-center"
+                    :maxlength="4"
+                    :placeholder="docCodeSequencePlaceholder"
+                    inputmode="numeric"
+                    :disabled="loading || fileUploading"
+                    @update:value="onDocCodeSequenceInput"
+                    @blur="onDocCodeSequenceBlur"
+                  />
+                </a-input-group>
+                </a-form-item-rest>
+                <a-form-item-rest v-else-if="docCodeInputMode === 'quad'">
+                <a-input-group
+                  compact
+                  class="w-full"
+                >
+                  <a-input
+                    :value="docCodeQuadHead"
+                    class="!w-[calc(50%-1rem)] text-center"
+                    :maxlength="4"
+                    :placeholder="docCodeSequencePlaceholder"
+                    inputmode="numeric"
+                    :disabled="loading || fileUploading"
+                    @update:value="(value) => onDocCodeQuadInput('head', value)"
+                    @blur="onDocCodeQuadBlur"
+                  />
+                  <a-input
+                    class="!w-8 text-center"
+                    style="pointer-events: none"
+                    placeholder="-"
+                    disabled
+                  />
+                  <a-input
+                    :value="docCodeQuadTail"
+                    class="!w-[calc(50%-1rem)] text-center"
+                    :maxlength="4"
+                    :placeholder="docCodeSequencePlaceholder"
+                    inputmode="numeric"
+                    :disabled="loading || fileUploading"
+                    @update:value="(value) => onDocCodeQuadInput('tail', value)"
+                    @blur="onDocCodeQuadBlur"
+                  />
+                </a-input-group>
+                </a-form-item-rest>
                 <a-input
+                  v-else
                   v-model:value="formState.docCode"
                   :placeholder="docCodePlaceholder"
                   show-count
@@ -232,10 +294,16 @@ import {
 } from '@/utils/taktFileUploadPolicy'
 import {
   buildEcAttachmentFileName,
+  composeEcAttachmentPrefixedDocCode,
+  composeEcAttachmentQuadDocCode,
+  extractEcAttachmentPrefixedSequence,
   getEcAttachmentDocCodeHintKey,
+  getEcAttachmentDocCodeInputMode,
+  getEcAttachmentDocCodePrefix,
   isEcAttachmentDocCodeLockedToEcCode,
   isEcAttachmentPdfFileName,
   isValidEcAttachmentDocCode,
+  splitEcAttachmentQuadDocCode,
 } from '@/utils/taktEcAttachmentDocCode'
 import { useEcAttachmentI18n } from '@/views/logistics/manufacturing/engineering-change/ec-te/composables/useEcAttachmentI18n'
 
@@ -410,6 +478,105 @@ function handleAttachmentTypeChange(type: string | number | (string | number)[] 
   if (ec && String(formState.docCode ?? '').trim() === ec) {
     formState.docCode = ''
   }
+  rewriteStructuredDocCode(nextType)
+  formRef.value?.validateFields(['docCode']).catch(() => undefined)
+}
+
+/**
+ * 切到联络/EPP/FPP 或 TCJ/外部联络时，只保留能套进新分段的数字，前缀按新类别重写
+ * @param attachmentType 新文件类别
+ * @returns {void}
+ */
+function rewriteStructuredDocCode(attachmentType: string) {
+  const mode = getEcAttachmentDocCodeInputMode(attachmentType)
+  const current = String(formState.docCode ?? '').trim()
+  if (mode === 'prefix') {
+    const prefix = getEcAttachmentDocCodePrefix(attachmentType)
+    const sequence = extractEcAttachmentPrefixedSequence(current)
+    formState.docCode = prefix && sequence
+      ? composeEcAttachmentPrefixedDocCode(prefix, sequence)
+      : ''
+    return
+  }
+  if (mode === 'quad') {
+    const parts = splitEcAttachmentQuadDocCode(current)
+    formState.docCode = parts.head || parts.tail
+      ? composeEcAttachmentQuadDocCode(parts.head, parts.tail)
+      : ''
+  }
+}
+
+/**
+ * 失焦或提交前把已输入的数字段左补零到 4 位
+ * @returns {void}
+ */
+function normalizeStructuredDocCode() {
+  const mode = getEcAttachmentDocCodeInputMode(formState.attachmentType)
+  if (mode === 'prefix') {
+    const prefix = getEcAttachmentDocCodePrefix(formState.attachmentType)
+    const sequence = extractEcAttachmentPrefixedSequence(formState.docCode)
+    if (prefix && sequence) {
+      formState.docCode = composeEcAttachmentPrefixedDocCode(prefix, sequence, true)
+    }
+    return
+  }
+  if (mode === 'quad') {
+    const parts = splitEcAttachmentQuadDocCode(formState.docCode)
+    if (parts.head || parts.tail) {
+      formState.docCode = composeEcAttachmentQuadDocCode(parts.head, parts.tail, true)
+    }
+  }
+}
+
+/**
+ * 联络为 DTS-序号，EPP/FPP 为 P-序号；只保留数字，最多 4 位
+ * @param value 序号输入
+ * @returns {void}
+ */
+function onDocCodeSequenceInput(value: string) {
+  const prefix = getEcAttachmentDocCodePrefix(formState.attachmentType)
+  if (!prefix) {
+    return
+  }
+  const digits = String(value ?? '').replace(/\D/g, '').slice(0, 4)
+  formState.docCode = composeEcAttachmentPrefixedDocCode(prefix, digits)
+  if (digits.length === 4) {
+    formRef.value?.validateFields(['docCode']).catch(() => undefined)
+  }
+}
+
+/**
+ * 序号失焦时左补零到 4 位并校验
+ * @returns {void}
+ */
+function onDocCodeSequenceBlur() {
+  normalizeStructuredDocCode()
+  formRef.value?.validateFields(['docCode']).catch(() => undefined)
+}
+
+/**
+ * TCJ / 外部联络：前 4 位与后 4 位分别只收数字
+ * @param part 横线前 head 或横线后 tail
+ * @param value 该段输入
+ * @returns {void}
+ */
+function onDocCodeQuadInput(part: 'head' | 'tail', value: string) {
+  const current = splitEcAttachmentQuadDocCode(formState.docCode)
+  const digits = String(value ?? '').replace(/\D/g, '').slice(0, 4)
+  const head = part === 'head' ? digits : current.head
+  const tail = part === 'tail' ? digits : current.tail
+  formState.docCode = composeEcAttachmentQuadDocCode(head, tail)
+  if (head.length === 4 && tail.length === 4) {
+    formRef.value?.validateFields(['docCode']).catch(() => undefined)
+  }
+}
+
+/**
+ * 前后四位失焦时各自左补零到 4 位并校验
+ * @returns {void}
+ */
+function onDocCodeQuadBlur() {
+  normalizeStructuredDocCode()
   formRef.value?.validateFields(['docCode']).catch(() => undefined)
 }
 
@@ -806,6 +973,24 @@ watch(
 /** 文件类别为设变(EC)时锁定 DocCode=设变单号 */
 const isDocCodeLocked = computed(() => isEcAttachmentDocCodeLockedToEcCode(formState.attachmentType))
 
+/** 文件编码控件：设变整码 / 固定前缀-序号 / 前四位-后四位 / 自由文本 */
+const docCodeInputMode = computed(() => getEcAttachmentDocCodeInputMode(formState.attachmentType))
+
+/** 联络 DTS、EPP/FPP 为 P；其余为空 */
+const docCodeFixedPrefix = computed(() => getEcAttachmentDocCodePrefix(formState.attachmentType))
+
+/** 固定前缀后的 4 位序号（输入中可不足 4 位） */
+const docCodeSequence = computed(() => extractEcAttachmentPrefixedSequence(formState.docCode))
+
+/** TCJ / 外部联络横线前 4 位 */
+const docCodeQuadHead = computed(() => splitEcAttachmentQuadDocCode(formState.docCode).head)
+
+/** TCJ / 外部联络横线后 4 位 */
+const docCodeQuadTail = computed(() => splitEcAttachmentQuadDocCode(formState.docCode).tail)
+
+/** 数字段占位（4 位序号） */
+const docCodeSequencePlaceholder = computed(() => t(`${DOC_CODE_I18N}.sequence`))
+
 /** 按文件类别动态占位提示 */
 const docCodePlaceholder = computed(() => {
   const hintKey = getEcAttachmentDocCodeHintKey(formState.attachmentType)
@@ -947,6 +1132,7 @@ const rules = computed<Record<string, Rule[]>>(() => ({
 
 /** 校验表单（失败 throw，供父级 handleFormSubmit 捕获） */
 async function validate() {
+  normalizeStructuredDocCode()
   await formRef.value?.validate()
   return formState
 }
@@ -954,6 +1140,7 @@ async function validate() {
 /** 映射为 Create/Update DTO（含主表外键 ecTeId） */
 function getValues(): Record<string, any> {
   syncDocCodeIfEcType(formState)
+  normalizeStructuredDocCode()
   const ecCode = resolveCurrentEcCode() || String(formState.ecCode ?? '').trim()
   const attachmentType = String(formState.attachmentType ?? '').trim()
   const docCode = isEcAttachmentDocCodeLockedToEcCode(attachmentType)

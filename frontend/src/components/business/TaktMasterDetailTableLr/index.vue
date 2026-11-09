@@ -14,10 +14,10 @@
     :style="rootScrollStyle"
   >
     <!-- 左：主表（结构与右栏对称：toolbar + __table-body + TaktSingleTable 内嵌分页） -->
-    <div class="takt-master-detail-table-lr__pane master-pane flex h-full min-h-0 w-2/5 shrink-0 flex-col border-r border-border pr-3">
+    <div class="takt-master-detail-table-lr__pane master-pane flex h-full min-h-0 w-2/5 min-w-0 shrink-0 flex-col border-r border-border pr-3">
       <div
         ref="masterToolbarWrapRef"
-        class="takt-master-detail-table-lr__chrome shrink-0"
+        class="takt-master-detail-table-lr__chrome w-full min-w-0 shrink-0"
       >
         <slot name="master-toolbar" />
       </div>
@@ -70,7 +70,7 @@
     <div class="takt-master-detail-table-lr__pane detail-pane flex h-full min-h-0 flex-1 flex-col overflow-hidden pl-3">
       <div
         ref="detailChromeWrapRef"
-        class="takt-master-detail-table-lr__chrome shrink-0"
+        class="takt-master-detail-table-lr__chrome w-full min-w-0 shrink-0"
       >
         <div
           v-if="detailTitle"
@@ -469,6 +469,14 @@ function handleMasterPaginationChange(page: number, pageSize: number) {
 .takt-master-detail-table-lr__pane {
   height: 100%;
   min-height: 0;
+  min-width: 0;
+}
+
+.takt-master-detail-table-lr__chrome {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .takt-master-detail-table-lr__table-body {

@@ -68,11 +68,11 @@ public static class TaktEcDeptCodes
     /// </summary>
     public const string OfficialCompletionDeptCode = Qc;
     /// <summary>
-    /// 阶段二执行部门看板列顺序（不含技术课；技术工作在阶段一 TaktEcTe 完成）
+    /// 阶段二执行部门看板列顺序（生管→制二→制一→品管→采购→受检→部管→物料→制技；不含技术课）
     /// </summary>
     public static readonly string[] KanbanOrder =
     [
-        Pc, Pur, Iqc, Mc, Mtl, Mfg2, Mfg1, Qc, Me
+        Pc, Mfg2, Mfg1, Qc, Pur, Iqc, Mc, Mtl, Me
     ];
     /// <summary>
     /// 转置表格列顺序（采购→生管→受检→部管→制二→制一→品管；不含技术课与制技）

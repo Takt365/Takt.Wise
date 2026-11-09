@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcPurDtos.cs
-// 创建时间：2026-09-02
+// 创建时间：2026-10-29
 // 创建人：Takt365(Auto Generated)
 // 功能描述：EcPur 模块 DTO（由 generate-dtos-from-entity.cjs 根据 TaktEcPur 生成，请按需审阅）
 // 
@@ -22,7 +22,7 @@ namespace Takt.Application.Dtos.Logistics.Manufacturing.EngineeringChange;
 // ========================================
 
 /// <summary>
-/// 设变采购课（D0510）部门执行表
+/// 设变采购课（部门 D0510）执行表。采购类型 F 且新物料有效才落行。按设变单号去重一行；机种/根物料/新物料写入编码组
 /// 对应前端 TaktEcPurDto
 /// 继承 TaktCompanyDtoBase
 /// </summary>
@@ -36,70 +36,64 @@ public class TaktEcPurDto : TaktCompanyDtoBase
     public long EcPurId { get; set; }
 
     /// <summary>
-    /// 执行行去重键（设变单号、机种或根物料或新物料、分道；同一键的明细共用本行。ntext）
-    /// </summary>
-    public string EcGrainKey { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 设变明细 名称（填充字段）
-    /// </summary>
-    public string? EcDetailName { get; set; }
-
-    /// <summary>
-    /// 设变单号（冗余，便于查询）
-    /// </summary>
-    public string EcCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 机种编码组（同设变单号+新采购类型+新物料下的机种编码，分号分隔；ntext）
-    /// </summary>
-    public string? EcModelCodeGroup { get; set; } = string.Empty;
-    /// <summary>
-    /// 根物料编码组（同设变单号+新采购类型+新物料下的根物料编码，分号分隔；ntext）
-    /// </summary>
-    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
-    /// <summary>
-    /// 根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）
-    /// </summary>
-    public string EcRootMaterialDescription { get; set; } = string.Empty;
-
-    /// <summary>
     /// 行号（项号/序号，固定步长=10）
     /// </summary>
     public int LineNumber { get; set; } = 0;
 
     /// <summary>
-    /// 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
+    /// 停产状态（字典 logistics_materials_material_discontinued_status；DictValue=Z0/ZQ 等）。同设变下任意成品不是停产（空或 Z0）时为 Z0，全部停产时取保留明细状态。
     /// </summary>
     public string DiscontinuedStatus { get; set; } = string.Empty;
 
     /// <summary>
-    /// 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
+    /// 设变单号（冗余：来自 TaktEcDetail.EcCode）
     /// </summary>
-    public int EcImplScope { get; set; }
-    /// <summary>
-    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种
-    /// </summary>
-    public int EcControlScope { get; set; } = 2;
+    public string EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
+    /// 机种编码组（同设变下采购类型 F 明细的机种编码，分号分隔；ntext）
     /// </summary>
-    public string? EcNewMaterialCode { get; set; } = string.Empty;
+    public string EcModelCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）
+    /// 根物料编码组（同设变下采购类型 F 明细的根物料编码，分号分隔；ntext）
     /// </summary>
-    public string? EcNewMaterialDescription { get; set; } = string.Empty;
+    public string EcRootMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新品仓库（选项 TaktWarehouses/options；DictValue=WarehouseCode；冗余：来自 TaktEcDetail.EcNewWarehouse）
+    /// 新物料编码组（同设变下采购类型 F 的全部新物料编码，分号分隔；ntext）
     /// </summary>
-    public string? EcNewWarehouse { get; set; } = string.Empty;
+    public string EcNewMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新采购类型（F=外部采购，E=自制生产；冗余：来自 TaktEcDetail.EcNewPurchaseType）
+    /// 旧物料编码组（同设变下采购类型 F 明细的旧物料编码，分号分隔；ntext；供旧品结余按行拆分）
     /// </summary>
-    public string? EcNewPurchaseType { get; set; } = string.Empty;
+    public string EcOldMaterialCodeGroup { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 新采购类型（冗余：来自 TaktEcDetail.EcNewPurchaseType；本表落行均为 F）
+    /// </summary>
+    public string EcNewPurchaseType { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 是否实施（0=否 1=是，字典 sys_yes_no）
+    /// </summary>
+    public int IsImplemented { get; set; } = 0;
+
+    /// <summary>
+    /// 旧品结余（可空；非空须按旧物料编码组逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，行数与旧物料组一致；采购自行维护，不从明细/生管带入；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；ntext）
+    /// </summary>
+    public string? EcOldPartBalance { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 进货日期
+    /// </summary>
+    public DateTime? InboundDate { get; set; }
+
+    /// <summary>
+    /// 执行内容（按新物料编码组拆行：物料:采购单10位:序号4位:供应商; 多行组合；ntext）
+    /// </summary>
+    public string? ExecContent { get; set; } = string.Empty;
 
     /// <summary>
     /// 部门编码（TaktDept.DeptCode；本表固定课别）
@@ -109,44 +103,31 @@ public class TaktEcPurDto : TaktCompanyDtoBase
     /// <summary>
     /// 部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）
     /// </summary>
-    public string? DeptName { get; set; } = string.Empty;
+    public string DeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 是否实施（0=否 1=是，字典 sys_yes_no）
+    /// 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
     /// </summary>
-    public int IsImplemented { get; set; } = 0;
+    public int EcImplScope { get; set; } = 0;
 
     /// <summary>
-    /// 执行内容（各部门通用）
+    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理）。采购固定按设变（DictValue=3）
     /// </summary>
-    public string? ExecContent { get; set; } = string.Empty;
+    public int EcControlScope { get; set; } = 0;
 
     /// <summary>
-    /// 采购订单发行日期
+    /// 执行行去重键（采购为设变单号；同一键的明细共用本行。ntext）
     /// </summary>
-    public DateTime? PurchaseOrderIssueDate { get; set; }
+    public string EcGrainKey { get; set; } = string.Empty;
 
-    /// <summary>
-    /// 供应商
-    /// </summary>
-    public string? Supplier { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 采购订单号码
-    /// </summary>
-    public string? PurchaseOrderCode { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 旧品处理（采购自行选择，不从明细/生管带入；字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
-    /// </summary>
-    public string? EcOldPartDisposition { get; set; } = string.Empty;
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
     /// </summary>
     public int IsObsolete { get; set; } = 0;
 
+
     /// <summary>
-    /// 设变明细列表（视图主从：执行表为主；一对多；业务键 EcCode + EcNewMaterialCode）
+    /// 设变明细列表（视图主从：执行表为主；一对多；新物料以编码组为准）
     /// </summary>
     public List<TaktEcDetailDto>? EcDetails { get; set; }
 
@@ -183,39 +164,69 @@ public class TaktEcPurQueryDto : TaktPagedQuery
     public string? PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 执行行去重键（设变单号、机种或根物料或新物料、分道；同一键的明细共用本行。ntext）
-    /// </summary>
-    public string? EcGrainKey { get; set; }
-
-    /// <summary>
-    /// 设变单号（冗余，便于查询）
-    /// </summary>
-    public string? EcCode { get; set; } = string.Empty;
-
-    /// <summary>
     /// 行号（项号/序号，固定步长=10）
     /// </summary>
     public int? LineNumber { get; set; }
 
     /// <summary>
-    /// 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
+    /// 停产状态（字典 logistics_materials_material_discontinued_status；DictValue=Z0/ZQ 等）。同设变下任意成品不是停产（空或 Z0）时为 Z0，全部停产时取保留明细状态。
     /// </summary>
-    public string? EcNewMaterialCode { get; set; } = string.Empty;
+    public string? DiscontinuedStatus { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）
+    /// 设变单号（冗余：来自 TaktEcDetail.EcCode）
     /// </summary>
-    public string? EcNewMaterialDescription { get; set; } = string.Empty;
+    public string? EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新品仓库（选项 TaktWarehouses/options；DictValue=WarehouseCode；冗余：来自 TaktEcDetail.EcNewWarehouse）
+    /// 机种编码组（同设变下采购类型 F 明细的机种编码，分号分隔；ntext）
     /// </summary>
-    public string? EcNewWarehouse { get; set; } = string.Empty;
+    public string? EcModelCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新采购类型（F=外部采购，E=自制生产；冗余：来自 TaktEcDetail.EcNewPurchaseType）
+    /// 根物料编码组（同设变下采购类型 F 明细的根物料编码，分号分隔；ntext）
+    /// </summary>
+    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 新物料编码组（同设变下采购类型 F 的全部新物料编码，分号分隔；ntext）
+    /// </summary>
+    public string? EcNewMaterialCodeGroup { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 旧物料编码组（同设变下采购类型 F 明细的旧物料编码，分号分隔；ntext；供旧品结余按行拆分）
+    /// </summary>
+    public string? EcOldMaterialCodeGroup { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 新采购类型（冗余：来自 TaktEcDetail.EcNewPurchaseType；本表落行均为 F）
     /// </summary>
     public string? EcNewPurchaseType { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 是否实施（0=否 1=是，字典 sys_yes_no）
+    /// </summary>
+    public int? IsImplemented { get; set; }
+
+    /// <summary>
+    /// 旧品结余（可空；非空须按旧物料编码组逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，行数与旧物料组一致；采购自行维护，不从明细/生管带入；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；ntext）
+    /// </summary>
+    public string? EcOldPartBalance { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 进货日期（范围查询-开始）
+    /// </summary>
+    public DateTime? InboundDateStart { get; set; }
+
+    /// <summary>
+    /// 进货日期（范围查询-结束）
+    /// </summary>
+    public DateTime? InboundDateEnd { get; set; }
+
+    /// <summary>
+    /// 执行内容（按新物料编码组拆行：物料:采购单10位:序号4位:供应商; 多行组合；ntext）
+    /// </summary>
+    public string? ExecContent { get; set; } = string.Empty;
 
     /// <summary>
     /// 部门编码（TaktDept.DeptCode；本表固定课别）
@@ -228,39 +239,20 @@ public class TaktEcPurQueryDto : TaktPagedQuery
     public string? DeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 是否实施（0=否 1=是，字典 sys_yes_no）
+    /// 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
     /// </summary>
-    public int? IsImplemented { get; set; }
+    public int? EcImplScope { get; set; }
 
     /// <summary>
-    /// 执行内容（各部门通用）
+    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理）。采购固定按设变（DictValue=3）
     /// </summary>
-    public string? ExecContent { get; set; } = string.Empty;
+    public int? EcControlScope { get; set; }
 
     /// <summary>
-    /// 采购订单发行日期（范围查询-开始）
+    /// 执行行去重键（采购为设变单号；同一键的明细共用本行。ntext）
     /// </summary>
-    public DateTime? PurchaseOrderIssueDateStart { get; set; }
+    public string? EcGrainKey { get; set; } = string.Empty;
 
-    /// <summary>
-    /// 采购订单发行日期（范围查询-结束）
-    /// </summary>
-    public DateTime? PurchaseOrderIssueDateEnd { get; set; }
-
-    /// <summary>
-    /// 供应商
-    /// </summary>
-    public string? Supplier { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 采购订单号码
-    /// </summary>
-    public string? PurchaseOrderCode { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 旧品处理（采购自行选择，不从明细/生管带入；字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
-    /// </summary>
-    public string? EcOldPartDisposition { get; set; } = string.Empty;
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
     /// </summary>
@@ -317,66 +309,71 @@ public class TaktEcPurCreateDto
     public string PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 执行行去重键（设变单号、机种或根物料或新物料、分道；同一键的明细共用本行。ntext）
-    /// </summary>
-    public string EcGrainKey { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 设变单号（冗余，便于查询）
-    /// </summary>
-    [Required(ErrorMessage = "设变单号（冗余，便于查询）不能为空")]
-    public string EcCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 机种编码组（同设变单号+新采购类型+新物料下的机种编码，分号分隔；ntext）
-    /// </summary>
-    public string? EcModelCodeGroup { get; set; } = string.Empty;
-    /// <summary>
-    /// 根物料编码组（同设变单号+新采购类型+新物料下的根物料编码，分号分隔；ntext）
-    /// </summary>
-    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
-    /// <summary>
-    /// 根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）
-    /// </summary>
-    public string EcRootMaterialDescription { get; set; } = string.Empty;
-
-    /// <summary>
     /// 行号（项号/序号，固定步长=10）
     /// </summary>
     public int LineNumber { get; set; } = 0;
 
     /// <summary>
-    /// 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
+    /// 停产状态（字典 logistics_materials_material_discontinued_status；DictValue=Z0/ZQ 等）。同设变下任意成品不是停产（空或 Z0）时为 Z0，全部停产时取保留明细状态。
     /// </summary>
+    [Required(ErrorMessage = "停产状态（字典 logistics_materials_material_discontinued_status；DictValue=Z0/ZQ 等）。同设变下任意成品不是停产（空或 Z0）时为 Z0，全部停产时取保留明细状态。不能为空")]
     public string DiscontinuedStatus { get; set; } = string.Empty;
 
     /// <summary>
-    /// 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
+    /// 设变单号（冗余：来自 TaktEcDetail.EcCode）
     /// </summary>
-    public int EcImplScope { get; set; }
-    /// <summary>
-    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种
-    /// </summary>
-    public int EcControlScope { get; set; } = 2;
+    [Required(ErrorMessage = "设变单号（冗余：来自 TaktEcDetail.EcCode）不能为空")]
+    public string EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
+    /// 机种编码组（同设变下采购类型 F 明细的机种编码，分号分隔；ntext）
     /// </summary>
-    public string? EcNewMaterialCode { get; set; } = string.Empty;
+    [Required(ErrorMessage = "机种编码组（同设变下采购类型 F 明细的机种编码，分号分隔；ntext）不能为空")]
+    public string EcModelCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）
+    /// 根物料编码组（同设变下采购类型 F 明细的根物料编码，分号分隔；ntext）
     /// </summary>
-    public string? EcNewMaterialDescription { get; set; } = string.Empty;
+    [Required(ErrorMessage = "根物料编码组（同设变下采购类型 F 明细的根物料编码，分号分隔；ntext）不能为空")]
+    public string EcRootMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新品仓库（选项 TaktWarehouses/options；DictValue=WarehouseCode；冗余：来自 TaktEcDetail.EcNewWarehouse）
+    /// 新物料编码组（同设变下采购类型 F 的全部新物料编码，分号分隔；ntext）
     /// </summary>
-    public string? EcNewWarehouse { get; set; } = string.Empty;
+    [Required(ErrorMessage = "新物料编码组（同设变下采购类型 F 的全部新物料编码，分号分隔；ntext）不能为空")]
+    public string EcNewMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新采购类型（F=外部采购，E=自制生产；冗余：来自 TaktEcDetail.EcNewPurchaseType）
+    /// 旧物料编码组（同设变下采购类型 F 明细的旧物料编码，分号分隔；ntext；供旧品结余按行拆分）
     /// </summary>
-    public string? EcNewPurchaseType { get; set; } = string.Empty;
+    [Required(ErrorMessage = "旧物料编码组不能为空")]
+    public string EcOldMaterialCodeGroup { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 新采购类型（冗余：来自 TaktEcDetail.EcNewPurchaseType；本表落行均为 F）
+    /// </summary>
+    [Required(ErrorMessage = "新采购类型（冗余：来自 TaktEcDetail.EcNewPurchaseType；本表落行均为 F）不能为空")]
+    public string EcNewPurchaseType { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 是否实施（0=否 1=是，字典 sys_yes_no）
+    /// </summary>
+    public int IsImplemented { get; set; } = 0;
+
+    /// <summary>
+    /// 旧品结余（可空；非空须按旧物料编码组逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，行数与旧物料组一致；采购自行维护，不从明细/生管带入；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；ntext）
+    /// </summary>
+    public string? EcOldPartBalance { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 进货日期
+    /// </summary>
+    public DateTime? InboundDate { get; set; }
+
+    /// <summary>
+    /// 执行内容（按新物料编码组拆行：物料:采购单10位:序号4位:供应商; 多行组合；ntext）
+    /// </summary>
+    public string? ExecContent { get; set; } = string.Empty;
 
     /// <summary>
     /// 部门编码（TaktDept.DeptCode；本表固定课别）
@@ -387,37 +384,25 @@ public class TaktEcPurCreateDto
     /// <summary>
     /// 部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）
     /// </summary>
-    public string? DeptName { get; set; } = string.Empty;
+    [Required(ErrorMessage = "部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）不能为空")]
+    public string DeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 是否实施（0=否 1=是，字典 sys_yes_no）
+    /// 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
     /// </summary>
-    public int IsImplemented { get; set; } = 0;
+    public int EcImplScope { get; set; } = 0;
 
     /// <summary>
-    /// 执行内容（各部门通用）
+    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理）。采购固定按设变（DictValue=3）
     /// </summary>
-    public string? ExecContent { get; set; } = string.Empty;
+    public int EcControlScope { get; set; } = 0;
 
     /// <summary>
-    /// 采购订单发行日期
+    /// 执行行去重键（采购为设变单号；同一键的明细共用本行。ntext）
     /// </summary>
-    public DateTime? PurchaseOrderIssueDate { get; set; }
+    [Required(ErrorMessage = "执行行去重键（采购为设变单号；同一键的明细共用本行。ntext）不能为空")]
+    public string EcGrainKey { get; set; } = string.Empty;
 
-    /// <summary>
-    /// 供应商
-    /// </summary>
-    public string? Supplier { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 采购订单号码
-    /// </summary>
-    public string? PurchaseOrderCode { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 旧品处理（采购自行选择，不从明细/生管带入；字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
-    /// </summary>
-    public string? EcOldPartDisposition { get; set; } = string.Empty;
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
     /// </summary>
@@ -456,8 +441,28 @@ public class TaktEcPurUpdateDto : TaktEcPurCreateDto
 }
 
 // ========================================
-// EcPur 作废 DTO
+// EcPur 状态 DTO
 // ========================================
+
+/// <summary>
+/// EcPur 状态更新 DTO
+/// </summary>
+public class TaktEcPurStatusDto
+{
+    /// <summary>
+    /// EcPurID
+    /// </summary>
+    [Required(ErrorMessage = "ID不能为空")]
+    [AdaptMember("Id")]
+    [JsonConverter(typeof(ValueToStringConverter))]
+    public long EcPurId { get; set; }
+
+    /// <summary>
+    /// 停产状态（字典 logistics_materials_material_discontinued_status；DictValue=Z0/ZQ 等）。同设变下任意成品不是停产（空或 Z0）时为 Z0，全部停产时取保留明细状态。
+    /// </summary>
+    [Required(ErrorMessage = "停产状态（字典 logistics_materials_material_discontinued_status；DictValue=Z0/ZQ 等）。同设变下任意成品不是停产（空或 Z0）时为 Z0，全部停产时取保留明细状态。不能为空")]
+    public string DiscontinuedStatus { get; set; } = string.Empty;
+}
 
 /// <summary>
 /// EcPur 停产状态 DTO
@@ -486,6 +491,11 @@ public class TaktEcPurDiscontinuedStatusDto
     /// </summary>
     public int EcControlScope { get; set; } = 2;
 }
+
+
+// ========================================
+// EcPur 作废 DTO
+// ========================================
 
 /// <summary>
 /// EcPur 作废/撤销作废 DTO
@@ -536,39 +546,64 @@ public class TaktEcPurTemplateDto
     public string? PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 执行行去重键（设变单号、机种或根物料或新物料、分道；同一键的明细共用本行。ntext）
-    /// </summary>
-    public string? EcGrainKey { get; set; }
-
-    /// <summary>
-    /// 设变单号（冗余，便于查询）
-    /// </summary>
-    public string? EcCode { get; set; } = string.Empty;
-
-    /// <summary>
     /// 行号（项号/序号，固定步长=10）
     /// </summary>
     public int? LineNumber { get; set; }
 
     /// <summary>
-    /// 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
+    /// 停产状态（字典 logistics_materials_material_discontinued_status；DictValue=Z0/ZQ 等）。同设变下任意成品不是停产（空或 Z0）时为 Z0，全部停产时取保留明细状态。
     /// </summary>
-    public string? EcNewMaterialCode { get; set; } = string.Empty;
+    public string? DiscontinuedStatus { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）
+    /// 设变单号（冗余：来自 TaktEcDetail.EcCode）
     /// </summary>
-    public string? EcNewMaterialDescription { get; set; } = string.Empty;
+    public string? EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新品仓库（选项 TaktWarehouses/options；DictValue=WarehouseCode；冗余：来自 TaktEcDetail.EcNewWarehouse）
+    /// 机种编码组（同设变下采购类型 F 明细的机种编码，分号分隔；ntext）
     /// </summary>
-    public string? EcNewWarehouse { get; set; } = string.Empty;
+    public string? EcModelCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新采购类型（F=外部采购，E=自制生产；冗余：来自 TaktEcDetail.EcNewPurchaseType）
+    /// 根物料编码组（同设变下采购类型 F 明细的根物料编码，分号分隔；ntext）
+    /// </summary>
+    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 新物料编码组（同设变下采购类型 F 的全部新物料编码，分号分隔；ntext）
+    /// </summary>
+    public string? EcNewMaterialCodeGroup { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 旧物料编码组（同设变下采购类型 F 明细的旧物料编码，分号分隔；ntext；供旧品结余按行拆分）
+    /// </summary>
+    public string? EcOldMaterialCodeGroup { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 新采购类型（冗余：来自 TaktEcDetail.EcNewPurchaseType；本表落行均为 F）
     /// </summary>
     public string? EcNewPurchaseType { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 是否实施（0=否 1=是，字典 sys_yes_no）
+    /// </summary>
+    public int? IsImplemented { get; set; }
+
+    /// <summary>
+    /// 旧品结余（可空；非空须按旧物料编码组逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，行数与旧物料组一致；采购自行维护，不从明细/生管带入；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；ntext）
+    /// </summary>
+    public string? EcOldPartBalance { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 进货日期
+    /// </summary>
+    public DateTime? InboundDate { get; set; }
+
+    /// <summary>
+    /// 执行内容（按新物料编码组拆行：物料:采购单10位:序号4位:供应商; 多行组合；ntext）
+    /// </summary>
+    public string? ExecContent { get; set; } = string.Empty;
 
     /// <summary>
     /// 部门编码（TaktDept.DeptCode；本表固定课别）
@@ -581,34 +616,20 @@ public class TaktEcPurTemplateDto
     public string? DeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 是否实施（0=否 1=是，字典 sys_yes_no）
+    /// 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
     /// </summary>
-    public int? IsImplemented { get; set; }
+    public int? EcImplScope { get; set; }
 
     /// <summary>
-    /// 执行内容（各部门通用）
+    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理）。采购固定按设变（DictValue=3）
     /// </summary>
-    public string? ExecContent { get; set; } = string.Empty;
+    public int? EcControlScope { get; set; }
 
     /// <summary>
-    /// 采购订单发行日期
+    /// 执行行去重键（采购为设变单号；同一键的明细共用本行。ntext）
     /// </summary>
-    public DateTime? PurchaseOrderIssueDate { get; set; }
+    public string? EcGrainKey { get; set; } = string.Empty;
 
-    /// <summary>
-    /// 供应商
-    /// </summary>
-    public string? Supplier { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 采购订单号码
-    /// </summary>
-    public string? PurchaseOrderCode { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 旧品处理（采购自行选择，不从明细/生管带入；字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
-    /// </summary>
-    public string? EcOldPartDisposition { get; set; } = string.Empty;
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
     /// </summary>
@@ -652,39 +673,64 @@ public class TaktEcPurImportDto
     public string? PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 执行行去重键（设变单号、机种或根物料或新物料、分道；同一键的明细共用本行。ntext）
-    /// </summary>
-    public string? EcGrainKey { get; set; }
-
-    /// <summary>
-    /// 设变单号（冗余，便于查询）
-    /// </summary>
-    public string? EcCode { get; set; } = string.Empty;
-
-    /// <summary>
     /// 行号（项号/序号，固定步长=10）
     /// </summary>
     public int? LineNumber { get; set; }
 
     /// <summary>
-    /// 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
+    /// 停产状态（字典 logistics_materials_material_discontinued_status；DictValue=Z0/ZQ 等）。同设变下任意成品不是停产（空或 Z0）时为 Z0，全部停产时取保留明细状态。
     /// </summary>
-    public string? EcNewMaterialCode { get; set; } = string.Empty;
+    public string? DiscontinuedStatus { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）
+    /// 设变单号（冗余：来自 TaktEcDetail.EcCode）
     /// </summary>
-    public string? EcNewMaterialDescription { get; set; } = string.Empty;
+    public string? EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新品仓库（选项 TaktWarehouses/options；DictValue=WarehouseCode；冗余：来自 TaktEcDetail.EcNewWarehouse）
+    /// 机种编码组（同设变下采购类型 F 明细的机种编码，分号分隔；ntext）
     /// </summary>
-    public string? EcNewWarehouse { get; set; } = string.Empty;
+    public string? EcModelCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新采购类型（F=外部采购，E=自制生产；冗余：来自 TaktEcDetail.EcNewPurchaseType）
+    /// 根物料编码组（同设变下采购类型 F 明细的根物料编码，分号分隔；ntext）
+    /// </summary>
+    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 新物料编码组（同设变下采购类型 F 的全部新物料编码，分号分隔；ntext）
+    /// </summary>
+    public string? EcNewMaterialCodeGroup { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 旧物料编码组（同设变下采购类型 F 明细的旧物料编码，分号分隔；ntext；供旧品结余按行拆分）
+    /// </summary>
+    public string? EcOldMaterialCodeGroup { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 新采购类型（冗余：来自 TaktEcDetail.EcNewPurchaseType；本表落行均为 F）
     /// </summary>
     public string? EcNewPurchaseType { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 是否实施（0=否 1=是，字典 sys_yes_no）
+    /// </summary>
+    public int? IsImplemented { get; set; }
+
+    /// <summary>
+    /// 旧品结余（可空；非空须按旧物料编码组逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，行数与旧物料组一致；采购自行维护，不从明细/生管带入；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；ntext）
+    /// </summary>
+    public string? EcOldPartBalance { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 进货日期
+    /// </summary>
+    public DateTime? InboundDate { get; set; }
+
+    /// <summary>
+    /// 执行内容（按新物料编码组拆行：物料:采购单10位:序号4位:供应商; 多行组合；ntext）
+    /// </summary>
+    public string? ExecContent { get; set; } = string.Empty;
 
     /// <summary>
     /// 部门编码（TaktDept.DeptCode；本表固定课别）
@@ -697,34 +743,20 @@ public class TaktEcPurImportDto
     public string? DeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 是否实施（0=否 1=是，字典 sys_yes_no）
+    /// 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
     /// </summary>
-    public int? IsImplemented { get; set; }
+    public int? EcImplScope { get; set; }
 
     /// <summary>
-    /// 执行内容（各部门通用）
+    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理）。采购固定按设变（DictValue=3）
     /// </summary>
-    public string? ExecContent { get; set; } = string.Empty;
+    public int? EcControlScope { get; set; }
 
     /// <summary>
-    /// 采购订单发行日期
+    /// 执行行去重键（采购为设变单号；同一键的明细共用本行。ntext）
     /// </summary>
-    public DateTime? PurchaseOrderIssueDate { get; set; }
+    public string? EcGrainKey { get; set; } = string.Empty;
 
-    /// <summary>
-    /// 供应商
-    /// </summary>
-    public string? Supplier { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 采购订单号码
-    /// </summary>
-    public string? PurchaseOrderCode { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 旧品处理（采购自行选择，不从明细/生管带入；字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
-    /// </summary>
-    public string? EcOldPartDisposition { get; set; } = string.Empty;
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
     /// </summary>
@@ -774,65 +806,64 @@ public class TaktEcPurExportDto
     public string CultureCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 执行行去重键（设变单号、机种或根物料或新物料、分道；同一键的明细共用本行。ntext）
-    /// </summary>
-    public string EcGrainKey { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 设变单号（冗余，便于查询）
-    /// </summary>
-    public string EcCode { get; set; } = string.Empty;
-    /// <summary>
-    /// 机种编码组（同设变单号+新采购类型+新物料下的机种编码，分号分隔；ntext）
-    /// </summary>
-    public string? EcModelCodeGroup { get; set; } = string.Empty;
-    /// <summary>
-    /// 根物料编码组（同设变单号+新采购类型+新物料下的根物料编码，分号分隔；ntext）
-    /// </summary>
-    public string? EcRootMaterialCodeGroup { get; set; } = string.Empty;
-    /// <summary>
-    /// 根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）
-    /// </summary>
-    public string EcRootMaterialDescription { get; set; } = string.Empty;
-
-    /// <summary>
     /// 行号（项号/序号，固定步长=10）
     /// </summary>
     public int LineNumber { get; set; } = 0;
 
     /// <summary>
-    /// 停产状态（冗余：来自 TaktEcDetail.DiscontinuedStatus）
+    /// 停产状态（字典 logistics_materials_material_discontinued_status；DictValue=Z0/ZQ 等）。同设变下任意成品不是停产（空或 Z0）时为 Z0，全部停产时取保留明细状态。
     /// </summary>
     public string DiscontinuedStatus { get; set; } = string.Empty;
 
     /// <summary>
-    /// 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
+    /// 设变单号（冗余：来自 TaktEcDetail.EcCode）
     /// </summary>
-    public int EcImplScope { get; set; }
-    /// <summary>
-    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种
-    /// </summary>
-    public int EcControlScope { get; set; } = 2;
+    public string EcCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新物料编码（冗余：来自 TaktEcDetail.EcNewMaterialCode）
+    /// 机种编码组（同设变下采购类型 F 明细的机种编码，分号分隔；ntext）
     /// </summary>
-    public string? EcNewMaterialCode { get; set; } = string.Empty;
+    public string EcModelCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新物料描述（冗余：来自 TaktEcDetail.EcNewMaterialDescription）
+    /// 根物料编码组（同设变下采购类型 F 明细的根物料编码，分号分隔；ntext）
     /// </summary>
-    public string? EcNewMaterialDescription { get; set; } = string.Empty;
+    public string EcRootMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新品仓库（选项 TaktWarehouses/options；DictValue=WarehouseCode；冗余：来自 TaktEcDetail.EcNewWarehouse）
+    /// 新物料编码组（同设变下采购类型 F 的全部新物料编码，分号分隔；ntext）
     /// </summary>
-    public string? EcNewWarehouse { get; set; } = string.Empty;
+    public string EcNewMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 新采购类型（F=外部采购，E=自制生产；冗余：来自 TaktEcDetail.EcNewPurchaseType）
+    /// 旧物料编码组（同设变下采购类型 F 明细的旧物料编码，分号分隔；ntext；供旧品结余按行拆分）
     /// </summary>
-    public string? EcNewPurchaseType { get; set; } = string.Empty;
+    public string EcOldMaterialCodeGroup { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 新采购类型（冗余：来自 TaktEcDetail.EcNewPurchaseType；本表落行均为 F）
+    /// </summary>
+    public string EcNewPurchaseType { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 是否实施（0=否 1=是，字典 sys_yes_no）
+    /// </summary>
+    public int IsImplemented { get; set; } = 0;
+
+    /// <summary>
+    /// 旧品结余（可空；非空须按旧物料编码组逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，行数与旧物料组一致；采购自行维护，不从明细/生管带入；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；ntext）
+    /// </summary>
+    public string? EcOldPartBalance { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 进货日期
+    /// </summary>
+    public DateTime? InboundDate { get; set; }
+
+    /// <summary>
+    /// 执行内容（按新物料编码组拆行：物料:采购单10位:序号4位:供应商; 多行组合；ntext）
+    /// </summary>
+    public string? ExecContent { get; set; } = string.Empty;
 
     /// <summary>
     /// 部门编码（TaktDept.DeptCode；本表固定课别）
@@ -842,37 +873,23 @@ public class TaktEcPurExportDto
     /// <summary>
     /// 部门名称（冗余：按 DeptCode 取 TaktDept.DeptName1 联动）
     /// </summary>
-    public string? DeptName { get; set; } = string.Empty;
+    public string DeptName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 是否实施（0=否 1=是，字典 sys_yes_no）
+    /// 实施范围（冗余：来自 TaktEcDetail.EcImplScope）
     /// </summary>
-    public int IsImplemented { get; set; } = 0;
+    public int EcImplScope { get; set; } = 0;
 
     /// <summary>
-    /// 执行内容（各部门通用）
+    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理）。采购固定按设变（DictValue=3）
     /// </summary>
-    public string? ExecContent { get; set; } = string.Empty;
+    public int EcControlScope { get; set; } = 0;
 
     /// <summary>
-    /// 采购订单发行日期
+    /// 执行行去重键（采购为设变单号；同一键的明细共用本行。ntext）
     /// </summary>
-    public DateTime? PurchaseOrderIssueDate { get; set; }
+    public string EcGrainKey { get; set; } = string.Empty;
 
-    /// <summary>
-    /// 供应商
-    /// </summary>
-    public string? Supplier { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 采购订单号码
-    /// </summary>
-    public string? PurchaseOrderCode { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 旧品处理（采购自行选择，不从明细/生管带入；字典 logistics_manufacturing_ec_old_part_disposition；1=转用，2=废弃，3=返工，4=消耗，5=无处理，9=未定）
-    /// </summary>
-    public string? EcOldPartDisposition { get; set; } = string.Empty;
     /// <summary>
     /// 是否作废（字典 sys_yes_no；0=否 1=是；编辑移除子行时标记作废）
     /// </summary>

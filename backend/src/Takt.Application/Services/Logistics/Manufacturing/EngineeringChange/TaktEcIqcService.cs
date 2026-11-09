@@ -130,12 +130,10 @@ public class TaktEcIqcService : TaktServiceBase, ITaktEcIqcService
         entity.IsObsolete = 0;
         var isUnique_ix_takt_logistics_manufacturing_ec_iqc_unique = await _uniqueValidator.IsUniqueAsync(
             _ecIqcRepository,
-            x => x.EcCode == entity.EcCode
-                && x.EcNewRequiresInspection == entity.EcNewRequiresInspection
-                && x.EcNewMaterialCode == entity.EcNewMaterialCode);
+            x => x.EcCode == entity.EcCode);
         if (!isUnique_ix_takt_logistics_manufacturing_ec_iqc_unique)
         {
-            throw new TaktBusinessException("设变受检执行的设变单号、新品检验、新物料编码已存在");
+            throw new TaktBusinessException("设变受检执行的设变单号已存在");
         }
         if (entity.LineNumber <= 0)
         {
@@ -163,16 +161,19 @@ public class TaktEcIqcService : TaktServiceBase, ITaktEcIqcService
         {
             throw new TaktBusinessException("设变受检执行不存在");
         }
+        var preservedEcGrainKey = entity.EcGrainKey;
         dto.Adapt(entity);
+        if (string.IsNullOrWhiteSpace(entity.EcGrainKey))
+        {
+            entity.EcGrainKey = preservedEcGrainKey;
+        }
         var isUnique_ix_takt_logistics_manufacturing_ec_iqc_unique = await _uniqueValidator.IsUniqueAsync(
             _ecIqcRepository,
-            x => x.EcCode == entity.EcCode
-                && x.EcNewRequiresInspection == entity.EcNewRequiresInspection
-                && x.EcNewMaterialCode == entity.EcNewMaterialCode,
+            x => x.EcCode == entity.EcCode,
             id);
         if (!isUnique_ix_takt_logistics_manufacturing_ec_iqc_unique)
         {
-            throw new TaktBusinessException("设变受检执行的设变单号、新品检验、新物料编码已存在");
+            throw new TaktBusinessException("设变受检执行的设变单号已存在");
         }
         await _ecIqcRepository.UpdateAsync(entity);
         await _ecExecPersistence.FanOutIqcFillableByEcAndNewMaterialAsync(entity);
@@ -304,19 +305,17 @@ public class TaktEcIqcService : TaktServiceBase, ITaktEcIqcService
             try
             {
                 var entity = rows[i].Adapt<TaktEcIqc>();
-                var importKey = $"{entity.EcCode}|{entity.EcNewRequiresInspection}|{entity.EcNewMaterialCode}";
+                var importKey = entity.EcCode ?? string.Empty;
                 if (!importSeenKeys.Add(importKey))
                 {
-                    throw new TaktBusinessException("与Excel中其他行重复（设变单号、新品检验、新物料编码）");
+                    throw new TaktBusinessException("与Excel中其他行重复（设变单号）");
                 }
                 var isUnique_ix_takt_logistics_manufacturing_ec_iqc_unique = await _uniqueValidator.IsUniqueAsync(
                     _ecIqcRepository,
-                    x => x.EcCode == entity.EcCode
-                        && x.EcNewRequiresInspection == entity.EcNewRequiresInspection
-                        && x.EcNewMaterialCode == entity.EcNewMaterialCode);
+                    x => x.EcCode == entity.EcCode);
                 if (!isUnique_ix_takt_logistics_manufacturing_ec_iqc_unique)
                 {
-                    throw new TaktBusinessException("设变受检执行的设变单号、新品检验、新物料编码已存在");
+                    throw new TaktBusinessException("设变受检执行的设变单号已存在");
                 }
                 if (entity.LineNumber <= 0)
                 {
@@ -397,7 +396,6 @@ public class TaktEcIqcService : TaktServiceBase, ITaktEcIqcService
                 || (x.DeptCode != null && x.DeptCode.Contains(keywords))
                 || SqlFunc.ToString(x.IsImplemented).Contains(keywords)
                 || (x.ExecContent != null && x.ExecContent.Contains(keywords))
-                || (x.IqcOrderCode != null && x.IqcOrderCode.Contains(keywords))
                 || (x.CultureCode != null && x.CultureCode.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
@@ -434,11 +432,6 @@ public class TaktEcIqcService : TaktServiceBase, ITaktEcIqcService
         if (!string.IsNullOrEmpty(queryDto?.ExecContent))
         {
             exp = exp.And(x => x.ExecContent != null && x.ExecContent.Contains(queryDto.ExecContent));
-        }
-
-        if (!string.IsNullOrEmpty(queryDto?.IqcOrderCode))
-        {
-            exp = exp.And(x => x.IqcOrderCode != null && x.IqcOrderCode.Contains(queryDto.IqcOrderCode));
         }
 
         if (!string.IsNullOrEmpty(queryDto?.CultureCode))

@@ -127,16 +127,22 @@ public class TaktEcPurService : TaktServiceBase, ITaktEcPurService
     /// <returns>DTO</returns>
     public async Task<TaktEcPurDto> CreateEcPurAsync(TaktEcPurCreateDto dto)
     {
+        if (!string.IsNullOrWhiteSpace(dto.EcOldPartBalance))
+        {
+            dto.EcOldPartBalance = dto.EcOldPartBalance.Trim();
+        }
+        if (!TaktRegexHelper.IsValidEcPcOldPartBalance(dto.EcOldPartBalance))
+        {
+            throw new TaktBusinessException("旧品结余须为空或按旧物料逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，如 S0111914-4300000000:0010:0;0;4;");
+        }
         var entity = dto.Adapt<TaktEcPur>();
         entity.IsObsolete = 0;
         var isUnique_ix_takt_logistics_manufacturing_ec_pur_unique = await _uniqueValidator.IsUniqueAsync(
             _ecPurRepository,
-            x => x.EcCode == entity.EcCode
-                && x.EcNewPurchaseType == entity.EcNewPurchaseType
-                && x.EcNewMaterialCode == entity.EcNewMaterialCode);
+            x => x.EcCode == entity.EcCode);
         if (!isUnique_ix_takt_logistics_manufacturing_ec_pur_unique)
         {
-            throw new TaktBusinessException("设变采购执行的设变单号、新采购类型、新物料编码已存在");
+            throw new TaktBusinessException("设变采购执行的设变单号已存在");
         }
         if (entity.LineNumber <= 0)
         {
@@ -152,7 +158,7 @@ public class TaktEcPurService : TaktServiceBase, ITaktEcPurService
     }
 
     /// <summary>
-    /// 更新设变采购执行（同设变单号+新物料且采购类型 F 的执行行一并写入可填字段）
+    /// 更新设变采购执行（同设变单号仅一行；可填字段写回后按 grain 扇出）
     /// </summary>
     /// <param name="id">设变采购执行ID</param>
     /// <param name="dto">更新DTO</param>
@@ -164,16 +170,27 @@ public class TaktEcPurService : TaktServiceBase, ITaktEcPurService
         {
             throw new TaktBusinessException("设变采购执行不存在");
         }
+        if (!string.IsNullOrWhiteSpace(dto.EcOldPartBalance))
+        {
+            dto.EcOldPartBalance = dto.EcOldPartBalance.Trim();
+        }
+        if (!TaktRegexHelper.IsValidEcPcOldPartBalance(dto.EcOldPartBalance))
+        {
+            throw new TaktBusinessException("旧品结余须为空或按旧物料逐行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，如 S0111914-4300000000:0010:0;0;4;");
+        }
+        var preservedEcGrainKey = entity.EcGrainKey;
         dto.Adapt(entity);
+        if (string.IsNullOrWhiteSpace(entity.EcGrainKey))
+        {
+            entity.EcGrainKey = preservedEcGrainKey;
+        }
         var isUnique_ix_takt_logistics_manufacturing_ec_pur_unique = await _uniqueValidator.IsUniqueAsync(
             _ecPurRepository,
-            x => x.EcCode == entity.EcCode
-                && x.EcNewPurchaseType == entity.EcNewPurchaseType
-                && x.EcNewMaterialCode == entity.EcNewMaterialCode,
+            x => x.EcCode == entity.EcCode,
             id);
         if (!isUnique_ix_takt_logistics_manufacturing_ec_pur_unique)
         {
-            throw new TaktBusinessException("设变采购执行的设变单号、新采购类型、新物料编码已存在");
+            throw new TaktBusinessException("设变采购执行的设变单号已存在");
         }
         await _ecPurRepository.UpdateAsync(entity);
         await _ecExecPersistence.FanOutMpFillableByEcAndNewMaterialAsync(entity);
@@ -305,19 +322,17 @@ public class TaktEcPurService : TaktServiceBase, ITaktEcPurService
             try
             {
                 var entity = rows[i].Adapt<TaktEcPur>();
-                var importKey = $"{entity.EcCode}|{entity.EcNewPurchaseType}|{entity.EcNewMaterialCode}";
+                var importKey = entity.EcCode ?? string.Empty;
                 if (!importSeenKeys.Add(importKey))
                 {
-                    throw new TaktBusinessException("与Excel中其他行重复（设变单号、新采购类型、新物料编码）");
+                    throw new TaktBusinessException("与Excel中其他行重复（设变单号）");
                 }
                 var isUnique_ix_takt_logistics_manufacturing_ec_pur_unique = await _uniqueValidator.IsUniqueAsync(
                     _ecPurRepository,
-                    x => x.EcCode == entity.EcCode
-                        && x.EcNewPurchaseType == entity.EcNewPurchaseType
-                        && x.EcNewMaterialCode == entity.EcNewMaterialCode);
+                    x => x.EcCode == entity.EcCode);
                 if (!isUnique_ix_takt_logistics_manufacturing_ec_pur_unique)
                 {
-                    throw new TaktBusinessException("设变采购执行的设变单号、新采购类型、新物料编码已存在");
+                    throw new TaktBusinessException("设变采购执行的设变单号已存在");
                 }
                 if (entity.LineNumber <= 0)
                 {
@@ -398,13 +413,11 @@ public class TaktEcPurService : TaktServiceBase, ITaktEcPurService
                 || (x.DeptCode != null && x.DeptCode.Contains(keywords))
                 || SqlFunc.ToString(x.IsImplemented).Contains(keywords)
                 || (x.ExecContent != null && x.ExecContent.Contains(keywords))
-                || (x.Supplier != null && x.Supplier.Contains(keywords))
-                || (x.PurchaseOrderCode != null && x.PurchaseOrderCode.Contains(keywords))
-                || (x.EcOldPartDisposition != null && x.EcOldPartDisposition.Contains(keywords))
+                || (x.EcOldPartBalance != null && x.EcOldPartBalance.Contains(keywords))
+                || SqlFunc.ToString(x.InboundDate).Contains(keywords)
                 || (x.CultureCode != null && x.CultureCode.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
-                || SqlFunc.ToString(x.PurchaseOrderIssueDate).Contains(keywords)
                 || SqlFunc.ToString(x.CreatedAt).Contains(keywords)
             );
         }
@@ -439,19 +452,19 @@ public class TaktEcPurService : TaktServiceBase, ITaktEcPurService
             exp = exp.And(x => x.ExecContent != null && x.ExecContent.Contains(queryDto.ExecContent));
         }
 
-        if (!string.IsNullOrEmpty(queryDto?.Supplier))
+        if (!string.IsNullOrEmpty(queryDto?.EcOldPartBalance))
         {
-            exp = exp.And(x => x.Supplier != null && x.Supplier.Contains(queryDto.Supplier));
+            exp = exp.And(x => x.EcOldPartBalance != null && x.EcOldPartBalance.Contains(queryDto.EcOldPartBalance));
         }
 
-        if (!string.IsNullOrEmpty(queryDto?.PurchaseOrderCode))
+        if (queryDto?.InboundDateStart.HasValue == true)
         {
-            exp = exp.And(x => x.PurchaseOrderCode != null && x.PurchaseOrderCode.Contains(queryDto.PurchaseOrderCode));
+            exp = exp.And(x => x.InboundDate >= queryDto.InboundDateStart);
         }
 
-        if (!string.IsNullOrEmpty(queryDto?.EcOldPartDisposition))
+        if (queryDto?.InboundDateEnd.HasValue == true)
         {
-            exp = exp.And(x => x.EcOldPartDisposition != null && x.EcOldPartDisposition.Contains(queryDto.EcOldPartDisposition));
+            exp = exp.And(x => x.InboundDate <= queryDto.InboundDateEnd);
         }
 
         if (!string.IsNullOrEmpty(queryDto?.CultureCode))
@@ -467,16 +480,6 @@ public class TaktEcPurService : TaktServiceBase, ITaktEcPurService
         if (!string.IsNullOrEmpty(queryDto?.Remark))
         {
             exp = exp.And(x => x.Remark != null && x.Remark.Contains(queryDto.Remark));
-        }
-
-        if (queryDto?.PurchaseOrderIssueDateStart.HasValue == true)
-        {
-            exp = exp.And(x => x.PurchaseOrderIssueDate >= queryDto.PurchaseOrderIssueDateStart);
-        }
-
-        if (queryDto?.PurchaseOrderIssueDateEnd.HasValue == true)
-        {
-            exp = exp.And(x => x.PurchaseOrderIssueDate <= queryDto.PurchaseOrderIssueDateEnd);
         }
 
         if (queryDto?.CreatedAtStart.HasValue == true)

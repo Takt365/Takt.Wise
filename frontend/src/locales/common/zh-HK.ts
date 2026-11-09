@@ -135,6 +135,7 @@ export default {
       numberingRule: "編碼規則",
       numberingCodePreview: "選擇編碼規則後自動生成",
       numberingRuleRequired: "請選擇編碼規則",
+      periodRange: "期間",
       periodRangeMaxMonths: "查詢期間不能超過 {max} 個月",
     },
   },

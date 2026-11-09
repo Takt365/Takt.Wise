@@ -75,10 +75,10 @@ public class TaktPurchaseOrderItem : TaktCompanyEntityBase
     public string? MaterialSpecification { get; set; }
 
     /// <summary>
-    /// 采购信息编码
+    /// 采购条件编码
     /// </summary>
-    [SugarColumn(ColumnName = "purchase_info_code", ColumnDescription = "采购信息编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = true)]
-    public string? PurchaseInfoCode { get; set; }
+    [SugarColumn(ColumnName = "purchase_condition_code", ColumnDescription = "采购条件编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = true)]
+    public string? PurchaseConditionCode { get; set; }
 
     /// <summary>
     /// 供应商物料编码

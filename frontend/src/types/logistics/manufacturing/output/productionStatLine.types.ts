@@ -49,7 +49,7 @@ export interface ProductionStatLine {
   /** 生产日期 */
   prodDate: string
   /** 批次 */
-  batchCode: string
+  prodBatch: string
   /** 物料 */
   materialCode: string
   /** 机种 */

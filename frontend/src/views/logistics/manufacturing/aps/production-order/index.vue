@@ -261,7 +261,7 @@
           v-model:value="advancedQueryForm.prodBatch"
           :placeholder="pi.queryPh('prodBatch', 'required')"
           show-count
-          :maxlength="20"
+          :maxlength="40"
           allow-clear
         />
       </a-form-item>

@@ -10,36 +10,32 @@
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
 // ========================================
 
+import type { TaktPagedQuery } from '@/types/common.types'
+
 /**
  * 设变统计查询
  */
-export interface EcStatQuery {
+export interface EcStatQuery extends TaktPagedQuery {
   /** 执行部门页签 */
-  statTab?: string
-  /** 实施页签：all / done / open */
+  statTab: string
+  /** 实施页签：all、done、open */
   implStatus?: string
-  /** 工厂 */
-  plantCode?: string
-  /** 发行期间起（技术主表发行日期） */
+  /** 工厂代码 */
+  plantCode: string
+  /** 发行期间起（yyyy-MM-dd） */
   periodDateStart?: string
-  /** 发行期间止（技术主表发行日期） */
+  /** 发行期间止（yyyy-MM-dd） */
   periodDateEnd?: string
-  /** 录入期间起（技术主表录入日期） */
+  /** 录入期间起（yyyy-MM-dd） */
   entryPeriodDateStart?: string
-  /** 录入期间止（技术主表录入日期） */
+  /** 录入期间止（yyyy-MM-dd） */
   entryPeriodDateEnd?: string
   /** 设变单号 */
   ecCode?: string
-  /** 关键词（设变单号、标题、担当） */
-  keyWords?: string
-  /** 页码 */
-  pageIndex?: number
-  /** 页大小 */
-  pageSize?: number
 }
 
 /**
- * 设变统计行。字段来自当前执行部门实施表，未使用的部门字段为空
+ * 设变统计行。新物料编码组对应执行部门 EcNewMaterialCodeGroup
  */
 export interface EcStatRow {
   /** 执行行主键 */
@@ -50,15 +46,15 @@ export interface EcStatRow {
   ecModelCodeGroup?: string | null
   /** 根物料编码组 */
   ecRootMaterialCodeGroup?: string | null
-  /** 新物料编码 */
-  ecNewMaterialCode?: string | null
+  /** 新物料编码组 */
+  ecNewMaterialCodeGroup?: string | null
   /** 新品仓库 */
   ecNewWarehouse?: string | null
-  /** 新品检验（sys_yes_no） */
+  /** 新品检验 */
   ecNewRequiresInspection?: number | null
-  /** 实施（sys_yes_no） */
+  /** 实施 */
   isImplemented?: number | null
-  /** 更新 SOP（sys_yes_no）。仅制造技术课 */
+  /** 更新 SOP */
   isSopUpdated?: number | null
   /** 预定日期 */
   scheduledDate?: string | null
@@ -66,16 +62,14 @@ export interface EcStatRow {
   scheduledBatch?: string | null
   /** 生产日期 */
   productionDate?: string | null
-  /** 实施批次 */
-  implementationBatch?: string | null
+  /** 生产批次 */
+  productionBatch?: string | null
+  /** 进货日期 */
+  inboundDate?: string | null
   /** 检验日期 */
   inspectionDate?: string | null
   /** 检验批次 */
   inspectionBatch?: string | null
-  /** 采购订单发行日期 */
-  purchaseOrderIssueDate?: string | null
-  /** 受检单号 */
-  iqcOrderCode?: string | null
   /** SOP 日期 */
   sopDate?: string | null
 }

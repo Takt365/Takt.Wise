@@ -93,6 +93,16 @@ public class TaktEcTeDto : TaktCompanyDtoBase
     public int EcControlScope { get; set; } = 2;
 
     /// <summary>
+    /// 旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」，分号分隔；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；ntext）
+    /// </summary>
+    public string? EcOldPartDisposition { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 明细去重旧物料编码清单（分号分隔；排除空与占位「0」；仅详情展示旧品处理页签用，不落库）
+    /// </summary>
+    public string? EcOldMaterialCodeGroup { get; set; }
+
+    /// <summary>
     /// 录入日期
     /// </summary>
     public DateTime EcEntryDate { get; set; }
@@ -201,6 +211,11 @@ public class TaktEcTeQueryDto : TaktPagedQuery
     /// 制二/制一/品管实施范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理）。只记录这三课
     /// </summary>
     public int? EcControlScope { get; set; }
+
+    /// <summary>
+    /// 旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」）
+    /// </summary>
+    public string? EcOldPartDisposition { get; set; } = string.Empty;
 
     /// <summary>
     /// 录入日期（范围查询-开始）
@@ -322,6 +337,11 @@ public class TaktEcTeCreateDto
     public int EcControlScope { get; set; } = 2;
 
     /// <summary>
+    /// 旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」，分号分隔；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；ntext）
+    /// </summary>
+    public string? EcOldPartDisposition { get; set; } = string.Empty;
+
+    /// <summary>
     /// 录入日期
     /// </summary>
     public DateTime EcEntryDate { get; set; }
@@ -350,6 +370,11 @@ public class TaktEcTeCreateDto
     /// 省略明细时的来源明细行数（仅提示；非持久化）
     /// </summary>
     public int DeferredDetailCount { get; set; }
+
+    /// <summary>
+    /// 来源导入延后明细时的旧物料编码清单（分号分隔；仅草稿展示旧品处理页签用，不落库）
+    /// </summary>
+    public string? EcOldMaterialCodeGroup { get; set; }
 
     /// <summary>
     /// 设变附件列表（技术阶段一：②，联络/EPP/FPP 等文档）（子表，级联保存）
@@ -507,6 +532,11 @@ public class TaktEcTeTemplateDto
     public int? EcControlScope { get; set; }
 
     /// <summary>
+    /// 旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」）
+    /// </summary>
+    public string? EcOldPartDisposition { get; set; } = string.Empty;
+
+    /// <summary>
     /// 录入日期
     /// </summary>
     public DateTime? EcEntryDate { get; set; }
@@ -612,6 +642,11 @@ public class TaktEcTeImportDto
     /// 制二/制一/品管实施范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理）。只记录这三课
     /// </summary>
     public int? EcControlScope { get; set; }
+
+    /// <summary>
+    /// 旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」）
+    /// </summary>
+    public string? EcOldPartDisposition { get; set; } = string.Empty;
 
     /// <summary>
     /// 录入日期
@@ -725,6 +760,11 @@ public class TaktEcTeExportDto
     /// 制二/制一/品管实施范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理）。只记录这三课
     /// </summary>
     public int EcControlScope { get; set; } = 2;
+
+    /// <summary>
+    /// 旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」，分号分隔；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；ntext）
+    /// </summary>
+    public string? EcOldPartDisposition { get; set; } = string.Empty;
 
     /// <summary>
     /// 录入日期

@@ -79,10 +79,22 @@ public class TaktMasterDemandScheduleLine : TaktCompanyEntityBase
     public int? SalesForecastLineNumber { get; set; }
 
     /// <summary>
+    /// 来源销售预测版本号（1～20；取该月参与 MDS 的版本）
+    /// </summary>
+    [SugarColumn(ColumnName = "sales_forecast_version_no", ColumnDescription = "来源预测版本", ColumnDataType = "int", IsNullable = true)]
+    public int? SalesForecastVersionNo { get; set; }
+
+    /// <summary>
     /// 物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）
     /// </summary>
     [SugarColumn(ColumnName = "material_code", ColumnDescription = "物料编码", ColumnDataType = "nvarchar", Length = 20, IsNullable = false)]
     public string MaterialCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 计划批次（生成 MPS 时下传，正式工单写入 ProdBatch）
+    /// </summary>
+    [SugarColumn(ColumnName = "planned_batch", ColumnDescription = "计划批次", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? PlannedBatch { get; set; }
 
     /// <summary>
     /// 时间桶开始

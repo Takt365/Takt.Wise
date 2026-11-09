@@ -30,10 +30,10 @@ export default {
     costSum: 'コスト計算',
     costRecalculate: '再計算コスト',
     costAverage: '機種平均コスト計算',
-    purchaseInfoBackfill: '購買価格補完',
-    purchaseInfoBackfillSuccess:
+    purchaseConditionBackfill: '購買価格補完',
+    purchaseConditionBackfillSuccess:
       '{month} 購買価格補完完了：スキャン {scanned}、更新 {updated}、価格なし {skipped}、変更なし {unchanged}',
-    purchaseInfoBackfillFailed: '購買価格補完に失敗しました',
+    purchaseConditionBackfillFailed: '購買価格補完に失敗しました',
     movingPriceBackfill: '移動価格を補完',
     movingPriceBackfillBatch: '代替価格を一括補完',
     movingPriceBackfillRow: '移動価格を補完',

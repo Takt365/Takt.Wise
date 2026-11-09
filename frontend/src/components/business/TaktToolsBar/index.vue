@@ -4,7 +4,7 @@
 文件名称:index.vue
 创建时间:2025-01-20
 创建人:Takt365(Cursor AI)
-功能描述:工具栏组件,提供常用操作按钮、权限控制、全屏、转置等功能
+功能描述:工具栏组件；填满父容器并随视口伸缩；提供常用操作按钮、权限控制、全屏、转置等功能
 
 版权信息:Copyright (c) 2025 Takt  All rights reserved.
 免责声明:此软件使用 MIT License,作者不承担任何使用风险。
@@ -882,18 +882,27 @@ const handleAction = (action: ToolBarAction) => {
 </script>
 
 <style scoped lang="css">
+/* 横向内边距放进 border-box。width:100% 再加左右 margin 会撑出父级，页壳和主子表 overflow:hidden 会裁掉最右侧按钮 */
 .takt-tools-bar {
-  margin: 0 4px 4px 4px;
+  margin: 0 0 4px;
+  padding-inline: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
+  flex-wrap: nowrap;
+  gap: 8px 16px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 
   .tools-bar-left {
     display: flex;
+    flex-wrap: nowrap;
     align-items: center;
-    flex: 1;
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
 
     :deep(.ant-btn) {
       display: inline-flex;
@@ -908,11 +917,12 @@ const handleAction = (action: ToolBarAction) => {
 
   .tools-bar-right {
     display: flex;
+    flex-wrap: nowrap;
     align-items: center;
-    flex-shrink: 0;
+    flex: 0 0 auto;
+    margin-left: auto;
   }
 }
-
 
 .takt-button-empty {
   display: inline-flex;
@@ -948,6 +958,8 @@ const handleAction = (action: ToolBarAction) => {
     .tools-bar-left,
     .tools-bar-right {
       justify-content: center;
+      margin-left: 0;
+      overflow: visible;
     }
   }
 }

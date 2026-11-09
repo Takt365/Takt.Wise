@@ -38,7 +38,23 @@
           :loading="loading"
           @search="handleSearch"
           @reset="handleReset"
-        />
+        >
+          <template #leading>
+            <a-range-picker
+              v-model:value="costPeriodRange"
+              picker="month"
+              format="YYYY-MM"
+              value-format="YYYY-MM"
+              :placeholder="[
+                t('logistics.quality.cost.cost-report.page.periodRange'),
+                t('logistics.quality.cost.cost-report.page.periodRange'),
+              ]"
+              :disabled-date="costPeriodLimit.disabledDate"
+              @calendar-change="costPeriodLimit.onCalendarChange"
+              @open-change="costPeriodLimit.onOpenChange"
+            />
+          </template>
+        </TaktQueryBar>
         <TaktToolsBar
       create-permission="logistics:quality:cost:assurance:create"
       update-permission="logistics:quality:cost:assurance:update"
@@ -158,6 +174,7 @@ import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
+import { useProdPeriodQuery } from '@/views/logistics/manufacturing/composables/useProdPeriodQuery'
 import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
 import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 import QualityAssuranceForm from './components/AssuranceForm.vue'
@@ -192,6 +209,14 @@ const searchPlaceholder = computed(
 
 /** 快捷查询关键字 */
 const queryKeyword = ref('')
+/** 期间：默认当前月，按业务年月 yyyy-MM 过滤 */
+const {
+  range: costPeriodRange,
+  limit: costPeriodLimit,
+  reset: resetCostPeriod,
+  hasPeriod: hasCostPeriod,
+  applyMonthRange: applyCostPeriod,
+} = useProdPeriodQuery()
 /** 列表 loading */
 const loading = ref(false)
 /** 分页列表数据 */
@@ -229,6 +254,9 @@ const advancedQueryVisible = ref(false)
  * @returns {boolean}
  */
 function hasAnyListQueryFilter(): boolean {
+  if (hasCostPeriod()) {
+    return true
+  }
   const kw = (queryKeyword.value ?? '').trim()
   if (kw.length > 0) {
     return true
@@ -306,6 +334,7 @@ function buildListQuery(overrides?: Partial<QualityAssuranceQuery>): QualityAssu
   for (const key of QUALITYASSURANCE_QUERY_STRING_FIELDS) {
     assignTrimmed(key, form[key])
   }
+  applyCostPeriod(query, 'assuranceMonthStart', 'assuranceMonthEnd')
   return query
 }
 /** 页面挂载：租户上下文就绪后加载分页配置；无查询条件时 loadData 保持空表 */
@@ -544,6 +573,7 @@ function handleSearch() {
 /** 重置查询条件并刷新列表 */
 function handleReset() {
   queryKeyword.value = ''
+  resetCostPeriod()
   advancedQueryForm.value = {
 
   }

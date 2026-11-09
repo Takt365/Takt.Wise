@@ -26,7 +26,7 @@ namespace Takt.Application.Services.Logistics.Manufacturing.Bom;
 /// <summary>
 /// BOM 机种成本推移：一行一个成品。各月列为成品月计算；差额为最后月减前一月。
 /// 组件差异取期间止月，只列出同一机种各成品间用量或单价不一致的成本组件。首行 Net 为这些组件的行成本合计，其后按行成本绝对值降序全量列出 编码:用量-行成本。共通价格、差异价格为组件行成本合计。
-/// 机种空则范围内每个机种各自对比。
+/// 机种空则范围内每个机种各自对比。物料类型空则不过滤类型。
 /// </summary>
 public class TaktBomModelCostTrendService : TaktServiceBase, ITaktBomModelCostTrendService
 {
@@ -171,9 +171,11 @@ public class TaktBomModelCostTrendService : TaktServiceBase, ITaktBomModelCostTr
         ArgumentException.ThrowIfNullOrWhiteSpace(queryDto.PlantCode);
         EnsureThreeLayerContext();
         var plantCode = queryDto.PlantCode.Trim();
-        var materialType = queryDto.MaterialType?.Trim();
+        var materialType = string.IsNullOrWhiteSpace(queryDto.MaterialType)
+            ? null
+            : queryDto.MaterialType.Trim();
         var (periodStart, periodEnd) = NormalizeMovingPricePeriodBounds(queryDto.PeriodDateStart, queryDto.PeriodDateEnd);
-        if (string.IsNullOrEmpty(materialType) || (!periodStart.HasValue && !periodEnd.HasValue))
+        if (!periodStart.HasValue && !periodEnd.HasValue)
         {
             return ModelCostTrendAnalysisBuilt.Empty(null, new List<string>());
         }
@@ -585,20 +587,20 @@ public class TaktBomModelCostTrendService : TaktServiceBase, ITaktBomModelCostTr
     }
 
     /// <summary>
-    /// 加载期间内成本头（工厂 + 物料类型 + 可选机种；不折叠月份）
+    /// 加载期间内成本头（工厂 + 可选物料类型 + 可选机种；不折叠月份）
     /// </summary>
     /// <param name="plantCode">工厂</param>
     /// <param name="modelCodes">机种（null/空=全部）</param>
     /// <param name="costingMonthStart">核算月起</param>
     /// <param name="costingMonthEnd">核算月止</param>
-    /// <param name="materialType">物料类型</param>
+    /// <param name="materialType">物料类型；空=全部类型</param>
     /// <returns>成本头</returns>
     private async Task<List<TaktBomMaterialCost>> LoadCostHeadersAsync(
         string plantCode,
         IReadOnlyList<string>? modelCodes,
         DateTime costingMonthStart,
         DateTime costingMonthEnd,
-        string materialType)
+        string? materialType)
     {
         var startPeriod = costingMonthStart.ToString("yyyy-MM", CultureInfo.InvariantCulture);
         var endPeriod = costingMonthEnd.ToString("yyyy-MM", CultureInfo.InvariantCulture);
@@ -607,10 +609,14 @@ public class TaktBomModelCostTrendService : TaktServiceBase, ITaktBomModelCostTr
             x.TenantCode == CurrentTenantCode
             && x.CompanyCode == CurrentCompanyCode
             && x.PlantCode == plantCode
-            && x.MaterialType == materialType
             && x.CostingPeriod != null
             && x.CostingPeriod.CompareTo(startPeriod) >= 0
             && x.CostingPeriod.CompareTo(endPeriod) <= 0);
+        if (!string.IsNullOrEmpty(materialType))
+        {
+            var type = materialType;
+            exp = exp.And(x => x.MaterialType == type);
+        }
         if (modelCodes is { Count: 1 })
         {
             var model = modelCodes[0];
@@ -620,7 +626,7 @@ public class TaktBomModelCostTrendService : TaktServiceBase, ITaktBomModelCostTr
     }
 
     /// <summary>
-    /// 加载成品 BOM 明细（生产相关=X、PCB SECT 标识为空、采购类型=F；按核算月；不截断）
+    /// 加载成品 BOM 明细（批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空；按核算月；不截断）
     /// </summary>
     /// <param name="plantCode">工厂</param>
     /// <param name="productCodes">产品编码</param>

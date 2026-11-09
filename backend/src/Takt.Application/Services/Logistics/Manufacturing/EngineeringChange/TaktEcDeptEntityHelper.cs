@@ -145,7 +145,6 @@ public static class TaktEcDeptEntityHelper
         {
             return te.SopDate.HasValue
                 || te.IsSopUpdated == 1
-                || !string.IsNullOrWhiteSpace(te.TechLeader)
                 || !string.IsNullOrWhiteSpace(te.SopLeader);
         }
         if (GetIsImplemented(exec) == 1)
@@ -164,7 +163,7 @@ public static class TaktEcDeptEntityHelper
     {
         var deptCode = GetDeptCode(exec);
         DateTime? scheduledDate = null;
-        DateTime? purchaseOrderIssueDate = null;
+        DateTime? expectedInboundDate = null;
         DateTime? inspectionDate = null;
         DateTime? outboundDate = null;
         DateTime? productionDate = null;
@@ -178,7 +177,7 @@ public static class TaktEcDeptEntityHelper
                 createdAt = e.CreatedAt;
                 break;
             case TaktEcPur e:
-                purchaseOrderIssueDate = e.PurchaseOrderIssueDate;
+                expectedInboundDate = e.InboundDate;
                 updatedAt = e.UpdatedAt;
                 createdAt = e.CreatedAt;
                 break;
@@ -208,7 +207,7 @@ public static class TaktEcDeptEntityHelper
                 createdAt = e.CreatedAt;
                 break;
             case TaktEcQc e:
-                inspectionDate = e.InspectionDate;
+                inspectionDate = e.ProductionDate;
                 updatedAt = e.UpdatedAt;
                 createdAt = e.CreatedAt;
                 break;
@@ -220,7 +219,7 @@ public static class TaktEcDeptEntityHelper
         return TaktEcExecTransposedHelper.ResolveCompletedDate(
             deptCode,
             scheduledDate,
-            purchaseOrderIssueDate,
+            expectedInboundDate,
             inspectionDate,
             outboundDate,
             productionDate,

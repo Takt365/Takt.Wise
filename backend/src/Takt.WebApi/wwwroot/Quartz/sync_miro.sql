@@ -23,7 +23,7 @@ DECLARE @plant_code NVARCHAR(4) = N'{{PlantCode}}';
 DECLARE @sync_user_id BIGINT = {{SyncUserId}};
 
 DECLARE @batch_size INT = 0;
-DECLARE @apply_chunk INT = 20000;
+DECLARE @apply_chunk INT = 100000;
 DECLARE @merge_from_rn INT;
 DECLARE @merge_to_rn INT;
 DECLARE @merge_max_rn INT;
@@ -479,6 +479,32 @@ DECLARE @item_before INT = (
   WHERE T.[is_deleted]=0
     AND EXISTS (SELECT 1 FROM #item S WHERE S.[tenant_code]=T.[tenant_code] AND S.[company_code]=T.[company_code])
 );
+
+-- 先回填目标明细外键（凭证号在主表唯一），再同步
+SET @dml_n = 1;
+WHILE @dml_n > 0
+BEGIN
+  UPDATE TOP (@apply_chunk) I
+  SET I.[purchase_invoice_id] = U.[id], I.[updated_by] = @sync_user_id, I.[updated_at] = @now
+  FROM [takt_logistics_procurement_purchase_invoice_item] AS I
+  INNER JOIN (
+    SELECT
+      H.[tenant_code], H.[company_code],
+      LTRIM(RTRIM(H.[purchase_invoice_code])) AS [purchase_invoice_code],
+      MIN(H.[id]) AS [id]
+    FROM [takt_logistics_procurement_purchase_invoice] AS H
+    WHERE H.[is_deleted] = 0
+    GROUP BY H.[tenant_code], H.[company_code], LTRIM(RTRIM(H.[purchase_invoice_code]))
+    HAVING COUNT(*) = 1
+  ) AS U
+    ON U.[tenant_code] = I.[tenant_code]
+   AND U.[company_code] = I.[company_code]
+   AND U.[purchase_invoice_code] = LTRIM(RTRIM(I.[purchase_invoice_code]))
+  WHERE I.[is_deleted] = 0
+    AND EXISTS (SELECT 1 FROM #item S WHERE S.[tenant_code] = I.[tenant_code] AND S.[company_code] = I.[company_code])
+    AND (I.[purchase_invoice_id] IS NULL OR I.[purchase_invoice_id] <> U.[id]);
+  SET @dml_n = @@ROWCOUNT;
+END
 
 SET @merge_from_rn = 1;
 SET @merge_max_rn = ISNULL((SELECT MAX([rn]) FROM #item), 0);

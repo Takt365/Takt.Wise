@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：frontend/src/api/logistics/manufacturing/engineering-change
 // 文件名称：ecMe.api.ts
-// 创建时间：2026-09-08
+// 创建时间：2026-10-29
 // 创建人：Takt365(Auto Generated)
 // 功能描述：logistics/manufacturing/engineering-change 模块 API（自动生成，请勿手改路由常量）
 // 
@@ -24,13 +24,13 @@ import type {
 } from '@/types/logistics/manufacturing/engineering-change/ecMe.types';
 import type {
   EcMeMaster
-} from '@/types/logistics/manufacturing/engineering-change/ecMe.types-master';
+} from '@/types/logistics/manufacturing/engineering-change/ecMeMaster.types';
 
 /**
  * API 路径前缀（相对 request baseURL，对应后端 [controller]）
  * @description TaktEcMes
  */
-const EC_TE_API_BASE = 'TaktEcMes';
+const EC_ME_API_BASE = 'TaktEcMes';
 
 // ========================================
 // 基础 CRUD
@@ -43,7 +43,7 @@ const EC_TE_API_BASE = 'TaktEcMes';
  */
 export function getEcMeList(queryDto: any): Promise<TaktPagedResult<EcMe>> {
   return request<TaktPagedResult<EcMe>>({
-    url: `${EC_TE_API_BASE}/list`,
+    url: `${EC_ME_API_BASE}/list`,
     method: 'get',
     params: queryDto,
   });
@@ -56,7 +56,7 @@ export function getEcMeList(queryDto: any): Promise<TaktPagedResult<EcMe>> {
  */
 export function getEcMeMasterList(queryDto: any): Promise<TaktPagedResult<EcMeMaster>> {
   return request<TaktPagedResult<EcMeMaster>>({
-    url: `${EC_TE_API_BASE}/masters`,
+    url: `${EC_ME_API_BASE}/masters`,
     method: 'get',
     params: queryDto,
   });
@@ -69,7 +69,7 @@ export function getEcMeMasterList(queryDto: any): Promise<TaktPagedResult<EcMeMa
  */
 export function getEcMeById(id: string): Promise<EcMe> {
   return request<EcMe>({
-    url: `${EC_TE_API_BASE}/${id}`,
+    url: `${EC_ME_API_BASE}/${id}`,
     method: 'get',
   });
 }
@@ -81,7 +81,7 @@ export function getEcMeById(id: string): Promise<EcMe> {
  */
 export function createEcMe(dto: EcMeCreate): Promise<EcMe> {
   return request<EcMe>({
-    url: `${EC_TE_API_BASE}`,
+    url: `${EC_ME_API_BASE}`,
     method: 'post',
     data: dto,
   });
@@ -95,7 +95,7 @@ export function createEcMe(dto: EcMeCreate): Promise<EcMe> {
  */
 export function updateEcMe(id: string, dto: EcMeUpdate): Promise<EcMe> {
   return request<EcMe>({
-    url: `${EC_TE_API_BASE}/${id}`,
+    url: `${EC_ME_API_BASE}/${id}`,
     method: 'put',
     data: dto,
   });
@@ -108,7 +108,7 @@ export function updateEcMe(id: string, dto: EcMeUpdate): Promise<EcMe> {
  */
 export function deleteEcMeById(id: string): Promise<void> {
   return request({
-    url: `${EC_TE_API_BASE}/${id}`,
+    url: `${EC_ME_API_BASE}/${id}`,
     method: 'delete',
   });
 }
@@ -120,20 +120,20 @@ export function deleteEcMeById(id: string): Promise<void> {
  */
 export function deleteEcMeBatch(ids: string[]): Promise<void> {
   return request({
-    url: `${EC_TE_API_BASE}/batch`,
+    url: `${EC_ME_API_BASE}/batch`,
     method: 'delete',
     data: ids,
   });
 }
 
 /**
- * 更新设变te执行停产状态
+ * 更新设变制技执行停产状态
  * @param {EcMeDiscontinuedStatus} dto 停产状态 DTO
- * @returns {Promise<EcMe>} 设变te执行DTO
+ * @returns {Promise<EcMe>} 设变制技执行DTO
  */
 export function updateEcMeDiscontinuedStatus(dto: EcMeDiscontinuedStatus): Promise<EcMe> {
   return request<EcMe>({
-    url: `${EC_TE_API_BASE}/discontinued-status`,
+    url: `${EC_ME_API_BASE}/discontinued-status`,
     method: 'put',
     data: dto,
   });
@@ -146,7 +146,7 @@ export function updateEcMeDiscontinuedStatus(dto: EcMeDiscontinuedStatus): Promi
  */
 export function updateEcMeObsolete(dto: EcMeObsolete): Promise<EcMe> {
   return request<EcMe>({
-    url: `${EC_TE_API_BASE}/obsolete`,
+    url: `${EC_ME_API_BASE}/obsolete`,
     method: 'put',
     data: dto,
   });
@@ -164,7 +164,7 @@ export function updateEcMeObsolete(dto: EcMeObsolete): Promise<EcMe> {
  */
 export function getEcMeOptions(plantCode?: string, keyword?: string): Promise<TaktSelectOption[]> {
   return request<TaktSelectOption[]>({
-    url: `${EC_TE_API_BASE}/options`,
+    url: `${EC_ME_API_BASE}/options`,
     method: 'get',
     params: {
       plantCode,
@@ -185,7 +185,7 @@ export function getEcMeOptions(plantCode?: string, keyword?: string): Promise<Ta
  */
 export function getEcMeTemplate(sheetName?: string, templateName?: string): Promise<Blob> {
   return request<Blob>({
-    url: `${EC_TE_API_BASE}/template`,
+    url: `${EC_ME_API_BASE}/template`,
     method: 'get',
     params: {
       sheetName,
@@ -206,7 +206,7 @@ export function importEcMe(file: globalThis.File, sheetName?: string): Promise<{
   formData.append('file', file);
   
   return request({
-    url: `${EC_TE_API_BASE}/import`,
+    url: `${EC_ME_API_BASE}/import`,
     method: 'post',
     data: formData,
     headers: {
@@ -231,7 +231,7 @@ export function exportEcMe(
   exportName?: string
 ): Promise<Blob> {
   return request<Blob>({
-    url: `${EC_TE_API_BASE}/export`,
+    url: `${EC_ME_API_BASE}/export`,
     method: 'get',
     params: {
       ...query,

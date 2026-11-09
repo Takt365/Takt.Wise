@@ -76,7 +76,7 @@ public class TaktProductionOrderFormFillDto
     /// <summary>
     /// 批次（工单 ProdBatch）
     /// </summary>
-    public string? BatchCode { get; set; }
+    public string? ProdBatch { get; set; }
 
     /// <summary>
     /// 工单数量

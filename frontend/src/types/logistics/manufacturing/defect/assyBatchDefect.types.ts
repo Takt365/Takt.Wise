@@ -32,7 +32,7 @@ export interface AssyBatchDefect extends CompanyDtoBase {
   /**
    * 批次（统计维度）
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 生产日期组（与生产工单组一一对应，yyyy-MM-dd 逗号分隔，取同工单最早生产日期）
@@ -145,7 +145,7 @@ export interface AssyBatchDefectExport {
   /**
    * 批次（统计维度）
    */
-  batchCode: string;
+  prodBatch: string;
 
   /**
    * 生产日期组（与生产工单组一一对应，yyyy-MM-dd 逗号分隔，取同工单最早生产日期）

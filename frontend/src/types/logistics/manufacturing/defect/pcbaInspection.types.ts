@@ -52,7 +52,7 @@ export interface PcbaInspection extends CompanyDtoBase {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 物料编码
@@ -125,7 +125,7 @@ export interface PcbaInspectionExport {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 物料编码
@@ -147,5 +147,21 @@ export interface PcbaInspectionExport {
    */
   createdAt: string;
 
+}
+
+/**
+ * PCBA检查日报列表查询
+ * 对应后端 TaktPcbaInspectionQueryDto
+ */
+export interface PcbaInspectionQuery extends TaktPagedQuery {
+  /**
+   * 生产期间开始（主表无生产日期；按明细 B 面/T 面实装日期）
+   */
+  prodDateStart?: string;
+
+  /**
+   * 生产期间结束（主表无生产日期；按明细 B 面/T 面实装日期）
+   */
+  prodDateEnd?: string;
 }
 

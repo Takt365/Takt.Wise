@@ -350,7 +350,7 @@ public class TaktQuartzTaskSeedData : ITaktSeedDataCoordinator
                 Description: "每月 3 日 02:24：税务条件（公司+应用程序+国家+税码+条件记录号；建议在 QT_SYNC_TAXCODE 之后；月度；以手动为主；默认暂停）"),
             new(
                 TaskCode: "QT_SYNC_PUP",
-                TaskName: "源数据同步：采购信息",
+                TaskName: "源数据同步：采购条件",
                 JobName: "sync_pup",
                 TaskType: TaskTypeSql,
                 SqlScript: "Quartz/sync_pup.sql",
@@ -359,10 +359,10 @@ public class TaktQuartzTaskSeedData : ITaktSeedDataCoordinator
                 CronExpression: "0 30 2 3 * ?",
                 TaskStatus: TaskStatusPaused,
                 ExecuteParams: SyncStagingParams,
-                Description: "每月 3 日 02:30：采购信息（源表原样同步；空物料描述回填见 QT_SYNC_PUP_BK；月度；以手动为主；默认暂停）"),
+                Description: "每月 3 日 02:30：采购条件（源表原样同步；空物料描述回填见 QT_SYNC_PUP_BK；月度；以手动为主；默认暂停）"),
             new(
                 TaskCode: "QT_SYNC_PUP_BK",
-                TaskName: "回填：采购信息物料描述",
+                TaskName: "回填：采购条件物料描述",
                 JobName: "sync_pup_bk",
                 TaskType: TaskTypeSql,
                 SqlScript: "Quartz/sync_pup_bk.sql",
@@ -371,7 +371,7 @@ public class TaktQuartzTaskSeedData : ITaktSeedDataCoordinator
                 CronExpression: "0 35 2 3 * ?",
                 TaskStatus: TaskStatusPaused,
                 ExecuteParams: SyncTargetOnlyParams,
-                Description: "每月 3 日 02:35：回填采购信息空物料描述（已有值不覆盖；culture=ja-JP；写入 ext_field._bk.pup）；建议在 QT_SYNC_PUP 之后；默认暂停"),
+                Description: "每月 3 日 02:35：先回填采购条件子表外键，再回填空物料描述（已有值不覆盖；culture=ja-JP；写入 ext_field._bk.pup）；建议在 QT_SYNC_PUP 之后；默认暂停"),
             new(
                 TaskCode: "QT_SYNC_SP",
                 TaskName: "源数据同步：销售条件",
@@ -395,7 +395,7 @@ public class TaktQuartzTaskSeedData : ITaktSeedDataCoordinator
                 CronExpression: "0 45 2 3 * ?",
                 TaskStatus: TaskStatusPaused,
                 ExecuteParams: SyncTargetOnlyParams,
-                Description: "每月 3 日 02:45：回填销售条件空物料描述（已有值不覆盖；zh-CN→Z1→ja-JP；写入 ext_field._bk.sp）；建议在 QT_SYNC_SP 之后；默认暂停"),
+                Description: "每月 3 日 02:45：先回填销售条件子表外键，再回填空物料描述（已有值不覆盖；zh-CN→Z1→ja-JP；写入 ext_field._bk.sp）；建议在 QT_SYNC_SP 之后；默认暂停"),
             new(
                 TaskCode: "QT_SYNC_MATDOC",
                 TaskName: "源数据同步：物料凭证",
@@ -576,7 +576,7 @@ public class TaktQuartzTaskSeedData : ITaktSeedDataCoordinator
                 AssemblyName: "Takt.Infrastructure",
                 ClassName: nameof(TaktBomMaterialZeroPriceMovingBackfillJobHandler),
                 ExecuteParams: SyncTargetOnlyParams,
-                Description: "每月 3 日 03:42：零价组件回填移动平均价（PcbSectIndicator=X 或用量≤0 永不回填；其余建议价末字母逆推；写入 ext_field._bk.mp；立即执行须选目标库+核算月；建议在 QT_SYNC_BC/MAP/PCB_SECT 之后、成本合计之前；默认暂停）"),
+                Description: "每月 3 日 03:42：零价组件回填移动平均价（不满足成本参与条件或用量≤0 永不回填；其余建议价末字母逆推；写入 ext_field._bk.mp；立即执行须选目标库+核算月；建议在 QT_SYNC_BC/MAP/PCB_SECT 之后、成本合计之前；默认暂停）"),
             new(
                 TaskCode: "QT_SYNC_BV",
                 TaskName: "源数据同步：材料成本汇总",

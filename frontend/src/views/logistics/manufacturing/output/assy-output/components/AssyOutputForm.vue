@@ -197,14 +197,14 @@
             </a-col>
             <a-col :span="12">
               <a-form-item
-                :label="pi.label('batchCode')"
-                name="batchCode"
+                :label="pi.label('prodBatch')"
+                name="prodBatch"
               >
                 <a-input
-                  v-model:value="formState.batchCode"
-                  :placeholder="pi.ph('batchCode')"
+                  v-model:value="formState.prodBatch"
+                  :placeholder="pi.ph('prodBatch')"
                   show-count
-                  :maxlength="20"
+                  :maxlength="40"
                   disabled
                 />
               </a-form-item>
@@ -488,7 +488,7 @@ const formContentClass = computed(() => (formFields.length > 10 ? 'takt-form-con
 /** 当前激活的 Tab key */
 const activeTab = ref('tab-0')
 /** CreateDto 字段名列表（与 formState 键对齐） */
-const formFields = ["tenantCode","companyCode","cultureCode","plantCode","prodCategory","prodDate","teamCode","directLabor","indirectLabor","shiftNo","stdCapacity","prodOrderCode","modelCode","materialCode","batchCode","prodOrderQty","serialCode","stdMinutes","prodOrderType","extField","remark"]
+const formFields = ["tenantCode","companyCode","cultureCode","plantCode","prodCategory","prodDate","teamCode","directLabor","indirectLabor","shiftNo","stdCapacity","prodOrderCode","modelCode","materialCode","prodBatch","prodOrderQty","serialCode","stdMinutes","prodOrderType","extField","remark"]
 
 import { resolveNextDetailLineNumber } from '@/utils/taktSequence'
 import { useAssyOutputDetailI18n } from '../composables/useAssyOutputDetailI18n'
@@ -992,7 +992,7 @@ watch(
       formState.prodOrderType = ''
       formState.modelCode = ''
       formState.materialCode = ''
-      formState.batchCode = ''
+      formState.prodBatch = ''
       formState.prodOrderQty = undefined
       formState.serialCode = ''
       formState.stdMinutes = undefined

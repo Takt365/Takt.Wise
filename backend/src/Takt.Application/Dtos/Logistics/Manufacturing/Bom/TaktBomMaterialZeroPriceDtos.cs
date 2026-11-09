@@ -289,6 +289,11 @@ public class TaktBomMaterialZeroPriceMovingBackfillResultDto
     public string ProcessedMonth { get; set; } = string.Empty;
 
     /// <summary>
+    /// 本次处理的工厂代码（多个以英文逗号分隔，按编码排序）
+    /// </summary>
+    public string ProcessedPlants { get; set; } = string.Empty;
+
+    /// <summary>
     /// 本次读写的明细物理表（选中库中的年分表，不存在则基表）
     /// </summary>
     public string ItemPhysicalTable { get; set; } = string.Empty;

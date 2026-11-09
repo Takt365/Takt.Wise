@@ -61,7 +61,7 @@ export interface FqcOrderItem extends CompanyDtoBase {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 入库数量
@@ -194,7 +194,7 @@ export interface FqcOrderItemExport {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 入库数量

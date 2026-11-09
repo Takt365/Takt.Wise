@@ -22,7 +22,7 @@ export const ASSYBATCHDEFECT_SELF_I18N_KEY = buildEntitySelfI18nKey(ASSYBATCHDEF
 export const ASSYBATCHDEFECT_LIST_FIELDS = [
   'plantCode',
   'prodCategory',
-  'batchCode',
+  'prodBatch',
   'prodDateGroup',
   'prodOrderGroup',
   'modelCode',
@@ -46,7 +46,7 @@ export const ASSYBATCHDEFECT_PLACEHOLDER = {
   companyDefaultCulture: 'optional',
   plantCode: 'required',
   prodCategory: 'select',
-  batchCode: 'required',
+  prodBatch: 'required',
   prodDateGroup: 'optional',
   prodOrderGroup: 'optional',
   modelCode: 'required',
@@ -71,7 +71,7 @@ export type AssyBatchDefectField = keyof typeof ASSYBATCHDEFECT_PLACEHOLDER
 /** 高级查询可 trim 的字符串字段 */
 export const ASSYBATCHDEFECT_QUERY_STRING_FIELDS = [
   'prodCategory',
-  'batchCode',
+  'prodBatch',
   'prodDateGroup',
   'prodOrderGroup',
   'modelCode',

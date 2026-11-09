@@ -35,12 +35,23 @@ export function searchIpGeolocation(ip: string): Promise<IpGeolocation> {
 }
 
 /**
- * 查询当前请求客户端 IP 归属地
- * @returns {Promise<IpGeolocation>} 归属结果
+ * 查询本机已激活网卡 IP 归属（服务端枚举 Up 网卡，非 HTTP ::1）
+ * @returns {Promise<IpGeolocation>} 优先激活 IP 归属；含 activeHostIps
  */
 export function searchClientIpGeolocation(): Promise<IpGeolocation> {
   return request<IpGeolocation>({
     url: `${IP_GEOLOCATION_API_BASE}/client`,
+    method: 'get',
+  })
+}
+
+/**
+ * 查询访问者公网 IP 归属（后端：请求公网地址或 API 出口；前端优先用浏览器 echo）
+ * @returns {Promise<IpGeolocation>} 公网归属结果
+ */
+export function searchVisitorPublicIpGeolocation(): Promise<IpGeolocation> {
+  return request<IpGeolocation>({
+    url: `${IP_GEOLOCATION_API_BASE}/public`,
     method: 'get',
   })
 }

@@ -16,7 +16,20 @@
       :loading="loading"
       @search="handleSearch"
       @reset="handleReset"
-    />
+    >
+      <template #leading>
+        <a-range-picker
+          v-model:value="prodPeriodRange"
+          picker="month"
+          format="YYYY-MM"
+          value-format="YYYY-MM"
+          :placeholder="[t(PROD_PERIOD_I18N_KEY), t(PROD_PERIOD_I18N_KEY)]"
+          :disabled-date="prodPeriodLimit.disabledDate"
+          @calendar-change="prodPeriodLimit.onCalendarChange"
+          @open-change="prodPeriodLimit.onOpenChange"
+        />
+      </template>
+    </TaktQueryBar>
 
     <!-- 工具栏 -->
     <TaktToolsBar
@@ -408,6 +421,7 @@ import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
+import { PROD_PERIOD_I18N_KEY, useProdPeriodQuery } from '@/views/logistics/manufacturing/composables/useProdPeriodQuery'
 import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
 import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 import ProductionChangeoverForm from './components/ProductionChangeoverForm.vue'
@@ -448,6 +462,14 @@ const searchPlaceholder = computed(
 
 /** 快捷查询关键字 */
 const queryKeyword = ref('')
+/** 生产期间：默认当前月，查询栏在关键字之前 */
+const {
+  range: prodPeriodRange,
+  limit: prodPeriodLimit,
+  reset: resetProdPeriod,
+  hasPeriod: hasProdPeriod,
+  applyToQuery: applyProdPeriodToQuery,
+} = useProdPeriodQuery()
 /** 列表 loading */
 const loading = ref(false)
 /** 分页列表数据 */
@@ -504,6 +526,53 @@ function createEmptyAdvancedQueryForm() {
 }
 /** 高级查询表单模型 */
 const advancedQueryForm = ref(createEmptyAdvancedQueryForm())
+/**
+ * 是否存在任一业务查询条件（分页除外）；无参时不请求列表/导出
+ * @returns {boolean}
+ */
+function hasAnyListQueryFilter(): boolean {
+  if (hasProdPeriod()) {
+    return true
+  }
+  const kw = (queryKeyword.value ?? '').trim()
+  if (kw.length > 0) {
+    return true
+  }
+  const form = advancedQueryForm.value
+  for (const key of PRODUCTIONCHANGEOVER_QUERY_STRING_FIELDS) {
+    if (String(form[key] ?? '').trim().length > 0) {
+      return true
+    }
+  }
+  if (form.changeoverCount !== undefined && form.changeoverCount !== null) {
+    return true
+  }
+  if (form.changeoverTime !== undefined && form.changeoverTime !== null) {
+    return true
+  }
+  if (form.instrumentSetupTime !== undefined && form.instrumentSetupTime !== null) {
+    return true
+  }
+  if (form.totalChangeoverTime !== undefined && form.totalChangeoverTime !== null) {
+    return true
+  }
+  if (form.readSopTime !== undefined && form.readSopTime !== null) {
+    return true
+  }
+  if (form.learningTime !== undefined && form.learningTime !== null) {
+    return true
+  }
+  if (form.personCount !== undefined && form.personCount !== null) {
+    return true
+  }
+  if (form.totalLearningTime !== undefined && form.totalLearningTime !== null) {
+    return true
+  }
+  if (form.totalSopTime !== undefined && form.totalSopTime !== null) {
+    return true
+  }
+  return false
+}
 /** 高级查询字段元数据（列显隐配置） */
 const queryFieldsMeta = computed(() =>
   PRODUCTIONCHANGEOVER_QUERY_FIELDS.map((key) => ({ key, label: pi.queryLabel(key) })),
@@ -588,6 +657,7 @@ function buildListQuery(overrides?: Partial<ProductionChangeoverQuery>): Product
   if (form.totalSopTime !== undefined && form.totalSopTime !== null) {
     query.totalSopTime = form.totalSopTime
   }
+  applyProdPeriodToQuery(query)
   return query
 }
 /** 页面挂载：租户上下文就绪后加载分页配置，再拉列表 */
@@ -733,6 +803,11 @@ const onClickRow = (record: ProductionChangeoverRowRecord) => ({
 async function loadData() {
   loading.value = true
   try {
+    if (!hasAnyListQueryFilter()) {
+      dataSource.value = []
+      total.value = 0
+      return
+    }
     const res = await getProductionChangeoverList(buildListQuery())
     dataSource.value = res.data ?? []
     total.value = res.total ?? 0
@@ -758,6 +833,7 @@ function handleSearch() {
 /** 重置查询条件并刷新列表 */
 function handleReset() {
   queryKeyword.value = ''
+  resetProdPeriod()
   advancedQueryForm.value = createEmptyAdvancedQueryForm()
   currentPage.value = getTaktDefaultPageIndex()
   loadData()
@@ -868,6 +944,9 @@ function handleImportCancel() {
 async function handleExport() {
   try {
     loading.value = true
+    if (!hasAnyListQueryFilter()) {
+      return
+    }
     const exportMeta = await exportProductionChangeover(
       buildListQuery({ pageIndex: 1, pageSize: 100000 }),
       excelNames.sheet,

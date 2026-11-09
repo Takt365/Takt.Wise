@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Aps
 // 文件名称：TaktApsOrderI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktApsOrder 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -125,6 +125,15 @@ public class TaktApsOrderI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.apsorder.materialcode", "zh-CN", "物料编码", "物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）"),
             // entity.apsorder.materialcode
             new TranslationSeedItem("entity.apsorder.materialcode", "zh-HK", "物料编码_hk", "物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）"),
+
+            // entity.apsorder.plannedbatch
+            new TranslationSeedItem("entity.apsorder.plannedbatch", "en-US", "计划批次_us", "计划批次（来自计划订单；释放正式工单时写入 ProdBatch）"),
+            // entity.apsorder.plannedbatch
+            new TranslationSeedItem("entity.apsorder.plannedbatch", "ja-JP", "计划批次_jp", "计划批次（来自计划订单；释放正式工单时写入 ProdBatch）"),
+            // entity.apsorder.plannedbatch
+            new TranslationSeedItem("entity.apsorder.plannedbatch", "zh-CN", "计划批次", "计划批次（来自计划订单；释放正式工单时写入 ProdBatch）"),
+            // entity.apsorder.plannedbatch
+            new TranslationSeedItem("entity.apsorder.plannedbatch", "zh-HK", "计划批次_hk", "计划批次（来自计划订单；释放正式工单时写入 ProdBatch）"),
 
             // entity.apsorder.orderquantity
             new TranslationSeedItem("entity.apsorder.orderquantity", "en-US", "订单数量_us", "订单数量"),

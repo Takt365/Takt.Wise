@@ -26,26 +26,22 @@
         @reset="handleReset"
       >
         <template #leading>
-          <span class="whitespace-nowrap text-sm text-text-secondary">{{ t(`${localePrefix}.issuePeriodRange`) }}</span>
           <a-range-picker
             v-model:value="issuePeriodRange"
             picker="month"
             format="YYYY-MM"
             value-format="YYYY-MM"
-            class="w-64 min-w-56"
             :disabled="periodHasValue(entryPeriodRange)"
             :placeholder="[t(`${localePrefix}.issuePeriodRange`), t(`${localePrefix}.issuePeriodRange`)]"
             :disabled-date="issuePeriodLimit.disabledDate"
             @calendar-change="issuePeriodLimit.onCalendarChange"
             @open-change="issuePeriodLimit.onOpenChange"
           />
-          <span class="whitespace-nowrap text-sm text-text-secondary">{{ t(`${localePrefix}.entryPeriodRange`) }}</span>
           <a-range-picker
             v-model:value="entryPeriodRange"
             picker="month"
             format="YYYY-MM"
             value-format="YYYY-MM"
-            class="w-64 min-w-56"
             :disabled="periodHasValue(issuePeriodRange)"
             :placeholder="[t(`${localePrefix}.entryPeriodRange`), t(`${localePrefix}.entryPeriodRange`)]"
             :disabled-date="entryPeriodLimit.disabledDate"
@@ -84,34 +80,21 @@
         @export="handleExport"
         @refresh="loadData"
       />
-      <div
-        ref="tableWrapRef"
-        class="min-h-0 min-w-0 flex-1 overflow-hidden"
-      >
-        <TaktSingleTable
-          analysis-table
-          class="h-full min-h-0 min-w-0"
-          entity-scope="company"
-          table-mode="single"
-          :columns="columns"
-          :data-source="rows"
-          :loading="loading"
-          :stripe="true"
-          :row-key="getRowKey"
-          :pagination="false"
-          :show-row-selection="false"
-          :scroll="{ y: tableScrollY }"
-        >
-          <template #bodyCell="{ column, record }">
-            <TaktDictTag
-              v-if="yesNoFields.has(String(column.key))"
-              dict-type="sys_yes_no"
-              :value="record[String(column.key)]"
-            />
-            <span v-else>{{ cellText(record, String(column.key)) }}</span>
-          </template>
-        </TaktSingleTable>
-      </div>
+      <TaktSingleTable
+        analysis-table
+        class="min-h-0 min-w-0 flex-1"
+        entity-scope="company"
+        table-mode="single"
+        scroll-layout="pageWithInnerTabs"
+        :columns="columns"
+        :data-source="rows"
+        :loading="loading"
+        :stripe="true"
+        :row-key="getRowKey"
+        :pagination="false"
+        :show-row-selection="false"
+        :scroll="{ x: 'max-content' }"
+      />
       <TaktPagination
         v-if="total > 0"
         class="shrink-0"
@@ -131,6 +114,7 @@
 import '../ec-list-layout.css'
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
+import TaktDictTag from '@/components/common/TaktDictTag/index.vue'
 import type { TaktPaneTabItem } from '@/components/business/TaktPaneTabs/index.vue'
 import {
   exportEcStat,
@@ -154,8 +138,6 @@ import {
   getTaktDefaultPageIndex,
   getTaktDefaultPageSize,
 } from '@/utils/taktPaged'
-import { measureConstrainedTableScrollY, TAKT_TABLE_SCROLL_Y_MIN } from '@/utils/tableScroll'
-
 const { t } = useI18n()
 /** 发行期间最多 12 个月，可选到本月 */
 const issuePeriodLimit = useAnalysisPeriodRangeLimit(TAKT_ANALYSIS_PERIOD_MAX_MONTHS, { allowCurrentMonth: true })
@@ -215,12 +197,6 @@ const total = ref(0)
 const pageIndex = ref(1)
 /** 页大小 */
 const pageSize = ref(20)
-/** 表格容器。页签内的 ref 可能是数组 */
-const tableWrapRef = ref<HTMLElement | HTMLElement[] | null>(null)
-/** 表体高度观察 */
-let tableResizeObserver: ResizeObserver | null = null
-/** 表体高度 */
-const tableScrollY = ref(TAKT_TABLE_SCROLL_Y_MIN)
 /** 工厂选项 */
 const plantOptionsUrl = getEcStatPlantOptionsUrl()
 /** 设变选项 */
@@ -236,14 +212,14 @@ const scopedApiParams = computed(() => {
 const yesNoFields = new Set(['isImplemented', 'isSopUpdated', 'ecNewRequiresInspection'])
 /** 各部门实施表要显示的列。顺序与该表字段一致，并带上设变单号 */
 const deptColumnFields: Record<(typeof deptTabs)[number], readonly string[]> = {
-  pur: ['ecCode', 'ecModelCodeGroup', 'ecNewMaterialCode', 'isImplemented', 'purchaseOrderIssueDate'],
+  pur: ['ecCode', 'ecModelCodeGroup', 'ecNewMaterialCodeGroup', 'isImplemented', 'inboundDate'],
   pc: ['ecCode', 'ecModelCodeGroup', 'ecRootMaterialCodeGroup', 'isImplemented', 'scheduledDate', 'scheduledBatch'],
-  iqc: ['ecCode', 'ecModelCodeGroup', 'ecRootMaterialCodeGroup', 'ecNewMaterialCode', 'ecNewRequiresInspection', 'isImplemented', 'inspectionDate', 'iqcOrderCode'],
-  mc: ['ecCode', 'ecModelCodeGroup', 'ecRootMaterialCodeGroup', 'ecNewMaterialCode', 'ecNewWarehouse', 'isImplemented', 'scheduledDate', 'scheduledBatch'],
-  mtl: ['ecCode', 'ecModelCodeGroup', 'ecRootMaterialCodeGroup', 'ecNewMaterialCode', 'ecNewWarehouse', 'isImplemented', 'scheduledDate', 'scheduledBatch'],
-  mfg2: ['ecCode', 'ecModelCodeGroup', 'ecRootMaterialCodeGroup', 'isImplemented', 'productionDate', 'implementationBatch'],
-  mfg1: ['ecCode', 'ecModelCodeGroup', 'ecRootMaterialCodeGroup', 'isImplemented', 'productionDate', 'implementationBatch'],
-  qc: ['ecCode', 'ecModelCodeGroup', 'ecRootMaterialCodeGroup', 'isImplemented', 'inspectionDate', 'inspectionBatch'],
+  iqc: ['ecCode', 'ecModelCodeGroup', 'ecRootMaterialCodeGroup', 'ecNewMaterialCodeGroup', 'ecNewRequiresInspection', 'isImplemented', 'inspectionDate'],
+  mc: ['ecCode', 'ecModelCodeGroup', 'ecRootMaterialCodeGroup', 'ecNewMaterialCodeGroup', 'ecNewWarehouse', 'isImplemented', 'scheduledDate', 'scheduledBatch'],
+  mtl: ['ecCode', 'ecModelCodeGroup', 'ecRootMaterialCodeGroup', 'ecNewMaterialCodeGroup', 'ecNewWarehouse', 'isImplemented', 'scheduledDate', 'scheduledBatch'],
+  mfg2: ['ecCode', 'ecModelCodeGroup', 'ecRootMaterialCodeGroup', 'isImplemented', 'productionDate', 'productionBatch'],
+  mfg1: ['ecCode', 'ecModelCodeGroup', 'ecRootMaterialCodeGroup', 'isImplemented', 'productionDate', 'productionBatch'],
+  qc: ['ecCode', 'ecModelCodeGroup', 'ecRootMaterialCodeGroup', 'isImplemented', 'productionDate', 'productionBatch', 'inspectionDate', 'inspectionBatch'],
   me: ['ecCode', 'ecModelCodeGroup', 'ecRootMaterialCodeGroup', 'isSopUpdated', 'sopDate'],
 }
 /** 各部门实体字段文案 */
@@ -262,13 +238,26 @@ const deptFieldLabel = {
 const columns = computed(() => {
   const tab = statTab.value
   const label = deptFieldLabel[tab].label
-  return deptColumnFields[tab].map((field) => ({
-    title: label(field),
-    dataIndex: field,
-    key: field,
-    width: columnWidth(field),
-    ellipsis: true,
-  }))
+  return deptColumnFields[tab].map((field) => {
+    const column = {
+      title: label(field),
+      dataIndex: field,
+      key: field,
+      width: columnWidth(field),
+      ellipsis: true,
+    }
+    if (!yesNoFields.has(field)) {
+      return column
+    }
+    return {
+      ...column,
+      customRender: ({ record }: { record: EcStatRow }) => {
+        const raw = record[field as keyof EcStatRow]
+        const value = typeof raw === 'number' || typeof raw === 'string' ? raw : undefined
+        return h(TaktDictTag, { dictType: 'sys_yes_no', value })
+      },
+    }
+  })
 })
 
 /**
@@ -296,20 +285,6 @@ function columnWidth(field: string): number {
  */
 function getRowKey(record: EcStatRow): string {
   return record.id
-}
-
-/**
- * 普通文本列
- * @param {EcStatRow} record 行
- * @param {string} key 列键
- * @returns {string} 显示文本
- */
-function cellText(record: EcStatRow, key: string): string {
-  const value = record[key as keyof EcStatRow]
-  if (value == null) {
-    return ''
-  }
-  return String(value)
 }
 
 /** 清空表格 */
@@ -507,52 +482,10 @@ watch(
   },
 )
 
-/**
- * 当前部门页签里的表格外壳
- * @returns {HTMLElement | null} 容器
- */
-function activeTableWrap(): HTMLElement | null {
-  const value = tableWrapRef.value
-  if (Array.isArray(value)) {
-    return value.find((item) => item != null) ?? null
-  }
-  return value
-}
-
-/** 按外壳重算表体高度 */
-function measureTableScrollY() {
-  const measured = measureConstrainedTableScrollY(activeTableWrap())
-  tableScrollY.value = measured > 0 ? Math.max(TAKT_TABLE_SCROLL_Y_MIN, measured) : TAKT_TABLE_SCROLL_Y_MIN
-}
-
-/** 重新观察当前页签的表格外壳 */
-function bindTableResize() {
-  tableResizeObserver?.disconnect()
-  tableResizeObserver = null
-  const wrap = activeTableWrap()
-  if (!wrap) {
-    return
-  }
-  measureTableScrollY()
-  tableResizeObserver = new ResizeObserver(() => measureTableScrollY())
-  tableResizeObserver.observe(wrap)
-}
-
-watch(statTab, () => {
-  void nextTick(() => bindTableResize())
-})
-
 onMounted(async () => {
   await ensureTaktPaginationConfigAsync()
   pageIndex.value = getTaktDefaultPageIndex()
   pageSize.value = getTaktDefaultPageSize()
   await applyEcStatQueryDefaults()
-  await nextTick()
-  bindTableResize()
-})
-
-onBeforeUnmount(() => {
-  tableResizeObserver?.disconnect()
-  tableResizeObserver = null
 })
 </script>

@@ -507,7 +507,7 @@ public class TaktPcbaOutputService : TaktServiceBase, ITaktPcbaOutputService
                 || (x.ProdOrderCode != null && x.ProdOrderCode.Contains(keywords))
                 || (x.ModelCode != null && x.ModelCode.Contains(keywords))
                 || (x.MaterialCode != null && x.MaterialCode.Contains(keywords))
-                || (x.BatchCode != null && x.BatchCode.Contains(keywords))
+                || (x.ProdBatch != null && x.ProdBatch.Contains(keywords))
                 || (x.SerialCode != null && x.SerialCode.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
@@ -556,10 +556,10 @@ public class TaktPcbaOutputService : TaktServiceBase, ITaktPcbaOutputService
             exp = exp.And(x => x.MaterialCode != null && x.MaterialCode.Contains(materialCode));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.BatchCode))
+        if (!string.IsNullOrWhiteSpace(queryDto?.ProdBatch))
         {
-            var batchCode = queryDto.BatchCode;
-            exp = exp.And(x => x.BatchCode != null && x.BatchCode.Contains(batchCode));
+            var prodBatch = queryDto.ProdBatch;
+            exp = exp.And(x => x.ProdBatch != null && x.ProdBatch.Contains(prodBatch));
         }
 
         if (queryDto?.ProdOrderQty.HasValue == true)
@@ -656,7 +656,7 @@ public class TaktPcbaOutputService : TaktServiceBase, ITaktPcbaOutputService
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.BatchCode))
+        if (!string.IsNullOrWhiteSpace(queryDto.ProdBatch))
         {
             return true;
         }

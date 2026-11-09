@@ -136,6 +136,7 @@ const wizardState = reactive<{
 /** 预览列 */
 const previewColumns = computed<TableColumnsType<MaterialRequirementsPlanningItem>>(() => [
   { title: t('entity.materialrequirementsplanningitem.materialcode'), dataIndex: 'materialCode', key: 'materialCode', width: 120 },
+  { title: t('entity.materialrequirementsplanningitem.plannedbatch'), dataIndex: 'plannedBatch', key: 'plannedBatch', width: 140 },
   { title: t('entity.materialrequirementsplanningitem.grossrequirement'), dataIndex: 'grossRequirement', key: 'grossRequirement', width: 100 },
   { title: t('entity.materialrequirementsplanningitem.onhandquantity'), dataIndex: 'onHandQuantity', key: 'onHandQuantity', width: 100 },
   { title: t('entity.materialrequirementsplanningitem.scheduledreceipts'), dataIndex: 'scheduledReceipts', key: 'scheduledReceipts', width: 100 },

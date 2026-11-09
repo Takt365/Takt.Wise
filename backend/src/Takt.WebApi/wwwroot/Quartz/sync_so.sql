@@ -23,7 +23,7 @@ DECLARE @plant_code NVARCHAR(4) = N'{{PlantCode}}';
 DECLARE @sync_user_id BIGINT = {{SyncUserId}};
 
 DECLARE @batch_size INT = 0;
-DECLARE @apply_chunk INT = 20000;
+DECLARE @apply_chunk INT = 100000;
 DECLARE @merge_from_rn INT;
 DECLARE @merge_to_rn INT;
 DECLARE @merge_max_rn INT;
@@ -525,6 +525,25 @@ DECLARE @item_before INT = (
   WHERE T.[is_deleted]=0
     AND EXISTS (SELECT 1 FROM #item S WHERE S.[tenant_code]=T.[tenant_code] AND S.[company_code]=T.[company_code])
 );
+
+-- 先回填目标明细外键（工厂+销售订单号），再同步
+SET @dml_n = 1;
+WHILE @dml_n > 0
+BEGIN
+  UPDATE TOP (@apply_chunk) I
+  SET I.[sales_order_id] = H.[id], I.[updated_by] = @sync_user_id, I.[updated_at] = @now
+  FROM [takt_logistics_sales_order_item] AS I
+  INNER JOIN [takt_logistics_sales_order] AS H
+    ON H.[tenant_code] = I.[tenant_code]
+   AND H.[company_code] = I.[company_code]
+   AND LTRIM(RTRIM(H.[plant_code])) = LTRIM(RTRIM(I.[plant_code]))
+   AND LTRIM(RTRIM(H.[sales_order_code])) = LTRIM(RTRIM(I.[sales_order_code]))
+   AND H.[is_deleted] = 0
+  WHERE I.[is_deleted] = 0
+    AND EXISTS (SELECT 1 FROM #item S WHERE S.[tenant_code] = I.[tenant_code] AND S.[company_code] = I.[company_code])
+    AND (I.[sales_order_id] IS NULL OR I.[sales_order_id] <> H.[id]);
+  SET @dml_n = @@ROWCOUNT;
+END
 
 SET @merge_from_rn = 1;
 SET @merge_max_rn = ISNULL((SELECT MAX([rn]) FROM #item), 0);

@@ -369,6 +369,16 @@ const columns = computed<TableColumnsType>(() => [
       String(getMasterDemandScheduleLineField(record, 'salesForecastLineNumber') ?? ''),
   },
   {
+    title: pi.label('salesForecastVersionNo'),
+    dataIndex: 'salesForecastVersionNo',
+    key: 'salesForecastVersionNo',
+    width: 120,
+    resizable: true,
+    ellipsis: true,
+    customRender: ({ record }: { record: MasterDemandScheduleLine }) =>
+      String(getMasterDemandScheduleLineField(record, 'salesForecastVersionNo') ?? ''),
+  },
+  {
     title: pi.label('materialCode'),
     dataIndex: 'materialCode',
     key: 'materialCode',
@@ -377,6 +387,16 @@ const columns = computed<TableColumnsType>(() => [
     ellipsis: true,
     customRender: ({ record }: { record: MasterDemandScheduleLine }) =>
       String(getMasterDemandScheduleLineField(record, 'materialCode') ?? ''),
+  },
+  {
+    title: pi.label('plannedBatch'),
+    dataIndex: 'plannedBatch',
+    key: 'plannedBatch',
+    width: 140,
+    resizable: true,
+    ellipsis: true,
+    customRender: ({ record }: { record: MasterDemandScheduleLine }) =>
+      String(getMasterDemandScheduleLineField(record, 'plannedBatch') ?? ''),
   },
   {
     title: pi.label('bucketStart'),

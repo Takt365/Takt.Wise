@@ -20,7 +20,7 @@ DECLARE @tenant_code NVARCHAR(3) = N'{{TenantCode}}';
 DECLARE @company_code NVARCHAR(4) = N'{{CompanyCode}}';
 DECLARE @sync_user_id BIGINT = {{SyncUserId}};
 DECLARE @now DATETIME = GETDATE();
-DECLARE @apply_chunk INT = 20000;
+DECLARE @apply_chunk INT = 100000;
 DECLARE @merge_from_rn INT;
 DECLARE @merge_to_rn INT;
 DECLARE @merge_max_rn INT;
@@ -37,7 +37,7 @@ DECLARE @model_skipped_clash INT = 0;
 -- =============================================================================
 -- QT_SYNC_BV_BK：BOM 物料码去前导 0 + 主表空机种/空物料类型回填
 -- ① 先查出前导 00000000 的行，再 STUFF 去掉这 8 位（❌ 不对全表逐行去 0）
---    主表/明细均按 @apply_chunk=20000 分批 UPDATE TOP（百万级禁止单事务）
+--    主表/明细均按 @apply_chunk=100000 分批 UPDATE TOP（百万级禁止单事务）
 --    主表 takt_logistics_manufacturing_bom_material_cost.product_code
 --    明细 takt_logistics_manufacturing_bom_material_cost_item.product_code、component_code
 --    纯数字且长度>8；撞唯一键则跳过（主表 Plant+Product+CostingDate；明细 Plant+BomLevel+BomItem+Product+Line+Component+CostingDate）
@@ -424,8 +424,8 @@ BEGIN
   CROSS APPLY (
     SELECT
       CASE
-        WHEN ISJSON(NULLIF(LTRIM(RTRIM(ISNULL(t.[ext_field], N''))), N'')) = 1
-        THEN LTRIM(RTRIM(t.[ext_field]))
+        WHEN ISJSON(NULLIF(LTRIM(RTRIM(CAST(ISNULL(t.[ext_field], N'') AS nvarchar(max)))), N'')) = 1
+        THEN LTRIM(RTRIM(CAST(t.[ext_field] AS nvarchar(max))))
         ELSE N'{}'
       END AS [base_ext]
   ) AS e0
@@ -532,8 +532,8 @@ LEFT JOIN #mpt AS p
 CROSS APPLY (
   SELECT
     CASE
-      WHEN ISJSON(NULLIF(LTRIM(RTRIM(ISNULL(t.[ext_field], N''))), N'')) = 1
-      THEN LTRIM(RTRIM(t.[ext_field]))
+      WHEN ISJSON(NULLIF(LTRIM(RTRIM(CAST(ISNULL(t.[ext_field], N'') AS nvarchar(max)))), N'')) = 1
+      THEN LTRIM(RTRIM(CAST(t.[ext_field] AS nvarchar(max))))
       ELSE N'{}'
     END AS [base_ext]
 ) AS e0

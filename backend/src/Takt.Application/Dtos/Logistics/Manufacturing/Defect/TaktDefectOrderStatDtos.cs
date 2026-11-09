@@ -45,7 +45,7 @@ public class TaktDefectOrderStatQueryDto : TaktPagedQuery
     /// <summary>
     /// 批次（可空）
     /// </summary>
-    public string? BatchCode { get; set; }
+    public string? ProdBatch { get; set; }
 
     /// <summary>
     /// 机种（可空）
@@ -291,7 +291,7 @@ public class TaktDefectOrderStatRowDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string BatchCode { get; set; } = string.Empty;
+    public string ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 机种

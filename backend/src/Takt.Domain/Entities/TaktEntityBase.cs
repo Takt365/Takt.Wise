@@ -35,9 +35,9 @@ public abstract class TaktTenantCoreEntityScopeBase
     public string TenantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 扩展字段
+    /// 扩展字段（JSON 履历等；nvarchar(max)；❌ 勿用 ntext——RTRIM/LTRIM/ISJSON 不支持，定时同步脚本会失败）
     /// </summary>
-    [SugarColumn(ColumnName = "ext_field", ColumnDescription = "扩展字段", ColumnDataType = "nvarchar", Length = 4000, IsNullable = true, CreateTableFieldSort = 102)]
+    [SugarColumn(ColumnName = "ext_field", ColumnDescription = "扩展字段", ColumnDataType = "nvarchar", Length = -1, IsNullable = true, CreateTableFieldSort = 102)]
     public string? ExtField { get; set; }
 
     /// <summary>
@@ -157,9 +157,9 @@ public abstract class TaktCompanyEntityScopeBase
     public string CultureCode { get; set; } = "en-US";
 
     /// <summary>
-    /// 扩展字段
+    /// 扩展字段（JSON 履历等；nvarchar(max)；❌ 勿用 ntext——RTRIM/LTRIM/ISJSON 不支持，定时同步脚本会失败）
     /// </summary>
-    [SugarColumn(ColumnName = "ext_field", ColumnDescription = "扩展字段", ColumnDataType = "nvarchar", Length = 4000, IsNullable = true, CreateTableFieldSort = 103)]
+    [SugarColumn(ColumnName = "ext_field", ColumnDescription = "扩展字段", ColumnDataType = "nvarchar", Length = -1, IsNullable = true, CreateTableFieldSort = 103)]
     public string? ExtField { get; set; }
 
     /// <summary>
@@ -243,9 +243,9 @@ public abstract class TaktApprovalEntityScopeBase
     public string CultureCode { get; set; } = "en-US";
 
     /// <summary>
-    /// 扩展字段
+    /// 扩展字段（JSON 履历等；nvarchar(max)；❌ 勿用 ntext——RTRIM/LTRIM/ISJSON 不支持，定时同步脚本会失败）
     /// </summary>
-    [SugarColumn(ColumnName = "ext_field", ColumnDescription = "扩展字段", ColumnDataType = "nvarchar", Length = 4000, IsNullable = true, CreateTableFieldSort = 103)]
+    [SugarColumn(ColumnName = "ext_field", ColumnDescription = "扩展字段", ColumnDataType = "nvarchar", Length = -1, IsNullable = true, CreateTableFieldSort = 103)]
     public string? ExtField { get; set; }
 
     /// <summary>

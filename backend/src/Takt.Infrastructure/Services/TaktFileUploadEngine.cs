@@ -797,9 +797,9 @@ public sealed class TaktFileUploadEngine : TaktServiceBase, ITaktFileUploadEngin
         (int)category;
 
     /// <summary>
-    /// 构建正式存储相对路径：{UploadRelativePath}/[{CategoryPath}/]{tenant}/{company}/{yyyy/MM/dd}/{storedFileName}
+    /// 构建正式存储相对路径：{UploadRelativePath}/{tenant}/{company}/[{CategoryPath}/]{yyyy/MM/dd}/{storedFileName}
     /// </summary>
-    /// <param name="scope">租户/公司与业务子路径（CategoryPath 含模块与文件类型目录，如 human-resource/images）</param>
+    /// <param name="scope">租户/公司与业务子路径（CategoryPath 含模块与文件类型目录，如 logistics/ec、human-resource/images）</param>
     /// <param name="storedFileName">唯一存储文件名</param>
     /// <returns>以 / 分隔的相对路径</returns>
     private string BuildStoredRelativePath(TaktFileUploadScope scope, string storedFileName)
@@ -808,14 +808,14 @@ public sealed class TaktFileUploadEngine : TaktServiceBase, ITaktFileUploadEngin
         var segments = new List<string>
         {
             _uploadOptions.UploadRelativePath,
+            scope.TenantCode,
+            scope.CompanyCode,
         };
         if (!string.IsNullOrWhiteSpace(scope.CategoryPath))
         {
             segments.Add(NormalizeCategoryPath(scope.CategoryPath));
         }
 
-        segments.Add(scope.TenantCode);
-        segments.Add(scope.CompanyCode);
         segments.Add(dateSegment);
         segments.Add(storedFileName);
         return string.Join('/', segments);

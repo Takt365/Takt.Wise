@@ -339,6 +339,16 @@ const columns = computed<TableColumnsType>(() => [
       String(getMasterProductionScheduleLineField(record, 'materialCode') ?? ''),
   },
   {
+    title: pi.label('plannedBatch'),
+    dataIndex: 'plannedBatch',
+    key: 'plannedBatch',
+    width: 140,
+    resizable: true,
+    ellipsis: true,
+    customRender: ({ record }: { record: MasterProductionScheduleLine }) =>
+      String(getMasterProductionScheduleLineField(record, 'plannedBatch') ?? ''),
+  },
+  {
     title: pi.label('bucketStart'),
     dataIndex: 'bucketStart',
     key: 'bucketStart',

@@ -116,7 +116,7 @@ public class TaktBomMaterialUsageService : TaktServiceBase, ITaktBomMaterialUsag
         => ExportAsync(query, KindDedicated, "专用物料", sheetName, fileName);
 
     /// <summary>
-    /// 物料下拉取自成本明细 ComponentCode，按工厂与核算年月去重，且采购类型 F、生产相关 X、PCB SECT 标识为空
+    /// 物料下拉取自成本明细 ComponentCode，按工厂与核算年月去重，且采购类型 F、生产相关 X、批量标识为空、PCB SECT 标识为空、特殊采购类为空
     /// </summary>
     /// <param name="plantCode">工厂</param>
     /// <param name="costingPeriod">核算年月 yyyy-MM</param>
@@ -263,7 +263,7 @@ public class TaktBomMaterialUsageService : TaktServiceBase, ITaktBomMaterialUsag
 
     /// <summary>
     /// 主表成本头 InnerJoin 子表成本明细：同一工厂、同一产品编码、同一核算年月。
-    /// 明细限定采购类型 F、生产相关 X、PCB SECT 标识为空。按机种、产品、物料汇总用量与行成本。
+    /// 明细限定采购类型 F、生产相关 X、批量标识为空、PCB SECT 标识为空、特殊采购类为空。按机种、产品、物料汇总用量与行成本。
     /// </summary>
     /// <param name="plantCode">工厂</param>
     /// <param name="costingMonth">核算年月月初</param>
@@ -310,7 +310,9 @@ public class TaktBomMaterialUsageService : TaktServiceBase, ITaktBomMaterialUsag
             && i.CostingDate < endExclusive
             && (i.PurchaseType == "F" || i.PurchaseType == "f")
             && (i.ProductionRelated == "X" || i.ProductionRelated == "x")
-            && (i.PcbSectIndicator == null || i.PcbSectIndicator == ""));
+            && (i.BatchIndicator == null || i.BatchIndicator == "")
+            && (i.PcbSectIndicator == null || i.PcbSectIndicator == "")
+            && (i.SpecialProcurementType == null || i.SpecialProcurementType == ""));
         var componentFilter = componentCode?.Trim() ?? string.Empty;
         if (componentFilter.Length > 0)
         {
@@ -333,7 +335,7 @@ public class TaktBomMaterialUsageService : TaktServiceBase, ITaktBomMaterialUsag
     }
 
     /// <summary>
-    /// 从一张成本明细物理表汇总 ComponentCode（采购类型 F、生产相关 X、PCB SECT 标识为空）
+    /// 从一张成本明细物理表汇总 ComponentCode（采购类型 F、生产相关 X、批量标识为空、PCB SECT 标识为空、特殊采购类为空）
     /// </summary>
     /// <param name="map">编码 → 描述</param>
     /// <param name="yearTable">年分表；空则基表</param>
@@ -365,7 +367,9 @@ public class TaktBomMaterialUsageService : TaktServiceBase, ITaktBomMaterialUsag
             && item.ComponentCode != ""
             && (item.PurchaseType == "F" || item.PurchaseType == "f")
             && (item.ProductionRelated == "X" || item.ProductionRelated == "x")
-            && (item.PcbSectIndicator == null || item.PcbSectIndicator == ""));
+            && (item.BatchIndicator == null || item.BatchIndicator == "")
+            && (item.PcbSectIndicator == null || item.PcbSectIndicator == "")
+            && (item.SpecialProcurementType == null || item.SpecialProcurementType == ""));
         var componentKeyword = keyword?.Trim() ?? string.Empty;
         if (componentKeyword.Length > 0)
         {

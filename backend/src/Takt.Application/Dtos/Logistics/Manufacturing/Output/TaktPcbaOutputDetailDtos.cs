@@ -147,6 +147,16 @@ public class TaktPcbaOutputDetailDto : TaktCompanyDtoBase
     public int DefectCount { get; set; } = 0;
 
     /// <summary>
+    /// 报废台数
+    /// </summary>
+    public int ScrapCount { get; set; } = 0;
+
+    /// <summary>
+    /// 报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）
+    /// </summary>
+    public string? ScrapReason { get; set; } = string.Empty;
+
+    /// <summary>
     /// 停线时间(分钟)
     /// </summary>
     public int DowntimeMinutes { get; set; } = 0;
@@ -369,6 +379,16 @@ public class TaktPcbaOutputDetailQueryDto : TaktPagedQuery
     /// 不良台数
     /// </summary>
     public int? DefectCount { get; set; }
+
+    /// <summary>
+    /// 报废台数
+    /// </summary>
+    public int? ScrapCount { get; set; }
+
+    /// <summary>
+    /// 报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）
+    /// </summary>
+    public string? ScrapReason { get; set; } = string.Empty;
 
     /// <summary>
     /// 停线时间(分钟)
@@ -612,6 +632,16 @@ public class TaktPcbaOutputDetailCreateDto
     /// 不良台数
     /// </summary>
     public int DefectCount { get; set; } = 0;
+
+    /// <summary>
+    /// 报废台数
+    /// </summary>
+    public int ScrapCount { get; set; } = 0;
+
+    /// <summary>
+    /// 报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）
+    /// </summary>
+    public string? ScrapReason { get; set; } = string.Empty;
 
     /// <summary>
     /// 停线时间(分钟)
@@ -908,6 +938,16 @@ public class TaktPcbaOutputDetailTemplateDto
     public int? DefectCount { get; set; }
 
     /// <summary>
+    /// 报废台数
+    /// </summary>
+    public int? ScrapCount { get; set; }
+
+    /// <summary>
+    /// 报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）
+    /// </summary>
+    public string? ScrapReason { get; set; } = string.Empty;
+
+    /// <summary>
     /// 停线时间(分钟)
     /// </summary>
     public int? DowntimeMinutes { get; set; }
@@ -1129,6 +1169,16 @@ public class TaktPcbaOutputDetailImportDto
     /// 不良台数
     /// </summary>
     public int? DefectCount { get; set; }
+
+    /// <summary>
+    /// 报废台数
+    /// </summary>
+    public int? ScrapCount { get; set; }
+
+    /// <summary>
+    /// 报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）
+    /// </summary>
+    public string? ScrapReason { get; set; } = string.Empty;
 
     /// <summary>
     /// 停线时间(分钟)
@@ -1358,6 +1408,16 @@ public class TaktPcbaOutputDetailExportDto
     /// 不良台数
     /// </summary>
     public int DefectCount { get; set; } = 0;
+
+    /// <summary>
+    /// 报废台数
+    /// </summary>
+    public int ScrapCount { get; set; } = 0;
+
+    /// <summary>
+    /// 报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）
+    /// </summary>
+    public string? ScrapReason { get; set; } = string.Empty;
 
     /// <summary>
     /// 停线时间(分钟)

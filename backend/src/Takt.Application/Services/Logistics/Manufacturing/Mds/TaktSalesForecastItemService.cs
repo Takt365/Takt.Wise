@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Services.Logistics.Manufacturing.Mds
 // 文件名称：TaktSalesForecastItemService.cs
-// 创建时间：2026-08-22
+// 创建时间：2026-11-06
 // 创建人：Takt365(Cursor AI)
 // 功能描述：销售预测明细应用服务实现
 // 
@@ -125,14 +125,15 @@ public class TaktSalesForecastItemService : TaktServiceBase, ITaktSalesForecastI
     {
         var entity = dto.Adapt<TaktSalesForecastItem>();
         entity.IsObsolete = 0;
-        var isUnique_ix_takt_logistics_manufacturing_mds_sales_forecast_item_month_unique = await _uniqueValidator.IsUniqueAsync(
+        var isUnique_ix_takt_logistics_manufacturing_mds_sales_forecast_item_version_unique = await _uniqueValidator.IsUniqueAsync(
             _salesForecastItemRepository,
             x => x.SalesForecastId == entity.SalesForecastId
                 && x.FiscalYear == entity.FiscalYear
-                && x.PlanMonth == entity.PlanMonth);
-        if (!isUnique_ix_takt_logistics_manufacturing_mds_sales_forecast_item_month_unique)
+                && x.PlanMonth == entity.PlanMonth
+                && x.VersionNo == entity.VersionNo);
+        if (!isUnique_ix_takt_logistics_manufacturing_mds_sales_forecast_item_version_unique)
         {
-            throw new TaktBusinessException("销售预测明细的SalesForecastId、FiscalYear、PlanMonth已存在");
+            throw new TaktBusinessException("销售预测明细的SalesForecastId、FiscalYear、PlanMonth、VersionNo已存在");
         }
         if (entity.LineNumber <= 0)
         {
@@ -160,15 +161,16 @@ public class TaktSalesForecastItemService : TaktServiceBase, ITaktSalesForecastI
             throw new TaktBusinessException("销售预测明细不存在");
         }
         dto.Adapt(entity);
-        var isUnique_ix_takt_logistics_manufacturing_mds_sales_forecast_item_month_unique = await _uniqueValidator.IsUniqueAsync(
+        var isUnique_ix_takt_logistics_manufacturing_mds_sales_forecast_item_version_unique = await _uniqueValidator.IsUniqueAsync(
             _salesForecastItemRepository,
             x => x.SalesForecastId == entity.SalesForecastId
                 && x.FiscalYear == entity.FiscalYear
-                && x.PlanMonth == entity.PlanMonth,
+                && x.PlanMonth == entity.PlanMonth
+                && x.VersionNo == entity.VersionNo,
             id);
-        if (!isUnique_ix_takt_logistics_manufacturing_mds_sales_forecast_item_month_unique)
+        if (!isUnique_ix_takt_logistics_manufacturing_mds_sales_forecast_item_version_unique)
         {
-            throw new TaktBusinessException("销售预测明细的SalesForecastId、FiscalYear、PlanMonth已存在");
+            throw new TaktBusinessException("销售预测明细的SalesForecastId、FiscalYear、PlanMonth、VersionNo已存在");
         }
         await _salesForecastItemRepository.UpdateAsync(entity);
         return await GetSalesForecastItemByIdAsync(id) ?? throw new TaktBusinessException("销售预测明细不存在");
@@ -273,19 +275,20 @@ public class TaktSalesForecastItemService : TaktServiceBase, ITaktSalesForecastI
             try
             {
                 var entity = rows[i].Adapt<TaktSalesForecastItem>();
-                var importKey = $"{entity.SalesForecastId}|{entity.FiscalYear}|{entity.PlanMonth}";
+                var importKey = $"{entity.SalesForecastId}|{entity.FiscalYear}|{entity.PlanMonth}|{entity.VersionNo}";
                 if (!importSeenKeys.Add(importKey))
                 {
-                    throw new TaktBusinessException("与Excel中其他行重复（SalesForecastId、FiscalYear、PlanMonth）");
+                    throw new TaktBusinessException("与Excel中其他行重复（SalesForecastId、FiscalYear、PlanMonth、VersionNo）");
                 }
-                var isUnique_ix_takt_logistics_manufacturing_mds_sales_forecast_item_month_unique = await _uniqueValidator.IsUniqueAsync(
+                var isUnique_ix_takt_logistics_manufacturing_mds_sales_forecast_item_version_unique = await _uniqueValidator.IsUniqueAsync(
                     _salesForecastItemRepository,
                     x => x.SalesForecastId == entity.SalesForecastId
                         && x.FiscalYear == entity.FiscalYear
-                        && x.PlanMonth == entity.PlanMonth);
-                if (!isUnique_ix_takt_logistics_manufacturing_mds_sales_forecast_item_month_unique)
+                        && x.PlanMonth == entity.PlanMonth
+                        && x.VersionNo == entity.VersionNo);
+                if (!isUnique_ix_takt_logistics_manufacturing_mds_sales_forecast_item_version_unique)
                 {
-                    throw new TaktBusinessException("销售预测明细的SalesForecastId、FiscalYear、PlanMonth已存在");
+                    throw new TaktBusinessException("销售预测明细的SalesForecastId、FiscalYear、PlanMonth、VersionNo已存在");
                 }
                 if (entity.LineNumber <= 0)
                 {
@@ -417,16 +420,16 @@ public class TaktSalesForecastItemService : TaktServiceBase, ITaktSalesForecastI
             exp = exp.And(x => x.PlanMonth == planMonth);
         }
 
-        if (queryDto?.PlanQuantity001.HasValue == true)
+        if (queryDto?.VersionNo.HasValue == true)
         {
-            var planQuantity001 = queryDto.PlanQuantity001.Value;
-            exp = exp.And(x => x.PlanQuantity001 == planQuantity001);
+            var versionNo = queryDto.VersionNo.Value;
+            exp = exp.And(x => x.VersionNo == versionNo);
         }
 
-        if (queryDto?.PlanQuantity002.HasValue == true)
+        if (queryDto?.PlanQuantity.HasValue == true)
         {
-            var planQuantity002 = queryDto.PlanQuantity002.Value;
-            exp = exp.And(x => x.PlanQuantity002 == planQuantity002);
+            var planQuantity = queryDto.PlanQuantity.Value;
+            exp = exp.And(x => x.PlanQuantity == planQuantity);
         }
 
         if (queryDto?.PlanQuantityDelta.HasValue == true)
@@ -523,11 +526,11 @@ public class TaktSalesForecastItemService : TaktServiceBase, ITaktSalesForecastI
         {
             return true;
         }
-        if (queryDto.PlanQuantity001.HasValue)
+        if (queryDto.VersionNo.HasValue)
         {
             return true;
         }
-        if (queryDto.PlanQuantity002.HasValue)
+        if (queryDto.PlanQuantity.HasValue)
         {
             return true;
         }

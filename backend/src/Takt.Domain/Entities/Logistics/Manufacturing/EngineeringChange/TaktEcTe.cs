@@ -79,10 +79,16 @@ public class TaktEcTe : TaktCompanyEntityBase
     public int EcImplScope { get; set; } = 1;
 
     /// <summary>
-    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种
+    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/电子物料/制技固定设变+机种（DictValue=2）
     /// </summary>
-    [SugarColumn(ColumnName = "ec_control_scope", ColumnDescription = "控制范围", ColumnDataType = "int", IsNullable = false, DefaultValue = "2")]
-    public int EcControlScope { get; set; } = 2;
+    [SugarColumn(ColumnName = "ec_control_scope", ColumnDescription = "控制范围", ColumnDataType = "int", IsNullable = false, DefaultValue = "1")]
+    public int EcControlScope { get; set; } = 1;
+
+    /// <summary>
+    /// 旧品处理（可空；非空须按旧物料逐段「旧物料:处理方式;」，分号分隔；旧物料≤20；处理方式字典 logistics_manufacturing_ec_old_part_disposition；1=转用 2=废弃 3=返工 4=消耗 5=无处理 9=未定；由明细旧物料+旧品处理聚合；ntext）
+    /// </summary>
+    [SugarColumn(ColumnName = "ec_old_part_disposition", ColumnDescription = "旧品处理", ColumnDataType = "ntext", IsNullable = true)]
+    public string? EcOldPartDisposition { get; set; }
 
     /// <summary>
     /// 录入日期

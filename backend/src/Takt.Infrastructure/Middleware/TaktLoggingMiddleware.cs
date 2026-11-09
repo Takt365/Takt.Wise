@@ -252,7 +252,7 @@ public class TaktLoggingMiddleware
             RequestId = requestId,
             TraceId = Activity.Current?.TraceId.ToString(),
             Route = context.Request.Path.Value,
-            ClientIp = context.Connection.RemoteIpAddress?.ToString(),
+            ClientIp = TaktLocationHelper.ResolveClientIp(context),
             TenantCode = TaktUserContext.TryResolveTenantCode(context),
             CompanyCode = TaktUserContext.TryResolveCompanyCode(context),
             UserId = TaktUserContext.TryResolveUserId(principal)?.ToString(),

@@ -20,7 +20,9 @@ TaktWise · Full-stack enterprise platform (.NET 9 + Vue 3).
 | Supported UI locales | 4 | `zh-CN` / `zh-HK` / `en-US` / `ja-JP` |
 | Cursor rules / skills | 18 / 18 | `.cursor/rules/`, `.cursor/skills/` (00–17) |
 
-Covers **identity & permissions, foundation platform, human resources, logistics & manufacturing, customer service, accounting, routine office, workflow, statistics & logging / quick query, and code generation**, using DDD layering, multi-tenant database sharding, and company-level data isolation.
+Covers **identity & permissions, foundation platform, human resources, Logistics (rear-support / 后勤: manufacturing execution, materials, procurement, sales, quality, …), customer service, accounting, routine office, workflow, statistics & logging / quick query, and code generation**, using DDD layering, multi-tenant database sharding, and company-level data isolation.
+
+> Note: Domain prefix `Logistics` / `logistics` means **rear-support operations** in this product (`menu.logistics._self` = 后勤管理). It is **not** “freight / shipping logistics”.
 
 ---
 
@@ -169,14 +171,14 @@ Backend `Controllers/` and `Domain/Entities/` share the same domain layout; fron
 | **Identity** | Users, roles, menus, tenants, RBAC, auth | Login, permission assignment, multi-tenant/company authorization |
 | **Foundation** | Dict, translation, system property, numbering, messages, online, culture, admin division, files | Platform master data, in-app messages, dynamic i18n |
 | **HumanResource** | Organization, Personnel, Attendance, Talent, Benefits, Compensation, Performance, Training | Org, HR, attendance, payroll/benefits, performance & training |
-| **Logistics · Materials** | Material, supplier, manufacturer, plant, etc. | Material master data |
-| **Logistics · Procurement** | Purchase request / order / price, etc. | Procurement |
-| **Logistics · Sales** | Customer, sales order / price, etc. | Sales |
-| **Logistics · CustomerService** | Request / order / ticket / contract + Stat | Customer service & stats |
-| **Logistics · Quality** | Operation (IQC/IPQC/FQC), Complaint, Cost; independent Trend | Inspection, complaints, quality cost & trends |
-| **Logistics · Manufacturing** | Bom (Explosion / cost-analysis Trend), Aps, Mds/Mps/Mrp, Output, Defect, EngineeringChange, LaborHour, Sop | MES, planning, output, defects, ECN |
-| **Logistics · Serial** | Product serial inbound/outbound | Serial traceability |
-| **Logistics · Maintenance** | Equipment, maintenance work orders | Equipment upkeep |
+| **Logistics (后勤) · Materials** | Material, supplier, manufacturer, plant, etc. | Material management |
+| **Logistics (后勤) · Procurement** | Purchase request / order / price, etc. | Procurement |
+| **Logistics (后勤) · Sales** | Customer, sales order / price, etc. | Sales |
+| **Logistics (后勤) · CustomerService** | Request / order / ticket / contract + Stat | Customer service & stats |
+| **Logistics (后勤) · Quality** | Operation (IQC/IPQC/FQC), Complaint, Cost; independent Trend | Quality (inspection, complaints, cost & trends) |
+| **Logistics (后勤) · Manufacturing** | Bom (Explosion / cost-analysis Trend), Aps, Mds/Mps/Mrp, Output, Defect, EngineeringChange, LaborHour, Sop | Manufacturing execution (planning, output, defects, EC, …) |
+| **Logistics (后勤) · Serial** | Product serial inbound/outbound | Serial number management |
+| **Logistics (后勤) · Maintenance** | Equipment, maintenance work orders | Plant maintenance |
 | **Accounting** | Financial, Controlling | Finance / cost masters |
 | **Routine** | Announcement, NewsCenter, HelpDesk, DocumentCenter, **MeetingCenter**, VisitorCenter | Announcements, news, help desk, documents, meetings, visitors |
 | **Workflow** | Scheme / form / instance / task / variable / add-sign + **Engine** | Approval definition & runtime |

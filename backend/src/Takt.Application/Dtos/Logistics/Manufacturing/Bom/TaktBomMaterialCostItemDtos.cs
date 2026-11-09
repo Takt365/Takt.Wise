@@ -77,7 +77,7 @@ public class TaktBomMaterialCostItemDto : TaktCompanyDtoBase
     public decimal ComponentQuantity { get; set; }
 
     /// <summary>
-    /// 批量标识（空或 X）
+    /// 批量标识（空才参与成本合计、零价清单、移动价回填与建议替代；X 排除）
     /// </summary>
     public string? BatchIndicator { get; set; } = string.Empty;
 
@@ -92,12 +92,12 @@ public class TaktBomMaterialCostItemDto : TaktCompanyDtoBase
     public string? PcbSectIndicator { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购类型（F=外部采购，E=自制生产）；仅生产相关=X、PCB SECT 标识为空且 F 行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数
+    /// 采购类型（F=外部采购，E=自制生产）；仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空的行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数
     /// </summary>
     public string PurchaseType { get; set; } = string.Empty;
 
     /// <summary>
-    /// 特殊采购类（空或业务码，最长 50）
+    /// 特殊采购类（空才参与成本合计、零价、建议替代、价格差异与组件差异；有值则排除）
     /// </summary>
     public string? SpecialProcurementType { get; set; } = string.Empty;
 
@@ -239,7 +239,7 @@ public class TaktBomMaterialCostItemQueryDto : TaktPagedQuery
     public decimal? ComponentQuantity { get; set; }
 
     /// <summary>
-    /// 批量标识（空或 X）
+    /// 批量标识（空才参与成本合计、零价清单、移动价回填与建议替代；X 排除）
     /// </summary>
     public string? BatchIndicator { get; set; } = string.Empty;
 
@@ -254,12 +254,12 @@ public class TaktBomMaterialCostItemQueryDto : TaktPagedQuery
     public string? PcbSectIndicator { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购类型（F=外部采购，E=自制生产）；仅生产相关=X、PCB SECT 标识为空且 F 行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数
+    /// 采购类型（F=外部采购，E=自制生产）；仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空的行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数
     /// </summary>
     public string? PurchaseType { get; set; } = string.Empty;
 
     /// <summary>
-    /// 特殊采购类（空或业务码，最长 50）
+    /// 特殊采购类（空才参与成本合计、零价、建议替代、价格差异与组件差异；有值则排除）
     /// </summary>
     public string? SpecialProcurementType { get; set; } = string.Empty;
 
@@ -421,7 +421,7 @@ public class TaktBomMaterialCostItemCreateDto
     public decimal ComponentQuantity { get; set; }
 
     /// <summary>
-    /// 批量标识（空或 X）
+    /// 批量标识（空才参与成本合计、零价清单、移动价回填与建议替代；X 排除）
     /// </summary>
     public string? BatchIndicator { get; set; } = string.Empty;
 
@@ -436,13 +436,13 @@ public class TaktBomMaterialCostItemCreateDto
     public string? PcbSectIndicator { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购类型（F=外部采购，E=自制生产）；仅生产相关=X、PCB SECT 标识为空且 F 行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数
+    /// 采购类型（F=外部采购，E=自制生产）；仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空的行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数
     /// </summary>
-    [Required(ErrorMessage = "采购类型（F=外部采购，E=自制生产）；仅生产相关=X、PCB SECT 标识为空且 F 行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数不能为空")]
+    [Required(ErrorMessage = "采购类型（F=外部采购，E=自制生产）；仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空的行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数不能为空")]
     public string PurchaseType { get; set; } = string.Empty;
 
     /// <summary>
-    /// 特殊采购类（空或业务码，最长 50）
+    /// 特殊采购类（空才参与成本合计、零价、建议替代、价格差异与组件差异；有值则排除）
     /// </summary>
     public string? SpecialProcurementType { get; set; } = string.Empty;
 
@@ -609,7 +609,7 @@ public class TaktBomMaterialCostItemTemplateDto
     public decimal? ComponentQuantity { get; set; }
 
     /// <summary>
-    /// 批量标识（空或 X）
+    /// 批量标识（空才参与成本合计、零价清单、移动价回填与建议替代；X 排除）
     /// </summary>
     public string? BatchIndicator { get; set; } = string.Empty;
 
@@ -624,12 +624,12 @@ public class TaktBomMaterialCostItemTemplateDto
     public string? PcbSectIndicator { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购类型（F=外部采购，E=自制生产）；仅生产相关=X、PCB SECT 标识为空且 F 行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数
+    /// 采购类型（F=外部采购，E=自制生产）；仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空的行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数
     /// </summary>
     public string? PurchaseType { get; set; } = string.Empty;
 
     /// <summary>
-    /// 特殊采购类（空或业务码，最长 50）
+    /// 特殊采购类（空才参与成本合计、零价、建议替代、价格差异与组件差异；有值则排除）
     /// </summary>
     public string? SpecialProcurementType { get; set; } = string.Empty;
 
@@ -766,7 +766,7 @@ public class TaktBomMaterialCostItemImportDto
     public decimal? ComponentQuantity { get; set; }
 
     /// <summary>
-    /// 批量标识（空或 X）
+    /// 批量标识（空才参与成本合计、零价清单、移动价回填与建议替代；X 排除）
     /// </summary>
     public string? BatchIndicator { get; set; } = string.Empty;
 
@@ -781,12 +781,12 @@ public class TaktBomMaterialCostItemImportDto
     public string? PcbSectIndicator { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购类型（F=外部采购，E=自制生产）；仅生产相关=X、PCB SECT 标识为空且 F 行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数
+    /// 采购类型（F=外部采购，E=自制生产）；仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空的行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数
     /// </summary>
     public string? PurchaseType { get; set; } = string.Empty;
 
     /// <summary>
-    /// 特殊采购类（空或业务码，最长 50）
+    /// 特殊采购类（空才参与成本合计、零价、建议替代、价格差异与组件差异；有值则排除）
     /// </summary>
     public string? SpecialProcurementType { get; set; } = string.Empty;
 
@@ -924,7 +924,7 @@ public class TaktBomMaterialCostItemExportDto
     public decimal ComponentQuantity { get; set; }
 
     /// <summary>
-    /// 批量标识（空或 X）
+    /// 批量标识（空才参与成本合计、零价清单、移动价回填与建议替代；X 排除）
     /// </summary>
     public string? BatchIndicator { get; set; } = string.Empty;
 
@@ -939,12 +939,12 @@ public class TaktBomMaterialCostItemExportDto
     public string? PcbSectIndicator { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购类型（F=外部采购，E=自制生产）；仅生产相关=X、PCB SECT 标识为空且 F 行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数
+    /// 采购类型（F=外部采购，E=自制生产）；仅批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空的行参与产品 BOM 材料成本汇总，行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数
     /// </summary>
     public string PurchaseType { get; set; } = string.Empty;
 
     /// <summary>
-    /// 特殊采购类（空或业务码，最长 50）
+    /// 特殊采购类（空才参与成本合计、零价、建议替代、价格差异与组件差异；有值则排除）
     /// </summary>
     public string? SpecialProcurementType { get; set; } = string.Empty;
 

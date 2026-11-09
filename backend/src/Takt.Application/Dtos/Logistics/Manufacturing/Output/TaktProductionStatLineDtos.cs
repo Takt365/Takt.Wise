@@ -40,7 +40,7 @@ public class TaktProductionStatLineDto
     /// <summary>
     /// 生产批次
     /// </summary>
-    public string BatchCode { get; set; } = string.Empty;
+    public string ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码

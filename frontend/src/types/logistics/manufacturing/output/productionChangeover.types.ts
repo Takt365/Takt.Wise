@@ -122,6 +122,122 @@ export interface ProductionChangeover extends CompanyDtoBase {
 }
 
 /**
+ * 生产切换记录列表查询
+ * 对应后端 TaktProductionChangeoverQueryDto
+ */
+export interface ProductionChangeoverQuery extends TaktPagedQuery {
+  /**
+   * 生产类别
+   */
+  prodCategory?: string;
+
+  /**
+   * 切换类别
+   */
+  changeoverCategory?: string;
+
+  /**
+   * 生产日期（范围查询-开始）
+   */
+  prodDateStart?: string;
+
+  /**
+   * 生产日期（范围查询-结束）
+   */
+  prodDateEnd?: string;
+
+  /**
+   * 班组编码
+   */
+  TeamCode?: string;
+
+  /**
+   * 当前生产工单编码
+   */
+  currentProdOrderCode?: string;
+
+  /**
+   * 当前机种
+   */
+  currentModelCode?: string;
+
+  /**
+   * 切换生产工单编码
+   */
+  changeoverProdOrderCode?: string;
+
+  /**
+   * 切换机种
+   */
+  changeoverModelCode?: string;
+
+  /**
+   * 创建时间（范围查询-开始）
+   */
+  createdAtStart?: string;
+
+  /**
+   * 创建时间（范围查询-结束）
+   */
+  createdAtEnd?: string;
+
+  /**
+   * 扩展字段JSON
+   */
+  extField?: string;
+
+  /**
+   * 备注
+   */
+  remark?: string;
+
+  /**
+   * 切换次数
+   */
+  changeoverCount?: number;
+
+  /**
+   * 切换时间
+   */
+  changeoverTime?: number;
+
+  /**
+   * 仪器准备时间
+   */
+  instrumentSetupTime?: number;
+
+  /**
+   * 切换时间合计
+   */
+  totalChangeoverTime?: number;
+
+  /**
+   * 阅读 SOP 时间
+   */
+  readSopTime?: number;
+
+  /**
+   * 学习时间
+   */
+  learningTime?: number;
+
+  /**
+   * 人数
+   */
+  personCount?: number;
+
+  /**
+   * 学习时间合计
+   */
+  totalLearningTime?: number;
+
+  /**
+   * SOP 时间合计
+   */
+  totalSopTime?: number;
+}
+
+/**
  * ProductionChangeover 导出 DTO（独立实现，不继承响应 Dto）
  * 对应前端 ProductionChangeoverExport
  * @description 对应后端 TaktProductionChangeoverExportDto

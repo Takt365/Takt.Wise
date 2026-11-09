@@ -52,10 +52,10 @@ public class TaktEcMe : TaktCompanyEntityBase, ITaktEcDeptExecEntity
     public string EcRootMaterialCodeGroup { get; set; } = string.Empty;
 
     /// <summary>
-    /// 是否更新 SOP（字典 sys_yes_no；0=否 1=是）
+    /// 是否更新 SOP（字典 sys_yes_no；0=否 1=是；派生：同机种组存在未停产 FERT 时为 0，非 FERT 或已停产为 1）
     /// </summary>
-    [SugarColumn(ColumnName = "is_sop_updated", ColumnDescription = "更新SOP", ColumnDataType = "int", IsNullable = false, DefaultValue = "0")]
-    public int IsSopUpdated { get; set; } = 0;
+    [SugarColumn(ColumnName = "is_sop_updated", ColumnDescription = "更新SOP", ColumnDataType = "int", IsNullable = false, DefaultValue = "1")]
+    public int IsSopUpdated { get; set; } = 1;
     /// <summary>
     /// SOP担当（选项 TaktEcGroups/options?ecGroupCategory=2；DictValue=EcGroupCode，DictLabel=EcGroupName）
     /// </summary>
@@ -67,25 +67,15 @@ public class TaktEcMe : TaktCompanyEntityBase, ITaktEcDeptExecEntity
     [SugarColumn(ColumnName = "sop_date", ColumnDescription = "SOP日期", ColumnDataType = "date", IsNullable = true)]
     public DateTime? SopDate { get; set; }
     /// <summary>
-    /// 设变EC担当（选项 TaktEcGroups/options?ecGroupCategory=1；DictValue=EcGroupCode，DictLabel=EcGroupName）
+    /// 执行内容（各部门通用；nvarchar Length=-1）
     /// </summary>
-    [SugarColumn(ColumnName = "tech_leader", ColumnDescription = "设变EC担当", ColumnDataType = "nvarchar", Length = 80, IsNullable = true)]
-    public string? TechLeader { get; set; }
+    [SugarColumn(ColumnName = "exec_content", ColumnDescription = "执行内容", ColumnDataType = "nvarchar", Length = -1, IsNullable = true)]
+    public string? ExecContent { get; set; }
     /// <summary>
     /// 是否实施（制技不落库，不参与页签。页签按是否更新 IsSopUpdated：0=未更新，1=已更新）
     /// </summary>
     [SugarColumn(IsIgnore = true)]
     public int IsImplemented { get; set; }
-    /// <summary>
-    /// 执行内容（制技不落库；仅满足 ITaktEcDeptExecEntity）
-    /// </summary>
-    [SugarColumn(IsIgnore = true)]
-    public string? ExecContent { get; set; }
-    /// <summary>
-    /// 根物料描述（仅实施范围=全仕向且部门实施范围=按成品时取明细描述；机种组或物料组时为空）
-    /// </summary>
-    [SugarColumn(ColumnName = "ec_root_material_description", ColumnDescription = "根物料描述", Length = 40, ColumnDataType = "nvarchar", IsNullable = false)]
-    public string EcRootMaterialDescription { get; set; } = string.Empty;
 
     /// <summary>
     /// 部门编码（TaktDept.DeptCode；本表固定课别）
@@ -104,7 +94,7 @@ public class TaktEcMe : TaktCompanyEntityBase, ITaktEcDeptExecEntity
     [SugarColumn(ColumnName = "ec_impl_scope", ColumnDescription = "实施范围", ColumnDataType = "int", IsNullable = false)]
     public int EcImplScope { get; set; }
     /// <summary>
-    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；1=按成品，2=按机种，3=按设变，4=不管理），只记录生管/制二/制一/品管；全仕向时生管与此相同。采购/受检/部管/SMT 固定按设变，制技固定按机种
+    /// 控制范围（字典 logistics_manufacturing_ec_control_scope_category；制技固定设变+机种 DictValue=2，无按成品）
     /// </summary>
     [SugarColumn(ColumnName = "ec_control_scope", ColumnDescription = "控制范围", ColumnDataType = "int", IsNullable = false, DefaultValue = "2")]
     public int EcControlScope { get; set; } = 2;

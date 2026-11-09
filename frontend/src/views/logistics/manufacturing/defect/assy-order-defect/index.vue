@@ -176,13 +176,13 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('batchCode')">
-      <a-form-item :label="pi.queryLabel('batchCode')">
+      <div v-show="isFieldVisible('prodBatch')">
+      <a-form-item :label="pi.queryLabel('prodBatch')">
         <a-input
-          v-model:value="advancedQueryForm.batchCode"
-          :placeholder="pi.queryPh('batchCode', 'required')"
+          v-model:value="advancedQueryForm.prodBatch"
+          :placeholder="pi.queryPh('prodBatch', 'required')"
           show-count
-          :maxlength="20"
+          :maxlength="40"
           allow-clear
         />
       </a-form-item>

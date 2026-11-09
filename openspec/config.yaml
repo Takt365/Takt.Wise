@@ -1,0 +1,139 @@
+schema: spec-driven
+
+# =============================================================================
+# TaktWise · OpenSpec 项目上下文（Agent 规划/落地时强制读取）
+# 权威细则仍以仓库规则为准：.cursor/rules/00～17、.cursor/skills/
+# =============================================================================
+
+context: |
+  Language: 简体中文
+  All OpenSpec artifacts (proposal.md / specs/**/spec.md / design.md / tasks.md)
+  MUST be written in 简体中文.
+  Keep OpenSpec structural headings and requirement keywords (SHALL / MUST / SHOULD)
+  in English. Capability paths under specs/ use kebab-case English
+  (e.g. logistics/manufacturing/ec-kanban).
+
+  # --------------------------------------------------------------------------
+  # Product
+  # --------------------------------------------------------------------------
+  Product: TaktWise（节拍智控）— 多租户后勤（Logistics=后勤，非「物流」运输）/生产执行/人资/财务企业平台。
+  Domain note: code prefix Logistics/logistics maps to 后勤管理 (menu.logistics._self); Manufacturing under it is 生产执行.
+  Repo root: this workspace. OpenSpec root is local openspec/ (no external store).
+
+  # --------------------------------------------------------------------------
+  # Stack (do not invent alternatives)
+  # --------------------------------------------------------------------------
+  Backend: .NET 9 · SqlSugar · Autofac · DDD
+    - Takt.WebApi → Controllers (plural: TaktXxxsController, route api/TaktXxxs)
+    - Takt.Application → DTO / Service (singular: TaktXxxService) / FluentValidation
+    - Takt.Infrastructure → repos, seeds, SignalR, Quartz, multi-DB
+    - Takt.Domain → Entities only (no Application/Infrastructure refs)
+    - Takt.Shared → helpers, constants, enums (runtime), paged models
+  Frontend: Vue 3 + TypeScript · Ant Design Vue 4 · Tailwind 4 · Pinia · vue-i18n · Vite
+  Auth: OpenIddict; headers X-Tenant-Code / X-Company-Code
+  DB: SQL Server; table takt_{module}_{entity}; multi-tenant by TenantCode + CompanyCode
+
+  # --------------------------------------------------------------------------
+  # Agent role when applying changes
+  # --------------------------------------------------------------------------
+  Act as 20y+ C#/.NET + Ant Design Vue full-stack engineer.
+  UI: prefer a-* → then Takt* wrappers → never parallel custom UI.
+  Prefer simple, verifiable designs; rewrite wrong abstractions instead of stacking patches.
+  Do NOT invent legacy-compat seeds, SoftDeleteObsolete*, dual routes, or hidden menus
+  (00-project §1.9 全新写法).
+
+  # --------------------------------------------------------------------------
+  # Naming & CRUD (non-negotiable)
+  # --------------------------------------------------------------------------
+  - C# types/files: Takt + PascalCase; Domain entities singular; Controllers plural
+  - Service methods: GetXxxListAsync / CreateXxxAsync / … (entity prefix required)
+  - Frontend API: getXxxList / createXxx …; files camelCase.api.ts / camelCase.types.ts
+  - views: kebab dirs + index.vue; form components PascalCase *Form.vue
+  - Frontend long IDs: string (never Number() on snowflake/long)
+  - Standard CRUD capability map: 12-crud (list/query/create/update/delete/import/export/…)
+  - Master-detail: 10-master-detail on top of 12-crud; Tree: 11-tree-table (lazy by parentId)
+  - Vue shells: 13-vue-view; forms: 14-vue-form; codegen: 15-codegen (scripts only .cjs)
+
+  # --------------------------------------------------------------------------
+  # Permission vs i18n (never mix)
+  # --------------------------------------------------------------------------
+  Permission: lowercase segments joined by ':' ; ends with action
+    e.g. logistics:manufacturing:engineering:change:kanban:list
+  I18nKey: lowercase segments joined by '.'
+    menu.* / entity.* / common.page.* / validation.*
+  Static locales: export default { page: {…} }; t('{path}.page.*')
+  Four-way Permission sync: menu seed, button seed, [TaktPermission], v-permission / ToolsBar
+
+  # --------------------------------------------------------------------------
+  # Domain entity constraints
+  # --------------------------------------------------------------------------
+  - Entity properties: int/int? only for flags/status — NO C# enum on Domain entities
+  - String Length: 17-field-length (default 40; MaterialCode=20; PlantCode=4; …)
+  - ColumnDescription = short title only; long semantics in XML <summary>
+  - Business string codes use XxxCode / xxx_code — forbid XxxNo / xxx_no (except ShiftNo/StepNo/VersionNo)
+  - No <see cref> in XML comments
+
+  # --------------------------------------------------------------------------
+  # Overflow & format
+  # --------------------------------------------------------------------------
+  - Lists: server paging both ends; tables virtual by default; no full-table ToList to UI
+  - Trees: one-level lazy load by parentId — never build full tree in memory for UI
+  - Blank lines: 03-format-blank-lines — forbid every-other-line blank / consecutive blanks
+  - Agent tools: Read/Grep/Glob/StrReplace; bulk via node scripts/*.cjs — no PowerShell search-replace
+
+  # --------------------------------------------------------------------------
+  # Where to read before proposing or applying
+  # --------------------------------------------------------------------------
+  MUST first: .cursor/skills/openspec-takt-conventions/SKILL.md
+    (routes themes → .cursor/rules/*.mdc + skills 00～17; all openspec-* / opsx-* require it)
+  Authority: .cursor/rules/00-project.mdc … 17-field-length.mdc (read matched rules first)
+  Checklists: .cursor/skills/00-project … 17-field-length
+  Commands: .cursor/commands/opsx-*.md also bind the same rules 00～17
+  Backend sample: TaktLoginLogService + TaktUsersController + TaktUser
+  Frontend sample: views/identity/user + api/identity/user.api.ts
+  Workflow: 09-workflow (AntFlow tree engine; no BPMN)
+
+  # --------------------------------------------------------------------------
+  # Spec organization hint
+  # --------------------------------------------------------------------------
+  Prefer capability paths aligned with product domains, e.g.:
+    identity/…, foundation/…, human-resource/…, logistics/manufacturing/…,
+    logistics/material/…, accounting/…, workflow/…, routine/…
+  Delta specs under a change are ADDED/MODIFIED/REMOVED requirements for that capability.
+  Main specs live in openspec/specs/<capability-path>/spec.md after archive.
+
+rules:
+  proposal:
+    - 用简体中文写清：背景、问题、目标、非目标（Out of scope）、影响面（前后端/种子/菜单）
+    - 明确验收标准（可观察行为）；禁止空泛「优化体验」
+    - 若触及权限/i18n/字段 Length/表形态，必须点名对照的规则编号（如 12-crud、16-permission-i18n、17-field-length）
+    - 禁止引入与仓库栈冲突的技术选型（禁止另起 UI 体系、禁止 BPMN 替代现有工作流引擎等）
+  specs:
+    - 每个 capability 一份 spec.md；路径用英文 kebab，与业务域目录对齐
+    - Requirements 使用 SHALL/MUST；描述系统必须满足的可验证行为，不写实现代码
+    - 覆盖：API/权限码、分页与溢出、多租户隔离、前后端主键 string、错误态（401/403）若相关
+    - 主子表/树表变更须写明与 10/11 + 12-crud 的关系
+  design:
+    - 说明分层落点（Domain/Application/WebApi/Frontend 目录）、参照现有模块路径
+    - 列出实体/DTO/Service/Controller/Vue/API/types/种子变更清单（有则写，无则标明 N/A）
+    - 数据与溢出策略：分页、懒加载、导出行上限；禁止「先全量再前端切」作为默认方案（看板类展开分页须说明）
+    - 风险与回滚：种子是否幂等、是否需要重建库、是否破坏兼容（默认不做兼容层）
+  tasks:
+    - 任务按可执行步骤拆分；每步标明层（后端/前端/种子/校验）
+    - 勾选顺序：实体/Length → DTO/Validator → Service/Controller → 前端 types/api → view/form → 权限/i18n 种子 → 自检
+    - 涉及 generate-all / 脚本时写清 `node scripts/….cjs` 命令；禁止 PowerShell 批量改写
+    - 每组任务末尾加「对照规则自检」检查项（空行、Permission 四处、分页）
+
+operations:
+  apply:
+    guidance:
+      - 严格按 tasks.md 顺序实现；未完成的规划产物不要跳过直接改业务代码
+      - 实现前再读相关 .cursor/rules；改完用真实代码路径自证，禁止臆测
+      - 保持原有功能可用；只改任务范围；遵守 03 空行与 17 Length
+      - 需要编译时优先 `dotnet build` 相关 csproj；前端大改可提示用户本地验证
+      - 不要主动 git commit / push，除非用户明确要求
+  archive:
+    guidance:
+      - 归档前确认 tasks 完成且 delta specs 可同步到 openspec/specs/
+      - 归档摘要用简体中文说明：合并了哪些 capability、主规范是否新建/更新
+      - 保留 .openspec.yaml 随 change 目录进入 archive

@@ -87,7 +87,7 @@ export interface ProductionOrderFormFill {
   /**
    * 批次
    */
-  batchCode?: string
+  prodBatch?: string
   /**
    * 工单数量
    */

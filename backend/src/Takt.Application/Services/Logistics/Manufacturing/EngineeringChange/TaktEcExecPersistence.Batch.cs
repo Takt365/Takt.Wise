@@ -88,11 +88,29 @@ public partial class TaktEcExecPersistence
         var skipByDedup = TaktEcScopeRowGrain.BuildSkipIds(derivable, deptCode, ecControlScope, fertRootKeys);
         var rootGroups = TaktEcScopeRowGrain.BuildRootGroups(derivable, deptCode, ecControlScope, fertRootKeys);
         var modelGroups = TaktEcScopeRowGrain.BuildModelGroups(derivable, deptCode, ecControlScope, fertRootKeys);
-        var newMaterialGroups = deptCode == TaktEcDeptCodes.Mfg2
-            ? TaktEcScopeRowGrain.BuildCodeGroups(derivable, deptCode, ecControlScope, fertRootKeys, detail => detail.EcNewMaterialCode)
+        var needsOldMaterialGroups = deptCode is TaktEcDeptCodes.Pc
+            or TaktEcDeptCodes.Mfg1
+            or TaktEcDeptCodes.Mfg2
+            or TaktEcDeptCodes.Qc
+            or TaktEcDeptCodes.Pur;
+        var needsNewMaterialGroups = needsOldMaterialGroups
+            || deptCode is TaktEcDeptCodes.Pur
+                or TaktEcDeptCodes.Iqc
+                or TaktEcDeptCodes.Mc
+                or TaktEcDeptCodes.Mtl;
+        var oldMaterialGroups = needsOldMaterialGroups && deptCode != TaktEcDeptCodes.Pc
+            ? TaktEcScopeRowGrain.BuildOldMaterialGroups(derivable, deptCode, ecControlScope, fertRootKeys)
             : null;
-        var parentMaterialGroups = deptCode == TaktEcDeptCodes.Mfg2
-            ? TaktEcScopeRowGrain.BuildCodeGroups(derivable, deptCode, ecControlScope, fertRootKeys, detail => detail.EcParentMaterialCode)
+        var pcEcLevelOldMaterialGroup = deptCode == TaktEcDeptCodes.Pc
+            ? TaktEcScopeRowGrain.BuildEcLevelOldMaterialGroup(derivable)
+            : null;
+        var pcSharedOldPartBalance = deptCode == TaktEcDeptCodes.Pc
+            ? existingList.OfType<TaktEcPc>()
+                .Select(x => x.EcOldPartBalance)
+                .FirstOrDefault(x => !string.IsNullOrWhiteSpace(x))
+            : null;
+        var newMaterialGroups = needsNewMaterialGroups
+            ? TaktEcScopeRowGrain.BuildNewMaterialGroups(derivable, deptCode, ecControlScope, fertRootKeys)
             : null;
         if (skipByDedup.Count > 0)
         {
@@ -151,12 +169,25 @@ public partial class TaktEcExecPersistence
             {
                 AssignModelCodeGroup(exec, modelGroup);
             }
-            if (newMaterialGroups != null
-                && parentMaterialGroups != null
-                && newMaterialGroups.TryGetValue(groupKey, out var newMaterialGroup)
-                && parentMaterialGroups.TryGetValue(groupKey, out var parentMaterialGroup))
+            if (deptCode == TaktEcDeptCodes.Pc && pcEcLevelOldMaterialGroup != null)
             {
-                AssignPcbaMaterialGroups(exec, newMaterialGroup, parentMaterialGroup);
+                AssignOldMaterialCodeGroup(exec, pcEcLevelOldMaterialGroup);
+                if (exec is TaktEcPc pcExec
+                    && string.IsNullOrWhiteSpace(pcExec.EcOldPartBalance)
+                    && !string.IsNullOrWhiteSpace(pcSharedOldPartBalance))
+                {
+                    pcExec.EcOldPartBalance = pcSharedOldPartBalance;
+                }
+            }
+            else if (oldMaterialGroups != null
+                && oldMaterialGroups.TryGetValue(groupKey, out var oldMaterialGroup))
+            {
+                AssignOldMaterialCodeGroup(exec, oldMaterialGroup);
+            }
+            if (newMaterialGroups != null
+                && newMaterialGroups.TryGetValue(groupKey, out var newMaterialGroup))
+            {
+                AssignNewMaterialCodeGroup(exec, newMaterialGroup);
             }
             EnsureDeptName(exec, deptName);
             if (exec is ITaktEcDeptExecEntity deptExec && deptExec.IsObsolete == 1)
@@ -177,6 +208,10 @@ public partial class TaktEcExecPersistence
                     deptCode,
                     ecControlScope,
                     fertRootKeys));
+            if (exec is TaktEcMe meRow)
+            {
+                ApplyMeSopUpdatedDefault(meRow, derivable, detail, ecControlScope, fertRootKeys, isNew);
+            }
             ApplyScopeFillMode(exec, isNew, shouldAutoComplete(detail), ecImplScope);
             var filledContent = TaktEcDeptEntityHelper.GetExecContent(exec);
             var isEolFilled = TaktEcScopeConstants.IsEolExecContent(filledContent);
@@ -255,8 +290,12 @@ public partial class TaktEcExecPersistence
         var skipSmt = TaktEcScopeRowGrain.BuildSkipIds(derivable, TaktEcDeptCodes.Mtl, smtDeptScope, null);
         var skipPcba = TaktEcScopeRowGrain.BuildSkipIds(derivable, TaktEcDeptCodes.Mfg2, nikaDeptScope, null);
         var smtRootGroups = TaktEcScopeRowGrain.BuildRootGroups(derivable, TaktEcDeptCodes.Mtl, smtDeptScope, null);
+        var smtModelGroups = TaktEcScopeRowGrain.BuildModelGroups(derivable, TaktEcDeptCodes.Mtl, smtDeptScope, null);
+        var smtNewMaterialGroups = TaktEcScopeRowGrain.BuildNewMaterialGroups(derivable, TaktEcDeptCodes.Mtl, smtDeptScope, null);
         var nikaRootGroups = TaktEcScopeRowGrain.BuildRootGroups(derivable, TaktEcDeptCodes.Mfg2, nikaDeptScope, null);
         var nikaModelGroups = TaktEcScopeRowGrain.BuildModelGroups(derivable, TaktEcDeptCodes.Mfg2, nikaDeptScope, null);
+        var nikaOldMaterialGroups = TaktEcScopeRowGrain.BuildOldMaterialGroups(derivable, TaktEcDeptCodes.Mfg2, nikaDeptScope, null);
+        var nikaNewMaterialGroups = TaktEcScopeRowGrain.BuildNewMaterialGroups(derivable, TaktEcDeptCodes.Mfg2, nikaDeptScope, null);
         _ = shouldAutoComplete;
         var applyNotRelatedAuto = TaktEcScopeConstants.AllowsNotRelatedFill(ecImplScope);
         var smtDeptName = await ResolveDeptNameAsync(TaktEcDeptCodes.Mtl);
@@ -308,10 +347,18 @@ public partial class TaktEcExecPersistence
                     lineNumber,
                     applyNotRelatedAuto: false,
                     masterDeptScope);
-                var smtGroupKey = TaktEcScopeRowGrain.BuildKey(detail, smtKind);
+                var smtGroupKey = TaktEcScopeRowGrain.BuildKey(detail, smtKind, TaktEcDeptCodes.Mtl);
                 if (smtRootGroups.TryGetValue(smtGroupKey, out var smtRootGroup))
                 {
                     exec.EcRootMaterialCodeGroup = smtRootGroup;
+                }
+                if (smtModelGroups.TryGetValue(smtGroupKey, out var smtModelGroup))
+                {
+                    exec.EcModelCodeGroup = smtModelGroup;
+                }
+                if (smtNewMaterialGroups.TryGetValue(smtGroupKey, out var smtNewMaterialGroup))
+                {
+                    exec.EcNewMaterialCodeGroup = smtNewMaterialGroup;
                 }
                 EnsureDeptName(exec, smtDeptName);
                 if (exec.IsObsolete == 1)
@@ -389,6 +436,14 @@ public partial class TaktEcExecPersistence
                 if (nikaModelGroups.TryGetValue(nikaGroupKey, out var nikaModelGroup))
                 {
                     exec.EcModelCodeGroup = nikaModelGroup;
+                }
+                if (nikaOldMaterialGroups.TryGetValue(nikaGroupKey, out var nikaOldMaterialGroup))
+                {
+                    exec.EcOldMaterialCodeGroup = nikaOldMaterialGroup;
+                }
+                if (nikaNewMaterialGroups.TryGetValue(nikaGroupKey, out var nikaNewMaterialGroup))
+                {
+                    exec.EcNewMaterialCodeGroup = nikaNewMaterialGroup;
                 }
                 EnsureDeptName(exec, pcbaDeptName);
                 if (exec.IsObsolete == 1)
@@ -527,9 +582,9 @@ public partial class TaktEcExecPersistence
     }
 
     /// <summary>
-    /// 停产与非 FERT 的冒号文案只写全仕向、部管里仍须人工实施的部门。内部、技术，以及部管下制二/制一/品管，保留实施范围自动文案。
-    /// 生管/制一/制二/品管按机种、按设变：停产行写 EOL，在产非 FERT 行写 HALB、ROH 或 HALB/ROH，二者都不并入在产成品的机种组与根物料组。
-    /// 按成品：当前成品停产写 EOL，否则非 FERT 写该类型。采购/受检/部管/物料始终按设变。
+    /// 停产与非 FERT 自动文案只写全仕向、部管里仍须人工实施的部门。内部、技术，以及部管下制二/制一/品管，保留实施范围自动文案。
+    /// 停产：执行内容为「实施范围:控制范围:EOL」，批次一律 EOL。
+    /// 不管理（非 FERT）：执行内容与批次只写 HALB/ROH，禁止「全仕向:按成品:HALB」这类三段文案。
     /// </summary>
     /// <param name="details">同一设变可派生明细</param>
     /// <param name="detail">本次保留的明细</param>
@@ -559,9 +614,16 @@ public partial class TaktEcExecPersistence
             && deptCode is TaktEcDeptCodes.Pc or TaktEcDeptCodes.Mfg2 or TaktEcDeptCodes.Mfg1 or TaktEcDeptCodes.Qc)
         {
             var finishedSuffix = TaktEcScopeRowGrain.FinishedProductExecSuffix(detail);
-            return string.IsNullOrEmpty(finishedSuffix)
-                ? null
-                : TaktEcScopeConstants.FormatScopeDeptExecContent(ecImplScope, ecControlScope, finishedSuffix);
+            if (string.IsNullOrEmpty(finishedSuffix))
+            {
+                return null;
+            }
+            if (string.Equals(finishedSuffix, TaktEcScopeConstants.EolExecContent, StringComparison.OrdinalIgnoreCase))
+            {
+                return TaktEcScopeConstants.FormatScopeDeptExecContent(ecImplScope, ecControlScope, TaktEcScopeConstants.EolExecContent);
+            }
+            // 不管理：只写根物料类型 HALB/ROH
+            return TaktEcScopeConstants.NonFertBatchMarker;
         }
         if (TaktEcScopeRowGrain.RootGroupAllDiscontinued(details, detail, deptCode, ecControlScope, fertRootKeys))
         {
@@ -573,9 +635,10 @@ public partial class TaktEcExecPersistence
             deptCode,
             ecControlScope,
             fertRootKeys);
+        // 不管理：只写根物料类型 HALB/ROH
         return string.IsNullOrEmpty(materialTypeSuffix)
             ? null
-            : TaktEcScopeConstants.FormatScopeDeptExecContent(ecImplScope, ecControlScope, materialTypeSuffix);
+            : TaktEcScopeConstants.NonFertBatchMarker;
     }
 
     /// <summary>
@@ -636,11 +699,13 @@ public partial class TaktEcExecPersistence
     }
 
     /// <summary>
-    /// 写入自动完成：实施、当天日期、预定批次与执行内容。
+    /// 写入自动完成：实施、当天日期、批次与执行内容。
+    /// 停产：执行内容为「全仕向:按成品:EOL」等三段文案，批次全部 EOL。
+    /// 不管理：执行内容与批次均为 HALB/ROH（禁止三段物料类型文案）。
     /// </summary>
     /// <param name="exec">部门执行实体</param>
     /// <param name="isNew">是否新建</param>
-    /// <param name="marker">执行内容（EOL 或无关）</param>
+    /// <param name="marker">停产三段文案，或不管理时的 HALB/ROH</param>
     private static void ApplyAutoCloseDeptExec(object exec, bool isNew, string marker)
     {
         if (exec is TaktEcMe)
@@ -656,43 +721,80 @@ public partial class TaktEcExecPersistence
         }
         ArgumentException.ThrowIfNullOrWhiteSpace(marker);
         var today = DateTime.Today;
+        var batchMarker = TaktEcScopeConstants.ResolveBatchMarkerFromExecContent(marker);
         TaktEcDeptEntityHelper.SetIsImplemented(exec, 1);
         TaktEcDeptEntityHelper.SetExecContent(exec, marker, overwrite: true);
         switch (exec)
         {
             case TaktEcPc row:
                 row.ScheduledDate = today;
-                row.ScheduledBatch = marker;
+                row.ScheduledBatch = batchMarker;
                 break;
             case TaktEcMc row:
                 row.ScheduledDate = today;
-                row.ScheduledBatch = marker;
+                row.ScheduledBatch = batchMarker;
+                row.OutboundDate = today;
+                row.OutboundBatch = batchMarker;
                 break;
-            case TaktEcPur row:
-                row.PurchaseOrderIssueDate = today;
+            case TaktEcPur:
                 break;
             case TaktEcIqc row:
                 row.InspectionDate = today;
                 break;
             case TaktEcMtl row:
                 row.ScheduledDate = today;
-                row.ScheduledBatch = marker;
+                row.ScheduledBatch = batchMarker;
+                row.OutboundDate = today;
+                row.OutboundBatch = batchMarker;
                 break;
             case TaktEcMfg2 row:
                 row.ScheduledDate = today;
-                row.ScheduledBatch = marker;
-                row.ImplementationBatch = marker;
+                row.ScheduledBatch = batchMarker;
+                row.ProductionBatch = batchMarker;
                 break;
             case TaktEcMfg1 row:
                 row.ScheduledDate = today;
-                row.ScheduledBatch = marker;
-                row.ImplementationBatch = marker;
+                row.ScheduledBatch = batchMarker;
+                row.ProductionBatch = batchMarker;
                 break;
             case TaktEcQc row:
-                row.ScheduledDate = today;
-                row.ScheduledBatch = marker;
+                row.InspectionDate = today;
+                row.InspectionBatch = batchMarker;
                 break;
         }
+    }
+
+    /// <summary>
+    /// 制技：同机种组内存在未停产 FERT → IsSopUpdated=0（须人工更新）；其余（非 FERT / 已停产）→ 1。
+    /// 已手填 SOP 日期或担当且标记已更新时不覆盖。
+    /// </summary>
+    /// <param name="row">制技执行行</param>
+    /// <param name="details">同一设变可派生明细</param>
+    /// <param name="detail">本次保留的明细</param>
+    /// <param name="ecControlScope">部门控制范围</param>
+    /// <param name="fertRootKeys">制一按成品 FERT 键（制技传 null）</param>
+    /// <param name="isNew">是否新建</param>
+    private static void ApplyMeSopUpdatedDefault(
+        TaktEcMe row,
+        IReadOnlyList<TaktEcDetail> details,
+        TaktEcDetail detail,
+        int ecControlScope,
+        IReadOnlySet<string>? fertRootKeys,
+        bool isNew)
+    {
+        if (!isNew
+            && row.IsSopUpdated == 1
+            && (row.SopDate != null || !string.IsNullOrWhiteSpace(row.SopLeader)))
+        {
+            return;
+        }
+        var needsManualSop = TaktEcScopeRowGrain.RootGroupHasActiveFert(
+            details,
+            detail,
+            TaktEcDeptCodes.Me,
+            ecControlScope,
+            fertRootKeys);
+        row.IsSopUpdated = needsManualSop ? 0 : 1;
     }
 
     /// <summary>
@@ -705,7 +807,7 @@ public partial class TaktEcExecPersistence
     {
         var marker = TaktEcMfg1Constants.NotRelatedBatch;
         var scheduled = row.ScheduledBatch?.Trim() ?? string.Empty;
-        var implementation = row.ImplementationBatch?.Trim() ?? string.Empty;
+        var implementation = row.ProductionBatch?.Trim() ?? string.Empty;
         var marked = string.Equals(scheduled, marker, StringComparison.Ordinal)
             && string.Equals(implementation, marker, StringComparison.Ordinal);
         var empty = scheduled.Length == 0 && implementation.Length == 0;
@@ -715,7 +817,7 @@ public partial class TaktEcExecPersistence
         }
         row.IsImplemented = 1;
         row.ScheduledBatch = marker;
-        row.ImplementationBatch = marker;
+        row.ProductionBatch = marker;
         if (row.ScheduledDate == null)
         {
             row.ScheduledDate = DateTime.Today;
@@ -730,10 +832,11 @@ public partial class TaktEcExecPersistence
     private static bool IsAssyNotRelatedDefault(TaktEcMfg1 row)
     {
         return TaktEcMfg1Constants.IsNotRelatedBatch(row.ScheduledBatch)
-            || TaktEcMfg1Constants.IsNotRelatedBatch(row.ImplementationBatch)
-            || TaktEcScopeConstants.IsDeptMaterialTypeExecContent(row.ScheduledBatch)
-            || TaktEcScopeConstants.IsDeptMaterialTypeExecContent(row.ImplementationBatch)
-            || TaktEcScopeConstants.IsDeptMaterialTypeExecContent(row.ExecContent);
+            || TaktEcMfg1Constants.IsNotRelatedBatch(row.ProductionBatch)
+            || TaktEcScopeConstants.IsAutoCloseBatchMarker(row.ScheduledBatch)
+            || TaktEcScopeConstants.IsAutoCloseBatchMarker(row.ProductionBatch)
+            || TaktEcScopeConstants.IsDeptMaterialTypeExecContent(row.ExecContent)
+            || TaktEcScopeConstants.IsEolExecContent(row.ExecContent);
     }
 
     /// <summary>
@@ -990,17 +1093,65 @@ public partial class TaktEcExecPersistence
     }
 
     /// <summary>
-    /// 按设变时写入制二的新物料编码组与上阶物料编码组
+    /// 写入旧物料编码组（生管/制一/制二/品管/采购）
     /// </summary>
     /// <param name="exec">部门执行实体</param>
-    /// <param name="newMaterialGroup">新物料编码组</param>
-    /// <param name="parentMaterialGroup">上阶物料编码组</param>
-    private static void AssignPcbaMaterialGroups(object exec, string newMaterialGroup, string parentMaterialGroup)
+    /// <param name="oldMaterialGroup">分号分隔的旧物料编码</param>
+    private static void AssignOldMaterialCodeGroup(object exec, string oldMaterialGroup)
     {
-        if (exec is TaktEcMfg2 row)
+        switch (exec)
         {
-            row.EcNewMaterialCodeGroup = newMaterialGroup;
-            row.EcParentMaterialCodeGroup = parentMaterialGroup;
+            case TaktEcPc row:
+                row.EcOldMaterialCodeGroup = oldMaterialGroup;
+                break;
+            case TaktEcMfg1 row:
+                row.EcOldMaterialCodeGroup = oldMaterialGroup;
+                break;
+            case TaktEcMfg2 row:
+                row.EcOldMaterialCodeGroup = oldMaterialGroup;
+                break;
+            case TaktEcQc row:
+                row.EcOldMaterialCodeGroup = oldMaterialGroup;
+                break;
+            case TaktEcPur row:
+                row.EcOldMaterialCodeGroup = oldMaterialGroup;
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 写入新物料编码组（生管/制一/制二/品管/采购）
+    /// </summary>
+    /// <param name="exec">部门执行实体</param>
+    /// <param name="newMaterialGroup">分号分隔的新物料编码</param>
+    private static void AssignNewMaterialCodeGroup(object exec, string newMaterialGroup)
+    {
+        switch (exec)
+        {
+            case TaktEcPc row:
+                row.EcNewMaterialCodeGroup = newMaterialGroup;
+                break;
+            case TaktEcMfg1 row:
+                row.EcNewMaterialCodeGroup = newMaterialGroup;
+                break;
+            case TaktEcMfg2 row:
+                row.EcNewMaterialCodeGroup = newMaterialGroup;
+                break;
+            case TaktEcQc row:
+                row.EcNewMaterialCodeGroup = newMaterialGroup;
+                break;
+            case TaktEcPur row:
+                row.EcNewMaterialCodeGroup = newMaterialGroup;
+                break;
+            case TaktEcMc row:
+                row.EcNewMaterialCodeGroup = newMaterialGroup;
+                break;
+            case TaktEcIqc row:
+                row.EcNewMaterialCodeGroup = newMaterialGroup;
+                break;
+            case TaktEcMtl row:
+                row.EcNewMaterialCodeGroup = newMaterialGroup;
+                break;
         }
     }
 
@@ -1191,7 +1342,7 @@ public partial class TaktEcExecPersistence
             TaktEcDeptCodes.Me => BuildTeEcModelSkipDetailIds(details),
             TaktEcDeptCodes.Pur => BuildMpSkipDetailIds(details),
             TaktEcDeptCodes.Iqc => BuildIqcSkipDetailIds(details),
-            TaktEcDeptCodes.Mc => BuildMcSkipDetailIds(details),
+            TaktEcDeptCodes.Mc => BuildMcSkipDetailIds(details, TaktEcControlScopeConstants.ByEngineeringChange),
             _ => []
         };
     }
@@ -1244,7 +1395,7 @@ public partial class TaktEcExecPersistence
     }
 
     /// <summary>
-    /// 采购课：采购类型 F 按设变去重（设变单号+新物料），非最大 Id 跳过
+    /// 采购课：采购类型 F 按设变单号去重一行，非最大 Id 跳过（新物料写入编码组）
     /// </summary>
     private static HashSet<long> BuildMpSkipDetailIds(IReadOnlyList<TaktEcDetail> details)
     {
@@ -1253,7 +1404,7 @@ public partial class TaktEcExecPersistence
             TaktEcScopeConstants.IsExternalPurchaseType(d.EcNewPurchaseType)
             && TaktEcScopeConstants.HasEffectiveNewMaterialCode(d.EcNewMaterialCode));
         foreach (var group in visible.GroupBy(
-            d => $"{d.EcCode}\u001f{d.EcNewMaterialCode}",
+            d => d.EcCode ?? string.Empty,
             StringComparer.OrdinalIgnoreCase))
         {
             var maxId = group.Max(x => x.Id);
@@ -1269,7 +1420,7 @@ public partial class TaktEcExecPersistence
     }
 
     /// <summary>
-    /// 受检课：新品检验为 1 按设变去重（设变单号+新物料），非最大 Id 跳过
+    /// 受检课：新品检验为 1 按设变单号去重一行，非最大 Id 跳过（新物料写入编码组）
     /// </summary>
     private static HashSet<long> BuildIqcSkipDetailIds(IReadOnlyList<TaktEcDetail> details)
     {
@@ -1278,7 +1429,7 @@ public partial class TaktEcExecPersistence
             d.EcNewRequiresInspection == 1
             && TaktEcScopeConstants.HasEffectiveNewMaterialCode(d.EcNewMaterialCode));
         foreach (var group in visible.GroupBy(
-            d => $"{d.EcCode}\u001f{d.EcNewMaterialCode}",
+            d => d.EcCode ?? string.Empty,
             StringComparer.OrdinalIgnoreCase))
         {
             var maxId = group.Max(x => x.Id);
@@ -1294,19 +1445,23 @@ public partial class TaktEcExecPersistence
     }
 
     /// <summary>
-    /// 部管课：同一设变、机种、行号、新物料只留一条，成品展开不重复落行
+    /// 部管课：F 非 C003 按传入控制范围去重，非最大 Id 跳过（新物料写入编码组）
     /// </summary>
-    private static HashSet<long> BuildMcSkipDetailIds(IReadOnlyList<TaktEcDetail> details)
+    /// <param name="details">明细</param>
+    /// <param name="ecControlScope">控制范围（按成品/按机种/按设变）</param>
+    private static HashSet<long> BuildMcSkipDetailIds(IReadOnlyList<TaktEcDetail> details, int ecControlScope)
     {
-        return TaktEcScopeRowGrain.BuildLineMaterialSkipIds(details, TaktEcDeptCodes.Mc, 0, null);
+        return TaktEcScopeRowGrain.BuildSkipIds(details, TaktEcDeptCodes.Mc, ecControlScope, null);
     }
 
     /// <summary>
-    /// SMT：同一设变、机种、行号、新物料只留一条，成品展开不重复落行
+    /// 物料：F+C003 按传入控制范围去重，非最大 Id 跳过（新物料写入编码组）
     /// </summary>
-    private static HashSet<long> BuildPcbaSmtSkipDetailIds(IReadOnlyList<TaktEcDetail> details)
+    /// <param name="details">明细</param>
+    /// <param name="ecControlScope">控制范围（按成品/按机种/按设变）</param>
+    private static HashSet<long> BuildPcbaSmtSkipDetailIds(IReadOnlyList<TaktEcDetail> details, int ecControlScope)
     {
-        return TaktEcScopeRowGrain.BuildLineMaterialSkipIds(details, TaktEcDeptCodes.Mtl, 0, null);
+        return TaktEcScopeRowGrain.BuildSkipIds(details, TaktEcDeptCodes.Mtl, ecControlScope, null);
     }
 
     /// <summary>

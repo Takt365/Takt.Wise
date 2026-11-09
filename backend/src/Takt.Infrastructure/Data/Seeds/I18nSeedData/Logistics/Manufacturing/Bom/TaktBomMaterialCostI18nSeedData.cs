@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Bom
 // 文件名称：TaktBomMaterialCostI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktBomMaterialCost 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -145,22 +145,22 @@ public class TaktBomMaterialCostI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.bommaterialcost.productmonthlycost", "zh-HK", "产品月成本_hk", "产品月成本（外部系统计算后的月成本；合计/重算/零价回填不得覆盖）"),
 
             // entity.bommaterialcost.productmonthlycalculation
-            new TranslationSeedItem("entity.bommaterialcost.productmonthlycalculation", "en-US", "产品月计算_us", "产品月计算（本系统按明细合计：生产相关=X、PCB SECT 标识为空、采购类型=F；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数）"),
+            new TranslationSeedItem("entity.bommaterialcost.productmonthlycalculation", "en-US", "产品月计算_us", "产品月计算（本系统按明细合计：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数）"),
             // entity.bommaterialcost.productmonthlycalculation
-            new TranslationSeedItem("entity.bommaterialcost.productmonthlycalculation", "ja-JP", "产品月计算_jp", "产品月计算（本系统按明细合计：生产相关=X、PCB SECT 标识为空、采购类型=F；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数）"),
+            new TranslationSeedItem("entity.bommaterialcost.productmonthlycalculation", "ja-JP", "产品月计算_jp", "产品月计算（本系统按明细合计：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数）"),
             // entity.bommaterialcost.productmonthlycalculation
-            new TranslationSeedItem("entity.bommaterialcost.productmonthlycalculation", "zh-CN", "产品月计算", "产品月计算（本系统按明细合计：生产相关=X、PCB SECT 标识为空、采购类型=F；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数）"),
+            new TranslationSeedItem("entity.bommaterialcost.productmonthlycalculation", "zh-CN", "产品月计算", "产品月计算（本系统按明细合计：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数）"),
             // entity.bommaterialcost.productmonthlycalculation
-            new TranslationSeedItem("entity.bommaterialcost.productmonthlycalculation", "zh-HK", "产品月计算_hk", "产品月计算（本系统按明细合计：生产相关=X、PCB SECT 标识为空、采购类型=F；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数）"),
+            new TranslationSeedItem("entity.bommaterialcost.productmonthlycalculation", "zh-HK", "产品月计算_hk", "产品月计算（本系统按明细合计：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数）"),
 
             // entity.bommaterialcost.latestpurchasecost
-            new TranslationSeedItem("entity.bommaterialcost.latestpurchasecost", "en-US", "最近采购成本_us", "最近采购成本（与产品月计算同一快照口径：生产相关=X、PCB SECT 标识为空、采购类型=F、用量 &gt; 0.001；行金额=组件数量×(净价÷采购价格单位)）"),
+            new TranslationSeedItem("entity.bommaterialcost.latestpurchasecost", "en-US", "最近采购成本_us", "最近采购成本（与产品月计算同一快照口径：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空、用量 &gt; 0.001；行金额=组件数量×(净价÷采购价格单位)）"),
             // entity.bommaterialcost.latestpurchasecost
-            new TranslationSeedItem("entity.bommaterialcost.latestpurchasecost", "ja-JP", "最近采购成本_jp", "最近采购成本（与产品月计算同一快照口径：生产相关=X、PCB SECT 标识为空、采购类型=F、用量 &gt; 0.001；行金额=组件数量×(净价÷采购价格单位)）"),
+            new TranslationSeedItem("entity.bommaterialcost.latestpurchasecost", "ja-JP", "最近采购成本_jp", "最近采购成本（与产品月计算同一快照口径：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空、用量 &gt; 0.001；行金额=组件数量×(净价÷采购价格单位)）"),
             // entity.bommaterialcost.latestpurchasecost
-            new TranslationSeedItem("entity.bommaterialcost.latestpurchasecost", "zh-CN", "最近采购成本", "最近采购成本（与产品月计算同一快照口径：生产相关=X、PCB SECT 标识为空、采购类型=F、用量 &gt; 0.001；行金额=组件数量×(净价÷采购价格单位)）"),
+            new TranslationSeedItem("entity.bommaterialcost.latestpurchasecost", "zh-CN", "最近采购成本", "最近采购成本（与产品月计算同一快照口径：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空、用量 &gt; 0.001；行金额=组件数量×(净价÷采购价格单位)）"),
             // entity.bommaterialcost.latestpurchasecost
-            new TranslationSeedItem("entity.bommaterialcost.latestpurchasecost", "zh-HK", "最近采购成本_hk", "最近采购成本（与产品月计算同一快照口径：生产相关=X、PCB SECT 标识为空、采购类型=F、用量 &gt; 0.001；行金额=组件数量×(净价÷采购价格单位)）"),
+            new TranslationSeedItem("entity.bommaterialcost.latestpurchasecost", "zh-HK", "最近采购成本_hk", "最近采购成本（与产品月计算同一快照口径：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空、用量 &gt; 0.001；行金额=组件数量×(净价÷采购价格单位)）"),
 
             // entity.bommaterialcost.currencycode
             new TranslationSeedItem("entity.bommaterialcost.currencycode", "en-US", "币种_us", "币种（字典 accounting_financial_currency_code；如 CNY/USD）"),
@@ -188,6 +188,15 @@ public class TaktBomMaterialCostI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.bommaterialcost.costingdate", "zh-CN", "核算日期", "核算日期（必须与本次成本合计/重算所用明细 TaktBomMaterialCostItem.CostingDate 一致；与 ProductCode 构成业务唯一键之一）"),
             // entity.bommaterialcost.costingdate
             new TranslationSeedItem("entity.bommaterialcost.costingdate", "zh-HK", "核算日期_hk", "核算日期（必须与本次成本合计/重算所用明细 TaktBomMaterialCostItem.CostingDate 一致；与 ProductCode 构成业务唯一键之一）"),
+
+            // entity.bommaterialcost.items
+            new TranslationSeedItem("entity.bommaterialcost.items", "en-US", "材料成本明细_us", "材料成本明细（按产品编码+核算日期关联；同工厂。子表不存主表 Id）"),
+            // entity.bommaterialcost.items
+            new TranslationSeedItem("entity.bommaterialcost.items", "ja-JP", "材料成本明细_jp", "材料成本明细（按产品编码+核算日期关联；同工厂。子表不存主表 Id）"),
+            // entity.bommaterialcost.items
+            new TranslationSeedItem("entity.bommaterialcost.items", "zh-CN", "材料成本明细", "材料成本明细（按产品编码+核算日期关联；同工厂。子表不存主表 Id）"),
+            // entity.bommaterialcost.items
+            new TranslationSeedItem("entity.bommaterialcost.items", "zh-HK", "材料成本明细_hk", "材料成本明细（按产品编码+核算日期关联；同工厂。子表不存主表 Id）"),
         };
     }
 

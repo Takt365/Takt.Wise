@@ -1364,6 +1364,18 @@ public class TaktQualityAssuranceService : TaktServiceBase, ITaktQualityAssuranc
             exp = exp.And(x => x.AssuranceMonth != null && x.AssuranceMonth.Contains(assuranceMonth));
         }
 
+        if (!string.IsNullOrWhiteSpace(queryDto?.AssuranceMonthStart))
+        {
+            var assuranceMonthStart = queryDto.AssuranceMonthStart.Trim();
+            exp = exp.And(x => x.AssuranceMonth != null && x.AssuranceMonth.CompareTo(assuranceMonthStart) >= 0);
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryDto?.AssuranceMonthEnd))
+        {
+            var assuranceMonthEnd = queryDto.AssuranceMonthEnd.Trim();
+            exp = exp.And(x => x.AssuranceMonth != null && x.AssuranceMonth.CompareTo(assuranceMonthEnd) <= 0);
+        }
+
         if (!string.IsNullOrWhiteSpace(queryDto?.CustomerName1))
         {
             var customerName1 = queryDto.CustomerName1;
@@ -1449,6 +1461,10 @@ public class TaktQualityAssuranceService : TaktServiceBase, ITaktQualityAssuranc
             return true;
         }
         if (!string.IsNullOrWhiteSpace(queryDto.AssuranceMonth))
+        {
+            return true;
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.AssuranceMonthStart) || !string.IsNullOrWhiteSpace(queryDto.AssuranceMonthEnd))
         {
             return true;
         }

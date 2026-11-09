@@ -96,7 +96,7 @@ export interface MaterialDocumentItem extends CompanyDtoBase {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 库存类型（字典 logistics_stock_type）
@@ -476,7 +476,7 @@ export interface MaterialDocumentItemQuery extends TaktPagedQuery {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 库存类型（字典 logistics_stock_type）
@@ -870,7 +870,7 @@ export interface MaterialDocumentItemCreate {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 库存类型（字典 logistics_stock_type）
@@ -1288,7 +1288,7 @@ export interface MaterialDocumentItemTemplate {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 库存类型（字典 logistics_stock_type）
@@ -1672,7 +1672,7 @@ export interface MaterialDocumentItemImport {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 库存类型（字典 logistics_stock_type）
@@ -2056,7 +2056,7 @@ export interface MaterialDocumentItemExport {
   /**
    * 批次
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 库存类型（字典 logistics_stock_type）

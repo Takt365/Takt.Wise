@@ -44,7 +44,7 @@ public class TaktAssyBatchDefectDto : TaktCompanyDtoBase
     /// <summary>
     /// 批次（统计维度）
     /// </summary>
-    public string BatchCode { get; set; } = string.Empty;
+    public string ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产日期组（与生产工单组一一对应，yyyy-MM-dd 逗号分隔，取同工单最早生产日期）
@@ -156,7 +156,7 @@ public class TaktAssyBatchDefectQueryDto : TaktPagedQuery
     /// <summary>
     /// 批次（统计维度）
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产日期组（与生产工单组一一对应，yyyy-MM-dd 逗号分隔，取同工单最早生产日期）
@@ -294,7 +294,7 @@ public class TaktAssyBatchDefectCreateDto
     /// 批次（统计维度）
     /// </summary>
     [Required(ErrorMessage = "批次（统计维度）不能为空")]
-    public string BatchCode { get; set; } = string.Empty;
+    public string ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产日期组（与生产工单组一一对应，yyyy-MM-dd 逗号分隔，取同工单最早生产日期）
@@ -460,7 +460,7 @@ public class TaktAssyBatchDefectTemplateDto
     /// <summary>
     /// 批次（统计维度）
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产日期组（与生产工单组一一对应，yyyy-MM-dd 逗号分隔，取同工单最早生产日期）
@@ -577,7 +577,7 @@ public class TaktAssyBatchDefectImportDto
     /// <summary>
     /// 批次（统计维度）
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产日期组（与生产工单组一一对应，yyyy-MM-dd 逗号分隔，取同工单最早生产日期）
@@ -695,7 +695,7 @@ public class TaktAssyBatchDefectExportDto
     /// <summary>
     /// 批次（统计维度）
     /// </summary>
-    public string BatchCode { get; set; } = string.Empty;
+    public string ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 生产日期组（与生产工单组一一对应，yyyy-MM-dd 逗号分隔，取同工单最早生产日期）

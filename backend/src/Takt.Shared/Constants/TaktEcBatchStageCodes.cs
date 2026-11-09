@@ -18,7 +18,7 @@ namespace Takt.Shared.Constants;
 public static class TaktEcBatchStageCodes
 {
     /// <summary>
-    /// 采购订单发行日期/采购订单号码（采购 Mp）
+    /// 进货日期（采购 Pur）
     /// </summary>
     public const string PurchaseOrder = "PurchaseOrder";
     /// <summary>
@@ -26,7 +26,7 @@ public static class TaktEcBatchStageCodes
     /// </summary>
     public const string Scheduled = "Scheduled";
     /// <summary>
-    /// 检验日期/受检单号（受检 Iqc）
+    /// 检验日期（受检 Iqc）
     /// </summary>
     public const string IncomingInspection = "IncomingInspection";
     /// <summary>

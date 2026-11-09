@@ -170,12 +170,12 @@
           <a-row :gutter="24">
             <a-col :span="12">
               <a-form-item
-                :label="pi.label('batchCode')"
-                name="batchCode"
+                :label="pi.label('prodBatch')"
+                name="prodBatch"
               >
                 <a-input
-                  v-model:value="formState.batchCode"
-                  :placeholder="pi.ph('batchCode')"
+                  v-model:value="formState.prodBatch"
+                  :placeholder="pi.ph('prodBatch')"
                   show-count
                   :maxlength="20"
                   allow-clear
@@ -1120,7 +1120,7 @@ const formContentClass = computed(() => (formFields.length > 10 ? 'takt-form-con
 /** 当前激活的 Tab key */
 const activeTab = ref('tab-0')
 /** CreateDto 字段名列表（与 formState 键对齐） */
-const formFields = ["tenantCode","companyCode","cultureCode","plantCode","lineNumber","lineId","parentLineId","lineDepth","movementType","autoCreatedFlag","materialCode","warehouseCode","batchCode","stockType","restrictedStockFlag","specialStock","supplierCode","customerCode","debitCreditIndicator","currencyCode","localCurrencyAmount","alternativeAmount","quantity","baseUnit","entryQuantity","entryUnit","poPriceQuantity","poPriceUnit","purchaseOrderCode","purchaseOrderItem","referenceDocumentYear","referenceDocumentCode","referenceDocumentItem","originalMaterialDocumentYear","originalMaterialDocumentCode","originalLineNumber","deliveryCompletedFlag","itemText","equipmentCode","goodsRecipient","unloadingPoint","businessAreaCode","controllingAreaCode","tradingPartnerBusinessArea","productionOrderCode","assetCode","assetSubCode","fiscalYear","postToPreviousPeriodFlag","postToPreviousYearFlag","accountingDocumentCode","accountingDocumentItem","revaluationDocumentCode","revaluationDocumentItem","reservationCode","reservationItem","finalIssueFlag","reservationQuantity","receivingMaterialCode","receivingPlantCode","receivingWarehouseCode","profitCenterCode","valuatedStockQuantity","totalValuatedStockValue","priceControl","manufacturerPartMaterialCode","mkpfReferenceCode","imDeliveryCode","imDeliveryItem","postedBy","isObsolete"]
+const formFields = ["tenantCode","companyCode","cultureCode","plantCode","lineNumber","lineId","parentLineId","lineDepth","movementType","autoCreatedFlag","materialCode","warehouseCode","prodBatch","stockType","restrictedStockFlag","specialStock","supplierCode","customerCode","debitCreditIndicator","currencyCode","localCurrencyAmount","alternativeAmount","quantity","baseUnit","entryQuantity","entryUnit","poPriceQuantity","poPriceUnit","purchaseOrderCode","purchaseOrderItem","referenceDocumentYear","referenceDocumentCode","referenceDocumentItem","originalMaterialDocumentYear","originalMaterialDocumentCode","originalLineNumber","deliveryCompletedFlag","itemText","equipmentCode","goodsRecipient","unloadingPoint","businessAreaCode","controllingAreaCode","tradingPartnerBusinessArea","productionOrderCode","assetCode","assetSubCode","fiscalYear","postToPreviousPeriodFlag","postToPreviousYearFlag","accountingDocumentCode","accountingDocumentItem","revaluationDocumentCode","revaluationDocumentItem","reservationCode","reservationItem","finalIssueFlag","reservationQuantity","receivingMaterialCode","receivingPlantCode","receivingWarehouseCode","profitCenterCode","valuatedStockQuantity","totalValuatedStockValue","priceControl","manufacturerPartMaterialCode","mkpfReferenceCode","imDeliveryCode","imDeliveryItem","postedBy","isObsolete"]
 
 
 

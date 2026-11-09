@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Defect
 // 文件名称：TaktAssyBatchDefectI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktAssyBatchDefect 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -99,14 +99,14 @@ public class TaktAssyBatchDefectI18nSeedData : ITaktSeedDataCoordinator
             // entity.assybatchdefect.prodcategory
             new TranslationSeedItem("entity.assybatchdefect.prodcategory", "zh-HK", "生产类别_hk", "生产类别（统计维度，字典 logistics_manufacturing_prod_category，存 DictValue：EPP/FPP/RWP/MDP/CPP）"),
 
-            // entity.assybatchdefect.batchcode
-            new TranslationSeedItem("entity.assybatchdefect.batchcode", "en-US", "批次_us", "批次（统计维度）"),
-            // entity.assybatchdefect.batchcode
-            new TranslationSeedItem("entity.assybatchdefect.batchcode", "ja-JP", "批次_jp", "批次（统计维度）"),
-            // entity.assybatchdefect.batchcode
-            new TranslationSeedItem("entity.assybatchdefect.batchcode", "zh-CN", "批次", "批次（统计维度）"),
-            // entity.assybatchdefect.batchcode
-            new TranslationSeedItem("entity.assybatchdefect.batchcode", "zh-HK", "批次_hk", "批次（统计维度）"),
+            // entity.assybatchdefect.prodbatch
+            new TranslationSeedItem("entity.assybatchdefect.prodbatch", "en-US", "批次_us", "批次（统计维度）"),
+            // entity.assybatchdefect.prodbatch
+            new TranslationSeedItem("entity.assybatchdefect.prodbatch", "ja-JP", "批次_jp", "批次（统计维度）"),
+            // entity.assybatchdefect.prodbatch
+            new TranslationSeedItem("entity.assybatchdefect.prodbatch", "zh-CN", "批次", "批次（统计维度）"),
+            // entity.assybatchdefect.prodbatch
+            new TranslationSeedItem("entity.assybatchdefect.prodbatch", "zh-HK", "批次_hk", "批次（统计维度）"),
 
             // entity.assybatchdefect.proddategroup
             new TranslationSeedItem("entity.assybatchdefect.proddategroup", "en-US", "生产日期组_us", "生产日期组（与生产工单组一一对应，yyyy-MM-dd 逗号分隔，取同工单最早生产日期）"),

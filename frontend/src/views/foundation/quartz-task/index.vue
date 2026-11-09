@@ -150,6 +150,9 @@
       @cancel="handleExecuteMonthCancel"
     >
       <a-form class="takt-generated-form" layout="horizontal" label-align="right">
+        <a-typography-text v-if="executeScopeText" type="secondary" class="mb-3 block">
+          {{ executeScopeText }}
+        </a-typography-text>
         <a-form-item :label="t('foundation.quartz-task.page.executeDb.targetDatabase')" required>
           <a-select
             v-model:value="executeTargetDatabase"
@@ -188,6 +191,9 @@
       @cancel="handleExecuteDbCancel"
     >
       <a-form class="takt-generated-form" layout="horizontal" label-align="right">
+        <a-typography-text v-if="executeScopeText" type="secondary" class="mb-3 block">
+          {{ executeScopeText }}
+        </a-typography-text>
         <a-form-item
           v-if="executeDbNeedsSource"
           :label="t('foundation.quartz-task.page.executeDb.sourceDatabase')"
@@ -596,6 +602,32 @@
         @success="handleImportSuccess"
       />
     </TaktModal>
+    <!-- 孤儿明细 / 空头凭证 -->
+    <TaktModal
+      v-model:open="relationVisible"
+      :title="t('foundation.quartz-task.page.relation.title')"
+      :use-viewport-size="false"
+      width="60vw"
+      :footer="null"
+    >
+      <div class="mb-3 flex items-center justify-between gap-3">
+        <a-radio-group v-model:value="relationKind" @change="handleRelationKindChange">
+          <a-radio-button value="orphan">{{ t('foundation.quartz-task.page.relation.orphan') }}</a-radio-button>
+          <a-radio-button value="empty">{{ t('foundation.quartz-task.page.relation.empty') }}</a-radio-button>
+        </a-radio-group>
+        <a-button type="primary" :loading="relationExporting" @click="handleRelationExport">
+          {{ t('foundation.quartz-task.page.relation.export') }}
+        </a-button>
+      </div>
+      <a-table
+        :columns="relationColumns"
+        :data-source="relationRows"
+        :loading="relationLoading"
+        :pagination="relationPagination"
+        :row-key="(row: QuartzRelationIssueRow) => row.rowKey || row.rowId"
+        @change="handleRelationTableChange"
+      />
+    </TaktModal>
     <!-- 列设置抽屉 -->
     <TaktColumnDrawer
       v-model:open="columnSettingVisible"
@@ -620,6 +652,7 @@ import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
+import { useTenantStore } from '@/stores/identity/useTenantStore'
 import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
 import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 import QuartzTaskForm from './components/QuartzTaskForm.vue'
@@ -635,8 +668,12 @@ import {
   exportQuartzTask,
   updateQuartzTaskStatus,
   executeQuartzTaskNow,
+  exportQuartzRelationIssue,
+  getQuartzRelationIssuePage,
 } from '@/api/foundation/quartzTask.api'
-import type { QuartzTask, QuartzTaskQuery } from '@/types/foundation/quartzTask.types'
+import type { QuartzRelationIssueRow, QuartzTask, QuartzTaskQuery } from '@/types/foundation/quartzTask.types'
+import { EventBus } from '@/utils/eventBus'
+import type { QuartzTaskExecutedEvent } from '@/types/foundation/quartzSignalR.types'
 import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
 import { taktExcelEntityNames } from '@/utils/naming'
 import { resolveExportDownloadFileName } from '@/utils/exportDownloadName'
@@ -720,6 +757,23 @@ const statusLoadingId = ref('')
 const executeSubmitting = ref(false)
 /** 当前待执行任务 */
 const executeTargetTask = ref<QuartzTask | null>(null)
+/** 当前登录公司与关联工厂 */
+const tenantStore = useTenantStore()
+/**
+ * 立即执行弹窗说明：本任务只过滤该任务所属公司与工厂
+ */
+const executeScopeText = computed(() => {
+  const company = (executeTargetTask.value?.companyCode || tenantStore.companyCode || '').trim()
+  const plant = (
+    executeTargetTask.value?.plantCode
+    || tenantStore.currentCompanyRelatedPlant
+    || ''
+  ).trim()
+  if (!company || !plant) {
+    return ''
+  }
+  return t('foundation.quartz-task.page.executeMonth.scope', { company, plant })
+})
 /** 核算月份弹窗 */
 const executeMonthVisible = ref(false)
 /** 核算月份 YYYY-MM */
@@ -732,6 +786,39 @@ const executeDbNeedsSource = ref(false)
 const executeSourceDatabase = ref<string | undefined>(undefined)
 /** 目标库 displayName */
 const executeTargetDatabase = ref<string | undefined>(undefined)
+/** 关系清单弹窗 */
+const relationVisible = ref(false)
+/** 关系清单加载 */
+const relationLoading = ref(false)
+/** 关系清单导出中 */
+const relationExporting = ref(false)
+/** 脚本文件名 */
+const relationScript = ref('')
+/** 源库 */
+const relationSourceDatabase = ref('')
+/** orphan 或 empty */
+const relationKind = ref<'orphan' | 'empty'>('orphan')
+/** 当前页 */
+const relationPage = ref(1)
+/** 每页条数 */
+const relationPageSize = ref(20)
+/** 总行数 */
+const relationTotal = ref(0)
+/** 当前页行 */
+const relationRows = ref<QuartzRelationIssueRow[]>([])
+/** 关系清单列 */
+const relationColumns = computed(() => [
+  { title: t('foundation.quartz-task.page.relation.businessCode'), dataIndex: 'businessCode' },
+  { title: t('foundation.quartz-task.page.relation.lineNumber'), dataIndex: 'lineNumber', width: 120 },
+  { title: t('foundation.quartz-task.page.relation.rowId'), dataIndex: 'rowId', width: 200 },
+])
+/** 关系清单分页 */
+const relationPagination = computed(() => ({
+  current: relationPage.value,
+  pageSize: relationPageSize.value,
+  total: relationTotal.value,
+  showSizeChanger: true,
+}))
 
 const {
   databaseInfoList,
@@ -877,7 +964,122 @@ onMounted(async () => {
   await ensureTaktPaginationConfigAsync()
   void dictDataStore.loadAllDictDataAsync()
   loadData()
+  EventBus.on('foundation:quartz-task:executed', handleQuartzExecuted)
 })
+onUnmounted(() => {
+  EventBus.off('foundation:quartz-task:executed', handleQuartzExecuted)
+})
+
+/**
+ * 从失败消息取出脚本与源库
+ * @param text 执行错误文本
+ * @returns { { script: string; sourceDatabase: string } | null } 可打开清单时返回定位信息
+ */
+function parseRelationMarker(text: string): { script: string; sourceDatabase: string } | null {
+  const matched = /QUARTZ_RELATION\|([^|\s]+)\|([^|\s]+)/.exec(text)
+  if (!matched?.[1] || !matched[2]) {
+    return null
+  }
+  return { script: matched[1], sourceDatabase: matched[2] }
+}
+
+/**
+ * 任务失败且带关系标记时打开清单
+ * @param event 执行完成事件
+ */
+function handleQuartzExecuted(event: QuartzTaskExecutedEvent): void {
+  if (event.executeStatus === 1) {
+    return
+  }
+  const parsed = parseRelationMarker(`${event.errorInfo || ''} ${event.executeMessage || ''}`)
+  if (!parsed) {
+    return
+  }
+  relationScript.value = parsed.script
+  relationSourceDatabase.value = parsed.sourceDatabase
+  relationKind.value = 'orphan'
+  relationPage.value = 1
+  relationVisible.value = true
+  void loadRelationPage()
+}
+
+/**
+ * 加载当前类型的一页问题行
+ */
+async function loadRelationPage(): Promise<void> {
+  if (!relationScript.value || !relationSourceDatabase.value) {
+    return
+  }
+  relationLoading.value = true
+  try {
+    const res = await getQuartzRelationIssuePage({
+      script: relationScript.value,
+      sourceDatabase: relationSourceDatabase.value,
+      issueKind: relationKind.value,
+      pageIndex: relationPage.value,
+      pageSize: relationPageSize.value,
+    })
+    relationRows.value = (res.data ?? []).map((row, index) => ({
+      ...row,
+      rowKey: `${row.issueKind}-${row.rowId}-${row.businessCode}-${row.lineNumber}-${index}`,
+    }))
+    relationTotal.value = res.total ?? 0
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error ?? '')
+    message.error(errMsg || t('common.feedback.load.data.failed'))
+    relationRows.value = []
+    relationTotal.value = 0
+  } finally {
+    relationLoading.value = false
+  }
+}
+
+/**
+ * 切换孤儿明细 / 空头凭证
+ */
+function handleRelationKindChange(): void {
+  relationPage.value = 1
+  void loadRelationPage()
+}
+
+/**
+ * 翻页
+ * @param pag 表格分页
+ */
+function handleRelationTableChange(pag: { current?: number; pageSize?: number }): void {
+  relationPage.value = pag.current ?? 1
+  relationPageSize.value = pag.pageSize ?? relationPageSize.value
+  void loadRelationPage()
+}
+
+/**
+ * 导出两类问题行
+ */
+async function handleRelationExport(): Promise<void> {
+  if (!relationScript.value) {
+    return
+  }
+  relationExporting.value = true
+  try {
+    const exportMeta = await exportQuartzRelationIssue(relationScript.value, relationSourceDatabase.value)
+    const blob = (exportMeta as { blob?: Blob }).blob ?? (exportMeta as unknown as Blob)
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${relationScript.value.replace(/\.sql$/i, '')}_relation.csv`
+    link.style.display = 'none'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    setTimeout(() => window.URL.revokeObjectURL(url), 100)
+    message.success(t('common.feedback.export.success', { target: t('foundation.quartz-task.page.relation.title') }))
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error ?? '')
+    message.error(errMsg || t('common.feedback.export.failed', { target: t('foundation.quartz-task.page.relation.title') }))
+  } finally {
+    relationExporting.value = false
+  }
+}
 
 /**
  * 构建列表标准文本列
@@ -1089,6 +1291,16 @@ async function submitExecuteNow(id: string, executeParams?: string): Promise<voi
 }
 
 /**
+ * 立即执行弹窗的默认核算月：上一个自然月
+ * @returns {string} yyyy-MM
+ */
+function buildPreviousCostingMonth(): string {
+  const now = new Date()
+  const previous = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+  return `${previous.getFullYear()}-${String(previous.getMonth() + 1).padStart(2, '0')}`
+}
+
+/**
  * 操作列：立即执行（按任务类型弹窗补参数）
  * @param record 行数据
  */
@@ -1100,9 +1312,7 @@ async function handleExecuteNow(record: QuartzTaskRowRecord): Promise<void> {
   }
   executeTargetTask.value = task
   if (needsBomCostingMonthPicker(task)) {
-    const now = new Date()
-    const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-    executeCostingMonth.value = month
+    executeCostingMonth.value = buildPreviousCostingMonth()
     const parsed = parseSyncExecuteDatabaseParams(task.executeParams)
     try {
       await loadDatabaseInfoList()

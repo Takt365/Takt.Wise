@@ -222,10 +222,10 @@ const rules = computed<Record<string, Rule[]>>(() => ({
       trigger: 'change'
     }
   ],
-  batchCode: [
+  prodBatch: [
     {
       required: true,
-      message: pi.ph('batchCode'),
+      message: pi.ph('prodBatch'),
       trigger: 'blur'
     }
   ],

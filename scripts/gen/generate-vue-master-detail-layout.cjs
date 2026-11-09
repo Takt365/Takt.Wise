@@ -52,6 +52,9 @@ const {
   buildChildPanelSummarySumFieldNames,
   entityI18nConstPrefix,
   buildAdvancedQueryFactoryBlock,
+  resolveListPeriodQuery,
+  buildListPeriodIndexFragments,
+  buildTaktQueryBarPeriodSuffix,
   entityI18nHookName,
   entityI18nComposableFileName,
   entityMasterContextComposableFileName,
@@ -578,8 +581,8 @@ ${buildFormTabsScopedStyleBlock(useFormTabs)}
  * @param {object[]} queryFields
  * @returns {string}
  */
-function buildChildPanelListQueryBlock(childPascal, masterFkField, entityPascal, queryFields) {
-  const block = buildServerPagedListQueryBlock(childPascal, queryFields);
+function buildChildPanelListQueryBlock(childPascal, masterFkField, entityPascal, queryFields, listPeriod = null) {
+  const block = buildServerPagedListQueryBlock(childPascal, queryFields, listPeriod);
   return block.replace(
     '    pageSize: pageSize.value,\n    ...overrides,',
     `    pageSize: pageSize.value,\n    ${masterFkField}: master${entityPascal}Id.value,\n    ...overrides,`,
@@ -762,11 +765,14 @@ function generateChildDetailPanelVue(ctx, child) {
   const masterPerm = String(permissionPrefix || ctx.permissionPrefix || '').replace(/:list$/, '');
   const childCaps = child.childCaps || detectApiCapabilities(child.childPascal, {});
   const queryFields = child.queryFields || [];
+  const listPeriod = resolveListPeriodQuery(queryFields);
+  const listPeriodFragments = buildListPeriodIndexFragments(listPeriod);
+  const queryBarPeriodSuffix = buildTaktQueryBarPeriodSuffix('    ', listPeriod);
   const queryInit = queryFields.map((f) => {
     const val = f.type === 'number' ? 'undefined as number | undefined' : "''";
     return `  ${f.name}: ${val},`;
   }).join('\n');
-  const queryFactoryBlock = buildAdvancedQueryFactoryBlock(child.childPascal, queryFields);
+  const queryFactoryBlock = buildAdvancedQueryFactoryBlock(child.childPascal, queryFields, listPeriod);
   const childI18nPrefix = entityI18nConstPrefix(child.childPascal);
   const entityScope = ctx.fields?.entityScope || 'company';
   const summaryParts = buildChildPanelSummaryParts(child, childI18nPrefix, entityScope);
@@ -815,6 +821,7 @@ function generateChildDetailPanelVue(ctx, child) {
     child.masterFkField,
     entityPascal,
     queryFields,
+    listPeriod,
   );
   if (!child.masterFkField) {
     console.warn(
@@ -962,8 +969,7 @@ function handleColumnSettingReset() {
       :placeholder="searchPlaceholder"
       :loading="loading"
       @search="handleSearch"
-      @reset="handleQueryReset"
-    />
+      @reset="handleQueryReset"${queryBarPeriodSuffix}
     <TaktToolsBar
       create-permission="${masterPerm}:create"
       update-permission="${masterPerm}:update"
@@ -1058,7 +1064,7 @@ ${queryDrawerBlock}${importModalBlock}
 import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { measureMasterDetailLrTableScrollY } from '@/composables/useTaktMasterDetailLrScrollY'
+${listPeriodFragments.importLine}import { measureMasterDetailLrTableScrollY } from '@/composables/useTaktMasterDetailLrScrollY'
 ${TAKT_FORM_MODAL_WIDTH_IMPORT}import { TAKT_TABLE_SCROLL_Y_MIN } from '@/utils/tableScroll'
 import { getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 ${excelImportLine ? `${excelImportLine}\n` : ''}${summaryParts.importLines ? `${summaryParts.importLines}\n` : ''}import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
@@ -1085,6 +1091,7 @@ const currentPage = ref(getTaktDefaultPageIndex())
 const pageSize = ref(getTaktDefaultPageSize())
 const total = ref(0)
 const queryKeyword = ref('')
+${listPeriodFragments.stateBlock}
 const selecmedRow = ref<${child.childType} | null>(null)
 const selecmedRows = ref<${child.childType}[]>([])
 const selecmedRowKeys = ref<(string | number)[]>([])
@@ -1259,7 +1266,7 @@ function handleSearch() {
 
 function handleQueryReset() {
   queryKeyword.value = ''
-  currentPage.value = getTaktDefaultPageIndex()
+${listPeriodFragments.resetLine}  currentPage.value = getTaktDefaultPageIndex()
   void loadData()
 }
 

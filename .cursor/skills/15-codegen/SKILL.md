@@ -98,6 +98,7 @@ node scripts/generate-all.cjs --Holiday --dry-run
 - [ ] 权限四处一致（16-permission-i18n）
 - [ ] entity.* i18n 种子与列标题 t('entity.*')
 - [ ] 树表/排除实体：13-vue-view + 14-vue-form 手工页
+- [ ] 单表/主子表查询栏期间：业务日期优先，否则创建日期；树表无期间
 - [ ] 12-crud 11 项能力 + 08 双端分页
 - [ ] 表单 TaktModal `:width="formModalWidthPx"`（`useTaktContentModalWidth`）；导入弹窗仍 `:width="600"`
 - [ ] 「xxx内容」表单为 takt-rich-editor（非 textarea）

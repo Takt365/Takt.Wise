@@ -5,7 +5,7 @@
 --   1) SalesCondition → Item → ScaleQuantity / ScaleValue
 --   2) SalesInvoice → Item
 --   3) SalesOrder → Item
---   4) PurchaseInfo → Item → ScaleQuantity / ScaleValue
+--   4) PurchaseCondition → Item → ScaleQuantity / ScaleValue
 --   5) PurchaseInvoice → Item
 --   6) PurchaseOrder → Item
 --   7) MaterialDocument → Item
@@ -36,7 +36,7 @@ INNER JOIN [dbo].[takt_logistics_sales_condition] AS H
 WHERE I.[is_deleted] = 0
   AND (I.[sales_condition_id] IS NULL OR I.[sales_condition_id] <> H.[id]);
 SET @n = @@ROWCOUNT;
-PRINT CONCAT(N'[SCR] item.sales_condition_id updated rows = ', @n);
+PRINT CONCAT(N'[SALES_CONDITION] item.sales_condition_id updated rows = ', @n);
 
 -- ScaleQuantity.sales_condition_item_id
 -- 键：tenant + company + plant + code + seq
@@ -53,7 +53,7 @@ INNER JOIN [dbo].[takt_logistics_sales_condition_item] AS I
 WHERE Q.[is_deleted] = 0
   AND (Q.[sales_condition_item_id] IS NULL OR Q.[sales_condition_item_id] <> I.[id]);
 SET @n = @@ROWCOUNT;
-PRINT CONCAT(N'[SCR] scale_quantity.sales_condition_item_id updated rows = ', @n);
+PRINT CONCAT(N'[SALES_CONDITION] scale_quantity.sales_condition_item_id updated rows = ', @n);
 
 -- ScaleValue.sales_condition_item_id
 UPDATE V
@@ -69,7 +69,7 @@ INNER JOIN [dbo].[takt_logistics_sales_condition_item] AS I
 WHERE V.[is_deleted] = 0
   AND (V.[sales_condition_item_id] IS NULL OR V.[sales_condition_item_id] <> I.[id]);
 SET @n = @@ROWCOUNT;
-PRINT CONCAT(N'[SCR] scale_value.sales_condition_item_id updated rows = ', @n);
+PRINT CONCAT(N'[SALES_CONDITION] scale_value.sales_condition_item_id updated rows = ', @n);
 
 -- ----------------------------------------
 -- 2. 销售发票：Item.sales_invoice_id
@@ -107,52 +107,52 @@ SET @n = @@ROWCOUNT;
 PRINT CONCAT(N'[SO] item.sales_order_id updated rows = ', @n);
 
 -- ----------------------------------------
--- 4. 采购信息：Item.purchase_info_id
---    键：tenant + company + plant + purchase_info_code
+-- 4. 采购条件：Item.purchase_condition_id
+--    键：tenant + company + plant + purchase_condition_code
 -- ----------------------------------------
 UPDATE I
-SET I.[purchase_info_id] = H.[id]
-FROM [dbo].[takt_logistics_procurement_purchase_info_item] AS I
-INNER JOIN [dbo].[takt_logistics_procurement_purchase_info] AS H
+SET I.[purchase_condition_id] = H.[id]
+FROM [dbo].[takt_logistics_procurement_purchase_condition_item] AS I
+INNER JOIN [dbo].[takt_logistics_procurement_purchase_condition] AS H
   ON H.[tenant_code] = I.[tenant_code]
  AND H.[company_code] = I.[company_code]
  AND LTRIM(RTRIM(H.[plant_code])) = LTRIM(RTRIM(I.[plant_code]))
- AND LTRIM(RTRIM(H.[purchase_info_code])) = LTRIM(RTRIM(I.[purchase_info_code]))
+ AND LTRIM(RTRIM(H.[purchase_condition_code])) = LTRIM(RTRIM(I.[purchase_condition_code]))
  AND H.[is_deleted] = 0
 WHERE I.[is_deleted] = 0
-  AND (I.[purchase_info_id] IS NULL OR I.[purchase_info_id] <> H.[id]);
+  AND (I.[purchase_condition_id] IS NULL OR I.[purchase_condition_id] <> H.[id]);
 SET @n = @@ROWCOUNT;
-PRINT CONCAT(N'[PIR] item.purchase_info_id updated rows = ', @n);
+PRINT CONCAT(N'[PURCHASE_CONDITION] item.purchase_condition_id updated rows = ', @n);
 
 UPDATE Q
-SET Q.[purchase_info_item_id] = I.[id]
-FROM [dbo].[takt_logistics_procurement_purchase_info_scale_quantity] AS Q
-INNER JOIN [dbo].[takt_logistics_procurement_purchase_info_item] AS I
+SET Q.[purchase_condition_item_id] = I.[id]
+FROM [dbo].[takt_logistics_procurement_purchase_condition_scale_quantity] AS Q
+INNER JOIN [dbo].[takt_logistics_procurement_purchase_condition_item] AS I
   ON I.[tenant_code] = Q.[tenant_code]
  AND I.[company_code] = Q.[company_code]
  AND LTRIM(RTRIM(I.[plant_code])) = LTRIM(RTRIM(Q.[plant_code]))
- AND LTRIM(RTRIM(I.[purchase_info_code])) = LTRIM(RTRIM(Q.[purchase_info_code]))
- AND I.[purchase_info_seq] = Q.[purchase_info_seq]
+ AND LTRIM(RTRIM(I.[purchase_condition_code])) = LTRIM(RTRIM(Q.[purchase_condition_code]))
+ AND I.[purchase_condition_seq] = Q.[purchase_condition_seq]
  AND I.[is_deleted] = 0
 WHERE Q.[is_deleted] = 0
-  AND (Q.[purchase_info_item_id] IS NULL OR Q.[purchase_info_item_id] <> I.[id]);
+  AND (Q.[purchase_condition_item_id] IS NULL OR Q.[purchase_condition_item_id] <> I.[id]);
 SET @n = @@ROWCOUNT;
-PRINT CONCAT(N'[PIR] scale_quantity.purchase_info_item_id updated rows = ', @n);
+PRINT CONCAT(N'[PURCHASE_CONDITION] scale_quantity.purchase_condition_item_id updated rows = ', @n);
 
 UPDATE V
-SET V.[purchase_info_item_id] = I.[id]
-FROM [dbo].[takt_logistics_procurement_purchase_info_scale_value] AS V
-INNER JOIN [dbo].[takt_logistics_procurement_purchase_info_item] AS I
+SET V.[purchase_condition_item_id] = I.[id]
+FROM [dbo].[takt_logistics_procurement_purchase_condition_scale_value] AS V
+INNER JOIN [dbo].[takt_logistics_procurement_purchase_condition_item] AS I
   ON I.[tenant_code] = V.[tenant_code]
  AND I.[company_code] = V.[company_code]
  AND LTRIM(RTRIM(I.[plant_code])) = LTRIM(RTRIM(V.[plant_code]))
- AND LTRIM(RTRIM(I.[purchase_info_code])) = LTRIM(RTRIM(V.[purchase_info_code]))
- AND I.[purchase_info_seq] = V.[purchase_info_seq]
+ AND LTRIM(RTRIM(I.[purchase_condition_code])) = LTRIM(RTRIM(V.[purchase_condition_code]))
+ AND I.[purchase_condition_seq] = V.[purchase_condition_seq]
  AND I.[is_deleted] = 0
 WHERE V.[is_deleted] = 0
-  AND (V.[purchase_info_item_id] IS NULL OR V.[purchase_info_item_id] <> I.[id]);
+  AND (V.[purchase_condition_item_id] IS NULL OR V.[purchase_condition_item_id] <> I.[id]);
 SET @n = @@ROWCOUNT;
-PRINT CONCAT(N'[PIR] scale_value.purchase_info_item_id updated rows = ', @n);
+PRINT CONCAT(N'[PURCHASE_CONDITION] scale_value.purchase_condition_item_id updated rows = ', @n);
 
 -- ----------------------------------------
 -- 5. 采购发票：Item.purchase_invoice_id

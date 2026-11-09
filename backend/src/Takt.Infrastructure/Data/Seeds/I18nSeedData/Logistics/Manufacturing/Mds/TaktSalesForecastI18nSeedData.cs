@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Mds
 // 文件名称：TaktSalesForecastI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSalesForecast 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -180,6 +180,15 @@ public class TaktSalesForecastI18nSeedData : ITaktSeedDataCoordinator
             // entity.salesforecast.materialdescription
             new TranslationSeedItem("entity.salesforecast.materialdescription", "zh-HK", "物料描述_hk", "物料描述（冗余：按 MaterialCode 取 TaktMaterialPlant.MaterialDescription联动）"),
 
+            // entity.salesforecast.plannedbatch
+            new TranslationSeedItem("entity.salesforecast.plannedbatch", "en-US", "计划批次_us", "计划批次（转入 MDS 后沿计划链下传，正式工单写入 ProdBatch）"),
+            // entity.salesforecast.plannedbatch
+            new TranslationSeedItem("entity.salesforecast.plannedbatch", "ja-JP", "计划批次_jp", "计划批次（转入 MDS 后沿计划链下传，正式工单写入 ProdBatch）"),
+            // entity.salesforecast.plannedbatch
+            new TranslationSeedItem("entity.salesforecast.plannedbatch", "zh-CN", "计划批次", "计划批次（转入 MDS 后沿计划链下传，正式工单写入 ProdBatch）"),
+            // entity.salesforecast.plannedbatch
+            new TranslationSeedItem("entity.salesforecast.plannedbatch", "zh-HK", "计划批次_hk", "计划批次（转入 MDS 后沿计划链下传，正式工单写入 ProdBatch）"),
+
             // entity.salesforecast.customercode
             new TranslationSeedItem("entity.salesforecast.customercode", "en-US", "客户编码_us", "客户编码（选项 TaktCustomers/options；汇总计划时可为空，DictValue=Id）"),
             // entity.salesforecast.customercode
@@ -217,13 +226,13 @@ public class TaktSalesForecastI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.salesforecast.plannergroupname", "zh-HK", "计划组名称_hk", "计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）"),
 
             // entity.salesforecast.totalquantity
-            new TranslationSeedItem("entity.salesforecast.totalquantity", "en-US", "计划总数量_us", "计划总数量（基本单位数量；通常汇总版本 002）"),
+            new TranslationSeedItem("entity.salesforecast.totalquantity", "en-US", "计划总数量_us", "计划总数量（各月最新版本数量之和）"),
             // entity.salesforecast.totalquantity
-            new TranslationSeedItem("entity.salesforecast.totalquantity", "ja-JP", "计划总数量_jp", "计划总数量（基本单位数量；通常汇总版本 002）"),
+            new TranslationSeedItem("entity.salesforecast.totalquantity", "ja-JP", "计划总数量_jp", "计划总数量（各月最新版本数量之和）"),
             // entity.salesforecast.totalquantity
-            new TranslationSeedItem("entity.salesforecast.totalquantity", "zh-CN", "计划总数量", "计划总数量（基本单位数量；通常汇总版本 002）"),
+            new TranslationSeedItem("entity.salesforecast.totalquantity", "zh-CN", "计划总数量", "计划总数量（各月最新版本数量之和）"),
             // entity.salesforecast.totalquantity
-            new TranslationSeedItem("entity.salesforecast.totalquantity", "zh-HK", "计划总数量_hk", "计划总数量（基本单位数量；通常汇总版本 002）"),
+            new TranslationSeedItem("entity.salesforecast.totalquantity", "zh-HK", "计划总数量_hk", "计划总数量（各月最新版本数量之和）"),
 
             // entity.salesforecast.totalamount
             new TranslationSeedItem("entity.salesforecast.totalamount", "en-US", "计划总金额_us", "计划总金额"),
@@ -280,13 +289,13 @@ public class TaktSalesForecastI18nSeedData : ITaktSeedDataCoordinator
             new TranslationSeedItem("entity.salesforecast.plandescription", "zh-HK", "计划说明_hk", "计划说明"),
 
             // entity.salesforecast.items
-            new TranslationSeedItem("entity.salesforecast.items", "en-US", "销售预测明细列表_us", "销售预测明细列表（主子表；一行=财年×月计划量 001/002/增减；维度在主表）"),
+            new TranslationSeedItem("entity.salesforecast.items", "en-US", "销售预测明细列表_us", "销售预测明细列表（主子表；一行=财年×月×版本，版本号 1～20；维度在主表）"),
             // entity.salesforecast.items
-            new TranslationSeedItem("entity.salesforecast.items", "ja-JP", "销售预测明细列表_jp", "销售预测明细列表（主子表；一行=财年×月计划量 001/002/增减；维度在主表）"),
+            new TranslationSeedItem("entity.salesforecast.items", "ja-JP", "销售预测明细列表_jp", "销售预测明细列表（主子表；一行=财年×月×版本，版本号 1～20；维度在主表）"),
             // entity.salesforecast.items
-            new TranslationSeedItem("entity.salesforecast.items", "zh-CN", "销售预测明细列表", "销售预测明细列表（主子表；一行=财年×月计划量 001/002/增减；维度在主表）"),
+            new TranslationSeedItem("entity.salesforecast.items", "zh-CN", "销售预测明细列表", "销售预测明细列表（主子表；一行=财年×月×版本，版本号 1～20；维度在主表）"),
             // entity.salesforecast.items
-            new TranslationSeedItem("entity.salesforecast.items", "zh-HK", "销售预测明细列表_hk", "销售预测明细列表（主子表；一行=财年×月计划量 001/002/增减；维度在主表）"),
+            new TranslationSeedItem("entity.salesforecast.items", "zh-HK", "销售预测明细列表_hk", "销售预测明细列表（主子表；一行=财年×月×版本，版本号 1～20；维度在主表）"),
         };
     }
 

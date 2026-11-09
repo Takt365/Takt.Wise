@@ -69,7 +69,7 @@ public class TaktCustomerComplaintItemDto : TaktCompanyDtoBase
     /// <summary>
     /// 批次号
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 不良项目类型（字典 logistics_quality_complaint_item_type）
@@ -213,7 +213,7 @@ public class TaktCustomerComplaintItemQueryDto : TaktPagedQuery
     /// <summary>
     /// 批次号
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 不良项目类型（字典 logistics_quality_complaint_item_type）
@@ -380,7 +380,7 @@ public class TaktCustomerComplaintItemCreateDto
     /// <summary>
     /// 批次号
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 不良项目类型（字典 logistics_quality_complaint_item_type）
@@ -596,7 +596,7 @@ public class TaktCustomerComplaintItemTemplateDto
     /// <summary>
     /// 批次号
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 不良项目类型（字典 logistics_quality_complaint_item_type）
@@ -739,7 +739,7 @@ public class TaktCustomerComplaintItemImportDto
     /// <summary>
     /// 批次号
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 不良项目类型（字典 logistics_quality_complaint_item_type）
@@ -888,7 +888,7 @@ public class TaktCustomerComplaintItemExportDto
     /// <summary>
     /// 批次号
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 不良项目类型（字典 logistics_quality_complaint_item_type）

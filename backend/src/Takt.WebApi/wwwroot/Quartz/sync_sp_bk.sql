@@ -20,7 +20,7 @@ DECLARE @tenant_code NVARCHAR(3) = N'{{TenantCode}}';
 DECLARE @company_code NVARCHAR(4) = N'{{CompanyCode}}';
 DECLARE @sync_user_id BIGINT = {{SyncUserId}};
 DECLARE @now DATETIME = GETDATE();
-DECLARE @apply_chunk INT = 20000;
+DECLARE @apply_chunk INT = 100000;
 DECLARE @merge_from_rn INT;
 DECLARE @merge_to_rn INT;
 DECLARE @merge_max_rn INT;
@@ -29,17 +29,76 @@ DECLARE @desc_updated INT = 0;
 
 -- =============================================================================
 -- QT_SYNC_SP_BK：销售条件主表物料描述回填（❌ 仅空字段，禁止全局覆盖）
--- 唯一写入目标：takt_logistics_sales_condition.material_description
---   （实体 TaktSalesCondition.MaterialDescription；Length=40）
+-- 顺序：先回填子表外键，再回填主表空物料描述
+--   1) sales_condition_item.sales_condition_id
+--   2) sales_condition_scale_quantity / scale_value.sales_condition_item_id
+--   3) sales_condition.material_description（Length=40；仅空）
 -- 来源只读：takt_logistics_materials_material_description
 --   语言优先：zh-CN → Z1 → ja-JP（与原 sync_desc 销售段一致）
--- ❌ 不回填：sales_condition_item / scale_* / 采购信息 / 机种目的地 / 规格型号长描述等
 -- ❌ 不改写：material_code、price_type、客户及其它业务列（仅顺带写 updated_by/updated_at）
 -- 规则：仅当目标 material_description 为空时写入；已有描述一律保留
 -- 本次写入合并到 ext_field：$._bk.sp = { at, material_description }
 -- 物料码匹配：trim + 18 位纯数字截末 10
 -- 建议：在 QT_SYNC_SP / 物料描述就绪之后执行
 -- =============================================================================
+
+-- ---------- ① 子表外键（业务键对齐后再写描述） ----------
+SET @dml_n = 1;
+WHILE @dml_n > 0
+BEGIN
+  UPDATE TOP (@apply_chunk) I
+  SET I.[sales_condition_id] = H.[id], I.[updated_by] = @sync_user_id, I.[updated_at] = @now
+  FROM [dbo].[takt_logistics_sales_condition_item] AS I
+  INNER JOIN [dbo].[takt_logistics_sales_condition] AS H
+    ON H.[tenant_code] = I.[tenant_code]
+   AND H.[company_code] = I.[company_code]
+   AND LTRIM(RTRIM(H.[plant_code])) = LTRIM(RTRIM(I.[plant_code]))
+   AND LTRIM(RTRIM(H.[sales_condition_code])) = LTRIM(RTRIM(I.[sales_condition_code]))
+   AND H.[is_deleted] = 0
+  WHERE I.[tenant_code] = @tenant_code
+    AND I.[company_code] = @company_code
+    AND I.[is_deleted] = 0
+    AND (I.[sales_condition_id] IS NULL OR I.[sales_condition_id] <> H.[id]);
+  SET @dml_n = @@ROWCOUNT;
+END
+SET @dml_n = 1;
+WHILE @dml_n > 0
+BEGIN
+  UPDATE TOP (@apply_chunk) Q
+  SET Q.[sales_condition_item_id] = I.[id], Q.[updated_by] = @sync_user_id, Q.[updated_at] = @now
+  FROM [dbo].[takt_logistics_sales_condition_scale_quantity] AS Q
+  INNER JOIN [dbo].[takt_logistics_sales_condition_item] AS I
+    ON I.[tenant_code] = Q.[tenant_code]
+   AND I.[company_code] = Q.[company_code]
+   AND LTRIM(RTRIM(I.[plant_code])) = LTRIM(RTRIM(Q.[plant_code]))
+   AND LTRIM(RTRIM(I.[sales_condition_code])) = LTRIM(RTRIM(Q.[sales_condition_code]))
+   AND I.[sales_condition_seq] = Q.[sales_condition_seq]
+   AND I.[is_deleted] = 0
+  WHERE Q.[tenant_code] = @tenant_code
+    AND Q.[company_code] = @company_code
+    AND Q.[is_deleted] = 0
+    AND (Q.[sales_condition_item_id] IS NULL OR Q.[sales_condition_item_id] <> I.[id]);
+  SET @dml_n = @@ROWCOUNT;
+END
+SET @dml_n = 1;
+WHILE @dml_n > 0
+BEGIN
+  UPDATE TOP (@apply_chunk) V
+  SET V.[sales_condition_item_id] = I.[id], V.[updated_by] = @sync_user_id, V.[updated_at] = @now
+  FROM [dbo].[takt_logistics_sales_condition_scale_value] AS V
+  INNER JOIN [dbo].[takt_logistics_sales_condition_item] AS I
+    ON I.[tenant_code] = V.[tenant_code]
+   AND I.[company_code] = V.[company_code]
+   AND LTRIM(RTRIM(I.[plant_code])) = LTRIM(RTRIM(V.[plant_code]))
+   AND LTRIM(RTRIM(I.[sales_condition_code])) = LTRIM(RTRIM(V.[sales_condition_code]))
+   AND I.[sales_condition_seq] = V.[sales_condition_seq]
+   AND I.[is_deleted] = 0
+  WHERE V.[tenant_code] = @tenant_code
+    AND V.[company_code] = @company_code
+    AND V.[is_deleted] = 0
+    AND (V.[sales_condition_item_id] IS NULL OR V.[sales_condition_item_id] <> I.[id]);
+  SET @dml_n = @@ROWCOUNT;
+END
 
 IF OBJECT_ID('tempdb..#mat_key') IS NOT NULL DROP TABLE #mat_key;
 IF OBJECT_ID('tempdb..#mat_desc') IS NOT NULL DROP TABLE #mat_desc;
@@ -117,8 +176,8 @@ INNER JOIN #mat_desc AS m
 CROSS APPLY (
   SELECT
     CASE
-      WHEN ISJSON(NULLIF(LTRIM(RTRIM(ISNULL(t.[ext_field], N''))), N'')) = 1
-      THEN LTRIM(RTRIM(t.[ext_field]))
+      WHEN ISJSON(NULLIF(LTRIM(RTRIM(CAST(ISNULL(t.[ext_field], N'') AS nvarchar(max)))), N'')) = 1
+      THEN LTRIM(RTRIM(CAST(t.[ext_field] AS nvarchar(max))))
       ELSE N'{}'
     END AS [base_ext]
 ) AS e0

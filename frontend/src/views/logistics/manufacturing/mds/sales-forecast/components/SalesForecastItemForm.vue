@@ -2,7 +2,7 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/mds/sales-forecast/components -->
 <!-- 文件名称：SalesForecastItemForm.vue -->
-<!-- 功能描述：Takt销售预测实体子表 salesForecastItem 独立 CRUD 弹窗表单；defineExpose validate/getValues/resetFields。由 generate-vue-master-detail-from-api.cjs 生成，风格与主表 *-form 一致 -->
+<!-- 功能描述：Takt销售预测实体子表 salesForecastItem 独立 CRUD 弹窗表单；defineExpose validate/getValues/resetFields。由 generate-vue-master-detail-from-api.cjs 生成，风格与主表 *Form 一致 -->
 <!-- 版权信息：Copyright (c) 2025 Takt  All rights reserved. -->
 <!-- ======================================== -->
 
@@ -15,22 +15,214 @@
     layout="horizontal"
     label-align="right"
   >
-    <a-tabs
+    <TaktFormTabs
       v-model:active-key="activeTab"
       class="sales-forecast-item-form-tabs"
     >
       <a-tab-pane
         key="tab-0"
-        :tab="t('common.page.form.tabs.basicinfo')"
+        :tab="t('common.page.form.tabs.basicinfo') + ' (1/3)'"
         force-render
       >
         <div :class="formContentClass">
           <a-row :gutter="24">
-
+            <a-col :span="12">
+              <a-form-item
+                :label="pi.label('plantCode')"
+                name="plantCode"
+              >
+                <TaktSelect
+                  v-model:value="formState.plantCode"
+                  api-url="TaktPlants/options"
+                  :placeholder="pi.ph('plantCode')"
+                  disabled
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
+                :label="pi.label('cultureCode')"
+                name="cultureCode"
+              >
+                <TaktSelect
+                  v-model:value="formState.cultureCode"
+                  dict-type="sys_culture_code"
+                  :placeholder="pi.ph('cultureCode')"
+                  disabled
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
+                :label="pi.label('lineNumber')"
+                name="lineNumber"
+              >
+                <a-input-number
+                  v-model:value="formState.lineNumber"
+                  :placeholder="pi.ph('lineNumber')"
+                  style="width: 100%"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
+                :label="pi.label('fiscalYear')"
+                name="fiscalYear"
+              >
+                <TaktSelect
+                  v-model:value="formState.fiscalYear"
+                  api-url="TaktFinancialPeriods/options"
+                  :placeholder="pi.ph('fiscalYear')"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
+                :label="pi.label('planMonth')"
+                name="planMonth"
+              >
+                <a-input-number
+                  v-model:value="formState.planMonth"
+                  :placeholder="pi.ph('planMonth')"
+                  style="width: 100%"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
+                :label="pi.label('versionNo')"
+                name="versionNo"
+              >
+                <a-input-number
+                  v-model:value="formState.versionNo"
+                  :placeholder="pi.ph('versionNo')"
+                  style="width: 100%"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
+                :label="pi.label('planQuantity')"
+                name="planQuantity"
+              >
+                <a-input-number
+                  v-model:value="formState.planQuantity"
+                  :placeholder="pi.ph('planQuantity')"
+                  style="width: 100%"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
+                :label="pi.label('planQuantityDelta')"
+                name="planQuantityDelta"
+              >
+                <a-input-number
+                  v-model:value="formState.planQuantityDelta"
+                  :placeholder="pi.ph('planQuantityDelta')"
+                  style="width: 100%"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
+                :label="pi.label('convertedQuantity')"
+                name="convertedQuantity"
+              >
+                <a-input-number
+                  v-model:value="formState.convertedQuantity"
+                  :placeholder="pi.ph('convertedQuantity')"
+                  style="width: 100%"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
+                :label="pi.label('estimatedUnitPrice')"
+                name="estimatedUnitPrice"
+              >
+                <a-input-number
+                  v-model:value="formState.estimatedUnitPrice"
+                  :placeholder="pi.ph('estimatedUnitPrice')"
+                  style="width: 100%"
+                />
+              </a-form-item>
+            </a-col>
           </a-row>
         </div>
       </a-tab-pane>
-    </a-tabs>
+      <a-tab-pane
+        key="tab-1"
+        :tab="t('common.page.form.tabs.basicinfo') + ' (2/3)'"
+        force-render
+      >
+        <div :class="formContentClass">
+          <a-row :gutter="24">
+            <a-col :span="12">
+              <a-form-item
+                :label="pi.label('estimatedAmount')"
+                name="estimatedAmount"
+              >
+                <a-input-number
+                  v-model:value="formState.estimatedAmount"
+                  :placeholder="pi.ph('estimatedAmount')"
+                  style="width: 100%"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
+                :label="pi.label('isObsolete')"
+                name="isObsolete"
+              >
+                <TaktSelect
+                  v-model:value="formState.isObsolete"
+                  dict-type="sys_yes_no"
+                  :placeholder="pi.ph('isObsolete')"
+                />
+              </a-form-item>
+            </a-col>
+          </a-row>
+        </div>
+      </a-tab-pane>
+      <a-tab-pane
+        key="tab-2"
+        :tab="t('common.page.form.tabs.basicinfo') + ' (3/3)'"
+        force-render
+      >
+        <div :class="formContentClass">
+          <a-row :gutter="24">
+            <a-col :span="12">
+              <a-form-item
+                :label="pi.label('tenantCode')"
+                name="tenantCode"
+              >
+                <a-input
+                  v-model:value="formState.tenantCode"
+                  :placeholder="pi.ph('tenantCode')"
+                  show-count
+                  :maxlength="20"
+                  disabled
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
+                :label="pi.label('companyCode')"
+                name="companyCode"
+              >
+                <TaktSelect
+                  v-model:value="formState.companyCode"
+                  api-url="TaktCompanies/options"
+                  :placeholder="pi.ph('companyCode')"
+                  disabled
+                />
+              </a-form-item>
+            </a-col>
+          </a-row>
+        </div>
+      </a-tab-pane>
+    </TaktFormTabs>
   </a-form>
 </template>
 
@@ -39,6 +231,7 @@
  * Takt销售预测实体子表 salesForecastItem 维护表单 · 由 generate-vue-master-detail-from-api.cjs 生成
  * @module views/logistics/manufacturing/mds/sales-forecast/components
  */
+
 import { useI18n } from 'vue-i18n'
 import type { Rule } from 'ant-design-vue/es/form'
 import { useSalesForecastItemI18n } from '../composables/useSalesForecastItemI18n'
@@ -47,15 +240,48 @@ import { useSalesForecastItemI18n } from '../composables/useSalesForecastItemI18
 const pi = useSalesForecastItemI18n()
 
 import type { SalesForecastItemCreate } from '@/types/logistics/manufacturing/mds/salesForecastItem.types'
+import { useDictDataStore } from '@/stores/foundation/useDictDataStore'
+import { useTenantStore } from '@/stores/identity/useTenantStore'
+import { useUserStore } from '@/stores/identity/useUserStore'
 
 /** i18n 翻译函数 */
 const { t } = useI18n()
+
+/** Pinia：租户上下文 */
+const tenantStore = useTenantStore()
+/** Pinia：用户上下文（当前公司 CultureCode 注入源） */
+const userStore = useUserStore()
+
+/**
+ * 上下文隔离字段：租户 / 公司 / CultureCode / PlantCode（登录或公司切换注入；工厂可选改）
+ * @param target 表单数据
+ * @param force 为 true 时强制覆盖（新增态或上下文切换）
+ */
+function applyScopeDefaults(target: Record<string, unknown>, force = false) {
+  if (force || !target.tenantCode) {
+    target.tenantCode = tenantStore.tenantCode
+  }
+  if (force || !target.companyCode) {
+    target.companyCode = tenantStore.companyCode
+  }
+  if (force || !target.cultureCode) {
+    target.cultureCode = userStore.userInfo?.companyDefaultCulture ?? userStore.userInfo?.cultureCode ?? ''
+  }
+  if (force || !target.plantCode) {
+    const nextPlant = tenantStore.currentCompanyRelatedPlant || ''
+    if (nextPlant) {
+      target.plantCode = nextPlant
+    }
+  }
+}
 /** 表单内容区高度 class（字段多时 tab-10 行） */
 const formContentClass = computed(() => (formFields.length > 10 ? 'takt-form-content-rows-10' : 'takt-form-content-rows-5'))
 /** 当前激活的 Tab key */
 const activeTab = ref('tab-0')
 /** CreateDto 字段名列表（与 formState 键对齐） */
-const formFields = []
+const formFields = ["tenantCode","companyCode","cultureCode","plantCode","lineNumber","fiscalYear","planMonth","versionNo","planQuantity","planQuantityDelta","convertedQuantity","estimatedUnitPrice","estimatedAmount","isObsolete"]
+
+
 
 /** 父级传入的编辑 DTO；新增时为 undefined 或空对象 */
 interface Props {
@@ -84,6 +310,16 @@ function applyFormDefaults(target: Record<string, unknown>) {
   void target
 }
 
+/** Pinia：字典缓存（TaktSelect dict-type 渲染前预热，避免选项空白） */
+const dictDataStore = useDictDataStore()
+
+/** 表单挂载时预加载全量字典 */
+onMounted(() => {
+  void dictDataStore.loadAllDictDataAsync()
+})
+
+
+
 /** 编辑态灌入 formData；新增态恢复默认值（须含 salesForecastItemId 才视为编辑） */
 watch(
   () => props.formData,
@@ -92,6 +328,7 @@ watch(
       const next = { ...val } as Record<string, unknown>
       Object.keys(formState).forEach((k) => delete formState[k])
 
+      applyScopeDefaults(next)
       Object.assign(formState, next)
       formRef.value?.clearValidate()
     } else {
@@ -100,15 +337,149 @@ watch(
         Object.assign(formState, val)
       }
       applyFormDefaults(formState)
+      applyScopeDefaults(formState as Record<string, unknown>, true)
       formRef.value?.clearValidate()
     }
   },
   { immediate: true }
 )
 
+/** 公司/租户切换时，新增态表单同步隔离字段 */
+watch(
+  () => [tenantStore.tenantCode, tenantStore.companyCode, userStore.userInfo?.companyDefaultCulture, tenantStore.currentCompanyRelatedPlant] as const,
+  () => {
+    if (!props.formData?.salesForecastItemId) {
+      applyScopeDefaults(formState, true)
+    }
+  },
+)
+
 /** 表单校验规则（与 FluentValidation 必填对齐） */
 const rules = computed<Record<string, Rule[]>>(() => ({
-
+  lineNumber: [{
+    validator: async (_rule, value) => {
+      if (value === undefined || value === null || value === '') {
+        return Promise.reject(pi.ph('lineNumber'))
+      }
+      const num = typeof value === 'number' ? value : Number(value)
+      if (!Number.isFinite(num)) {
+        return Promise.reject(pi.ph('lineNumber'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change'
+  }],
+  fiscalYear: [
+    {
+      required: true,
+      message: pi.ph('fiscalYear'),
+      trigger: 'change'
+    }
+  ],
+  planMonth: [{
+    validator: async (_rule, value) => {
+      if (value === undefined || value === null || value === '') {
+        return Promise.reject(pi.ph('planMonth'))
+      }
+      const num = typeof value === 'number' ? value : Number(value)
+      if (!Number.isFinite(num)) {
+        return Promise.reject(pi.ph('planMonth'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change'
+  }],
+  versionNo: [{
+    validator: async (_rule, value) => {
+      if (value === undefined || value === null || value === '') {
+        return Promise.reject(pi.ph('versionNo'))
+      }
+      const num = typeof value === 'number' ? value : Number(value)
+      if (!Number.isFinite(num)) {
+        return Promise.reject(pi.ph('versionNo'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change'
+  }],
+  planQuantity: [{
+    validator: async (_rule, value) => {
+      if (value === undefined || value === null || value === '') {
+        return Promise.reject(pi.ph('planQuantity'))
+      }
+      const num = typeof value === 'number' ? value : Number(value)
+      if (!Number.isFinite(num)) {
+        return Promise.reject(pi.ph('planQuantity'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change'
+  }],
+  planQuantityDelta: [{
+    validator: async (_rule, value) => {
+      if (value === undefined || value === null || value === '') {
+        return Promise.reject(pi.ph('planQuantityDelta'))
+      }
+      const num = typeof value === 'number' ? value : Number(value)
+      if (!Number.isFinite(num)) {
+        return Promise.reject(pi.ph('planQuantityDelta'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change'
+  }],
+  convertedQuantity: [{
+    validator: async (_rule, value) => {
+      if (value === undefined || value === null || value === '') {
+        return Promise.reject(pi.ph('convertedQuantity'))
+      }
+      const num = typeof value === 'number' ? value : Number(value)
+      if (!Number.isFinite(num)) {
+        return Promise.reject(pi.ph('convertedQuantity'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change'
+  }],
+  estimatedUnitPrice: [{
+    validator: async (_rule, value) => {
+      if (value === undefined || value === null || value === '') {
+        return Promise.reject(pi.ph('estimatedUnitPrice'))
+      }
+      const num = typeof value === 'number' ? value : Number(value)
+      if (!Number.isFinite(num)) {
+        return Promise.reject(pi.ph('estimatedUnitPrice'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change'
+  }],
+  estimatedAmount: [{
+    validator: async (_rule, value) => {
+      if (value === undefined || value === null || value === '') {
+        return Promise.reject(pi.ph('estimatedAmount'))
+      }
+      const num = typeof value === 'number' ? value : Number(value)
+      if (!Number.isFinite(num)) {
+        return Promise.reject(pi.ph('estimatedAmount'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change'
+  }],
+  isObsolete: [{
+    validator: async (_rule, value) => {
+      if (value === undefined || value === null || value === '') {
+        return Promise.reject(pi.ph('isObsolete'))
+      }
+      const num = typeof value === 'number' ? value : Number(value)
+      if (!Number.isFinite(num)) {
+        return Promise.reject(pi.ph('isObsolete'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change'
+  }],
 }))
 
 /** 校验表单（失败 throw，供父级 handleFormSubmit 捕获） */
@@ -120,10 +491,106 @@ async function validate() {
 /** 映射为 Create/Update DTO（含主表外键 salesForecastId） */
 function getValues(): Record<string, any> {
   const payload = { ...formState }
+  if ('lineNumber' in payload) {
+    const rawlineNumber = payload.lineNumber
+    if (rawlineNumber === undefined || rawlineNumber === null || rawlineNumber === '') {
+      delete payload.lineNumber
+    } else {
+      const numlineNumber = typeof rawlineNumber === 'number' ? rawlineNumber : Number(rawlineNumber)
+      if (Number.isFinite(numlineNumber)) payload.lineNumber = numlineNumber
+      else delete payload.lineNumber
+    }
+  }
+  if ('planMonth' in payload) {
+    const rawplanMonth = payload.planMonth
+    if (rawplanMonth === undefined || rawplanMonth === null || rawplanMonth === '') {
+      delete payload.planMonth
+    } else {
+      const numplanMonth = typeof rawplanMonth === 'number' ? rawplanMonth : Number(rawplanMonth)
+      if (Number.isFinite(numplanMonth)) payload.planMonth = numplanMonth
+      else delete payload.planMonth
+    }
+  }
+  if ('versionNo' in payload) {
+    const rawversionNo = payload.versionNo
+    if (rawversionNo === undefined || rawversionNo === null || rawversionNo === '') {
+      delete payload.versionNo
+    } else {
+      const numversionNo = typeof rawversionNo === 'number' ? rawversionNo : Number(rawversionNo)
+      if (Number.isFinite(numversionNo)) payload.versionNo = numversionNo
+      else delete payload.versionNo
+    }
+  }
+  if ('planQuantity' in payload) {
+    const rawplanQuantity = payload.planQuantity
+    if (rawplanQuantity === undefined || rawplanQuantity === null || rawplanQuantity === '') {
+      delete payload.planQuantity
+    } else {
+      const numplanQuantity = typeof rawplanQuantity === 'number' ? rawplanQuantity : Number(rawplanQuantity)
+      if (Number.isFinite(numplanQuantity)) payload.planQuantity = numplanQuantity
+      else delete payload.planQuantity
+    }
+  }
+  if ('planQuantityDelta' in payload) {
+    const rawplanQuantityDelta = payload.planQuantityDelta
+    if (rawplanQuantityDelta === undefined || rawplanQuantityDelta === null || rawplanQuantityDelta === '') {
+      delete payload.planQuantityDelta
+    } else {
+      const numplanQuantityDelta = typeof rawplanQuantityDelta === 'number' ? rawplanQuantityDelta : Number(rawplanQuantityDelta)
+      if (Number.isFinite(numplanQuantityDelta)) payload.planQuantityDelta = numplanQuantityDelta
+      else delete payload.planQuantityDelta
+    }
+  }
+  if ('convertedQuantity' in payload) {
+    const rawconvertedQuantity = payload.convertedQuantity
+    if (rawconvertedQuantity === undefined || rawconvertedQuantity === null || rawconvertedQuantity === '') {
+      delete payload.convertedQuantity
+    } else {
+      const numconvertedQuantity = typeof rawconvertedQuantity === 'number' ? rawconvertedQuantity : Number(rawconvertedQuantity)
+      if (Number.isFinite(numconvertedQuantity)) payload.convertedQuantity = numconvertedQuantity
+      else delete payload.convertedQuantity
+    }
+  }
+  if ('estimatedUnitPrice' in payload) {
+    const rawestimatedUnitPrice = payload.estimatedUnitPrice
+    if (rawestimatedUnitPrice === undefined || rawestimatedUnitPrice === null || rawestimatedUnitPrice === '') {
+      delete payload.estimatedUnitPrice
+    } else {
+      const numestimatedUnitPrice = typeof rawestimatedUnitPrice === 'number' ? rawestimatedUnitPrice : Number(rawestimatedUnitPrice)
+      if (Number.isFinite(numestimatedUnitPrice)) payload.estimatedUnitPrice = numestimatedUnitPrice
+      else delete payload.estimatedUnitPrice
+    }
+  }
+  if ('estimatedAmount' in payload) {
+    const rawestimatedAmount = payload.estimatedAmount
+    if (rawestimatedAmount === undefined || rawestimatedAmount === null || rawestimatedAmount === '') {
+      delete payload.estimatedAmount
+    } else {
+      const numestimatedAmount = typeof rawestimatedAmount === 'number' ? rawestimatedAmount : Number(rawestimatedAmount)
+      if (Number.isFinite(numestimatedAmount)) payload.estimatedAmount = numestimatedAmount
+      else delete payload.estimatedAmount
+    }
+  }
+  if ('isObsolete' in payload) {
+    const rawisObsolete = payload.isObsolete
+    if (rawisObsolete === undefined || rawisObsolete === null || rawisObsolete === '') {
+      delete payload.isObsolete
+    } else {
+      const numisObsolete = typeof rawisObsolete === 'number' ? rawisObsolete : Number(rawisObsolete)
+      if (Number.isFinite(numisObsolete)) payload.isObsolete = numisObsolete
+      else delete payload.isObsolete
+    }
+  }
   if ('sortOrder' in payload) delete payload.sortOrder
+  if (!payload.plantCode) {
+    // 只读工厂：未注入时勿提交空串触发 FluentValidation
+    const scopedPlant = (typeof tenantStore !== 'undefined' && tenantStore.currentCompanyRelatedPlant) || ''
+    if (scopedPlant) payload.plantCode = scopedPlant
+  }
 
   if (props.formData?.salesForecastItemId) {
     payload.salesForecastItemId = props.formData.salesForecastItemId
+    delete payload.numberingRuleCode
   }
   payload.salesForecastId = props.masterId
   // 主表冗余码/名：左侧选中行回填（后端 Stamp 仍按主表 FK 兜底；不限人事）
@@ -156,6 +623,7 @@ function resetFields() {
     Object.assign(formState, props.formData)
   }
   applyFormDefaults(formState)
+  applyScopeDefaults(formState as Record<string, unknown>, !props.formData?.salesForecastItemId)
   activeTab.value = 'tab-0'
   formRef.value?.clearValidate()
 }

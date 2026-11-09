@@ -15,7 +15,7 @@ using Takt.Shared.Models;
 namespace Takt.Application.Dtos.Logistics.Manufacturing.Bom;
 
 /// <summary>
-/// 机种成本推移查询（工厂 + 期间 + 物料类型；机种可空=全部机种）
+/// 机种成本推移查询（工厂 + 期间；物料类型、机种可空=全部）
 /// </summary>
 public class TaktBomModelCostTrendQueryDto : TaktPagedQuery
 {
@@ -30,7 +30,7 @@ public class TaktBomModelCostTrendQueryDto : TaktPagedQuery
     public string? ModelCode { get; set; }
 
     /// <summary>
-    /// 物料类型（本表 MaterialType；必填）
+    /// 物料类型（本表 MaterialType；空=范围内全部类型）
     /// </summary>
     public string? MaterialType { get; set; }
 

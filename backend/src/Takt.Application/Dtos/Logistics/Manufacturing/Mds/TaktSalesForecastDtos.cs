@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Dtos.Logistics.Manufacturing.Mds
 // 文件名称：TaktSalesForecastDtos.cs
-// 创建时间：2026-08-28
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：SalesForecast 模块 DTO（由 generate-dtos-from-entity.cjs 根据 TaktSalesForecast 生成，请按需审阅）
 // 
@@ -36,7 +36,7 @@ public class TaktSalesForecastDto : TaktApprovalDtoBase
     public long SalesForecastId { get; set; }
 
     /// <summary>
-    /// 销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一）
+    /// 销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 销售预测编码规则生成并展示，非手输；单据类型菜单：销售预测）
     /// </summary>
     public string SalesForecastCode { get; set; } = string.Empty;
 
@@ -86,6 +86,11 @@ public class TaktSalesForecastDto : TaktApprovalDtoBase
     public string MaterialDescription { get; set; } = string.Empty;
 
     /// <summary>
+    /// 计划批次（转入 MDS 后沿计划链下传，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
+
+    /// <summary>
     /// 客户编码（选项 TaktCustomers/options；汇总计划时可为空，DictValue=Id）
     /// </summary>
     public string? CustomerCode { get; set; } = string.Empty;
@@ -98,8 +103,7 @@ public class TaktSalesForecastDto : TaktApprovalDtoBase
     /// <summary>
     /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    public string? PlannerGroupCode { get; set; }
-
+    public string? PlannerGroupCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
@@ -107,7 +111,7 @@ public class TaktSalesForecastDto : TaktApprovalDtoBase
     public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 计划总数量（基本单位数量；通常汇总版本 002）
+    /// 计划总数量（各月最新版本数量之和）
     /// </summary>
     public decimal TotalQuantity { get; set; }
 
@@ -142,7 +146,7 @@ public class TaktSalesForecastDto : TaktApprovalDtoBase
     public string? PlanDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 销售预测明细列表（主子表；一行=财年×月计划量 001/002/增减；维度在主表）
+    /// 销售预测明细列表（主子表；一行=财年×月×版本，版本号 1～20；维度在主表）
     /// （子表：TaktSalesForecastItem）
     /// </summary>
     public List<TaktSalesForecastItemDto>? Items { get; set; }
@@ -180,7 +184,7 @@ public class TaktSalesForecastQueryDto : TaktPagedQuery
     public string? PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一）
+    /// 销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 销售预测编码规则生成并展示，非手输；单据类型菜单：销售预测）
     /// </summary>
     public string? SalesForecastCode { get; set; } = string.Empty;
 
@@ -240,6 +244,11 @@ public class TaktSalesForecastQueryDto : TaktPagedQuery
     public string? MaterialDescription { get; set; } = string.Empty;
 
     /// <summary>
+    /// 计划批次（转入 MDS 后沿计划链下传，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
+
+    /// <summary>
     /// 客户编码（选项 TaktCustomers/options；汇总计划时可为空，DictValue=Id）
     /// </summary>
     public string? CustomerCode { get; set; } = string.Empty;
@@ -252,7 +261,7 @@ public class TaktSalesForecastQueryDto : TaktPagedQuery
     /// <summary>
     /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    public string? PlannerGroupCode { get; set; }
+    public string? PlannerGroupCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
@@ -260,7 +269,7 @@ public class TaktSalesForecastQueryDto : TaktPagedQuery
     public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 计划总数量（基本单位数量；通常汇总版本 002）
+    /// 计划总数量（各月最新版本数量之和）
     /// </summary>
     public decimal? TotalQuantity { get; set; }
 
@@ -388,10 +397,15 @@ public class TaktSalesForecastCreateDto
     public string PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一）
+    /// 销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 销售预测编码规则生成并展示，非手输；单据类型菜单：销售预测）
     /// </summary>
-    [Required(ErrorMessage = "销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一）不能为空")]
+    [Required(ErrorMessage = "销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 销售预测编码规则生成并展示，非手输；单据类型菜单：销售预测）不能为空")]
     public string SalesForecastCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 编码规则编码（前端表单从 TaktNumberings/options 选择；对应 TaktNumbering.RuleCode；不落库）
+    /// </summary>
+    public string? NumberingRuleCode { get; set; }
 
     /// <summary>
     /// 计划编制日期（客户侧业务计划日；与接收日期分离）
@@ -443,6 +457,11 @@ public class TaktSalesForecastCreateDto
     public string MaterialDescription { get; set; } = string.Empty;
 
     /// <summary>
+    /// 计划批次（转入 MDS 后沿计划链下传，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
+
+    /// <summary>
     /// 客户编码（选项 TaktCustomers/options；汇总计划时可为空，DictValue=Id）
     /// </summary>
     public string? CustomerCode { get; set; } = string.Empty;
@@ -455,7 +474,7 @@ public class TaktSalesForecastCreateDto
     /// <summary>
     /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    public string? PlannerGroupCode { get; set; }
+    public string? PlannerGroupCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
@@ -463,7 +482,7 @@ public class TaktSalesForecastCreateDto
     public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 计划总数量（基本单位数量；通常汇总版本 002）
+    /// 计划总数量（各月最新版本数量之和）
     /// </summary>
     public decimal TotalQuantity { get; set; }
 
@@ -498,7 +517,7 @@ public class TaktSalesForecastCreateDto
     public string? PlanDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 销售预测明细列表（主子表；一行=财年×月计划量 001/002/增减；维度在主表）（子表，级联保存）
+    /// 销售预测明细列表（主子表；一行=财年×月×版本，版本号 1～20；维度在主表）（子表，级联保存）
     /// </summary>
     public List<TaktSalesForecastItemCreateDto>? Items { get; set; }
 
@@ -533,7 +552,7 @@ public class TaktSalesForecastUpdateDto : TaktSalesForecastCreateDto
     public long SalesForecastId { get; set; }
 
     /// <summary>
-    /// 销售预测明细列表（主子表；一行=财年×月计划量 001/002/增减；维度在主表）（子表，级联保存）
+    /// 销售预测明细列表（主子表；一行=财年×月×版本，版本号 1～20；维度在主表）（子表，级联保存）
     /// </summary>
     public new List<TaktSalesForecastItemUpdateDto>? Items { get; set; }
 
@@ -593,7 +612,7 @@ public class TaktSalesForecastTemplateDto
     public string? PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一）
+    /// 销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 销售预测编码规则生成并展示，非手输；单据类型菜单：销售预测）
     /// </summary>
     public string? SalesForecastCode { get; set; } = string.Empty;
 
@@ -643,6 +662,11 @@ public class TaktSalesForecastTemplateDto
     public string? MaterialDescription { get; set; } = string.Empty;
 
     /// <summary>
+    /// 计划批次（转入 MDS 后沿计划链下传，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
+
+    /// <summary>
     /// 客户编码（选项 TaktCustomers/options；汇总计划时可为空，DictValue=Id）
     /// </summary>
     public string? CustomerCode { get; set; } = string.Empty;
@@ -655,7 +679,7 @@ public class TaktSalesForecastTemplateDto
     /// <summary>
     /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    public string? PlannerGroupCode { get; set; }
+    public string? PlannerGroupCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
@@ -663,7 +687,7 @@ public class TaktSalesForecastTemplateDto
     public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 计划总数量（基本单位数量；通常汇总版本 002）
+    /// 计划总数量（各月最新版本数量之和）
     /// </summary>
     public decimal? TotalQuantity { get; set; }
 
@@ -698,7 +722,7 @@ public class TaktSalesForecastTemplateDto
     public string? PlanDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 销售预测明细列表（主子表；一行=财年×月计划量 001/002/增减；维度在主表）（子表，级联保存）
+    /// 销售预测明细列表（主子表；一行=财年×月×版本，版本号 1～20；维度在主表）（子表，级联保存）
     /// </summary>
     public List<TaktSalesForecastItemCreateDto>? Items { get; set; }
 
@@ -740,7 +764,7 @@ public class TaktSalesForecastImportDto
     public string? PlantCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一）
+    /// 销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 销售预测编码规则生成并展示，非手输；单据类型菜单：销售预测）
     /// </summary>
     public string? SalesForecastCode { get; set; } = string.Empty;
 
@@ -790,6 +814,11 @@ public class TaktSalesForecastImportDto
     public string? MaterialDescription { get; set; } = string.Empty;
 
     /// <summary>
+    /// 计划批次（转入 MDS 后沿计划链下传，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
+
+    /// <summary>
     /// 客户编码（选项 TaktCustomers/options；汇总计划时可为空，DictValue=Id）
     /// </summary>
     public string? CustomerCode { get; set; } = string.Empty;
@@ -802,7 +831,7 @@ public class TaktSalesForecastImportDto
     /// <summary>
     /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    public string? PlannerGroupCode { get; set; }
+    public string? PlannerGroupCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
@@ -810,7 +839,7 @@ public class TaktSalesForecastImportDto
     public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 计划总数量（基本单位数量；通常汇总版本 002）
+    /// 计划总数量（各月最新版本数量之和）
     /// </summary>
     public decimal? TotalQuantity { get; set; }
 
@@ -845,7 +874,7 @@ public class TaktSalesForecastImportDto
     public string? PlanDescription { get; set; } = string.Empty;
 
     /// <summary>
-    /// 销售预测明细列表（主子表；一行=财年×月计划量 001/002/增减；维度在主表）（子表，级联保存）
+    /// 销售预测明细列表（主子表；一行=财年×月×版本，版本号 1～20；维度在主表）（子表，级联保存）
     /// </summary>
     public List<TaktSalesForecastItemCreateDto>? Items { get; set; }
 
@@ -893,7 +922,7 @@ public class TaktSalesForecastExportDto
     public string CultureCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// 销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一）
+    /// 销售预测编码（租户+公司+工厂内与接收版本号组合业务唯一；前端表单选择编码规则后自动通过 TaktNumbering 销售预测编码规则生成并展示，非手输；单据类型菜单：销售预测）
     /// </summary>
     public string SalesForecastCode { get; set; } = string.Empty;
 
@@ -943,6 +972,11 @@ public class TaktSalesForecastExportDto
     public string MaterialDescription { get; set; } = string.Empty;
 
     /// <summary>
+    /// 计划批次（转入 MDS 后沿计划链下传，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
+
+    /// <summary>
     /// 客户编码（选项 TaktCustomers/options；汇总计划时可为空，DictValue=Id）
     /// </summary>
     public string? CustomerCode { get; set; } = string.Empty;
@@ -955,7 +989,7 @@ public class TaktSalesForecastExportDto
     /// <summary>
     /// 计划组编码（选项 TaktApsGroups/options?apsGroupCategory=1；DictValue=ApsGroupCode）
     /// </summary>
-    public string? PlannerGroupCode { get; set; }
+    public string? PlannerGroupCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 计划组名称（冗余：按 PlannerGroupCode 取 TaktApsGroups.ApsGroupName 联动）
@@ -963,7 +997,7 @@ public class TaktSalesForecastExportDto
     public string? PlannerGroupName { get; set; } = string.Empty;
 
     /// <summary>
-    /// 计划总数量（基本单位数量；通常汇总版本 002）
+    /// 计划总数量（各月最新版本数量之和）
     /// </summary>
     public decimal TotalQuantity { get; set; }
 

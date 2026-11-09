@@ -69,9 +69,18 @@ export interface MasterDemandScheduleLine extends CompanyDtoBase {
   salesForecastLineNumber?: number;
 
   /**
+   * 来源销售预测版本号（1～20）
+   */
+  salesForecastVersionNo?: number;
+
+  /**
    * 物料编码（关联 TaktGeneralMaterial.MaterialCode，选项 TaktGeneralMaterials/options）
    */
   materialCode?: string;
+  /**
+   * 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+   */
+  plannedBatch?: string;
 
   /**
    * 时间桶开始
@@ -157,9 +166,18 @@ export interface MasterDemandScheduleLineExport {
   salesForecastLineNumber?: number;
 
   /**
+   * 来源销售预测版本号（1～20）
+   */
+  salesForecastVersionNo?: number;
+
+  /**
    * 物料编码（关联 TaktGeneralMaterial.MaterialCode，选项 TaktGeneralMaterials/options）
    */
   materialCode: string;
+  /**
+   * 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+   */
+  plannedBatch?: string;
 
   /**
    * 时间桶开始

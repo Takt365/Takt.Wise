@@ -600,10 +600,10 @@ const customerComplaintItemFormColumns = computed<TaktEditableTableColumn[]>(() 
     width: 140, allowClear: true, placeholder: customerComplaintItemPi.ph('productName'),
   },
   {
-    key: 'batchCode',
-    title: customerComplaintItemPi.label('batchCode'),
+    key: 'prodBatch',
+    title: customerComplaintItemPi.label('prodBatch'),
     editor: 'input',
-    width: 140, allowClear: true, placeholder: customerComplaintItemPi.ph('batchCode'),
+    width: 140, allowClear: true, placeholder: customerComplaintItemPi.ph('prodBatch'),
   },
   {
     key: 'itemType',
@@ -699,7 +699,7 @@ function createDefaultCustomerComplaintItemRow(): Record<string, unknown> {
     lineNumber: allocateNextCustomerComplaintItemLineNumber(),
     productCode: '',
     productName: '',
-    batchCode: '',
+    prodBatch: '',
     itemType: 0,
     defectDescription: '',
     defectLevel: '',

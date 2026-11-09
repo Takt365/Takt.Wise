@@ -20,7 +20,6 @@ export const BOMMATERIALCOST_SELF_I18N_KEY = buildEntitySelfI18nKey(BOMMATERIALC
 
 /** 列表业务列（不含主键） */
 export const BOMMATERIALCOST_LIST_FIELDS = [
-  'plantCode',
   'modelCode',
   'modelMonthlyAverageCost',
   'materialType',
@@ -39,7 +38,7 @@ export const BOMMATERIALCOST_PLACEHOLDER = {
   tenantCode: 'optional',
   companyCode: 'optional',
   cultureCode: 'optional',
-  plantCode: 'select',
+  plantCode: 'optional',
   modelCode: 'required',
   modelMonthlyAverageCost: 'select',
   materialType: 'select',
@@ -89,7 +88,7 @@ export const BOMMATERIALCOST_QUERY_FIELDS: readonly BomMaterialCostQueryField[] 
 ]
 
 /**
- * BOM 物料成本汇总表字段 i18n：index / material-cost-form 统一入口
+ * BOM 物料成本汇总表字段 i18n：index / BomMaterialCostForm 统一入口
  */
 export function useBomMaterialCostI18n() {
   const ef = useEntityFieldI18n(BOMMATERIALCOST_ENTITY_SLUG)

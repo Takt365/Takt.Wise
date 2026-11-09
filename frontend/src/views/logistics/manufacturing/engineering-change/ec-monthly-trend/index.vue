@@ -9,18 +9,18 @@
 
 <template>
   <div class="ec-list-layout flex h-full min-h-0 flex-col p-4">
+    <TaktPaneTabs
+      v-model:active-key="activeTab"
+      class="shrink-0"
+      hide-content
+      :items="trendTabItems"
+    />
     <EcMonthlyTrendQueryForm
       v-model:period-range="periodRange"
       v-model:ec-code="ecCode"
       :loading="panelLoading"
       @search="handleSearch"
       @reset="handleReset"
-    />
-    <TaktPaneTabs
-      v-model:active-key="activeTab"
-      class="ec-monthly-trend-tabs mb-[2pt] shrink-0 [&_.ant-tabs-nav]:!mb-0"
-      hide-content
-      :items="trendTabItems"
     />
     <TaktToolsBar
       :show-create="false"

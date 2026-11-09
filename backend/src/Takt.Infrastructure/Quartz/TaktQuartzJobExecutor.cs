@@ -39,6 +39,7 @@ public sealed class TaktQuartzJobExecutor
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IEnumerable<ITaktQuartzJobHandler> _handlers;
     private readonly ITaktQuartzJobSignalRPushService _quartzJobSignalRPushService;
+    private readonly ITaktQuartzRelationIssueService _relationIssueService;
     private readonly TaktSqlSugarContext _sqlSugarContext;
 
     /// <summary>
@@ -54,17 +55,20 @@ public sealed class TaktQuartzJobExecutor
         IHttpClientFactory httpClientFactory,
         IEnumerable<ITaktQuartzJobHandler> handlers,
         ITaktQuartzJobSignalRPushService quartzJobSignalRPushService,
+        ITaktQuartzRelationIssueService relationIssueService,
         TaktSqlSugarContext sqlSugarContext)
     {
         ArgumentNullException.ThrowIfNull(configuration);
         ArgumentNullException.ThrowIfNull(httpClientFactory);
         ArgumentNullException.ThrowIfNull(handlers);
         ArgumentNullException.ThrowIfNull(quartzJobSignalRPushService);
+        ArgumentNullException.ThrowIfNull(relationIssueService);
         ArgumentNullException.ThrowIfNull(sqlSugarContext);
         _configuration = configuration;
         _httpClientFactory = httpClientFactory;
         _handlers = handlers;
         _quartzJobSignalRPushService = quartzJobSignalRPushService;
+        _relationIssueService = relationIssueService;
         _sqlSugarContext = sqlSugarContext;
     }
 
@@ -232,6 +236,7 @@ public sealed class TaktQuartzJobExecutor
         CancellationToken cancellationToken)
     {
         IDisposable? targetDbScope = null;
+        IDisposable? runScope = null;
         try
         {
             var (_, targetDatabase) = TaktQuartzSyncExecuteParamsHelper.Parse(executeParams);
@@ -242,9 +247,18 @@ public sealed class TaktQuartzJobExecutor
                 targetDbScope = _sqlSugarContext.UseDatabaseConnection(resolvedTenant, connectionString);
                 var liveDatabase = _sqlSugarContext.Db.Ado.Connection?.Database ?? string.Empty;
                 TaktQuartzJobExecutionLogger.LogProgress(
-                    $"Assembly 已切换目标库：TargetDb={targetDatabase}，LiveDb={liveDatabase}，ConfigTenant={resolvedTenant}",
+                    $"Assembly 已切换目标库：Target={targetDatabase.Trim()}，LiveDb={liveDatabase}，ConfigTenant={resolvedTenant}",
                     task.Id);
             }
+            var costingPeriod = TaktBomQuartzExecuteParamsHelper.TryResolveCostingPeriodKey(
+                executeParams,
+                out var periodKey)
+                ? periodKey
+                : null;
+            var targetName = string.IsNullOrWhiteSpace(targetDatabase)
+                ? _sqlSugarContext.Db.Ado.Connection?.Database
+                : targetDatabase.Trim();
+            runScope = TaktQuartzRunScope.Begin(null, targetName, costingPeriod);
             var handler = _handlers.FirstOrDefault(x =>
                 string.Equals(x.HandlerKey, task.ClassName, StringComparison.OrdinalIgnoreCase));
             if (handler == null)
@@ -265,15 +279,18 @@ public sealed class TaktQuartzJobExecutor
             var message = string.IsNullOrWhiteSpace(jobContext.ExecuteMessage)
                 ? $"程序集任务已执行：{assemblyHint}/{handler.HandlerKey}"
                 : jobContext.ExecuteMessage.Trim();
-            if (!string.IsNullOrWhiteSpace(targetDatabase))
+            if (!string.IsNullOrWhiteSpace(targetDatabase)
+                && message.IndexOf("Target=", StringComparison.Ordinal) < 0
+                && message.IndexOf("目标库", StringComparison.Ordinal) < 0)
             {
-                message = $"{message}，TargetDb={targetDatabase.Trim()}";
+                message = $"{message}，Target={targetDatabase.Trim()}";
             }
             TaktQuartzJobExecutionLogger.LogProgress(message, task.Id);
             return message;
         }
         finally
         {
+            runScope?.Dispose();
             targetDbScope?.Dispose();
         }
     }
@@ -335,6 +352,7 @@ public sealed class TaktQuartzJobExecutor
             out var periodKey)
             ? periodKey
             : null;
+        using var runScope = TaktQuartzRunScope.Begin(sourceDatabase, targetDatabase, costingPeriod);
         var isSyncScript = IsQuartzSyncSqlScript(task.SqlScript);
         if (isSyncScript)
         {
@@ -344,6 +362,7 @@ public sealed class TaktQuartzJobExecutor
                     "同步 SQL 任务 ExecuteParams 须提供 targetDatabase（如 {\"targetDatabase\":\"zTakt_000_Dev\"}）");
             }
             TaktQuartzSyncExecuteParamsHelper.ValidateDatabaseName(targetDatabase);
+            await _relationIssueService.ThrowIfBrokenAsync(sourceDatabase, task.SqlScript, cancellationToken);
         }
         var database = _configuration.RequireDatabase();
         // 优先任务自身 PlantCode；空则按 Database:CompanyCodes↔PlantCodes 映射（与种子一致）
@@ -363,19 +382,9 @@ public sealed class TaktQuartzJobExecutor
             targetDatabase,
             costingPeriod,
             cancellationToken);
-        var dbHint = string.IsNullOrWhiteSpace(targetDatabase)
-            ? string.Empty
-            : $"，TargetDb={targetDatabase}";
-        if (!string.IsNullOrWhiteSpace(sourceDatabase))
-        {
-            dbHint += $"，SourceDb={sourceDatabase}";
-        }
-        if (!string.IsNullOrWhiteSpace(costingPeriod))
-        {
-            dbHint += $"，CostingPeriod={costingPeriod}";
-        }
+        var dbHint = FormatRunDatabaseHint(sourceDatabase, targetDatabase, costingPeriod);
         TaktQuartzJobExecutionLogger.LogProgress(
-            $"SQL 已解析，路径={task.SqlScript}，SqlLength={sql.Length}{dbHint}",
+            $"SQL 已解析，路径={task.SqlScript}，SqlLength={sql.Length}",
             task.Id);
         ISqlSugarClient executeDb = seedContext.Db;
         SqlSugarClient? targetClient = null;
@@ -394,9 +403,9 @@ public sealed class TaktQuartzJobExecutor
             {
                 TaktSqlExecutorValidator.Validate(sql, TaktSqlExecuteOptions.ReadOnlyDefault);
                 var rows = await TaktRepositoryReadOnlySql.QueryAsync(executeDb, sql, null, cancellationToken);
-                var message = $"SQL 查询成功，路径={task.SqlScript}，返回 {rows.Count} 行{dbHint}";
+                var message = $"SQL 查询成功，路径={task.SqlScript}，返回 {rows.Count} 行";
                 TaktQuartzJobExecutionLogger.LogProgress(message, task.Id);
-                return message;
+                return message + dbHint;
             }
             TaktSqlExecutorValidator.Validate(sql, TaktSqlExecuteOptions.NonQueryDefault);
             var previousTimeout = executeDb.Ado.CommandTimeOut;
@@ -409,9 +418,8 @@ public sealed class TaktQuartzJobExecutor
                     task.SqlScript,
                     progress => TaktQuartzJobExecutionLogger.LogProgress(progress, task.Id),
                     cancellationToken);
-                message = string.IsNullOrWhiteSpace(dbHint) ? message : $"{message}{dbHint}";
                 TaktQuartzJobExecutionLogger.LogProgress(message, task.Id);
-                return message;
+                return message + dbHint;
             }
             finally
             {
@@ -422,6 +430,34 @@ public sealed class TaktQuartzJobExecutor
         {
             targetClient?.Dispose();
         }
+    }
+
+    /// <summary>
+    /// 执行结果附带本次选中的源库、目标库、核算月
+    /// </summary>
+    /// <param name="sourceDatabase">源库</param>
+    /// <param name="targetDatabase">目标库</param>
+    /// <param name="costingPeriod">核算月 yyyy-MM</param>
+    /// <returns>前导中文逗号的说明；都空则空串</returns>
+    private static string FormatRunDatabaseHint(
+        string? sourceDatabase,
+        string? targetDatabase,
+        string? costingPeriod)
+    {
+        var parts = new List<string>(3);
+        if (!string.IsNullOrWhiteSpace(sourceDatabase))
+        {
+            parts.Add("Source=" + sourceDatabase.Trim());
+        }
+        if (!string.IsNullOrWhiteSpace(targetDatabase))
+        {
+            parts.Add("Target=" + targetDatabase.Trim());
+        }
+        if (!string.IsNullOrWhiteSpace(costingPeriod))
+        {
+            parts.Add("Period=" + costingPeriod.Trim());
+        }
+        return parts.Count == 0 ? string.Empty : "，" + string.Join("，", parts);
     }
 
     /// <summary>

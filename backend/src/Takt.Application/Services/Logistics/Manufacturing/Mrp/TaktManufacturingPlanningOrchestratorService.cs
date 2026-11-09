@@ -16,6 +16,7 @@ using Takt.Application.Dtos.Logistics.Procurement;
 using Takt.Application.Services.Logistics.Manufacturing.Bom;
 using Takt.Application.Services.Logistics.Procurement;
 using Takt.Application.Services.Logistics.Procurement.Chain;
+using Takt.Domain.Entities.Accounting.Financial;
 using Takt.Domain.Entities.Logistics.Manufacturing.Aps;
 using Takt.Domain.Entities.Logistics.Manufacturing.Bom;
 using Takt.Domain.Entities.Logistics.Manufacturing.Mds;
@@ -47,6 +48,12 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
 
     private readonly ITaktApprovalRepository<TaktMasterDemandSchedule> _mdsRepository;
     private readonly ITaktCompanyRepository<TaktMasterDemandScheduleLine> _mdsLineRepository;
+    private readonly ITaktApprovalRepository<TaktSalesForecast> _salesForecastRepository;
+    private readonly ITaktCompanyRepository<TaktSalesForecastItem> _salesForecastItemRepository;
+    private readonly ITaktTenantRepository<TaktFinancialPeriod> _financialPeriodRepository;
+    private readonly ITaktApprovalRepository<TaktRouting> _routingRepository;
+    private readonly ITaktCompanyRepository<TaktRoutingItem> _routingItemRepository;
+    private readonly ITaktCompanyRepository<TaktApsOperation> _apsOperationRepository;
     private readonly ITaktApprovalRepository<TaktMasterProductionSchedule> _mpsRepository;
     private readonly ITaktCompanyRepository<TaktMasterProductionScheduleLine> _mpsLineRepository;
     private readonly ITaktApprovalRepository<TaktMaterialRequirementsPlanning> _mrpRepository;
@@ -73,6 +80,12 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
     public TaktManufacturingPlanningOrchestratorService(
         ITaktApprovalRepository<TaktMasterDemandSchedule> mdsRepository,
         ITaktCompanyRepository<TaktMasterDemandScheduleLine> mdsLineRepository,
+        ITaktApprovalRepository<TaktSalesForecast> salesForecastRepository,
+        ITaktCompanyRepository<TaktSalesForecastItem> salesForecastItemRepository,
+        ITaktTenantRepository<TaktFinancialPeriod> financialPeriodRepository,
+        ITaktApprovalRepository<TaktRouting> routingRepository,
+        ITaktCompanyRepository<TaktRoutingItem> routingItemRepository,
+        ITaktCompanyRepository<TaktApsOperation> apsOperationRepository,
         ITaktApprovalRepository<TaktMasterProductionSchedule> mpsRepository,
         ITaktCompanyRepository<TaktMasterProductionScheduleLine> mpsLineRepository,
         ITaktApprovalRepository<TaktMaterialRequirementsPlanning> mrpRepository,
@@ -98,6 +111,12 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
     {
         _mdsRepository = mdsRepository;
         _mdsLineRepository = mdsLineRepository;
+        _salesForecastRepository = salesForecastRepository;
+        _salesForecastItemRepository = salesForecastItemRepository;
+        _financialPeriodRepository = financialPeriodRepository;
+        _routingRepository = routingRepository;
+        _routingItemRepository = routingItemRepository;
+        _apsOperationRepository = apsOperationRepository;
         _mpsRepository = mpsRepository;
         _mpsLineRepository = mpsLineRepository;
         _mrpRepository = mrpRepository;
@@ -117,6 +136,123 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
         _billOfMaterialExplosionService = billOfMaterialExplosionService;
         _purchaseRequestService = purchaseRequestService;
         _procurementChainOrchestrator = procurementChainOrchestrator;
+    }
+
+    /// <summary>
+    /// 按销售预测各月最新版本生成或刷新 MDS。同一工厂、同一物料、同一月份的数量合并为一条需求
+    /// </summary>
+    /// <param name="dto">销售预测主键列表</param>
+    /// <returns>编排结果</returns>
+    public async Task<TaktManufacturingPlanningFlowResultDto> RunMdsFromSalesForecastAsync(TaktMdsRunFromSalesForecastDto dto)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+        EnsureThreeLayerContext();
+        var ids = ParseIdList(dto.SalesForecastIds);
+        var forecasts = new List<TaktSalesForecast>(ids.Count);
+        foreach (var id in ids)
+        {
+            var forecast = await _salesForecastRepository.GetByIdAsync(id)
+                ?? throw new TaktBusinessException($"销售预测不存在：{id}");
+            forecasts.Add(forecast);
+        }
+
+        var plantCode = forecasts[0].PlantCode;
+        if (forecasts.Any(x => !string.Equals(x.PlantCode, plantCode, StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new TaktBusinessException("生成 MDS 的销售预测必须属于同一工厂");
+        }
+
+        var merged = new Dictionary<string, TaktMasterDemandScheduleLine>(StringComparer.OrdinalIgnoreCase);
+        foreach (var forecast in forecasts)
+        {
+            var items = await _salesForecastItemRepository.GetListAsync(x => x.SalesForecastId == forecast.Id && x.IsObsolete == 0);
+            foreach (var group in items.GroupBy(x => $"{x.FiscalYear}|{x.PlanMonth}"))
+            {
+                var latest = group.OrderBy(x => x.VersionNo).ThenBy(x => x.LineNumber).Last();
+                if (latest.PlanQuantity <= 0)
+                {
+                    continue;
+                }
+
+                var bucket = await ResolveForecastBucketAsync(latest.FiscalYear, latest.PlanMonth);
+                var key = $"{forecast.MaterialCode}|{bucket.Start:yyyyMMdd}";
+                if (!merged.TryGetValue(key, out var line))
+                {
+                    line = new TaktMasterDemandScheduleLine
+                    {
+                        TenantCode = CurrentTenantCode,
+                        CompanyCode = CurrentCompanyCode,
+                        PlantCode = plantCode,
+                        DemandSourceType = 1,
+                        SalesForecastId = forecast.Id,
+                        SalesForecastLineNumber = latest.LineNumber,
+                        SalesForecastVersionNo = latest.VersionNo,
+                        MaterialCode = forecast.MaterialCode,
+                        PlannedBatch = forecast.PlannedBatch,
+                        BucketStart = bucket.Start,
+                        BucketEnd = bucket.End,
+                        UnitOfMeasure = "PC"
+                    };
+                    merged[key] = line;
+                }
+                else if (string.IsNullOrWhiteSpace(line.PlannedBatch) && !string.IsNullOrWhiteSpace(forecast.PlannedBatch))
+                {
+                    line.PlannedBatch = forecast.PlannedBatch;
+                }
+
+                line.DemandQuantity += latest.PlanQuantity;
+            }
+        }
+
+        if (merged.Count == 0)
+        {
+            throw new TaktBusinessException("销售预测没有可转入 MDS 的版本数量");
+        }
+
+        TaktMasterDemandSchedule mds;
+        if (dto.MasterDemandScheduleId is > 0)
+        {
+            mds = await _mdsRepository.GetByIdAsync(dto.MasterDemandScheduleId.Value)
+                ?? throw new TaktBusinessException("主需求计划不存在");
+            await _mdsLineRepository.DeleteAsync(x => x.MasterDemandScheduleId == mds.Id);
+        }
+        else
+        {
+            mds = new TaktMasterDemandSchedule
+            {
+                TenantCode = CurrentTenantCode,
+                CompanyCode = CurrentCompanyCode,
+                PlantCode = plantCode,
+                MdsCode = BuildFlowCode("MD"),
+                PlanPeriodStart = merged.Values.Min(x => x.BucketStart),
+                PlanPeriodEnd = merged.Values.Max(x => x.BucketEnd),
+                BucketType = 2,
+                ScheduleStatus = 1,
+                ApprovalStatus = 0
+            };
+            mds = await _mdsRepository.CreateAsync(mds);
+        }
+
+        mds.PlanPeriodStart = merged.Values.Min(x => x.BucketStart);
+        mds.PlanPeriodEnd = merged.Values.Max(x => x.BucketEnd);
+        await _mdsRepository.UpdateAsync(mds);
+
+        var lineNo = 10;
+        foreach (var line in merged.Values.OrderBy(x => x.BucketStart).ThenBy(x => x.MaterialCode))
+        {
+            line.MasterDemandScheduleId = mds.Id;
+            line.MdsCode = mds.MdsCode;
+            line.LineNumber = lineNo;
+            await _mdsLineRepository.CreateAsync(line);
+            lineNo = checked(lineNo + 10);
+        }
+
+        return new TaktManufacturingPlanningFlowResultDto
+        {
+            EntityId = mds.Id,
+            EntityCode = mds.MdsCode,
+            ProcessedCount = merged.Count
+        };
     }
 
     /// <summary>
@@ -170,6 +306,7 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
             mps = await _mpsRepository.CreateAsync(mps);
         }
 
+        var forecastBatchById = await LoadSalesForecastPlannedBatchAsync(mdsLines);
         foreach (var mdsLine in mdsLines.OrderBy(l => l.BucketStart).ThenBy(l => l.MaterialCode))
         {
             var gross = mdsLine.DemandQuantity;
@@ -181,6 +318,7 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
                 MpsCode = mps.MpsCode,
                 MasterDemandScheduleLineId = mdsLine.Id,
                 MaterialCode = mdsLine.MaterialCode,
+                PlannedBatch = ResolvePlannedBatch(mdsLine, forecastBatchById),
                 BucketStart = mdsLine.BucketStart,
                 BucketEnd = mdsLine.BucketEnd,
                 GrossRequirement = gross,
@@ -247,6 +385,7 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
                     mpsLine.MaterialCode,
                     rootQty,
                     mpsLine.BucketStart,
+                    mpsLine.PlannedBatch,
                     options,
                     demandMap);
             }
@@ -270,6 +409,8 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
                 onHandByMaterial.TryGetValue(bucket.MaterialCode, out var onHand);
                 scheduledByMaterial.TryGetValue(bucket.MaterialCode, out var receipts);
                 var (net, poh) = TaktMrpNettingCalculator.Calculate(bucket.GrossRequirement, onHand, receipts);
+                onHandByMaterial[bucket.MaterialCode] = poh;
+                scheduledByMaterial[bucket.MaterialCode] = 0;
                 procurementByMaterial.TryGetValue(bucket.MaterialCode, out var procurementType);
 
                 var item = new TaktMaterialRequirementsPlanningItem
@@ -280,6 +421,7 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
                     MaterialRequirementsPlanningCode = mrp.MaterialRequirementsPlanningCode,
                     LineNumber = lineNumber,
                     MaterialCode = bucket.MaterialCode,
+                    PlannedBatch = bucket.PlannedBatch,
                     MaterialDescription = materialNameByCode.GetValueOrDefault(bucket.MaterialCode) ?? bucket.MaterialCode,
                     ParentMaterialCode = bucket.ParentMaterialCode,
                     BomLevel = bucket.BomLevel,
@@ -371,6 +513,7 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
                     ProductionPlanCode = productionPlan.ProductionPlanCode,
                     LineNumber = ppLine,
                     MaterialCode = item.MaterialCode,
+                    PlannedBatch = item.PlannedBatch,
                     MaterialDescription = item.MaterialDescription,
                     MaterialSpecification = item.MaterialSpecification,
                     PlanUnit = item.PlanUnit,
@@ -392,6 +535,7 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
                     MaterialRequirementsPlanningCode = mrp.MaterialRequirementsPlanningCode,
                     MaterialRequirementsPlanningItemId = item.Id,
                     MaterialCode = item.MaterialCode,
+                    PlannedBatch = item.PlannedBatch,
                     PlannedQuantity = item.NetRequirement,
                     UnitOfMeasure = item.PlanUnit,
                     PlannedStartTime = item.RequirementDate,
@@ -490,6 +634,7 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
                 PlannedOrderId = planned.Id,
                 PlannedOrderCode = planned.PlannedOrderCode,
                 MaterialCode = planned.MaterialCode,
+                PlannedBatch = planned.PlannedBatch,
                 OrderQuantity = planned.PlannedQuantity,
                 UnitOfMeasure = planned.UnitOfMeasure,
                 RoutingCode = planned.RoutingCode,
@@ -498,6 +643,7 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
                 OrderStatus = 0
             };
             apsOrder = await _apsOrderRepository.CreateAsync(apsOrder);
+            await CreateApsOperationsFromRoutingAsync(apsOrder);
             planned.OrderStatus = PlannedOrderStatusReleased;
             await _plannedOrderRepository.UpdateAsync(planned);
             created.Add(apsOrder.Id.ToString());
@@ -558,34 +704,61 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
             schedule = await _apsScheduleRepository.CreateAsync(schedule);
         }
 
+        await _apsScheduleItemRepository.DeleteAsync(x => x.ApsScheduleId == schedule.Id);
         var line = 10;
-        var seq = 1;
-        foreach (var order in orders.OrderBy(o => o.PlannedStartTime ?? DateTime.MaxValue))
+        DateTime? scheduleEnd = null;
+        foreach (var order in orders.OrderBy(o => o.PlannedStartTime ?? DateTime.MaxValue).ThenBy(o => o.ApsOrderCode))
         {
-            await _apsScheduleItemRepository.CreateAsync(new TaktApsScheduleItem
+            var operations = await _apsOperationRepository.GetListAsync(x => x.ApsOrderId == order.Id && x.IsObsolete == 0);
+            if (operations.Count == 0)
             {
-                TenantCode = CurrentTenantCode,
-                CompanyCode = CurrentCompanyCode,
-                ApsScheduleId = schedule.Id,
-                ApsScheduleCode = schedule.ScheduleCode,
-                ApsOrderId = order.Id,
-                LineNumber = line,
-                WorkOrderCode = order.ApsOrderCode,
-                ProductCode = order.MaterialCode,
-                ProductName = order.MaterialCode,
-                ProcessCode = "P001",
-                ProcessName = "主工序",
-                ProcessSequence = seq,
-                PlanQuantity = order.OrderQuantity,
-                PlanStartTime = order.PlannedStartTime ?? DateTime.Now,
-                PlanEndTime = order.PlannedEndTime ?? DateTime.Now.AddDays(1),
-                ProcessStatus = 0
-            });
+                await CreateApsOperationsFromRoutingAsync(order);
+                operations = await _apsOperationRepository.GetListAsync(x => x.ApsOrderId == order.Id && x.IsObsolete == 0);
+            }
+
+            var cursor = order.PlannedStartTime ?? schedule.PlanStartTime;
+            var sequence = 1;
+            if (operations.Count == 0)
+            {
+                var end = order.PlannedEndTime ?? cursor.AddDays(1);
+                await _apsScheduleItemRepository.CreateAsync(BuildScheduleItem(schedule, order, null, line, sequence, cursor, end));
+                cursor = end;
+                line = checked(line + 10);
+            }
+            else
+            {
+                foreach (var operation in operations.OrderBy(x => x.LineNumber))
+                {
+                    var minutes = operation.PlannedDurationMinutes + operation.ChangeoverMinutes;
+                    if (minutes < 0)
+                    {
+                        minutes = 0;
+                    }
+
+                    var end = cursor.AddMinutes((double)minutes);
+                    operation.PlannedStartTime = cursor;
+                    operation.PlannedEndTime = end;
+                    operation.OperationStatus = 1;
+                    await _apsOperationRepository.UpdateAsync(operation);
+                    await _apsScheduleItemRepository.CreateAsync(BuildScheduleItem(schedule, order, operation, line, sequence, cursor, end));
+                    cursor = end;
+                    line = checked(line + 10);
+                    sequence++;
+                }
+            }
+
+            order.PlannedStartTime = order.PlannedStartTime ?? schedule.PlanStartTime;
+            order.PlannedEndTime = cursor;
             order.ApsScheduleId = schedule.Id;
             order.OrderStatus = 1;
             await _apsOrderRepository.UpdateAsync(order);
-            line = checked(line + 10);
-            seq++;
+            scheduleEnd = cursor;
+        }
+
+        if (scheduleEnd.HasValue)
+        {
+            schedule.PlanEndTime = scheduleEnd.Value;
+            await _apsScheduleRepository.UpdateAsync(schedule);
         }
 
         return new TaktManufacturingPlanningFlowResultDto
@@ -620,6 +793,7 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
                 ProdOrderType = "ZDTA",
                 ProdOrderCode = BuildFlowCode("WO"),
                 MaterialCode = apsOrder.MaterialCode,
+                ProdBatch = apsOrder.PlannedBatch,
                 ProdOrderQty = apsOrder.OrderQuantity,
                 UnitOfMeasure = apsOrder.UnitOfMeasure,
                 RoutingCode = apsOrder.RoutingCode,
@@ -739,13 +913,14 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
         string materialCode,
         decimal quantity,
         DateTime requirementDate,
+        string? plannedBatch,
         TaktMrpRunOptionsDto options,
         Dictionary<string, MrpDemandAccumulator> demandMap)
     {
         var bom = await FindPublishedBomAsync(plantCode, materialCode, options.BomType);
         if (bom == null)
         {
-            AddDemand(demandMap, materialCode, null, 1, requirementDate, quantity);
+            AddDemand(demandMap, materialCode, null, 1, requirementDate, quantity, plannedBatch);
             return;
         }
 
@@ -758,7 +933,7 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
         });
         if (explosion?.Lines == null || explosion.Lines.Count == 0)
         {
-            AddDemand(demandMap, materialCode, null, 1, requirementDate, quantity);
+            AddDemand(demandMap, materialCode, null, 1, requirementDate, quantity, plannedBatch);
             return;
         }
 
@@ -770,7 +945,8 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
                 line.ImmediateParentMaterialCode,
                 line.HierarchyLevel,
                 requirementDate,
-                line.CumulativeQuantity);
+                line.CumulativeQuantity,
+                plannedBatch);
         }
     }
 
@@ -838,14 +1014,16 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
         string? parentMaterialCode,
         int bomLevel,
         DateTime requirementDate,
-        decimal quantity)
+        decimal quantity,
+        string? plannedBatch)
     {
         if (quantity <= 0 || string.IsNullOrWhiteSpace(materialCode))
         {
             return;
         }
 
-        var key = $"{materialCode}|{requirementDate:yyyyMMdd}|{parentMaterialCode ?? ""}|{bomLevel}";
+        var batch = string.IsNullOrWhiteSpace(plannedBatch) ? string.Empty : plannedBatch.Trim();
+        var key = $"{materialCode}|{requirementDate:yyyyMMdd}|{parentMaterialCode ?? ""}|{bomLevel}|{batch}";
         if (!map.TryGetValue(key, out var acc))
         {
             acc = new MrpDemandAccumulator
@@ -853,7 +1031,8 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
                 MaterialCode = materialCode,
                 ParentMaterialCode = parentMaterialCode,
                 BomLevel = bomLevel,
-                RequirementDate = requirementDate
+                RequirementDate = requirementDate,
+                PlannedBatch = string.IsNullOrEmpty(batch) ? null : batch
             };
             map[key] = acc;
         }
@@ -898,6 +1077,193 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
         return result;
     }
 
+    /// <summary>
+    /// 按 MDS 行上的销售预测主键取计划批次，供行上未填批次时回退
+    /// </summary>
+    /// <param name="mdsLines">本次参与 MPS 的 MDS 行</param>
+    /// <returns>销售预测 Id → 计划批次</returns>
+    private async Task<Dictionary<long, string?>> LoadSalesForecastPlannedBatchAsync(IReadOnlyList<TaktMasterDemandScheduleLine> mdsLines)
+    {
+        var forecastIds = mdsLines
+            .Where(line => line.SalesForecastId is > 0 && string.IsNullOrWhiteSpace(line.PlannedBatch))
+            .Select(line => line.SalesForecastId!.Value)
+            .Distinct()
+            .ToList();
+        var result = new Dictionary<long, string?>();
+        if (forecastIds.Count == 0)
+        {
+            return result;
+        }
+
+        var forecasts = await _salesForecastRepository.GetListAsync(x => forecastIds.Contains(x.Id));
+        foreach (var forecast in forecasts)
+        {
+            result[forecast.Id] = forecast.PlannedBatch;
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// 计划批次：MDS 行优先，空则取关联销售预测
+    /// </summary>
+    /// <param name="line">MDS 行</param>
+    /// <param name="forecastBatchById">销售预测计划批次</param>
+    /// <returns>计划批次</returns>
+    private static string? ResolvePlannedBatch(
+        TaktMasterDemandScheduleLine line,
+        IReadOnlyDictionary<long, string?> forecastBatchById)
+    {
+        if (!string.IsNullOrWhiteSpace(line.PlannedBatch))
+        {
+            return line.PlannedBatch.Trim();
+        }
+
+        if (line.SalesForecastId is > 0
+            && forecastBatchById.TryGetValue(line.SalesForecastId.Value, out var forecastBatch)
+            && !string.IsNullOrWhiteSpace(forecastBatch))
+        {
+            return forecastBatch.Trim();
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// 按工艺路线工序展开 APS 订单工序。标准工时按订单数量 / 基本数量折算，换型含准备与清理
+    /// </summary>
+    /// <param name="order">APS 订单</param>
+    /// <returns>任务</returns>
+    private async Task CreateApsOperationsFromRoutingAsync(TaktApsOrder order)
+    {
+        var existing = await _apsOperationRepository.GetListAsync(x => x.ApsOrderId == order.Id && x.IsObsolete == 0);
+        if (existing.Count > 0 || string.IsNullOrWhiteSpace(order.RoutingCode))
+        {
+            return;
+        }
+
+        var routings = await _routingRepository.GetListAsync(x =>
+            x.PlantCode == order.PlantCode
+            && x.RoutingCode == order.RoutingCode
+            && (x.RoutingStatus == 2 || x.RoutingStatus == 4));
+        var routing = routings.OrderByDescending(x => x.RoutingStatus).FirstOrDefault();
+        if (routing == null)
+        {
+            return;
+        }
+
+        var items = await _routingItemRepository.GetListAsync(x => x.RoutingId == routing.Id && x.IsObsolete == 0);
+        var line = 10;
+        foreach (var item in items.OrderBy(x => x.SortOrder).ThenBy(x => x.LineNumber))
+        {
+            var baseQuantity = item.BaseQuantity <= 0 ? 1 : item.BaseQuantity;
+            var runMinutes = item.ConvertedMinutes > 0 ? item.ConvertedMinutes : item.StandardMinutes;
+            var duration = decimal.Round(order.OrderQuantity / baseQuantity * runMinutes, 2, MidpointRounding.AwayFromZero);
+            var processCode = item.LineNumber.ToString("D4");
+            if (processCode.Length > 4)
+            {
+                processCode = processCode[^4..];
+            }
+
+            var processName = string.IsNullOrWhiteSpace(item.ProcessDescription) ? $"工序{processCode}" : item.ProcessDescription.Trim();
+            if (processName.Length > 70)
+            {
+                processName = processName[..70];
+            }
+
+            var orderCode = order.ApsOrderCode.Length <= 12 ? order.ApsOrderCode : order.ApsOrderCode[..12];
+            await _apsOperationRepository.CreateAsync(new TaktApsOperation
+            {
+                TenantCode = order.TenantCode,
+                CompanyCode = order.CompanyCode,
+                PlantCode = order.PlantCode,
+                ApsOrderId = order.Id,
+                ApsOrderCode = orderCode,
+                LineNumber = line,
+                RoutingItemId = item.Id,
+                ProcessCode = processCode,
+                ProcessName = processName,
+                PlannedDurationMinutes = duration,
+                ChangeoverMinutes = item.SetupMinutes + item.TeardownMinutes
+            });
+            line = checked(line + 10);
+        }
+    }
+
+    /// <summary>
+    /// 组装一条 APS 排程工序
+    /// </summary>
+    private static TaktApsScheduleItem BuildScheduleItem(
+        TaktApsSchedule schedule,
+        TaktApsOrder order,
+        TaktApsOperation? operation,
+        int lineNumber,
+        int sequence,
+        DateTime start,
+        DateTime end)
+    {
+        var processCode = string.IsNullOrWhiteSpace(operation?.ProcessCode) ? "0000" : operation.ProcessCode;
+        var processName = string.IsNullOrWhiteSpace(operation?.ProcessName) ? "主工序" : operation.ProcessName;
+        var orderCode = order.ApsOrderCode.Length <= 12 ? order.ApsOrderCode : order.ApsOrderCode[..12];
+        var perPiece = operation == null || order.OrderQuantity <= 0
+            ? 0
+            : decimal.Round(operation.PlannedDurationMinutes / order.OrderQuantity, 2, MidpointRounding.AwayFromZero);
+        return new TaktApsScheduleItem
+        {
+            TenantCode = order.TenantCode,
+            CompanyCode = order.CompanyCode,
+            PlantCode = order.PlantCode,
+            ApsScheduleId = schedule.Id,
+            ApsScheduleCode = schedule.ScheduleCode,
+            ApsOrderId = order.Id,
+            ApsOperationId = operation?.Id,
+            RoutingItemId = operation?.RoutingItemId,
+            LineNumber = lineNumber,
+            WorkOrderCode = orderCode,
+            ProductCode = order.MaterialCode,
+            ProductName = order.MaterialCode,
+            ProcessCode = processCode,
+            ProcessName = processName,
+            ProcessSequence = sequence,
+            ProcessStandardST = perPiece,
+            ProcessStandardSTUnit = 3,
+            ExtraMinutes = operation?.ChangeoverMinutes ?? 0,
+            PlanQuantity = order.OrderQuantity,
+            PlanStartTime = start,
+            PlanEndTime = end,
+            ProcessStatus = 0
+        };
+    }
+
+    /// <summary>
+    /// 财年+计划月份转为自然月时间桶。优先财务期间主数据，没有期间时用财年编码中的年份
+    /// </summary>
+    /// <param name="fiscalYear">财务年度编码</param>
+    /// <param name="planMonth">计划月份</param>
+    /// <returns>月初与月末</returns>
+    private async Task<(DateTime Start, DateTime End)> ResolveForecastBucketAsync(string fiscalYear, int planMonth)
+    {
+        var month = planMonth is >= 1 and <= 12 ? planMonth : 1;
+        var period = await _financialPeriodRepository.FirstAsync(x => x.FinancialYearCode == fiscalYear && x.CalendarMonth == month);
+        DateTime start;
+        if (period != null && period.CalendarYear > 0 && period.CalendarMonth is >= 1 and <= 12)
+        {
+            start = new DateTime(period.CalendarYear, period.CalendarMonth, 1);
+        }
+        else
+        {
+            var year = DateTime.Now.Year;
+            if (!string.IsNullOrWhiteSpace(fiscalYear) && fiscalYear.Length >= 6 && int.TryParse(fiscalYear.AsSpan(2), out var parsedYear))
+            {
+                year = parsedYear;
+            }
+
+            start = new DateTime(year, month, 1);
+        }
+
+        return (start, start.AddMonths(1).AddSeconds(-1));
+    }
+
     private static string BuildFlowCode(string prefix) =>
         $"{prefix}{DateTime.Now:yyyyMMddHHmmss}{Random.Shared.Next(1000, 9999)}";
 
@@ -907,6 +1273,7 @@ public class TaktManufacturingPlanningOrchestratorService : TaktServiceBase, ITa
         public string? ParentMaterialCode { get; set; }
         public int BomLevel { get; set; } = 1;
         public DateTime RequirementDate { get; set; }
+        public string? PlannedBatch { get; set; }
         public decimal GrossRequirement { get; set; }
     }
 }

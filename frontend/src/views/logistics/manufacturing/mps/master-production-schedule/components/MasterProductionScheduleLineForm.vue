@@ -26,7 +26,17 @@
       >
         <div :class="formContentClass">
           <a-row :gutter="24">
-
+            <a-col :span="12">
+              <a-form-item :label="t('entity.masterproductionscheduleline.plannedbatch')" name="plannedBatch">
+                <a-input
+                  v-model:value="formState.plannedBatch"
+                  :placeholder="t('common.page.form.placeholder.input')"
+                  show-count
+                  :maxlength="40"
+                  allow-clear
+                />
+              </a-form-item>
+            </a-col>
           </a-row>
         </div>
       </a-tab-pane>

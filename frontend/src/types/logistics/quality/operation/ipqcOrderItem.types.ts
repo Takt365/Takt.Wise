@@ -61,7 +61,7 @@ export interface IpqcOrderItem extends CompanyDtoBase {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 生产数量
@@ -196,7 +196,7 @@ export interface IpqcOrderItemQuery extends TaktPagedQuery {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 生产数量
@@ -353,7 +353,7 @@ export interface IpqcOrderItemCreate {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 生产数量
@@ -545,7 +545,7 @@ export interface IpqcOrderItemTemplate {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 生产数量
@@ -692,7 +692,7 @@ export interface IpqcOrderItemImport {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 生产数量
@@ -826,7 +826,7 @@ export interface IpqcOrderItemExport {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 生产数量

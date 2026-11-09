@@ -36,6 +36,26 @@ public class TaktManufacturingPlanningFlowController : TaktControllerBase
     }
 
     /// <summary>
+    /// 从销售预测最新版本生成 MDS
+    /// </summary>
+    /// <param name="dto">销售预测 ID 列表</param>
+    /// <returns>编排结果</returns>
+    [TaktPermission("logistics:manufacturing:mds:master:demand:schedule:generate", "从销售预测生成MDS")]
+    [HttpPost("mds/run-from-sales-forecast")]
+    public async Task<IActionResult> RunMdsFromSalesForecastAsync([FromBody] TaktMdsRunFromSalesForecastDto dto)
+    {
+        try
+        {
+            var result = await _orchestrator.RunMdsFromSalesForecastAsync(dto);
+            return Success(result, "MDS 生成成功");
+        }
+        catch (Exception ex)
+        {
+            return HandleException(ex);
+        }
+    }
+
+    /// <summary>
     /// 从 MDS 生成或刷新 MPS
     /// </summary>
     /// <param name="dto">下推参数</param>

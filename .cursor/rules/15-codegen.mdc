@@ -1,9 +1,7 @@
 ---
 description: Takt 全栈代码生成（generate-all 流水线、脚本映射、三种 CRUD 形态、排除与生成后审阅）
-globs: scripts/generate*.cjs,backend/src/**/*.cs,frontend/src/**/*
 alwaysApply: false
 ---
-
 # 全栈代码生成（generate-all）
 
 命名/CRUD 基线见 `00-project`、`12-crud`；后端分层见 `01-backend`；前端见 `02-frontend`；视图/表单见 `13-vue-view`、`14-vue-form`。
@@ -187,7 +185,7 @@ alwaysApply: false
 | 层 | 行为 |
 |----|------|
 | **后端** `generate-services-from-dtos` | `HasAnyListQueryFilter`：无 KeyWords/字段/日期范围等业务条件时，`GetXxxListAsync` / `ExportXxxAsync` 返回空结果；**有条件时**走 `QueryExpression` 正常过滤 + 分页（❌ 不是解锁全表） |
-| **前端** `generate-vue-common` | `hasAnyListQueryFilter`：无参/重置时静默空表、不请求；有参才拉数并按条件过滤 |
+| **前端** `generate-vue-common` | `hasAnyListQueryFilter`：无参时静默空表、不请求；有参才拉数并按条件过滤。单表与主子表（含子表右栏）查询栏生成月份期间：优先业务日期（生产/检验/事故/问题/生效等），没有则用创建日期；默认当前月，占位 `common.page.form.periodRange`，无旁侧标签；期间为控件默认宽度，关键字占剩余宽。期间计入有条件；清空期间且无其它条件时仍空表。树表不生成该控件 |
 | **QueryExpression** | 字符串条件须局部变量捕获后再 `Contains`（避免 SqlSugar 丢条件）；KeyWords **禁止**对 `CreatedAt` 等日期 `ToString().Contains` |
 
 主子表子面板：主表外键计入后端条件；子表仍须选中主表行后加载（既有 `hasMasterSelection`）。

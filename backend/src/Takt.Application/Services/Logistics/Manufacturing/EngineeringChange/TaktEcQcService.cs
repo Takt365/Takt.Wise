@@ -94,6 +94,8 @@ public class TaktEcQcService : TaktServiceBase, ITaktEcQcService
         {
             return null;
         }
+        // 打开编辑：始终从制一带出生产班组/实施批次/生产日期 → 班组/生产批次/生产日期（空则空）
+        await _ecExecPersistence.RefreshQcRedundantFromMfg1Async(entity);
         var dto = entity.Adapt<TaktEcQcDto>();
         await _ecExecPersistence.FillExecViewDetailsAsync(entity, dto);
         return dto;
@@ -162,8 +164,19 @@ public class TaktEcQcService : TaktServiceBase, ITaktEcQcService
         {
             throw new TaktBusinessException("设变品管执行不存在");
         }
-        dto.InspectionBatch = TaktStringHelper.NormalizeBatchCode(dto.InspectionBatch);
+        var preservedEcGrainKey = entity.EcGrainKey;
+        // ProductionTeam/ProductionBatch/ProductionDate 冗余自制一，只读，禁止前端改写
+        var preservedProductionTeam = entity.ProductionTeam;
+        var preservedProductionBatch = entity.ProductionBatch;
+        var preservedProductionDate = entity.ProductionDate;
         dto.Adapt(entity);
+        entity.ProductionTeam = preservedProductionTeam;
+        entity.ProductionBatch = preservedProductionBatch;
+        entity.ProductionDate = preservedProductionDate;
+        if (string.IsNullOrWhiteSpace(entity.EcGrainKey))
+        {
+            entity.EcGrainKey = preservedEcGrainKey;
+        }
         var isUnique_ix_takt_logistics_manufacturing_ec_qc_unique = await _uniqueValidator.IsUniqueAsync(
             _ecQcRepository,
             x => x.EcCode == entity.EcCode && SqlFunc.ToString(x.EcGrainKey) == entity.EcGrainKey
@@ -396,11 +409,12 @@ public class TaktEcQcService : TaktServiceBase, ITaktEcQcService
                 || SqlFunc.ToString(x.IsImplemented).Contains(keywords)
                 || (x.ExecContent != null && x.ExecContent.Contains(keywords))
                 || (x.ProductionTeam != null && x.ProductionTeam.Contains(keywords))
+                || (x.ProductionBatch != null && x.ProductionBatch.Contains(keywords))
                 || (x.InspectionBatch != null && x.InspectionBatch.Contains(keywords))
-                || (x.SamplingCode != null && x.SamplingCode.Contains(keywords))
                 || (x.CultureCode != null && x.CultureCode.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
+                || SqlFunc.ToString(x.ProductionDate).Contains(keywords)
                 || SqlFunc.ToString(x.InspectionDate).Contains(keywords)
                 || SqlFunc.ToString(x.CreatedAt).Contains(keywords)
             );
@@ -441,14 +455,14 @@ public class TaktEcQcService : TaktServiceBase, ITaktEcQcService
             exp = exp.And(x => x.ProductionTeam != null && x.ProductionTeam.Contains(queryDto.ProductionTeam));
         }
 
+        if (!string.IsNullOrEmpty(queryDto?.ProductionBatch))
+        {
+            exp = exp.And(x => x.ProductionBatch != null && x.ProductionBatch.Contains(queryDto.ProductionBatch));
+        }
+
         if (!string.IsNullOrEmpty(queryDto?.InspectionBatch))
         {
             exp = exp.And(x => x.InspectionBatch != null && x.InspectionBatch.Contains(queryDto.InspectionBatch));
-        }
-
-        if (!string.IsNullOrEmpty(queryDto?.SamplingCode))
-        {
-            exp = exp.And(x => x.SamplingCode != null && x.SamplingCode.Contains(queryDto.SamplingCode));
         }
 
         if (!string.IsNullOrEmpty(queryDto?.CultureCode))
@@ -464,6 +478,16 @@ public class TaktEcQcService : TaktServiceBase, ITaktEcQcService
         if (!string.IsNullOrEmpty(queryDto?.Remark))
         {
             exp = exp.And(x => x.Remark != null && x.Remark.Contains(queryDto.Remark));
+        }
+
+        if (queryDto?.ProductionDateStart.HasValue == true)
+        {
+            exp = exp.And(x => x.ProductionDate >= queryDto.ProductionDateStart);
+        }
+
+        if (queryDto?.ProductionDateEnd.HasValue == true)
+        {
+            exp = exp.And(x => x.ProductionDate <= queryDto.ProductionDateEnd);
         }
 
         if (queryDto?.InspectionDateStart.HasValue == true)

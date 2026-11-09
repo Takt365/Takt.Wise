@@ -240,6 +240,32 @@
             </a-col>
             <a-col :span="12">
               <a-form-item
+                :label="pi.label('scrapCount')"
+                name="scrapCount"
+              >
+                <a-input-number
+                  v-model:value="formState.scrapCount"
+                  :placeholder="pi.ph('scrapCount')"
+                  style="width: 100%"
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
+                :label="pi.label('scrapReason')"
+                name="scrapReason"
+              >
+                <a-input
+                  v-model:value="formState.scrapReason"
+                  :placeholder="pi.ph('scrapReason')"
+                  show-count
+                  :maxlength="500"
+                  allow-clear
+                />
+              </a-form-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-item
                 :label="pi.label('downtimeMinutes')"
                 name="downtimeMinutes"
               >
@@ -507,7 +533,7 @@ const formContentClass = computed(() => (formFields.length > 10 ? 'takt-form-con
 /** 当前激活的 Tab key */
 const activeTab = ref('tab-0')
 /** CreateDto 字段名列表（与 formState 键对齐） */
-const formFields = ["tenantCode","companyCode","cultureCode","plantCode","lineNumber","timePeriod","teamCode","prodEquipCode","directLabor","indirectLabor","shiftNo","stdShorts","pcbBoardType","panelSide","batchQty","dailyCompletedQty","serialCode","defectCount","downtimeMinutes","downtimeReason","downtimeDescription","repairMinutes","switchCount","switchTime","stopTime","totalMinutes","unachievedReason","unachievedDescription","confirmMinutes","mixedProd","isObsolete"]
+const formFields = ["tenantCode","companyCode","cultureCode","plantCode","lineNumber","timePeriod","teamCode","prodEquipCode","directLabor","indirectLabor","shiftNo","stdShorts","pcbBoardType","panelSide","batchQty","dailyCompletedQty","serialCode","defectCount","scrapCount","scrapReason","downtimeMinutes","downtimeReason","downtimeDescription","repairMinutes","switchCount","switchTime","stopTime","totalMinutes","unachievedReason","unachievedDescription","confirmMinutes","mixedProd","isObsolete"]
 
 /** 父级传入的编辑 DTO；新增时为 undefined 或空对象 */
 interface Props {
@@ -733,6 +759,19 @@ const rules = computed<Record<string, Rule[]>>(() => ({
     },
     trigger: 'change'
   }],
+  scrapCount: [{
+    validator: async (_rule, value) => {
+      if (value === undefined || value === null || value === '') {
+        return Promise.reject(pi.ph('scrapCount'))
+      }
+      const num = typeof value === 'number' ? value : Number(value)
+      if (!Number.isFinite(num)) {
+        return Promise.reject(pi.ph('scrapCount'))
+      }
+      return Promise.resolve()
+    },
+    trigger: 'change'
+  }],
   downtimeMinutes: [{
     validator: async (_rule, value) => {
       if (value === undefined || value === null || value === '') {
@@ -940,6 +979,16 @@ function getValues(): Record<string, any> {
       const numdefectCount = typeof rawdefectCount === 'number' ? rawdefectCount : Number(rawdefectCount)
       if (Number.isFinite(numdefectCount)) payload.defectCount = numdefectCount
       else delete payload.defectCount
+    }
+  }
+  if ('scrapCount' in payload) {
+    const rawscrapCount = payload.scrapCount
+    if (rawscrapCount === undefined || rawscrapCount === null || rawscrapCount === '') {
+      delete payload.scrapCount
+    } else {
+      const numscrapCount = typeof rawscrapCount === 'number' ? rawscrapCount : Number(rawscrapCount)
+      if (Number.isFinite(numscrapCount)) payload.scrapCount = numscrapCount
+      else delete payload.scrapCount
     }
   }
   if ('downtimeMinutes' in payload) {

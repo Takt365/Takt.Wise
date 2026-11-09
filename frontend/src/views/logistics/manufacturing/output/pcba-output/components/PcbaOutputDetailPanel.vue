@@ -328,6 +328,26 @@
         />
       </a-form-item>
       </div>
+      <div v-show="isFieldVisible('scrapCount')">
+      <a-form-item :label="pi.queryLabel('scrapCount')">
+        <a-input-number
+          v-model:value="advancedQueryForm.scrapCount"
+          :placeholder="pi.queryPh('scrapCount', 'required')"
+          style="width: 100%"
+        />
+      </a-form-item>
+      </div>
+      <div v-show="isFieldVisible('scrapReason')">
+      <a-form-item :label="pi.queryLabel('scrapReason')">
+        <a-input
+          v-model:value="advancedQueryForm.scrapReason"
+          :placeholder="pi.queryPh('scrapReason', 'optional')"
+          show-count
+          :maxlength="500"
+          allow-clear
+        />
+      </a-form-item>
+      </div>
       <div v-show="isFieldVisible('downtimeMinutes')">
       <a-form-item :label="pi.queryLabel('downtimeMinutes')">
         <a-input-number
@@ -748,6 +768,9 @@ function hasAnyListQueryFilter(): boolean {
   if (form.defectCount !== undefined && form.defectCount !== null) {
     return true
   }
+  if (form.scrapCount !== undefined && form.scrapCount !== null) {
+    return true
+  }
   if (form.downtimeMinutes !== undefined && form.downtimeMinutes !== null) {
     return true
   }
@@ -811,6 +834,7 @@ function createEmptyAdvancedQueryForm() {
     totalCompletedQty: undefined as number | undefined,
     completedStatus: undefined as number | undefined,
     defectCount: undefined as number | undefined,
+    scrapCount: undefined as number | undefined,
     downtimeMinutes: undefined as number | undefined,
     inputMinutes: undefined as number | undefined,
     actualMinutes: undefined as number | undefined,
@@ -1105,6 +1129,26 @@ const columns = computed<TableColumnsType>(() => [
     ellipsis: true,
     customRender: ({ record }: { record: PcbaOutputDetail }) =>
       String(getPcbaOutputDetailField(record, 'defectCount') ?? ''),
+  },
+  {
+    title: pi.label('scrapCount'),
+    dataIndex: 'scrapCount',
+    key: 'scrapCount',
+    width: 120,
+    resizable: true,
+    ellipsis: true,
+    customRender: ({ record }: { record: PcbaOutputDetail }) =>
+      String(getPcbaOutputDetailField(record, 'scrapCount') ?? ''),
+  },
+  {
+    title: pi.label('scrapReason'),
+    dataIndex: 'scrapReason',
+    key: 'scrapReason',
+    width: 160,
+    resizable: true,
+    ellipsis: true,
+    customRender: ({ record }: { record: PcbaOutputDetail }) =>
+      String(getPcbaOutputDetailField(record, 'scrapReason') ?? ''),
   },
   {
     title: pi.label('downtimeMinutes'),
@@ -1458,6 +1502,9 @@ function buildListQuery(overrides?: Partial<PcbaOutputDetailQuery>): PcbaOutputD
   }
   if (form.defectCount !== undefined && form.defectCount !== null) {
     query.defectCount = form.defectCount
+  }
+  if (form.scrapCount !== undefined && form.scrapCount !== null) {
+    query.scrapCount = form.scrapCount
   }
   if (form.downtimeMinutes !== undefined && form.downtimeMinutes !== null) {
     query.downtimeMinutes = form.downtimeMinutes

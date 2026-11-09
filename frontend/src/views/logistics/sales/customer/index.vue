@@ -16,7 +16,20 @@
       :loading="loading"
       @search="handleSearch"
       @reset="handleReset"
-    />
+    >
+      <template #leading>
+        <a-range-picker
+          v-model:value="listPeriodRange"
+          picker="month"
+          format="YYYY-MM"
+          value-format="YYYY-MM"
+          :placeholder="[t('common.page.form.periodRange'), t('common.page.form.periodRange')]"
+          :disabled-date="listPeriodLimit.disabledDate"
+          @calendar-change="listPeriodLimit.onCalendarChange"
+          @open-change="listPeriodLimit.onOpenChange"
+        />
+      </template>
+    </TaktQueryBar>
 
     <!-- 工具栏 -->
     <TaktToolsBar
@@ -912,6 +925,7 @@ import { message, Modal } from 'ant-design-vue'
 import type { TableColumnsType } from 'ant-design-vue'
 import { CreateActionColumn } from '@/components/business/TaktActionColumn/index'
 import { useI18n } from 'vue-i18n'
+import { useListPeriodQuery } from '@/composables/useListPeriodQuery'
 import { ensureTaktPaginationConfigAsync, getTaktDefaultPageIndex, getTaktDefaultPageSize } from '@/utils/taktPaged'
 import { useTaktContentModalWidth } from '@/composables/useTaktContentModalWidth'
 import CustomerForm from './components/CustomerForm.vue'
@@ -987,6 +1001,9 @@ function hasAnyListQueryFilter(): boolean {
   if (kw.length > 0) {
     return true
   }
+  if (hasListPeriod()) {
+    return true
+  }
   const form = advancedQueryForm.value
   for (const key of CUSTOMER_QUERY_STRING_FIELDS) {
     if (String(form[key] ?? '').trim().length > 0) {
@@ -1053,6 +1070,20 @@ const updateDisabled = computed(() => selecmedRows.value.length !== 1)
 /** 工具栏「删除」是否禁用（未选中任何行） */
 const deleteDisabled = computed(() => selecmedRows.value.length === 0)
 
+/** 查询栏期间（默认当前月；创建日期） */
+const {
+  range: listPeriodRange,
+  limit: listPeriodLimit,
+  reset: resetListPeriod,
+  hasPeriod: hasListPeriod,
+  applyDateRange: applyListPeriodDate,
+} = useListPeriodQuery()
+
+/** 将查询栏期间写入 createdAtStart / createdAtEnd */
+function applyListPeriod(query: object): void {
+  applyListPeriodDate(query, 'createdAtStart', 'createdAtEnd')
+}
+
 /** Pinia：字典缓存（列表/查询 dict-type 渲染前预热） */
 const dictDataStore = useDictDataStore()
 
@@ -1100,6 +1131,7 @@ function buildListQuery(overrides?: Partial<CustomerQuery>): CustomerQuery {
   if (form.customerStatus !== undefined && form.customerStatus !== null) {
     query.customerStatus = form.customerStatus
   }
+  applyListPeriod(query)
   return query
 }
 /** 页面挂载：租户上下文就绪后加载分页配置；无查询条件时 loadData 保持空表 */
@@ -1259,6 +1291,7 @@ function handleSearch() {
 /** 重置查询条件并刷新列表 */
 function handleReset() {
   queryKeyword.value = ''
+  resetListPeriod()
   advancedQueryForm.value = createEmptyAdvancedQueryForm()
   currentPage.value = getTaktDefaultPageIndex()
   loadData()

@@ -133,6 +133,7 @@ import { normalizeRoutePath } from '@/utils/permission'
 import { NOT_FOUND_ROUTE_NAME } from '@/router/menuRoutes'
 import { TAKT_TABS_STORAGE_KEY } from '@/bootstrap/taktLogoutFlow'
 import { EventBus } from '@/utils/eventBus'
+import { useOpenPageCacheStore } from '@/stores/navigation/useOpenPageCacheStore'
 
 interface Tab {
   key: string
@@ -173,6 +174,7 @@ const emit = defineEmits<{
 
 const route = useRoute()
 const router = useRouter()
+const openPageCacheStore = useOpenPageCacheStore()
 const { setting } = storeToRefs(useSettingStore())
 const settingSafe = computed(() => setting.value ?? defaultSetting)
 const { t, locale: i18nLocale } = useI18n()
@@ -243,6 +245,7 @@ function resolveTabRouteMeta(path: string): RouteMeta | null {
 function resetTabsForLogout(): void {
   tabsList.value = []
   activeKey.value = ''
+  openPageCacheStore.clear()
   localStorage.removeItem(TAKT_TABS_STORAGE_KEY)
 }
 
@@ -521,6 +524,7 @@ watch(() => settingSafe.value.persistTabs, (enabled) => {
 // 监听标签列表变化，保存到存储
 watch(tabsList, () => {
   saveTabsToStorage()
+  openPageCacheStore.sync(tabsList.value.map((tab) => tab.path))
 }, { deep: true })
 
 // 监听活动标签变化，保存到存储

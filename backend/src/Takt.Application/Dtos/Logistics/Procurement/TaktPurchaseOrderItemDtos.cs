@@ -82,9 +82,9 @@ public class TaktPurchaseOrderItemDto : TaktCompanyDtoBase
     public string? MaterialSpecification { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购信息编码
+    /// 采购条件编码
     /// </summary>
-    public string? PurchaseInfoCode { get; set; } = string.Empty;
+    public string? PurchaseConditionCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 供应商物料编码
@@ -270,9 +270,9 @@ public class TaktPurchaseOrderItemQueryDto : TaktPagedQuery
     public string? MaterialSpecification { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购信息编码
+    /// 采购条件编码
     /// </summary>
-    public string? PurchaseInfoCode { get; set; } = string.Empty;
+    public string? PurchaseConditionCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 供应商物料编码
@@ -482,9 +482,9 @@ public class TaktPurchaseOrderItemCreateDto
     public string? MaterialSpecification { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购信息编码
+    /// 采购条件编码
     /// </summary>
-    public string? PurchaseInfoCode { get; set; } = string.Empty;
+    public string? PurchaseConditionCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 供应商物料编码
@@ -747,9 +747,9 @@ public class TaktPurchaseOrderItemTemplateDto
     public string? MaterialSpecification { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购信息编码
+    /// 采购条件编码
     /// </summary>
-    public string? PurchaseInfoCode { get; set; } = string.Empty;
+    public string? PurchaseConditionCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 供应商物料编码
@@ -940,9 +940,9 @@ public class TaktPurchaseOrderItemImportDto
     public string? MaterialSpecification { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购信息编码
+    /// 采购条件编码
     /// </summary>
-    public string? PurchaseInfoCode { get; set; } = string.Empty;
+    public string? PurchaseConditionCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 供应商物料编码
@@ -1139,9 +1139,9 @@ public class TaktPurchaseOrderItemExportDto
     public string? MaterialSpecification { get; set; } = string.Empty;
 
     /// <summary>
-    /// 采购信息编码
+    /// 采购条件编码
     /// </summary>
-    public string? PurchaseInfoCode { get; set; } = string.Empty;
+    public string? PurchaseConditionCode { get; set; } = string.Empty;
 
     /// <summary>
     /// 供应商物料编码

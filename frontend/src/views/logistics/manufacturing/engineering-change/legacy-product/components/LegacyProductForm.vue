@@ -122,14 +122,13 @@
                 />
               </a-form-item>
             </a-col>
-            <a-col :span="12">
+            <a-col :span="24">
               <a-form-item :label="pi.label('oldProductHandling')" name="oldProductHandling">
-                <TaktSelect
+                <a-textarea
                   v-model:value="formState.oldProductHandling"
-                  dict-type="logistics_manufacturing_ec_old_part_disposition"
                   :placeholder="pi.ph('oldProductHandling')"
                   disabled
-                  allow-clear
+                  :rows="3"
                 />
               </a-form-item>
             </a-col>
@@ -139,7 +138,7 @@
                   v-model:value="formState.ecOldPartDisposition"
                   dict-type="logistics_manufacturing_ec_old_part_disposition"
                   :placeholder="pi.ph('ecOldPartDisposition')"
-                  disabled
+                  :disabled="loading"
                   allow-clear
                 />
               </a-form-item>
@@ -264,7 +263,6 @@ function applyScopeDefaults(target: Record<string, unknown>, force = false) {
 const LEGACY_PRODUCT_DICT_FIELDS = [
   { field: 'ec2ndVendor', dictType: 'logistics_manufacturing_ec_2nd_vendor' },
   { field: 'ecInstruction', dictType: 'logistics_manufacturing_ec_source_instruction' },
-  { field: 'oldProductHandling', dictType: 'logistics_manufacturing_ec_old_part_disposition' },
   { field: 'ecOldPartDisposition', dictType: 'logistics_manufacturing_ec_old_part_disposition' },
   { field: 'discontinuedStatus', dictType: 'logistics_materials_material_discontinued_status' },
 ] as const
@@ -307,6 +305,13 @@ watch(
 
 /** 表单校验规则 */
 const rules = computed<Record<string, Rule[]>>(() => ({
+  ecOldPartDisposition: [
+    {
+      required: true,
+      message: pi.ph('ecOldPartDisposition'),
+      trigger: 'change',
+    },
+  ],
   discontinuedStatus: [
     {
       required: true,
@@ -331,7 +336,7 @@ async function validate() {
 function getValues(): EcLegacyProductUpdate {
   return {
     ecDetailId: String(formState.ecDetailId ?? ''),
-    oldProductHandling: (formState.oldProductHandling as string | undefined) ?? '',
+    ecOldPartDisposition: (formState.ecOldPartDisposition as string | undefined) ?? '',
     discontinuedStatus: String(formState.discontinuedStatus ?? 'Z0'),
     remark: (formState.remark as string | undefined) ?? '',
   }

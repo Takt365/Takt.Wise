@@ -62,6 +62,11 @@ public class TaktApsOrderDto : TaktCompanyDtoBase
     public string MaterialCode { get; set; } = string.Empty;
 
     /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
+
+    /// <summary>
     /// 订单数量
     /// </summary>
     public decimal OrderQuantity { get; set; }
@@ -160,6 +165,11 @@ public class TaktApsOrderQueryDto : TaktPagedQuery
     /// 物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）
     /// </summary>
     public string? MaterialCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 订单数量
@@ -279,6 +289,11 @@ public class TaktApsOrderCreateDto
     /// </summary>
     [Required(ErrorMessage = "物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）不能为空")]
     public string MaterialCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 订单数量
@@ -434,6 +449,11 @@ public class TaktApsOrderTemplateDto
     public string? MaterialCode { get; set; } = string.Empty;
 
     /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
+
+    /// <summary>
     /// 订单数量
     /// </summary>
     public decimal? OrderQuantity { get; set; }
@@ -531,6 +551,11 @@ public class TaktApsOrderImportDto
     /// 物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）
     /// </summary>
     public string? MaterialCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 订单数量
@@ -636,6 +661,11 @@ public class TaktApsOrderExportDto
     /// 物料编码（选项 TaktMaterialPlants/options；DictValue=MaterialCode，ExtValue=PlantCode）
     /// </summary>
     public string MaterialCode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 计划批次（发布/释放时带入下阶，正式工单写入 ProdBatch）
+    /// </summary>
+    public string? PlannedBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 订单数量

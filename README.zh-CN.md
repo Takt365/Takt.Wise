@@ -20,7 +20,9 @@
 | 支持语言 | 4 | `zh-CN` / `zh-HK` / `en-US` / `ja-JP` |
 | Cursor 规则 / Skill | 18 / 18 | `.cursor/rules/`、`.cursor/skills/`（00～17） |
 
-覆盖 **身份与权限、基础平台、人力资源、物流制造、客服、财务会计、日常办公、工作流、统计日志与快速查询、代码生成** 等业务域，采用 DDD 分层 + 多租户分库 + 公司级数据隔离。
+覆盖 **身份与权限、基础平台、人力资源、后勤管理（含生产执行 / 物料 / 采购 / 销售 / 品质等）、客服、财务会计、日常办公、工作流、统计日志与快速查询、代码生成** 等业务域，采用 DDD 分层 + 多租户分库 + 公司级数据隔离。
+
+> 说明：代码与菜单域名前缀 `Logistics` / `logistics` 在本项目中对应 **后勤**（`menu.logistics._self` = 后勤管理），**不是**「物流」运输义。
 
 ---
 
@@ -169,14 +171,14 @@ Takt.Shared          → 分页、异常、Options、工具类、枚举/常量
 | **Identity** | 用户、角色、菜单、租户、RBAC、认证 | 登录鉴权、权限分配、多租户/多公司授权 |
 | **Foundation** | 字典、翻译、系统属性、编码、消息、在线、文化、行政区划、文件 | 平台基础数据、站内消息、动态 i18n |
 | **HumanResource** | Organization、Personnel、Attendance、Talent、Benefits、Compensation、Performance、Training | 组织、人事、考勤、薪酬福利、绩效培训 |
-| **Logistics · Materials** | 物料、供应商、厂商、工厂等 | 物料主数据 |
-| **Logistics · Procurement** | 请购 / 采购订单 / 采购价格等 | 采购业务 |
-| **Logistics · Sales** | 客户、销售订单 / 价格等 | 销售管理 |
-| **Logistics · CustomerService** | 请求 / 订单 / 工单 / 合同及 Stat | 客服与统计 |
-| **Logistics · Quality** | Operation（IQC/IPQC/FQC）、Complaint、Cost；含独立 Trend | 检验、客诉、质量成本与趋势 |
-| **Logistics · Manufacturing** | Bom（含 Explosion / 成本分析 Trend）、Aps、Mds/Mps/Mrp、Output、Defect、EngineeringChange、LaborHour、Sop | 制造、计划、产出、不良、ECN |
-| **Logistics · Serial** | 产品序列号入出库 | 序列号追溯 |
-| **Logistics · Maintenance** | 设备、保养工单 | 设备维护 |
+| **Logistics（后勤）· Materials** | 物料、供应商、厂商、工厂等 | 物料管理 |
+| **Logistics（后勤）· Procurement** | 请购 / 采购订单 / 采购价格等 | 采购管理 |
+| **Logistics（后勤）· Sales** | 客户、销售订单 / 价格等 | 销售管理 |
+| **Logistics（后勤）· CustomerService** | 请求 / 订单 / 工单 / 合同及 Stat | 客户服务与统计 |
+| **Logistics（后勤）· Quality** | Operation（IQC/IPQC/FQC）、Complaint、Cost；含独立 Trend | 质量管理（检验、客诉、质量成本与趋势） |
+| **Logistics（后勤）· Manufacturing** | Bom（含 Explosion / 成本分析 Trend）、Aps、Mds/Mps/Mrp、Output、Defect、EngineeringChange、LaborHour、Sop | 生产执行（计划、产出、不良、设变等） |
+| **Logistics（后勤）· Serial** | 产品序列号入出库 | 序列号管理 |
+| **Logistics（后勤）· Maintenance** | 设备、保养工单 | 工厂维护 |
 | **Accounting** | Financial、Controlling | 财务 / 成本主档 |
 | **Routine** | Announcement、NewsCenter、HelpDesk、DocumentCenter、**MeetingCenter**、VisitorCenter | 公告、新闻、服务台、文档、会议、访客 |
 | **Workflow** | 方案 / 表单 / 实例 / 任务 / 变量 / 加签 + **Engine** | 审批定义与运行时 |

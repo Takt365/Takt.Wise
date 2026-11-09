@@ -94,6 +94,8 @@ public class TaktEcMfg1Service : TaktServiceBase, ITaktEcMfg1Service
         {
             return null;
         }
+        // 打开编辑：按设变+机种+完成品从生管刷新预定日期/预定批次
+        await _ecExecPersistence.RefreshScheduledRedundantFromPcAsync(entity);
         var dto = entity.Adapt<TaktEcMfg1Dto>();
         await _ecExecPersistence.FillExecViewDetailsAsync(entity, dto);
         return dto;
@@ -162,8 +164,13 @@ public class TaktEcMfg1Service : TaktServiceBase, ITaktEcMfg1Service
         {
             throw new TaktBusinessException("设变制一执行不存在");
         }
-        dto.ImplementationBatch = TaktStringHelper.NormalizeBatchCode(dto.ImplementationBatch);
+        dto.ProductionBatch = TaktStringHelper.NormalizeBatchCode(dto.ProductionBatch);
+        var preservedEcGrainKey = entity.EcGrainKey;
         dto.Adapt(entity);
+        if (string.IsNullOrWhiteSpace(entity.EcGrainKey))
+        {
+            entity.EcGrainKey = preservedEcGrainKey;
+        }
         var isUnique_ix_takt_logistics_manufacturing_ec_mfg1_unique = await _uniqueValidator.IsUniqueAsync(
             _ecMfg1Repository,
             x => x.EcCode == entity.EcCode && SqlFunc.ToString(x.EcGrainKey) == entity.EcGrainKey
@@ -396,7 +403,7 @@ public class TaktEcMfg1Service : TaktServiceBase, ITaktEcMfg1Service
                 || SqlFunc.ToString(x.IsImplemented).Contains(keywords)
                 || (x.ExecContent != null && x.ExecContent.Contains(keywords))
                 || (x.ProductionTeam != null && x.ProductionTeam.Contains(keywords))
-                || (x.ImplementationBatch != null && x.ImplementationBatch.Contains(keywords))
+                || (x.ProductionBatch != null && x.ProductionBatch.Contains(keywords))
                 || (x.CultureCode != null && x.CultureCode.Contains(keywords))
                 || (x.ExtField != null && x.ExtField.Contains(keywords))
                 || (x.Remark != null && x.Remark.Contains(keywords))
@@ -440,9 +447,9 @@ public class TaktEcMfg1Service : TaktServiceBase, ITaktEcMfg1Service
             exp = exp.And(x => x.ProductionTeam != null && x.ProductionTeam.Contains(queryDto.ProductionTeam));
         }
 
-        if (!string.IsNullOrEmpty(queryDto?.ImplementationBatch))
+        if (!string.IsNullOrEmpty(queryDto?.ProductionBatch))
         {
-            exp = exp.And(x => x.ImplementationBatch != null && x.ImplementationBatch.Contains(queryDto.ImplementationBatch));
+            exp = exp.And(x => x.ProductionBatch != null && x.ProductionBatch.Contains(queryDto.ProductionBatch));
         }
 
         if (!string.IsNullOrEmpty(queryDto?.CultureCode))

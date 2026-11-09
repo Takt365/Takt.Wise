@@ -16,6 +16,25 @@ using Takt.Shared.Helpers;
 namespace Takt.Application.Dtos.Logistics.Manufacturing.Mrp;
 
 /// <summary>
+/// 从销售预测生成 MDS 请求
+/// </summary>
+public class TaktMdsRunFromSalesForecastDto
+{
+    /// <summary>
+    /// 销售预测 ID 列表
+    /// </summary>
+    [Required]
+    [MinLength(1)]
+    public List<string> SalesForecastIds { get; set; } = new();
+
+    /// <summary>
+    /// 已存在 MDS 头表 ID 时刷新行（可选）
+    /// </summary>
+    [JsonConverter(typeof(ValueToStringConverter))]
+    public long? MasterDemandScheduleId { get; set; }
+}
+
+/// <summary>
 /// 从 MDS 生成 MPS 请求
 /// </summary>
 public class TaktMpsRunFromMdsDto

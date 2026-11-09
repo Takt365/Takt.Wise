@@ -132,7 +132,7 @@ internal static class TaktPurchasePriceTrendExportHelper
         return new TaktPurchasePriceTrendDto
         {
             PlantCode = row.PlantCode,
-            PurchaseInfoCode = row.PurchaseInfoCode,
+            PurchaseConditionCode = row.PurchaseConditionCode,
             MaterialCode = row.MaterialCode,
             MaterialName = row.MaterialName,
             MaterialDescription = row.MaterialDescription,
@@ -202,7 +202,7 @@ internal static class TaktPurchasePriceTrendExportHelper
         return new Dictionary<string, object?>(StringComparer.Ordinal)
         {
             ["plantCode"] = row.PlantCode,
-            ["purchaseInfoCode"] = row.PurchaseInfoCode,
+            ["purchaseConditionCode"] = row.PurchaseConditionCode,
             ["materialCode"] = row.MaterialCode,
             ["materialDescription"] = row.MaterialDescription,
             ["supplierCode"] = row.SupplierCode,

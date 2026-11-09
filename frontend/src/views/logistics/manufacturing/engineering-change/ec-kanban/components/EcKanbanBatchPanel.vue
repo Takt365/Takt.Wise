@@ -2,7 +2,7 @@
 <!-- 项目名称：节拍智控 · TaktWise (TDF) -->
 <!-- 命名空间：@/views/logistics/manufacturing/engineering-change/ec-kanban/components -->
 <!-- 文件名称：EcKanbanBatchPanel.vue -->
-<!-- 功能描述：设变看板批次页签：一个设变号一组，各部门按可见明细行数展开成表格行 -->
+<!-- 功能描述：设变看板·批次页签：panelKey 区分生产组(生管/制二/制一/品管)与采购/受检/部管/物料独立脊柱；defineExpose 无 -->
 <!-- 版权信息：Copyright (c) 2026 Takt  All rights reserved. -->
 <!-- 免责声明：此软件使用 MIT License，作者不承担任何使用风险。 -->
 <!-- ======================================== -->
@@ -11,19 +11,17 @@
   <div class="box-border flex w-full min-w-0 max-w-full flex-col overflow-x-hidden">
     <TaktQueryBar
       v-model="queryKeyword"
-      :loading="loading"
       :placeholder="t('common.page.form.placeholder.search')"
+      :loading="loading"
       @search="handleSearch"
       @reset="handleReset"
     >
       <template #leading>
-        <span class="whitespace-nowrap text-sm text-text-secondary">{{ t('logistics.manufacturing.engineering-change.ec-stat.page.entryPeriodRange') }}</span>
         <a-range-picker
           v-model:value="entryPeriod"
           picker="month"
           format="YYYY-MM"
           value-format="YYYY-MM"
-          class="w-64 min-w-56"
           :placeholder="[
             t('logistics.manufacturing.engineering-change.ec-stat.page.entryPeriodRange'),
             t('logistics.manufacturing.engineering-change.ec-stat.page.entryPeriodRange'),
@@ -58,59 +56,46 @@
       :show-row-selection="false"
       :columns="columns"
       :visible-column-keys="visibleColumnKeys"
-      :id-column-key="'ecDetailId'"
+      :id-column-key="'ecTeId'"
       table-mode="single"
-      :data-source="tableRows"
+      scroll-layout="pageWithInnerTabs"
+      :scroll="{ y: batchTableScrollY }"
+      :data-source="dataSource"
       :loading="loading"
       :stripe="true"
-      :virtual="false"
-      :row-key="getEcDetailId"
+      :virtual="true"
+      :row-key="getEcId"
       @change="handleTableChange"
       @resize-column="handleResizeColumn"
     >
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'ecCode'">
-            <a-typography-link @click.stop="handleDetail(record as BatchTableRow)">
-              {{ record.ecCode }}
-            </a-typography-link>
-          </template>
-          <template v-else-if="column.key === 'ecIssueDate' || column.key === 'ecEntryDate'">
-            <span>{{ formatCalendarDate((record as Record<string, unknown>)[String(column.key)]) }}</span>
-          </template>
-          <template v-else-if="isStageColumn(column.key)">
-            <span>{{ (record as BatchTableRow)[String(column.key)] }}</span>
-          </template>
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'ecIssueDate' || column.key === 'ecEntryDate'">
+          {{ formatIssueDate(record[column.key]) }}
+        </template>
+        <template v-else-if="column.key === 'ecLeader'">
+          <TaktDictTag
+            v-if="record.ecLeader"
+            :value="record.ecLeader"
+            :option="ecGroupOption(record.ecLeader)"
+          />
+        </template>
+        <template v-else-if="isStageColumn(column.key)">
+          <span>{{ (record as BatchTableRow)[String(column.key)] || '—' }}</span>
+        </template>
       </template>
     </TaktSingleTable>
     <TaktPagination
       v-model:current="currentPage"
       v-model:page-size="pageSize"
       :total="total"
+      :show-total="true"
       @change="handlePaginationChange"
     />
-    <TaktModal
-      v-model:open="detailVisible"
-      :title="t('common.dialog.title.detail', { entity: t('logistics.manufacturing.engineering-change.ec-kanban.page.tabs.batch') })"
-      width="960px"
-      :hide-footer="true"
-      @cancel="detailVisible = false"
-    >
-      <a-spin :spinning="detailLoading">
-        <a-descriptions v-if="detailData" bordered :column="2" size="small">
-          <a-descriptions-item :label="gi.label('ecCode')">{{ detailData.ecCode }}</a-descriptions-item>
-          <a-descriptions-item :label="pi.label('lineNumber')">{{ detailData.lineNumber }}</a-descriptions-item>
-          <a-descriptions-item :label="pi.label('ecModelCode')">{{ detailData.ecModelCode }}</a-descriptions-item>
-          <a-descriptions-item :label="pi.label('ecNewMaterialCode')">{{ detailData.ecNewMaterialCode ?? '—' }}</a-descriptions-item>
-          <a-descriptions-item :label="pi.label('ecOldMaterialCode')">{{ detailData.ecOldMaterialCode ?? '—' }}</a-descriptions-item>
-          <a-descriptions-item :label="gi.label('ecEntryDate')">{{ formatCalendarDate(detailData.ecEntryDate) || '—' }}</a-descriptions-item>
-        </a-descriptions>
-      </a-spin>
-    </TaktModal>
     <TaktQueryDrawer
       v-model:open="advancedQueryVisible"
       v-model:visible-field-keys="visibleQueryFieldKeys"
       :fields="queryFieldsMeta"
-      storage-key="takt-query-fields-logistics-manufacturing-engineering-change-kanban-batch"
+      :storage-key="queryStorageKey"
       :form-model="advancedQueryForm"
       @submit="handleAdvancedQuerySubmit"
       @reset="handleAdvancedQueryReset"
@@ -121,29 +106,19 @@
             <a-input v-model:value="advancedQueryForm.ecCode" allow-clear :maxlength="10" />
           </a-form-item>
         </div>
-        <div v-show="isFieldVisible('ecModelCode')">
-          <a-form-item :label="pi.label('ecModelCode')">
-            <a-input v-model:value="advancedQueryForm.ecModelCode" allow-clear :maxlength="40" />
+        <div v-show="isFieldVisible('changeStatus')">
+          <a-form-item :label="gi.label('changeStatus')">
+            <TaktSelect v-model:value="advancedQueryForm.changeStatus" dict-type="logistics_manufacturing_ec_status" allow-clear />
           </a-form-item>
         </div>
-        <div v-show="isFieldVisible('ecNewMaterialCode')">
-          <a-form-item :label="pi.label('ecNewMaterialCode')">
-            <a-input v-model:value="advancedQueryForm.ecNewMaterialCode" allow-clear :maxlength="20" />
+        <div v-show="isFieldVisible('ecStatus')">
+          <a-form-item :label="gi.label('ecStatus')">
+            <TaktSelect v-model:value="advancedQueryForm.ecStatus" dict-type="logistics_manufacturing_ec_te_status" allow-clear />
           </a-form-item>
         </div>
-        <div v-show="isFieldVisible('ecIssueDateStart')">
-          <a-form-item :label="gi.queryLabel('ecIssueDateStart')">
-            <a-date-picker v-model:value="advancedQueryForm.ecIssueDateStart" value-format="YYYY-MM-DD" class="w-full" />
-          </a-form-item>
-        </div>
-        <div v-show="isFieldVisible('ecIssueDateEnd')">
-          <a-form-item :label="gi.queryLabel('ecIssueDateEnd')">
-            <a-date-picker v-model:value="advancedQueryForm.ecIssueDateEnd" value-format="YYYY-MM-DD" class="w-full" />
-          </a-form-item>
-        </div>
-        <div v-show="isFieldVisible('batchCode')">
-          <a-form-item :label="pc.label('scheduledBatch')">
-            <a-input :value="advancedQueryForm.batchCode" allow-clear :maxlength="20" @update:value="(value) => { advancedQueryForm.batchCode = taktDeptBatchInput(value) }" />
+        <div v-show="isFieldVisible('cultureCode')">
+          <a-form-item :label="t('common.page.entity.culturecode')">
+            <TaktSelect v-model:value="advancedQueryForm.cultureCode" dict-type="sys_culture_code" allow-clear />
           </a-form-item>
         </div>
       </template>
@@ -152,8 +127,7 @@
       v-model:open="columnSettingVisible"
       :columns="columns"
       :checked-keys="visibleColumnKeys"
-      id-column-key="ecDetailId"
-      action-column-key="action"
+      id-column-key="ecTeId"
       entity-scope="company"
       table-mode="single"
       @update:checked-keys="handleColumnKeysChange"
@@ -164,447 +138,488 @@
 
 <script setup lang="ts">
 /**
- * 设变看板批次页签：一个设变号一组。部门有几条可见明细就展开几行，设变信息每行重复
+ * 设变看板批次页签：按 panelKey 展开脊柱（生产组=生管行；采购/受检/部管/物料=本部门库表行）
  */
 import '../../ec-list-layout.css'
-import { RiEyeLine } from '@remixicon/vue';
-import { useAnalysisPeriodRangeLimit } from '@/composables/useAnalysisPeriodRangeLimit';
+import type { TableColumnsType } from 'ant-design-vue'
+import { useI18n } from 'vue-i18n'
+import { useAnalysisPeriodRangeLimit } from '@/composables/useAnalysisPeriodRangeLimit'
 import {
   TAKT_ANALYSIS_PERIOD_MAX_MONTHS,
   buildDefaultThroughCurrentPeriodRange,
-} from '@/views/logistics/manufacturing/bom/material-cost/utils/bomMaterialCostPeriod';
-import type { TableColumnsType } from 'ant-design-vue';
-import { useI18n } from 'vue-i18n';
-import { useEntityFieldI18n } from '@/composables/useEntityFieldI18n';
-import { getEcBatchTransposedList } from '@/api/logistics/manufacturing/engineering-change/ecBatch.api';
-import { getEcDetailById } from '@/api/logistics/manufacturing/engineering-change/ecDetail.api';
-import { exportEcBatchData } from '@/api/logistics/manufacturing/engineering-change/ecBatch.api';
-import { CreateActionColumn } from '@/components/business/TaktActionColumn/index';
-import { TaktEcBatchStageCodes, TaktEcBatchStageTransposedOrder } from '@/constants/logistics/ecBatchStageCodes.constants';
-import { taktDeptBatchInput } from '@/constants/logistics/ecDeptExecLineFields.constants';
-import type { EcDetail } from '@/types/logistics/manufacturing/engineering-change/ecDetail.types';
+} from '@/views/logistics/manufacturing/bom/material-cost/utils/bomMaterialCostPeriod'
+import { exportEcKanbanData } from '@/api/logistics/manufacturing/engineering-change/ecKanban.api'
+import { getEcGroupOptions } from '@/api/logistics/manufacturing/engineering-change/ecGroup.api'
+import { useTaktTableViewportScrollY } from '@/composables/useTaktTableViewportScrollY'
+import type { TaktSelectOption } from '@/types/common.types'
 import type {
-  EcExecBatchTransposed,
-  EcExecBatchTransposedQuery,
-  EcExecBatchTransposedResult,
-  EcExecBatchTransposedStageLine,
-} from '@/types/logistics/manufacturing/engineering-change/ecExecTransposed.types';
-import { formatCalendarDate } from '@/utils/datetime';
-import { useEcDetailI18n } from '@/views/logistics/manufacturing/engineering-change/ec-te/composables/useEcDetailI18n';
-import { useEcTeI18n } from '@/views/logistics/manufacturing/engineering-change/ec-te/composables/useEcTeI18n';
+  EcKanban,
+  EcKanbanDeptLine,
+} from '@/types/logistics/manufacturing/engineering-change/ecKanban.types'
+import {
+  TAKT_TABLE_HEADER_FALLBACK_PX,
+  TAKT_TABLE_SCROLL_Y_MIN,
+} from '@/utils/tableScroll'
+import { useEcTeI18n } from '@/views/logistics/manufacturing/engineering-change/ec-te/composables/useEcTeI18n'
+import {
+  fetchAllEcKanbanMasters,
+  sliceEcKanbanDetailPage,
+} from '../utils/fetchAllEcKanbanMasters'
 
-const { t } = useI18n();
-const pi = useEcDetailI18n();
-const gi = useEcTeI18n();
-const localePrefix = 'logistics.manufacturing.engineering-change.ec-kanban.page.batch';
+/** 批次页签：生产组 / 采购 / 受检 / 部管 / 物料 */
+export type EcKanbanBatchPanelKey = 'production' | 'pur' | 'iqc' | 'mc' | 'mtl'
 
-/** 展开后的一行：同一设变号按各部门最大行数展开，阶段列只放这一行 */
-interface BatchTableRow {
-  rowKey: string;
-  lineIndex: number;
-  lineCount: number;
-  ecDetailId: string;
-  ecCode: string;
-  technicalLiaisonNo: string;
-  pNo: string;
-  tcjLiaisonNo: string;
-  ecIssueDate: string;
-  ecModelCode: string;
-  ecNewMaterialCode: string;
-  ecEntryDate: string;
-  [key: string]: string | number;
-}
-/** 生管 entity.ecpc.* */
-const pc = useEntityFieldI18n('ecpc');
-/** 列表 loading */
-const loading = ref(false);
-/** 转置结果 */
-const transposedResult = ref<EcExecBatchTransposedResult | null>(null);
-/** 当前页 */
-const currentPage = ref(1);
-/** 每页条数 */
-const pageSize = ref(20);
-/** 总数 */
-const total = ref(0);
-/** 关键词，放在查询按钮前面 */
-const queryKeyword = ref('');
-/** 录入期间，截止本月 */
-const entryPeriod = ref<[string, string] | null>(buildDefaultThroughCurrentPeriodRange(3));
-/** 录入期间可选到本月，最多 12 个月 */
-const entryPeriodLimit = useAnalysisPeriodRangeLimit(TAKT_ANALYSIS_PERIOD_MAX_MONTHS, { allowCurrentMonth: true });
-/** 详情弹窗 */
-const detailVisible = ref(false);
-/** 详情 loading */
-const detailLoading = ref(false);
-/** 详情数据 */
-const detailData = ref<EcDetail | null>(null);
-/** 列设置抽屉 */
-const columnSettingVisible = ref(false);
-/** 用户勾选的列；空表示跟随当前全部列 */
-const userVisibleColumnKeys = ref<string[] | null>(null);
-/** 高级查询抽屉 */
-const advancedQueryVisible = ref(false);
-/** 高级查询字段 */
-const BATCH_QUERY_FIELDS = [
-  'ecCode',
-  'ecModelCode',
-  'ecNewMaterialCode',
-  'ecIssueDateStart',
-  'ecIssueDateEnd',
-  'batchCode',
-] as const;
-/** 高级查询可见字段 */
-const visibleQueryFieldKeys = ref<string[]>([]);
+const props = withDefaults(defineProps<{
+  /** 页签脊柱：production=生管+制二+制一+品管；其余为本部门单列 */
+  panelKey?: EcKanbanBatchPanelKey
+}>(), {
+  panelKey: 'production',
+})
+
+const { t } = useI18n()
+const gi = useEcTeI18n()
+const localePrefix = 'logistics.manufacturing.engineering-change.ec-kanban.page'
+const batchPrefix = `${localePrefix}.batch`
+/** 视口标准表体高度（已扣内嵌页签栏） */
+const viewportScrollYPx = useTaktTableViewportScrollY('pageWithInnerTabs')
 /**
- * 空的高级查询表单
+ * 批次表为分组双层表头；scroll.y 只约束表体，须再扣一层表头高度，
+ * 总高度才与采购/受检等单层表头页签对齐
+ */
+const batchTableScrollY = computed(() =>
+  Math.max(TAKT_TABLE_SCROLL_Y_MIN, viewportScrollYPx.value - TAKT_TABLE_HEADER_FALLBACK_PX),
+)
+/** 列表 loading */
+const loading = ref(false)
+/** 单张设变最多展开行数（与后端 KanbanDeptLineCap 对齐） */
+const KANBAN_MAX_EXPAND_LINES = 300
+
+/** 展开后的一行 */
+interface BatchTableRow {
+  rowKey: string
+  lineIndex: number
+  ecIssueDate: string
+  ecLeader: string
+  ecCode: string
+  ecModelCode: string
+  ecRootMaterialCode: string
+  ecEntryDate: string
+  [key: string]: string | number
+}
+
+/** 部门列配置 */
+interface BatchDeptColumn {
+  linesKey: string
+  group: string
+  dateKey: string
+  batchKey: string
+}
+
+/** 生产组：生管→制二→制一→品管（同生管脊柱） */
+const PRODUCTION_DEPT_COLUMNS: BatchDeptColumn[] = [
+  { linesKey: 'pcLines', group: 'pc', dateKey: 'scheduledInput', batchKey: 'productionSchedule' },
+  { linesKey: 'mfg2Lines', group: 'mfg2', dateKey: 'productionDate', batchKey: 'productionBatch' },
+  { linesKey: 'mfg1Lines', group: 'mfg1', dateKey: 'productionDate', batchKey: 'productionBatch' },
+  { linesKey: 'qcLines', group: 'qc', dateKey: 'sampleDate', batchKey: 'sampleBatch' },
+]
+
+/** 单部门页签列 */
+const SINGLE_DEPT_COLUMNS: Record<Exclude<EcKanbanBatchPanelKey, 'production'>, BatchDeptColumn[]> = {
+  pur: [{ linesKey: 'purLines', group: 'pur', dateKey: 'inboundDate', batchKey: '' }],
+  iqc: [{ linesKey: 'iqcLines', group: 'iqc', dateKey: 'inspectionDate', batchKey: '' }],
+  mc: [{ linesKey: 'mcLines', group: 'mc', dateKey: 'outboundDate', batchKey: 'outboundBatch' }],
+  mtl: [{ linesKey: 'mtlLines', group: 'mtl', dateKey: 'outboundDate', batchKey: 'outboundBatch' }],
+}
+
+/** 当前页签部门列 */
+const activeDeptColumns = computed((): BatchDeptColumn[] => {
+  if (props.panelKey === 'production') {
+    return PRODUCTION_DEPT_COLUMNS
+  }
+  return SINGLE_DEPT_COLUMNS[props.panelKey]
+})
+
+/** 展开脊柱字段（生产=生管；其余=本部门） */
+const spineLinesKey = computed(() => {
+  if (props.panelKey === 'production') {
+    return 'pcLines'
+  }
+  return SINGLE_DEPT_COLUMNS[props.panelKey][0].linesKey
+})
+
+/** 查询抽屉 storage */
+const queryStorageKey = computed(
+  () => `takt-query-fields-logistics-manufacturing-engineering-change-kanban-batch-${props.panelKey}`,
+)
+
+/** 展开后的全量明细行（分页按此切页） */
+const allDetailRows = ref<BatchTableRow[]>([])
+/** 当前页表格行 */
+const dataSource = ref<BatchTableRow[]>([])
+/** 当前页 */
+const currentPage = ref(1)
+/** 每页条数 */
+const pageSize = ref(20)
+/** 总数（展开后明细行数） */
+const total = ref(0)
+/** 关键词 */
+const queryKeyword = ref('')
+/** 录入期间 */
+const entryPeriod = ref<[string, string] | null>(buildDefaultThroughCurrentPeriodRange(3))
+/** 录入期间限制 */
+const entryPeriodLimit = useAnalysisPeriodRangeLimit(TAKT_ANALYSIS_PERIOD_MAX_MONTHS, { allowCurrentMonth: true })
+/** 列设置 */
+const columnSettingVisible = ref(false)
+/** 高级查询 */
+const advancedQueryVisible = ref(false)
+/** 高级查询字段 */
+const KANBAN_QUERY_FIELDS = ['ecCode', 'changeStatus', 'ecStatus', 'cultureCode'] as const
+/** 高级查询可见字段 */
+const visibleQueryFieldKeys = ref<string[]>([])
+
+/**
+ * 空高级查询表单
  */
 function createEmptyAdvancedQueryForm() {
   return {
     ecCode: '',
-    ecModelCode: '',
-    ecNewMaterialCode: '',
-    ecIssueDateStart: '',
-    ecIssueDateEnd: '',
-    batchCode: '',
-  };
+    cultureCode: '',
+    changeStatus: undefined as number | undefined,
+    ecStatus: undefined as number | undefined,
+  }
 }
-/** 高级查询表单 */
-const advancedQueryForm = ref(createEmptyAdvancedQueryForm());
-/** 高级查询字段标题 */
-const queryFieldsMeta = computed(() => BATCH_QUERY_FIELDS.map((key) => ({
-  key,
-  label: key === 'ecCode' || key === 'ecIssueDateStart' || key === 'ecIssueDateEnd'
-    ? gi.queryLabel(key)
-    : key === 'batchCode'
-      ? pc.label('scheduledBatch')
-      : pi.label(key),
-})));
 
-/**
- * 设变信息跨行。第一行占满该设变号的全部展开行
- * @param record 展开行
- * @returns 单元格跨行
- */
-function identityCell(record: BatchTableRow) {
-  return { rowSpan: record.lineIndex === 0 ? record.lineCount : 0 };
-}
+/** 高级查询表单 */
+const advancedQueryForm = ref(createEmptyAdvancedQueryForm())
+/** 高级查询字段标题 */
+const queryFieldsMeta = computed(() => KANBAN_QUERY_FIELDS.map((key) => ({
+  key,
+  label: key === 'cultureCode' ? t('common.page.entity.culturecode') : gi.label(key),
+})))
 
 /**
  * 叶子列
- * @param titleKey 页面列文案键
+ * @param title 标题
  * @param key 列键
- * @param width 列宽
- * @param spanGroup 是否按设变号跨行
- * @returns 列定义
+ * @param width 宽度
+ * @returns 列
  */
-function leafColumn(titleKey: string, key: string, width: number, spanGroup = false) {
+function leaf(title: string, key: string, width: number) {
   return {
-    title: t(`${localePrefix}.column.${titleKey}`),
+    title,
     dataIndex: key,
     key,
     width,
     align: 'center' as const,
-    customCell: spanGroup ? identityCell : undefined,
-  };
+  }
 }
 
 /**
- * 分组表头
- * @param titleKey 分组文案键
- * @param key 分组键
- * @param children 子列
+ * 部门分组列
+ * @param group 分组键
+ * @param dateKey 日期列文案键
+ * @param batchKey 批次列文案键；空则仅日期
  * @returns 分组列
  */
-function groupColumn(titleKey: string, key: string, children: TableColumnsType) {
+function deptGroup(group: string, dateKey: string, batchKey: string) {
+  const children = [
+    leaf(t(`${batchPrefix}.column.${dateKey}`), `date_${group}`, 110),
+  ]
+  if (batchKey) {
+    children.push(leaf(t(`${batchPrefix}.column.${batchKey}`), `batch_${group}`, 120))
+  }
   return {
-    title: t(`${localePrefix}.group.${titleKey}`),
-    key,
+    title: t(`${batchPrefix}.group.${group}`),
+    key: `group_${group}`,
     align: 'center' as const,
     children,
-  };
-}
-
-/** 两级表头：设变信息，以及生管、采购、受检、部管、物料、制二、制一、品管、制技 */
-const columns = computed(() => {
-  const base: TableColumnsType = [
-    groupColumn('ecInfo', 'ecInfo', [
-      leafColumn('ecCode', 'ecCode', 120, true),
-      leafColumn('liaisonNo', 'technicalLiaisonNo', 120, true),
-      leafColumn('pNo', 'pNo', 110, true),
-      leafColumn('tcjDate', 'tcjLiaisonNo', 130, true),
-      leafColumn('issueDate', 'ecIssueDate', 110, true),
-      leafColumn('model', 'ecModelCode', 160, true),
-      leafColumn('product', 'ecNewMaterialCode', 180, true),
-      leafColumn('entryDate', 'ecEntryDate', 110, true),
-    ]),
-    groupColumn('pc', 'pc', [
-      leafColumn('scheduledInput', `stageDate_${TaktEcBatchStageCodes.Scheduled}`, 110),
-      leafColumn('productionSchedule', `stageBatch_${TaktEcBatchStageCodes.Scheduled}`, 110),
-    ]),
-    groupColumn('pur', 'pur', [
-      leafColumn('orderDate', `stageDate_${TaktEcBatchStageCodes.PurchaseOrder}`, 110),
-      leafColumn('orderCode', `stageBatch_${TaktEcBatchStageCodes.PurchaseOrder}`, 130),
-    ]),
-    groupColumn('iqc', 'iqc', [
-      leafColumn('inspectionDate', `stageDate_${TaktEcBatchStageCodes.IncomingInspection}`, 110),
-      leafColumn('iqcOrderCode', `stageBatch_${TaktEcBatchStageCodes.IncomingInspection}`, 130),
-    ]),
-    groupColumn('mc', 'mc', [
-      leafColumn('outboundDate', `stageDate_${TaktEcBatchStageCodes.Outbound}`, 110),
-      leafColumn('outboundBatch', `stageBatch_${TaktEcBatchStageCodes.Outbound}`, 120),
-    ]),
-    groupColumn('mtl', 'mtl', [
-      leafColumn('outboundDate', `stageDate_${TaktEcBatchStageCodes.ElectronicOutbound}`, 110),
-      leafColumn('outboundBatch', `stageBatch_${TaktEcBatchStageCodes.ElectronicOutbound}`, 120),
-    ]),
-    groupColumn('mfg2', 'mfg2', [
-      leafColumn('productionDate', `stageDate_${TaktEcBatchStageCodes.Mfg2Production}`, 110),
-      leafColumn('productionBatch', `stageBatch_${TaktEcBatchStageCodes.Mfg2Production}`, 120),
-    ]),
-    groupColumn('mfg1', 'mfg1', [
-      leafColumn('productionDate', `stageDate_${TaktEcBatchStageCodes.Mfg1Production}`, 110),
-      leafColumn('productionBatch', `stageBatch_${TaktEcBatchStageCodes.Mfg1Production}`, 120),
-    ]),
-    groupColumn('qc', 'qc', [
-      leafColumn('sampleDate', `stageDate_${TaktEcBatchStageCodes.SampleInspection}`, 110),
-    ]),
-    groupColumn('me', 'me', [
-      leafColumn('sopDate', `stageDate_${TaktEcBatchStageCodes.TechSop}`, 110),
-    ]),
-  ];
-  base.push({
-    ...CreateActionColumn<BatchTableRow>({
-      actions: [
-        {
-          key: 'detail',
-          label: t('common.page.button.detail'),
-          shape: 'plain',
-          icon: RiEyeLine,
-          permission: 'logistics:manufacturing:engineering:change:kanban:list',
-          buttonClass: 'takt-button-detail',
-          onClick: (record) => handleDetail(record),
-        }],
-    }),
-    customCell: identityCell,
-  });
-  return base;
-});
-
-/** 可见列 keys */
-const visibleColumnKeys = computed(() => {
-  const all = columns.value.map((column) => String(column.key ?? '')).filter((key) => key.length > 0);
-  if (userVisibleColumnKeys.value == null) {
-    return all;
   }
-  const allowed = new Set(all);
-  const kept = userVisibleColumnKeys.value.filter((key) => allowed.has(key));
-  const known = new Set(userVisibleColumnKeys.value);
-  return [...kept, ...all.filter((key) => !known.has(key))];
-});
+}
 
-/** 表格行：按各部门执行行数展开 */
-const tableRows = computed(() => expandBatchRows(transposedResult.value?.paged?.data ?? []));
+/** 列：设变信息 + 当前页签部门日期/批次 */
+const columns = computed((): TableColumnsType => [
+  leaf(t(`${localePrefix}.column.issueDate`), 'ecIssueDate', 120),
+  leaf(t(`${localePrefix}.column.leader`), 'ecLeader', 110),
+  leaf(t(`${localePrefix}.column.ecCode`), 'ecCode', 130),
+  leaf(t(`${localePrefix}.column.model`), 'ecModelCode', 120),
+  leaf(t(`${localePrefix}.column.finishedProduct`), 'ecRootMaterialCode', 150),
+  leaf(t(`${localePrefix}.column.tech`), 'ecEntryDate', 120),
+  ...activeDeptColumns.value.map((column) => deptGroup(column.group, column.dateKey, column.batchKey)),
+])
+
+/** 默认可见列 */
+const BATCH_DEFAULT_COLUMN_KEYS = computed(() =>
+  columns.value.map((column) => String(column.key ?? '')).filter((key) => key.length > 0),
+)
+/** 可见列 */
+const visibleColumnKeys = ref<string[]>([])
+
+watch(
+  BATCH_DEFAULT_COLUMN_KEYS,
+  (keys) => {
+    visibleColumnKeys.value = [...keys]
+  },
+  { immediate: true },
+)
+
+/** 设变组选项 */
+const ecGroupOptionByCode = ref<Record<string, TaktSelectOption>>({})
 
 /**
- * 行主键：设变号码加展开行号
- * @param record 行数据
- * @returns 行主键
+ * 设变担当选项
+ * @param value 编码
+ * @returns 选项
  */
-function getEcDetailId(record: Record<string, unknown>) {
-  return String(record.rowKey ?? record.ecCode ?? record.ecDetailId ?? '');
+function ecGroupOption(value: unknown): TaktSelectOption | undefined {
+  if (value == null || value === '') {
+    return undefined
+  }
+  return ecGroupOptionByCode.value[String(value)]
+}
+
+/** 预加载设变组 */
+async function loadEcGroupOptions(): Promise<void> {
+  try {
+    const list = await getEcGroupOptions()
+    const map: Record<string, TaktSelectOption> = {}
+    for (const item of list ?? []) {
+      if (item.dictValue != null && String(item.dictValue) !== '') {
+        map[String(item.dictValue)] = item
+      }
+    }
+    ecGroupOptionByCode.value = map
+  } catch {
+    ecGroupOptionByCode.value = {}
+  }
 }
 
 /**
- * 是否为部门日期或批次列
+ * 是否部门日期/批次列
  * @param key 列键
- * @returns 是否阶段列
+ * @returns 是否
  */
 function isStageColumn(key: unknown): boolean {
-  const text = String(key ?? '');
-  return text.startsWith('stageDate_') || text.startsWith('stageBatch_');
+  const text = String(key ?? '')
+  return text.startsWith('date_') || text.startsWith('batch_')
 }
 
 /**
- * 一条执行行的日期或批次。该部门没有这一行时留空
- * @param line 执行行
- * @param isDate 是否日期列
- * @returns 展示文本
+ * 取部门执行行列表
+ * @param row 看板行
+ * @param linesKey 字段名
+ * @returns 行列表
  */
-function stageLineText(line: EcExecBatchTransposedStageLine | undefined, isDate: boolean): string {
-  if (!line) {
-    return '';
-  }
-  if (isDate) {
-    if (line.dateDisplayText) {
-      return line.dateDisplayText;
-    }
-    return line.stageDate ? String(line.stageDate).slice(0, 10).replace(/-/g, '') : '—';
-  }
-  return line.batchCode?.trim() ? line.batchCode : '—';
+function deptLines(row: EcKanban, linesKey: string): EcKanbanDeptLine[] {
+  const value = (row as Record<string, unknown>)[linesKey]
+  return Array.isArray(value) ? (value as EcKanbanDeptLine[]) : []
 }
 
 /**
- * 一个设变号按各部门执行行数展开。行数取最大的那个部门
- * @param rows 接口行
+ * 阶段日期展示
+ * @param line 执行行
+ * @returns 文本
+ */
+function lineDateText(line: EcKanbanDeptLine | undefined): string {
+  if (!line) {
+    return ''
+  }
+  if (line.dateDisplayText?.trim()) {
+    return line.dateDisplayText.trim()
+  }
+  if (line.stageDate) {
+    return String(line.stageDate).slice(0, 10).replace(/-/g, '')
+  }
+  return ''
+}
+
+/**
+ * 阶段批次展示
+ * @param line 执行行
+ * @returns 文本
+ */
+function lineBatchText(line: EcKanbanDeptLine | undefined): string {
+  return line?.prodBatch?.trim() ? line.prodBatch.trim() : ''
+}
+
+/**
+ * 按页签脊柱展开：生产组按生管行；单部门按本部门库表行（机种/成品取脊柱行）
+ * @param rows 看板行
  * @returns 表格行
  */
-function expandBatchRows(rows: EcExecBatchTransposed[]): BatchTableRow[] {
-  const lines: BatchTableRow[] = [];
+function expandBatchRows(rows: EcKanban[]): BatchTableRow[] {
+  const lines: BatchTableRow[] = []
+  const deptCols = activeDeptColumns.value
+  const spineKey = spineLinesKey.value
   for (const row of rows) {
-    const groups = TaktEcBatchStageTransposedOrder.map((code) => row.stageCells?.[code]?.lines ?? []);
-    const lineCount = Math.max(1, ...groups.map((group) => group.length));
+    const spine = deptLines(row, spineKey)
+    const lineCount = Math.min(KANBAN_MAX_EXPAND_LINES, Math.max(1, spine.length))
+    const groups = deptCols.map((column) => deptLines(row, column.linesKey))
     for (let index = 0; index < lineCount; index += 1) {
+      const spineLine = spine[index]
       const line: BatchTableRow = {
-        rowKey: `${row.ecCode}-${index}`,
+        rowKey: `${row.ecCode}-${props.panelKey}-${index}`,
         lineIndex: index,
-        lineCount,
-        ecDetailId: row.ecDetailId,
-        ecCode: row.ecCode,
-        technicalLiaisonNo: row.technicalLiaisonNo ?? '',
-        pNo: row.pNo ?? '',
-        tcjLiaisonNo: row.tcjLiaisonNo ?? '',
-        ecIssueDate: row.ecIssueDate,
-        ecModelCode: row.ecModelCode,
-        ecNewMaterialCode: row.ecNewMaterialCode ?? '',
-        ecEntryDate: row.ecEntryDate,
-      };
-      TaktEcBatchStageTransposedOrder.forEach((code, deptIndex) => {
-        const item = groups[deptIndex]?.[index];
-        line[`stageDate_${code}`] = stageLineText(item, true);
-        line[`stageBatch_${code}`] = stageLineText(item, false);
-      });
-      lines.push(line);
+        ecIssueDate: row.ecIssueDate ?? '',
+        ecLeader: row.ecLeader ?? '',
+        ecCode: row.ecCode ?? '',
+        ecModelCode: String(spineLine?.ecModelCode ?? ''),
+        ecRootMaterialCode: String(spineLine?.ecRootMaterialCode ?? ''),
+        ecEntryDate: row.ecEntryDate ?? '',
+      }
+      deptCols.forEach((column, groupIndex) => {
+        // 单部门页签：列与脊柱同一列表，按下标取；生产组：各部门已对齐生管下标
+        const item = props.panelKey === 'production'
+          ? groups[groupIndex]?.[index]
+          : spineLine
+        if (!item || item.isImplemented === -1) {
+          line[`date_${column.group}`] = ''
+          if (column.batchKey) {
+            line[`batch_${column.group}`] = ''
+          }
+          return
+        }
+        line[`date_${column.group}`] = lineDateText(item)
+        if (column.batchKey) {
+          line[`batch_${column.group}`] = lineBatchText(item)
+        }
+      })
+      lines.push(line)
     }
   }
-  return lines;
+  return lines
 }
 
 /**
- * 构建查询参数
- * @returns 查询 DTO
+ * 发行/录入日期只显示年月日
+ * @param value 日期
+ * @returns yyyy-MM-dd
  */
-function buildQueryParams(): EcExecBatchTransposedQuery {
-  const form = advancedQueryForm.value;
-  const query: EcExecBatchTransposedQuery = {
-    pageIndex: currentPage.value,
-    pageSize: pageSize.value,
-  };
-  const keyword = queryKeyword.value.trim();
-  if (keyword) {
-    query.keyWords = keyword;
-  }
-  const textKeys = ['ecCode', 'ecModelCode', 'ecNewMaterialCode', 'batchCode'] as const;
-  for (const key of textKeys) {
-    const value = form[key].trim();
-    if (value) {
-      query[key] = value;
-    }
-  }
-  if (form.ecIssueDateStart) {
-    query.ecIssueDateStart = form.ecIssueDateStart;
-  }
-  if (form.ecIssueDateEnd) {
-    query.ecIssueDateEnd = form.ecIssueDateEnd;
-  }
-  const entryDates = entryPeriodToQuery(entryPeriod.value);
-  if (entryDates.ecEntryDateStart) {
-    query.ecEntryDateStart = entryDates.ecEntryDateStart;
-  }
-  if (entryDates.ecEntryDateEnd) {
-    query.ecEntryDateEnd = entryDates.ecEntryDateEnd;
-  }
-  return query;
+function formatIssueDate(value: unknown): string {
+  const text = String(value ?? '')
+  return text.length >= 10 ? text.slice(0, 10) : text
 }
 
 /**
- * 录入期间转成技术主表日期起止。结束日取该月最后一天
+ * 行主键
+ * @param record 行
+ * @returns 主键
+ */
+function getEcId(record: Record<string, unknown>) {
+  return String(record.rowKey ?? record.ecCode ?? '')
+}
+
+/**
+ * 录入期间 → 查询起止
  * @param range 年月区间
- * @returns 录入日期起止
+ * @returns 日期起止
  */
 function entryPeriodToQuery(range: [string, string] | null): { ecEntryDateStart?: string; ecEntryDateEnd?: string } {
   if (!range?.[0] || !range?.[1]) {
-    return {};
+    return {}
   }
-  const parts = range[1].split('-').map(Number);
-  const year = parts[0];
-  const month = parts[1];
+  const parts = range[1].split('-').map(Number)
+  const year = parts[0]
+  const month = parts[1]
   if (!year || !month) {
-    return { ecEntryDateStart: `${range[0]}-01` };
+    return { ecEntryDateStart: `${range[0]}-01` }
   }
-  const lastDay = new Date(year, month, 0).getDate();
+  const lastDay = new Date(year, month, 0).getDate()
   return {
     ecEntryDateStart: `${range[0]}-01`,
     ecEntryDateEnd: `${range[1]}-${String(lastDay).padStart(2, '0')}`,
-  };
-}
-
-/** 打开高级查询 */
-function handleAdvancedQuery() {
-  advancedQueryVisible.value = true;
-}
-
-/** 提交高级查询 */
-function handleAdvancedQuerySubmit() {
-  advancedQueryVisible.value = false;
-  currentPage.value = 1;
-  loadData();
-}
-
-/** 重置高级查询 */
-function handleAdvancedQueryReset() {
-  advancedQueryForm.value = createEmptyAdvancedQueryForm();
-  currentPage.value = 1;
-  loadData();
-}
-
-/** 打开列设置 */
-function handleColumnSetting() {
-  columnSettingVisible.value = true;
+  }
 }
 
 /**
- * 列设置勾选变更
- * @param keys 可见列
+ * 构建筛选参数（不含分页；明细行在前端展开后分页）
+ * @returns 查询 DTO
  */
-function handleColumnKeysChange(keys: string[]) {
-  userVisibleColumnKeys.value = keys;
+function buildQueryParams() {
+  const form = advancedQueryForm.value
+  return {
+    keyWords: queryKeyword.value || undefined,
+    ...entryPeriodToQuery(entryPeriod.value),
+    ecCode: form.ecCode.trim() || undefined,
+    cultureCode: form.cultureCode.trim() || undefined,
+    changeStatus: form.changeStatus === undefined || form.changeStatus === null ? undefined : Number(form.changeStatus),
+    ecStatus: form.ecStatus === undefined || form.ecStatus === null ? undefined : Number(form.ecStatus),
+  }
 }
 
-/** 列设置恢复默认 */
-function handleColumnSettingReset() {
-  userVisibleColumnKeys.value = null;
+/** 按明细行切当前页 */
+function applyDetailPageSlice() {
+  const sliced = sliceEcKanbanDetailPage(allDetailRows.value, currentPage.value, pageSize.value)
+  currentPage.value = sliced.pageIndex
+  total.value = sliced.total
+  dataSource.value = sliced.pageRows
 }
 
-/** 加载转置列表 */
+/** 加载列表（拉全量主表 → 展开明细 → 按明细行分页） */
 async function loadData() {
-  loading.value = true;
+  loading.value = true
   try {
-    const result = await getEcBatchTransposedList(buildQueryParams());
-    transposedResult.value = result;
-    total.value = result?.paged?.total ?? 0;
+    const masters = await fetchAllEcKanbanMasters(buildQueryParams())
+    allDetailRows.value = expandBatchRows(masters)
+    applyDetailPageSlice()
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 
 /** 搜索 */
 function handleSearch() {
-  currentPage.value = 1;
-  loadData();
+  currentPage.value = 1
+  loadData()
 }
 
 /** 重置 */
 function handleReset() {
-  queryKeyword.value = '';
-  entryPeriod.value = buildDefaultThroughCurrentPeriodRange(3);
-  advancedQueryForm.value = createEmptyAdvancedQueryForm();
-  currentPage.value = 1;
-  loadData();
+  entryPeriod.value = buildDefaultThroughCurrentPeriodRange(3)
+  advancedQueryForm.value = createEmptyAdvancedQueryForm()
+  currentPage.value = 1
+  loadData()
 }
 
-/** 分页变化 */
+/** 打开高级查询 */
+function handleAdvancedQuery() {
+  advancedQueryVisible.value = true
+}
+
+/** 提交高级查询 */
+function handleAdvancedQuerySubmit() {
+  advancedQueryVisible.value = false
+  currentPage.value = 1
+  loadData()
+}
+
+/** 重置高级查询 */
+function handleAdvancedQueryReset() {
+  advancedQueryForm.value = createEmptyAdvancedQueryForm()
+  currentPage.value = 1
+  loadData()
+}
+
+/** 打开列设置 */
+function handleColumnSetting() {
+  columnSettingVisible.value = true
+}
+
+/**
+ * 列设置变更
+ * @param keys 可见列
+ */
+function handleColumnKeysChange(keys: string[]) {
+  visibleColumnKeys.value = keys
+}
+
+/** 列设置恢复默认 */
+function handleColumnSettingReset() {
+  visibleColumnKeys.value = [...BATCH_DEFAULT_COLUMN_KEYS.value]
+}
+
+/** 分页变化（仅切明细页，不重拉主表） */
 function handlePaginationChange() {
-  loadData();
+  applyDetailPageSlice()
 }
 
 /** 表格变化 */
@@ -613,40 +628,28 @@ function handleTableChange() {}
 /** 列宽变化 */
 function handleResizeColumn() {}
 
-/**
- * 打开设变明细详情
- * @param record 展开行
- */
-async function handleDetail(record: { ecDetailId: string }) {
-  detailVisible.value = true;
-  detailLoading.value = true;
-  detailData.value = null;
-  try {
-    detailData.value = await getEcDetailById(record.ecDetailId);
-  } finally {
-    detailLoading.value = false;
-  }
-}
-
 /** 导出 */
 async function handleExport() {
   try {
-    loading.value = true;
-    const blob = await exportEcBatchData(buildQueryParams());
-    const url = window.URL.createObjectURL(blob as Blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${t('logistics.manufacturing.engineering-change.ec-kanban.page.tabs.batch')}.xlsx`;
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setTimeout(() => window.URL.revokeObjectURL(url), 100);
+    loading.value = true
+    const blob = await exportEcKanbanData(buildQueryParams())
+    const url = window.URL.createObjectURL(blob as Blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${t(`${localePrefix}.tabs.${props.panelKey}`)}.xlsx`
+    link.style.display = 'none'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    setTimeout(() => window.URL.revokeObjectURL(url), 100)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 
-useTableRefresh(loadData);
-onMounted(loadData);
+useTableRefresh(loadData)
+onMounted(() => {
+  void loadEcGroupOptions()
+  void loadData()
+})
 </script>

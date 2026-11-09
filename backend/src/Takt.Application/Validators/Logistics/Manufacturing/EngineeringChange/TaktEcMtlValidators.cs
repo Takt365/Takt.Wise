@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Validators.Logistics.Manufacturing.EngineeringChange
 // 文件名称：TaktEcMtlValidators.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：EcMtl 模块 FluentValidation 验证器（由 generate-validators-from-entity.cjs 根据 TaktEcMtl 生成，请按需审阅）
 // 
@@ -51,21 +51,14 @@ public class TaktEcMtlCreateValidator : AbstractValidator<TaktEcMtlCreateDto>
             .NotEmpty().WithMessage("机种编码组不能为空");
         RuleFor(x => x.EcRootMaterialCodeGroup)
             .NotEmpty().WithMessage("根物料编码组不能为空");
-        RuleFor(x => x.EcRootMaterialDescription)
-            .NotEmpty().WithMessage("根物料描述不能为空")
-            .MaximumLength(40).WithMessage("根物料描述长度不能超过40个字符");
+        RuleFor(x => x.EcNewMaterialCodeGroup)
+            .NotEmpty().WithMessage("新物料编码组不能为空");
         RuleFor(x => x.EcParentMaterialCode)
             .NotEmpty().WithMessage("上阶物料编码不能为空")
             .MaximumLength(20).WithMessage("上阶物料编码长度不能超过20个字符");
         RuleFor(x => x.EcParentMaterialDescription)
             .NotEmpty().WithMessage("上阶物料描述不能为空")
             .MaximumLength(40).WithMessage("上阶物料描述长度不能超过40个字符");
-        RuleFor(x => x.EcNewMaterialCode)
-            .NotEmpty().WithMessage("新物料编码不能为空")
-            .MaximumLength(20).WithMessage("新物料编码长度不能超过20个字符");
-        RuleFor(x => x.EcNewMaterialDescription)
-            .NotEmpty().WithMessage("新物料描述不能为空")
-            .MaximumLength(40).WithMessage("新物料描述长度不能超过40个字符");
         RuleFor(x => x.EcNewPurchaseType)
             .NotEmpty().WithMessage("新采购类型不能为空")
             .MaximumLength(1).WithMessage("新采购类型长度不能超过1个字符");
@@ -125,21 +118,14 @@ public class TaktEcMtlUpdateValidator : AbstractValidator<TaktEcMtlUpdateDto>
             .NotEmpty().WithMessage("机种编码组不能为空");
         RuleFor(x => x.EcRootMaterialCodeGroup)
             .NotEmpty().WithMessage("根物料编码组不能为空");
-        RuleFor(x => x.EcRootMaterialDescription)
-            .NotEmpty().WithMessage("根物料描述不能为空")
-            .MaximumLength(40).WithMessage("根物料描述长度不能超过40个字符");
+        RuleFor(x => x.EcNewMaterialCodeGroup)
+            .NotEmpty().WithMessage("新物料编码组不能为空");
         RuleFor(x => x.EcParentMaterialCode)
             .NotEmpty().WithMessage("上阶物料编码不能为空")
             .MaximumLength(20).WithMessage("上阶物料编码长度不能超过20个字符");
         RuleFor(x => x.EcParentMaterialDescription)
             .NotEmpty().WithMessage("上阶物料描述不能为空")
             .MaximumLength(40).WithMessage("上阶物料描述长度不能超过40个字符");
-        RuleFor(x => x.EcNewMaterialCode)
-            .NotEmpty().WithMessage("新物料编码不能为空")
-            .MaximumLength(20).WithMessage("新物料编码长度不能超过20个字符");
-        RuleFor(x => x.EcNewMaterialDescription)
-            .NotEmpty().WithMessage("新物料描述不能为空")
-            .MaximumLength(40).WithMessage("新物料描述长度不能超过40个字符");
         RuleFor(x => x.EcNewPurchaseType)
             .NotEmpty().WithMessage("新采购类型不能为空")
             .MaximumLength(1).WithMessage("新采购类型长度不能超过1个字符");
@@ -183,33 +169,24 @@ public class TaktEcMtlImportValidator : AbstractValidator<TaktEcMtlImportDto>
             .MaximumLength(5).WithMessage("区域文化编码长度不能超过5个字符").When(x => !string.IsNullOrWhiteSpace(x.CultureCode));
         RuleFor(x => x.PlantCode)
             .MaximumLength(4).WithMessage("工厂代码长度不能超过4个字符").When(x => !string.IsNullOrWhiteSpace(x.PlantCode));
-        RuleFor(x => x.EcGrainKey)
-            .NotEmpty().WithMessage("执行行去重键不能为空");
         RuleFor(x => x.EcCode)
             .NotEmpty().WithMessage("设变单号不能为空")
             .MaximumLength(10).WithMessage("设变单号长度不能超过10个字符");
+        RuleFor(x => x.DiscontinuedStatus)
+            .NotEmpty().WithMessage("停产状态不能为空")
+            .MaximumLength(4).WithMessage("停产状态长度不能超过4个字符");
         RuleFor(x => x.EcModelCodeGroup)
             .NotEmpty().WithMessage("机种编码组不能为空");
         RuleFor(x => x.EcRootMaterialCodeGroup)
             .NotEmpty().WithMessage("根物料编码组不能为空");
-        RuleFor(x => x.EcRootMaterialDescription)
-            .NotEmpty().WithMessage("根物料描述不能为空")
-            .MaximumLength(40).WithMessage("根物料描述长度不能超过40个字符");
+        RuleFor(x => x.EcNewMaterialCodeGroup)
+            .NotEmpty().WithMessage("新物料编码组不能为空");
         RuleFor(x => x.EcParentMaterialCode)
             .NotEmpty().WithMessage("上阶物料编码不能为空")
             .MaximumLength(20).WithMessage("上阶物料编码长度不能超过20个字符");
         RuleFor(x => x.EcParentMaterialDescription)
             .NotEmpty().WithMessage("上阶物料描述不能为空")
             .MaximumLength(40).WithMessage("上阶物料描述长度不能超过40个字符");
-        RuleFor(x => x.DiscontinuedStatus)
-            .NotEmpty().WithMessage("停产状态不能为空")
-            .MaximumLength(4).WithMessage("停产状态长度不能超过4个字符");
-        RuleFor(x => x.EcNewMaterialCode)
-            .NotEmpty().WithMessage("新物料编码不能为空")
-            .MaximumLength(20).WithMessage("新物料编码长度不能超过20个字符");
-        RuleFor(x => x.EcNewMaterialDescription)
-            .NotEmpty().WithMessage("新物料描述不能为空")
-            .MaximumLength(40).WithMessage("新物料描述长度不能超过40个字符");
         RuleFor(x => x.EcNewPurchaseType)
             .NotEmpty().WithMessage("新采购类型不能为空")
             .MaximumLength(1).WithMessage("新采购类型长度不能超过1个字符");
@@ -222,6 +199,8 @@ public class TaktEcMtlImportValidator : AbstractValidator<TaktEcMtlImportDto>
         RuleFor(x => x.DeptName)
             .NotEmpty().WithMessage("部门名称不能为空")
             .MaximumLength(40).WithMessage("部门名称长度不能超过40个字符");
+        RuleFor(x => x.EcGrainKey)
+            .NotEmpty().WithMessage("执行行去重键不能为空");
         RuleFor(x => x.ExtField)
             .MaximumLength(4000).WithMessage("扩展字段JSON长度不能超过4000个字符").When(x => !string.IsNullOrWhiteSpace(x.ExtField));
         RuleFor(x => x.Remark)

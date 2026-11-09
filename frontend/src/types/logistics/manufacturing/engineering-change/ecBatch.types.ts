@@ -18,7 +18,7 @@ export interface EcBatch extends CompanyDtoBase {
 export interface EcBatchQuery extends TaktPagedQuery {
   ecCode?: string;
   ecModelCode?: string;
-  batchCode?: string;
+  prodBatch?: string;
 }
 
 export interface EcBatchUpdate {

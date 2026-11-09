@@ -76,7 +76,7 @@ public static class TaktBomMaterialCostItemModelEnrichmentHelper
     }
 
     /// <summary>
-    /// 计算机种指定月份平均材料成本（生产相关=X、PCB SECT 标识为空、采购类型=F；各成品有成本的参与算术平均）
+    /// 计算机种指定月份平均材料成本（批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空；各成品有成本的参与算术平均）
     /// </summary>
     /// <param name="catalogProductCodes">成品编码清单（须与主表产品集一致，勿用型号目的地扩编）</param>
     /// <param name="monthRows">该工厂该月全部 BOM 行</param>

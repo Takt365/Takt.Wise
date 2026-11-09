@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Defect
 // 文件名称：TaktAssyDefectI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktAssyDefect 实体字段国际化种子（已对齐前端 locales：src/locales/logistics/manufacturing/defect/assy-defect）
 // 
@@ -162,14 +162,14 @@ public class TaktAssyDefectI18nSeedData : ITaktSeedDataCoordinator
             // entity.assydefect.modelcode
             new TranslationSeedItem("entity.assydefect.modelcode", "zh-HK", "机种_hk", "机种"),
 
-            // entity.assydefect.batchcode
-            new TranslationSeedItem("entity.assydefect.batchcode", "en-US", "批次_us", "批次"),
-            // entity.assydefect.batchcode
-            new TranslationSeedItem("entity.assydefect.batchcode", "ja-JP", "批次_jp", "批次"),
-            // entity.assydefect.batchcode
-            new TranslationSeedItem("entity.assydefect.batchcode", "zh-CN", "批次", "批次"),
-            // entity.assydefect.batchcode
-            new TranslationSeedItem("entity.assydefect.batchcode", "zh-HK", "批次_hk", "批次"),
+            // entity.assydefect.prodbatch
+            new TranslationSeedItem("entity.assydefect.prodbatch", "en-US", "批次_us", "批次"),
+            // entity.assydefect.prodbatch
+            new TranslationSeedItem("entity.assydefect.prodbatch", "ja-JP", "批次_jp", "批次"),
+            // entity.assydefect.prodbatch
+            new TranslationSeedItem("entity.assydefect.prodbatch", "zh-CN", "批次", "批次"),
+            // entity.assydefect.prodbatch
+            new TranslationSeedItem("entity.assydefect.prodbatch", "zh-HK", "批次_hk", "批次"),
 
             // entity.assydefect.materialcode
             new TranslationSeedItem("entity.assydefect.materialcode", "en-US", "物料编码_us", "物料编码"),

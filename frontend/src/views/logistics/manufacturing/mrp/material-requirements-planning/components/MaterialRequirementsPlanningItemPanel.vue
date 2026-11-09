@@ -339,6 +339,16 @@ const columns = computed<TableColumnsType>(() => [
       String(getMaterialRequirementsPlanningItemField(record, 'materialCode') ?? ''),
   },
   {
+    title: pi.label('plannedBatch'),
+    dataIndex: 'plannedBatch',
+    key: 'plannedBatch',
+    width: 140,
+    resizable: true,
+    ellipsis: true,
+    customRender: ({ record }: { record: MaterialRequirementsPlanningItem }) =>
+      String(getMaterialRequirementsPlanningItemField(record, 'plannedBatch') ?? ''),
+  },
+  {
     title: pi.label('materialDescription'),
     dataIndex: 'materialDescription',
     key: 'materialDescription',

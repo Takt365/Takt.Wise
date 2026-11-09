@@ -4,11 +4,13 @@
 // 文件名称：TaktEcRootMaterialCodeGroup.cs
 // 创建时间：2026-10-08
 // 创建人：Takt365(Cursor AI)
-// 功能描述：部管/SMT 根物料编码组拼接（同设变单号+机种，分号分隔，列类型 ntext）
+// 功能描述：部管/SMT 根物料与旧/新物料编码组拼接（分号分隔，列类型 ntext）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
 // ========================================
+
+using Takt.Shared.Constants;
 
 namespace Takt.Application.Services.Logistics.Manufacturing.EngineeringChange;
 
@@ -32,6 +34,17 @@ internal static class TaktEcRootMaterialCodeGroup
             .OrderBy(code => code, StringComparer.OrdinalIgnoreCase)
             .Cast<string>();
         return string.Join(';', parts);
+    }
+
+    /// <summary>
+    /// 旧/新物料编码组：排除空与占位「0」后去重、排序、分号拼接
+    /// </summary>
+    /// <param name="codes">旧物料或新物料编码</param>
+    /// <returns>编码组；无有效编码时为空串</returns>
+    internal static string JoinMaterialCodes(IEnumerable<string?> codes)
+    {
+        ArgumentNullException.ThrowIfNull(codes);
+        return Join(codes.Where(TaktEcScopeConstants.HasEffectiveMaterialCode));
     }
 
     /// <summary>

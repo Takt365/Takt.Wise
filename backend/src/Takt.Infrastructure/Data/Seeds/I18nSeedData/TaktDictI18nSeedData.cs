@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData
 // 文件名称：TaktDictI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Cursor AI)
 // 功能描述：字典项国际化翻译种子（dict.* 键，与 TaktDictDataSeedData I18nKey 对齐）
 // 
@@ -19299,13 +19299,13 @@ public class TaktDictI18nSeedData : ITaktSeedDataCoordinator
             ("dict.logistics.sales.pricing.procedure.zvaa99", "zh-HK", "标准_hk", "销售定价过程.ZVAA99"),
 
             // dict.logistics.procurement.pricing.procedure.zrm001
-            ("dict.logistics.procurement.pricing.procedure.zrm001", "en-US", "采购信息_us", "采购定价过程.ZRM001"),
+            ("dict.logistics.procurement.pricing.procedure.zrm001", "en-US", "采购条件_us", "采购定价过程.ZRM001"),
             // dict.logistics.procurement.pricing.procedure.zrm001
-            ("dict.logistics.procurement.pricing.procedure.zrm001", "ja-JP", "采购信息_jp", "采购定价过程.ZRM001"),
+            ("dict.logistics.procurement.pricing.procedure.zrm001", "ja-JP", "采购条件_jp", "采购定价过程.ZRM001"),
             // dict.logistics.procurement.pricing.procedure.zrm001
-            ("dict.logistics.procurement.pricing.procedure.zrm001", "zh-CN", "采购信息", "采购定价过程.ZRM001"),
+            ("dict.logistics.procurement.pricing.procedure.zrm001", "zh-CN", "采购条件", "采购定价过程.ZRM001"),
             // dict.logistics.procurement.pricing.procedure.zrm001
-            ("dict.logistics.procurement.pricing.procedure.zrm001", "zh-HK", "采购信息_hk", "采购定价过程.ZRM001"),
+            ("dict.logistics.procurement.pricing.procedure.zrm001", "zh-HK", "采购条件_hk", "采购定价过程.ZRM001"),
 
             // dict.logistics.procurement.pricing.procedure.zrm002
             ("dict.logistics.procurement.pricing.procedure.zrm002", "en-US", "库存凭证_us", "采购定价过程.ZRM002"),

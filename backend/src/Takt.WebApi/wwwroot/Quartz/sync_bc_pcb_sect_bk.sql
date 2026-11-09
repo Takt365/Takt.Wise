@@ -20,7 +20,7 @@ DECLARE @tenant_code NVARCHAR(3) = N'{{TenantCode}}';
 DECLARE @company_code NVARCHAR(4) = N'{{CompanyCode}}';
 DECLARE @sync_user_id BIGINT = {{SyncUserId}};
 DECLARE @now DATETIME = GETDATE();
-DECLARE @apply_chunk INT = 20000;
+DECLARE @apply_chunk INT = 100000;
 DECLARE @merge_from_rn INT;
 DECLARE @merge_to_rn INT;
 DECLARE @merge_max_rn INT;
@@ -247,8 +247,8 @@ INNER JOIN #bc_pcb_mark AS m ON m.[id] = t.[id]
 CROSS APPLY (
   SELECT
     CASE
-      WHEN ISJSON(NULLIF(LTRIM(RTRIM(ISNULL(t.[ext_field], N''))), N'')) = 1
-      THEN LTRIM(RTRIM(t.[ext_field]))
+      WHEN ISJSON(NULLIF(LTRIM(RTRIM(CAST(ISNULL(t.[ext_field], N'') AS nvarchar(max)))), N'')) = 1
+      THEN LTRIM(RTRIM(CAST(t.[ext_field] AS nvarchar(max))))
       ELSE N'{}'
     END AS [base_ext]
 ) AS e0

@@ -166,7 +166,7 @@ const columns = computed<TableColumnsType>(() => {
     }
     list.push(
       col('prodDate', 'prodDate', 110),
-      col('batchCode', 'batchCode', 140),
+      col('prodBatch', 'prodBatch', 140),
       col('lotQty', 'lotQty', 100),
       col('modelCode', 'modelCode', 140),
       col('pcbBoardType', 'pcbBoardType', 110),
@@ -182,7 +182,7 @@ const columns = computed<TableColumnsType>(() => {
     return [
       col('teamCode', 'teamCode', 100),
       col('prodDate', 'prodDate', 110),
-      col('batchCode', 'batchCode', 140),
+      col('prodBatch', 'prodBatch', 140),
       col('materialCode', 'materialCode', 130),
       col('modelCode', 'modelCode', 140),
       col('stdMinutes', 'stdMinutes', 80),
@@ -236,7 +236,7 @@ function handleColumnKeysChange(keys: string[]) {
  * @returns {string} 键
  */
 function getRowKey(record: ProductionStatLine): string {
-  return record.rowKey || `${record.prodDate}|${record.teamCode}|${record.modelCode}|${record.batchCode}`
+  return record.rowKey || `${record.prodDate}|${record.teamCode}|${record.modelCode}|${record.prodBatch}`
 }
 
 /**

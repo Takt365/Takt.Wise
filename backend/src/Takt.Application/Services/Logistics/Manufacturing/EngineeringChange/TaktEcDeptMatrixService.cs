@@ -332,71 +332,96 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
     // ========================================
 
     /// <summary>
-    /// 获取设变批次转置列表（分页）。一行一个设变号，各部门列出自己的全部执行行
+    /// 单设变各部门阶段行上限（防超大明细撑爆 JSON / 前端 DOM）
+    /// </summary>
+    private const int BatchStageLineCap = 300;
+
+    /// <summary>
+    /// 获取设变批次转置列表（分页）。先按技术主表分页，仅加载当前页设变号的明细与阶段行
     /// </summary>
     /// <param name="queryDto">查询 DTO</param>
     /// <returns>批次转置分页结果</returns>
     public async Task<TaktEcExecBatchTransposedResultDto> GetEcBatchTransposedListAsync(TaktEcExecBatchTransposedQueryDto queryDto)
     {
         EnsureThreeLayerContext();
-        var matched = await _ecDetailRepository.GetListAsync(BatchTransposedQueryExpression(queryDto));
-        var ecIds = matched.Select(x => x.EcTeId).Distinct().ToList();
-        var codes = matched
+        var pageIndex = TaktPagedClamp.NormalizePageIndex(queryDto.PageIndex);
+        var pageSize = TaktPagedClamp.NormalizePageSize(queryDto.PageSize);
+        var (masters, total) = await _ecTeRepository.GetPagedAsync(
+            BatchMasterQueryExpression(queryDto),
+            pageIndex,
+            pageSize,
+            x => x.EcIssueDate,
+            true,
+            thenBy: x => x.EcCode,
+            thenByDesc: false);
+        if (masters.Count == 0)
+        {
+            return new TaktEcExecBatchTransposedResultDto
+            {
+                Paged = TaktPagedResult<TaktEcExecBatchTransposedDto>.Create([], total, pageIndex, pageSize),
+                StageCodeOrder = TaktEcBatchStageCodes.TransposedOrder,
+            };
+        }
+        var ecIds = masters.Select(x => x.Id).ToList();
+        var codes = masters
             .Select(x => x.EcCode)
             .Where(x => !string.IsNullOrWhiteSpace(x))
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
-        var pageIndex = Math.Max(1, queryDto.PageIndex);
-        var pageSize = Math.Max(1, queryDto.PageSize);
-        if (codes.Count == 0)
-        {
-            return new TaktEcExecBatchTransposedResultDto
-            {
-                Paged = TaktPagedResult<TaktEcExecBatchTransposedDto>.Create([], 0, pageIndex, pageSize),
-                StageCodeOrder = TaktEcBatchStageCodes.TransposedOrder,
-            };
-        }
-        var ecMap = await LoadEcMapAsync(ecIds);
         var details = await ListBatchDetailsAsync(ecIds);
+        details = FilterBatchDetailsByQuery(details, queryDto);
         var attachmentGroups = await LoadAttachmentGroupsAsync(ecIds);
         var stageLines = await _ecExecDeptAccess.ListBatchStageLinesByEcCodesAsync(codes);
         var linesByCode = stageLines
             .Where(x => !string.IsNullOrWhiteSpace(x.EcCode))
             .GroupBy(x => x.EcCode, StringComparer.OrdinalIgnoreCase)
             .ToDictionary(x => x.Key, x => x.ToList(), StringComparer.OrdinalIgnoreCase);
-        var rows = new List<TaktEcExecBatchTransposedDto>();
-        foreach (var group in details
+        var detailsByCode = details
             .Where(x => x.IsObsolete == 0 && !string.IsNullOrWhiteSpace(x.EcCode))
-            .GroupBy(x => x.EcCode, StringComparer.OrdinalIgnoreCase))
+            .GroupBy(x => x.EcCode, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
+        var rows = new List<TaktEcExecBatchTransposedDto>(masters.Count);
+        foreach (var master in masters)
         {
-            var sample = group.ToList();
-            var master = sample
-                .Select(x => ecMap.TryGetValue(x.EcTeId, out var ec) ? ec : null)
-                .Where(x => x != null)
-                .OrderByDescending(x => x!.EcIssueDate)
-                .FirstOrDefault();
-            var attachments = sample
-                .Select(x => x.EcTeId)
-                .Distinct()
-                .SelectMany(id => attachmentGroups.TryGetValue(id, out var list) ? list : [])
-                .ToList();
-            linesByCode.TryGetValue(group.Key, out var lines);
+            if (!detailsByCode.TryGetValue(master.EcCode, out var sample) || sample.Count == 0)
+            {
+                continue;
+            }
+            var attachments = attachmentGroups.TryGetValue(master.Id, out var list) ? list : [];
+            linesByCode.TryGetValue(master.EcCode, out var lines);
             rows.Add(BuildBatchTransposedRow(master, sample, attachments, lines ?? []));
         }
-        var ordered = rows
-            .OrderByDescending(x => x.EcIssueDate)
-            .ThenBy(x => x.EcCode, StringComparer.Ordinal)
-            .ToList();
-        var skip = checked((pageIndex - 1) * pageSize);
         return new TaktEcExecBatchTransposedResultDto
         {
-            Paged = TaktPagedResult<TaktEcExecBatchTransposedDto>.Create(
-                ordered.Skip(skip).Take(pageSize).ToList(),
-                ordered.Count,
-                pageIndex,
-                pageSize),
+            Paged = TaktPagedResult<TaktEcExecBatchTransposedDto>.Create(rows, total, pageIndex, pageSize),
             StageCodeOrder = TaktEcBatchStageCodes.TransposedOrder,
         };
+    }
+
+    /// <summary>
+    /// 按机种/成品等明细条件再筛当前页明细（主表已分页）
+    /// </summary>
+    /// <param name="details">当前页主表下明细</param>
+    /// <param name="queryDto">查询 DTO</param>
+    /// <returns>过滤后明细</returns>
+    private static List<TaktEcDetail> FilterBatchDetailsByQuery(
+        List<TaktEcDetail> details,
+        TaktEcExecBatchTransposedQueryDto queryDto)
+    {
+        IEnumerable<TaktEcDetail> query = details;
+        if (!string.IsNullOrWhiteSpace(queryDto.EcModelCode))
+        {
+            var model = queryDto.EcModelCode.Trim();
+            query = query.Where(x => x.EcModelCode != null && x.EcModelCode.Contains(model, StringComparison.OrdinalIgnoreCase));
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.EcNewMaterialCode))
+        {
+            var material = queryDto.EcNewMaterialCode.Trim();
+            query = query.Where(x =>
+                (x.EcNewMaterialCode != null && x.EcNewMaterialCode.Contains(material, StringComparison.OrdinalIgnoreCase))
+                || (x.EcRootMaterialCode != null && x.EcRootMaterialCode.Contains(material, StringComparison.OrdinalIgnoreCase)));
+        }
+        return query.ToList();
     }
 
     /// <summary>
@@ -459,8 +484,8 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
                 StageCode = stageCode,
                 Lines = stageLines,
                 StageDate = head?.StageDate,
-                BatchNo = head?.BatchCode,
-                BatchCode = head?.BatchCode ?? string.Empty,
+                BatchNo = head?.ProdBatch,
+                ProdBatch = head?.ProdBatch ?? string.Empty,
                 DateDisplayText = head?.DateDisplayText,
             };
         }
@@ -510,17 +535,21 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
         var result = new List<TaktEcExecBatchTransposedStageLineDto>();
         foreach (var detail in details.OrderBy(x => x.LineNumber).ThenBy(x => x.Id))
         {
+            if (result.Count >= BatchStageLineCap)
+            {
+                break;
+            }
             if (!TaktEcScopeRowGrain.IsEligible(detail, deptCode, implScope, null))
             {
                 continue;
             }
             execByGrain.TryGetValue(TaktEcScopeRowGrain.BuildExecGrainKey(detail, deptCode, controlScope), out var exec);
-            var cell = TaktEcExecBatchTransposedHelper.BuildStageCell(stageCode, exec?.StageDate, exec?.BatchCode);
+            var cell = TaktEcExecBatchTransposedHelper.BuildStageCell(stageCode, exec?.StageDate, exec?.ProdBatch);
             result.Add(new TaktEcExecBatchTransposedStageLineDto
             {
                 StageDate = cell.StageDate,
                 DateDisplayText = cell.DateDisplayText,
-                BatchCode = cell.BatchCode ?? string.Empty,
+                ProdBatch = cell.ProdBatch ?? string.Empty,
             });
         }
         return result;
@@ -597,19 +626,16 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
     }
 
     /// <summary>
-    /// 构建批次转置列表查询表达式
+    /// 批次转置：按技术主表分页的查询表达式（明细/批次条件走子查询）
     /// </summary>
     /// <param name="queryDto">查询 DTO</param>
-    /// <returns>表达式</returns>
-    private static Expression<Func<TaktEcDetail, bool>> BatchTransposedQueryExpression(TaktEcExecBatchTransposedQueryDto queryDto)
+    /// <returns>主表表达式</returns>
+    private static Expression<Func<TaktEcTe, bool>> BatchMasterQueryExpression(TaktEcExecBatchTransposedQueryDto queryDto)
     {
-        var exp = Expressionable.Create<TaktEcDetail>();
-        exp = exp.And(x => SqlFunc.Subqueryable<TaktEcTe>()
-            .Where(ec => ec.Id == x.EcTeId
-                && ec.IsDeleted == 0
-                && (ec.EcImplScope == TaktEcScopeConstants.AllDestination
-                    || ec.EcImplScope == TaktEcScopeConstants.MaterialControl))
-            .Any());
+        var exp = Expressionable.Create<TaktEcTe>();
+        exp = exp.And(x =>
+            x.EcImplScope == TaktEcScopeConstants.AllDestination
+            || x.EcImplScope == TaktEcScopeConstants.MaterialControl);
         exp = exp.And(x =>
             SqlFunc.Subqueryable<TaktEcPur>().Where(d => d.EcCode == x.EcCode && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
             || SqlFunc.Subqueryable<TaktEcPc>().Where(d => d.EcCode == x.EcCode && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
@@ -620,79 +646,88 @@ public class TaktEcDeptMatrixService : TaktServiceBase, ITaktEcDeptMatrixService
             || SqlFunc.Subqueryable<TaktEcMfg1>().Where(d => d.EcCode == x.EcCode && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
             || SqlFunc.Subqueryable<TaktEcQc>().Where(d => d.EcCode == x.EcCode && d.IsDeleted == 0 && d.IsObsolete == 0).Any()
             || SqlFunc.Subqueryable<TaktEcMe>().Where(d => d.EcCode == x.EcCode && d.IsDeleted == 0 && d.IsObsolete == 0).Any());
-        if (!string.IsNullOrEmpty(queryDto.KeyWords))
+        if (!string.IsNullOrWhiteSpace(queryDto.KeyWords))
         {
-            var keywords = queryDto.KeyWords;
+            var keywords = queryDto.KeyWords.Trim();
             exp = exp.And(x =>
                 (x.EcCode != null && x.EcCode.Contains(keywords))
-                || (x.EcModelCode != null && x.EcModelCode.Contains(keywords))
-                || (x.EcNewMaterialCode != null && x.EcNewMaterialCode.Contains(keywords))
-                || (x.EcOldMaterialCode != null && x.EcOldMaterialCode.Contains(keywords)));
+                || SqlFunc.Subqueryable<TaktEcDetail>().Where(d =>
+                    d.EcTeId == x.Id
+                    && d.IsDeleted == 0
+                    && d.IsObsolete == 0
+                    && ((d.EcModelCode != null && d.EcModelCode.Contains(keywords))
+                        || (d.EcNewMaterialCode != null && d.EcNewMaterialCode.Contains(keywords))
+                        || (d.EcOldMaterialCode != null && d.EcOldMaterialCode.Contains(keywords))
+                        || (d.EcRootMaterialCode != null && d.EcRootMaterialCode.Contains(keywords))))
+                    .Any());
         }
-        if (!string.IsNullOrEmpty(queryDto.EcCode))
+        if (!string.IsNullOrWhiteSpace(queryDto.EcCode))
         {
-            exp = exp.And(x => x.EcCode != null && x.EcCode.Contains(queryDto.EcCode));
+            var ecCode = queryDto.EcCode.Trim();
+            exp = exp.And(x => x.EcCode != null && x.EcCode.Contains(ecCode));
         }
-        if (!string.IsNullOrEmpty(queryDto.EcModelCode))
+        if (!string.IsNullOrWhiteSpace(queryDto.EcNo))
         {
-            exp = exp.And(x => x.EcModelCode != null && x.EcModelCode.Contains(queryDto.EcModelCode));
+            var ecNo = queryDto.EcNo.Trim();
+            exp = exp.And(x => x.EcCode != null && x.EcCode.Contains(ecNo));
         }
-        if (!string.IsNullOrEmpty(queryDto.EcNewMaterialCode))
+        if (!string.IsNullOrWhiteSpace(queryDto.EcModelCode))
         {
-            exp = exp.And(x => x.EcNewMaterialCode != null && x.EcNewMaterialCode.Contains(queryDto.EcNewMaterialCode));
+            var model = queryDto.EcModelCode.Trim();
+            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcDetail>()
+                .Where(d => d.EcTeId == x.Id && d.IsDeleted == 0 && d.IsObsolete == 0
+                    && d.EcModelCode != null && d.EcModelCode.Contains(model))
+                .Any());
+        }
+        if (!string.IsNullOrWhiteSpace(queryDto.EcNewMaterialCode))
+        {
+            var material = queryDto.EcNewMaterialCode.Trim();
+            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcDetail>()
+                .Where(d => d.EcTeId == x.Id && d.IsDeleted == 0 && d.IsObsolete == 0
+                    && ((d.EcNewMaterialCode != null && d.EcNewMaterialCode.Contains(material))
+                        || (d.EcRootMaterialCode != null && d.EcRootMaterialCode.Contains(material))))
+                .Any());
         }
         if (queryDto.EcIssueDateStart.HasValue)
         {
             var start = queryDto.EcIssueDateStart.Value;
-            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcTe>()
-                .Where(ec => ec.Id == x.EcTeId && ec.EcIssueDate >= start)
-                .Any());
+            exp = exp.And(x => x.EcIssueDate >= start);
         }
         if (queryDto.EcIssueDateEnd.HasValue)
         {
             var end = queryDto.EcIssueDateEnd.Value;
-            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcTe>()
-                .Where(ec => ec.Id == x.EcTeId && ec.EcIssueDate <= end)
-                .Any());
+            exp = exp.And(x => x.EcIssueDate <= end);
         }
         if (queryDto.EcEntryDateStart.HasValue)
         {
             var entryStart = queryDto.EcEntryDateStart.Value;
-            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcTe>()
-                .Where(ec => ec.Id == x.EcTeId && ec.EcEntryDate >= entryStart)
-                .Any());
+            exp = exp.And(x => x.EcEntryDate >= entryStart);
         }
         if (queryDto.EcEntryDateEnd.HasValue)
         {
             var entryEnd = queryDto.EcEntryDateEnd.Value;
-            exp = exp.And(x => SqlFunc.Subqueryable<TaktEcTe>()
-                .Where(ec => ec.Id == x.EcTeId && ec.EcEntryDate <= entryEnd)
-                .Any());
+            exp = exp.And(x => x.EcEntryDate <= entryEnd);
         }
-        if (!string.IsNullOrEmpty(queryDto.BatchCode))
+        var prodBatch = !string.IsNullOrWhiteSpace(queryDto.ProdBatch)
+            ? queryDto.ProdBatch.Trim()
+            : queryDto.BatchNo?.Trim();
+        if (!string.IsNullOrWhiteSpace(prodBatch))
         {
-            var batchCode = queryDto.BatchCode;
             exp = exp.And(x =>
-                SqlFunc.Subqueryable<TaktEcPur>()
-                    .Where(d => d.EcCode == x.EcCode && d.PurchaseOrderCode != null && d.PurchaseOrderCode.Contains(batchCode))
-                    .Any()
-                || SqlFunc.Subqueryable<TaktEcPc>()
-                    .Where(d => d.EcCode == x.EcCode && d.ScheduledBatch != null && d.ScheduledBatch.Contains(batchCode))
-                    .Any()
-                || SqlFunc.Subqueryable<TaktEcIqc>()
-                    .Where(d => d.EcCode == x.EcCode && d.IqcOrderCode != null && d.IqcOrderCode.Contains(batchCode))
+                SqlFunc.Subqueryable<TaktEcPc>()
+                    .Where(d => d.EcCode == x.EcCode && d.ScheduledBatch != null && d.ScheduledBatch.Contains(prodBatch))
                     .Any()
                 || SqlFunc.Subqueryable<TaktEcMc>()
-                    .Where(d => d.EcCode == x.EcCode && d.OutboundBatch != null && d.OutboundBatch.Contains(batchCode))
+                    .Where(d => d.EcCode == x.EcCode && d.OutboundBatch != null && d.OutboundBatch.Contains(prodBatch))
                     .Any()
                 || SqlFunc.Subqueryable<TaktEcMtl>()
-                    .Where(d => d.EcCode == x.EcCode && d.OutboundBatch != null && d.OutboundBatch.Contains(batchCode))
+                    .Where(d => d.EcCode == x.EcCode && d.OutboundBatch != null && d.OutboundBatch.Contains(prodBatch))
                     .Any()
                 || SqlFunc.Subqueryable<TaktEcMfg2>()
-                    .Where(d => d.EcCode == x.EcCode && d.ImplementationBatch != null && d.ImplementationBatch.Contains(batchCode))
+                    .Where(d => d.EcCode == x.EcCode && d.ProductionBatch != null && d.ProductionBatch.Contains(prodBatch))
                     .Any()
                 || SqlFunc.Subqueryable<TaktEcMfg1>()
-                    .Where(d => d.EcCode == x.EcCode && d.ImplementationBatch != null && d.ImplementationBatch.Contains(batchCode))
+                    .Where(d => d.EcCode == x.EcCode && d.ProductionBatch != null && d.ProductionBatch.Contains(prodBatch))
                     .Any());
         }
         return exp.ToExpression();

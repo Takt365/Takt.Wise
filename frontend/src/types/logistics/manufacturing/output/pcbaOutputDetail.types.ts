@@ -139,6 +139,16 @@ export interface PcbaOutputDetail extends CompanyDtoBase {
   defectCount: number;
 
   /**
+   * 报废台数
+   */
+  scrapCount: number;
+
+  /**
+   * 报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）
+   */
+  scrapReason?: string;
+
+  /**
    * 停线时间(分钟)
    */
   downtimeMinutes: number;
@@ -357,6 +367,16 @@ export interface PcbaOutputDetailQuery extends TaktPagedQuery {
    * 不良台数
    */
   defectCount?: number;
+
+  /**
+   * 报废台数
+   */
+  scrapCount?: number;
+
+  /**
+   * 报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）
+   */
+  scrapReason?: string;
 
   /**
    * 停线时间(分钟)
@@ -591,6 +611,16 @@ export interface PcbaOutputDetailCreate {
    * 不良台数
    */
   defectCount: number;
+
+  /**
+   * 报废台数
+   */
+  scrapCount: number;
+
+  /**
+   * 报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）
+   */
+  scrapReason?: string;
 
   /**
    * 停线时间(分钟)
@@ -870,6 +900,16 @@ export interface PcbaOutputDetailTemplate {
   defectCount?: number;
 
   /**
+   * 报废台数
+   */
+  scrapCount?: number;
+
+  /**
+   * 报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）
+   */
+  scrapReason?: string;
+
+  /**
    * 停线时间(分钟)
    */
   downtimeMinutes?: number;
@@ -1094,6 +1134,16 @@ export interface PcbaOutputDetailImport {
   defectCount?: number;
 
   /**
+   * 报废台数
+   */
+  scrapCount?: number;
+
+  /**
+   * 报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）
+   */
+  scrapReason?: string;
+
+  /**
    * 停线时间(分钟)
    */
   downtimeMinutes?: number;
@@ -1316,6 +1366,16 @@ export interface PcbaOutputDetailExport {
    * 不良台数
    */
   defectCount: number;
+
+  /**
+   * 报废台数
+   */
+  scrapCount: number;
+
+  /**
+   * 报废原因（自由文本；Length=500，与同表停线原因、未达成原因同长）
+   */
+  scrapReason?: string;
 
   /**
    * 停线时间(分钟)

@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Sales
 // 文件名称：TaktSalesInvoiceItemI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktSalesInvoiceItem 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -315,14 +315,14 @@ public class TaktSalesInvoiceItemI18nSeedData : ITaktSeedDataCoordinator
             // entity.salesinvoiceitem.pricingreferencematerialcode
             new TranslationSeedItem("entity.salesinvoiceitem.pricingreferencematerialcode", "zh-HK", "定价参考物料_hk", "定价参考物料"),
 
-            // entity.salesinvoiceitem.batchcode
-            new TranslationSeedItem("entity.salesinvoiceitem.batchcode", "en-US", "批次_us", "批次"),
-            // entity.salesinvoiceitem.batchcode
-            new TranslationSeedItem("entity.salesinvoiceitem.batchcode", "ja-JP", "批次_jp", "批次"),
-            // entity.salesinvoiceitem.batchcode
-            new TranslationSeedItem("entity.salesinvoiceitem.batchcode", "zh-CN", "批次", "批次"),
-            // entity.salesinvoiceitem.batchcode
-            new TranslationSeedItem("entity.salesinvoiceitem.batchcode", "zh-HK", "批次_hk", "批次"),
+            // entity.salesinvoiceitem.prodbatch
+            new TranslationSeedItem("entity.salesinvoiceitem.prodbatch", "en-US", "批次_us", "批次"),
+            // entity.salesinvoiceitem.prodbatch
+            new TranslationSeedItem("entity.salesinvoiceitem.prodbatch", "ja-JP", "批次_jp", "批次"),
+            // entity.salesinvoiceitem.prodbatch
+            new TranslationSeedItem("entity.salesinvoiceitem.prodbatch", "zh-CN", "批次", "批次"),
+            // entity.salesinvoiceitem.prodbatch
+            new TranslationSeedItem("entity.salesinvoiceitem.prodbatch", "zh-HK", "批次_hk", "批次"),
 
             // entity.salesinvoiceitem.materialgroup
             new TranslationSeedItem("entity.salesinvoiceitem.materialgroup", "en-US", "物料组_us", "物料组"),

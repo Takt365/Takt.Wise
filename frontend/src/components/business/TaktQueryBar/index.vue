@@ -4,7 +4,7 @@
 文件名称:index.vue
 创建时间:2025-01-20
 创建人:Takt365(Cursor AI)
-功能描述:查询栏组件；#leading 在关键字前、按内容宽度；关键字占剩余宽；有 #fields 时关键字 50%，扩展条件+查询/重置共 50%
+功能描述:查询栏组件；单行填满父容器；#leading 按控件默认宽度，关键字占剩余宽；有 #fields 时关键字 50%，扩展条件+查询/重置共 50%
 
 版权信息:Copyright (c) 2025 Takt  All rights reserved.
 免责声明:此软件使用 MIT License,作者不承担任何使用风险。
@@ -158,30 +158,53 @@ defineExpose({
   margin: 4px;
   padding: 4px;
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 8px;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   box-sizing: border-box;
 }
 
 .takt-query-bar__leading {
   flex: 0 0 auto;
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 8px;
+  width: auto;
+  max-width: 100%;
   min-width: 0;
 }
 
-.takt-query-bar__keyword {
+/* 无关键字时（仅 #leading）由前置条件吃掉剩余宽；期间选择器本身仍保持控件默认宽度 */
+.takt-query-bar:not(:has(.takt-query-bar__keyword)) .takt-query-bar__leading {
   flex: 1 1 auto;
+}
+
+.takt-query-bar__leading :deep(.ant-picker) {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: unset;
+  max-width: none;
+}
+
+.takt-query-bar__keyword {
+  flex: 1 1 0;
   width: auto;
   min-width: 0;
-  max-width: none;
+}
+
+.takt-query-bar__keyword :deep(.ant-input-affix-wrapper) {
+  width: 100%;
+  min-width: 0;
 }
 
 .takt-query-bar__trailing {
   flex: 0 0 auto;
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 8px;
   min-width: 0;
@@ -196,15 +219,17 @@ defineExpose({
 }
 
 .takt-query-bar--custom-fields .takt-query-bar__keyword {
-  flex: 0 0 calc(50% - 4px);
+  flex: 1 1 calc(50% - 4px);
   width: calc(50% - 4px);
-  max-width: calc(50% - 4px);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .takt-query-bar--custom-fields .takt-query-bar__trailing {
-  flex: 0 0 calc(50% - 4px);
+  flex: 1 1 calc(50% - 4px);
   width: calc(50% - 4px);
-  max-width: calc(50% - 4px);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .takt-query-bar--custom-fields .takt-query-bar__fields > * {

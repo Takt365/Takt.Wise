@@ -4,7 +4,7 @@
 // 文件名称：TaktEcPurQueryHelper.cs
 // 创建时间：2026-08-27
 // 创建人：Takt365(Cursor AI)
-// 功能描述：采购课主表/子表可见明细：采购类型 F 按设变去重（设变单号+新物料，保留最大 Id）
+// 功能描述：采购课主表/子表可见明细：采购类型 F 按设变单号去重（保留最大 Id；新物料聚合进编码组）
 //
 // 版权信息：Copyright (c) 2026 Takt  All rights reserved.
 // 免责声明：此软件使用 MIT License，作者不承担任何使用风险。
@@ -23,7 +23,7 @@ namespace Takt.Application.Services.Logistics.Manufacturing.EngineeringChange;
 internal static class TaktEcPurQueryHelper
 {
     /// <summary>
-    /// 新采购类型为 F，且同设变单号+新物料仅保留最大 Id 一行
+    /// 新采购类型为 F，且同设变单号仅保留最大 Id 一行（其余明细新物料写入该行编码组）
     /// </summary>
     /// <returns>明细过滤表达式</returns>
     internal static Expression<Func<TaktEcDetail, bool>> VisibleDetailExpression()
@@ -39,7 +39,6 @@ internal static class TaktEcPurQueryHelper
                     && s.IsDeleted == 0
                     && s.IsObsolete == 0
                     && s.EcCode == x.EcCode
-                    && s.EcNewMaterialCode == x.EcNewMaterialCode
                     && s.EcNewPurchaseType == purchaseTypeF
                     && s.Id > x.Id)
                 .Any());
@@ -47,7 +46,7 @@ internal static class TaktEcPurQueryHelper
     }
 
     /// <summary>
-    /// 采购执行列表可见：采购类型 F，按设变单号+新物料去重，保留最大 Id
+    /// 采购执行列表可见：采购类型 F，同设变单号仅保留最大 Id 一行
     /// </summary>
     /// <returns>执行表过滤表达式</returns>
     internal static Expression<Func<TaktEcPur, bool>> VisibleExecExpression()
@@ -63,7 +62,6 @@ internal static class TaktEcPurQueryHelper
                     && s.IsObsolete == 0
                     && s.EcNewPurchaseType == purchaseTypeF
                     && s.EcCode == x.EcCode
-                    && s.EcNewMaterialCode == x.EcNewMaterialCode
                     && s.Id > x.Id)
                 .Any();
     }

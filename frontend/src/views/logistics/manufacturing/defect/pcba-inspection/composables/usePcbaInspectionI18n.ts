@@ -25,7 +25,7 @@ export const PCBAINSPECTION_LIST_FIELDS = [
   'prodOrderCode',
   'prodOrderQty',
   'modelCode',
-  'batchCode',
+  'prodBatch',
   'materialCode',
   'remark',
 ] as const

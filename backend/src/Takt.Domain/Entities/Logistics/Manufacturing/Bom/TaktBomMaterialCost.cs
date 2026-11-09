@@ -16,7 +16,7 @@ using Takt.Domain.Entities;
 namespace Takt.Domain.Entities.Logistics.Manufacturing.Bom;
 
 /// <summary>
-/// BOM 物料成本汇总表（由明细按工厂+产品+核算日聚合写入；UI 机种组→产品行→Item，实体不拆分，无对明细导航）
+/// BOM 物料成本汇总表（由明细按工厂+产品+核算日聚合写入；与明细按产品编码+核算日期关联，子表不存主表 Id）
 /// <para>业务唯一键（新增/更新匹配）：TenantCode+CompanyCode+PlantCode+ProductCode+CostingDate；ModelCode/CostingPeriod 为业务字段，不参与唯一匹配。</para>
 /// <para>软删除：本表 IsDeleted 可为 0/1；列表读隔离不显示已删；合计/重算/机种平均须 includeSoftDeleted 含已删主表。</para>
 /// </summary>
@@ -75,13 +75,13 @@ public class TaktBomMaterialCost : TaktCompanyEntityBase
     public decimal ProductMonthlyCost { get; set; } = 0;
 
     /// <summary>
-    /// 产品月计算（本系统按明细合计：生产相关=X、PCB SECT 标识为空、采购类型=F；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数）
+    /// 产品月计算（本系统按明细合计：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空；行成本=组件数量×(移动平均价÷移动价格单位) 保留 5 位小数）
     /// </summary>
     [SugarColumn(ColumnName = "product_monthly_calculation", ColumnDescription = "产品月计算", ColumnDataType = "decimal", Length = 18, DecimalDigits = 5, IsNullable = false, DefaultValue = "0")]
     public decimal ProductMonthlyCalculation { get; set; } = 0;
 
     /// <summary>
-    /// 最近采购成本（与产品月计算同一快照口径：生产相关=X、PCB SECT 标识为空、采购类型=F、用量 &gt; 0.001；行金额=组件数量×(净价÷采购价格单位)）
+    /// 最近采购成本（与产品月计算同一快照口径：批量标识为空、生产相关=X、PCB SECT 标识为空、采购类型=F、特殊采购类为空、用量 &gt; 0.001；行金额=组件数量×(净价÷采购价格单位)）
     /// </summary>
     [SugarColumn(ColumnName = "latest_purchase_cost", ColumnDescription = "最近采购成本", ColumnDataType = "decimal", Length = 18, DecimalDigits = 5, IsNullable = false, DefaultValue = "0")]
     public decimal LatestPurchaseCost { get; set; } = 0;
@@ -103,4 +103,17 @@ public class TaktBomMaterialCost : TaktCompanyEntityBase
     /// </summary>
     [SugarColumn(ColumnName = "costing_date", ColumnDescription = "核算日期", ColumnDataType = "datetime", IsNullable = false)]
     public DateTime CostingDate { get; set; }
+
+    // ========================================
+    // 导航属性区域
+    // ========================================
+
+    /// <summary>
+    /// 材料成本明细（按产品编码+核算日期关联；同工厂。子表不存主表 Id）
+    /// </summary>
+    [Navigate(
+        NavigateType.OneToMany,
+        nameof(TaktBomMaterialCostItem.PlantCode) + "," + nameof(TaktBomMaterialCostItem.ProductCode) + "," + nameof(TaktBomMaterialCostItem.CostingDate),
+        nameof(PlantCode) + "," + nameof(ProductCode) + "," + nameof(CostingDate))]
+    public List<TaktBomMaterialCostItem>? Items { get; set; }
 }

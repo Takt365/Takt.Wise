@@ -14,18 +14,31 @@ export default {
   page: {
     tabs: {
       board: '看板',
-      impl: '実施',
-      batch: 'バッチ',
+      /** 生管 → 製二 → 製一 → 品管（行数一致） */
+      production: 'バッチ',
+      pur: '購買',
+      iqc: '受入検査',
+      mc: '部管',
+      mtl: '物料',
     },
     kpi: {
       ecTotal: '設変数',
     },
     charts: {
-      statusTitle: '実施状態分布',
-      deptTitle: '部門実行行（実施済 / 未実施）',
+      statusTitle: '部門別 実施済 / 未実施',
+      sunburstTitle: 'サンバースト：主表 → 明細 → 部門 → 実施/未実施',
       monthTitle: '月別登録設変',
       implemented: '実施済',
       notImplemented: '未実施',
+      masterRing: '主表',
+      detailRing: '明細',
+      deptRing: '部門実行',
+      tooltipMaster: '主表件数',
+      tooltipDetail: '明細行数',
+      tooltipDept: '部門',
+      tooltipDeptRows: '部門行数',
+      tooltipImplemented: '実施済',
+      tooltipNotImplemented: '未実施',
     },
     filter: {
       implementationStatus: '実施',
@@ -49,6 +62,13 @@ export default {
       me: '製技',
     },
     implemented: '実施',
+    /** 購買/受検/部管/物料：行数集計（未命中もラベル表示・数値は空） */
+    deptCount: {
+      summary: '{rows}:{done}:{pending}',
+      empty: '',
+      tooltip: '明細:{rows},実施:{done},未実施:{pending}',
+      tooltipEmpty: '',
+    },
     pathLabel: {
       pc: '生管',
       pur: '購買',
@@ -74,6 +94,7 @@ export default {
       inProgress: '実施中',
       officiallyCompleted: '正式完了',
       fullyCompleted: '全完了',
+      deptCompleted: '完了',
     },
     batch: {
       group: {
@@ -99,15 +120,16 @@ export default {
         entryDate: '登録日',
         orderDate: '注文日',
         orderCode: '注文番号',
+        inboundDate: '入荷日',
         scheduledInput: '予定投入',
         productionSchedule: '生産予定',
         inspectionDate: '検査日',
-        iqcOrderCode: '受検番号',
         outboundDate: '出庫日',
         outboundBatch: '出庫ロット',
         productionDate: '生産日',
         productionBatch: '生産ロット',
         sampleDate: '検様日',
+        sampleBatch: '検校ロット',
         sopDate: 'SOP日',
       },
     },

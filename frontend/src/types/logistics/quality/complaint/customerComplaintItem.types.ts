@@ -61,7 +61,7 @@ export interface CustomerComplaintItem extends CompanyDtoBase {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 不良项目类型（字典 logistics_quality_complaint_item_type）
@@ -201,7 +201,7 @@ export interface CustomerComplaintItemQuery extends TaktPagedQuery {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 不良项目类型（字典 logistics_quality_complaint_item_type）
@@ -365,7 +365,7 @@ export interface CustomerComplaintItemCreate {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 不良项目类型（字典 logistics_quality_complaint_item_type）
@@ -562,7 +562,7 @@ export interface CustomerComplaintItemTemplate {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 不良项目类型（字典 logistics_quality_complaint_item_type）
@@ -706,7 +706,7 @@ export interface CustomerComplaintItemImport {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 不良项目类型（字典 logistics_quality_complaint_item_type）
@@ -850,7 +850,7 @@ export interface CustomerComplaintItemExport {
   /**
    * 批次号
    */
-  batchCode?: string;
+  prodBatch?: string;
 
   /**
    * 不良项目类型（字典 logistics_quality_complaint_item_type）

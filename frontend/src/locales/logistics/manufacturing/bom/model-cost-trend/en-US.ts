@@ -16,9 +16,10 @@ export default {
     periodRange: 'Costing months',
     modelOptional: 'Model (optional, empty = all)',
     modelAll: 'All models',
+    materialTypeOptional: 'Material type (optional, empty = all)',
+    materialTypeAll: 'All material types',
     selectPlantRequired: 'Please select a plant',
     selectPeriodRequired: 'Please select a costing period',
-    selectMaterialTypeRequired: 'Please select a material type',
     summary:
       '{plant} / {materialType} / {period} / model {model} — {productCount} products (component diff at {compare})',
     export: 'Export model cost trend',

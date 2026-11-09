@@ -25,6 +25,11 @@ export default {
       province: '省/州',
       city: '都市',
       isp: 'ISP',
+      active: {
+        host: {
+          ips: '有効なNIC',
+        },
+      },
       full: {
         address: '完全住所',
       },
@@ -37,11 +42,18 @@ export default {
     },
     button: {
       search: '照会',
-      client: 'クライアントIPを照会',
+      client: '本機IPを照会',
     },
     rule: {
       ip: {
         required: 'IPアドレスを入力してください',
+      },
+    },
+    visitor: {
+      loading: '公衆IPを取得中…',
+      line: 'あなたのIP：{ip},位置：{location}',
+      unknown: {
+        location: '不明',
       },
     },
     message: {
@@ -49,7 +61,10 @@ export default {
         fail: 'IP位置照会に失敗しました',
       },
       client: {
-        fail: 'クライアントIPの位置照会に失敗しました',
+        fail: '本機IP位置照会に失敗しました',
+      },
+      visitor: {
+        fail: '公衆IPを自動取得できません。手動入力して照会してください',
       },
       not: {
         found: 'このIPの位置情報が見つかりません',

@@ -51,7 +51,7 @@ internal enum TaktEcScopeDedupKind
     EcNewGroup = 6,
 
     /// <summary>
-    /// 采购：任何范围均为设变单号 + 新采购类型 + 新物料；机种与根物料写入编码组
+    /// （保留）采购历史粒度：设变单号 + 新采购类型 + 新物料；现行采购用 EcOnlyGroup
     /// </summary>
     PurchaseNewGroup = 7,
 
@@ -61,7 +61,7 @@ internal enum TaktEcScopeDedupKind
     PurchaseInspectNewGroup = 8,
 
     /// <summary>
-    /// 按设变：仅设变单号；机种与根物料写入编码组。制二另汇总新物料与上阶物料编码组
+    /// 按设变：仅设变单号；机种与根物料写入编码组
     /// </summary>
     EcOnlyGroup = 9,
 
@@ -69,42 +69,63 @@ internal enum TaktEcScopeDedupKind
     /// 设变单号 + 根物料（按成品）；机种写入编码组
     /// </summary>
     EcRootGroup = 10,
+
+    /// <summary>
+    /// （保留）物料历史上按上阶去重；现行物料与部管同生管/制一等，严格按控制范围派生
+    /// </summary>
+    EcParentGroup = 11,
 }
 
 /// <summary>
-/// 实施范围 → 部门执行去重键。
+/// 控制范围 → 部门执行去重键。
 /// 部门范围 EcControlScope：1=按成品，2=按机种，3=按设变。管理范围 EcImplScope（全仕向/部管/内部/技术）不参与去重键。
-/// 生管/制一/制二/品管在按机种、按设变时，停产与在产非 FERT 各自成行，机种组与根物料组不并入在产成品。
+/// 按成品：生管/制一/制二/品管/部管/物料一律设变+机种+完成品（ModelRoot）一一对应。
+/// 按机种、按设变：停产与在产非 FERT 各自成行，机种组与根物料组不并入在产成品。
+/// 采购/受检固定按设变（EcOnlyGroup）；制技固定按机种（ModelGroup）。
 /// </summary>
 internal static class TaktEcScopeRowGrain
 {
     /// <summary>
-    /// 解析部门在该实施范围下的去重粒度
+    /// 解析部门在该控制范围下的去重粒度
     /// </summary>
     /// <param name="deptCode">部门编码</param>
-    /// <param name="ecControlScope">部门实施范围</param>
+    /// <param name="ecControlScope">部门控制范围</param>
     /// <returns>去重粒度</returns>
     internal static TaktEcScopeDedupKind ResolveKind(string deptCode, int ecControlScope)
     {
         var finished = ecControlScope == TaktEcControlScopeConstants.ByFinishedProduct;
         var byModel = ecControlScope == TaktEcControlScopeConstants.ByModel;
-        // 生管与制一/制二/品管同一套：按成品 / 按机种 / 按设变（含内部·技术→按设变）
-        return deptCode switch
+        // 采购/受检：始终按设变去重；新物料采购/检验回填物料编码组（资格见 IsEligible）
+        if (deptCode is TaktEcDeptCodes.Pur or TaktEcDeptCodes.Iqc)
         {
-            TaktEcDeptCodes.Pc or TaktEcDeptCodes.Mfg2 or TaktEcDeptCodes.Mfg1 or TaktEcDeptCodes.Qc => finished
-                ? (deptCode == TaktEcDeptCodes.Pc
-                    ? TaktEcScopeDedupKind.ModelRoot
-                    : TaktEcScopeDedupKind.EcRootGroup)
-                : byModel
-                    ? TaktEcScopeDedupKind.ModelGroup
-                    : TaktEcScopeDedupKind.EcOnlyGroup,
-            TaktEcDeptCodes.Mc or TaktEcDeptCodes.Mtl => TaktEcScopeDedupKind.ModelOnly,
-            TaktEcDeptCodes.Me => TaktEcScopeDedupKind.ModelGroup,
-            TaktEcDeptCodes.Pur or TaktEcDeptCodes.Iqc => TaktEcScopeDedupKind.EcNewGroup,
-            _ => finished || byModel
-                ? TaktEcScopeDedupKind.ModelRoot
-                : TaktEcScopeDedupKind.ModelOnly,
-        };
+            return TaktEcScopeDedupKind.EcOnlyGroup;
+        }
+        // 制技：始终按设变单号+机种去重，根物料写入编码组
+        if (deptCode == TaktEcDeptCodes.Me)
+        {
+            return TaktEcScopeDedupKind.ModelGroup;
+        }
+        // 生管/制一/制二/品管/部管/物料：跟随控制范围（按成品/按机种/按设变）。
+        // 按成品一律设变+机种+完成品（ModelRoot），各部门一一对应，禁止只按设变+成品漏掉机种。
+        // 物料编码组：生管/制二/制一/品管=旧+新；部管=非C003采购新物料；物料=C003采购新物料。
+        if (deptCode is TaktEcDeptCodes.Pc
+            or TaktEcDeptCodes.Mfg2
+            or TaktEcDeptCodes.Mfg1
+            or TaktEcDeptCodes.Qc
+            or TaktEcDeptCodes.Mc
+            or TaktEcDeptCodes.Mtl)
+        {
+            if (finished)
+            {
+                return TaktEcScopeDedupKind.ModelRoot;
+            }
+            return byModel
+                ? TaktEcScopeDedupKind.ModelGroup
+                : TaktEcScopeDedupKind.EcOnlyGroup;
+        }
+        return finished || byModel
+            ? TaktEcScopeDedupKind.ModelRoot
+            : TaktEcScopeDedupKind.ModelOnly;
     }
 
     /// <summary>
@@ -190,6 +211,7 @@ internal static class TaktEcScopeRowGrain
         var model = detail.EcModelCode ?? string.Empty;
         var root = detail.EcRootMaterialCode ?? string.Empty;
         var material = detail.EcNewMaterialCode ?? string.Empty;
+        var parent = detail.EcParentMaterialCode ?? string.Empty;
         var purchaseType = detail.EcNewPurchaseType ?? string.Empty;
         var inspection = detail.EcNewRequiresInspection.ToString();
         var key = kind switch
@@ -203,6 +225,7 @@ internal static class TaktEcScopeRowGrain
             TaktEcScopeDedupKind.PurchaseInspectNewGroup => $"{ecCode}\u001f{inspection}\u001f{material}",
             TaktEcScopeDedupKind.EcOnlyGroup => ecCode,
             TaktEcScopeDedupKind.EcRootGroup => $"{ecCode}\u001f{root}",
+            TaktEcScopeDedupKind.EcParentGroup => $"{ecCode}\u001f{parent}",
             _ => $"{ecCode}\u001f{model}\u001f{root}",
         };
         if (!SplitsOutlierFromLive(deptCode, kind))
@@ -213,14 +236,19 @@ internal static class TaktEcScopeRowGrain
     }
 
     /// <summary>
-    /// 生管/制一/制二/品管的按机种、按设变需要把停产和在产非 FERT 从在产成品组拆出。
+    /// 生管/制一/制二/品管/部管/物料的按机种、按设变需要把停产和在产非 FERT 从在产成品组拆出。
     /// </summary>
     /// <param name="deptCode">部门编码</param>
     /// <param name="kind">去重粒度</param>
     /// <returns>需要分道时为 true</returns>
     private static bool SplitsOutlierFromLive(string? deptCode, TaktEcScopeDedupKind kind)
     {
-        if (deptCode is not (TaktEcDeptCodes.Pc or TaktEcDeptCodes.Mfg1 or TaktEcDeptCodes.Mfg2 or TaktEcDeptCodes.Qc))
+        if (deptCode is not (TaktEcDeptCodes.Pc
+            or TaktEcDeptCodes.Mfg1
+            or TaktEcDeptCodes.Mfg2
+            or TaktEcDeptCodes.Qc
+            or TaktEcDeptCodes.Mc
+            or TaktEcDeptCodes.Mtl))
         {
             return false;
         }
@@ -324,10 +352,6 @@ internal static class TaktEcScopeRowGrain
         IReadOnlySet<string>? fertRootKeys)
     {
         ArgumentNullException.ThrowIfNull(details);
-        if (deptCode is TaktEcDeptCodes.Mc or TaktEcDeptCodes.Mtl)
-        {
-            return BuildLineMaterialSkipIds(details, deptCode, ecImplScope, fertRootKeys);
-        }
         var kind = ResolveKind(deptCode, ecImplScope);
         var groups = new Dictionary<string, List<TaktEcDetail>>(StringComparer.OrdinalIgnoreCase);
         foreach (var detail in details)
@@ -512,6 +536,51 @@ internal static class TaktEcScopeRowGrain
                 continue;
             }
             if (IsNonFertRootMaterialType(item.EcRootMaterialType))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 同去重键组内是否存在未停产且类型为 FERT 的根物料。
+    /// 制技派生：仅此类行 IsSopUpdated=0（须人工更新 SOP）；非 FERT 或已停产一律 IsSopUpdated=1。
+    /// </summary>
+    /// <param name="details">同一设变明细</param>
+    /// <param name="keeper">本次保留的明细</param>
+    /// <param name="deptCode">部门编码</param>
+    /// <param name="ecControlScope">部门实施范围</param>
+    /// <param name="fertRootKeys">制一按成品的 FERT 键（制技传 null）</param>
+    /// <returns>存在在产 FERT 时为 true</returns>
+    internal static bool RootGroupHasActiveFert(
+        IReadOnlyList<TaktEcDetail> details,
+        TaktEcDetail keeper,
+        string deptCode,
+        int ecControlScope,
+        IReadOnlySet<string>? fertRootKeys)
+    {
+        ArgumentNullException.ThrowIfNull(details);
+        ArgumentNullException.ThrowIfNull(keeper);
+        ArgumentException.ThrowIfNullOrWhiteSpace(deptCode);
+        var kind = ResolveKind(deptCode, ecControlScope);
+        var key = BuildKey(keeper, kind, deptCode);
+        foreach (var item in details)
+        {
+            if (!IsEligible(item, deptCode, ecControlScope, fertRootKeys))
+            {
+                continue;
+            }
+            if (!string.Equals(BuildKey(item, kind, deptCode), key, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+            if (TaktEcScopeConstants.IsEolDiscontinued(item.DiscontinuedStatus))
+            {
+                continue;
+            }
+            var materialType = item.EcRootMaterialType?.Trim() ?? string.Empty;
+            if (string.Equals(materialType, TaktEcMfg1Constants.FertMaterialType, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -720,6 +789,109 @@ internal static class TaktEcScopeRowGrain
     }
 
     /// <summary>
+    /// 每个去重键下的旧物料编码组（分号分隔，不截断；生管/制一/制二/品管聚合行；排除空与「0」）
+    /// </summary>
+    /// <param name="details">同一设变明细</param>
+    /// <param name="deptCode">部门编码</param>
+    /// <param name="ecImplScope">实施范围</param>
+    /// <param name="fertRootKeys">制一按成品的 FERT 键</param>
+    /// <returns>键为去重键，值为旧物料编码组</returns>
+    internal static Dictionary<string, string> BuildOldMaterialGroups(
+        IReadOnlyList<TaktEcDetail> details,
+        string deptCode,
+        int ecImplScope,
+        IReadOnlySet<string>? fertRootKeys)
+    {
+        return BuildMaterialCodeGroups(
+            details,
+            deptCode,
+            ecImplScope,
+            fertRootKeys,
+            detail => detail.EcOldMaterialCode);
+    }
+
+    /// <summary>
+    /// 生管旧品结余：同一设变下全部有效旧物料去重编码组（不按完成品拆分；排除空与「0」）
+    /// </summary>
+    /// <param name="details">同一设变明细（未作废）</param>
+    /// <returns>分号分隔旧物料编码组</returns>
+    internal static string BuildEcLevelOldMaterialGroup(IReadOnlyList<TaktEcDetail> details)
+    {
+        ArgumentNullException.ThrowIfNull(details);
+        return TaktEcRootMaterialCodeGroup.JoinMaterialCodes(
+            details
+                .Where(detail => detail.IsObsolete == 0)
+                .Select(detail => detail.EcOldMaterialCode));
+    }
+
+    /// <summary>
+    /// 每个去重键下的新物料编码组（分号分隔，不截断；生管/制一/制二/品管聚合行；排除空与「0」）
+    /// </summary>
+    /// <param name="details">同一设变明细</param>
+    /// <param name="deptCode">部门编码</param>
+    /// <param name="ecImplScope">实施范围</param>
+    /// <param name="fertRootKeys">制一按成品的 FERT 键</param>
+    /// <returns>键为去重键，值为新物料编码组</returns>
+    internal static Dictionary<string, string> BuildNewMaterialGroups(
+        IReadOnlyList<TaktEcDetail> details,
+        string deptCode,
+        int ecImplScope,
+        IReadOnlySet<string>? fertRootKeys)
+    {
+        return BuildMaterialCodeGroups(
+            details,
+            deptCode,
+            ecImplScope,
+            fertRootKeys,
+            detail => detail.EcNewMaterialCode);
+    }
+
+    /// <summary>
+    /// 每个去重键下旧/新物料编码组（排除空与占位「0」）
+    /// </summary>
+    /// <param name="details">同一设变明细</param>
+    /// <param name="deptCode">部门编码</param>
+    /// <param name="ecImplScope">实施范围</param>
+    /// <param name="fertRootKeys">制一按成品的 FERT 键</param>
+    /// <param name="pick">从明细取旧/新物料编码</param>
+    /// <returns>键为去重键，值为物料编码组</returns>
+    private static Dictionary<string, string> BuildMaterialCodeGroups(
+        IReadOnlyList<TaktEcDetail> details,
+        string deptCode,
+        int ecImplScope,
+        IReadOnlySet<string>? fertRootKeys,
+        Func<TaktEcDetail, string?> pick)
+    {
+        ArgumentNullException.ThrowIfNull(details);
+        ArgumentNullException.ThrowIfNull(pick);
+        var kind = ResolveKind(deptCode, ecImplScope);
+        var buckets = new Dictionary<string, List<string?>>(StringComparer.OrdinalIgnoreCase);
+        foreach (var detail in details)
+        {
+            if (!IsEligible(detail, deptCode, ecImplScope, fertRootKeys))
+            {
+                continue;
+            }
+            var code = pick(detail);
+            if (!TaktEcScopeConstants.HasEffectiveMaterialCode(code))
+            {
+                continue;
+            }
+            var key = BuildKey(detail, kind, deptCode);
+            if (!buckets.TryGetValue(key, out var codes))
+            {
+                codes = [];
+                buckets[key] = codes;
+            }
+            codes.Add(code);
+        }
+        return buckets.ToDictionary(
+            pair => pair.Key,
+            pair => TaktEcRootMaterialCodeGroup.JoinMaterialCodes(pair.Value),
+            StringComparer.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
     /// 每个去重键下指定字段的编码组（分号分隔，不截断）
     /// </summary>
     /// <param name="details">同一设变明细</param>
@@ -777,26 +949,6 @@ internal static class TaktEcScopeRowGrain
     {
         ArgumentNullException.ThrowIfNull(detail);
         ArgumentNullException.ThrowIfNull(siblings);
-        if (deptCode is TaktEcDeptCodes.Mc or TaktEcDeptCodes.Mtl)
-        {
-            if (!IsEligible(detail, deptCode, ecImplScope, fertRootKeys))
-            {
-                return false;
-            }
-            var lineKey = BuildLineMaterialKey(detail);
-            foreach (var sibling in siblings)
-            {
-                if (sibling.Id <= detail.Id || !IsEligible(sibling, deptCode, ecImplScope, fertRootKeys))
-                {
-                    continue;
-                }
-                if (string.Equals(BuildLineMaterialKey(sibling), lineKey, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
         if (!IsEligible(detail, deptCode, ecImplScope, fertRootKeys))
         {
             return false;

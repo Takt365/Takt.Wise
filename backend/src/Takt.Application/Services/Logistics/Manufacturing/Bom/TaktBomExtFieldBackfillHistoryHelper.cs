@@ -61,9 +61,9 @@ public static class TaktBomExtFieldBackfillHistoryHelper
     public const string ScopePcbSect = "pcb_sect";
 
     /// <summary>
-    /// ExtField nvarchar 上限（与公司基类一致）
+    /// ExtField 软上限（基类已为 ntext；仍限制单次履历膨胀，超限丢弃最早条目）
     /// </summary>
-    public const int ExtFieldMaxLength = 4000;
+    public const int ExtFieldMaxLength = 100_000;
 
     /// <summary>
     /// 追加一条履历到 ExtField._bk.{scope}（数组；若曾为单对象则先迁入数组）

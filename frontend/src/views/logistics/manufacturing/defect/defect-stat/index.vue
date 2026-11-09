@@ -24,8 +24,15 @@
           v-if="statTab === tab.key"
           class="flex h-full min-h-0 min-w-0 flex-col"
         >
-    <div class="takt-query-bar defect-stat-query-bar shrink-0">
-      <div class="flex min-w-0 flex-1 flex-nowrap items-center gap-x-2">
+    <TaktQueryBar
+      :show-keyword="false"
+      class="shrink-0"
+      :loading="loading"
+      @search="handleSearch"
+      @reset="handleReset"
+    >
+      <template #leading>
+<div class="flex min-w-0 flex-1 flex-nowrap items-center gap-x-2">
         <div class="flex min-w-0 flex-1 items-center gap-1">
           <span class="shrink-0 whitespace-nowrap text-sm text-text-secondary">{{ t(`${localePrefix}.periodRange`) }}</span>
           <a-range-picker
@@ -70,10 +77,10 @@
           />
         </div>
         <div class="flex min-w-0 flex-1 items-center gap-1">
-          <span class="shrink-0 whitespace-nowrap text-sm text-text-secondary">{{ t(`${localePrefix}.batchCode`) }}</span>
+          <span class="shrink-0 whitespace-nowrap text-sm text-text-secondary">{{ t(`${localePrefix}.prodBatch`) }}</span>
           <TaktSelect
             :key="`${statTab}-batch`"
-            v-model:value="batchCode"
+            v-model:value="prodBatch"
             :api-url="batchOptionsUrl"
             :api-params="scopedApiParams"
             :disabled="!plantCode?.trim()"
@@ -112,29 +119,8 @@
           />
         </div>
       </div>
-      <a-space class="query-actions shrink-0">
-        <a-button
-          class="takt-button-query"
-          :loading="loading"
-          @click="handleSearch"
-        >
-          <template #icon>
-            <RiSearchLine class="takt-remix-icon" />
-          </template>
-          {{ t('common.page.button.query') }}
-        </a-button>
-        <a-button
-          class="takt-button-reset"
-          :disabled="loading"
-          @click="handleReset"
-        >
-          <template #icon>
-            <RiRefreshLine class="takt-remix-icon" />
-          </template>
-          {{ t('common.page.button.reset') }}
-        </a-button>
-      </a-space>
-    </div>
+      </template>
+    </TaktQueryBar>
     <TaktToolsBar
       :show-create="false"
       :show-update="false"
@@ -256,11 +242,11 @@
           />
         </a-form-item>
         <a-form-item
-          v-show="isFieldVisible('batchCode')"
-          :label="t(`${localePrefix}.batchCode`)"
+          v-show="isFieldVisible('prodBatch')"
+          :label="t(`${localePrefix}.prodBatch`)"
         >
           <TaktSelect
-            v-model:value="batchCode"
+            v-model:value="prodBatch"
             :api-url="batchOptionsUrl"
             :api-params="scopedApiParams"
             :disabled="!plantCode?.trim()"
@@ -316,7 +302,6 @@
  */
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { RiRefreshLine, RiSearchLine } from '@remixicon/vue'
 import {
   exportDefectStat,
   getDefectStatBatchOptionsUrl,
@@ -373,7 +358,7 @@ const prodCategory = ref<string | undefined>()
 /** 工单 */
 const prodOrderCode = ref<string | undefined>()
 /** 批次 */
-const batchCode = ref<string | undefined>()
+const prodBatch = ref<string | undefined>()
 /** 机种 */
 const modelCode = ref<string | undefined>()
 /** 物料 */
@@ -544,7 +529,7 @@ const queryFieldsMeta = computed(() => {
     fields.push({ key: 'prodOrderCode', label: t(`${localePrefix}.prodOrderCode`) })
   }
   fields.push(
-    { key: 'batchCode', label: t(`${localePrefix}.batchCode`) },
+    { key: 'prodBatch', label: t(`${localePrefix}.prodBatch`) },
     { key: 'modelCode', label: t(`${localePrefix}.modelCode`) },
     { key: 'materialCode', label: t(`${localePrefix}.materialCode`) },
   )
@@ -576,7 +561,7 @@ function handleAdvancedQueryReset() {
  * @returns {string} 键
  */
 function getRowKey(record: DefectOrderStatRow): string {
-  return record.rowKey || `${statTab.value}|${record.prodCategory}|${record.prodOrderCode}|${record.batchCode}`
+  return record.rowKey || `${statTab.value}|${record.prodCategory}|${record.prodOrderCode}|${record.prodBatch}`
 }
 
 /** 清空表格 */
@@ -589,7 +574,7 @@ function clearTable() {
 function clearFilters() {
   prodCategory.value = undefined
   prodOrderCode.value = undefined
-  batchCode.value = undefined
+  prodBatch.value = undefined
   modelCode.value = undefined
   materialCode.value = undefined
 }
@@ -609,7 +594,7 @@ function buildQuery() {
     periodDateStart: `${periodRange.value[0]}-01`,
     periodDateEnd: `${periodRange.value[1]}-01`,
     prodOrderCode: isBatchTab.value ? undefined : prodOrderCode.value?.trim() || undefined,
-    batchCode: batchCode.value?.trim() || undefined,
+    prodBatch: prodBatch.value?.trim() || undefined,
     modelCode: modelCode.value?.trim() || undefined,
     materialCode: materialCode.value?.trim() || undefined,
     prodCategory: prodCategory.value?.trim() || undefined,

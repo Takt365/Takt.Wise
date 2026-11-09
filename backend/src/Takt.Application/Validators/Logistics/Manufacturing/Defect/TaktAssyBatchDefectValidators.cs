@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Application.Validators.Logistics.Manufacturing.Defect
 // 文件名称：TaktAssyBatchDefectValidators.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：AssyBatchDefect 模块 FluentValidation 验证器（由 generate-validators-from-entity.cjs 根据 TaktAssyBatchDefect 生成，请按需审阅）
 // 
@@ -44,9 +44,9 @@ public class TaktAssyBatchDefectCreateValidator : AbstractValidator<TaktAssyBatc
         RuleFor(x => x.ProdCategory)
             .NotEmpty().WithMessage("生产类别不能为空")
             .MaximumLength(4).WithMessage("生产类别长度不能超过4个字符");
-        RuleFor(x => x.BatchCode)
+        RuleFor(x => x.ProdBatch)
             .NotEmpty().WithMessage("批次不能为空")
-            .MaximumLength(20).WithMessage("批次长度不能超过20个字符");
+            .MaximumLength(40).WithMessage("批次长度不能超过40个字符");
         RuleFor(x => x.ModelCode)
             .NotEmpty().WithMessage("机种不能为空")
             .MaximumLength(40).WithMessage("机种长度不能超过40个字符");
@@ -88,9 +88,9 @@ public class TaktAssyBatchDefectUpdateValidator : AbstractValidator<TaktAssyBatc
         RuleFor(x => x.ProdCategory)
             .NotEmpty().WithMessage("生产类别不能为空")
             .MaximumLength(4).WithMessage("生产类别长度不能超过4个字符");
-        RuleFor(x => x.BatchCode)
+        RuleFor(x => x.ProdBatch)
             .NotEmpty().WithMessage("批次不能为空")
-            .MaximumLength(20).WithMessage("批次长度不能超过20个字符");
+            .MaximumLength(40).WithMessage("批次长度不能超过40个字符");
         RuleFor(x => x.ModelCode)
             .NotEmpty().WithMessage("机种不能为空")
             .MaximumLength(40).WithMessage("机种长度不能超过40个字符");
@@ -126,9 +126,9 @@ public class TaktAssyBatchDefectImportValidator : AbstractValidator<TaktAssyBatc
         RuleFor(x => x.ProdCategory)
             .NotEmpty().WithMessage("生产类别不能为空")
             .MaximumLength(4).WithMessage("生产类别长度不能超过4个字符");
-        RuleFor(x => x.BatchCode)
+        RuleFor(x => x.ProdBatch)
             .NotEmpty().WithMessage("批次不能为空")
-            .MaximumLength(20).WithMessage("批次长度不能超过20个字符");
+            .MaximumLength(40).WithMessage("批次长度不能超过40个字符");
         RuleFor(x => x.ModelCode)
             .NotEmpty().WithMessage("机种不能为空")
             .MaximumLength(40).WithMessage("机种长度不能超过40个字符");

@@ -338,12 +338,33 @@ public static class TaktRegexHelper
     /// </summary>
     public static readonly Regex OrderCode = new(@"^[a-zA-Z][a-zA-Z0-9-]{2,49}$", Opt);
     /// <summary>
-    /// 设变生管 Po残（与前端 RegexPatterns.EC_PO_REMAINDER 对齐）。
-    /// 空串合法（字段可空）；非空须为「采购单10位-序号4位:数量」，数量为非负整数或最多两位小数，如 4500123456-0010:18.5。
+    /// 设变生管/采购旧品结余单行（与前端 RegexPatterns.EC_PC_OLD_PART_BALANCE_LINE 对齐）。
+    /// 「旧物料-采购单10位:序号4位:数量;结余;处理方式;」— 旧物料与采购单用「-」，其后冒号，结余与处理方式各以分号分隔；如 S0111914-4300000000:0010:0;0;4;。
     /// </summary>
-    public static readonly Regex EcPoRemainder = new(
-        @"^\d{10}-\d{4}:\d+(?:\.\d{1,2})?$",
+    public static readonly Regex EcPcOldPartBalanceLine = new(
+        @"^[^:\s;]{1,20}-\d{10}:\d{4}:\d+(?:\.\d{1,2})?;\d+(?:\.\d{1,2})?;(?:[1-5]|9);?$",
         Opt);
+    /// <summary>
+    /// 设变技术课主表旧品处理单段（与前端 RegexPatterns.EC_TE_OLD_PART_DISPOSITION_PART 对齐）。
+    /// 「旧物料:处理方式」— 物料≤20；处理方式 1～5 或 9；如 S0111914:4。
+    /// </summary>
+    public static readonly Regex EcTeOldPartDispositionPart = new(
+        @"^[^:\s;]{1,20}:(?:[1-5]|9)$",
+        Opt);
+    /// <summary>
+    /// 设变采购执行内容单行（与前端 RegexPatterns.EC_PUR_EXEC_LINE 对齐）。
+    /// 「物料:采购单10位:序号4位:供应商」— 物料≤20；供应商1～10位字母数字。
+    /// </summary>
+    public static readonly Regex EcPurExecLine = new(
+        @"^[^:\s;]{1,20}:\d{10}:\d{4}:[A-Za-z0-9]{1,10}$",
+        Opt);
+    /// <summary>
+    /// 设变受检执行内容单行（与前端 RegexPatterns.EC_IQC_EXEC_LINE 对齐）。
+    /// 「物料:检验单10位:序号4位:PASS」— 如 S0111914:4300000000:0010:PASS；末段 PASS 大小写不敏感。
+    /// </summary>
+    public static readonly Regex EcIqcExecLine = new(
+        @"^[^:\s;]{1,20}:\d{10}:\d{4}:PASS$",
+        Opt | RegexOptions.IgnoreCase);
     /// <summary>
     /// 批次编码（字母开头，3-50位）。
     /// </summary>
@@ -806,17 +827,122 @@ public static class TaktRegexHelper
     public static bool IsValidAssetCode(string? value) => IsMatch(AssetCode, value);
 
     /// <summary>
-    /// 是否为有效设变生管 Po残。空或空白视为合法；非空须匹配「采购单10位-序号4位:数量」。
+    /// 是否为有效设变生管/采购旧品结余。空或空白视为合法；非空须为多行「旧物料-采购单10位:序号4位:数量;结余;处理方式;」，行间换行（行内分号不可作行分隔）。
     /// </summary>
-    /// <param name="value">Po残文本</param>
-    /// <returns>空或格式正确时为 true</returns>
-    public static bool IsValidEcPoRemainder(string? value)
+    /// <param name="value">旧品结余文本</param>
+    /// <returns>空或每行格式正确时为 true</returns>
+    public static bool IsValidEcPcOldPartBalance(string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
             return true;
         }
 
-        return IsMatch(EcPoRemainder, value);
+        var parts = value
+            .Split(['\n', '\r'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (parts.Length == 0)
+        {
+            return false;
+        }
+
+        foreach (var part in parts)
+        {
+            if (!IsMatch(EcPcOldPartBalanceLine, part))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// 是否为有效设变技术课主表旧品处理。空或空白视为合法；非空须为多段「旧物料:处理方式」，以分号或换行分隔。
+    /// </summary>
+    /// <param name="value">旧品结余文本</param>
+    /// <returns>空或每段格式正确时为 true</returns>
+    public static bool IsValidEcTeOldPartDisposition(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return true;
+        }
+
+        var parts = value
+            .Split([';', '\n', '\r'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (parts.Length == 0)
+        {
+            return false;
+        }
+
+        foreach (var part in parts)
+        {
+            if (!IsMatch(EcTeOldPartDispositionPart, part))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// 验证设变采购执行内容。空串合法（必填由业务校验）；非空须为多段「物料:采购单10位:序号4位:供应商」，以分号或换行分隔。
+    /// </summary>
+    /// <param name="value">执行内容</param>
+    /// <returns>空或每段格式正确时为 true</returns>
+    public static bool IsValidEcPurExecContent(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return true;
+        }
+
+        var parts = value
+            .Split([';', '\n', '\r'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (parts.Length == 0)
+        {
+            return false;
+        }
+
+        foreach (var part in parts)
+        {
+            if (!IsMatch(EcPurExecLine, part))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// 验证设变受检执行内容。空串合法（必填由业务校验）；非空须为多段「物料:检验单10位:序号4位:PASS」，以分号或换行分隔。
+    /// </summary>
+    /// <param name="value">执行内容</param>
+    /// <returns>空或每段格式正确时为 true</returns>
+    public static bool IsValidEcIqcExecContent(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return true;
+        }
+
+        var parts = value
+            .Split([';', '\n', '\r'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (parts.Length == 0)
+        {
+            return false;
+        }
+
+        foreach (var part in parts)
+        {
+            if (!IsMatch(EcIqcExecLine, part))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

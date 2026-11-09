@@ -124,6 +124,11 @@ public class TaktBomCalculateCostResultDto
     /// 处理的核算月份（yyyy-MM）
     /// </summary>
     public string ProcessedMonth { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 本次处理的工厂代码（多个以英文逗号分隔，按编码排序）
+    /// </summary>
+    public string ProcessedPlants { get; set; } = string.Empty;
 }
 
 /// <summary>
@@ -201,12 +206,17 @@ public class TaktBomCalculateAverageResultDto
     /// 处理的核算期间
     /// </summary>
     public string CostingPeriod { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 本次处理的工厂代码（多个以英文逗号分隔，按编码排序）
+    /// </summary>
+    public string ProcessedPlants { get; set; } = string.Empty;
 }
 
 /// <summary>
 /// 回填 BOM 明细采购价结果（采购组织=主表工厂编码；净价取条件行或数量/价值等级）
 /// </summary>
-public class TaktBomCalculatePurchaseInfoBackfillResultDto
+public class TaktBomCalculatePurchaseConditionBackfillResultDto
 {
     /// <summary>
     /// 扫描明细行数

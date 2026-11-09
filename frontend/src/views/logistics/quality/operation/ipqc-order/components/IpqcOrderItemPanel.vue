@@ -164,11 +164,11 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('batchCode')">
-      <a-form-item :label="pi.queryLabel('batchCode')">
+      <div v-show="isFieldVisible('prodBatch')">
+      <a-form-item :label="pi.queryLabel('prodBatch')">
         <a-input
-          v-model:value="advancedQueryForm.batchCode"
-          :placeholder="pi.queryPh('batchCode', 'required')"
+          v-model:value="advancedQueryForm.prodBatch"
+          :placeholder="pi.queryPh('prodBatch', 'required')"
           show-count
           :maxlength="20"
           allow-clear
@@ -718,14 +718,14 @@ const columns = computed<TableColumnsType>(() => [
       String(getIpqcOrderItemField(record, 'materialDescription') ?? ''),
   },
   {
-    title: pi.label('batchCode'),
-    dataIndex: 'batchCode',
-    key: 'batchCode',
+    title: pi.label('prodBatch'),
+    dataIndex: 'prodBatch',
+    key: 'prodBatch',
     width: 120,
     resizable: true,
     ellipsis: true,
     customRender: ({ record }: { record: IpqcOrderItem }) =>
-      String(getIpqcOrderItemField(record, 'batchCode') ?? ''),
+      String(getIpqcOrderItemField(record, 'prodBatch') ?? ''),
   },
   {
     title: pi.label('productionQuantity'),

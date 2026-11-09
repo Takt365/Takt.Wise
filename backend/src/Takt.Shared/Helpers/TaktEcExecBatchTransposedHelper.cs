@@ -28,7 +28,7 @@ public sealed class TaktEcDeptBatchTransposedStageCell
     /// <summary>
     /// 批次号/批次说明
     /// </summary>
-    public string? BatchCode { get; init; }
+    public string? ProdBatch { get; init; }
     /// <summary>
     /// 日期展示文本（yyyyMMdd）
     /// </summary>
@@ -45,12 +45,12 @@ public static class TaktEcExecBatchTransposedHelper
     /// </summary>
     /// <param name="stageCode">阶段编码</param>
     /// <param name="stageDate">阶段日期</param>
-    /// <param name="batchCode">批次号</param>
+    /// <param name="prodBatch">批次号</param>
     /// <returns>阶段单元格</returns>
     public static TaktEcDeptBatchTransposedStageCell BuildStageCell(
         string stageCode,
         DateTime? stageDate,
-        string? batchCode)
+        string? prodBatch)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(stageCode);
         var date = stageDate?.Date;
@@ -58,7 +58,7 @@ public static class TaktEcExecBatchTransposedHelper
         {
             StageCode = stageCode,
             StageDate = date,
-            BatchCode = string.IsNullOrWhiteSpace(batchCode) ? null : batchCode.Trim(),
+            ProdBatch = string.IsNullOrWhiteSpace(prodBatch) ? null : prodBatch.Trim(),
             DateDisplayText = date?.ToString("yyyyMMdd"),
         };
     }

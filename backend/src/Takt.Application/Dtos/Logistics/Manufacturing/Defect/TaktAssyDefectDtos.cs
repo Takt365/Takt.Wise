@@ -78,7 +78,7 @@ public class TaktAssyDefectDto : TaktCompanyDtoBase
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码
@@ -181,7 +181,7 @@ public class TaktAssyDefectQueryDto : TaktPagedQuery
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码
@@ -295,7 +295,7 @@ public class TaktAssyDefectCreateDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码
@@ -427,7 +427,7 @@ public class TaktAssyDefectTemplateDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码
@@ -529,7 +529,7 @@ public class TaktAssyDefectImportDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码
@@ -637,7 +637,7 @@ public class TaktAssyDefectExportDto
     /// <summary>
     /// 批次
     /// </summary>
-    public string? BatchCode { get; set; } = string.Empty;
+    public string? ProdBatch { get; set; } = string.Empty;
 
     /// <summary>
     /// 物料编码

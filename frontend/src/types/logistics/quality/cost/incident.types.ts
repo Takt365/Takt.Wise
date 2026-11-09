@@ -193,3 +193,19 @@ export interface QualityIncidentExport {
 
 }
 
+/**
+ * 品质事故列表查询
+ * 对应后端 TaktQualityIncidentQueryDto
+ */
+export interface QualityIncidentQuery extends TaktPagedQuery {
+  /**
+   * 事故日期（范围查询-开始）
+   */
+  incidentDateStart?: string;
+
+  /**
+   * 事故日期（范围查询-结束）
+   */
+  incidentDateEnd?: string;
+}
+

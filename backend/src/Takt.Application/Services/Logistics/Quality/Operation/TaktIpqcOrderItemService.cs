@@ -534,7 +534,7 @@ public class TaktIpqcOrderItemService : TaktServiceBase, ITaktIpqcOrderItemServi
                 || (x.IpqcOrderCode != null && x.IpqcOrderCode.Contains(keywords))
                 || (x.MaterialCode != null && x.MaterialCode.Contains(keywords))
                 || (x.MaterialDescription != null && x.MaterialDescription.Contains(keywords))
-                || (x.BatchCode != null && x.BatchCode.Contains(keywords))
+                || (x.ProdBatch != null && x.ProdBatch.Contains(keywords))
                 || (x.StandardCode != null && x.StandardCode.Contains(keywords))
                 || (x.SamplingSchemeCode != null && x.SamplingSchemeCode.Contains(keywords))
                 || (x.SampleSerialCode != null && x.SampleSerialCode.Contains(keywords))
@@ -587,10 +587,10 @@ public class TaktIpqcOrderItemService : TaktServiceBase, ITaktIpqcOrderItemServi
             exp = exp.And(x => x.MaterialDescription != null && x.MaterialDescription.Contains(materialDescription));
         }
 
-        if (!string.IsNullOrWhiteSpace(queryDto?.BatchCode))
+        if (!string.IsNullOrWhiteSpace(queryDto?.ProdBatch))
         {
-            var batchCode = queryDto.BatchCode;
-            exp = exp.And(x => x.BatchCode != null && x.BatchCode.Contains(batchCode));
+            var prodBatch = queryDto.ProdBatch;
+            exp = exp.And(x => x.ProdBatch != null && x.ProdBatch.Contains(prodBatch));
         }
 
         if (queryDto?.ProductionQuantity.HasValue == true)
@@ -747,7 +747,7 @@ public class TaktIpqcOrderItemService : TaktServiceBase, ITaktIpqcOrderItemServi
         {
             return true;
         }
-        if (!string.IsNullOrWhiteSpace(queryDto.BatchCode))
+        if (!string.IsNullOrWhiteSpace(queryDto.ProdBatch))
         {
             return true;
         }

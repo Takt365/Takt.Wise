@@ -91,8 +91,8 @@ public class TaktMaterialDocumentItem : TaktCompanyEntityBase
     /// <summary>
     /// 批次
     /// </summary>
-    [SugarColumn(ColumnName = "batch_code", ColumnDescription = "批次", ColumnDataType = "nvarchar", Length = 20, IsNullable = true)]
-    public string? BatchCode { get; set; }
+    [SugarColumn(ColumnName = "prod_batch", ColumnDescription = "批次", ColumnDataType = "nvarchar", Length = 20, IsNullable = true)]
+    public string? ProdBatch { get; set; }
 
     /// <summary>
     /// 库存类型（字典 logistics_stock_type）

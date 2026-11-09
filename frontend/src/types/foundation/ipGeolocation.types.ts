@@ -51,7 +51,12 @@ export interface IpGeolocation {
   isp: string
 
   /**
-   * 完整地址信息（国家|区域|省份|城市|ISP）
+   * ISO 3166-1 alpha-2（xdb 第五段）
+   */
+  isoCountryCode?: string
+
+  /**
+   * 完整地址原文（国家|省份|城市|ISP|ISO）
    */
   fullAddress: string
 
@@ -59,4 +64,9 @@ export interface IpGeolocation {
    * 格式化地址（用于显示）
    */
   formattedAddress: string
+
+  /**
+   * 本机已激活网卡 IP 列表（仅「查询本机」返回；IPv4 在前）
+   */
+  activeHostIps?: string[]
 }

@@ -96,8 +96,8 @@ public class TaktAssyOutput : TaktCompanyEntityBase
     /// <summary>
     /// 批次（回填：随工单）
     /// </summary>
-    [SugarColumn(ColumnName = "batch_code", ColumnDescription = "批次", Length = 20, ColumnDataType = "nvarchar", IsNullable = true)]
-    public string? BatchCode { get; set; }
+    [SugarColumn(ColumnName = "prod_batch", ColumnDescription = "批次", Length = 40, ColumnDataType = "nvarchar", IsNullable = true)]
+    public string? ProdBatch { get; set; }
 
     /// <summary>
     /// 工单数量（回填：随工单）

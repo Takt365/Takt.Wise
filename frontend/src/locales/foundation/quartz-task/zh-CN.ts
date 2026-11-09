@@ -19,6 +19,7 @@ export default {
       costingMonthPlaceholder: '请选择核算月份',
       costingMonthRequired: '请选择核算月份',
       hint: '须同时选择目标库与核算月；Cron 未传参时核算月默认当月、库取任务 ExecuteParams。',
+      scope: '当前任务只过滤公司 {company}、工厂 {plant}。',
     },
     executeDb: {
       modalTitle: '选择同步数据库',
@@ -32,6 +33,15 @@ export default {
     signalr: {
       executeSucceeded: '任务 {code} 执行成功（{duration}ms）',
       executeFailed: '任务 {code} 执行失败（{duration}ms）',
+    },
+    relation: {
+      title: '主子表关系清单',
+      orphan: '孤儿明细',
+      empty: '空头凭证',
+      businessCode: '业务编码',
+      lineNumber: '行号',
+      rowId: '主键',
+      export: '导出清单',
     },
     cron: {
       modalTitle: 'Cron 表达式',

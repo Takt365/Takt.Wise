@@ -10,6 +10,7 @@
 
 export default {
   page: {
+    periodRange: '生产期间',
     proddatelocked: '生产日期 {prodDate} 已锁定（次月 {cutoffDay} 日之后不可新增或修改）',
     proddateoutofrange: '生产日期超出可选范围（每月 {cutoffDay} 日之后仅可选当月1日至今日；不可选择今天之后的日期）',
   },

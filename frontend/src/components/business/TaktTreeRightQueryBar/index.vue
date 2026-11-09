@@ -4,7 +4,7 @@
 文件名称:index.vue
 创建时间:2025-01-20
 创建人:Takt365(Cursor AI)
-功能描述:右树查询栏,栏宽对齐右表；关键字输入框宽度=右表栏宽减去查询/重置按钮
+功能描述:右树查询栏；占查询行剩余宽度并随视口伸缩；关键字宽度=槽宽减去查询/重置按钮
 
 版权信息:Copyright (c) 2025 Takt  All rights reserved.
 免责声明:此软件使用 MIT License,作者不承担任何使用风险。
@@ -130,15 +130,16 @@ defineExpose({
 </script>
 
 <style scoped>
-/* 栏宽：与右表一致（80%）；关键字 flex:1 = 右表栏宽 − 查询/重置按钮 */
+/* 栏宽：占满查询行剩余（吸收 gap），随视口伸缩；关键字 flex:1 = 槽宽 − 查询/重置 */
 .takt-query-bar {
-  flex: 0 0 80%;
-  width: 80%;
-  min-width: 200px;
-  max-width: 80%;
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+  max-width: none;
   padding: 4px;
   box-sizing: border-box;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
 

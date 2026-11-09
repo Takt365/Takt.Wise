@@ -205,11 +205,11 @@
         />
       </a-form-item>
       </div>
-      <div v-show="isFieldVisible('purchaseInfoCode')">
-      <a-form-item :label="pi.queryLabel('purchaseInfoCode')">
+      <div v-show="isFieldVisible('purchaseConditionCode')">
+      <a-form-item :label="pi.queryLabel('purchaseConditionCode')">
         <a-input
-          v-model:value="advancedQueryForm.purchaseInfoCode"
-          :placeholder="pi.queryPh('purchaseInfoCode', 'required')"
+          v-model:value="advancedQueryForm.purchaseConditionCode"
+          :placeholder="pi.queryPh('purchaseConditionCode', 'required')"
           show-count
           :maxlength="20"
           allow-clear
@@ -896,14 +896,14 @@ const columns = computed<TableColumnsType>(() => [
       String(getPurchaseOrderItemField(record, 'materialSpecification') ?? ''),
   },
   {
-    title: pi.label('purchaseInfoCode'),
-    dataIndex: 'purchaseInfoCode',
-    key: 'purchaseInfoCode',
+    title: pi.label('purchaseConditionCode'),
+    dataIndex: 'purchaseConditionCode',
+    key: 'purchaseConditionCode',
     width: 120,
     resizable: true,
     ellipsis: true,
     customRender: ({ record }: { record: PurchaseOrderItem }) =>
-      String(getPurchaseOrderItemField(record, 'purchaseInfoCode') ?? ''),
+      String(getPurchaseOrderItemField(record, 'purchaseConditionCode') ?? ''),
   },
   {
     title: pi.label('supplierMaterialCode'),

@@ -171,14 +171,14 @@
           <a-row :gutter="24">
             <a-col :span="24">
               <a-form-item
-                :label="pi.label('batchCode')"
-                name="batchCode"
+                :label="pi.label('prodBatch')"
+                name="prodBatch"
               >
                 <a-input
-                  v-model:value="formState.batchCode"
-                  :placeholder="pi.ph('batchCode')"
+                  v-model:value="formState.prodBatch"
+                  :placeholder="pi.ph('prodBatch')"
                   show-count
-                  :maxlength="20"
+                  :maxlength="40"
                   allow-clear
                   :disabled="!!formData?.assyDefectId"
                 />
@@ -420,7 +420,7 @@ const formContentClass = computed(() => (formFields.length > 10 ? 'takt-form-con
 /** 当前激活的 Tab key */
 const activeTab = ref('tab-0')
 /** CreateDto 字段名列表（与 formState 键对齐） */
-const formFields = ["tenantCode","companyCode","cultureCode","plantCode","prodCategory","prodDate","teamCode","shiftNo","prodOrderType","prodOrderCode","prodOrderQty","modelCode","batchCode","materialCode","prodActualQty","goodQuantity","extField","remark"]
+const formFields = ["tenantCode","companyCode","cultureCode","plantCode","prodCategory","prodDate","teamCode","shiftNo","prodOrderType","prodOrderCode","prodOrderQty","modelCode","prodBatch","materialCode","prodActualQty","goodQuantity","extField","remark"]
 
 import type { TaktEditableTableColumn } from '@/components/business/TaktEditableTable/types'
 import { resolveNextDetailLineNumber } from '@/utils/taktSequence'

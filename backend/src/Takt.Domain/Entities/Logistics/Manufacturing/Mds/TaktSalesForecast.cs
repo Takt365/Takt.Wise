@@ -92,6 +92,12 @@ public class TaktSalesForecast : TaktApprovalEntityBase
     public string MaterialDescription { get; set; } = string.Empty;
 
     /// <summary>
+    /// 计划批次（转入 MDS 后沿计划链下传，正式工单写入 ProdBatch）
+    /// </summary>
+    [SugarColumn(ColumnName = "planned_batch", ColumnDescription = "计划批次", ColumnDataType = "nvarchar", Length = 40, IsNullable = true)]
+    public string? PlannedBatch { get; set; }
+
+    /// <summary>
     /// 客户编码（选项 TaktCustomers/options；汇总计划时可为空，DictValue=Id）
     /// </summary>
     [SugarColumn(ColumnName = "customer_code", ColumnDescription = "客户编码", ColumnDataType = "nvarchar", Length = 10, IsNullable = true)]
@@ -116,7 +122,7 @@ public class TaktSalesForecast : TaktApprovalEntityBase
     public string? PlannerGroupName { get; set; }
 
     /// <summary>
-    /// 计划总数量（基本单位数量；通常汇总版本 002）
+    /// 计划总数量（各月最新版本数量之和）
     /// </summary>
     [SugarColumn(ColumnName = "total_quantity", ColumnDescription = "计划总数量", ColumnDataType = "decimal", Length = 18, DecimalDigits = 4, IsNullable = false, DefaultValue = "0")]
     public decimal TotalQuantity { get; set; } = 0;
@@ -158,7 +164,7 @@ public class TaktSalesForecast : TaktApprovalEntityBase
     public string? PlanDescription { get; set; }
 
     /// <summary>
-    /// 销售预测明细列表（主子表；一行=财年×月计划量 001/002/增减；维度在主表）
+    /// 销售预测明细列表（主子表；一行=财年×月×版本，版本号 1～20；维度在主表）
     /// </summary>
     [Navigate(NavigateType.OneToMany, nameof(TaktSalesForecastItem.SalesForecastId))]
     public List<TaktSalesForecastItem>? Items { get; set; }

@@ -33,7 +33,7 @@ internal static class TaktAssyDefectStatSyncHelper
         public DateTime ProdDate { get; init; }
         public string ProdOrderCode { get; init; } = string.Empty;
         public string ModelCode { get; init; } = string.Empty;
-        public string? BatchCode { get; init; }
+        public string? ProdBatch { get; init; }
         public string MaterialCode { get; init; } = string.Empty;
         public decimal ProdOrderQty { get; init; }
         public decimal ProdActualQty { get; init; }
@@ -50,7 +50,7 @@ internal static class TaktAssyDefectStatSyncHelper
     /// <param name="companyCode">公司编码</param>
     /// <param name="prodCategory">生产类别</param>
     /// <param name="prodOrderCode">工单号</param>
-    /// <param name="batchCode">批次（为空时跳过批量统计）</param>
+    /// <param name="prodBatch">批次（为空时跳过批量统计）</param>
     /// <returns>任务</returns>
     public static async Task RefreshDefectStatsFromAssyDefectAsync(
         ITaktCompanyRepository<TaktAssyDefect> assyDefectRepository,
@@ -60,7 +60,7 @@ internal static class TaktAssyDefectStatSyncHelper
         string companyCode,
         string? prodCategory,
         string prodOrderCode,
-        string? batchCode)
+        string? prodBatch)
     {
         var normalizedProdCategory = prodCategory?.Trim() ?? string.Empty;
         if (string.IsNullOrWhiteSpace(normalizedProdCategory))
@@ -74,7 +74,7 @@ internal static class TaktAssyDefectStatSyncHelper
             companyCode,
             normalizedProdCategory,
             prodOrderCode);
-        if (!string.IsNullOrWhiteSpace(batchCode))
+        if (!string.IsNullOrWhiteSpace(prodBatch))
         {
             await RefreshBatchDefectStatFromAssyDefectAsync(
                 assyDefectRepository,
@@ -82,7 +82,7 @@ internal static class TaktAssyDefectStatSyncHelper
                 tenantCode,
                 companyCode,
                 normalizedProdCategory,
-                batchCode);
+                prodBatch);
         }
     }
 
@@ -134,7 +134,7 @@ internal static class TaktAssyDefectStatSyncHelper
     /// <param name="tenantCode">租户编码</param>
     /// <param name="companyCode">公司编码</param>
     /// <param name="prodCategory">生产类别</param>
-    /// <param name="batchCode">批次</param>
+    /// <param name="prodBatch">批次</param>
     /// <returns>任务</returns>
     public static async Task RefreshBatchDefectStatFromAssyDefectAsync(
         ITaktCompanyRepository<TaktAssyDefect> assyDefectRepository,
@@ -142,12 +142,12 @@ internal static class TaktAssyDefectStatSyncHelper
         string tenantCode,
         string companyCode,
         string prodCategory,
-        string batchCode)
+        string prodBatch)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantCode);
         ArgumentException.ThrowIfNullOrWhiteSpace(companyCode);
         if (string.IsNullOrWhiteSpace(prodCategory)
-            || string.IsNullOrWhiteSpace(batchCode))
+            || string.IsNullOrWhiteSpace(prodBatch))
         {
             return;
         }
@@ -155,14 +155,14 @@ internal static class TaktAssyDefectStatSyncHelper
             x.TenantCode == tenantCode
             && x.CompanyCode == companyCode
             && x.ProdCategory == prodCategory
-            && x.BatchCode == batchCode);
+            && x.ProdBatch == prodBatch);
         var reports = BuildStatSnapshotsFromDefects(defects);
         await UpsertBatchDefectStatAsync(
             assyBatchDefectRepository,
             tenantCode,
             companyCode,
             prodCategory,
-            batchCode,
+            prodBatch,
             reports);
     }
 
@@ -222,7 +222,7 @@ internal static class TaktAssyDefectStatSyncHelper
     /// <param name="tenantCode">租户编码</param>
     /// <param name="companyCode">公司编码</param>
     /// <param name="prodCategory">生产类别</param>
-    /// <param name="batchCode">批次</param>
+    /// <param name="prodBatch">批次</param>
     /// <returns>任务</returns>
     public static async Task RefreshBatchDefectStatAsync(
         ITaktCompanyRepository<TaktAssyOutput> assyOutputRepository,
@@ -232,12 +232,12 @@ internal static class TaktAssyDefectStatSyncHelper
         string tenantCode,
         string companyCode,
         string prodCategory,
-        string batchCode)
+        string prodBatch)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantCode);
         ArgumentException.ThrowIfNullOrWhiteSpace(companyCode);
         if (string.IsNullOrWhiteSpace(prodCategory)
-            || string.IsNullOrWhiteSpace(batchCode))
+            || string.IsNullOrWhiteSpace(prodBatch))
         {
             return;
         }
@@ -248,13 +248,13 @@ internal static class TaktAssyDefectStatSyncHelper
             tenantCode,
             companyCode,
             prodCategory,
-            batchCode);
+            prodBatch);
         await UpsertBatchDefectStatAsync(
             assyBatchDefectRepository,
             tenantCode,
             companyCode,
             prodCategory,
-            batchCode,
+            prodBatch,
             reports);
     }
 
@@ -270,7 +270,7 @@ internal static class TaktAssyDefectStatSyncHelper
     /// <param name="companyCode">公司编码</param>
     /// <param name="prodCategory">生产类别</param>
     /// <param name="prodOrderCode">工单号</param>
-    /// <param name="batchCode">批次</param>
+    /// <param name="prodBatch">批次</param>
     /// <returns>任务</returns>
     public static async Task RefreshDefectStatsAsync(
         ITaktCompanyRepository<TaktAssyOutput> assyOutputRepository,
@@ -282,7 +282,7 @@ internal static class TaktAssyDefectStatSyncHelper
         string companyCode,
         string? prodCategory,
         string prodOrderCode,
-        string? batchCode)
+        string? prodBatch)
     {
         var normalizedProdCategory = prodCategory?.Trim() ?? string.Empty;
         if (string.IsNullOrWhiteSpace(normalizedProdCategory))
@@ -298,7 +298,7 @@ internal static class TaktAssyDefectStatSyncHelper
             companyCode,
             normalizedProdCategory,
             prodOrderCode);
-        if (!string.IsNullOrWhiteSpace(batchCode))
+        if (!string.IsNullOrWhiteSpace(prodBatch))
         {
             await RefreshBatchDefectStatAsync(
                 assyOutputRepository,
@@ -308,7 +308,7 @@ internal static class TaktAssyDefectStatSyncHelper
                 tenantCode,
                 companyCode,
                 normalizedProdCategory,
-                batchCode);
+                prodBatch);
         }
     }
 
@@ -347,13 +347,13 @@ internal static class TaktAssyDefectStatSyncHelper
         string tenantCode,
         string companyCode,
         string prodCategory,
-        string batchCode)
+        string prodBatch)
     {
         var outputs = await assyOutputRepository.GetListAsync(x =>
             x.TenantCode == tenantCode
             && x.CompanyCode == companyCode
             && x.ProdCategory == prodCategory
-            && x.BatchCode == batchCode);
+            && x.ProdBatch == prodBatch);
         return await BuildStatSnapshotsAsync(
             assyOutputDetailRepository,
             assyDefectRepository,
@@ -410,7 +410,7 @@ internal static class TaktAssyDefectStatSyncHelper
                 ProdDate = output.ProdDate,
                 ProdOrderCode = output.ProdOrderCode,
                 ModelCode = output.ModelCode,
-                BatchCode = output.BatchCode,
+                ProdBatch = output.ProdBatch,
                 MaterialCode = output.MaterialCode,
                 ProdOrderQty = output.ProdOrderQty,
                 ProdActualQty = prodActualQty,
@@ -519,7 +519,7 @@ internal static class TaktAssyDefectStatSyncHelper
             ProdDate = defect.ProdDate,
             ProdOrderCode = defect.ProdOrderCode,
             ModelCode = defect.ModelCode,
-            BatchCode = defect.BatchCode,
+            ProdBatch = defect.ProdBatch,
             MaterialCode = defect.MaterialCode,
             ProdOrderQty = defect.ProdOrderQty,
             ProdActualQty = defect.ProdActualQty,
@@ -566,7 +566,7 @@ internal static class TaktAssyDefectStatSyncHelper
         stat.ProdDateGroup = BuildOrderProdDateGroup(reports);
         stat.ModelCode = latest.ModelCode;
         stat.MaterialCode = latest.MaterialCode;
-        stat.BatchCode = latest.BatchCode;
+        stat.ProdBatch = latest.ProdBatch;
         stat.ProdOrderQty = latest.ProdOrderQty;
         stat.ProdActualQty = prodActualQty;
         stat.GoodQuantity = goodQuantity;
@@ -594,14 +594,14 @@ internal static class TaktAssyDefectStatSyncHelper
         string tenantCode,
         string companyCode,
         string prodCategory,
-        string batchCode,
+        string prodBatch,
         List<AssyStatReportSnapshot> reports)
     {
         var existing = await assyBatchDefectRepository.FirstAsync(x =>
             x.TenantCode == tenantCode
             && x.CompanyCode == companyCode
             && x.ProdCategory == prodCategory
-            && x.BatchCode == batchCode);
+            && x.ProdBatch == prodBatch);
         if (reports.Count == 0)
         {
             if (existing != null)
@@ -621,7 +621,7 @@ internal static class TaktAssyDefectStatSyncHelper
             TenantCode = tenantCode,
             CompanyCode = companyCode,
             ProdCategory = prodCategory,
-            BatchCode = batchCode,
+            ProdBatch = prodBatch,
         };
         stat.PlantCode = latest.PlantCode;
         stat.ProdDateGroup = prodDateGroup;

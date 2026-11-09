@@ -111,12 +111,12 @@
             </a-col>
             <a-col :span="12">
               <a-form-item
-                :label="t('entity.iqcorderitem.batchCode')"
-                name="batchCode"
+                :label="t('entity.iqcorderitem.prodBatch')"
+                name="prodBatch"
               >
                 <a-input
-                  v-model:value="formState.batchCode"
-                  :placeholder="t('common.page.form.placeholder.required', { field: t('entity.iqcorderitem.batchCode') })"
+                  v-model:value="formState.prodBatch"
+                  :placeholder="t('common.page.form.placeholder.required', { field: t('entity.iqcorderitem.prodBatch') })"
                   show-count
                   :maxlength="20"
                   allow-clear
@@ -415,7 +415,7 @@ const formContentClass = computed(() => (formFields.length > 10 ? 'takt-form-con
 /** 当前激活的 Tab key */
 const activeTab = ref('tab-0')
 /** CreateDto 字段名列表（与 formState 键对齐） */
-const formFields = ["tenantCode","companyCode","cultureCode","iqcOrderId","iqcOrderCode","lineNumber","materialCode","materialDescription","batchCode","purchaseQuantity","standardCode","samplingSchemeCode","inspectionMethod","sampleQuantity","qualifiedQuantity","unqualifiedQuantity","inspectionReturnQuantity","sampleSerialCode","inspectionDescription","inspectorBy","inspectionDate","judgeStatus","extField","remark"]
+const formFields = ["tenantCode","companyCode","cultureCode","iqcOrderId","iqcOrderCode","lineNumber","materialCode","materialDescription","prodBatch","purchaseQuantity","standardCode","samplingSchemeCode","inspectionMethod","sampleQuantity","qualifiedQuantity","unqualifiedQuantity","inspectionReturnQuantity","sampleSerialCode","inspectionDescription","inspectorBy","inspectionDate","judgeStatus","extField","remark"]
 
 import type { TaktEditableTableColumn } from '@/components/business/TaktEditableTable/types'
 

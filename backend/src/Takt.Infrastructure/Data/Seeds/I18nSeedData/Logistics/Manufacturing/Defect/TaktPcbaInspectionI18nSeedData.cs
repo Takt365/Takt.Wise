@@ -2,7 +2,7 @@
 // 项目名称：节拍智控·TaktWise
 // 命名空间：Takt.Infrastructure.Data.Seeds.I18nSeedData.Logistics.Manufacturing.Defect
 // 文件名称：TaktPcbaInspectionI18nSeedData.cs
-// 创建时间：2026-10-27
+// 创建时间：2026-11-06
 // 创建人：Takt365(Auto Generated)
 // 功能描述：TaktPcbaInspection 实体字段国际化种子（无对应 frontend locales；TranslationText 取自 ColumnDescription，ContextNote 取自属性 XML summary）
 // 
@@ -135,14 +135,14 @@ public class TaktPcbaInspectionI18nSeedData : ITaktSeedDataCoordinator
             // entity.pcbainspection.modelcode
             new TranslationSeedItem("entity.pcbainspection.modelcode", "zh-HK", "机种_hk", "机种"),
 
-            // entity.pcbainspection.batchcode
-            new TranslationSeedItem("entity.pcbainspection.batchcode", "en-US", "批次_us", "批次"),
-            // entity.pcbainspection.batchcode
-            new TranslationSeedItem("entity.pcbainspection.batchcode", "ja-JP", "批次_jp", "批次"),
-            // entity.pcbainspection.batchcode
-            new TranslationSeedItem("entity.pcbainspection.batchcode", "zh-CN", "批次", "批次"),
-            // entity.pcbainspection.batchcode
-            new TranslationSeedItem("entity.pcbainspection.batchcode", "zh-HK", "批次_hk", "批次"),
+            // entity.pcbainspection.prodbatch
+            new TranslationSeedItem("entity.pcbainspection.prodbatch", "en-US", "批次_us", "批次"),
+            // entity.pcbainspection.prodbatch
+            new TranslationSeedItem("entity.pcbainspection.prodbatch", "ja-JP", "批次_jp", "批次"),
+            // entity.pcbainspection.prodbatch
+            new TranslationSeedItem("entity.pcbainspection.prodbatch", "zh-CN", "批次", "批次"),
+            // entity.pcbainspection.prodbatch
+            new TranslationSeedItem("entity.pcbainspection.prodbatch", "zh-HK", "批次_hk", "批次"),
 
             // entity.pcbainspection.materialcode
             new TranslationSeedItem("entity.pcbainspection.materialcode", "en-US", "物料编码_us", "物料编码"),

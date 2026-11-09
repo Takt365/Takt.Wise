@@ -21,7 +21,6 @@ export interface EcDeptView extends CompanyDtoBase {
   ecOldMaterialCode?: string;
   ecNewMaterialCode?: string;
   ecOldMaterialDescription?: string;
-  ecNewMaterialDescription?: string;
   deptCode: string;
   isImplemented: number;
   content?: string;
@@ -35,25 +34,16 @@ export interface EcDeptView extends CompanyDtoBase {
   ecLeader?: string;
   scheduledDate?: string;
   scheduledBatch?: string;
-  poRemainder?: string;
-  balanceQuantity?: number | null;
   oldProductHandling?: string;
-  purchaseOrderIssueDate?: string;
-  supplier?: string;
-  purchaseOrderCode?: string;
-  iqcOrderCode?: string;
+  inboundDate?: string;
   inspectionDate?: string;
-  outboundBatch?: string;
   outboundDate?: string;
+  outboundBatch?: string;
   productionDate?: string;
   productionBatch?: string;
   outboundOrderCode?: string;
   productionTeam?: string;
   implementationDate?: string;
-  /** 实施批次（制一） */
-  implementationBatch?: string;
-  inspectionBatch?: string;
-  samplingCode?: string;
   /** SOP日期（制技） */
   sopDate?: string;
   isSopUpdated: number;
@@ -77,25 +67,16 @@ export interface EcDeptViewUpdate {
   ecLeader?: string;
   scheduledDate?: string;
   scheduledBatch?: string;
-  poRemainder?: string;
-  balanceQuantity?: number | null;
   oldProductHandling?: string;
-  purchaseOrderIssueDate?: string;
-  supplier?: string;
-  purchaseOrderCode?: string;
-  iqcOrderCode?: string;
+  inboundDate?: string;
   inspectionDate?: string;
-  outboundBatch?: string;
   outboundDate?: string;
+  outboundBatch?: string;
   productionDate?: string;
   productionBatch?: string;
   outboundOrderCode?: string;
   productionTeam?: string;
   implementationDate?: string;
-  /** 实施批次（制一） */
-  implementationBatch?: string;
-  inspectionBatch?: string;
-  samplingCode?: string;
   /** SOP日期（制技） */
   sopDate?: string;
   isSopUpdated: number;

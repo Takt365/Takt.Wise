@@ -25,6 +25,11 @@ export default {
       province: 'Province',
       city: 'City',
       isp: 'ISP',
+      active: {
+        host: {
+          ips: 'Active NICs',
+        },
+      },
       full: {
         address: 'Full address',
       },
@@ -37,11 +42,18 @@ export default {
     },
     button: {
       search: 'Search',
-      client: 'My client IP',
+      client: 'This machine IP',
     },
     rule: {
       ip: {
         required: 'Please enter an IP address',
+      },
+    },
+    visitor: {
+      loading: 'Detecting your public IP…',
+      line: 'Your IP: {ip}, Location: {location}',
+      unknown: {
+        location: 'Unknown',
       },
     },
     message: {
@@ -49,7 +61,10 @@ export default {
         fail: 'IP geolocation lookup failed',
       },
       client: {
-        fail: 'Client IP geolocation lookup failed',
+        fail: 'Active host IP geolocation lookup failed',
+      },
+      visitor: {
+        fail: 'Could not detect public IP automatically; enter an IP and search',
       },
       not: {
         found: 'No geolocation found for this IP',
